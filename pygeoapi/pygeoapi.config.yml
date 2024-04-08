@@ -1,0 +1,253 @@
+#=================================================================
+#
+# Authors: Benjamin Webb <bwebb@lincolninst.edu
+#
+# Copyright (c) 2024 Lincoln Institute of Land Policy
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation
+# files (the "Software"), to deal in the Software without
+# restriction, including without limitation the rights to use,
+# copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following
+# conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+#
+# =================================================================
+
+server:
+  bind:
+    host: localhost #change to your hostname if running your own instance
+    port: 5000
+  url: ${PYGEOAPI_URL} #change to host URL  if running your own instance
+  mimetype: application/json; charset=UTF-8
+  encoding: utf-8
+  gzip: true
+  language: en-US
+  cors: true
+  pretty_print: true
+  limit: 1000
+  map:
+    url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
+    attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
+
+logging:
+  level: ERROR
+  # logfile: /tmp/pygeoapi.log
+
+metadata:
+  identification:
+    title: USBR Interoperable Data Hub
+    description: USBR Interoperable Data Hub
+    keywords:
+      - USBR
+      - IODH
+      - IOW
+    keywords_type: theme
+    terms_of_service: https://creativecommons.org/licenses/by/4.0/
+    url: https://github.com/internetofwater/IODH
+  license:
+    name: CC-BY 4.0 license
+    url: https://creativecommons.org/licenses/by/4.0/
+  provider:
+    name: Internet of Water
+    url: https://github.com/internetofwater/IODH
+  contact:
+    address: 113 Brattle St
+    city: Cambridge
+    stateorprovince: Massachussetts
+    postalcode: 02138
+    country: USA
+    email: bwebb@lincolninst.edu
+    url: https://cgsearth.org
+    role: pointOfContact
+
+resources:
+  icoads/sst:
+    type: collection
+    title: International Comprehensive Ocean-Atmosphere Data Set (ICOADS)
+    description: International Comprehensive Ocean-Atmosphere Data Set (ICOADS)
+    keywords:
+      - icoads
+      - sst
+      - air temperature
+    extents:
+      spatial:
+        bbox: [-180, -90, 180, 90]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    links:
+      - type: text/html
+        rel: canonical
+        title: information
+        href: https://psl.noaa.gov/data/gridded/data.coads.1deg.html
+        hreflang: en-US
+    providers:
+      - type: edr
+        name: xarray-edr
+        data: tests/data/coads_sst.nc
+        format:
+          name: NetCDF
+          mimetype: application/x-netcdf
+
+  usgs/prism:
+    type: collection
+    title: Parameter-elevation Regressions on Independent Slopes Model (PRISM)
+    description: PRISM Monthly Climate Data for the Continental United States
+    keywords:
+      - temperature
+      - precipitation
+    extents:
+      spatial:
+        bbox: [-125.020836, 24.104166, -66.520836, 49.9375]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    links:
+      - type: text/html
+        rel: canonical
+        title: information
+        href: https://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/prism_v2
+        hreflang: en-US
+    providers:
+      - type: edr
+        name: xarray-edr
+        data: s3://mdmf/gdp/PRISM_v2.zarr
+        format:
+          name: zarr
+          mimetype: application/zip
+        options:
+          s3:
+            anon: true
+            requester_pays: false
+            client_kwargs:
+              endpoint_url: https://usgs.osn.mghpcc.org/
+
+  usgs/loca-future:
+    type: collection
+    title: Projected Future LOCA Statistical Downscaling (Localized Constructed Analogs)
+    description: Projected Future LOCA Statistical Downscaling (Localized Constructed Analogs)
+    keywords:
+      - usgs
+      - loca
+      - future
+    extents:
+      spatial:
+        bbox: [234.03125, 23.40625, 293.96875, 53.96875]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+      temporal:
+        begin: 2006-01-01T12:00:00Z
+        end: 2100-12-31T12:00:00Z
+    providers:
+      - type: edr
+        name: xarray-edr
+        data: s3://mdmf/gdp/LOCA_future.zarr
+        x_field: lon
+        y_field: lat
+        format:
+          mimetype: application/zip
+          name: zarr
+        options:
+          s3:
+            anon: true
+            client_kwargs:
+              endpoint_url: https://usgs.osn.mghpcc.org/
+
+  usgs/loca-historical:
+    type: collection
+    title: LOCA_historical
+    description: LOCA_historical
+    keywords:
+      - usgs
+      - loca
+      - historical
+    extents:
+      spatial:
+        bbox: [234.03125, 23.40625, 293.96875, 53.96875]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+      temporal:
+        begin: 1950-01-01T12:00:00Z
+        end: 2005-12-31T12:00:00Z
+    providers:
+      - type: edr
+        name: xarray-edr
+        data: s3://mdmf/gdp/LOCA_historical.zarr
+        x_field: lon
+        y_field: lat
+        format:
+          mimetype: application/zip
+          name: zarr
+        options:
+          s3:
+            anon: true
+            client_kwargs:
+              endpoint_url: https://usgs.osn.mghpcc.org/
+
+  nasa/power:
+    type: collection
+    title: NASA Prediction Of Worldwide Energy Resources (POWER)
+    description: NASA Prediction Of Worldwide Energy Resources (POWER)
+    keywords:
+      - nasa
+      - energy
+      - power
+    extents:
+      spatial:
+        bbox: [-180, -90, 180, 90]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    links:
+      - type: text/html
+        rel: canonical
+        title: information
+        href: https://power.larc.nasa.gov/
+        hreflang: en-US
+    providers:
+      - type: edr
+        name: xarray-edr
+        data: s3://power-analysis-ready-datastore/power_901_annual_meteorology_utc.zarr
+        format:
+          name: zarr
+          mimetype: application/zip
+        options:
+          s3:
+            anon: true
+            requester_pays: false
+
+  # noaa/nwm:
+  #   type: collection
+  #   title: NOAA National Water Model CONUS Retrospective Dataset
+  #   description: NOAA National Water Model CONUS Retrospective Dataset
+  #   keywords:
+  #     - national water model
+  #     - agriculture
+  #   extents:
+  #     spatial:
+  #       bbox: [-125.020836, 24.104166, -66.520836, 49.9375]
+  #       crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+  #   links:
+  #     - type: text/html
+  #       rel: canonical
+  #       title: information
+  #       href: https://registry.opendata.aws/nwm-archive/
+  #       hreflang: en-US
+  #   providers:
+  #     - type: edr
+  #       name: xarray-edr
+  #       data: s3://noaa-nwm-retrospective-3-0-pds/CONUS/zarr/chrtout.zarr
+  #       x_field: longitude
+  #       y_field: latitude
+  #       format:
+  #         name: zarr
+  #         mimetype: application/zip
+  #       options:
+  #         s3:
+  #           anon: true
