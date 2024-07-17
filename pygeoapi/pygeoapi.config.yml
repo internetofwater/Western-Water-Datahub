@@ -52,9 +52,9 @@ metadata:
     title: USBR Interoperable Data Hub
     description: USBR Interoperable Data Hub
     keywords:
-      - USBR
-      - IODH
-      - IOW
+      - usbr
+      - iodh
+      - iow
     keywords_type: theme
     terms_of_service: https://creativecommons.org/licenses/by/4.0/
     url: https://github.com/internetofwater/IODH
