@@ -49,8 +49,8 @@ logging:
 
 metadata:
   identification:
-    title: USBR Interoperable Data Hub
-    description: USBR Interoperable Data Hub
+    title: US Bureau of Reclamation Interoperable Data Hub
+    description: US Bureau of Reclamation Interoperable Data Hub
     keywords:
       - usbr
       - iodh
