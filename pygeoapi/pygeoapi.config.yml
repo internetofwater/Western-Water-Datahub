@@ -90,6 +90,8 @@ resources:
       temporal:
         begin: 2000-01-16T06:00:00Z
         end: 2000-12-16T01:20:06Z
+        trs: http://www.opengis.net/def/uom/ISO-8601/0/Gregorian
+        values: ['R335/2000-01-16T06:00:00Z/P1D']
     links:
       - type: text/html
         rel: canonical
@@ -118,6 +120,8 @@ resources:
       temporal:
         begin: 1895-01-01T00:00:00Z
         end: 2020-12-01T00:00:00Z
+        trs: http://www.opengis.net/def/uom/ISO-8601/0/Gregorian
+        values: ['R1500/1895-01-01T00:00:00Z/P1M']
     links:
       - type: text/html
         rel: canonical
@@ -153,6 +157,8 @@ resources:
       temporal:
         begin: 2006-01-01T12:00:00Z
         end: 2100-12-31T12:00:00Z
+        trs: http://www.opengis.net/def/uom/ISO-8601/0/Gregorian
+        values: ['R1140/2006-01-01T12:00:00Z/P1M']
     providers:
       - type: edr
         name: xarray-edr
@@ -183,6 +189,8 @@ resources:
       temporal:
         begin: 1950-01-01T12:00:00Z
         end: 2005-12-31T12:00:00Z
+        trs: http://www.opengis.net/def/uom/ISO-8601/0/Gregorian
+        values: ['R672/1950-01-01T12:00:00Z/P1M']
     providers:
       - type: edr
         name: xarray-edr
@@ -213,6 +221,8 @@ resources:
       temporal:
         begin: 1981-12-31T00:00:00.00Z
         end: 2022-12-31T00:00:00.00Z
+        trs: http://www.opengis.net/def/uom/ISO-8601/0/Gregorian
+        values: ['R492/1981-12-31T00:00:00.00Z/P1M']
     links:
       - type: text/html
         rel: canonical
