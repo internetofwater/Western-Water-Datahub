@@ -75,7 +75,7 @@ metadata:
     role: pointOfContact
 
 resources:
-  icoads/sst:
+  icoads-sst:
     type: collection
     title: International Comprehensive Ocean-Atmosphere Data Set (ICOADS)
     description: International Comprehensive Ocean-Atmosphere Data Set (ICOADS)
@@ -87,6 +87,9 @@ resources:
       spatial:
         bbox: [-180, -90, 180, 90]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+      temporal:
+        begin: 2000-01-16T06:00:00Z
+        end: 2000-12-16T01:20:06Z
     links:
       - type: text/html
         rel: canonical
@@ -101,7 +104,7 @@ resources:
           name: NetCDF
           mimetype: application/x-netcdf
 
-  usgs/prism:
+  usgs-prism:
     type: collection
     title: Parameter-elevation Regressions on Independent Slopes Model (PRISM)
     description: PRISM Monthly Climate Data for the Continental United States
@@ -112,6 +115,9 @@ resources:
       spatial:
         bbox: [-125.020836, 24.104166, -66.520836, 49.9375]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+      temporal:
+        begin: 1895-01-01T00:00:00Z
+        end: 2020-12-01T00:00:00Z
     links:
       - type: text/html
         rel: canonical
@@ -132,7 +138,7 @@ resources:
             client_kwargs:
               endpoint_url: https://usgs.osn.mghpcc.org/
 
-  usgs/loca-future:
+  usgs-loca-future:
     type: collection
     title: Projected Future LOCA Statistical Downscaling (Localized Constructed Analogs)
     description: Projected Future LOCA Statistical Downscaling (Localized Constructed Analogs)
@@ -142,7 +148,7 @@ resources:
       - future
     extents:
       spatial:
-        bbox: [234.03125, 23.40625, 293.96875, 53.96875]
+        bbox: [-125.020836, 24.104166, -66.520836, 49.9375]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
       temporal:
         begin: 2006-01-01T12:00:00Z
@@ -162,7 +168,7 @@ resources:
             client_kwargs:
               endpoint_url: https://usgs.osn.mghpcc.org/
 
-  usgs/loca-historical:
+  usgs-loca-historical:
     type: collection
     title: LOCA_historical
     description: LOCA_historical
@@ -172,7 +178,7 @@ resources:
       - historical
     extents:
       spatial:
-        bbox: [234.03125, 23.40625, 293.96875, 53.96875]
+        bbox: [-125.020836, 24.104166, -66.520836, 49.9375]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
       temporal:
         begin: 1950-01-01T12:00:00Z
@@ -192,7 +198,7 @@ resources:
             client_kwargs:
               endpoint_url: https://usgs.osn.mghpcc.org/
 
-  nasa/power:
+  nasa-power:
     type: collection
     title: NASA Prediction Of Worldwide Energy Resources (POWER)
     description: NASA Prediction Of Worldwide Energy Resources (POWER)
@@ -204,6 +210,9 @@ resources:
       spatial:
         bbox: [-180, -90, 180, 90]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+      temporal:
+        begin: 1981-12-31T00:00:00.00Z
+        end: 2022-12-31T00:00:00.00Z
     links:
       - type: text/html
         rel: canonical
@@ -222,7 +231,7 @@ resources:
             anon: true
             requester_pays: false
 
-  # noaa/nwm:
+  # noaa-nwm:
   #   type: collection
   #   title: NOAA National Water Model CONUS Retrospective Dataset
   #   description: NOAA National Water Model CONUS Retrospective Dataset
