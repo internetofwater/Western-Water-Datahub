@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+
+  redis:
+    image: redislabs/redismod
+    ports:
+      - '6379:6379'
+      
+  pygeoapi:
+    build:
+      context: .  
+      dockerfile: Dockerfile
+    image: rise-pygeoapi  
+    ports:
+      - "5000:80"
+    volumes:
+      - ./.devcontainer:/pygeoapi/.devcontainer
+      - ./local.config.yml:/pygeoapi/local.config.yml
+      - ./.vscode:/pygeoapi/.vscode
+      - ./rise:/pygeoapi/rise
+      - ./docker/entrypoint.sh:/pygeoapi/docker/entrypoint.sh
+
+    depends_on:
+      - redis
