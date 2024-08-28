@@ -167,7 +167,7 @@ class LocationHelper:
                             allParams.append(res["id"])
 
             except KeyError:
-                with open("tests/data/rise/debug.json", "w") as f:
+                with open("rise/tests/data/debug.json", "w") as f:
                     json.dump(urlItemMapper, f)
                 raise ProviderQueryError("Could not get parameters")
 
