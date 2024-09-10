@@ -2,7 +2,12 @@
 
 EDR is an OGC API that allows a user to filter locations by parameters and their associated data. It can return either geojson or coveragejson depending on the endpoint. geojson maps easier to RISE, while coveragejson requires more complex ETL.
 
-## Challenges
+## Questions to verify
+
+- How / when does RISE update data? What is the best way to cache an API call that does not have a `timeStep` update interval?
+- Coveragejson requires returning a location as well as its parameter metadata and results. Is there a better way to get this data besides joining across multiple calls?
+
+## Background for challenges
 
 ### Caching
 
