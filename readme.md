@@ -8,6 +8,8 @@ To run
 docker compose up
 ```
 
+You can run tests by entering the container shell and running pytest or opening the provided devcontainer and running the vscode test runner.
+
 ## Limitations
 
 - This repository uses extensive caching to prevent unnecessary fetch requests to RISE. OGC EDR does not map cleanly onto RISE without this. 

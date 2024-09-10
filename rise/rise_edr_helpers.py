@@ -206,6 +206,7 @@ class LocationHelper:
     def filter_by_properties(
         response: LocationResponse, select_properties: list[str] | str, cache: RISECache
     ) -> LocationResponse:
+        """Filter a location by a list of properties. NOTE you can also do this directly in RISE. Make sure you actually need this and can't fetch up front."""
         list_of_properties: list[str] = (
             [select_properties]
             if isinstance(select_properties, str)

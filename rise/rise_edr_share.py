@@ -2,7 +2,7 @@
 
 from rise.rise_api_types import JsonPayload, Url
 
-"""This file exists solely to prevent circular imports due to three files all need to import this, but can't import each other"""
+"""This function is a separate file solely to prevent circular imports due to three files all need to import this, but can't import each other"""
 
 def merge_pages(pages: dict[Url, JsonPayload]):
     # Initialize variables to hold the URL and combined data

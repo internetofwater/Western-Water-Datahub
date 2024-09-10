@@ -146,7 +146,7 @@ class RISECache(CacheInterface):
     def get_or_fetch_all_pages(
         self, url: str, force_fetch=False
     ) -> dict[Url, JsonPayload]:
-        # max number of items you can query
+        # max number of items you can query in RISE
         MAX_ITEMS_PER_PAGE = 100
 
         # Get the first response that contains the list of pages

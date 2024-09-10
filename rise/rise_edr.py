@@ -1,4 +1,5 @@
 import logging
+from optparse import Option
 from typing import Any, ClassVar, Optional
 import requests
 
@@ -7,6 +8,7 @@ from pygeoapi.provider.base import (
     ProviderQueryError,
 )
 from pygeoapi.provider.base_edr import BaseEDRProvider
+from rise.rise_api_types import LocationResponse
 from rise.rise_edr_helpers import (
     RISECache,
     get_only_key,
@@ -16,7 +18,6 @@ from rise.rise_edr_share import merge_pages
 
 
 LOGGER = logging.getLogger(__name__)
-
 
 class RiseEDRProvider(BaseEDRProvider):
     """Base EDR Provider"""
@@ -51,12 +52,29 @@ class RiseEDRProvider(BaseEDRProvider):
 
         self.instances = []
 
+    def get_or_fetch_all_param_filtered_pages(
+        self, properties: Optional[list[str]] = None
+    ) -> LocationResponse:
+        """RISE has an API for fetching locations by property/param ids. Thus, we want to fetch only relevant properties if we have them"""
+        if properties:
+            base_url = "https://data.usbr.gov/rise/api/location?&"
+            for prop in properties:
+                assert isinstance(prop, str)
+                base_url += f"parameterId%5B%5D={prop}&"
+            base_url = base_url.removesuffix("&")
+        else:
+            base_url = RiseEDRProvider.LOCATION_API
+        response = self.cache.get_or_fetch_all_pages(base_url)
+        response = merge_pages(response)
+        response = get_only_key(response)
+        return response
+
     @BaseEDRProvider.register()
     def locations(
         self,
         location_id: Optional[int] = None,
         datetime_: Optional[str] = None,
-        select_properties: Optional[str] = None,
+        select_properties: Optional[list[str]] = None,
         crs: Optional[str] = None,
         format_: Optional[str] = None,
         **kwargs,
@@ -64,6 +82,8 @@ class RiseEDRProvider(BaseEDRProvider):
         """
         Extract data from location
         """
+        if not location_id and datetime_:
+            raise ProviderQueryError("Can't filter by date on the entire ")
 
         if location_id:
             # Instead of merging all location pages, just
@@ -80,26 +100,19 @@ class RiseEDRProvider(BaseEDRProvider):
                 response = response.json()
 
         else:
-            response = self.cache.get_or_fetch_all_pages(RiseEDRProvider.LOCATION_API)
-            response = merge_pages(response)
-            response = get_only_key(response)
-            if response is None:
-                raise ProviderNoDataError
+            response = self.get_or_fetch_all_param_filtered_pages(select_properties)
+            if not response:
+                return {}
 
         if datetime_:
             response = LocationHelper.filter_by_date(response, datetime_)
 
-        # location 1 has parameter 1721
-        if select_properties:
-            response = LocationHelper.filter_by_properties(
-                response, select_properties, self.cache
-            )
-
-        query_args = [crs, datetime_, location_id]
-
-        if not any(query_args) or format_ == "geojson":
+        if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return LocationHelper.to_geojson(
-                response, single_feature=True if location_id else False
+                response,
+                single_feature=True
+                if location_id
+                else False,  # Geojson is redered differently if there is just one feature
             )
         else:
             return LocationHelper.to_covjson(response, self.cache)
@@ -131,16 +144,8 @@ class RiseEDRProvider(BaseEDRProvider):
         :param format_: data format of output
 
         """
-        response = self.cache.get_or_fetch_all_pages(RiseEDRProvider.LOCATION_API)
-        response = merge_pages(response)
-        response = get_only_key(response)
-        if response is None:
-            raise ProviderNoDataError
 
-        if select_properties:
-            response = LocationHelper.filter_by_properties(
-                response, select_properties, self.cache
-            )
+        response = self.get_or_fetch_all_param_filtered_pages(select_properties)
 
         if datetime_:
             response = LocationHelper.filter_by_date(response, datetime_)
@@ -173,16 +178,7 @@ class RiseEDRProvider(BaseEDRProvider):
         :returns: A CovJSON CoverageCollection.
         """
 
-        response = self.cache.get_or_fetch_all_pages(RiseEDRProvider.LOCATION_API)
-        response = merge_pages(response)
-        response = get_only_key(response)
-        if response is None:
-            raise ProviderNoDataError
-
-        if select_properties:
-            response = LocationHelper.filter_by_properties(
-                response, select_properties, self.cache
-            )
+        response = self.get_or_fetch_all_param_filtered_pages(select_properties)
 
         if datetime_:
             response = LocationHelper.filter_by_date(response, datetime_)
@@ -203,8 +199,8 @@ class RiseEDRProvider(BaseEDRProvider):
         :param kwargs: Additional parameters for the request.
         :returns: A GeoJSON representation of the items.
         """
+        # We have to define this since pygeoapi has a limitation and needs both EDR and OAF for items
         # https://github.com/geopython/pygeoapi/issues/1748
-        # define this as an OAF provider as well since pygeoapi has a limitation
         pass
 
     def __repr__(self):

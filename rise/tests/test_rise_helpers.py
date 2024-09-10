@@ -1,5 +1,6 @@
 from datetime import timedelta
 import json
+import logging
 
 import redis
 
@@ -25,6 +26,34 @@ import asyncio
 
 import requests
 import time
+
+LOGGER = logging.getLogger(__name__)
+
+
+def test_rise_filter_by_param_list():
+    """Make sure that rise is actually filtering by parameters correctly"""
+    out812 = requests.get(
+        "https://data.usbr.gov/rise/api/location?page=1&itemsPerPage=25&parameterId%5B%5D=812",
+        headers={"accept": "application/vnd.api+json"},
+    ).json()
+    assert out812["meta"]["totalItems"] == 10
+    assert len(out812["data"]) == out812["meta"]["totalItems"]
+
+    out6 = requests.get(
+        "https://data.usbr.gov/rise/api/location?page=1&itemsPerPage=25&parameterId%5B%5D=6",
+        headers={"accept": "application/vnd.api+json"},
+    ).json()
+    assert out6["meta"]["totalItems"] == 13
+
+    out_812_and_6 = requests.get(
+        "https://data.usbr.gov/rise/api/location?page=1&itemsPerPage=25&parameterId%5B%5D=812&parameterId%5B%5D=6",
+        headers={"accept": "application/vnd.api+json"},
+    ).json()
+
+    assert (
+        out_812_and_6["meta"]["totalItems"]
+        == out812["meta"]["totalItems"] + out6["meta"]["totalItems"]
+    )
 
 
 def test_get_catalogItems():
