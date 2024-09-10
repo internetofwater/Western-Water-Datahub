@@ -2,6 +2,7 @@ from copy import deepcopy
 import datetime
 import json
 import logging
+from optparse import Option
 from typing import Optional, Tuple
 import shapely.wkt
 from typing_extensions import assert_never
@@ -62,6 +63,47 @@ def parse_z(z: str) -> Optional[Tuple[ZType, list[int]]]:
             raise ProviderQueryError(f"Invalid z value: {z}")
 
 
+def parse_date(datetime_: str) -> list[datetime.datetime]:
+    """Parses an EDR formatted datetime string into a datetime object"""
+    dateRange = datetime_.split("/")
+
+    if len(dateRange) == 2:  # noqa F841
+        start, end = dateRange
+
+        # python does not accept Z at the end of the datetime even though that is a valid ISO 8601 datetime
+        if start.endswith("Z"):
+            start = start.replace("Z", "+00:00")
+
+        if end.endswith("Z"):
+            end = end.replace("Z", "+00:00")
+
+        start = (
+            datetime.datetime.min
+            if start == ".."
+            else datetime.datetime.fromisoformat(start)
+        )
+        end = (
+            datetime.datetime.max
+            if end == ".."
+            else datetime.datetime.fromisoformat(end)
+        )
+        start, end = (
+            start.replace(tzinfo=datetime.timezone.utc),
+            end.replace(tzinfo=datetime.timezone.utc),
+        )
+
+        if start > end:
+            raise ProviderQueryError(
+                "Start date must be before end date but got {} and {}".format(
+                    start, end
+                )
+            )
+
+        return [start, end]
+    else:
+        return [datetime.datetime.fromisoformat(datetime_)]
+
+
 def parse_bbox(
     bbox: Optional[list],
 ) -> Tuple[Optional[shapely.geometry.base.BaseGeometry], Optional[str]]:
@@ -93,8 +135,25 @@ def get_trailing_id(url: str) -> str:
     return url.split("/")[-1]
 
 
-def getResultUrlFromCatalogUrl(url: str) -> str:
-    return f"https://data.usbr.gov/rise/api/result?itemId={get_trailing_id(url)}"
+def getResultUrlFromCatalogUrl(url: str, datetime_: Optional[str]) -> str:
+    """Create the result url given a catalog item url and the datetime we want to filter by"""
+    base = f"https://data.usbr.gov/rise/api/result?itemId={get_trailing_id(url)}"
+
+    if datetime_:
+        parsed_date = datetime_.split("/")
+        if len(parsed_date) == 2:
+            after_date = parsed_date[0]
+            before_date = parsed_date[1]
+        else:
+            # In RISE we are allowed to filter broadly by using the same start and end date
+            # i.e. 2017-01-01 as the start and end would match on 2017-01-01:00:00:00 - 2017-01-01:23:59:59
+            after_date = parsed_date[0]
+            before_date = parsed_date[0]
+
+        base += f"&dateTime%5Bbefore%5D={before_date}"
+        base += f"&dateTime%5Bafter%5D={after_date}"
+
+    return base
 
 
 def flatten_values(input: dict[str, list[str]]) -> list[str]:
@@ -233,39 +292,10 @@ class LocationHelper:
 
         filteredResp = location_response.copy()
 
-        dateRange = datetime_.split("/")
+        parsed_date: list[datetime.datetime] = parse_date(datetime_)
 
-        if len(dateRange) == 2:  # noqa F841
-            start, end = dateRange
-
-            # python does not accept Z at the end of the datetime even though that is a valid ISO 8601 datetime
-            if start.endswith("Z"):
-                start = start.replace("Z", "+00:00")
-
-            if end.endswith("Z"):
-                end = end.replace("Z", "+00:00")
-
-            start = (
-                datetime.datetime.min
-                if start == ".."
-                else datetime.datetime.fromisoformat(start)
-            )
-            end = (
-                datetime.datetime.max
-                if end == ".."
-                else datetime.datetime.fromisoformat(end)
-            )
-            start, end = (
-                start.replace(tzinfo=datetime.timezone.utc),
-                end.replace(tzinfo=datetime.timezone.utc),
-            )
-
-            if start > end:
-                raise ProviderQueryError(
-                    "Start date must be before end date but got {} and {}".format(
-                        start, end
-                    )
-                )
+        if len(parsed_date) == 2:
+            start, end = parsed_date
 
             for i, location in enumerate(filteredResp["data"]):
                 updateDate = datetime.datetime.fromisoformat(
@@ -274,15 +304,13 @@ class LocationHelper:
                 if updateDate < start or updateDate > end:
                     filteredResp["data"].pop(i)
 
-        elif len(dateRange) == 1:
-            # By casting to a string we can use .str.contains to coarsely check.
-            # We want 2019-10 to match 2019-10-01, 2019-10-02, etc.
-
-            for i, location in enumerate(filteredResp["data"]):
-                if not str(location["attributes"]["updateDate"]).startswith(
-                    dateRange[0]
-                ):
-                    filteredResp["data"].pop(i)
+        elif len(parsed_date) == 1:
+            parsed_date_str = str(parsed_date[0])
+            filteredResp["data"] = [
+                location
+                for location in filteredResp["data"]
+                if str(location["attributes"]["updateDate"]).startswith(parsed_date_str)
+            ]
 
         else:
             raise ProviderQueryError(
@@ -323,6 +351,7 @@ class LocationHelper:
     def _filter_by_geometry(
         location_response: LocationResponse,
         geometry: Optional[shapely.geometry.base.BaseGeometry],
+        # Vertical level
         z: Optional[str] = None,
     ) -> LocationResponse:
         # need to deep copy so we don't change the dict object
@@ -456,7 +485,10 @@ class LocationHelper:
 
     @staticmethod
     def fill_catalogItems(
-        response: LocationResponse, cache: RISECache, add_results: bool = False
+        response: LocationResponse,
+        cache: RISECache,
+        datetime_: Optional[str] = None,
+        add_results: bool = False,
     ):
         """Given a location that contains just catalog item ids, fill in the catalog items with the full
         endpoint response for the given catalog item so it can be more easily used for complex joins
@@ -475,7 +507,10 @@ class LocationHelper:
         )
 
         if add_results:
-            resultUrls = [getResultUrlFromCatalogUrl(url) for url in catalogItemUrls]
+            # Fetch all results in parallel before looping through each location to add them in the json
+            resultUrls = [
+                getResultUrlFromCatalogUrl(url, datetime_) for url in catalogItemUrls
+            ]
             assert len(resultUrls) == len(set(resultUrls)), LOGGER.error(
                 "Duplicate result urls when adding results to the catalog items"
             )
@@ -503,7 +538,7 @@ class LocationHelper:
                     base_catalog_item_j = new["data"][i]["relationships"][
                         "catalogItems"
                     ]["data"][j]
-                    associated_res_url = getResultUrlFromCatalogUrl(url)
+                    associated_res_url = getResultUrlFromCatalogUrl(url, datetime_)
                     if not associated_res_url:
                         results_for_catalog_item_j = None
                     else:
@@ -543,11 +578,14 @@ class LocationHelper:
 
     @staticmethod
     def to_covjson(
-        location_response: LocationResponse, cache: RISECache
+        location_response: LocationResponse,
+        cache: RISECache,
+        datetime_: Optional[str] = None,
     ) -> CoverageCollection:
-        # Fill in the catalog items so we can more easily join across them
+        # Fill in the location response with the full response of the catalog items as well as the associated results
+        # We need all this data to be able to build the covjson
         expanded_response = LocationHelper.fill_catalogItems(
-            location_response, cache, add_results=True
+            location_response, cache, datetime_, add_results=True
         )
 
         allCoverages: list[Coverage] = []

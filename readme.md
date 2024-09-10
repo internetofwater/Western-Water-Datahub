@@ -1,6 +1,6 @@
 # RISE EDR Mappings
 
-Map the USBR RISE API to the OGC EDR API.
+This repository maps the USBR RISE API to OGC EDR using pygeoapi for ETL. It defaults to redis for the caching implementation.
 
 To run
 
@@ -8,7 +8,7 @@ To run
 docker compose up
 ```
 
-You can run tests by entering the container shell and running pytest or opening the provided devcontainer and running the vscode test runner.
+You can run tests by entering the container shell and running pytest or opening the provided devcontainer and running the vscode test runner. View the [docs](./docs/) for more information.
 
 ## Limitations
 

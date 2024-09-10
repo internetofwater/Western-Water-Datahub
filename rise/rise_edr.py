@@ -1,5 +1,4 @@
 import logging
-from optparse import Option
 from typing import Any, ClassVar, Optional
 import requests
 
@@ -18,6 +17,7 @@ from rise.rise_edr_share import merge_pages
 
 
 LOGGER = logging.getLogger(__name__)
+
 
 class RiseEDRProvider(BaseEDRProvider):
     """Base EDR Provider"""
@@ -55,7 +55,8 @@ class RiseEDRProvider(BaseEDRProvider):
     def get_or_fetch_all_param_filtered_pages(
         self, properties: Optional[list[str]] = None
     ) -> LocationResponse:
-        """RISE has an API for fetching locations by property/param ids. Thus, we want to fetch only relevant properties if we have them"""
+        """Return all locations which contain"""
+        # RISE has an API for fetching locations by property/param ids. Thus, we want to fetch only relevant properties if we have them
         if properties:
             base_url = "https://data.usbr.gov/rise/api/location?&"
             for prop in properties:
@@ -85,6 +86,8 @@ class RiseEDRProvider(BaseEDRProvider):
         if not location_id and datetime_:
             raise ProviderQueryError("Can't filter by date on the entire ")
 
+        LOGGER.warning(datetime_)
+
         if location_id:
             # Instead of merging all location pages, just
             # fetch the location associated with the ID
@@ -104,9 +107,6 @@ class RiseEDRProvider(BaseEDRProvider):
             if not response:
                 return {}
 
-        if datetime_:
-            response = LocationHelper.filter_by_date(response, datetime_)
-
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return LocationHelper.to_geojson(
                 response,
@@ -115,7 +115,8 @@ class RiseEDRProvider(BaseEDRProvider):
                 else False,  # Geojson is redered differently if there is just one feature
             )
         else:
-            return LocationHelper.to_covjson(response, self.cache)
+            # When we return covjson we also end up filtering by datetime_ along the way
+            return LocationHelper.to_covjson(response, self.cache, datetime_)
 
     def get_fields(self):
         if self._fields:
@@ -159,6 +160,7 @@ class RiseEDRProvider(BaseEDRProvider):
     @BaseEDRProvider.register()
     def area(
         self,
+        # Well known text (WKT) representation of the geometry for the area
         wkt: str,
         select_properties: list[str] = [],
         datetime_: Optional[str] = None,
@@ -168,14 +170,6 @@ class RiseEDRProvider(BaseEDRProvider):
     ):
         """
         Extract and return coverage data from a specified area.
-
-        :param wkt: Well-Known Text (WKT) representation of the
-                    geometry for the area.
-        :param select_properties: List of properties to include
-                                  in the response.
-        :param datetime_: Temporal filter for observations.
-
-        :returns: A CovJSON CoverageCollection.
         """
 
         response = self.get_or_fetch_all_param_filtered_pages(select_properties)
@@ -185,11 +179,7 @@ class RiseEDRProvider(BaseEDRProvider):
 
         response = LocationHelper.filter_by_wkt(response, wkt, z)
 
-        # match format_:
-        #     case "json" | "GeoJSON" | "" | None:
         return LocationHelper.to_geojson(response)
-        # case "covjson":
-        #     return LocationHelper.to_covjson(response)
 
     @BaseEDRProvider.register()
     def items(self, **kwargs):

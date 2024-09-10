@@ -1,4 +1,5 @@
 {
+    // pytest should be scoped to just the rise directory for the purpose of this development
     "python.testing.pytestArgs": [
         "rise",
         "--color=yes"

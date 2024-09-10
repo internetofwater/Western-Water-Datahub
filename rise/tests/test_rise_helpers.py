@@ -2,6 +2,8 @@ from datetime import timedelta
 import json
 import logging
 
+from flask import request
+from pytest import approx
 import redis
 
 from rise.rise_edr_share import merge_pages
@@ -28,32 +30,6 @@ import requests
 import time
 
 LOGGER = logging.getLogger(__name__)
-
-
-def test_rise_filter_by_param_list():
-    """Make sure that rise is actually filtering by parameters correctly"""
-    out812 = requests.get(
-        "https://data.usbr.gov/rise/api/location?page=1&itemsPerPage=25&parameterId%5B%5D=812",
-        headers={"accept": "application/vnd.api+json"},
-    ).json()
-    assert out812["meta"]["totalItems"] == 10
-    assert len(out812["data"]) == out812["meta"]["totalItems"]
-
-    out6 = requests.get(
-        "https://data.usbr.gov/rise/api/location?page=1&itemsPerPage=25&parameterId%5B%5D=6",
-        headers={"accept": "application/vnd.api+json"},
-    ).json()
-    assert out6["meta"]["totalItems"] == 13
-
-    out_812_and_6 = requests.get(
-        "https://data.usbr.gov/rise/api/location?page=1&itemsPerPage=25&parameterId%5B%5D=812&parameterId%5B%5D=6",
-        headers={"accept": "application/vnd.api+json"},
-    ).json()
-
-    assert (
-        out_812_and_6["meta"]["totalItems"]
-        == out812["meta"]["totalItems"] + out6["meta"]["totalItems"]
-    )
 
 
 def test_get_catalogItems():
@@ -109,13 +85,18 @@ def test_merge_pages():
 @pytest.mark.parametrize("cache_type", ["redis", "shelve"])
 def test_integration_merge_pages(cache_type):
     url = "https://data.usbr.gov/rise/api/location"
+
+    totalitems = requests.get(
+        url, headers={"accept": "application/vnd.api+json"}
+    ).json()["meta"]["totalItems"]
+
     cache = RISECache(cache_type)
     pages = cache.get_or_fetch_all_pages(url, force_fetch=True)
     merged = merge_pages(pages)
     for url, content in merged.items():
         assert content is not None
         assert content["data"]
-        assert len(content["data"]) == 593
+        assert len(content["data"]) == totalitems
         break
 
 
@@ -273,7 +254,7 @@ def test_get_or_fetch_group():
 
 def test_make_result():
     url = "https://data.usbr.gov/rise/api/catalog-item/128632"
-    res = getResultUrlFromCatalogUrl(url)
+    res = getResultUrlFromCatalogUrl(url, None)
     resp = requests.get(res)
     assert resp.ok
 

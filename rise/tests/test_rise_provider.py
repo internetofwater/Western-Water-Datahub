@@ -5,6 +5,7 @@ import pytest
 from pygeoapi.provider.base import ProviderQueryError
 from rise.rise import RiseProvider
 from rise.rise_edr import RiseEDRProvider
+import datetime
 
 
 @pytest.fixture(params=["redis", "shelve"])
@@ -84,30 +85,26 @@ def test_location_select_properties(edr_config: dict):
     )  # has 10 features
     out_6 = p.locations(select_properties=["6"], format_="geojson")  # has 13 features
 
-    assert len(out_812["features"]) < len(out_6["features"])
+    assert len(out_812["features"]) < len(out_6["features"])  # type: ignore
 
     out_812_6 = p.locations(select_properties=["812", "6"], format_="geojson")
 
-    assert len(out_812_6["features"]) == len(out_812["features"]) + len(
-        out_6["features"]
+    assert len(out_812_6["features"]) == len(out_812["features"]) + len(  # type: ignore
+        out_6["features"]  # type: ignore
     )
 
 
 def test_location_datetime(edr_config: dict):
     p = RiseEDRProvider(edr_config)
-    out = p.locations(datetime_="2024-03-29T15:49:57+00:00", format_="geojson")
-    for i in out["features"]:  # type: ignore
-        if i["id"] == 6902:
-            break
-    else:
-        assert False
 
-    out = p.locations(datetime="2024-03-29/..", format_="geojson")
-    for i in out["features"]:  # type: ignore
-        if i["id"] == 6902:
-            break
-    else:
-        assert False
+    out = p.locations(location_id=1536, datetime_="2017-01-01/2018-01-01")
+
+    start = datetime.datetime.fromisoformat("2017-01-01T00:00:00+00:00")
+    end = datetime.datetime.fromisoformat("2018-01-01T00:00:00+00:00")
+
+    for param in out["coverages"]:
+        for time_val in param["domain"]["axes"]["t"]["values"]:
+            assert start <= datetime.datetime.fromisoformat(time_val) <= end
 
 
 def test_area(edr_config: dict):

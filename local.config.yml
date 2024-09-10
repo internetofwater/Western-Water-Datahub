@@ -15,7 +15,7 @@ server:
         url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
         attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 logging:
-    level: ERROR
+    level: WARNING
 #     logfile: /tmp/pygeoapi.log
 
 metadata:
