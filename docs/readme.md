@@ -12,8 +12,8 @@ EDR is an OGC API that allows a user to filter locations by parameters and their
 ### Caching
 
 To my understanding, RISE does not provide an TLL/invalidation header for each response in the API. You can assume it for some endpoints if a response returns data with a defined update `timeStep` interval. However, we also need to fetch URLs like `/location` for metadata that do not have an update interval, yet may still be updated.
-- It is also not always clear when and how data in the API is updated. (i.e. are old results ever deleted? Are new results ever created at an interval that is different from what is specified?)
-
+- It is also not always clear when and how data in the API is updated. (i.e. are old results ever deleted? Are new results ever created at an interval that is different from what is specified?
+)
 In our cache implementation we use a hard coded TTL; it is low enough that it seems to be a reasonable tradeoff. This reduces complexity on our end so we do not need to check for updates or go into the JSON differently for different endpoints.
 
 ### CoverageJson Causes Many API Calls
