@@ -105,8 +105,6 @@ class RiseEDRProvider(BaseEDRProvider):
 
         else:
             response = self.get_or_fetch_all_param_filtered_pages(select_properties)
-            if not response:
-                return {}
 
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return LocationHelper.to_geojson(

@@ -8,14 +8,15 @@
 	"service": "pygeoapi",
 	// the path VS Code should open by default when connected.
 	"workspaceFolder": "/pygeoapi",
-	"postAttachCommand": 
-	{
-		"server":  "python3 -m pip install -r requirements-dev.txt"
-	}, 
+	"postAttachCommand": {
+		"server": "python3 -m pip install -r requirements-dev.txt"
+	},
 	// when working inside the container, this will override the pygeoapi serve command 
 	// so we can run it manually and see its output in the terminal ourselves
 	"overrideCommand": true,
-
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli:1": {}
+	},
 	"customizations": {
 		"vscode": {
 			// Set *default* container specific settings.json values on container create.
