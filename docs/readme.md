@@ -53,7 +53,7 @@ When the user goes to `http://localhost:5000/collections/rise-edr/locations/1` t
 
 This results in `1 + $NUM_CATALOG_ITEMS + $NUM_RESULTS` (where `$NUM_RESULTS <= $NUM_CATALOG_ITEMS`) API calls for one coveragejson output. 
 
-This is a bigger challenge for `area/` and `cube/` queries where a user could requset many different locations. 
+This is a bigger challenge for `area/` and `cube/` queries where a user could request many different locations all at once.
 
 - We do limit the impact of this by using `async` fetches and caching
 - However, if the cache is stale, we need to do many fetches
