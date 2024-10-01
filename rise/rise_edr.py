@@ -3,6 +3,7 @@ from typing import Any, ClassVar, Optional
 import requests
 
 from pygeoapi.provider.base import (
+    ProviderGenericError,
     ProviderNoDataError,
     ProviderQueryError,
 )
@@ -155,7 +156,8 @@ class RiseEDRProvider(BaseEDRProvider):
 
         # match format_:
         #     case "json" | "GeoJSON" | _:
-        return LocationHelper.to_geojson(response)
+        # return LocationHelper.to_geojson(response)
+        return LocationHelper.to_covjson(response, self.cache, datetime_)
 
     @BaseEDRProvider.register()
     def area(
@@ -170,6 +172,8 @@ class RiseEDRProvider(BaseEDRProvider):
     ):
         """
         Extract and return coverage data from a specified area.
+        Example: http://localhost:5000/collections/rise-edr/area?coords=POLYGON((-124.566244%2042.000709%2C%20-124.566244%2046.292035%2C%20-116.463262%2046.292035%2C%20-116.463262%2042.000709%2C%20-124.566244%2042.000709))
+
         """
 
         response = self.get_or_fetch_all_param_filtered_pages(select_properties)
@@ -179,7 +183,7 @@ class RiseEDRProvider(BaseEDRProvider):
 
         response = LocationHelper.filter_by_wkt(response, wkt, z)
 
-        return LocationHelper.to_geojson(response)
+        return LocationHelper.to_covjson(response, self.cache, datetime_)
 
     @BaseEDRProvider.register()
     def items(self, **kwargs):
