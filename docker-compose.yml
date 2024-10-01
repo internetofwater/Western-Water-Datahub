@@ -19,7 +19,9 @@ services:
       - ./local.config.yml:/pygeoapi/local.config.yml
       - ./.vscode:/pygeoapi/.vscode
       - ./rise:/pygeoapi/rise
-      - ./docker/entrypoint.sh:/pygeoapi/docker/entrypoint.sh
-
+    environment:
+    # Need to set these env vars for the custom entrypoint 
+      - PYGEOAPI_CONFIG=/pygeoapi/local.config.yml
+      - PYGEOAPI_OPENAPI=/pygeoapi/local.openapi.yml
     depends_on:
       - redis
