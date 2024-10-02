@@ -45,11 +45,11 @@ class PyTest(Command):
     def run(self):
         import subprocess
 
-        errno = subprocess.call(['pytest'])
+        errno = subprocess.call(["pytest"])
         raise SystemExit(errno)
 
 
-def read(filename, encoding='utf-8'):
+def read(filename, encoding="utf-8"):
     """read file contents"""
     full_path = os.path.join(os.path.dirname(__file__), filename)
     with io.open(full_path, encoding=encoding) as fh:
@@ -59,45 +59,45 @@ def read(filename, encoding='utf-8'):
 
 def get_package_version():
     """get version from top-level package init"""
-    version_file = read('rise/__init__.py')
+    version_file = read("rise/__init__.py")
     version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", version_file, re.M)
     if version_match:
         return version_match.group(1)
-    raise RuntimeError('Unable to find version string.')
+    raise RuntimeError("Unable to find version string.")
 
 
-DESCRIPTION = 'rise EDR mapping'
+DESCRIPTION = "rise EDR mapping"
 
 # ensure a fresh MANIFEST file is generated
-if os.path.exists('MANIFEST'):
-    os.unlink('MANIFEST')
+if os.path.exists("MANIFEST"):
+    os.unlink("MANIFEST")
 
 setup(
-    name='rise',
+    name="rise",
     version=get_package_version(),
     description=DESCRIPTION.strip(),
-    long_description=read('readme.md'),
-    long_description_content_type='text/markdown',
-    license='MIT',
-    platforms='all',
-    keywords=' '.join(['cgs', 'pygeoapi', 'rise']),
-    author='Colton Loftus',
-    author_email='cloftus@lincolninst.edu',
-    maintainer='Colton Loftus Webb',
-    maintainer_email='cloftus@lincolninst.edu',
-    url='https://github.com/cgs-earth/RISE-EDR-Mappings',
-    install_requires=read('requirements.txt').splitlines(),
+    long_description=read("readme.md"),
+    long_description_content_type="text/markdown",
+    license="MIT",
+    platforms="all",
+    keywords=" ".join(["cgs", "pygeoapi", "rise"]),
+    author="Colton Loftus",
+    author_email="cloftus@lincolninst.edu",
+    maintainer="Colton Loftus Webb",
+    maintainer_email="cloftus@lincolninst.edu",
+    url="https://github.com/cgs-earth/RISE-EDR-Mappings",
+    install_requires=read("requirements.txt").splitlines(),
     packages=find_packages(),
     include_package_data=True,
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Intended Audience :: Developers',
-        'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: MIT License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Scientific/Engineering :: GIS',
+        "Development Status :: 4 - Beta",
+        "Environment :: Console",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Topic :: Scientific/Engineering :: GIS",
     ],
-    cmdclass={'test': PyTest},
+    cmdclass={"test": PyTest},
 )
