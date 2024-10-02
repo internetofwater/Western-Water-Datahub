@@ -15,7 +15,7 @@
 !docs/**
 
 !.gitignore
-!.pre-commit-config.yml
+!.pre-commit-config.yaml
 
 !Dockerfile-rise
 !docker-compose-rise.yml
