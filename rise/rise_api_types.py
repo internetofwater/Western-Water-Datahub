@@ -1,6 +1,6 @@
 from datetime import timedelta
 from enum import Enum, auto
-from typing import ClassVar, Literal, Optional, Protocol, TypedDict
+from typing import Literal, Optional, Protocol, TypedDict
 
 
 class EDRQuery(TypedDict):
@@ -10,7 +10,6 @@ class EDRQuery(TypedDict):
 class LocationDataCoordinates(TypedDict):
     type: Literal["Point", "Polygon"]
     coordinates: list[float]
-
 
 class LocationDataAttributes(TypedDict):
     _id: int

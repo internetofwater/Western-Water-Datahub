@@ -1,2 +1,15 @@
-__pycache__
+# ignore everything so that when we are inside the container, everything is ignored
+*
+__pycache__/
 .venv/
+
+# But not these files
+!.devcontainer/
+!.vscode/
+!docs/
+!rise/
+!.gitignore
+!.pre-commit.config.yml
+!Dockerfile-rise
+!docker-compose-rise.yml
+!README

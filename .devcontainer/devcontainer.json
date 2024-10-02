@@ -3,7 +3,7 @@
 {
 	"name": "Existing Docker Compose (Extend)",
 	"dockerComposeFile": [
-		"../docker-compose.yml"
+		"../docker-compose-rise.yml"
 	],
 	"service": "pygeoapi",
 	// the path VS Code should open by default when connected.
@@ -15,7 +15,8 @@
 	// so we can run it manually and see its output in the terminal ourselves
 	"overrideCommand": true,
 	"features": {
-		"ghcr.io/devcontainers/features/github-cli:1": {}
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/meaningful-ooo/devcontainer-features/fish:1": {}
 	},
 	"customizations": {
 		"vscode": {
