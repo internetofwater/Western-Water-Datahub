@@ -2,7 +2,6 @@ from copy import deepcopy
 import datetime
 import json
 import logging
-from optparse import Option
 from typing import Optional, Tuple
 import shapely.wkt
 from typing_extensions import assert_never

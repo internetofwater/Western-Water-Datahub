@@ -16,6 +16,7 @@ from rise.rise_edr_share import merge_pages
 
 LOGGER = logging.getLogger(__name__)
 
+
 class RiseProvider(BaseProvider):
     """Rise Provider"""
 

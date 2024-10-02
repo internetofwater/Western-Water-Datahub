@@ -1,74 +1,69 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Python Debugger: Flask",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "flask",
-            "env": {
-                "FLASK_DEBUG": "1",
-                "PYGEOAPI_CONFIG": "local.config.yml",
-                "PYGEOAPI_OPENAPI": "local.openapi.yml"
-            },
-            "args": [
-                "--app",
-                "./pygeoapi/flask_app",
-                "run",
-                "--no-debugger",
-                "--no-reload"
-            ],
-            "jinja": true,
-            "autoStartBrowser": false
-        },
-        {
-            "name": "Python Debugger: Attach using Process Id",
-            "type": "debugpy",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
-        },
-        {
-            "name": "Gunicorn",
-            "python": "/usr/bin/python3",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "gunicorn",
-            "env": {
-                "PYGEOAPI_CONFIG": "local.config.yml",
-                "PYGEOAPI_OPENAPI": "local.openapi.yml"
-            },
-            "args": [
-                "pygeoapi.flask_app:APP"
-            ]
-        },
-        {
-            "name": "Pytest",
-            "python": "/usr/bin/python3",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "pytest",
-            "args": [
-                "-svvvv",
-                "${file}"
-            ]
-        },
-        {
-            "name": "Python: Webapp",
-            "type": "python",
-            "request": "launch",
-            "python": "/usr/bin/python3",
-            "module": "gunicorn",
-            "gevent": true,
-            "args": [
-                "pygeoapi.flask_app:APP",
-                "--worker-class=gevent",
-                "--bind=127.0.0.1:8080",
-                "--reload",
-            ],
-            "env": {
-                "PYGEOAPI_CONFIG": "local.config.yml",
-                "PYGEOAPI_OPENAPI": "local.openapi.yml"
-            }
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python Debugger: Flask",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "flask",
+      "env": {
+        "FLASK_DEBUG": "1",
+        "PYGEOAPI_CONFIG": "local.config.yml",
+        "PYGEOAPI_OPENAPI": "local.openapi.yml"
+      },
+      "args": [
+        "--app",
+        "./pygeoapi/flask_app",
+        "run",
+        "--no-debugger",
+        "--no-reload"
+      ],
+      "jinja": true,
+      "autoStartBrowser": false
+    },
+    {
+      "name": "Python Debugger: Attach using Process Id",
+      "type": "debugpy",
+      "request": "attach",
+      "processId": "${command:pickProcess}"
+    },
+    {
+      "name": "Gunicorn",
+      "python": "/usr/bin/python3",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "gunicorn",
+      "env": {
+        "PYGEOAPI_CONFIG": "local.config.yml",
+        "PYGEOAPI_OPENAPI": "local.openapi.yml"
+      },
+      "args": ["pygeoapi.flask_app:APP"]
+    },
+    {
+      "name": "Pytest",
+      "python": "/usr/bin/python3",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-svvvv", "${file}"]
+    },
+    {
+      "name": "Python: Webapp",
+      "type": "python",
+      "request": "launch",
+      "python": "/usr/bin/python3",
+      "module": "gunicorn",
+      "gevent": true,
+      "args": [
+        "pygeoapi.flask_app:APP",
+        "--worker-class=gevent",
+        "--bind=127.0.0.1:8080",
+        "--reload"
+      ],
+      "env": {
+        "PYGEOAPI_CONFIG": "local.config.yml",
+        "PYGEOAPI_OPENAPI": "local.openapi.yml"
+      }
+    }
+  ]
 }
