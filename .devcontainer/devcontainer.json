@@ -47,8 +47,8 @@
 		"source=${localWorkspaceFolder}/docs,target=/pygeoapi/docs,type=bind,consistency=cached",
 		"source=${localWorkspaceFolder}/.git,target=/pygeoapi/.git,type=bind,consistency=cached",
 		"source=${localWorkspaceFolder}/.gitignore,target=/pygeoapi/.gitignore,type=bind,consistency=cached",
-		"source=${localWorkspaceFolder}/README,target=/pygeoapi/README,type=bind,consistency=cached",
-		"source=${localWorkspaceFolder}/.pre-commit-config.yml,target=/pygeoapi/.pre-commit-config.yml,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/readme.md,target=/pygeoapi/readme.md,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/.pre-commit-config.yml,target=/pygeoapi/.pre-commit-config-rise.yml,type=bind,consistency=cached",
 		"source=${localWorkspaceFolder}/Dockerfile-rise,target=/pygeoapi/Dockerfile-rise,type=bind,consistency=cached",
 		"source=${localWorkspaceFolder}/docker-compose.yml,target=/pygeoapi/docker-compose-rise.yml,type=bind,consistency=cached"
 	]

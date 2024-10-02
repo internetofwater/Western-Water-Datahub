@@ -20,7 +20,7 @@
 !Dockerfile-rise
 !docker-compose-rise.yml
 !docker-compose.yml
-!README
+!readme.md
 
 
 *.pyc

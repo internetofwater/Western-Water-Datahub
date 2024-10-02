@@ -8,7 +8,7 @@ To run
 docker compose up
 ```
 
-You can run tests by entering the container shell and running pytest or opening the provided devcontainer and running the vscode test runner. View the [docs](./docs/) for more information.
+You can run tests by entering the container shell and running pytest or opening the provided devcontainer and running the vscode test runner. 
 
 ## Limitations
 
@@ -18,4 +18,5 @@ You can run tests by entering the container shell and running pytest or opening 
 ## Development Setup
 
 - This repository uses a devcontainer to allow for dynamic development inside of pygeoapi while isolating our code
-- the `.gitignore` ignores all files but ours so that we can work inside a 
+- the `.gitignore` ignores all files but ours so that we can work inside a standardized environment while ignoring pygeoapi upstream code
+- when you are inside the container, run `pygeoapi serve` to run the server with hotreloading
