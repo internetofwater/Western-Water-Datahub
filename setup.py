@@ -83,7 +83,7 @@ setup(
     keywords=" ".join(["cgs", "pygeoapi", "rise"]),
     author="Colton Loftus",
     author_email="cloftus@lincolninst.edu",
-    maintainer="Colton Loftus Webb",
+    maintainer="Colton Loftus",
     maintainer_email="cloftus@lincolninst.edu",
     url="https://github.com/cgs-earth/RISE-EDR-Mappings",
     install_requires=read("requirements.txt").splitlines(),
