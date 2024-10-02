@@ -4,7 +4,12 @@ services:
       context: pygeoapi
     ports:
       - 5000:80
-    # volumes:
-    #   - ./pygeoapi/pygeoapi.config.yml:/pygeoapi/local.config.yml
+    volumes:
+      - ./pygeoapi/pygeoapi.config.yml:/pygeoapi/local.config.yml
     environment:
       - PYGEOAPI_URL=http://localhost:5000
+
+  redis:
+    image: redislabs/redismod
+    ports:
+      - '6379:6379'
