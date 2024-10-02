@@ -3,7 +3,7 @@
 {
 	"name": "Existing Docker Compose (Extend)",
 	"dockerComposeFile": [
-		"../docker-compose-rise.yml"
+		"../docker-compose.yml"
 	],
 	"service": "pygeoapi",
 	// the path VS Code should open by default when connected.
@@ -23,7 +23,8 @@
 			// Set *default* container specific settings.json values on container create.
 			"settings": {
 				"editor.formatOnSave": true,
-				"terminal.integrated.defaultProfile.linux": "bash"
+				"terminal.integrated.defaultProfile.linux": "fish",
+				"explorer.excludeGitIgnore": true,
 			},
 			// Add the IDs of extensions you want installed when the container is created.
 			"extensions": [
@@ -31,10 +32,24 @@
 				"wholroyd.jinja",
 				"redhat.vscode-yaml",
 				"charliermarsh.ruff",
-				"Codeium.codeium"
+				"Codeium.codeium",
+				"ms-azuretools.vscode-docker"
 			]
 		}
 	},
 	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
-	"remoteUser": "root"
+	"remoteUser": "root",
+	"mounts": [
+		"source=${localWorkspaceFolder}/.devcontainer,target=/pygeoapi/.devcontainer,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/local.config.yml,target=/pygeoapi/local.config.yml,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/.vscode,target=/pygeoapi/.vscode,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/rise,target=/pygeoapi/rise,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/docs,target=/pygeoapi/docs,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/.git,target=/pygeoapi/.git,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/.gitignore,target=/pygeoapi/.gitignore,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/README,target=/pygeoapi/README,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/.pre-commit-config.yml,target=/pygeoapi/.pre-commit-config.yml,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/Dockerfile-rise,target=/pygeoapi/Dockerfile-rise,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/docker-compose.yml,target=/pygeoapi/docker-compose-rise.yml,type=bind,consistency=cached"
+	]
 }

@@ -1,15 +1,27 @@
-# ignore everything so that when we are inside the container, everything is ignored
-*
-__pycache__/
-.venv/
+# Ignore everything
+/**
 
-# But not these files
+# Unignore specific directories and files
 !.devcontainer/
+!.devcontainer/**
+
 !.vscode/
-!docs/
+!.vscode/**
+
 !rise/
+!rise/**
+
+!docs/
+!docs/**
+
 !.gitignore
-!.pre-commit.config.yml
+!.pre-commit-config.yml
+
 !Dockerfile-rise
 !docker-compose-rise.yml
+!docker-compose.yml
 !README
+
+
+*.pyc
+__pycache__/

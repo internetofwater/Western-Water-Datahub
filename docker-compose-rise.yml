@@ -1,40 +1,27 @@
-version: '3'
-
 services:
-
   redis:
     image: redislabs/redismod
     ports:
-      - '6379:6379'
+      - "6379:6379"
     volumes:
-        - redis_data:/data
-      
+      - redis_data:/data
+
   pygeoapi:
     build:
-      context: .  
+      context: .
       dockerfile: Dockerfile-rise
-    image: rise-pygeoapi  
+    image: rise-pygeoapi
     ports:
-    # - "5000:80"
-      - "5000:5000"
-    volumes:
-      - ./.devcontainer:/pygeoapi/.devcontainer
-      - ./local.config.yml:/pygeoapi/local.config.yml
-      - ./.vscode:/pygeoapi/.vscode
-      - ./rise:/pygeoapi/rise
-      - ./docs:/pygeoapi/docs
-      # use our local git repo
-      - ./.git:/pygeoapi/.git
-      - ./.gitignore:/pygeoapi/.gitignore
-      # pass in the docker config just so we can still see it while we are in the container
-      - ./Dockerfile-rise:/pygeoapi/Dockerfile-rise
-      - ./docker-compose-rise.yml:/pygeoapi/docker-compose-rise.yml
+      # if launched with `pygeoapi serve`, pygeoapi runs on port 5000
+      - "5000:80"
+        # - "5000:5000"
 
     environment:
-    # Need to set these env vars for the custom entrypoint 
+      # Need to set these env vars for the custom entrypoint
       - PYGEOAPI_CONFIG=/pygeoapi/local.config.yml
       - PYGEOAPI_OPENAPI=/pygeoapi/local.openapi.yml
     depends_on:
       - redis
+
 volumes:
   redis_data:
