@@ -11,6 +11,7 @@ class LocationDataCoordinates(TypedDict):
     type: Literal["Point", "Polygon"]
     coordinates: list[float]
 
+
 class LocationDataAttributes(TypedDict):
     _id: int
     locationParentId: Optional[str]
@@ -148,7 +149,9 @@ class CacheInterface(Protocol):
                 "Cannot instantiate an instance of the cache. You must use static methods on the class itself"
             )
 
-    def set(self, url: str, json_data: dict, _ttl: Optional[timedelta] = None) -> None: ...
+    def set(
+        self, url: str, json_data: dict, _ttl: Optional[timedelta] = None
+    ) -> None: ...
 
     def clear(self, url: str) -> None: ...
 

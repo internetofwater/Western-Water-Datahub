@@ -2,8 +2,6 @@ from datetime import timedelta
 import json
 import logging
 
-from flask import request
-from pytest import approx
 import redis
 
 from rise.rise_edr_share import merge_pages

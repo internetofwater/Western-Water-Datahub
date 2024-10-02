@@ -3,8 +3,6 @@ from typing import Any, ClassVar, Optional
 import requests
 
 from pygeoapi.provider.base import (
-    ProviderGenericError,
-    ProviderNoDataError,
     ProviderQueryError,
 )
 from pygeoapi.provider.base_edr import BaseEDRProvider
