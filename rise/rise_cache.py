@@ -1,4 +1,5 @@
 import asyncio
+import os
 import json
 import logging
 import math
@@ -16,6 +17,9 @@ from datetime import timedelta
 HEADERS = {"accept": "application/vnd.api+json"}
 
 LOGGER = logging.getLogger(__name__)
+
+REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+REDIS_PORT = os.getenv("REDIS_PORT", "6379")
 
 
 async def fetch_url(url: str) -> dict:
@@ -68,7 +72,7 @@ class ShelveCache(CacheInterface):
 
 class RedisCache(CacheInterface):
     def __init__(self, ttl: timedelta = timedelta(hours=24)):
-        self.db = redis.Redis(host="redis", port=6379, decode_responses=False)
+        self.db = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=False)
         self.ttl = ttl
 
     def set(self, url: str, json_data: dict, _ttl: Optional[timedelta] = None):
