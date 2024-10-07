@@ -2,23 +2,25 @@ from datetime import timedelta
 import json
 import logging
 
-import redis
-
-from rise.rise_edr_share import merge_pages
+from rise.lib import (
+    flatten_values,
+    getResultUrlFromCatalogUrl,
+    merge_pages,
+    safe_run_async,
+)
 import pytest
 import shapely.wkt
 
 from pygeoapi.provider.base import ProviderQueryError
-from rise.rise_edr_helpers import (
+from rise.edr_helpers import (
     LocationHelper,
-    flatten_values,
-    getResultUrlFromCatalogUrl,
     parse_bbox,
     parse_z,
-    ZType,
 )
 
-from rise.rise_cache import RISECache, fetch_url
+from rise.custom_types import ZType
+
+from rise.cache import RISECache, fetch_url
 
 import shapely
 
@@ -45,7 +47,7 @@ def test_fetch():
     )
     assert resp.json()
 
-    async_resp = asyncio.run(fetch_url(url))
+    async_resp = safe_run_async(fetch_url(url))
     assert async_resp == resp.json()
 
 
@@ -124,44 +126,6 @@ def test_z_parse():
 
     with pytest.raises(ProviderQueryError):
         parse_z("10,20,30,")
-
-
-def test_shapely_sanity_check():
-    geo: dict = {
-        "type": "Point",
-        "coordinates": [-104.855255, 39.651378],
-    }
-
-    result = shapely.geometry.shape(geo)
-
-    wkt = "POLYGON((-79 40,-79 38,-75 38,-75 41,-79 40))"
-
-    wkt_parsed = shapely.wkt.loads(wkt)
-    assert not wkt_parsed.contains(result)
-
-    assert int(float("4530.000000")) == 4530
-    location_6902_geom = {
-        "type": "Polygon",
-        "coordinates": [
-            [
-                [-111.49544, 36.94029],
-                [-111.49544, 36.99597],
-                [-111.47861, 36.99597],
-                [-111.47861, 36.94029],
-                [-111.49544, 36.94029],
-            ]
-        ],
-    }
-
-    point_inside = "POINT(-111.48 36.95)"
-    point_inside = shapely.wkt.loads(point_inside)
-
-    assert shapely.geometry.shape(location_6902_geom).contains(point_inside)
-
-    point_outside = "POINT(-111.5 46.95)"
-    point_outside = shapely.wkt.loads(point_outside)
-
-    assert not shapely.geometry.shape(location_6902_geom).contains(point_outside)
 
 
 def test_wkt_filter():
@@ -243,7 +207,7 @@ def test_get_or_fetch_group():
     ]
 
     cache = RISECache()
-    urlToContent = asyncio.run(cache.get_or_fetch_group(group))
+    urlToContent = safe_run_async(cache.get_or_fetch_group(group))
 
     assert len(urlToContent.values()) == 2
     # Can't do a better test here since the remote value changes ocassionally and can make this flakey
@@ -255,14 +219,6 @@ def test_make_result():
     res = getResultUrlFromCatalogUrl(url, None)
     resp = requests.get(res)
     assert resp.ok
-
-
-def test_redis():
-    r = redis.Redis(host="redis", port=6379, db=0)
-    assert r
-    r.set("test", "test")
-    val = r.get("test")
-    assert val == b"test"
 
 
 def test_simple_redis_serialization():
@@ -295,7 +251,7 @@ class TestFnsWithCaching:
             "https://data.usbr.gov/rise/api/catalog-item/128564",
         ]
         cache = RISECache(cache_type)
-        resp = asyncio.run(cache.fetch_and_set_url_group(urls))
+        resp = safe_run_async(cache.fetch_and_set_url_group(urls))
         assert len(resp) == 3
         assert None not in resp
 
@@ -342,38 +298,13 @@ class TestFnsWithCaching:
         length = len(field_ids)
         assert length == len(set(field_ids))
 
-    def test_expand_with_results(self, cache_type):
-        with open("rise/tests/data/location.json") as f:
-            data = json.load(f)
-
-            # filter just 268 which contains catalog item 4 which has results
-            res = LocationHelper.filter_by_id(data, identifier="268")
-            cache = RISECache(cache_type)
-            expanded = LocationHelper.fill_catalogItems(res, cache, add_results=True)
-
-            assert expanded["data"][0]["relationships"]["catalogItems"] is not None
-
-            assert (
-                len(expanded["data"][0]["relationships"]["catalogItems"]["data"]) == 5
-            )
-
-        ids = [
-            item["id"]
-            for item in expanded["data"][0]["relationships"]["catalogItems"]["data"]
-        ]
-        assert "/rise/api/catalog-item/4" in ids
-        assert "/rise/api/catalog-item/141" in ids
-        assert "/rise/api/catalog-item/142" in ids
-        assert "/rise/api/catalog-item/144" in ids
-        assert "/rise/api/catalog-item/11279" in ids
-
     def test_cache(self, cache_type):
         url = "https://data.usbr.gov/rise/api/catalog-item/128562"
 
         start = time.time()
         cache = RISECache(cache_type)
         cache.clear(url)
-        remote_res = asyncio.run(cache.get_or_fetch(url))
+        remote_res = safe_run_async(cache.get_or_fetch(url))
         assert remote_res
         network_time = time.time() - start
 
@@ -382,58 +313,19 @@ class TestFnsWithCaching:
         start = time.time()
         cache.clear(url)
         assert not cache.contains(url)
-        disk_res = asyncio.run(cache.get_or_fetch(url))
+        disk_res = safe_run_async(cache.get_or_fetch(url))
         assert disk_res
         disk_time = time.time() - start
 
         assert remote_res == disk_res
         assert disk_time < network_time
 
-    def test_fill_catalogItems(self, cache_type):
-        with open("rise/tests/data/location.json") as f:
-            data = json.load(f)
-            assert len(data["data"]) == 25
-
-            res = LocationHelper.filter_by_id(data, identifier="6902")
-            assert res["data"][0]["attributes"]["_id"] == 6902
-            assert len(res["data"]) == 1
-            assert (
-                res["data"][0]["relationships"]["catalogItems"]["data"][0]["id"]
-                == "/rise/api/catalog-item/128632"
-            ), print(res["data"][0]["relationships"]["catalogItems"])
-
-            # Fill in the catalog items and make sure that the only two
-            # remaining catalog items are the catalog items associated with location
-            # 6902 since we previously filtered to just that location
-            cache = RISECache(cache_type)
-            expanded = LocationHelper.fill_catalogItems(res, cache)
-
-            assert expanded["data"][0]["relationships"]["catalogItems"] is not None
-
-            assert (
-                len(expanded["data"][0]["relationships"]["catalogItems"]["data"]) == 2
-            )
-
-            # Expanded is flakey and can return in either order, so we just check both
-            assert (
-                expanded["data"][0]["relationships"]["catalogItems"]["data"][0]["id"]
-                == "/rise/api/catalog-item/128632"
-                or expanded["data"][0]["relationships"]["catalogItems"]["data"][0]["id"]
-                == "/rise/api/catalog-item/128633"
-            )
-            assert (
-                expanded["data"][0]["relationships"]["catalogItems"]["data"][1]["id"]
-                == "/rise/api/catalog-item/128633"
-                or expanded["data"][0]["relationships"]["catalogItems"]["data"][1]["id"]
-                == "/rise/api/catalog-item/128632"
-            )
-
     def test_cache_clears(self, cache_type):
         cache = RISECache(cache_type)
         cache.set(
             "https://data.usbr.gov/rise/api/catalog-item/128562", {"data": "test"}
         )
-        assert asyncio.run(
+        assert safe_run_async(
             cache.get_or_fetch("https://data.usbr.gov/rise/api/catalog-item/128562")
         ) == {"data": "test"}
 
@@ -445,3 +337,15 @@ class TestFnsWithCaching:
         )
         with pytest.raises(KeyError):
             cache.get("https://data.usbr.gov/rise/api/catalog-item/128562")
+
+
+def test_safe_async():
+    # Create an event loop without running anything on it
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    # Check that the event loop is running by calling run_async
+    safe_run_async(asyncio.sleep(0.1))
+
+    # Close the event loop after the test
+    loop.close()

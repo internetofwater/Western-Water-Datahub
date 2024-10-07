@@ -6,13 +6,13 @@ from pygeoapi.provider.base import (
     ProviderQueryError,
 )
 from pygeoapi.provider.base_edr import BaseEDRProvider
-from rise.rise_api_types import LocationResponse
-from rise.rise_edr_helpers import (
+from rise.covjson import CovJSONBuilder
+from rise.custom_types import LocationResponse
+from rise.edr_helpers import (
     RISECache,
-    get_only_key,
     LocationHelper,
 )
-from rise.rise_edr_share import merge_pages
+from rise.lib import merge_pages, get_only_key
 
 
 LOGGER = logging.getLogger(__name__)
@@ -113,7 +113,7 @@ class RiseEDRProvider(BaseEDRProvider):
             )
         else:
             # When we return covjson we also end up filtering by datetime_ along the way
-            return LocationHelper.to_covjson(response, self.cache, datetime_)
+            return CovJSONBuilder(self.cache).render(response, datetime_)
 
     def get_fields(self):
         if self._fields:
@@ -153,7 +153,7 @@ class RiseEDRProvider(BaseEDRProvider):
         # match format_:
         #     case "json" | "GeoJSON" | _:
         # return LocationHelper.to_geojson(response)
-        return LocationHelper.to_covjson(response, self.cache, datetime_)
+        return CovJSONBuilder(self.cache).render(response, datetime_)
 
     @BaseEDRProvider.register()
     def area(
@@ -179,7 +179,7 @@ class RiseEDRProvider(BaseEDRProvider):
 
         response = LocationHelper.filter_by_wkt(response, wkt, z)
 
-        return LocationHelper.to_covjson(response, self.cache, datetime_)
+        return CovJSONBuilder(self.cache).render(response, datetime_)
 
     @BaseEDRProvider.register()
     def items(self, **kwargs):

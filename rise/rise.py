@@ -4,21 +4,19 @@ from typing import Optional
 import requests
 
 from pygeoapi.provider.base import BaseProvider, ProviderNoDataError, ProviderQueryError
-from rise.rise_api_types import LocationResponse
+from rise.custom_types import LocationResponse
 from rise.rise_edr import RiseEDRProvider
-from rise.rise_edr_helpers import (
+from rise.edr_helpers import (
     LocationHelper,
     RISECache,
-    get_only_key,
 )
-from rise.rise_edr_share import merge_pages
-
+from rise.lib import get_only_key, merge_pages
 
 LOGGER = logging.getLogger(__name__)
 
 
 class RiseProvider(BaseProvider):
-    """Rise Provider"""
+    """Rise Provider for OGC API Features"""
 
     def __init__(self, provider_def):
         """
@@ -88,9 +86,7 @@ class RiseProvider(BaseProvider):
         if bbox:
             response = LocationHelper.filter_by_bbox(response, bbox)
 
-        geojson = LocationHelper.to_geojson(response, single_feature=itemId is not None)
-
-        return geojson
+        return LocationHelper.to_geojson(response, single_feature=itemId is not None)
 
     def query(self, **kwargs):
         return self.items(**kwargs)

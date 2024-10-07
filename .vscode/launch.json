@@ -40,12 +40,25 @@
       "args": ["pygeoapi.flask_app:APP"]
     },
     {
-      "name": "Pytest",
+      "name": "Pytest One File",
       "python": "/usr/bin/python3",
       "type": "debugpy",
       "request": "launch",
       "module": "pytest",
       "args": ["-svvvv", "${file}"]
+    },
+    {
+      "name": "Pytest Entire Directory",
+      "python": "/usr/bin/python3",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-svvvv",
+        "${workspaceFolder}/rise/tests",
+        "--ignore",
+        "${workspaceFolder}/rise/tests/test_sanity_checks.py"
+      ]
     },
     {
       "name": "Python: Webapp",

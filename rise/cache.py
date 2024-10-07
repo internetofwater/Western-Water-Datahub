@@ -7,9 +7,9 @@ import shelve
 from typing import ClassVar, Literal, Optional, Union
 from typing_extensions import assert_never
 from pygeoapi.provider.base import ProviderConnectionError, ProviderNoDataError
-from rise.rise_api_types import CacheInterface, JsonPayload, Url
+from rise.custom_types import CacheInterface, JsonPayload, Url
 import aiohttp
-from rise.rise_edr_share import merge_pages
+from rise.lib import merge_pages, safe_run_async
 import redis
 from aiohttp import client_exceptions
 from datetime import timedelta
@@ -19,7 +19,7 @@ HEADERS = {"accept": "application/vnd.api+json"}
 LOGGER = logging.getLogger(__name__)
 
 REDIS_HOST = os.getenv("REDIS_HOST", "redis")
-REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+REDIS_PORT: int = int(os.getenv("REDIS_PORT", "6379"))
 
 
 async def fetch_url(url: str) -> dict:
@@ -154,7 +154,7 @@ class RISECache(CacheInterface):
         MAX_ITEMS_PER_PAGE = 100
 
         # Get the first response that contains the list of pages
-        response = asyncio.run(self.get_or_fetch(url))
+        response = safe_run_async(self.get_or_fetch(url))
 
         NOT_PAGINATED = "meta" not in response
         if NOT_PAGINATED:
@@ -172,7 +172,7 @@ class RISECache(CacheInterface):
             for page in range(1, int(pages_to_complete) + 1)
         ]
 
-        pages = asyncio.run(self.get_or_fetch_group(urls, force_fetch=force_fetch))
+        pages = safe_run_async(self.get_or_fetch_group(urls, force_fetch=force_fetch))
 
         return pages
 

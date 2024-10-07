@@ -1,6 +1,9 @@
+import redis
 import requests
+import shapely.wkt
+import shapely.geometry
 
-"""This file is solely for sanity checks on the upstream repo to make sure that queries are performing as our understanding expects"""
+"""This file is solely for sanity checks on the upstream repo or underlying libs to make sure that queries are performing as our understanding expects"""
 
 
 def test_rise_filter_by_param_list():
@@ -52,3 +55,49 @@ def test_rise_filter_by_same_start_and_end():
     response = requests.get(url, headers={"accept": "application/vnd.api+json"})
     assert response.json()["meta"]["totalItems"] != 0
     assert len(response.json()["data"]) != 0
+
+
+def test_shapely_sanity_check():
+    geo: dict = {
+        "type": "Point",
+        "coordinates": [-104.855255, 39.651378],
+    }
+
+    result = shapely.geometry.shape(geo)
+
+    wkt = "POLYGON((-79 40,-79 38,-75 38,-75 41,-79 40))"
+
+    wkt_parsed = shapely.wkt.loads(wkt)
+    assert not wkt_parsed.contains(result)
+
+    assert int(float("4530.000000")) == 4530
+    location_6902_geom = {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [-111.49544, 36.94029],
+                [-111.49544, 36.99597],
+                [-111.47861, 36.99597],
+                [-111.47861, 36.94029],
+                [-111.49544, 36.94029],
+            ]
+        ],
+    }
+
+    point_inside = "POINT(-111.48 36.95)"
+    point_inside = shapely.wkt.loads(point_inside)
+
+    assert shapely.geometry.shape(location_6902_geom).contains(point_inside)
+
+    point_outside = "POINT(-111.5 46.95)"
+    point_outside = shapely.wkt.loads(point_outside)
+
+    assert not shapely.geometry.shape(location_6902_geom).contains(point_outside)
+
+
+def test_redis():
+    r = redis.Redis(host="redis", port=6379, db=0)
+    assert r
+    r.set("test", "test")
+    val = r.get("test")
+    assert val == b"test"

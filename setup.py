@@ -86,7 +86,7 @@ setup(
     maintainer="Colton Loftus",
     maintainer_email="cloftus@lincolninst.edu",
     url="https://github.com/cgs-earth/RISE-EDR-Mappings",
-    install_requires=read("requirements.txt").splitlines(),
+    install_requires=read("requirements-rise.txt").splitlines(),
     packages=find_packages(),
     include_package_data=True,
     classifiers=[
