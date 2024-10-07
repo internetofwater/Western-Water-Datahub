@@ -12,11 +12,11 @@ def safe_run_async(coro: Coroutine[Any, Any, Any]) -> Any:
     Run an asyncio coroutine, ensuring it works even if an event loop is already running.
     """
     try:
-        loop = asyncio.get_running_loop()
-        return loop.run_until_complete(coro)
-    except RuntimeError:
         # No running event loop
         return asyncio.run(coro)
+    except RuntimeError:
+        loop = asyncio.get_running_loop()
+        return loop.run_until_complete(coro)
 
 
 def merge_pages(pages: dict[Url, JsonPayload]):
