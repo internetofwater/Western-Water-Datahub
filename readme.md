@@ -5,7 +5,7 @@ This repository maps the USBR RISE API to OGC EDR using pygeoapi for ETL. It def
 To run
 
 ```
-docker compose up
+docker compose -f docker-compose-rise.yml up
 ```
 
 You can run tests by entering the container shell and running pytest or opening the provided devcontainer and running the vscode test runner.
@@ -20,3 +20,4 @@ You can run tests by entering the container shell and running pytest or opening 
 - This repository uses a devcontainer to allow for dynamic development inside of pygeoapi while isolating our code
 - the `.gitignore` ignores all files but ours so that we can work inside a standardized environment while ignoring pygeoapi upstream code
 - when you are inside the container, run `pygeoapi serve` to run the server with hotreloading
+- many files are prefixed with the word `rise` since when we mount them in the container we don't want to override existing pygeoapi files

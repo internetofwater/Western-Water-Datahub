@@ -12,9 +12,10 @@ services:
       dockerfile: Dockerfile-rise
     image: rise-pygeoapi
     ports:
+      # if launched with entrypoint.sh, pygeoapi runs on port 80
+      # - "5000:80"
       # if launched with `pygeoapi serve`, pygeoapi runs on port 5000
-      - "5000:80"
-        # - "5000:5000"
+      - "5000:5000"
 
     environment:
       # Need to set these env vars for the custom entrypoint
@@ -22,6 +23,11 @@ services:
       - PYGEOAPI_OPENAPI=/pygeoapi/local.openapi.yml
     depends_on:
       - redis
+
+    volumes:
+      - ./local.config.yml:/pygeoapi/local.config.yml
+      - ./rise/:/pygeoapi/rise/
+
 
 volumes:
   redis_data:

@@ -39,9 +39,7 @@
   "remoteUser": "root",
   "mounts": [
     "source=${localWorkspaceFolder}/.devcontainer,target=/pygeoapi/.devcontainer,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/local.config.yml,target=/pygeoapi/local.config.yml,type=bind,consistency=cached",
     "source=${localWorkspaceFolder}/.vscode,target=/pygeoapi/.vscode,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/rise,target=/pygeoapi/rise,type=bind,consistency=cached",
     "source=${localWorkspaceFolder}/docs,target=/pygeoapi/docs,type=bind,consistency=cached",
     "source=${localWorkspaceFolder}/.git,target=/pygeoapi/.git,type=bind,consistency=cached",
     "source=${localWorkspaceFolder}/.gitignore,target=/pygeoapi/.gitignore,type=bind,consistency=cached",
