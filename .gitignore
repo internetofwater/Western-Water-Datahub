@@ -1,26 +1,8 @@
-# Ignore everything
-/**
 
-# Unignore specific directories and files
-!.devcontainer/
-!.devcontainer/**
+*.egg-info
 
-!.vscode/
-!.vscode/**
+local.openapi.yml
 
-!rise/
-!rise/**
+.egg-info
 
-!docs/
-!docs/**
-
-!.gitignore
-!.pre-commit-config.yaml
-
-!Dockerfile-rise
-!docker-compose-rise.yml
-!readme.md
-!requirements-rise.txt
-
-*.pyc
 __pycache__/

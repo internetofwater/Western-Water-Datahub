@@ -1,3 +1,6 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 from datetime import timedelta
 from enum import Enum, auto
 from typing import Literal, Optional, Protocol, TypedDict

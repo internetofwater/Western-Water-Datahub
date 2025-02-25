@@ -1,3 +1,6 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 services:
   redis:
     image: redislabs/redismod
@@ -9,25 +12,27 @@ services:
   pygeoapi:
     build:
       context: .
-      dockerfile: Dockerfile-rise
+      dockerfile: Dockerfile
     image: rise-pygeoapi
     ports:
       # if launched with entrypoint.sh, pygeoapi runs on port 80
       # - "5000:80"
       # if launched with `pygeoapi serve`, pygeoapi runs on port 5000
       - "5000:5000"
+    profiles:
+      - production
 
     environment:
       # Need to set these env vars for the custom entrypoint
       - PYGEOAPI_CONFIG=/pygeoapi/local.config.yml
       - PYGEOAPI_OPENAPI=/pygeoapi/local.openapi.yml
+      - REDIS_HOST=redis
     depends_on:
       - redis
 
     volumes:
       - ./local.config.yml:/pygeoapi/local.config.yml
       - ./rise/:/pygeoapi/rise/
-
 
 volumes:
   redis_data:

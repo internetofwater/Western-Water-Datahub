@@ -1,0 +1,40 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
+[project]
+name = "rise-edr"
+version = "0.1.0"
+description = "Mappings from the USBR RISE API to OGC EDR"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp>=3.11.13",
+    "jsonpatch>=1.33",
+    "pygeoapi>=0.19.0",
+    "pytest>=8.3.4",
+    "redis>=5.2.1",
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering :: GIS",
+]
+
+keywords = [
+    "cgs",
+    "pygeoapi",
+    "rise",]
+
+[dependency-groups]
+dev = [
+    "rise-edr",
+]
+
+[tool.uv.sources]
+rise-edr = { workspace = true }
