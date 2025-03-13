@@ -6,3 +6,6 @@ local.openapi.yml
 .egg-info
 
 __pycache__/
+
+# debugging test file
+test.json

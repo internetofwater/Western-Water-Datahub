@@ -51,6 +51,7 @@ repos:
       # Update the uv lockfile
       - id: uv-lock
       - id: uv-export
+        args: ["--no-hashes"]
   - repo: https://github.com/google/addlicense
     rev: "55a521bf81c24480094950caa3566548fa63875e"
     hooks:

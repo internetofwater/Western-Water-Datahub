@@ -27,12 +27,23 @@ services:
       - PYGEOAPI_CONFIG=/pygeoapi/local.config.yml
       - PYGEOAPI_OPENAPI=/pygeoapi/local.openapi.yml
       - REDIS_HOST=redis
+      - OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-false}
     depends_on:
       - redis
 
     volumes:
       - ./local.config.yml:/pygeoapi/local.config.yml
       - ./rise/:/pygeoapi/rise/
+
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+      # Ports defined here https://www.jaegertracing.io/docs/next-release/getting-started/#all-in-one
+      - "16686:16686" # expose the UI
+      - "4317:4317" # Enable OTLP HTTP port
+    environment:
+      - LOG_LEVEL=debug
+    restart: on-failure
 
 volumes:
   redis_data:

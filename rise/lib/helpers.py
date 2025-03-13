@@ -3,49 +3,55 @@
 
 import asyncio
 import datetime
-from typing import Any, Coroutine, Optional, Tuple
+from typing import Coroutine, Optional, Tuple
 
 import shapely
 from pygeoapi.provider.base import ProviderQueryError
-from rise.custom_types import JsonPayload, Url, ZType
+from rise.lib.types.helpers import ZType
+from rise.env import rise_event_loop
+
+import copy
+from typing import Dict
 
 
-def safe_run_async(coro: Coroutine[Any, Any, Any]) -> Any:
+def await_(coro: Coroutine):
     """
-    Run an asyncio coroutine, ensuring it works even if an event loop is already running.
+    await an asyncio coroutine, ensuring it works even if an event loop is already running.
     """
-    try:
-        # No running event loop
-        return asyncio.run(coro)
-    except RuntimeError:
-        loop = asyncio.get_running_loop()
-        return loop.run_until_complete(coro)
+    return asyncio.run_coroutine_threadsafe(coro, loop=rise_event_loop).result()
 
 
-def merge_pages(pages: dict[Url, JsonPayload]):
-    # Initialize variables to hold the URL and combined data
-    combined_url = None
-    combined_data = None
+def merge_pages(pages: Dict[str, dict]) -> dict:
+    """Given multiple different pages of data, merge them together"""
+    assert pages
 
-    for url, content in pages.items():
-        if combined_url is None:
-            combined_url = url  # Set the URL from the first dictionary
-        if combined_data is None:
-            combined_data = content
-        else:
-            data = content.get("data", [])
-            if not data:
-                continue
+    combined_data = copy.deepcopy(
+        next(iter(pages.values()))
+    )  # Create a deep copy of the first element
 
-            combined_data["data"].extend(data)
+    for content in list(pages.values())[1:]:  # Iterate over remaining items
+        if "data" in content:
+            combined_data.setdefault("data", []).extend(content["data"])
 
-    # Create the merged dictionary with the combined URL and data
-    merged_dict = {combined_url: combined_data}
+        if "included" in content:
+            combined_data.setdefault("included", []).extend(content["included"])
 
-    return merged_dict
+    return combined_data
 
 
-def flatten_values(input: dict[str, list[str]]) -> list[str]:
+def no_duplicates_in_pages(pages: dict):
+    found = {}
+    for url in pages:
+        for data in pages[url]["data"]:
+            id = data["attributes"]["_id"]
+            assert id not in found, (
+                f"{id} witn name {data['attributes']['locationName']} was found in both {url} and {found[id]}. You may need to clear the cache for {found[id]}"
+            )
+            found[id] = url
+
+
+def flatten_values(input: dict[str, list]) -> list:
+    """Given a dict of lists, flatten them into a single list"""
     output = []
     for _, v in input.items():
         for i in v:
@@ -55,7 +61,7 @@ def flatten_values(input: dict[str, list[str]]) -> list[str]:
 
 
 def parse_z(z: str) -> Optional[Tuple[ZType, list[int]]]:
-    """Parse a z value in the format required by the OGC API spec"""
+    """Parse a z value in the format required by the OGC EDR spec"""
     if not z:
         return None
     if z.startswith("R") and len(z.split("/")) == 3:

@@ -21,4 +21,4 @@ RUN pip install .
 RUN pygeoapi openapi generate /pygeoapi/local.config.yml --output-file /pygeoapi/local.openapi.yml
 
 # Hot reloading (remove for production)
-ENTRYPOINT [ "pygeoapi", "serve" ]
+ENTRYPOINT [ "pygeoapi", "serve", "--starlette" ]
