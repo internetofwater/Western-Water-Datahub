@@ -6,6 +6,7 @@ from typing import Any, Literal, Optional, Tuple
 
 from pydantic import BaseModel
 
+from rise.env import TRACER
 from rise.lib.cache import RISECache
 from rise.lib.helpers import flatten_values, getResultUrlFromCatalogUrl, await_
 from rise.lib.location import LocationResponseWithIncluded
@@ -78,6 +79,7 @@ class LocationResultBuilder:
             return None
         return self.timeseriesResults[catalogItem]
 
+    @TRACER.start_as_current_span("fetching_and_loading_timeseries")
     def load_results(
         self, time_filter: Optional[str] = None
     ) -> list[DataNeededForCovjson]:

@@ -121,9 +121,9 @@ def test_location_datetime(edr_config: dict):
 def test_area(edr_config: dict):
     p = RiseEDRProvider()
 
-    areaWithOneLocationInTexas = "POLYGON ((-99.717407 28.637568, -97.124634 28.608637, -97.020264 27.210671, -100.184326 26.980829, -101.392822 28.139816, -99.717407 28.637568)))"
+    secondQueryForQeorgeWestTexasID291 = "POLYGON ((-99.717407 28.637568, -97.124634 28.608637, -97.020264 27.210671, -100.184326 26.980829, -101.392822 28.139816, -99.717407 28.637568)))"
     response = p.area(
-        wkt=areaWithOneLocationInTexas,
+        wkt=secondQueryForQeorgeWestTexasID291,
     )
     coverages = response["coverages"]
     assert len(coverages) == 2
@@ -132,15 +132,19 @@ def test_area(edr_config: dict):
             "Both coverages should have the same x value since they are on the same location"
         )
         assert coverage["domain"]["axes"]["y"]["values"][0] == 28.4667
-    assert coverages[0]["ranges"]["Lake/Reservoir Storage"]
-
-    georgeWestTexasID291 = "POLYGON ((-98.66272 28.062286, -97.756348 28.062286, -97.756348 28.688178, -98.66272 28.688178, -98.66272 28.062286))"
-    response = p.area(
-        wkt=georgeWestTexasID291,
+    assert len(response["coverages"]) == 2, (
+        "There should be 2 coverages unless an additional location was added"
     )
-    assert len(response["coverages"]) == 2
     assert response["coverages"][0]["ranges"]["Lake/Reservoir Storage"]
     assert response["coverages"][1]["ranges"]["Lake/Reservoir Elevation"]
+
+    # make sure that we can get the same data with a different geospatial query as long as the same data is in the bbox
+    secondQueryForQeorgeWestTexasID291 = "POLYGON ((-98.66272 28.062286, -97.756348 28.062286, -97.756348 28.688178, -98.66272 28.688178, -98.66272 28.062286))"
+    response2 = p.area(
+        wkt=secondQueryForQeorgeWestTexasID291,
+    )
+
+    assert response2 == response
 
     areaInMontanaWithDataID424 = "POLYGON ((-109.204102 47.010226, -104.655762 47.010226, -104.655762 49.267805, -109.204102 49.267805, -109.204102 47.010226))"
 

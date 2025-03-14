@@ -51,6 +51,7 @@ class RiseEDRProvider(BaseEDRProvider):
 
         self.instances = []
 
+    @TRACER.start_as_current_span("get_or_fetch_all_param_filtered_pages")
     def get_or_fetch_all_param_filtered_pages(
         self, properties_to_filter_by: Optional[list[str]] = None
     ):

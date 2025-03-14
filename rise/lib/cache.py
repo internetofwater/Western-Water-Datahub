@@ -2,10 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 import asyncio
-import json
 import logging
 import math
-from typing import Coroutine
 from urllib.parse import urlparse
 import redis.asyncio as redis
 from rise.custom_types import JsonPayload, Url
@@ -14,6 +12,7 @@ from aiohttp import client_exceptions
 from datetime import timedelta
 from rise.env import REDIS_HOST, REDIS_PORT, TRACER
 from rise.lib.helpers import merge_pages
+import orjson
 
 HEADERS = {"accept": "application/vnd.api+json"}
 
@@ -40,7 +39,7 @@ class RISECache:
     async def set(self, url: str, json_data: dict):
         """Associate a url key with json data in the cache"""
         # Serialize the data before storing it in Redis
-        await self.db.set(name=url, value=json.dumps(json_data))
+        await self.db.set(name=url, value=orjson.dumps(json_data))
         await self.db.expire(name=url, time=self.ttl)
 
     async def reset(self):
@@ -64,7 +63,7 @@ class RISECache:
             data = await self.db.get(url)
             if data is None:
                 raise KeyError(f"{url} not found in cache")
-            return json.loads(data)
+            return orjson.loads(data)
 
     async def get_or_fetch(self, url, force_fetch=False) -> dict:
         """Send a get request or grab it locally if it already exists in the cache"""
@@ -172,20 +171,16 @@ class RISECache:
         urls_not_in_cache_coroutine = self._fetch_and_set_url_group(urls_not_in_cache)
 
         # Fetch from local cache
-        fetch_coroutines: dict[str, Coroutine] = {
-            url: self.get(url) for url in urls_in_cache
-        }
-        fetch_results = await asyncio.gather(*fetch_coroutines.values())
+        with TRACER.start_span("mget"):
+            cache_fetch = self.db.mget(urls_in_cache)
+            cache_results = await cache_fetch
+            urlToResult = {}
+            for url, data in zip(urls_in_cache, cache_results):
+                urlToResult[url] = orjson.loads(data)
 
-        url_to_result = {
-            url: result for url, result in zip(fetch_coroutines.keys(), fetch_results)
-        }
-
-        remote_fetch = await urls_not_in_cache_coroutine
-        url_to_result.update(remote_fetch)
-        # Construct a reliable URL-to-result mapping
-
-        return url_to_result
+        remote_results = await urls_not_in_cache_coroutine
+        urlToResult.update(remote_results)
+        return urlToResult
 
     async def _fetch_and_set_url_group(
         self,

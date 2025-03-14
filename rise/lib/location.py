@@ -8,6 +8,7 @@ import geojson_pydantic
 from pydantic import BaseModel, field_validator
 import shapely
 import shapely.wkt
+from rise.env import TRACER
 from rise.lib.helpers import (
     merge_pages,
     no_duplicates_in_pages,
@@ -41,11 +42,13 @@ class LocationResponse(BaseModel):
     data: list[LocationData]
 
     @classmethod
+    @TRACER.start_as_current_span("loading_data_from_api_pages")
     def from_api_pages(cls, pages: dict[str, dict]):
         """Create a location response from multiple paged API responses by first merging them together"""
         no_duplicates_in_pages(pages)
         merged = merge_pages(pages)
-        return cls(**merged)
+        with TRACER.start_span("pydantic_validation"):
+            return cls.model_validate(merged)
 
     @field_validator("data", check_fields=True, mode="before")
     @classmethod
@@ -58,6 +61,7 @@ class LocationResponse(BaseModel):
             return [data]
         return data
 
+    @TRACER.start_as_current_span("date_filter")
     def drop_outside_of_date_range(self, datetime_: str):
         """
         Filter a list of locations by date
@@ -100,6 +104,7 @@ class LocationResponse(BaseModel):
 
         return self
 
+    @TRACER.start_as_current_span("geometry_filter")
     def _filter_by_geometry(
         self,
         geometry: Optional[shapely.geometry.base.BaseGeometry],
@@ -109,7 +114,6 @@ class LocationResponse(BaseModel):
         """
         Filter a list of locations by any arbitrary geometry; if they are not inside of it, drop their data
         """
-        # need to deep copy so we don't change the dict object
         indices_to_pop = set()
         parsed_z = parse_z(str(z)) if z else None
 
