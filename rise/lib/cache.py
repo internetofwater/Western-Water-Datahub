@@ -171,7 +171,8 @@ class RISECache:
         urls_not_in_cache_coroutine = self._fetch_and_set_url_group(urls_not_in_cache)
 
         # Fetch from local cache
-        with TRACER.start_span("mget"):
+        with TRACER.start_span("mget") as span:
+            span.set_attribute("mget.urls", urls_in_cache)
             cache_fetch = self.db.mget(urls_in_cache)
             cache_results = await cache_fetch
             urlToResult = {}
