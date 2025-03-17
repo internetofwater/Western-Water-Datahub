@@ -35,6 +35,7 @@ class RiseProvider(BaseProvider):
         limit: Optional[int] = None,
         itemId: Optional[str] = None,
         offset: Optional[int] = 0,
+        skip_geometry: Optional[bool] = False,
         **kwargs,
     ):
         response: LocationResponse
@@ -71,7 +72,7 @@ class RiseProvider(BaseProvider):
                 "numberMatched": len(response.data),
             }
 
-        return response.to_geojson()
+        return response.to_geojson(skip_geometry)
 
     def query(self, **kwargs):
         return self.items(**kwargs)
