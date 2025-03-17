@@ -83,13 +83,11 @@ class RiseEDRProvider(BaseEDRProvider):
         if not location_id and datetime_:
             raise ProviderQueryError("Can't filter by date on every location")
 
+        raw_resp = self.get_or_fetch_all_param_filtered_pages(select_properties)
+        response = LocationResponseWithIncluded.from_api_pages(raw_resp)
+
         if location_id:
-            url: str = f"https://data.usbr.gov/rise/api/location/{location_id}?include=catalogRecords.catalogItems&itemStructureId=1"
-            raw_resp = await_(self.cache.get_or_fetch(url))
-            response = LocationResponseWithIncluded(**raw_resp)
-        else:
-            raw_resp = self.get_or_fetch_all_param_filtered_pages(select_properties)
-            response = LocationResponseWithIncluded.from_api_pages(raw_resp)
+            response = response.drop_everything_but_one_location(location_id)
 
         # If a location exists but has no CatalogItems, it should not appear in locations
         response = response.drop_locations_without_catalogitems()

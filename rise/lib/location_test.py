@@ -104,3 +104,18 @@ def test_get_all_catalogItemURLs(allItemsOnePageLocationRespFixture: dict):
     )
     urls = flatten_values(model.get_catalogItemURLs())
     assert len(urls) > 400
+
+
+def test_drop_by_location_id(allItemsOnePageLocationRespFixture: dict):
+    model = LocationResponseWithIncluded.model_validate(
+        allItemsOnePageLocationRespFixture
+    )
+    droppedModel = model.drop_everything_but_one_location(model.data[0].attributes.id)
+    assert len(droppedModel.data) == 1
+
+    model = LocationResponseWithIncluded.model_validate(
+        allItemsOnePageLocationRespFixture
+    )
+    dataLength = len(model.data)
+    droppedModel = model.drop_specific_location(location_id=model.data[0].attributes.id)
+    assert len(droppedModel.data) == dataLength - 1
