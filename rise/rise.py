@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-from typing import Optional
+from typing import Literal, Optional
 
 
 from pygeoapi.provider.base import BaseProvider
@@ -31,6 +31,7 @@ class RiseProvider(BaseProvider):
         self,
         bbox: list = [],
         datetime_: Optional[str] = None,
+        resulttype: Optional[Literal["hits", "results"]] = "results",
         limit: Optional[int] = None,
         itemId: Optional[str] = None,
         offset: Optional[int] = 0,
@@ -62,6 +63,13 @@ class RiseProvider(BaseProvider):
         # Even though bbox is required, it can be an empty list. If it is empty just skip filtering
         if bbox:
             response = response.drop_outside_of_bbox(bbox)
+
+        if resulttype == "hits":
+            return {
+                "type": "FeatureCollection",
+                "features": [],
+                "numberMatched": len(response.data),
+            }
 
         return response.to_geojson()
 

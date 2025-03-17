@@ -45,3 +45,14 @@ def test_item(oaf_config: dict):
 
     out = p.items(limit=10)
     assert len(out["features"]) == 10
+
+
+def test_resulttype_hits(oaf_config: dict):
+    p = RiseProvider(oaf_config)
+    out = p.items(resulttype="hits")
+    assert len(out["features"]) == 0
+    assert out["type"] == "FeatureCollection"
+    # make sure numberMatched is greater than 0
+    # we can't compare against a constant because it could
+    # change but it should always be greater than 0
+    assert out["numberMatched"] > 0
