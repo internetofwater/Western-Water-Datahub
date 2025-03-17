@@ -6,6 +6,7 @@ from typing import Literal, Optional
 
 
 from pygeoapi.provider.base import BaseProvider
+from pygeoapi.util import crs_transform
 from rise.env import TRACER
 from rise.lib.cache import RISECache
 from rise.lib.location import LocationResponse
@@ -74,6 +75,7 @@ class RiseProvider(BaseProvider):
 
         return response.to_geojson(skip_geometry)
 
+    @crs_transform
     def query(self, **kwargs):
         return self.items(**kwargs)
 
