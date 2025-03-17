@@ -167,20 +167,14 @@ def test_area(edr_config: dict):
 
 def test_cube(edr_config: dict):
     p = RiseEDRProvider()
+    bboxCoveringTexasID291 = [-98.5, 26.5, -95.5, 29.5]
+    result = p.cube(bbox=bboxCoveringTexasID291)
+    assert (
+        len(result["coverages"]) == 2
+    )  # there are 2 coverages since location/291 has 2 datastreams
 
-    # random location near corpus christi should return only one feature
-    # TODO: test this more thoroughly
-    collection = p.area(
-        wkt="POLYGON ((-98.96918309080456 28.682352643651612, -98.96918309080456 26.934669197978764, -94.3740448509505 26.934669197978764, -94.3740448509505 28.682352643651612, -98.96918309080456 28.682352643651612))"
-    )
-    assert collection
-
-    # Test the bermuda triangle. Spooky...
-    # TODO: test this more thoroughly
-    collection = p.area(
-        wkt="POLYGON ((-64.8 32.3, -65.5 18.3, -80.3 25.2, -64.8 32.3))"
-    )
-    assert collection["coverages"] == []
+    result = p.cube(bbox=[0, 0, 0, 0])
+    assert len(result["coverages"]) == 0
 
 
 def test_polygon_output(edr_config: dict):

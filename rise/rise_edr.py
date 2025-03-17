@@ -132,7 +132,7 @@ class RiseEDRProvider(BaseEDRProvider):
         :param format_: data format of output
         """
 
-        raw_resp = await_(self.get_or_fetch_all_param_filtered_pages(select_properties))
+        raw_resp = self.get_or_fetch_all_param_filtered_pages(select_properties)
         response = LocationResponseWithIncluded.from_api_pages(raw_resp)
 
         if datetime_:
