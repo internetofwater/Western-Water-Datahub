@@ -22,7 +22,6 @@ def await_(coro: Coroutine):
 
 def merge_pages(pages: Dict[str, dict]) -> dict:
     """Given multiple different pages of data, merge them together."""
-    assert pages
 
     combined_data = {}
 

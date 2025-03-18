@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 from typing import Literal, Optional, Union
-from pydantic import BaseModel, Field, FiniteFloat
+from pydantic import BaseModel, ConfigDict, Field, FiniteFloat
 
 
 class PageLinks(BaseModel):
@@ -40,26 +40,34 @@ class LocationDataAttributes(BaseModel):
             attributes:
     """
 
+    model_config = ConfigDict(extra="forbid")
+
     # We use an alias here to map the _id field to the id field since the _ in the name causes issues
     # https://stackoverflow.com/questions/59562997/how-to-parse-and-read-id-field-from-and-to-a-pydantic-model
     id: int = Field(..., alias="_id")
 
+    locationParentId: Optional[int]
     locationName: str
     locationDescription: Optional[str]
     locationStatusId: int
+
     # the "type" field tells us whether to validate as a Point or a Polygon
     locationCoordinates: Union[
         PointCoordinates, PolygonCoordinates, LineStringCoordinates
     ] = Field(discriminator="type")
-    elevation: Optional[float]
+    elevation: Optional[float] = None
     createDate: str
     updateDate: str
     horizontalDatum: dict
     locationGeometry: dict
+    timezone: Optional[str] = None
+    verticalDatum: Optional[dict]
     locationTags: list[dict]
     relatedLocationIds: Optional[list[int]]
     projectNames: list[str]
     locationTypeName: str
+    timezoneName: Optional[str] = None
+    timezoneOffset: Optional[float] = None
     locationRegionNames: list[str]
     locationUnifiedRegionNames: list[str]
 

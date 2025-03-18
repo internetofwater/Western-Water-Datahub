@@ -20,4 +20,4 @@ This repository maps the USBR RISE API to OGC EDR using pygeoapi for ETL. It def
 
 | Provider | Property Filters/Display | Result Type | BBox | Datetime | Sort By | Skip Geometry | CQL | Transactions | CRS |
 | -------- | ------------------------ | ----------- | ---- | -------- | ------- | ------------- | --- | ------------ | --- |
-| `RISE`   | ❌/ ❌                   | ✅          | ✅   | ✅       | ❌      | ✅            | ❌  | ❌           | ✅  |
+| `RISE`   | ✅ / ✅                  | ✅          | ✅   | ✅       | ✅      | ✅            | ❌  | ❌           | ✅  |

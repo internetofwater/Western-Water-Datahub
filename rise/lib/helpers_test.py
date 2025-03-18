@@ -1,7 +1,9 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+from typing import Optional
 from urllib.parse import urlparse
+from pydantic import BaseModel
 import pytest
 import shapely.wkt
 from rise.lib.cache import RISECache
@@ -92,3 +94,17 @@ def test_parse_query_params():
     url3 = "https://example.com?"
     parsed_url3 = urlparse(url3)
     assert not bool(parsed_url3.query)
+
+
+def test_dump_none():
+    class DummyNestedModel(BaseModel):
+        a: Optional[int] = None
+        b: Optional[str] = None
+
+    class DummyModel(BaseModel):
+        a: int
+        b: DummyNestedModel
+
+    model = DummyModel(a=1, b=DummyNestedModel(a=1, b=None))
+    assert model.model_dump() == {"a": 1, "b": {"a": 1, "b": None}}
+    assert model.model_dump(exclude_none=True) == {"a": 1, "b": {"a": 1}}

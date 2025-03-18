@@ -63,12 +63,12 @@ def test_get_fields(edr_config: dict):
 def test_get_or_fetch_all_param_filtered_pages(edr_config: dict):
     p = RiseEDRProvider()
     params = ["812", "6"]
-    bothparams = p.get_or_fetch_all_param_filtered_pages(params)
+    bothparams = p.cache.get_or_fetch_all_param_filtered_pages(params)
     merge_resp = merge_pages(bothparams)
     assert len(merge_resp["data"]) == 10 + 13
 
     params = ["6"]
-    oneparam = p.get_or_fetch_all_param_filtered_pages(params)
+    oneparam = p.cache.get_or_fetch_all_param_filtered_pages(params)
     one_resp = merge_pages(oneparam)
     assert len(one_resp["data"]) == 13
 
@@ -76,7 +76,7 @@ def test_get_or_fetch_all_param_filtered_pages(edr_config: dict):
         "both params should have more data than one param"
     )
 
-    allparams = p.get_or_fetch_all_param_filtered_pages()
+    allparams = p.cache.get_or_fetch_all_param_filtered_pages()
     model = LocationResponseWithIncluded.from_api_pages(allparams)
     seenData = set()
     for loc in model.data:
@@ -87,29 +87,23 @@ def test_get_or_fetch_all_param_filtered_pages(edr_config: dict):
 
 
 def test_location_select_properties(edr_config: dict):
+    """Make sure that we can filter locations based on their associated property IDs"""
     # Currently in pygeoapi we use the word "select_properties" as the
     # keyword argument. This is hold over from OAF it seems.
     p = RiseEDRProvider()
-    out_prop_2 = p.locations(select_properties=["2"], format_="geojson")
-    for f in out_prop_2["features"]:  # type: ignore
-        if f["id"] == 1:  # location 1 is associated with property 2
-            break
-    else:
-        # if location 1 isn't in the responses, then something is wrong
-        assert False
-
-    out_812 = p.locations(
-        select_properties=["812"], format_="geojson"
-    )  # has 10 features
-    out_6 = p.locations(select_properties=["6"], format_="geojson")  # has 13 features
-
-    assert len(out_812["features"]) < len(out_6["features"])  # type: ignore
-
-    out_812_6 = p.locations(select_properties=["812", "6"], format_="geojson")
-
-    assert len(out_812_6["features"]) == len(out_812["features"]) + len(  # type: ignore
-        out_6["features"]  # type: ignore
+    lakeReservoirStorage = "3"
+    texasID291 = "291"
+    out = p.locations(location_id=texasID291, select_properties=[lakeReservoirStorage])
+    assert len(out["coverages"]) == 2, (
+        "We expect to have both Lake/Reservoir Storage and Elevation unless more have been retroactively added"
     )
+
+    outAsGeojson = p.locations(select_properties=[lakeReservoirStorage])
+    found = False
+    for feature in outAsGeojson["features"]:  # type: ignore
+        if feature["id"] == int(texasID291):
+            found = True
+    assert found
 
 
 def test_location_select_properties_with_id_filter(edr_config: dict):

@@ -20,6 +20,8 @@ from rise.lib.types.helpers import ZType
 from rise.lib.types.includes import LocationIncluded
 from rise.lib.types.location import LocationData, PageLinks
 from geojson_pydantic import Feature, FeatureCollection
+from pygeoapi.provider.base import ProviderQueryError
+from rise.lib.types.sorting import SortDict
 
 LOGGER = logging.getLogger()
 
@@ -228,26 +230,68 @@ class LocationResponse(BaseModel):
         ]
         return self
 
-    def to_geojson(self, skip_geometry: Optional[bool] = False) -> dict:
+    def to_geojson(
+        self,
+        skip_geometry: Optional[bool] = False,
+        select_properties: Optional[list[str]] = None,
+        properties: Optional[list[tuple[str, str]]] = None,
+        fields_mapping: dict[
+            str, dict[Literal["type"], Literal["number", "string", "integer"]]
+        ] = {},
+        sortby: Optional[list[SortDict]] = None,  # now treat as list[SortDict]
+    ) -> dict:
         """
         Convert a list of locations to geojson
         """
         geojson_features: list[geojson_pydantic.Feature] = []
 
-        single_feature = len(self.data) == 1
-
         for location_feature in self.data:
+            if properties:
+                # We rely on fields_mapping to know how to cast each property
+                if not fields_mapping:
+                    raise ProviderQueryError(
+                        "You must supply a `fields_mapping` if you want to filter by properties"
+                    )
+
+                dump = location_feature.attributes.model_dump(by_alias=True)
+                found_list: list[bool] = []
+                for prop_name, prop_value in properties:
+                    datatype = fields_mapping.get(prop_name)
+                    if not datatype:
+                        raise ProviderQueryError(
+                            f"Could not find a property '{prop_name}' in {location_feature}"
+                        )
+
+                    # Convert the string passed in the query to the correct Python type
+                    match datatype["type"]:
+                        case "number":
+                            prop_value = float(prop_value)
+                        case "integer":
+                            prop_value = int(prop_value)
+                        case "string":
+                            prop_value = str(prop_value)
+                        case _:
+                            assert_never(datatype)
+
+                    found_list.append(dump.get(prop_name) == prop_value)
+
+                # If *all* requested property-value pairs match, keep the feature
+                if not all(found_list):
+                    continue
+
             feature_as_geojson = {
                 "type": "Feature",
                 "id": location_feature.attributes.id,
-                # dump with alias to preserve any aliased properties
                 "properties": location_feature.attributes.model_dump(
                     by_alias=True, exclude={"locationCoordinates", "locationGeometry"}
                 ),
-                "geometry": location_feature.attributes.locationCoordinates.model_dump()
-                if not skip_geometry
-                else None,
+                "geometry": (
+                    location_feature.attributes.locationCoordinates.model_dump()
+                    if not skip_geometry
+                    else None
+                ),
             }
+
             feature_as_geojson["properties"]["name"] = (
                 location_feature.attributes.locationName
             )
@@ -256,9 +300,34 @@ class LocationResponse(BaseModel):
             if z is not None:
                 feature_as_geojson["properties"]["elevation"] = z
 
-            geojson_features.append(Feature(**feature_as_geojson))
-            if single_feature:
-                return feature_as_geojson
+            if select_properties:
+                for p in list(feature_as_geojson["properties"].keys()):
+                    if p not in select_properties:
+                        del feature_as_geojson["properties"][p]
+
+            geojson_features.append(Feature.model_validate(feature_as_geojson))
+
+        if len(geojson_features) == 1:
+            return geojson_features[0].model_dump(by_alias=True)
+
+        if sortby:
+            for sort_criterion in reversed(sortby):
+                sort_prop = sort_criterion["property"]
+                sort_order = sort_criterion["order"]
+                reverse_sort = sort_order == "-"
+
+                # Define a key function that places None values at the end for ascending order
+                # and at the beginning for descending order.
+                def sort_key(f):
+                    value = (f.properties or {}).get(sort_prop, None)
+                    return (
+                        (value is None, value)
+                        if not reverse_sort
+                        else (value is not None, value)
+                    )
+
+                # Sort in-place using the key function
+                geojson_features.sort(key=sort_key, reverse=reverse_sort)
 
         validated_geojson = FeatureCollection(
             type="FeatureCollection", features=geojson_features

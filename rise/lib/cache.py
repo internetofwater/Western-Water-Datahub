@@ -4,6 +4,7 @@
 import asyncio
 import logging
 import math
+from typing import Optional
 from urllib.parse import urlparse
 import redis.asyncio as redis
 from rise.custom_types import JsonPayload, Url
@@ -11,7 +12,7 @@ import aiohttp
 from aiohttp import client_exceptions
 from datetime import timedelta
 from rise.env import REDIS_HOST, REDIS_PORT, TRACER
-from rise.lib.helpers import merge_pages
+from rise.lib.helpers import await_, merge_pages
 import orjson
 
 HEADERS = {"accept": "application/vnd.api+json"}
@@ -152,6 +153,21 @@ class RISECache:
             }
 
         return fields
+
+    @TRACER.start_as_current_span("get_or_fetch_all_param_filtered_pages")
+    def get_or_fetch_all_param_filtered_pages(
+        self, properties_to_filter_by: Optional[list[str]] = None
+    ):
+        """Return all locations which contain timeseries data and optionally, also a given list of properties. Will return the associated catalogitems / catalogrecords for joins"""
+        hasTimeseriesData = "itemStructureId=1"
+        base_url = f"https://data.usbr.gov/rise/api/location?include=catalogRecords.catalogItems&{hasTimeseriesData}"
+        if properties_to_filter_by:
+            base_url += "&"
+            for prop in properties_to_filter_by:
+                assert isinstance(prop, str)
+                base_url += f"parameterId%5B%5D={prop}&"
+            base_url = base_url.removesuffix("&")
+        return await_(self.get_or_fetch_all_pages(base_url))
 
     async def get_or_fetch_group(
         self, urls: list[str], force_fetch=False

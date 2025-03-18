@@ -51,21 +51,6 @@ class RiseEDRProvider(BaseEDRProvider):
 
         self.instances = []
 
-    @TRACER.start_as_current_span("get_or_fetch_all_param_filtered_pages")
-    def get_or_fetch_all_param_filtered_pages(
-        self, properties_to_filter_by: Optional[list[str]] = None
-    ):
-        """Return all locations which contain timeseries data and optionally, also a given list of properties. Will return the associated catalogitems / catalogrecords for joins"""
-        hasTimeseriesData = "itemStructureId=1"
-        base_url = f"https://data.usbr.gov/rise/api/location?include=catalogRecords.catalogItems&{hasTimeseriesData}"
-        if properties_to_filter_by:
-            base_url += "&"
-            for prop in properties_to_filter_by:
-                assert isinstance(prop, str)
-                base_url += f"parameterId%5B%5D={prop}&"
-            base_url = base_url.removesuffix("&")
-        return await_(self.cache.get_or_fetch_all_pages(base_url))
-
     @TRACER.start_as_current_span("locations")
     @BaseEDRProvider.register()
     def locations(
@@ -83,7 +68,7 @@ class RiseEDRProvider(BaseEDRProvider):
         if not location_id and datetime_:
             raise ProviderQueryError("Can't filter by date on every location")
 
-        raw_resp = self.get_or_fetch_all_param_filtered_pages(select_properties)
+        raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(select_properties)
         response = LocationResponseWithIncluded.from_api_pages(raw_resp)
 
         if location_id:
@@ -100,7 +85,9 @@ class RiseEDRProvider(BaseEDRProvider):
 
         # FROM SPEC: If a location id is not defined the API SHALL return a GeoJSON features array of valid location identifiers,
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
-            return response.to_geojson()
+            return response.to_geojson(
+                select_properties=select_properties, fields_mapping=self.get_fields()
+            )
 
         # if we are returning covjson we need to fetch the results and fill in the json
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
@@ -136,7 +123,7 @@ class RiseEDRProvider(BaseEDRProvider):
         :param format_: data format of output
         """
 
-        raw_resp = self.get_or_fetch_all_param_filtered_pages(select_properties)
+        raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(select_properties)
         response = LocationResponseWithIncluded.from_api_pages(raw_resp)
 
         if datetime_:
@@ -165,7 +152,7 @@ class RiseEDRProvider(BaseEDRProvider):
         Example: http://localhost:5000/collections/rise-edr/area?coords=POLYGON%20((-109.204102%2047.010226,%20-104.655762%2047.010226,%20-104.655762%2049.267805,%20-109.204102%2049.267805,%20-109.204102%2047.010226))&f=json
         """
 
-        raw_resp = self.get_or_fetch_all_param_filtered_pages(select_properties)
+        raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(select_properties)
         assert len(raw_resp) > 1
         found = set()
         for url in raw_resp:
