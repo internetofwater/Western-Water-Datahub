@@ -8,6 +8,7 @@ from rise.lib.helpers import merge_pages
 from rise.lib.location import LocationResponseWithIncluded
 from rise.rise_edr import RiseEDRProvider
 import datetime
+from pygeoapi.provider.base import ProviderQueryError
 
 
 @pytest.fixture()
@@ -38,6 +39,12 @@ def test_location_locationId(edr_config: dict):
     geojson_out: dict = p.locations(location_id=1, format_="geojson")  # type: ignore Have to ignore this since we know it is geojson
     assert geojson_out["type"] == "Feature"
     assert geojson_out["id"] == 1
+
+
+def test_invalid_location_id(edr_config: dict):
+    p = RiseEDRProvider()
+    with pytest.raises(ProviderQueryError):
+        p.locations(location_id="__INVALID", format_="geojson")
 
 
 def test_get_fields(edr_config: dict):
