@@ -70,7 +70,7 @@ class RiseEDRProvider(BaseEDRProvider):
     @BaseEDRProvider.register()
     def locations(
         self,
-        location_id: Optional[int] = None,
+        location_id: Optional[str] = None,
         datetime_: Optional[str] = None,
         select_properties: Optional[list[str]] = None,
         crs: Optional[str] = None,
@@ -87,7 +87,13 @@ class RiseEDRProvider(BaseEDRProvider):
         response = LocationResponseWithIncluded.from_api_pages(raw_resp)
 
         if location_id:
-            response = response.drop_everything_but_one_location(location_id)
+            try:
+                location_id_as_int = int(location_id)
+            except ValueError:
+                raise ProviderQueryError(
+                    f"Invalid location id: '{location_id}'; RISE location IDs must be integers"
+                )
+            response = response.drop_everything_but_one_location(location_id_as_int)
 
         # If a location exists but has no CatalogItems, it should not appear in locations
         response = response.drop_locations_without_catalogitems()
