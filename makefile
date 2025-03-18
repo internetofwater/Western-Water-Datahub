@@ -1,7 +1,7 @@
 # install dependencies
 # this project uses uv to manage dependencies
 deps:
-	uv sync
+	uv sync --all-groups
 	uv add . --dev
 	uv pip install -e .
 
@@ -15,4 +15,4 @@ devNoOTEL:
 	OTEL_SDK_DISABLED=true PYGEOAPI_CONFIG=local.config.yml PYGEOAPI_OPENAPI=local.openapi.yml uv run pygeoapi serve --starlette
 
 test:
-	 pytest -n auto -x --maxfail=1 -vv
+	uv run pytest -n auto -x --maxfail=1 -vv
