@@ -20,7 +20,7 @@ dependencies = [
     "opentelemetry-sdk>=1.30.0",
     "opentelemetry-exporter-otlp>=1.30.0",
     "orjson>=3.10.15",
-    "pygeoapi",
+    "pygeoapi @ git+https://github.com/webb-ben/pygeoapi.git@pydantic",
 ]
 
 classifiers = [
@@ -48,7 +48,6 @@ dev = [
 
 [tool.uv.sources]
 rise-edr = { workspace = true }
-pygeoapi = { git = "https://github.com/webb-ben/pygeoapi.git", rev = "pydantic" }
 
 [tool.pyright]
 # we can't resolve shapely from source so we need to just disable this check
