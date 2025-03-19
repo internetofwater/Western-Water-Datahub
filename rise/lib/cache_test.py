@@ -102,3 +102,16 @@ def test_safe_async():
 
     # Close the event loop after the test
     loop.close()
+
+
+@pytest.mark.asyncio
+async def test_fetch_all_results():
+    result_base_url = "https://data.usbr.gov/rise/api/result?itemId=1"
+    cache = RISECache()
+    results = await cache.get_or_fetch_all_results(
+        {
+            "1": result_base_url,
+        }
+    )
+    assert len(results) == 1
+    assert len(results[result_base_url]["data"]) > 1000

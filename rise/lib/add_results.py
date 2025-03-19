@@ -61,18 +61,19 @@ class LocationResultBuilder:
     def _get_all_timeseries_data(self, time_filter: Optional[str] = None):
         # Make a dictionary from an existing response
         catalogItemUrls = flatten_values(self.locationToCatalogItemUrls)
-        resultUrls = [
-            getResultUrlFromCatalogUrl(url, time_filter) for url in catalogItemUrls
-        ]
+
+        resultUrls = {
+            url: getResultUrlFromCatalogUrl(url, time_filter) for url in catalogItemUrls
+        }
 
         if len(resultUrls) != len(set(resultUrls)):
             raise RuntimeError(
                 "Got duplicate result urls when loading timeseries data:",
-                set([x for x in resultUrls if resultUrls.count(x) > 1]),
+                set([x for x in resultUrls if list(resultUrls.keys()).count(x) > 1]),
             )
 
         LOGGER.debug(f"Fetching {resultUrls}; {len(resultUrls)} in total")
-        return await_(self.cache.get_or_fetch_group(resultUrls))
+        return await_(self.cache.get_or_fetch_all_results(resultUrls))
 
     def _get_timeseries_for_catalogitem(self, catalogItem):
         if catalogItem not in self.timeseriesResults:
@@ -101,7 +102,11 @@ class LocationResultBuilder:
                 catalogUrlAsResultUrl = getResultUrlFromCatalogUrl(
                     catalogItemUrl, time_filter
                 )
-                timseriesResults = self.timeseriesResults[catalogUrlAsResultUrl]
+                timseriesResults = self.timeseriesResults.get(catalogUrlAsResultUrl)
+                # if there were no results for this catalog item, continue and don't even bother serializing
+                if not timseriesResults:
+                    continue
+
                 if timseriesResults.get("detail") == "Internal Server Error":
                     await_(
                         self.cache.clear(catalogUrlAsResultUrl)

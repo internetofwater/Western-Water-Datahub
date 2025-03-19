@@ -81,8 +81,15 @@ class RISECache:
     async def get_or_fetch_all_pages(
         self, base_url: str, force_fetch=False
     ) -> dict[Url, JsonPayload]:
-        # max number of items you can query in RISE
-        MAX_ITEMS_PER_PAGE = 100
+        MAX_ITEMS_PER_PAGE: int
+
+        if "data.usbr.gov/rise/api/result" in base_url:
+            # there is a special case in RISE where the max number of items per result page is 10000
+            # this appears to be different from the other endpoints
+            MAX_ITEMS_PER_RESULT_PAGE = 10000
+            MAX_ITEMS_PER_PAGE = MAX_ITEMS_PER_RESULT_PAGE
+        else:
+            MAX_ITEMS_PER_PAGE = 100
 
         # Get the first response that contains the list of pages
         response = await self.get_or_fetch(base_url)
@@ -112,6 +119,7 @@ class RISECache:
                 urls.append(f"{base_url}?page={page}&itemsPerPage={MAX_ITEMS_PER_PAGE}")
 
         pages = await self.get_or_fetch_group(urls, force_fetch=force_fetch)
+        assert len(pages) == pages_to_complete
         # found = {}
         # for base_url in pages:
         #     for location in pages[base_url]["data"]:
@@ -168,6 +176,27 @@ class RISECache:
                 base_url += f"parameterId%5B%5D={prop}&"
             base_url = base_url.removesuffix("&")
         return await_(self.get_or_fetch_all_pages(base_url))
+
+    async def get_or_fetch_all_results(
+        self, catalogItemToResultUrl: dict[str, str]
+    ) -> dict[str, JsonPayload]:
+        """Given a dictionary mapping catalog items to URLs, fetch all pages for each URL in parallel
+        and return a dictionary mapping catalog items to their corresponding merged pages."""
+        tasks = {
+            resultUrl: asyncio.create_task(
+                self.get_or_fetch_all_pages(resultUrl, force_fetch=True)
+            )
+            for _, resultUrl in catalogItemToResultUrl.items()
+        }
+
+        results = await asyncio.gather(*tasks.values())
+
+        mergedResult = {}
+
+        for resultUrl, result in zip(tasks.keys(), results):
+            mergedResult[resultUrl] = merge_pages(result)
+
+        return mergedResult
 
     async def get_or_fetch_group(
         self, urls: list[str], force_fetch=False

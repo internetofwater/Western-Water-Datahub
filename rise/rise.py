@@ -8,6 +8,7 @@ from pygeoapi.provider.base import BaseProvider
 from pygeoapi.util import crs_transform
 from rise.env import TRACER
 from rise.lib.cache import RISECache
+from rise.lib.geojson.types import GeojsonFeatureCollectionDict
 from rise.lib.location import LocationResponseWithIncluded
 from rise.lib.types.location import LocationDataAttributes
 from rise.lib.types.sorting import SortDict
@@ -50,7 +51,7 @@ class RiseProvider(BaseProvider):
         offset: Optional[int] = 0,
         skip_geometry: Optional[bool] = False,
         **kwargs,
-    ):
+    ) -> GeojsonFeatureCollectionDict:
         # we don't filter by parameters here since OAF filters features by
         # the attributes of the feature, not the parameters of the associated timeseries data
         raw_resp = self.cache.get_or_fetch_all_param_filtered_pages()

@@ -32,13 +32,14 @@ def test_location_locationId(edr_config: dict):
 
     p = RiseEDRProvider()
     out = p.locations(location_id="1", format_="covjson")
+    assert "coverages" in out
     assert len(out["coverages"]) == catalogItems, (
         "There must be the same number of catalogItems as there are coverages"
     )
 
-    geojson_out: dict = p.locations(location_id=1, format_="geojson")  # type: ignore Have to ignore this since we know it is geojson
-    assert geojson_out["type"] == "Feature"
-    assert geojson_out["id"] == 1
+    geojson_out = p.locations(location_id="1", format_="geojson")
+    assert "features" in geojson_out
+    assert geojson_out["features"][0]["id"] == 1
 
 
 def test_invalid_location_id(edr_config: dict):
@@ -94,6 +95,7 @@ def test_location_select_properties(edr_config: dict):
     lakeReservoirStorage = "3"
     texasID291 = "291"
     out = p.locations(location_id=texasID291, select_properties=[lakeReservoirStorage])
+    assert "coverages" in out
     assert len(out["coverages"]) == 2, (
         "We expect to have both Lake/Reservoir Storage and Elevation unless more have been retroactively added"
     )
@@ -111,8 +113,8 @@ def test_location_select_properties_with_id_filter(edr_config: dict):
     out_prop_2_with_location_id_filter = p.locations(
         location_id="1", select_properties=["2"], format_="geojson"
     )
-    assert out_prop_2_with_location_id_filter["type"] == "Feature"
-    assert out_prop_2_with_location_id_filter["id"] == 1  # type: ignore
+    assert "features" in out_prop_2_with_location_id_filter
+    assert out_prop_2_with_location_id_filter["features"][0]["id"] == 1
 
 
 def test_location_datetime(edr_config: dict):
@@ -122,7 +124,7 @@ def test_location_datetime(edr_config: dict):
 
     start = datetime.datetime.fromisoformat("2017-01-01T00:00:00+00:00")
     end = datetime.datetime.fromisoformat("2018-01-01T00:00:00+00:00")
-
+    assert "coverages" in out
     for param in out["coverages"]:
         for time_val in param["domain"]["axes"]["t"]["values"]:
             assert start <= datetime.datetime.fromisoformat(time_val) <= end

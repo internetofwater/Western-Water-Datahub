@@ -15,4 +15,4 @@ devNoOTEL:
 	OTEL_SDK_DISABLED=true PYGEOAPI_CONFIG=local.config.yml PYGEOAPI_OPENAPI=local.openapi.yml uv run pygeoapi serve --starlette
 
 test:
-	uv run pytest -n auto -x --maxfail=1 -vv
+	uv run pytest -n auto -x --maxfail=1 -vv --durations=5

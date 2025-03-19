@@ -36,8 +36,8 @@ def test_item(oaf_config: dict):
     """Test what happens if we request one item; make sure the geojson is valid"""
     p = RiseProvider(oaf_config)
     out = p.items(itemId="1")
-    assert out["id"] == 1
-    assert out["type"] == "Feature"
+    assert out["features"][0]["id"] == 1
+    assert out["type"] == "FeatureCollection"
 
     with pytest.raises(Exception):
         out = p.items(itemId="__INVALID")
@@ -60,7 +60,7 @@ def test_select_properties(oaf_config: dict):
     """Make sure select properties returns features but filters out which properties are returned in the requested features"""
     p = RiseProvider(oaf_config)
     out = p.items(itemId="1", select_properties=["DUMMY_PROPERTY"])
-    assert out["properties"] == {}, (
+    assert out["features"][0]["properties"] == {}, (
         "select_properties filtering with a non-existent property should return no properties"
     )
 
@@ -68,10 +68,10 @@ def test_select_properties(oaf_config: dict):
     outWithSelection = p.items(itemId="1", select_properties=["locationName"])
     out = p.items(itemId="1")
     assert (
-        outWithSelection["properties"]["locationName"]
-        == out["properties"]["locationName"]
+        outWithSelection["features"][0]["properties"]["locationName"]
+        == out["features"][0]["properties"]["locationName"]
     )
-    assert len(outWithSelection["properties"]) == 1
+    assert len(outWithSelection["features"][0]["properties"]) == 1
 
     # make sure that we can select multiple properties where one exists and one doesn't
     propertyThatIsNullInLocation1 = "locationParentId"
@@ -83,7 +83,9 @@ def test_select_properties(oaf_config: dict):
             propertyThatExistsInLocation1,
         ],
     )
-    assert propertyThatExistsInLocation1 in outWithSelection["properties"]
+    assert (
+        propertyThatExistsInLocation1 in outWithSelection["features"][0]["properties"]
+    )
 
 
 def test_properties_key_value_mapping(oaf_config: dict):
@@ -98,8 +100,7 @@ def test_properties_key_value_mapping(oaf_config: dict):
         itemId="1",
         properties=[("_id", "1")],
     )
-    assert out["type"] == "Feature"
-    assert out["properties"]["_id"] == 1
+    assert out["features"][0]["properties"]["_id"] == 1
     out = p.items(
         itemId="1",
         properties=[("_id", "1"), ("locationName", "DUMMY")],
@@ -162,14 +163,14 @@ def test_resulttype_hits(oaf_config: dict):
     # make sure numberMatched is greater than 0
     # we can't compare against a constant because it could
     # change but it should always be greater than 0
+    assert "numberMatched" in out
     assert out["numberMatched"] > 0
 
 
 def test_skip_geometry(oaf_config: dict):
     p = RiseProvider(oaf_config)
     out = p.items(itemId="1", skip_geometry=True)
-    assert out["type"] == "Feature"
-    assert out["geometry"] is None
+    assert out["type"] == "FeatureCollection"
+    assert out["features"][0]["geometry"] is None
     outWithoutSkip = p.items(itemId="1")
-    assert outWithoutSkip["type"] == "Feature"
-    assert outWithoutSkip["geometry"]
+    assert outWithoutSkip["features"][0]["geometry"]
