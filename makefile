@@ -1,9 +1,7 @@
 # install dependencies
 # this project uses uv to manage dependencies
 deps:
-	uv sync --all-groups
-	uv add . --dev
-	uv pip install -e .
+	uv sync --all-groups --locked --all-packages
 
 # serve the api (requires redis to be running)
 dev: 

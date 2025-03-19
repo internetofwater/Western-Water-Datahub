@@ -8,8 +8,7 @@
     "**/__pycache__/": true,
     "**/.pytest_cache/": true,
     // hide build artifacts / dependency installations
-    "rise.egg-info": true,
-    "rise_edr.egg-info": true,
+    "**/*.egg-info/": true,
     ".venv/": true
   }
 }

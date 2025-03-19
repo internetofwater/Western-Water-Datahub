@@ -1,6 +1,6 @@
 # [RISE API](https://data.usbr.gov/rise-api) Overview
 
-There are a series of [primary endpoints](#primary-endpoints). Then there are managed vocabularies which are essentially helpers and enumerate the data contained within other primary endpoints. 
+There are a series of [primary endpoints](#primary-endpoints). Then there are managed vocabularies which are essentially helpers and enumerate the data contained within other primary endpoints.
 
 Finally there are a list of datatypes that describe the dataformat and mimic the layout of the underlying table.
 
@@ -35,15 +35,15 @@ Some of the information regarding entityID and ownerID is not exposed publicly, 
 
 ## Data Type Layout
 
-CatalogRecord contains multiple CatalogItems. 
-CatalogItems are associated with one or more locations and parameters. 
-Parameters are associated with a ParameterGroup. 
-Parameters contain a unit, timestep, and description. 
+CatalogRecord contains multiple CatalogItems.
+CatalogItems are associated with one or more locations and parameters.
+Parameters are associated with a ParameterGroup.
+Parameters contain a unit, timestep, and description.
 ParameterGroups contain multiple parameters.
 CatalogItems contain a pointer back to the CatalogRecord
-A CatalogRecord is created from a generationEffort. 
+A CatalogRecord is created from a generationEffort.
 Locations contain geometric data.
-Results are not linked to any other endpoint and are queried independently. 
+Results are not linked to any other endpoint and are queried independently.
 Results output a location but it is a one way link. Locations do not directly link to results but you can get to a result by linking back to the catalogItem.
 
 Each result is associated with a modelRunMemberId as well as a modeRunID. Each modelRunMember outputs a modelRunId as well as an ID. Confusingly, the modelRun has both an id and an itemId. However, the ID of the modelRun is how a result can be linked to a parameter and a location.
@@ -66,7 +66,7 @@ graph TD;
     CatalogItem --> parameterID;
     CatalogItem --> Matrix;
     CatalogItem --> CatalogRecord;
-    
+
     Result --> parameterID;
     Result --> Location;
     Result --> modelRunMemberID;
@@ -100,13 +100,13 @@ graph TD;
 
 - Contains lots of meta info on description / temporal data / publication info.
 - Primary data: matrix, item type, spatial Geometry/Resolution/Transformation
-    - Contains a catalog record. With this record we can then retrieve more metadata
+  - Contains a catalog record. With this record we can then retrieve more metadata
 
 ## CatalogRecord
 
-- Contains multiple `catalogItems` 
+- Contains multiple `catalogItems`
 - Contains location, upload metadata, generation Effort, program names, associated themes, tags, etc
-    - Once we get this we can link between items
+  - Once we get this we can link between items
 
 ## Location
 
@@ -125,10 +125,7 @@ graph TD;
       "locationStatusId": 1,
       "locationCoordinates": {
         "type": "Point",
-        "coordinates": [
-          -105.5343083,
-          40.3440796
-        ]
+        "coordinates": [-105.5343083, 40.3440796]
       },
       "elevation": "8050.000000",
       "createDate": "2020-08-12T10:08:06+00:00",
@@ -160,12 +157,8 @@ graph TD;
       "locationTypeName": "Lake/Reservoir",
       "timezoneName": "Mountain Standard Time",
       "timezoneOffset": -7,
-      "locationRegionNames": [
-        "Great Plains"
-      ],
-      "locationUnifiedRegionNames": [
-        "Missouri Basin"
-      ]
+      "locationRegionNames": ["Great Plains"],
+      "locationUnifiedRegionNames": ["Missouri Basin"]
     },
     "relationships": {
       "states": {
@@ -211,7 +204,6 @@ graph TD;
     }
   }
 }
-
 ```
 
 ## Parameter
@@ -232,7 +224,6 @@ Represents the natural language description of and the units for some sort of da
     "currentPage": 1
   },
   "data": [
-
     {
       "id": "/rise/api/parameter/1688",
       "type": "Parameter",
@@ -286,7 +277,6 @@ Represents the natural language description of and the units for some sort of da
   ]
 }
 ```
-
 
 ## Result
 
@@ -356,7 +346,7 @@ Not entirely clear how to link a result to a parameter since it neither outputs 
         "definition": "Relating to the natural world and the impact of human activity on its condition.",
         "createDate": "2018-06-25T15:11:38+00:00"
       }
-    },
+    }
   ]
 }
 ```
@@ -398,16 +388,15 @@ A generationEffort is essentially some sort of project with associated funding.
         "generationEffort": "Invasive Mussel Early Detection and Monitoring",
         "createDate": "2021-02-04T11:55:19+00:00"
       }
-    },
+    }
   ]
 }
 ```
 
 ## LocationGeometry
 
-  - Straightforward, just the geometric point
-  - defines the data format in the locationCoordinates
-
+- Straightforward, just the geometric point
+- defines the data format in the locationCoordinates
 
 ## Other Datatypes
 

@@ -1,6 +1,13 @@
 version = 1
 requires-python = ">=3.12"
 
+[manifest]
+members = [
+    "iodh-integrations",
+    "rise",
+    "snotel",
+]
+
 [[package]]
 name = "affine"
 version = "2.4.0"
@@ -456,6 +463,57 @@ wheels = [
 ]
 
 [[package]]
+name = "iodh-integrations"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "covjson-pydantic" },
+    { name = "geojson-pydantic" },
+    { name = "jsonpatch" },
+    { name = "opentelemetry-exporter-otlp" },
+    { name = "opentelemetry-instrumentation-aiohttp-client" },
+    { name = "opentelemetry-sdk" },
+    { name = "orjson" },
+    { name = "pygeoapi" },
+    { name = "pytest" },
+    { name = "redis" },
+    { name = "starlette" },
+    { name = "uvicorn" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "packages" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-xdist" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3.11.13" },
+    { name = "covjson-pydantic", specifier = ">=0.5.0" },
+    { name = "geojson-pydantic", specifier = ">=1.2.0" },
+    { name = "jsonpatch", specifier = ">=1.33" },
+    { name = "opentelemetry-exporter-otlp", specifier = ">=1.30.0" },
+    { name = "opentelemetry-instrumentation-aiohttp-client", specifier = ">=0.51b0" },
+    { name = "opentelemetry-sdk", specifier = ">=1.30.0" },
+    { name = "orjson", specifier = ">=3.10.15" },
+    { name = "pygeoapi", git = "https://github.com/webb-ben/pygeoapi.git?rev=pydantic" },
+    { name = "pytest", specifier = ">=8.3.4" },
+    { name = "redis", specifier = ">=5.2.1" },
+    { name = "starlette", specifier = ">=0.46.0" },
+    { name = "uvicorn", specifier = ">=0.34.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "packages", specifier = ">=0.1.0" },
+    { name = "pytest-asyncio", specifier = ">=0.25.3" },
+    { name = "pytest-xdist", specifier = ">=3.6.1" },
+]
+
+[[package]]
 name = "itsdangerous"
 version = "2.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -833,6 +891,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/cc/d3/6dc91156cf12ed86bed383bcb942d84d23304a1e57b7ab030bf60ea130d6/orjson-3.10.15-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:eca81f83b1b8c07449e1d6ff7074e82e3fd6777e588f1a6632127f286a968825", size = 129826 },
     { url = "https://files.pythonhosted.org/packages/b3/38/c47c25b86f6996f1343be721b6ea4367bc1c8bc0fc3f6bbcd995d18cb19d/orjson-3.10.15-cp313-cp313-win32.whl", hash = "sha256:c03cd6eea1bd3b949d0d007c8d57049aa2b39bd49f58b4b2af571a5d3833d890", size = 142542 },
     { url = "https://files.pythonhosted.org/packages/27/f1/1d7ec15b20f8ce9300bc850de1e059132b88990e46cd0ccac29cbf11e4f9/orjson-3.10.15-cp313-cp313-win_amd64.whl", hash = "sha256:fd56a26a04f6ba5fb2045b0acc487a63162a958ed837648c5781e1fe3316cfbf", size = 133444 },
+]
+
+[[package]]
+name = "packages"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/80/e5/d2357ad6c6ad75afb16629f6779d61d84305348f2fec4130042d8244bbf9/packages-0.1.0.tar.gz", hash = "sha256:0f9116b42fcda9e4c20c23fffecd04fea552f4231cb42ee0e970a66127a2195c", size = 804 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/eb/57/62bb00f35c704756319c1debd06bb94e9771e946c10930f3c27aa0884990/packages-0.1.0-py3-none-any.whl", hash = "sha256:31f14822956bc62f8d9e1da2f80d863dabf9d70d3c5c03443389f901a0a267c7", size = 1023 },
 ]
 
 [[package]]
@@ -1254,55 +1321,9 @@ wheels = [
 ]
 
 [[package]]
-name = "rise-edr"
+name = "rise"
 version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "covjson-pydantic" },
-    { name = "geojson-pydantic" },
-    { name = "jsonpatch" },
-    { name = "opentelemetry-exporter-otlp" },
-    { name = "opentelemetry-instrumentation-aiohttp-client" },
-    { name = "opentelemetry-sdk" },
-    { name = "orjson" },
-    { name = "pygeoapi" },
-    { name = "pytest" },
-    { name = "redis" },
-    { name = "starlette" },
-    { name = "uvicorn" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pytest-asyncio" },
-    { name = "pytest-xdist" },
-    { name = "rise-edr" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiohttp", specifier = ">=3.11.13" },
-    { name = "covjson-pydantic", specifier = ">=0.5.0" },
-    { name = "geojson-pydantic", specifier = ">=1.2.0" },
-    { name = "jsonpatch", specifier = ">=1.33" },
-    { name = "opentelemetry-exporter-otlp", specifier = ">=1.30.0" },
-    { name = "opentelemetry-instrumentation-aiohttp-client", specifier = ">=0.51b0" },
-    { name = "opentelemetry-sdk", specifier = ">=1.30.0" },
-    { name = "orjson", specifier = ">=3.10.15" },
-    { name = "pygeoapi", git = "https://github.com/webb-ben/pygeoapi.git?rev=pydantic" },
-    { name = "pytest", specifier = ">=8.3.4" },
-    { name = "redis", specifier = ">=5.2.1" },
-    { name = "starlette", specifier = ">=0.46.0" },
-    { name = "uvicorn", specifier = ">=0.34.0" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pytest-asyncio", specifier = ">=0.25.3" },
-    { name = "pytest-xdist", specifier = ">=3.6.1" },
-    { name = "rise-edr", virtual = "." },
-]
+source = { editable = "packages/rise" }
 
 [[package]]
 name = "rpds-py"
@@ -1391,6 +1412,11 @@ sdist = { url = "https://files.pythonhosted.org/packages/a2/87/a6771e1546d97e7e0
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e9/44/75a9c9421471a6c4805dbf2356f7c181a29c1879239abab1ea2cc8f38b40/sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2", size = 10235 },
 ]
+
+[[package]]
+name = "snotel"
+version = "0.1.0"
+source = { virtual = "packages/snotel" }
 
 [[package]]
 name = "sqlalchemy"
