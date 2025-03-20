@@ -6,7 +6,7 @@ from typing import Literal, Optional
 
 from pygeoapi.provider.base import BaseProvider
 from pygeoapi.util import crs_transform
-from rise.env import TRACER
+from com.env import TRACER
 from rise.lib.cache import RISECache
 from rise.lib.geojson.types import GeojsonFeatureCollectionDict
 from rise.lib.location import LocationResponseWithIncluded

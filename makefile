@@ -13,4 +13,9 @@ devNoOTEL:
 	OTEL_SDK_DISABLED=true PYGEOAPI_CONFIG=local.config.yml PYGEOAPI_OPENAPI=local.openapi.yml uv run pygeoapi serve --starlette
 
 test:
+	# run tests in parallel with pytest-xdist and stop after first failure; run in verbose mode and show durations of the 5 slowest tests
 	uv run pytest -n auto -x --maxfail=1 -vv --durations=5
+
+clean:
+	rm -rf .venv/
+	rm -rf .pytest_cache/

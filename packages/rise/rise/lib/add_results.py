@@ -6,7 +6,7 @@ from typing import Any, Literal, Optional, Tuple
 
 from pydantic import BaseModel
 
-from rise.env import TRACER
+from com.env import TRACER
 from rise.lib.cache import RISECache
 from rise.lib.helpers import flatten_values, getResultUrlFromCatalogUrl, await_
 from rise.lib.location import LocationResponseWithIncluded
