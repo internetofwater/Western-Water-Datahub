@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 [project]
-name = "iodh-integrations"
+name = "iodh_integrations"
 version = "0.1.0"
 description = "Mappings from various hydrological data sources to a standardized OGC EDR API format"
 readme = "README.md"
@@ -45,6 +45,7 @@ keywords = [
 [dependency-groups]
 dev = [
     "packages>=0.1.0",
+    "pyright>=1.1.397",
     "pytest-asyncio>=0.25.3",
     "pytest-xdist>=3.6.1",
 ]

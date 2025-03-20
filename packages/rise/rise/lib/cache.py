@@ -183,9 +183,7 @@ class RISECache:
         """Given a dictionary mapping catalog items to URLs, fetch all pages for each URL in parallel
         and return a dictionary mapping catalog items to their corresponding merged pages."""
         tasks = {
-            resultUrl: asyncio.create_task(
-                self.get_or_fetch_all_pages(resultUrl, force_fetch=True)
-            )
+            resultUrl: asyncio.create_task(self.get_or_fetch_all_pages(resultUrl))
             for _, resultUrl in catalogItemToResultUrl.items()
         }
 
