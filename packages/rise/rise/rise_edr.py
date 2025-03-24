@@ -4,6 +4,7 @@
 import logging
 from typing import ClassVar, Optional
 
+from com.helpers import await_
 from pygeoapi.provider.base import (
     ProviderQueryError,
 )
@@ -12,7 +13,6 @@ from com.env import TRACER
 from rise.lib.covjson.covjson import CovJSONBuilder
 from rise.lib.location import LocationResponseWithIncluded
 from rise.lib.cache import RISECache
-from rise.lib.helpers import await_
 from rise.lib.add_results import LocationResultBuilder
 
 LOGGER = logging.getLogger(__name__)

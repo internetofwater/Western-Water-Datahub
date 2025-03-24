@@ -1,13 +1,14 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+from com.helpers import await_
 import redis
 import requests
 import shapely.wkt
 import shapely.geometry
 
 from rise.lib.cache import RISECache
-from rise.lib.helpers import await_, merge_pages
+from rise.lib.helpers import merge_pages
 from rise.lib.location import LocationResponseWithIncluded
 
 """This file is solely for sanity checks on the upstream repo or underlying libs to make sure that queries are performing as our understanding expects"""

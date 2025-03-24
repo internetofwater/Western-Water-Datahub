@@ -4,6 +4,7 @@
 import logging
 from typing import Any, Tuple
 
+from com.helpers import await_
 from rise.lib.covjson.template import COVJSON_TEMPLATE
 from rise.lib.covjson.types import (
     CoverageCollection,
@@ -13,7 +14,6 @@ from rise.lib.covjson.types import (
 )
 from rise.lib.cache import RISECache
 from rise.lib.add_results import DataNeededForCovjson
-from rise.lib.helpers import await_
 
 LOGGER = logging.getLogger(__name__)
 

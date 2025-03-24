@@ -4,11 +4,12 @@
 import logging
 from typing import Any, Literal, Optional, Tuple
 
+from com.helpers import await_
 from pydantic import BaseModel
 
 from com.env import TRACER
 from rise.lib.cache import RISECache
-from rise.lib.helpers import flatten_values, getResultUrlFromCatalogUrl, await_
+from rise.lib.helpers import flatten_values, getResultUrlFromCatalogUrl
 from rise.lib.location import LocationResponseWithIncluded
 from rise.lib.types.results import ResultResponse
 

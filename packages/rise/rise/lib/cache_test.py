@@ -5,9 +5,9 @@ import asyncio
 import json
 import time
 
+from com.helpers import await_
 import pytest
 from rise.lib.cache import RISECache
-from rise.lib.helpers import await_
 
 
 @pytest.mark.asyncio

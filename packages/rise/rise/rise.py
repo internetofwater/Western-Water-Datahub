@@ -4,19 +4,17 @@
 import logging
 from typing import Literal, Optional
 
+from com.helpers import FieldsMapping, get_oaf_fields_from_pydantic_model
 from pygeoapi.provider.base import BaseProvider
 from pygeoapi.util import crs_transform
 from com.env import TRACER
 from rise.lib.cache import RISECache
-from rise.lib.geojson.types import GeojsonFeatureCollectionDict
+from com.geojson.types import GeojsonFeatureCollectionDict
 from rise.lib.location import LocationResponseWithIncluded
 from rise.lib.types.location import LocationDataAttributes
 from rise.lib.types.sorting import SortDict
 
 LOGGER = logging.getLogger(__name__)
-
-
-fieldsMapping = dict[str, dict[Literal["type"], Literal["number", "string", "integer"]]]
 
 
 class RiseProvider(BaseProvider):
@@ -103,7 +101,7 @@ class RiseProvider(BaseProvider):
 
         return self.items(itemId=identifier, bbox=[], **kwargs)
 
-    def get_fields(self, **kwargs) -> fieldsMapping:
+    def get_fields(self, **kwargs) -> FieldsMapping:
         """
         Get provider field information (names, types)
 
@@ -112,28 +110,6 @@ class RiseProvider(BaseProvider):
         :returns: dict of field names and their associated JSON Schema types
         """
         if not self._fields:
-            pydanticFields = LocationDataAttributes.model_fields
-            for fieldName in pydanticFields.keys():
-                dataType: Literal["number", "string", "integer"]
-
-                aliasName = pydanticFields[fieldName].alias
-                if aliasName:
-                    name = aliasName
-                else:
-                    name = fieldName
-
-                if "str" in str(pydanticFields[fieldName].annotation):
-                    dataType = "string"
-                elif "int" in str(pydanticFields[fieldName].annotation):
-                    dataType = "integer"
-                elif "float" in str(pydanticFields[fieldName].annotation):
-                    dataType = "number"
-                else:
-                    LOGGER.warning(
-                        f"Skipping field '{name}' with unmappable data type {pydanticFields[fieldName].annotation}"
-                    )
-                    continue
-
-                self._fields[name] = {"type": dataType}
+            self._fields = get_oaf_fields_from_pydantic_model(LocationDataAttributes)
 
         return self._fields

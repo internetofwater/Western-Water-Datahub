@@ -1,10 +1,11 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+from com.helpers import await_
 from pytest import FixtureRequest
 import pytest
 from rise.lib.cache import RISECache
-from rise.lib.helpers import await_, merge_pages
+from rise.lib.helpers import merge_pages
 from rise.lib.location import LocationResponse
 from rise.rise import RiseProvider
 from rise.rise_edr import RiseEDRProvider

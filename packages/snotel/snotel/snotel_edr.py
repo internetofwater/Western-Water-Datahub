@@ -4,13 +4,17 @@
 import logging
 from typing import Optional
 
+from com.helpers import EDRField
 from pygeoapi.provider.base_edr import BaseEDRProvider
+from snotel.lib.locations import LocationCollection
+from snotel.lib.parameters import ParametersCollection
+from pygeoapi.provider.base import ProviderQueryError
 
 LOGGER = logging.getLogger(__name__)
 
 
 class SnotelEDRProvider(BaseEDRProvider):
-    """The EDR Provider for the USBR Rise API"""
+    """The EDR Provider for the Snotel API"""
 
     def __init__(self, provider_def=None):
         """
@@ -37,10 +41,20 @@ class SnotelEDRProvider(BaseEDRProvider):
         """
         Extract data from location
         """
-        ...
 
-    def get_fields(self):
+        if not location_id and datetime_:
+            raise ProviderQueryError(
+                "Datetime parameter is not supported without location_id"
+            )
+        collection = LocationCollection()
+        if location_id:
+            collection = collection.drop_all_locations_but_id(location_id)
+
+    def get_fields(self) -> dict[str, EDRField]:
         """Get the list of all parameters (i.e. fields) that the user can filter by"""
+        if not self._fields:
+            self._fields = ParametersCollection().get_fields()
+        return self._fields
 
     @BaseEDRProvider.register()
     def cube(
@@ -75,7 +89,6 @@ class SnotelEDRProvider(BaseEDRProvider):
     ):
         """
         Extract and return coverage data from a specified area.
-        Example: http://localhost:5000/collections/rise-edr/area?coords=POLYGON%20((-109.204102%2047.010226,%20-104.655762%2047.010226,%20-104.655762%2049.267805,%20-109.204102%2049.267805,%20-109.204102%2047.010226))&f=json
         """
         ...
 

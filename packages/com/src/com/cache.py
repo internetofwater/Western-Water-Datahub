@@ -10,7 +10,7 @@ from datetime import timedelta
 from com.env import REDIS_HOST, REDIS_PORT, TRACER
 import orjson
 
-HEADERS = {"accept": "application/vnd.api+json"}
+HEADERS = {"accept": "application/vnd.api+json, application/json"}
 
 LOGGER = logging.getLogger(__name__)
 

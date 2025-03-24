@@ -10,5 +10,12 @@
     // hide build artifacts / dependency installations
     "**/*.egg-info/": true,
     ".venv/": true
+  },
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.ruff": "always"
   }
 }

@@ -6,13 +6,14 @@ import logging
 import math
 from typing import Optional
 from urllib.parse import urlparse
+from com.helpers import EDRField, await_
 from rise.custom_types import JsonPayload, Url
 import aiohttp
 from aiohttp import client_exceptions
 from datetime import timedelta
 from com.cache import RedisCache
 from com.env import TRACER
-from rise.lib.helpers import await_, merge_pages
+from rise.lib.helpers import merge_pages
 
 HEADERS = {"accept": "application/vnd.api+json"}
 
@@ -95,8 +96,8 @@ class RISECache(RedisCache):
 
         return pages
 
-    async def get_or_fetch_parameters(self, force_fetch=False) -> dict[str, dict]:
-        fields = {}
+    async def get_or_fetch_parameters(self, force_fetch=False) -> dict[str, EDRField]:
+        fields: dict[str, EDRField] = {}
 
         pages = await self.get_or_fetch_all_pages(
             "https://data.usbr.gov/rise/api/parameter",
