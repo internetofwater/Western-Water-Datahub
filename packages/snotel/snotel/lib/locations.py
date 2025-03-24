@@ -61,6 +61,7 @@ class LocationCollection:
         itemsIDSingleFeature=False,
         skip_geometry: Optional[bool] = False,
         select_properties: Optional[list[str]] = None,
+        properties: Optional[list[tuple[str, str]]] = None,
         fields_mapping: dict[
             str, dict[Literal["type"], Literal["number", "string", "integer"]]
         ] = {},

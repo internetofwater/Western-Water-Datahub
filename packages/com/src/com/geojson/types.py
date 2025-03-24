@@ -4,6 +4,9 @@
 from typing import Literal, NotRequired, Optional, TypedDict
 
 import geojson_pydantic
+from pygeoapi.provider.base import ProviderQueryError
+from rise.lib.types.location import LocationData
+from typing import assert_never
 
 
 class SortDict(TypedDict):
@@ -53,3 +56,42 @@ def sort_by_properties_in_place(
 
         # Sort in-place using the key function
         geojson_features.sort(key=sort_key, reverse=reverse_sort)
+
+
+def all_properties_found_in_feature(
+    location_feature: LocationData,
+    properties_to_look_for: list[tuple[str, str]],
+    fields_mapping: dict[
+        str, dict[Literal["type"], Literal["number", "string", "integer"]]
+    ],
+) -> bool:
+    # We rely on fields_mapping to know how to cast each property
+    if not fields_mapping:
+        raise ProviderQueryError(
+            "You must supply a `fields_mapping` if you want to filter by properties"
+        )
+
+    dump = location_feature.attributes.model_dump(by_alias=True)
+    found_list: list[bool] = []
+    for prop_name, prop_value in properties_to_look_for:
+        datatype = fields_mapping.get(prop_name)
+        if not datatype:
+            raise ProviderQueryError(
+                f"Could not find a property '{prop_name}' in {fields_mapping} and thus we cannot deserialize it"
+            )
+
+        # Convert the string passed in the query to the correct Python type
+        match datatype["type"]:
+            case "number":
+                prop_value = float(prop_value)
+            case "integer":
+                prop_value = int(prop_value)
+            case "string":
+                prop_value = str(prop_value)
+            case _:
+                assert_never(datatype)
+
+        found_list.append(dump.get(prop_name) == prop_value)
+
+    # If *all* requested property-value pairs match, keep the feature
+    return all(found_list)

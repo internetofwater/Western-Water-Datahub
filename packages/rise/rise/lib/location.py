@@ -14,6 +14,7 @@ from com.geojson.types import (
     GeojsonFeatureDict,
     GeojsonFeatureCollectionDict,
     SortDict,
+    all_properties_found_in_feature,
     sort_by_properties_in_place,
 )
 from rise.lib.helpers import (
@@ -24,7 +25,6 @@ from rise.lib.types.helpers import ZType
 from rise.lib.types.includes import LocationIncluded
 from rise.lib.types.location import LocationData, PageLinks
 from geojson_pydantic import Feature, FeatureCollection
-from pygeoapi.provider.base import ProviderQueryError
 
 LOGGER = logging.getLogger()
 
@@ -251,36 +251,9 @@ class LocationResponse(BaseModel):
 
         for location_feature in self.data:
             if properties:
-                # We rely on fields_mapping to know how to cast each property
-                if not fields_mapping:
-                    raise ProviderQueryError(
-                        "You must supply a `fields_mapping` if you want to filter by properties"
-                    )
-
-                dump = location_feature.attributes.model_dump(by_alias=True)
-                found_list: list[bool] = []
-                for prop_name, prop_value in properties:
-                    datatype = fields_mapping.get(prop_name)
-                    if not datatype:
-                        raise ProviderQueryError(
-                            f"Could not find a property '{prop_name}' in {location_feature}"
-                        )
-
-                    # Convert the string passed in the query to the correct Python type
-                    match datatype["type"]:
-                        case "number":
-                            prop_value = float(prop_value)
-                        case "integer":
-                            prop_value = int(prop_value)
-                        case "string":
-                            prop_value = str(prop_value)
-                        case _:
-                            assert_never(datatype)
-
-                    found_list.append(dump.get(prop_name) == prop_value)
-
-                # If *all* requested property-value pairs match, keep the feature
-                if not all(found_list):
+                if not all_properties_found_in_feature(
+                    location_feature, properties, fields_mapping
+                ):
                     continue
 
             feature_as_geojson = {

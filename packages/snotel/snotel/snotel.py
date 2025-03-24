@@ -66,7 +66,12 @@ class SnotelProvider(BaseProvider):
             }
 
         return collection.to_geojson(
-            itemsIDSingleFeature=itemId is not None, skip_geometry=skip_geometry
+            itemsIDSingleFeature=itemId is not None,
+            skip_geometry=skip_geometry,
+            select_properties=select_properties,
+            properties=properties,
+            sortby=sortby,
+            fields_mapping=self.get_fields(),
         )
 
     @crs_transform
