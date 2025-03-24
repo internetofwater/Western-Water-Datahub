@@ -37,21 +37,24 @@ def test_item(oaf_config: dict):
     """Test what happens if we request one item; make sure the geojson is valid"""
     p = RiseProvider(oaf_config)
     out = p.items(itemId="1")
-    assert out["features"][0]["id"] == 1
-    assert out["type"] == "FeatureCollection"
+    assert out["type"] == "Feature"
+    assert out["id"] == 1
 
     with pytest.raises(Exception):
         out = p.items(itemId="__INVALID")
 
     out = p.items(limit=10)
+    assert out["type"] == "FeatureCollection"
     assert len(out["features"]) == 10
 
 
 def test_offset(oaf_config: dict):
     p = RiseProvider(oaf_config)
     out1 = p.items(offset=1, limit=10)
+    assert out1["type"] == "FeatureCollection"
     assert len(out1["features"]) == 10
     out2 = p.items(offset=0, limit=10)
+    assert out2["type"] == "FeatureCollection"
     assert len(out2["features"]) == 10
     assert out1["features"] != out2["features"]
     assert out1["features"][0] == out2["features"][1]
@@ -60,17 +63,27 @@ def test_offset(oaf_config: dict):
 def test_select_properties(oaf_config: dict):
     """Make sure select properties returns features but filters out which properties are returned in the requested features"""
     p = RiseProvider(oaf_config)
-    out = p.items(itemId="1", select_properties=["DUMMY_PROPERTY"])
-    assert out["features"][0]["properties"] == {}, (
-        "select_properties filtering with a non-existent property should return no properties"
+    id1Full = p.items(itemId="1")
+    assert id1Full["type"] == "Feature"
+    id1WithDummyProperties = p.items(itemId="1", select_properties=["DUMMY_PROPERTY"])
+    assert id1WithDummyProperties["type"] == "Feature"
+    assert id1Full["geometry"] == id1WithDummyProperties["geometry"]
+    assert id1Full["id"] == id1WithDummyProperties["id"]
+    assert id1Full["properties"] != id1WithDummyProperties["properties"]
+    assert id1WithDummyProperties["properties"] == {}, (
+        "If we select a property that doesn't exist, it should return an empty dict"
     )
 
     assert "locationName" in p._fields, "fields were not set properly"
-    outWithSelection = p.items(itemId="1", select_properties=["locationName"])
+    outWithSelection = p.items(
+        select_properties=["locationName"], properties=[("_id", "1")]
+    )
+    assert outWithSelection["type"] == "FeatureCollection"
     out = p.items(itemId="1")
+    assert out["type"] == "Feature"
     assert (
         outWithSelection["features"][0]["properties"]["locationName"]
-        == out["features"][0]["properties"]["locationName"]
+        == out["properties"]["locationName"]
     )
     assert len(outWithSelection["features"][0]["properties"]) == 1
 
@@ -78,12 +91,13 @@ def test_select_properties(oaf_config: dict):
     propertyThatIsNullInLocation1 = "locationParentId"
     propertyThatExistsInLocation1 = "locationDescription"
     outWithSelection = p.items(
-        itemId="1",
         select_properties=[
             propertyThatIsNullInLocation1,
             propertyThatExistsInLocation1,
         ],
+        properties=[("_id", "1")],
     )
+    assert outWithSelection["type"] == "FeatureCollection"
     assert (
         propertyThatExistsInLocation1 in outWithSelection["features"][0]["properties"]
     )
@@ -92,32 +106,29 @@ def test_select_properties(oaf_config: dict):
 def test_properties_key_value_mapping(oaf_config: dict):
     p = RiseProvider(oaf_config)
     out = p.items(
-        itemId="1",
         properties=[("locationName", "DUMMY"), ("locationDescription", "DUMMY")],
     )
-    assert out["features"] == []
+    assert out["type"] == "FeatureCollection"
+    assert len(out["features"]) == 0
 
     out = p.items(
-        itemId="1",
-        properties=[("_id", "1")],
+        properties=[("_id", "1"), ("locationDescription", "DUMMY")],
     )
-    assert out["features"][0]["properties"]["_id"] == 1
-    out = p.items(
-        itemId="1",
-        properties=[("_id", "1"), ("locationName", "DUMMY")],
+    assert out["type"] == "FeatureCollection"
+    assert len(out["features"]) == 0, (
+        "If one property is invalid but one is valid, the entire feature should still be filtered out"
     )
-    assert out["features"] == [], (
-        f"A filter with a property that doesn't exist should return no results but got {out}"
-    )
-    allDataOut = p.items(
-        properties=[("_id", "1"), ("locationName", "DUMMY")],
-    )
-    assert allDataOut["features"] == [], (
-        f"A filter with a property that doesn't exist should return no results but got {out}"
-    )
-    assert p.items(
-        properties=[("_id", "1")],
-    ) == p.items(
+
+    with pytest.raises(AssertionError):
+        _ = p.items(
+            itemId="1",
+            properties=[("_id", "1"), ("locationName", "DUMMY")],
+        )
+
+    featureCollectionJustID1 = p.items(properties=[("_id", "1")])
+    assert featureCollectionJustID1["type"] == "FeatureCollection"
+    assert len(featureCollectionJustID1["features"]) == 1
+    assert featureCollectionJustID1["features"][0] == p.items(
         itemId="1",
     ), "Filtering by a property 'id' should be the same as filtering by the item id"
 
@@ -138,6 +149,7 @@ def test_sortby(oaf_config: dict):
         select_properties=["locationDescription"],
         sortby=[{"property": "locationDescription", "order": "-"}],
     )
+    assert out["type"] == "FeatureCollection"
     for i, feature in enumerate(out["features"], start=1):
         prev = out["features"][i - 1]
         curr = feature
@@ -159,6 +171,7 @@ def test_sortby(oaf_config: dict):
 def test_resulttype_hits(oaf_config: dict):
     p = RiseProvider(oaf_config)
     out = p.items(resulttype="hits")
+    assert out["type"] == "FeatureCollection"
     assert len(out["features"]) == 0
     assert out["type"] == "FeatureCollection"
     # make sure numberMatched is greater than 0
@@ -171,7 +184,8 @@ def test_resulttype_hits(oaf_config: dict):
 def test_skip_geometry(oaf_config: dict):
     p = RiseProvider(oaf_config)
     out = p.items(itemId="1", skip_geometry=True)
-    assert out["type"] == "FeatureCollection"
-    assert out["features"][0]["geometry"] is None
+    assert out["type"] == "Feature"
+    assert out["geometry"] is None
     outWithoutSkip = p.items(itemId="1")
-    assert outWithoutSkip["features"][0]["geometry"]
+    assert outWithoutSkip["type"] == "Feature"
+    assert outWithoutSkip["geometry"]

@@ -10,7 +10,12 @@ from pydantic import BaseModel, field_validator
 import shapely
 import shapely.wkt
 from com.env import TRACER
-from com.geojson.types import GeojsonFeatureCollectionDict
+from com.geojson.types import (
+    GeojsonFeatureDict,
+    GeojsonFeatureCollectionDict,
+    SortDict,
+    sort_by_properties_in_place,
+)
 from rise.lib.helpers import (
     merge_pages,
     no_duplicates_in_pages,
@@ -20,7 +25,6 @@ from rise.lib.types.includes import LocationIncluded
 from rise.lib.types.location import LocationData, PageLinks
 from geojson_pydantic import Feature, FeatureCollection
 from pygeoapi.provider.base import ProviderQueryError
-from rise.lib.types.sorting import SortDict
 
 LOGGER = logging.getLogger()
 
@@ -231,6 +235,7 @@ class LocationResponse(BaseModel):
 
     def to_geojson(
         self,
+        itemsIDSingleFeature: bool,
         skip_geometry: Optional[bool] = False,
         select_properties: Optional[list[str]] = None,
         properties: Optional[list[tuple[str, str]]] = None,
@@ -238,7 +243,7 @@ class LocationResponse(BaseModel):
             str, dict[Literal["type"], Literal["number", "string", "integer"]]
         ] = {},
         sortby: Optional[list[SortDict]] = None,  # now treat as list[SortDict]
-    ) -> GeojsonFeatureCollectionDict:
+    ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
         Convert a list of locations to geojson
         """
@@ -306,28 +311,15 @@ class LocationResponse(BaseModel):
 
             geojson_features.append(Feature.model_validate(feature_as_geojson))
 
-        if sortby and len(geojson_features) > 1:
-            for sort_criterion in reversed(sortby):
-                sort_prop = sort_criterion["property"]
-                sort_order = sort_criterion["order"]
-                reverse_sort = sort_order == "-"
-
-                # Define a key function that places None values at the end for ascending order
-                # and at the beginning for descending order.
-                def sort_key(f):
-                    value = (f.properties or {}).get(sort_prop, None)
-                    return (
-                        (value is None, value)
-                        if not reverse_sort
-                        else (value is not None, value)
-                    )
-
-                # Sort in-place using the key function
-                geojson_features.sort(key=sort_key, reverse=reverse_sort)
+        if sortby:
+            sort_by_properties_in_place(geojson_features, sortby)
 
         validated_geojson = FeatureCollection(
             type="FeatureCollection", features=geojson_features
         )
+        if itemsIDSingleFeature:
+            return GeojsonFeatureDict(**geojson_features[0].model_dump(by_alias=True))
+
         return GeojsonFeatureCollectionDict(
             **validated_geojson.model_dump(by_alias=True)
         )

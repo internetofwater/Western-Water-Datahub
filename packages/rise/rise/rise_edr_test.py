@@ -38,8 +38,9 @@ def test_location_locationId(edr_config: dict):
     )
 
     geojson_out = p.locations(location_id="1", format_="geojson")
-    assert "features" in geojson_out
-    assert geojson_out["features"][0]["id"] == 1
+    assert geojson_out["type"] == "Feature"
+    assert "id" in geojson_out
+    assert geojson_out["id"] == 1
 
 
 def test_invalid_location_id(edr_config: dict):
@@ -110,11 +111,8 @@ def test_location_select_properties(edr_config: dict):
 
 def test_location_select_properties_with_id_filter(edr_config: dict):
     p = RiseEDRProvider()
-    out_prop_2_with_location_id_filter = p.locations(
-        location_id="1", select_properties=["2"], format_="geojson"
-    )
-    assert "features" in out_prop_2_with_location_id_filter
-    assert out_prop_2_with_location_id_filter["features"][0]["id"] == 1
+    out = p.locations(location_id="1", select_properties=["3"], format_="geojson")
+    assert out["type"] == "Feature"
 
 
 def test_location_datetime(edr_config: dict):

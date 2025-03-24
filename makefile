@@ -14,7 +14,7 @@ devNoOTEL:
 
 test:
 	# run tests in parallel with pytest-xdist and stop after first failure; run in verbose mode and show durations of the 5 slowest tests
-	uv run pytest -n 20 -x --maxfail=1 -vv --durations=5
+	uv run pyright && uv run pytest -n 20 -x --maxfail=1 -vv --durations=5
 
 clean:
 	rm -rf .venv/

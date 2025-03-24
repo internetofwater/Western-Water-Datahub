@@ -9,10 +9,9 @@ from pygeoapi.provider.base import BaseProvider
 from pygeoapi.util import crs_transform
 from com.env import TRACER
 from rise.lib.cache import RISECache
-from com.geojson.types import GeojsonFeatureCollectionDict
+from com.geojson.types import GeojsonFeatureDict, GeojsonFeatureCollectionDict, SortDict
 from rise.lib.location import LocationResponseWithIncluded
 from rise.lib.types.location import LocationDataAttributes
-from rise.lib.types.sorting import SortDict
 
 LOGGER = logging.getLogger(__name__)
 
@@ -35,11 +34,11 @@ class RiseProvider(BaseProvider):
         bbox: list = [],
         datetime_: Optional[str] = None,
         resulttype: Optional[Literal["hits", "results"]] = "results",
-        # select only features that contains all the `select_properties` values
+        # return features as normal, but return only the properties specified in `select_properties`
         select_properties: Optional[
             list[str]
         ] = None,  # query this with ?properties in the actual url
-        # select only features that contains all the `properties` with their corresponding values
+        # filter out features based on whether they contain all the `properties` with their corresponding values
         properties: list[tuple[str, str]] = [],
         sortby: Optional[list[SortDict]] = None,
         limit: Optional[int] = None,
@@ -49,7 +48,12 @@ class RiseProvider(BaseProvider):
         offset: Optional[int] = 0,
         skip_geometry: Optional[bool] = False,
         **kwargs,
-    ) -> GeojsonFeatureCollectionDict:
+    ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
+        if itemId:
+            assert not properties, (
+                "Cannot use itemId and properties together since that would potentially filter out the single item"
+            )
+
         # we don't filter by parameters here since OAF filters features by
         # the attributes of the feature, not the parameters of the associated timeseries data
         raw_resp = self.cache.get_or_fetch_all_param_filtered_pages()
@@ -79,7 +83,8 @@ class RiseProvider(BaseProvider):
             }
 
         return response.to_geojson(
-            skip_geometry,
+            itemsIDSingleFeature=itemId is not None,
+            skip_geometry=skip_geometry,
             select_properties=select_properties,
             properties=properties,
             fields_mapping=self._fields,

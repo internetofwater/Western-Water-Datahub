@@ -3,14 +3,18 @@
 
 from com.cache import RedisCache
 from com.env import TRACER
-from com.geojson.types import GeojsonFeature, GeojsonFeatureCollectionDict
+from com.geojson.types import (
+    GeojsonFeatureDict,
+    GeojsonFeatureCollectionDict,
+    SortDict,
+    sort_by_properties_in_place,
+)
 from com.helpers import await_, parse_bbox, parse_z
 import geojson_pydantic
-import geojson_pydantic.types
 from rise.lib.types.helpers import ZType
 from snotel.lib.types import StationDTO
 import shapely
-from typing import Optional, assert_never
+from typing import Literal, Optional, assert_never
 
 
 class LocationCollection:
@@ -53,15 +57,22 @@ class LocationCollection:
         return self._filter_by_geometry(geometry, z)
 
     def to_geojson(
-        self, skip_geometry: Optional[bool] = False, itemsIDSingleFeature=False
-    ) -> GeojsonFeatureCollectionDict | GeojsonFeature:
+        self,
+        itemsIDSingleFeature=False,
+        skip_geometry: Optional[bool] = False,
+        select_properties: Optional[list[str]] = None,
+        fields_mapping: dict[
+            str, dict[Literal["type"], Literal["number", "string", "integer"]]
+        ] = {},
+        sortby: Optional[list[SortDict]] = None,
+    ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
         Return a geojson feature if the client queried for items/{itemId} or a feature collection if they queried for items/ even if the result is only one item
         """
-        features: list[GeojsonFeature] = []
+        features: list[geojson_pydantic.Feature] = []
 
         for loc in self.locations:
-            feature: GeojsonFeature = {
+            feature: GeojsonFeatureDict = {
                 "type": "Feature",
                 "properties": loc.model_dump(exclude={"latitude", "longitude"}),
                 "geometry": {
@@ -72,21 +83,32 @@ class LocationCollection:
                 else None,
                 "id": loc.stationId,
             }
-            features.append(feature)
+            if select_properties:
+                feature["properties"] = {
+                    k: v
+                    for k, v in feature["properties"].items()
+                    if k in select_properties
+                }
+            features.append(geojson_pydantic.Feature.model_validate(feature))
+
+        if sortby:
+            sort_by_properties_in_place(features, sortby)
 
         geojson_pydantic.FeatureCollection(
             type="FeatureCollection",
-            features=[geojson_pydantic.Feature.model_validate(f) for f in features],
+            features=features,
         )
         if itemsIDSingleFeature:
             assert len(features) == 1, (
                 "The user queried a single item but we have more than one present. This is a sign that filtering by locationid wasn't done properly"
             )
-            return features[0]
-        return {
-            "type": "FeatureCollection",
-            "features": features,
-        }
+            return GeojsonFeatureDict(**features[0].model_dump())
+        return GeojsonFeatureCollectionDict(
+            **{
+                "type": "FeatureCollection",
+                "features": [feature.model_dump(by_alias=True) for feature in features],
+            }
+        )
 
     @TRACER.start_as_current_span("geometry_filter")
     def _filter_by_geometry(

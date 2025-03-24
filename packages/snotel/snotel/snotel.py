@@ -7,8 +7,7 @@ from typing import Literal, Optional
 from com.helpers import get_oaf_fields_from_pydantic_model
 from pygeoapi.provider.base import BaseProvider
 from pygeoapi.util import crs_transform
-from com.geojson.types import GeojsonFeature, GeojsonFeatureCollectionDict
-from rise.lib.types.sorting import SortDict
+from com.geojson.types import GeojsonFeatureDict, GeojsonFeatureCollectionDict, SortDict
 from com.cache import RedisCache
 from snotel.lib.locations import LocationCollection
 from snotel.lib.types import StationDTO
@@ -47,7 +46,7 @@ class SnotelProvider(BaseProvider):
         offset: Optional[int] = 0,
         skip_geometry: Optional[bool] = False,
         **kwargs,
-    ) -> GeojsonFeatureCollectionDict | GeojsonFeature:
+    ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         collection = LocationCollection()
         if itemId:
             collection = collection.drop_all_locations_but_id(itemId)
@@ -66,7 +65,9 @@ class SnotelProvider(BaseProvider):
                 "numberMatched": len(collection.locations),
             }
 
-        return collection.to_geojson(skip_geometry, itemId is not None)
+        return collection.to_geojson(
+            itemsIDSingleFeature=itemId is not None, skip_geometry=skip_geometry
+        )
 
     @crs_transform
     def query(self, **kwargs):

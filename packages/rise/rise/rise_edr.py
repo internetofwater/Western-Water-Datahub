@@ -86,7 +86,9 @@ class RiseEDRProvider(BaseEDRProvider):
         # FROM SPEC: If a location id is not defined the API SHALL return a GeoJSON features array of valid location identifiers,
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return response.to_geojson(
-                select_properties=select_properties, fields_mapping=self.get_fields()
+                itemsIDSingleFeature=location_id is not None,
+                select_properties=select_properties,
+                fields_mapping=self.get_fields(),
             )
 
         # if we are returning covjson we need to fetch the results and fill in the json
