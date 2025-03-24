@@ -92,10 +92,6 @@ def parse_date(datetime_: str) -> list[datetime.datetime]:
             if end == ".."
             else datetime.datetime.fromisoformat(end)
         )
-        start, end = (
-            start.replace(tzinfo=datetime.timezone.utc),
-            end.replace(tzinfo=datetime.timezone.utc),
-        )
 
         if start > end:
             raise ProviderQueryError(

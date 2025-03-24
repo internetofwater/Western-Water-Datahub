@@ -53,6 +53,9 @@ class SnotelProvider(BaseProvider):
         if bbox:
             collection = collection.drop_all_locations_outside_bounding_box(bbox)
 
+        if datetime_:
+            collection = collection.select_date_range(datetime_)
+
         if limit:
             collection = collection.drop_after_limit(limit)
         if offset:

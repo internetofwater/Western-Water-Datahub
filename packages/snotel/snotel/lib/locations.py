@@ -1,6 +1,7 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+from datetime import datetime
 from com.cache import RedisCache
 from com.env import TRACER
 from com.geojson.types import (
@@ -9,7 +10,7 @@ from com.geojson.types import (
     SortDict,
     sort_by_properties_in_place,
 )
-from com.helpers import await_, parse_bbox, parse_z
+from com.helpers import await_, parse_bbox, parse_date, parse_z
 import geojson_pydantic
 from rise.lib.types.helpers import ZType
 from snotel.lib.types import StationDTO
@@ -55,6 +56,62 @@ class LocationCollection:
     def drop_all_locations_outside_bounding_box(self, bbox):
         geometry, z = parse_bbox(bbox)
         return self._filter_by_geometry(geometry, z)
+
+    def select_date_range(self, datetime_: str):
+        """
+        Drop locations if their begin-end range is outside of the query date range
+        """
+        location_indices_to_remove = set()
+
+        parsed_date: list[datetime] = parse_date(datetime_)
+        MAGIC_UPSTREAM_DATE_SIGNIFYING_STILL_IN_SERVICE = "2100-01-01"
+
+        if len(parsed_date) == 2:
+            startQuery, endQuery = parsed_date
+
+            for i, location in enumerate(self.locations):
+                if not location.beginDate or not location.endDate:
+                    location_indices_to_remove.add(i)
+                    continue
+                skipEndDateCheck = location.endDate.startswith(
+                    MAGIC_UPSTREAM_DATE_SIGNIFYING_STILL_IN_SERVICE
+                )
+                startDate = datetime.fromisoformat(location.beginDate)
+                endDate = datetime.fromisoformat(location.endDate)
+
+                locationIsInsideQueryRange = startDate <= startQuery and (
+                    endQuery <= endDate if not skipEndDateCheck else True
+                )
+                if not locationIsInsideQueryRange:
+                    location_indices_to_remove.add(i)
+
+        elif len(parsed_date) == 1:
+            for i, location in enumerate(self.locations):
+                if not location.beginDate or not location.endDate:
+                    location_indices_to_remove.add(i)
+                    continue
+                skipEndDateCheck = (
+                    location.endDate == MAGIC_UPSTREAM_DATE_SIGNIFYING_STILL_IN_SERVICE
+                )
+                startDate = datetime.fromisoformat(location.beginDate)
+                endDate = datetime.fromisoformat(location.endDate)
+                if parsed_date[0] < startDate or (
+                    not skipEndDateCheck and parsed_date[0] > endDate
+                ):
+                    location_indices_to_remove.add(i)
+
+        else:
+            raise RuntimeError(
+                "datetime_ must be a date or date range with two dates separated by '/' but got {}".format(
+                    datetime_
+                )
+            )
+
+        # delete them backwards so we don't have to make a copy of the list or mess up indices while iterating
+        for index in sorted(location_indices_to_remove, reverse=True):
+            del self.locations[index]
+
+        return self
 
     def to_geojson(
         self,
