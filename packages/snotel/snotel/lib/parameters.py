@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 from com.cache import RedisCache
-from com.helpers import EDRField, await_
+from com.helpers import EDRFieldsMapping, await_
 from snotel.lib.types import ReferenceDataDTO
 
 
@@ -18,8 +18,8 @@ class ParametersCollection:
         )
         self.parameters = ReferenceDataDTO.model_validate(result)
 
-    def get_fields(self) -> dict[str, EDRField]:
-        fields: dict[str, EDRField] = {}
+    def get_fields(self) -> EDRFieldsMapping:
+        fields: EDRFieldsMapping = {}
         assert self.parameters.elements
         for parameter in self.parameters.elements:
             assert parameter.code

@@ -4,7 +4,13 @@
 from datetime import datetime
 import logging
 from typing import Literal, Optional, assert_never, cast
-from com.helpers import EDRField, OAFFieldsMapping, parse_bbox, parse_date, parse_z
+from com.helpers import (
+    EDRFieldsMapping,
+    OAFFieldsMapping,
+    parse_bbox,
+    parse_date,
+    parse_z,
+)
 import geojson_pydantic
 from pydantic import BaseModel, field_validator
 import shapely
@@ -239,7 +245,7 @@ class LocationResponse(BaseModel):
         skip_geometry: Optional[bool] = False,
         select_properties: Optional[list[str]] = None,
         properties: Optional[list[tuple[str, str]]] = None,
-        fields_mapping: OAFFieldsMapping | dict[str, EDRField] = {},
+        fields_mapping: OAFFieldsMapping | EDRFieldsMapping = {},
         sortby: Optional[list[SortDict]] = None,  # now treat as list[SortDict]
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """

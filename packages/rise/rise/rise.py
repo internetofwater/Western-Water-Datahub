@@ -49,6 +49,7 @@ class RiseProvider(BaseProvider):
         ] = None,  # unlike edr, this is a string; we need to case to an int before filtering
         offset: Optional[int] = 0,
         skip_geometry: Optional[bool] = False,
+        **kwargs,  # other implicit args added by pygeoapi
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         if itemId:
             assert not properties, (

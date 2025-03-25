@@ -10,12 +10,20 @@ from com.geojson.types import (
     SortDict,
     sort_by_properties_in_place,
 )
-from com.helpers import await_, parse_bbox, parse_date, parse_z
+from com.helpers import (
+    EDRFieldsMapping,
+    OAFFieldsMapping,
+    await_,
+    parse_bbox,
+    parse_date,
+    parse_z,
+)
 import geojson_pydantic
 from rise.lib.types.helpers import ZType
+from snotel.lib.covjson_builder import CovjsonBuilder
 from snotel.lib.types import StationDTO
 import shapely
-from typing import Literal, Optional, assert_never
+from typing import Optional, assert_never
 
 
 class LocationCollection:
@@ -119,9 +127,7 @@ class LocationCollection:
         skip_geometry: Optional[bool] = False,
         select_properties: Optional[list[str]] = None,
         properties: Optional[list[tuple[str, str]]] = None,
-        fields_mapping: dict[
-            str, dict[Literal["type"], Literal["number", "string", "integer"]]
-        ] = {},
+        fields_mapping: EDRFieldsMapping | OAFFieldsMapping = {},
         sortby: Optional[list[SortDict]] = None,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
@@ -222,3 +228,21 @@ class LocationCollection:
             self.locations.pop(i)
 
         return self
+
+    def to_covjson(self, fieldMapper: EDRFieldsMapping):
+        stationTriples: list[str] = [
+            location.stationTriplet
+            for location in self.locations
+            if location.stationTriplet
+        ]
+
+        tripleToGeometry: dict[str, tuple[float, float]] = {}
+        for location in self.locations:
+            if location.stationTriplet and location.longitude and location.latitude:
+                assert location.longitude and location.latitude
+                tripleToGeometry[location.stationTriplet] = (
+                    location.longitude,
+                    location.latitude,
+                )
+
+        return CovjsonBuilder(stationTriples, tripleToGeometry, fieldMapper).render()

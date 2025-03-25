@@ -19,6 +19,7 @@ OAFFieldsMapping = dict[
     str, dict[Literal["type"], Literal["number", "string", "integer"]]
 ]
 
+
 EDRField = TypedDict(
     "EDRField",
     {
@@ -28,6 +29,8 @@ EDRField = TypedDict(
         "x-ogc-unit": str,
     },
 )
+
+EDRFieldsMapping = dict[str, EDRField]
 
 
 def await_(coro: Coroutine[Any, Any, T]) -> T:

@@ -26,4 +26,6 @@ def test_get_all_data(fields):
         station_triplets=["908:WA:SNTL", "301:CA:SNTL"],
         element_code="*",
     )
-    assert collection
+    assert len(collection) == 2
+    assert collection["908:WA:SNTL"].data
+    assert collection["301:CA:SNTL"].data

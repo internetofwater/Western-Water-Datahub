@@ -4,7 +4,7 @@
 import logging
 from typing import Any, Tuple
 
-from com.helpers import EDRField, await_
+from com.helpers import EDRFieldsMapping, await_
 from rise.lib.covjson.template import COVJSON_TEMPLATE
 from rise.lib.covjson.types import (
     CoverageCollection,
@@ -73,7 +73,7 @@ class CovJSONBuilder:
 
     def _insert_parameter_metadata(
         self,
-        paramsToGeoJsonOutput: dict[str, EDRField],
+        paramsToGeoJsonOutput: EDRFieldsMapping,
         location_response: list[DataNeededForCovjson],
     ):
         relevant_parameters = []
@@ -163,7 +163,7 @@ class CovJSONBuilder:
         self, location_response: list[DataNeededForCovjson]
     ) -> CoverageCollection:
         templated_covjson: CoverageCollection = COVJSON_TEMPLATE
-        paramIdToMetadata: dict[str, EDRField] = await_(
+        paramIdToMetadata: EDRFieldsMapping = await_(
             self._cache.get_or_fetch_parameters()
         )
         templated_covjson["coverages"] = self._get_coverages(

@@ -18,6 +18,10 @@ class ResultCollection:
     def _fetch_metadata_for_elements(
         self, station_triplets: list[str], element_code: str
     ):
+        """
+        Fetch the elements for a series of station triplets; since no begin or end date is specified it will return just a small amount of data
+        but still include the begin and end date in the response,
+        """
         assert station_triplets
         station_triplets_comma_separated = ",".join(station_triplets)
         assert element_code
@@ -31,7 +35,8 @@ class ResultCollection:
         station_triplets: list[str],
         element_code: str = "*",
         force_fetch: bool = False,
-    ) -> list[StationDataDTO]:
+        datetime_filter: str = "",
+    ) -> dict[str, StationDataDTO]:
         """
         Given a list of station triples, fetch all associated data for them
         """
@@ -68,13 +73,11 @@ class ResultCollection:
             self.cache.get_or_fetch_group(urls_for_full_data, force_fetch)
         )
 
-        data_array: list[StationDataDTO] = []
-        for url, datastreams in result.items():
+        stationToData: dict[str, StationDataDTO] = {}
+        for _url, datastreams in result.items():
             for item in datastreams:
                 data = StationDataDTO.model_validate(item)
-                data_array.append(data)
+                assert data.stationTriplet
+                stationToData[data.stationTriplet] = data
 
-        return data_array
-
-
-# StationDataDTO.model_validate(result[list(result.keys())[0]][0])
+        return stationToData

@@ -6,7 +6,7 @@ import logging
 import math
 from typing import Optional
 from urllib.parse import urlparse
-from com.helpers import EDRField, await_
+from com.helpers import EDRFieldsMapping, await_
 from rise.custom_types import JsonPayload, Url
 import aiohttp
 from aiohttp import client_exceptions
@@ -96,8 +96,8 @@ class RISECache(RedisCache):
 
         return pages
 
-    async def get_or_fetch_parameters(self, force_fetch=False) -> dict[str, EDRField]:
-        fields: dict[str, EDRField] = {}
+    async def get_or_fetch_parameters(self, force_fetch=False) -> EDRFieldsMapping:
+        fields: EDRFieldsMapping = {}
 
         pages = await self.get_or_fetch_all_pages(
             "https://data.usbr.gov/rise/api/parameter",
