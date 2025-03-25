@@ -2,10 +2,11 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-from typing import Optional
+from typing import Optional, cast
 
 from com.helpers import EDRFieldsMapping
 from pygeoapi.provider.base_edr import BaseEDRProvider
+from rise.lib.covjson.types import CoverageCollection
 from snotel.lib.locations import LocationCollection
 from snotel.lib.parameters import ParametersCollection
 from pygeoapi.provider.base import ProviderQueryError
@@ -74,7 +75,7 @@ class SnotelEDRProvider(BaseEDRProvider):
         z: Optional[str] = None,
         format_: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> CoverageCollection:
         """
         Returns a data cube defined by bbox and z parameters
 
@@ -83,7 +84,13 @@ class SnotelEDRProvider(BaseEDRProvider):
         :param z: vertical level(s)
         :param format_: data format of output
         """
-        ...
+        # Example: http://localhost:5000/collections/snotel-edr/cube?bbox=-164.300537,67.195518,-160.620117,68.26125
+
+        collection = LocationCollection()
+
+        collection.drop_all_locations_outside_bounding_box(bbox, z)
+
+        return cast(CoverageCollection, collection.to_covjson(self.get_fields()))
 
     @BaseEDRProvider.register()
     def area(

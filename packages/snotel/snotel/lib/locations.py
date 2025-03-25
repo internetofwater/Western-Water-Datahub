@@ -61,9 +61,16 @@ class LocationCollection:
         self.locations = self.locations[offset:]
         return self
 
-    def drop_all_locations_outside_bounding_box(self, bbox):
-        geometry, z = parse_bbox(bbox)
-        return self._filter_by_geometry(geometry, z)
+    def drop_all_locations_outside_bounding_box(self, bbox, z=None):
+        if bbox:
+            parse_result = parse_bbox(bbox)
+            shapely_box = parse_result[0] if parse_result else None
+            z = parse_result[1] if parse_result else z
+
+        shapely_box = parse_bbox(bbox)[0] if bbox else None
+        # TODO what happens if they specify both a bbox with z and a z value?
+        z = parse_bbox(bbox)[1] if bbox else z
+        return self._filter_by_geometry(shapely_box, z)
 
     def select_date_range(self, datetime_: str):
         """

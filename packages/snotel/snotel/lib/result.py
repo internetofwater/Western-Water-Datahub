@@ -22,7 +22,7 @@ class ResultCollection:
         Fetch the elements for a series of station triplets; since no begin or end date is specified it will return just a small amount of data
         but still include the begin and end date in the response,
         """
-        assert station_triplets
+        assert station_triplets, "No station triplets provided"
         station_triplets_comma_separated = ",".join(station_triplets)
         assert element_code
         url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/data?elements={element_code}&stationTriplets={station_triplets_comma_separated}"
