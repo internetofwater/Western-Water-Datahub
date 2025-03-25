@@ -3,7 +3,8 @@
 
 import asyncio
 import logging
-from typing import Coroutine, Literal, Optional, Tuple, Type, TypedDict
+from typing import Any, Coroutine, Literal, Optional, Tuple, Type, TypedDict
+from annotated_types import T
 from com.env import iodh_event_loop
 from pydantic import BaseModel
 from rise.lib.types.helpers import ZType
@@ -14,7 +15,9 @@ from pygeoapi.provider.base import ProviderQueryError
 
 LOGGER = logging.getLogger(__name__)
 
-FieldsMapping = dict[str, dict[Literal["type"], Literal["number", "string", "integer"]]]
+OAFFieldsMapping = dict[
+    str, dict[Literal["type"], Literal["number", "string", "integer"]]
+]
 
 EDRField = TypedDict(
     "EDRField",
@@ -27,7 +30,7 @@ EDRField = TypedDict(
 )
 
 
-def await_(coro: Coroutine):
+def await_(coro: Coroutine[Any, Any, T]) -> T:
     """
     await an asyncio coroutine, ensuring it works even if an event loop is already running.
     """
@@ -127,10 +130,10 @@ def parse_bbox(
         )
 
 
-def get_oaf_fields_from_pydantic_model(model: Type[BaseModel]) -> FieldsMapping:
+def get_oaf_fields_from_pydantic_model(model: Type[BaseModel]) -> OAFFieldsMapping:
     """Given a pydantic model, return a mapping of the fields to their data types"""
     pydanticFields = model.model_fields
-    fields: FieldsMapping = {}
+    fields: OAFFieldsMapping = {}
     for fieldName in pydanticFields.keys():
         dataType: Literal["number", "string", "integer"]
 
