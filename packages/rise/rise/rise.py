@@ -4,7 +4,7 @@
 import logging
 from typing import Literal, Optional
 
-from com.helpers import OAFFieldsMapping, get_oaf_fields_from_pydantic_model
+from com.helpers import FieldsMapping, get_oaf_fields_from_pydantic_model
 from pygeoapi.provider.base import BaseProvider
 from pygeoapi.util import crs_transform
 from com.env import TRACER
@@ -18,8 +18,6 @@ LOGGER = logging.getLogger(__name__)
 
 class RiseProvider(BaseProvider):
     """Rise Provider for OGC API Features"""
-
-    _fields: OAFFieldsMapping
 
     def __init__(self, provider_def):
         """
@@ -107,7 +105,7 @@ class RiseProvider(BaseProvider):
 
         return self.items(itemId=identifier, bbox=[], **kwargs)
 
-    def get_fields(self, **kwargs) -> OAFFieldsMapping:
+    def get_fields(self, **kwargs) -> FieldsMapping:
         """
         Get provider field information (names, types)
 

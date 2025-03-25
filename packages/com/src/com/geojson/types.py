@@ -3,7 +3,6 @@
 
 from typing import Literal, NotRequired, Optional, TypedDict
 
-from com.helpers import OAFFieldsMapping
 import geojson_pydantic
 from pygeoapi.provider.base import ProviderQueryError
 from rise.lib.types.location import LocationData
@@ -62,7 +61,9 @@ def sort_by_properties_in_place(
 def all_properties_found_in_feature(
     location_feature: LocationData,
     properties_to_look_for: list[tuple[str, str]],
-    fields_mapping: OAFFieldsMapping,
+    fields_mapping: dict[
+        str, dict[Literal["type"], Literal["number", "string", "integer"]]
+    ],
 ) -> bool:
     # We rely on fields_mapping to know how to cast each property
     if not fields_mapping:

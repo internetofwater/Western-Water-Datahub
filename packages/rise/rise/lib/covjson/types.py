@@ -6,7 +6,7 @@ from typing import Literal, TypedDict
 
 class Parameter(TypedDict):
     type: str
-    description: dict[str, str]
+    description: dict[str, dict]
     unit: dict
     observedProperty: dict
 

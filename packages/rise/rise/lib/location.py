@@ -3,8 +3,8 @@
 
 from datetime import datetime
 import logging
-from typing import Literal, Optional, assert_never, cast
-from com.helpers import EDRField, OAFFieldsMapping, parse_bbox, parse_date, parse_z
+from typing import Literal, Optional, assert_never
+from com.helpers import parse_bbox, parse_date, parse_z
 import geojson_pydantic
 from pydantic import BaseModel, field_validator
 import shapely
@@ -239,7 +239,9 @@ class LocationResponse(BaseModel):
         skip_geometry: Optional[bool] = False,
         select_properties: Optional[list[str]] = None,
         properties: Optional[list[tuple[str, str]]] = None,
-        fields_mapping: OAFFieldsMapping | dict[str, EDRField] = {},
+        fields_mapping: dict[
+            str, dict[Literal["type"], Literal["number", "string", "integer"]]
+        ] = {},
         sortby: Optional[list[SortDict]] = None,  # now treat as list[SortDict]
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
@@ -249,8 +251,6 @@ class LocationResponse(BaseModel):
 
         for location_feature in self.data:
             if properties:
-                # narrow the FieldsMapping type here manually since properties is a query arg for oaf and thus we know that OAFFieldsMapping must be used
-                fields_mapping = cast(OAFFieldsMapping, fields_mapping)
                 if not all_properties_found_in_feature(
                     location_feature, properties, fields_mapping
                 ):
