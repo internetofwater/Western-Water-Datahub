@@ -23,6 +23,7 @@ def test_get_one_element_metadata(fields):
 
 def test_get_all_data(fields):
     collection = ResultCollection().fetch_all_data(
-        station_triplets=["908:WA:SNTL", "301:CA:SNTL"], element_code="*"
+        station_triplets=["908:WA:SNTL", "301:CA:SNTL"],
+        element_code="*",
     )
     assert collection
