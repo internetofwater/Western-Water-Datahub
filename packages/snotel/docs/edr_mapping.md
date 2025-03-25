@@ -18,3 +18,7 @@ The process to generate EDR mappings for snotel is relatively straightforward. L
 # OAF Mappings
 
 - fetch `stations/` with `stationNames=*`
+
+# Docs
+
+Docs for snotel can be found via the swagger ui here: https://wcc.sc.egov.usda.gov/awdbRestApi/swagger-ui/index.html
