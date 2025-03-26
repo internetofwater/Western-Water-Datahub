@@ -9,3 +9,6 @@ __pycache__/
 
 # debugging test file
 test.json
+
+.coverage
+coverage.xml

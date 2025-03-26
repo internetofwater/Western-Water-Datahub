@@ -16,6 +16,12 @@ test:
 	# run tests in parallel with pytest-xdist and stop after first failure; run in verbose mode and show durations of the 5 slowest tests
 	uv run pyright && uv run pytest -n 20 -x --maxfail=1 -vv --durations=5
 
+cov:
+	uv run pytest -n 20 -x --maxfail=1 -vv --durations=5 --cov
+
+cyclo:
+	uv run radon cc --order SCORE --show-complexity --min B .
+
 clean:
 	rm -rf .venv/
 	rm -rf .pytest_cache/

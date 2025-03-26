@@ -21,6 +21,8 @@ dependencies = [
     "opentelemetry-exporter-otlp>=1.30.0",
     "orjson>=3.10.15",
     "pygeoapi @ git+https://github.com/webb-ben/pygeoapi.git@pydantic",
+    "pytest-cov>=6.0.0",
+    "radon>=6.0.1",
 ]
 
 classifiers = [
@@ -68,3 +70,9 @@ snotel = { workspace = true }
 [tool.pytest.ini_options]
 # needed to prevent a deprecation warning; doesnt really affect any behavior
 asyncio_default_fixture_loop_scope = "function"
+
+[tool.coverage.run]
+# don't include tests 
+omit = [
+    "**/*_test.py"
+]
