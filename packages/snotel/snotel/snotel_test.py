@@ -47,3 +47,25 @@ def test_snotel_filter_by_multiple_property_values():
     out = p.items(properties=[("networkCode", "SNTL"), ("name", "Albro Lake")])
     assert out["type"] == "FeatureCollection"
     assert len(out["features"]) == 1
+
+
+def test_filter_by_property_is_same_as_filter_by_id():
+    p = SnotelProvider(conf)
+    idForAdinMtnInCalifornia = 301
+    out1 = p.items(itemId=f"{idForAdinMtnInCalifornia}")
+    assert out1["type"] == "Feature"
+    out2 = p.items(properties=[("stationId", f"{idForAdinMtnInCalifornia}")])
+    assert out2["type"] == "FeatureCollection"
+    assert len(out2["features"]) == 1
+    assert out1 == out2["features"][0]
+
+
+def test_filter_by_property_and_itemid_at_once():
+    p = SnotelProvider(conf)
+    idForAdinMtnInCalifornia = 301
+    out1 = p.items(
+        itemId=f"{idForAdinMtnInCalifornia}", properties=[("networkCode", "SNTL")]
+    )
+    assert out1["type"] == "Feature"
+    assert out1["properties"]["networkCode"] == "SNTL"
+    assert out1["properties"]["stationId"] == str(idForAdinMtnInCalifornia)
