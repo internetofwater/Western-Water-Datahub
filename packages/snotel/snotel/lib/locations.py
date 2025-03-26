@@ -8,6 +8,8 @@ from com.geojson.types import (
     GeojsonFeatureDict,
     GeojsonFeatureCollectionDict,
     SortDict,
+    all_properties_found_in_feature,
+    filter_out_properties_not_selected,
     sort_by_properties_in_place,
 )
 from com.helpers import (
@@ -23,7 +25,7 @@ from rise.lib.types.helpers import ZType
 from snotel.lib.covjson_builder import CovjsonBuilder
 from snotel.lib.types import StationDTO
 import shapely
-from typing import Optional, assert_never
+from typing import Optional, assert_never, cast
 import shapely.wkt
 
 
@@ -159,13 +161,22 @@ class LocationCollection:
                 else None,
                 "id": loc.stationId,
             }
+
+            serialized_feature = geojson_pydantic.Feature.model_validate(feature)
+            if properties:
+                # narrow the FieldsMapping type here manually since properties is a query arg for oaf and thus we know that OAFFieldsMapping must be used
+                fields_mapping = cast(OAFFieldsMapping, fields_mapping)
+                if not all_properties_found_in_feature(
+                    serialized_feature, properties, fields_mapping
+                ):
+                    continue
+
             if select_properties:
-                feature["properties"] = {
-                    k: v
-                    for k, v in feature["properties"].items()
-                    if k in select_properties
-                }
-            features.append(geojson_pydantic.Feature.model_validate(feature))
+                filter_out_properties_not_selected(
+                    serialized_feature, select_properties
+                )
+
+            features.append(serialized_feature)
 
         if sortby:
             sort_by_properties_in_place(features, sortby)

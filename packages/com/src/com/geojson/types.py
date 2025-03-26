@@ -6,7 +6,6 @@ from typing import Literal, NotRequired, Optional, TypedDict
 from com.helpers import OAFFieldsMapping
 import geojson_pydantic
 from pygeoapi.provider.base import ProviderQueryError
-from rise.lib.types.location import LocationData
 from typing import assert_never
 
 
@@ -60,17 +59,20 @@ def sort_by_properties_in_place(
 
 
 def all_properties_found_in_feature(
-    location_feature: LocationData,
+    location_feature: geojson_pydantic.Feature,
     properties_to_look_for: list[tuple[str, str]],
     fields_mapping: OAFFieldsMapping,
 ) -> bool:
+    """Check if all properties to look for are found in the geojson feature. Use the
+    field mapper to determine the type of each property when deserializing
+    """
     # We rely on fields_mapping to know how to cast each property
     if not fields_mapping:
         raise ProviderQueryError(
             "You must supply a `fields_mapping` if you want to filter by properties"
         )
+    assert location_feature.properties
 
-    dump = location_feature.attributes.model_dump(by_alias=True)
     found_list: list[bool] = []
     for prop_name, prop_value in properties_to_look_for:
         datatype = fields_mapping.get(prop_name)
@@ -90,7 +92,21 @@ def all_properties_found_in_feature(
             case _:
                 assert_never(datatype)
 
-        found_list.append(dump.get(prop_name) == prop_value)
+        found_list.append(location_feature.properties.get(prop_name) == prop_value)
 
     # If *all* requested property-value pairs match, keep the feature
     return all(found_list)
+
+
+def filter_out_properties_not_selected(
+    serialized_feature: geojson_pydantic.Feature, select_properties: list[str]
+):
+    """Given a a geojson feature, remove any properties that are not in the list of selected properties"""
+    thingsToRemove = set()
+    assert serialized_feature.properties
+    for p in serialized_feature.properties:
+        if p not in select_properties:
+            thingsToRemove.add(p)
+
+    for i in sorted(thingsToRemove, reverse=True):
+        del serialized_feature.properties[i]

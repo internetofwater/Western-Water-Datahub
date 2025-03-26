@@ -21,6 +21,7 @@ from com.geojson.types import (
     GeojsonFeatureCollectionDict,
     SortDict,
     all_properties_found_in_feature,
+    filter_out_properties_not_selected,
     sort_by_properties_in_place,
 )
 from rise.lib.helpers import (
@@ -254,14 +255,6 @@ class LocationResponse(BaseModel):
         geojson_features: list[geojson_pydantic.Feature] = []
 
         for location_feature in self.data:
-            if properties:
-                # narrow the FieldsMapping type here manually since properties is a query arg for oaf and thus we know that OAFFieldsMapping must be used
-                fields_mapping = cast(OAFFieldsMapping, fields_mapping)
-                if not all_properties_found_in_feature(
-                    location_feature, properties, fields_mapping
-                ):
-                    continue
-
             feature_as_geojson = {
                 "type": "Feature",
                 "id": location_feature.attributes.id,
@@ -283,12 +276,20 @@ class LocationResponse(BaseModel):
             if z is not None:
                 feature_as_geojson["properties"]["elevation"] = z
 
+            serialized_feature = Feature.model_validate(feature_as_geojson)
+            if properties:
+                # narrow the FieldsMapping type here manually since properties is a query arg for oaf and thus we know that OAFFieldsMapping must be used
+                fields_mapping = cast(OAFFieldsMapping, fields_mapping)
+                if not all_properties_found_in_feature(
+                    serialized_feature, properties, fields_mapping
+                ):
+                    continue
             if select_properties:
-                for p in list(feature_as_geojson["properties"].keys()):
-                    if p not in select_properties:
-                        del feature_as_geojson["properties"][p]
+                filter_out_properties_not_selected(
+                    serialized_feature, select_properties
+                )
 
-            geojson_features.append(Feature.model_validate(feature_as_geojson))
+            geojson_features.append(serialized_feature)
 
         if sortby:
             sort_by_properties_in_place(geojson_features, sortby)
