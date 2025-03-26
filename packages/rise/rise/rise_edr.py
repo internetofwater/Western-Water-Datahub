@@ -124,7 +124,7 @@ class RiseEDRProvider(BaseEDRProvider):
         :param z: vertical level(s)
         :param format_: data format of output
         """
-
+        # Example: http://localhost:5000/collections/rise-edr/cube?bbox=-101.381836,27.215556,-92.680664,32.23139
         raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(select_properties)
         response = LocationResponseWithIncluded.from_api_pages(raw_resp)
 

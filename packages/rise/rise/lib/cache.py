@@ -122,7 +122,7 @@ class RISECache(RedisCache):
 
     @TRACER.start_as_current_span("get_or_fetch_all_param_filtered_pages")
     def get_or_fetch_all_param_filtered_pages(
-        self, properties_to_filter_by: Optional[list[str]] = None
+        self, properties_to_filter_by: Optional[list[str]] = None, force_fetch=False
     ):
         """Return all locations which contain timeseries data and optionally, also a given list of properties. Will return the associated catalogitems / catalogrecords for joins"""
         hasTimeseriesData = "itemStructureId=1"
@@ -133,7 +133,7 @@ class RISECache(RedisCache):
                 assert isinstance(prop, str)
                 base_url += f"parameterId%5B%5D={prop}&"
             base_url = base_url.removesuffix("&")
-        return await_(self.get_or_fetch_all_pages(base_url))
+        return await_(self.get_or_fetch_all_pages(base_url, force_fetch=force_fetch))
 
     async def get_or_fetch_all_results(
         self, catalogItemToResultUrl: dict[str, str]
