@@ -106,7 +106,11 @@ class SnotelEDRProvider(BaseEDRProvider):
         """
         Extract and return coverage data from a specified area.
         """
-        ...
+        collection = LocationCollection()
+
+        collection = collection.drop_outside_of_wkt(wkt, z)
+
+        return cast(CoverageCollection, collection.to_covjson(self.get_fields()))
 
     @BaseEDRProvider.register()
     def items(self, **kwargs):

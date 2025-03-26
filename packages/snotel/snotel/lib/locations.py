@@ -24,6 +24,7 @@ from snotel.lib.covjson_builder import CovjsonBuilder
 from snotel.lib.types import StationDTO
 import shapely
 from typing import Optional, assert_never
+import shapely.wkt
 
 
 class LocationCollection:
@@ -60,6 +61,10 @@ class LocationCollection:
         """
         self.locations = self.locations[offset:]
         return self
+
+    def drop_outside_of_wkt(self, wkt: Optional[str] = None, z: Optional[str] = None):
+        parsed_geo = shapely.wkt.loads(str(wkt)) if wkt else None
+        return self._filter_by_geometry(parsed_geo, z)
 
     def drop_all_locations_outside_bounding_box(self, bbox, z=None):
         if bbox:
