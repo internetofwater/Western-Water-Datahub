@@ -115,17 +115,6 @@ class CovJSONBuilder:
 
         coverages = []
         for location_feature in locationsWithResults:
-            # CoverageJSON needs a us to associated every parameter with data
-            # This data is grouped independently for each location
-            paramToCoverage: dict[str, CoverageRange] = {}
-
-            longestParam = 0
-
-            for param in location_feature.parameters:
-                assert len(param.timeseriesResults) == len(param.timeseriesDates)
-                if len(param.timeseriesResults) > longestParam:
-                    longestParam = len(param.timeseriesResults)
-
             for param in location_feature.parameters:
                 if not (  # ensure param contains data so it can be used for covjson
                     param.timeseriesResults
@@ -138,21 +127,21 @@ class CovJSONBuilder:
                     "title"
                 ]
 
-                paramToCoverage[naturalLanguageName] = {
-                    "axisNames": ["t"],
-                    "dataType": "float",
-                    "shape": [longestParam],
-                    "values": param.timeseriesResults
-                    + ([None] * (longestParam - len(param.timeseriesResults))),
-                    "type": "NdArray",
+                range: dict[str, CoverageRange] = {
+                    naturalLanguageName: {
+                        "axisNames": ["t"],
+                        "dataType": "float",
+                        "shape": [len(param.timeseriesResults)],
+                        "values": param.timeseriesResults,
+                        "type": "NdArray",
+                    }
                 }
 
                 coverage_item = _generate_coverage_item(
                     location_feature.locationType,
                     location_feature.geometry,
-                    param.timeseriesDates
-                    + ([None] * (longestParam - len(param.timeseriesDates))),
-                    paramToCoverage,
+                    param.timeseriesDates,
+                    range,
                 )
 
                 coverages.append(coverage_item)
