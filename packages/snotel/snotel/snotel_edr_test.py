@@ -1,6 +1,7 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+import datetime
 from snotel.snotel_edr import SnotelEDRProvider
 
 conf = {
@@ -35,3 +36,26 @@ def test_cube_with_multiple_locations():
     coveragesIn1285 = 7
 
     assert len(out["coverages"]) == coveragesIn1176 + coveragesIn1285
+
+
+def test_cube_with_datetime_filter():
+    p = SnotelEDRProvider(conf)
+    bboxCovering1175InAlaska = [-164.300537, 67.195518, -160.620117, 68.26125]
+    out = p.cube(bbox=bboxCovering1175InAlaska, datetime_="2010-01-01/..")
+    assert len(out["coverages"]) == 13
+    for cov in out["coverages"]:
+        for tValue in cov["domain"]["axes"]["t"]["values"]:
+            assert tValue >= datetime.datetime(2010, 1, 1).replace(
+                tzinfo=datetime.timezone.utc
+            )
+
+    out = p.cube(bbox=bboxCovering1175InAlaska, datetime_="2010-01-01/2020-01-01")
+    assert len(out["coverages"]) == 13
+    for cov in out["coverages"]:
+        for tValue in cov["domain"]["axes"]["t"]["values"]:
+            assert tValue >= datetime.datetime(2010, 1, 1).replace(
+                tzinfo=datetime.timezone.utc
+            )
+            assert tValue <= datetime.datetime(2020, 1, 1).replace(
+                tzinfo=datetime.timezone.utc
+            )

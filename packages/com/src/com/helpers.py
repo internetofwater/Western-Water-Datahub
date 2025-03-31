@@ -74,11 +74,13 @@ def parse_z(z: str) -> Optional[Tuple[ZType, list[int]]]:
             raise ProviderQueryError(f"Invalid z value: {z}")
 
 
-def parse_date(datetime_: str) -> list[datetime.datetime]:
+def parse_date(
+    datetime_: str,
+) -> datetime.datetime | tuple[datetime.datetime, datetime.datetime]:
     """Parses an EDR formatted datetime string into a datetime object"""
     dateRange = datetime_.split("/")
 
-    if len(dateRange) == 2:  # noqa F841
+    if len(dateRange) == 2:
         start, end = dateRange
 
         # python does not accept Z at the end of the datetime even though that is a valid ISO 8601 datetime
@@ -106,9 +108,9 @@ def parse_date(datetime_: str) -> list[datetime.datetime]:
                 )
             )
 
-        return [start, end]
+        return (start, end)
     else:
-        return [datetime.datetime.fromisoformat(datetime_)]
+        return datetime.datetime.fromisoformat(datetime_)
 
 
 def parse_bbox(

@@ -4,14 +4,14 @@
 from typing import Literal, TypedDict
 
 
-class Parameter(TypedDict):
+class ParameterDict(TypedDict):
     type: str
     description: dict[str, str]
     unit: dict
     observedProperty: dict
 
 
-class CoverageRange(TypedDict):
+class CoverageRangeDict(TypedDict):
     type: Literal["NdArray"]
     dataType: Literal["float"]
     axisNames: list[str]
@@ -19,15 +19,15 @@ class CoverageRange(TypedDict):
     values: list[float | None]
 
 
-class Coverage(TypedDict):
+class CoverageDict(TypedDict):
     type: Literal["Coverage"]
     domain: dict
-    ranges: dict[str, CoverageRange]
+    ranges: dict[str, CoverageRangeDict]
     domainType: Literal["PolygonSeries", "PointSeries"]
 
 
-class CoverageCollection(TypedDict):
+class CoverageCollectionDict(TypedDict):
     type: str
-    parameters: dict[str, Parameter]
+    parameters: dict[str, ParameterDict]
     referencing: list
-    coverages: list[Coverage]
+    coverages: list[CoverageDict]

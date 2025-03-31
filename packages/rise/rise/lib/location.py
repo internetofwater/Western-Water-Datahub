@@ -83,8 +83,8 @@ class LocationResponse(BaseModel):
 
         location_indices_to_remove = set()
 
-        parsed_date: list[datetime] = parse_date(datetime_)
-        if len(parsed_date) == 2:
+        parsed_date = parse_date(datetime_)
+        if isinstance(parsed_date, tuple) and len(parsed_date) == 2:
             start, end = parsed_date
 
             for i, location in enumerate(self.data):
@@ -92,8 +92,8 @@ class LocationResponse(BaseModel):
                 if updateDate < start or updateDate > end:
                     location_indices_to_remove.add(i)
 
-        elif len(parsed_date) == 1:
-            parsed_date_str = str(parsed_date[0])
+        elif isinstance(parsed_date, datetime) == 1:
+            parsed_date_str = str(parsed_date)
             self.data = [
                 location
                 for location in self.data

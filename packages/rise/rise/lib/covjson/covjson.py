@@ -7,10 +7,10 @@ from typing import Any, Tuple
 from com.helpers import EDRFieldsMapping, await_
 from rise.lib.covjson.template import COVJSON_TEMPLATE
 from rise.lib.covjson.types import (
-    CoverageCollection,
-    Coverage,
-    CoverageRange,
-    Parameter,
+    CoverageCollectionDict,
+    CoverageDict,
+    CoverageRangeDict,
+    ParameterDict,
 )
 from rise.lib.cache import RISECache
 from rise.lib.add_results import DataNeededForCovjson
@@ -22,15 +22,15 @@ def _generate_coverage_item(
     location_type: str,
     coords: list[Any] | Tuple[float, float],
     times: list[str | None],
-    paramToCoverage: dict[str, CoverageRange],
-) -> Coverage:
+    paramToCoverage: dict[str, CoverageRangeDict],
+) -> CoverageDict:
     # if it is a point it will have different geometry
 
     if location_type == "Point":
         # z = location_feature["attributes"]["elevation"]
         x, y = coords[0], coords[1]
 
-        coverage_item: Coverage = {
+        coverage_item: CoverageDict = {
             "type": "Coverage",
             "domainType": "PointSeries",
             "domain": {
@@ -45,7 +45,7 @@ def _generate_coverage_item(
         }
 
     else:
-        coverage_item: Coverage = {
+        coverage_item: CoverageDict = {
             "type": "Coverage",
             "domainType": "PolygonSeries",
             "domain": {
@@ -81,7 +81,7 @@ class CovJSONBuilder:
             for p in location.parameters:
                 relevant_parameters.append(p.parameterId)
 
-        paramNameToMetadata: dict[str, Parameter] = {}
+        paramNameToMetadata: dict[str, ParameterDict] = {}
 
         for param_id in relevant_parameters:
             if param_id not in paramsToGeoJsonOutput:
@@ -92,7 +92,7 @@ class CovJSONBuilder:
 
             associatedData = paramsToGeoJsonOutput[param_id]
 
-            _param: Parameter = {
+            _param: ParameterDict = {
                 "type": "Parameter",
                 "description": {"en": associatedData["description"]},
                 "unit": {"symbol": associatedData["x-ogc-unit"]},
@@ -110,7 +110,7 @@ class CovJSONBuilder:
         self,
         locationsWithResults: list[DataNeededForCovjson],
         paramsToGeoJsonOutput,
-    ) -> list[Coverage]:
+    ) -> list[CoverageDict]:
         """Return the data needed for the 'coverage' key in the covjson response"""
 
         coverages = []
@@ -127,7 +127,7 @@ class CovJSONBuilder:
                     "title"
                 ]
 
-                range: dict[str, CoverageRange] = {
+                range: dict[str, CoverageRangeDict] = {
                     naturalLanguageName: {
                         "axisNames": ["t"],
                         "dataType": "float",
@@ -150,8 +150,8 @@ class CovJSONBuilder:
 
     def fill_template(
         self, location_response: list[DataNeededForCovjson]
-    ) -> CoverageCollection:
-        templated_covjson: CoverageCollection = COVJSON_TEMPLATE
+    ) -> CoverageCollectionDict:
+        templated_covjson: CoverageCollectionDict = COVJSON_TEMPLATE
         paramIdToMetadata: EDRFieldsMapping = await_(
             self._cache.get_or_fetch_parameters()
         )

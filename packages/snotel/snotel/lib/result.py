@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: MIT
 
 import datetime
+from typing import Optional
 from com.cache import RedisCache
-from com.helpers import await_
+from com.helpers import await_, parse_date
 from snotel.lib.types import StationDataDTO
 
 
@@ -30,48 +31,87 @@ class ResultCollection:
         assert "error" not in result, result
         return [StationDataDTO.model_validate(res) for res in result]
 
+    def _get_earliest_and_latest_date_from_filter(
+        self, datetime_filter: str
+    ) -> tuple[datetime.datetime, datetime.datetime]:
+        """
+        In EDR you can specify a format like ../1910-01-01
+        to fetch all data up to and including 1910-01-01
+
+        However, SNOTEL fails if you try to pass in datetime.min/max
+        since it apparently is too early/late, thus we have to set it to a reasonable date
+        """
+        if (
+            (parsed_date := parse_date(datetime_filter))
+            and isinstance(parsed_date, tuple)
+            and len(parsed_date) == 2
+        ):
+            earliestDate, latestDate = parsed_date
+        else:
+            earliestDate = latestDate = parsed_date
+
+        earliestDate = max(earliestDate, datetime.datetime.fromisoformat("1900-01-01"))
+
+        lastDateSupportedInAPI = "2100-01-01"
+        latestDate = min(
+            latestDate, datetime.datetime.fromisoformat(lastDateSupportedInAPI)
+        )
+
+        return earliestDate, latestDate
+
     def fetch_all_data(
         self,
         station_triplets: list[str],
         element_code: str = "*",
         force_fetch: bool = False,
-        datetime_filter: str = "",
+        datetime_filter: Optional[str] = None,
     ) -> dict[str, StationDataDTO]:
         """
         Given a list of station triples, fetch all associated data for them
         """
         metadata = self._fetch_metadata_for_elements(station_triplets, element_code)
-
         urls_for_full_data = []
         for station in metadata:
             if not station.data:
                 continue
-            earliestDate, latestDate = datetime.datetime.max, datetime.datetime.min
+
+            earliestDate, latestDate = (
+                (datetime.datetime.max, datetime.datetime.min)
+                if not datetime_filter
+                else self._get_earliest_and_latest_date_from_filter(datetime_filter)
+            )
             elements: list[str] = []
             for datastream in station.data:
                 if not datastream.stationElement:
                     continue
-                start, end = (
-                    datastream.stationElement.beginDate,
-                    datastream.stationElement.endDate,
-                )
-                assert start
-                assert end
-                startDate = datetime.datetime.fromisoformat(start)
-                endDate = datetime.datetime.fromisoformat(end)
-                if startDate < earliestDate:
-                    earliestDate = startDate
-                if endDate > latestDate:
-                    latestDate = endDate
+
+                if not datetime_filter:
+                    start, end = (
+                        datastream.stationElement.beginDate,
+                        datastream.stationElement.endDate,
+                    )
+                    assert start and end
+                    startDate = datetime.datetime.fromisoformat(start)
+                    endDate = datetime.datetime.fromisoformat(end)
+                    if startDate < earliestDate:
+                        earliestDate = startDate
+                    if endDate > latestDate:
+                        latestDate = endDate
 
                 assert datastream.stationElement.elementCode
                 elements.append(datastream.stationElement.elementCode)
 
+            assert earliestDate < latestDate, (
+                f"{earliestDate} was not before {latestDate}"
+            )
             full_results_url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/data?beginDate={earliestDate}&endDate={latestDate}&elements={','.join(elements)}&stationTriplets={station.stationTriplet}"
             urls_for_full_data.append(full_results_url)
+
         result: dict[str, dict] = await_(
             self.cache.get_or_fetch_group(urls_for_full_data, force_fetch)
         )
+        for url, res in result.items():
+            assert "error" not in res, (url, res)
 
         stationToData: dict[str, StationDataDTO] = {}
         for _url, datastreams in result.items():

@@ -21,12 +21,15 @@ from com.helpers import (
     parse_z,
 )
 import geojson_pydantic
+from rise.lib.covjson.types import CoverageCollectionDict
 from rise.lib.types.helpers import ZType
 from snotel.lib.covjson_builder import CovjsonBuilder
 from snotel.lib.types import StationDTO
 import shapely
 from typing import Optional, assert_never, cast
 import shapely.wkt
+
+type longitudeAndLatitude = tuple[float, float]
 
 
 class LocationCollection:
@@ -85,10 +88,10 @@ class LocationCollection:
         """
         location_indices_to_remove = set()
 
-        parsed_date: list[datetime] = parse_date(datetime_)
+        parsed_date = parse_date(datetime_)
         MAGIC_UPSTREAM_DATE_SIGNIFYING_STILL_IN_SERVICE = "2100-01-01"
 
-        if len(parsed_date) == 2:
+        if isinstance(parsed_date, tuple) and len(parsed_date) == 2:
             startQuery, endQuery = parsed_date
 
             for i, location in enumerate(self.locations):
@@ -107,7 +110,7 @@ class LocationCollection:
                 if not locationIsInsideQueryRange:
                     location_indices_to_remove.add(i)
 
-        elif len(parsed_date) == 1:
+        elif isinstance(parsed_date, datetime):
             for i, location in enumerate(self.locations):
                 if not location.beginDate or not location.endDate:
                     location_indices_to_remove.add(i)
@@ -117,11 +120,10 @@ class LocationCollection:
                 )
                 startDate = datetime.fromisoformat(location.beginDate)
                 endDate = datetime.fromisoformat(location.endDate)
-                if parsed_date[0] < startDate or (
-                    not skipEndDateCheck and parsed_date[0] > endDate
+                if parsed_date < startDate or (
+                    not skipEndDateCheck and parsed_date > endDate
                 ):
                     location_indices_to_remove.add(i)
-
         else:
             raise RuntimeError(
                 "datetime_ must be a date or date range with two dates separated by '/' but got {}".format(
@@ -252,14 +254,16 @@ class LocationCollection:
 
         return self
 
-    def to_covjson(self, fieldMapper: EDRFieldsMapping):
+    def to_covjson(
+        self, fieldMapper: EDRFieldsMapping, datetime_: Optional[str]
+    ) -> CoverageCollectionDict:
         stationTriples: list[str] = [
             location.stationTriplet
             for location in self.locations
             if location.stationTriplet
         ]
 
-        tripleToGeometry: dict[str, tuple[float, float]] = {}
+        tripleToGeometry: dict[str, longitudeAndLatitude] = {}
         for location in self.locations:
             if location.stationTriplet and location.longitude and location.latitude:
                 assert location.longitude and location.latitude
@@ -268,4 +272,12 @@ class LocationCollection:
                     location.latitude,
                 )
 
-        return CovjsonBuilder(stationTriples, tripleToGeometry, fieldMapper).render()
+        # We cast the return value here because we know it will be a CoverageCollectionDict
+        covjson_result = CovjsonBuilder(
+            stationTriples, tripleToGeometry, fieldMapper, datetime_
+        ).render()
+
+        return cast(
+            CoverageCollectionDict,
+            covjson_result,
+        )

@@ -7,6 +7,11 @@ from snotel.lib.types import ReferenceDataDTO
 
 
 class ParametersCollection:
+    """
+    A helper class used for fetching data about parameters;
+    parameters are known as `reference-data` in the upstream SNOTEL API
+    """
+
     parameters: ReferenceDataDTO
 
     def __init__(self) -> None:
@@ -22,6 +27,8 @@ class ParametersCollection:
         fields: EDRFieldsMapping = {}
         assert self.parameters.elements
         for parameter in self.parameters.elements:
+            # We add asserts here since depending on query params it could be possible to not
+            # have these in the response; however, given the default query params, we expect them
             assert parameter.code
             assert parameter.name
             description = parameter.description or parameter.physicalElementName

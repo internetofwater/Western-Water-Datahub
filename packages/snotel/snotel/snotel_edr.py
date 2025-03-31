@@ -2,11 +2,12 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-from typing import Optional, cast
+from typing import Optional
 
+from com.geojson.types import GeojsonFeatureCollectionDict, GeojsonFeatureDict
 from com.helpers import EDRFieldsMapping
 from pygeoapi.provider.base_edr import BaseEDRProvider
-from rise.lib.covjson.types import CoverageCollection
+from rise.lib.covjson.types import CoverageCollectionDict
 from snotel.lib.locations import LocationCollection
 from snotel.lib.parameters import ParametersCollection
 from pygeoapi.provider.base import ProviderQueryError
@@ -38,7 +39,7 @@ class SnotelEDRProvider(BaseEDRProvider):
         crs: Optional[str] = None,
         format_: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> CoverageCollectionDict | GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
         Extract data from location
         """
@@ -58,7 +59,7 @@ class SnotelEDRProvider(BaseEDRProvider):
                 fields_mapping=self.get_fields(),
             )
 
-        return collection.to_covjson(self.get_fields())
+        return collection.to_covjson(self.get_fields(), datetime_)
 
     def get_fields(self) -> EDRFieldsMapping:
         """Get the list of all parameters (i.e. fields) that the user can filter by"""
@@ -73,9 +74,8 @@ class SnotelEDRProvider(BaseEDRProvider):
         datetime_: Optional[str] = None,
         select_properties: Optional[list] = None,
         z: Optional[str] = None,
-        format_: Optional[str] = None,
         **kwargs,
-    ) -> CoverageCollection:
+    ) -> CoverageCollectionDict:
         """
         Returns a data cube defined by bbox and z parameters
 
@@ -85,12 +85,13 @@ class SnotelEDRProvider(BaseEDRProvider):
         :param format_: data format of output
         """
         # Example: http://localhost:5000/collections/snotel-edr/cube?bbox=-164.300537,67.195518,-160.620117,68.26125
+        # Example: http://localhost:5000/collections/snotel-edr/cube?bbox=-164.300537,67.195518,-160.620117,68.26125&datetime=2010-01-01/..&f=json
 
         collection = LocationCollection()
 
         collection.drop_all_locations_outside_bounding_box(bbox, z)
 
-        return cast(CoverageCollection, collection.to_covjson(self.get_fields()))
+        return collection.to_covjson(self.get_fields(), datetime_)
 
     @BaseEDRProvider.register()
     def area(
@@ -100,9 +101,8 @@ class SnotelEDRProvider(BaseEDRProvider):
         select_properties: list[str] = [],
         datetime_: Optional[str] = None,
         z: Optional[str] = None,
-        format_: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> CoverageCollectionDict:
         """
         Extract and return coverage data from a specified area.
         """
@@ -110,7 +110,7 @@ class SnotelEDRProvider(BaseEDRProvider):
 
         collection = collection.drop_outside_of_wkt(wkt, z)
 
-        return cast(CoverageCollection, collection.to_covjson(self.get_fields()))
+        return collection.to_covjson(self.get_fields(), datetime_)
 
     @BaseEDRProvider.register()
     def items(self, **kwargs):

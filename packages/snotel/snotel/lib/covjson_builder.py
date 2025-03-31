@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 from datetime import datetime, timezone
+from typing import Optional
 from com.helpers import EDRFieldsMapping
 from covjson_pydantic.coverage import Coverage, CoverageCollection
 from covjson_pydantic.parameter import Parameter
@@ -27,9 +28,12 @@ class CovjsonBuilder:
         station_triples: list[str],
         triplesToGeometry: dict[str, tuple[float, float]],
         fieldsMapper: EDRFieldsMapping,
+        datetime_: Optional[str] = None,
     ):
         """Initialize the builder object and fetch the necessary timeseries data"""
-        self.triplesToData = ResultCollection().fetch_all_data(station_triples)
+        self.triplesToData = ResultCollection().fetch_all_data(
+            station_triples, datetime_filter=datetime_
+        )
         self.triplesToGeometry = triplesToGeometry
         self.fieldsMapper = fieldsMapper
 

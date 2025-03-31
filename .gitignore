@@ -12,3 +12,4 @@ test.json
 
 .coverage
 coverage.xml
+htmlcov/
