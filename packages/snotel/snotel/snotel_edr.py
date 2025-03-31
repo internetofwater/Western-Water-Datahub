@@ -48,7 +48,7 @@ class SnotelEDRProvider(BaseEDRProvider):
             raise ProviderQueryError(
                 "Datetime parameter is not supported without location_id"
             )
-        collection = LocationCollection()
+        collection = LocationCollection(select_properties)
         if location_id:
             collection = collection.drop_all_locations_but_id(location_id)
 
@@ -72,7 +72,7 @@ class SnotelEDRProvider(BaseEDRProvider):
         self,
         bbox: list,
         datetime_: Optional[str] = None,
-        select_properties: Optional[list] = None,
+        select_properties: Optional[list[str]] = None,
         z: Optional[str] = None,
         **kwargs,
     ) -> CoverageCollectionDict:
@@ -86,8 +86,10 @@ class SnotelEDRProvider(BaseEDRProvider):
         """
         # Example: http://localhost:5000/collections/snotel-edr/cube?bbox=-164.300537,67.195518,-160.620117,68.26125
         # Example: http://localhost:5000/collections/snotel-edr/cube?bbox=-164.300537,67.195518,-160.620117,68.26125&datetime=2010-01-01/..&f=json
+        # Example: http://localhost:5000/collections/snotel-edr/cube?bbox=-164.300537,67.195518,-160.620117,68.26125&datetime=2010-01-01/..&parameter-name=EVAP
+        # Example: http://localhost:5000/collections/snotel-edr/cube?bbox=-164.300537,67.195518,-160.620117,68.26125&datetime=2010-01-01/..&parameter-name=TAVG
 
-        collection = LocationCollection()
+        collection = LocationCollection(select_properties)
 
         collection.drop_all_locations_outside_bounding_box(bbox, z)
 
@@ -106,7 +108,7 @@ class SnotelEDRProvider(BaseEDRProvider):
         """
         Extract and return coverage data from a specified area.
         """
-        collection = LocationCollection()
+        collection = LocationCollection(select_properties)
 
         collection = collection.drop_outside_of_wkt(wkt, z)
 

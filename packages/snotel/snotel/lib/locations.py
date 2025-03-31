@@ -37,15 +37,14 @@ class LocationCollection:
 
     locations: list[StationDTO]
 
-    def __init__(self):
+    def __init__(self, select_properties: Optional[list[str]] = None):
         self.cache = RedisCache()
         # snotel also proxies usgs so we just want to get SNOTEL stations
         JUST_SNOTEL_STATIONS = "*:*:SNTL"
-        result = await_(
-            self.cache.get_or_fetch(
-                f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?activeOnly=true&stationTriplets={JUST_SNOTEL_STATIONS}"
-            )
-        )
+        url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?activeOnly=true&stationTriplets={JUST_SNOTEL_STATIONS}"
+        if select_properties:
+            url += f"&elements={','.join(select_properties)}"
+        result = await_(self.cache.get_or_fetch(url))
         self.locations = [StationDTO.model_validate(res) for res in result]
 
     def drop_all_locations_but_id(self, location_id: str):

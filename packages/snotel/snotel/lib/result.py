@@ -69,6 +69,10 @@ class ResultCollection:
         """
         Given a list of station triples, fetch all associated data for them
         """
+        # If there aren't any stations in the list there is nothing to fetch
+        if not station_triplets:
+            return {}
+
         metadata = self._fetch_metadata_for_elements(station_triplets, element_code)
         urls_for_full_data = []
         for station in metadata:

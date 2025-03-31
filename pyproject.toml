@@ -70,6 +70,10 @@ snotel = { workspace = true }
 [tool.pytest.ini_options]
 # needed to prevent a deprecation warning; doesnt really affect any behavior
 asyncio_default_fixture_loop_scope = "function"
+addopts = "--strict-markers"
+markers = [
+    "upstream: marks tests that test upstream behavior outside of our control"
+]
 
 [tool.coverage.run]
 # don't include tests 
