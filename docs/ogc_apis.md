@@ -2,7 +2,7 @@
 
 | name in pygeoapi    | name in query url | spec text                                                                               | explanation                                                                                                                                                                                                            | example                                                                             |
 | ------------------- | ----------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `select_properties` | `parameter-name`  | Verify that only resources for the requested parameters were included in the result set | Drop location features if they do not contain the parameters in question. Since they are dropped, no timeseries results data should be fetched. Neither the location nor its results will be part of the final covjson | https://sta-edr.internetofwater.dev/collections/USGS/locations?parameter-name=00003 |
+| `select_properties` | `parameter-name`  | Verify that only resources for the requested parameters were included in the result set | Drop location features if they do not contain the parameters in question. Since they are dropped, no timeseries results data should be fetched. Neither the location nor its results will be part of the final covjson |  |
 
 # OAF Spec
 
