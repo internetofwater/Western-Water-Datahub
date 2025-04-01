@@ -1,4 +1,4 @@
-# IODH EDR Mappings
+# Western Water Datahub EDR Mappings
 
 This repository maps the various federal water data APIs like the USBR RISE API to OGC EDR using pygeoapi for ETL. It defaults to redis for the caching implementation.
 
