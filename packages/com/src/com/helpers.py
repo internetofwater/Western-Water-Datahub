@@ -91,12 +91,12 @@ def parse_date(
             end = end.replace("Z", "+00:00")
 
         start = (
-            datetime.datetime.min
+            datetime.datetime.min.replace(tzinfo=datetime.timezone.utc)
             if start == ".."
             else datetime.datetime.fromisoformat(start)
         )
         end = (
-            datetime.datetime.max
+            datetime.datetime.max.replace(tzinfo=datetime.timezone.utc)
             if end == ".."
             else datetime.datetime.fromisoformat(end)
         )
