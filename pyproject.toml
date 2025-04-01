@@ -56,11 +56,12 @@ dev = [
 package = false
 
 [tool.uv.workspace]
-members = ["packages/rise", "packages/snotel", "packages/com"]
+members = ["packages/rise", "packages/snotel", "packages/com", "packages/awdb_forecasts"]
 
 [tool.uv.sources]
 rise = { workspace = true }
 snotel = { workspace = true }
+awdb_forecasts = { workspace = true }
 
 
 [tool.pyright]

@@ -9,7 +9,9 @@
     "**/.pytest_cache/": true,
     // hide build artifacts / dependency installations
     "**/*.egg-info/": true,
-    ".venv/": true
+    ".venv/": true,
+    "dist/": true,
+    "htmlcov/": true
   },
   "[python]": {
     "editor.formatOnSave": true,
