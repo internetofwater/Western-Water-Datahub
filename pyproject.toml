@@ -20,7 +20,7 @@ dependencies = [
     "opentelemetry-sdk>=1.30.0",
     "opentelemetry-exporter-otlp>=1.30.0",
     "orjson>=3.10.15",
-    "pygeoapi @ git+https://github.com/webb-ben/pygeoapi.git@pydantic",
+    "pygeoapi @ git+https://github.com/geopython/pygeoapi.git",
     "pytest-cov>=6.0.0",
     "radon>=6.0.1",
 ]
