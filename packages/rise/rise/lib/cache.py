@@ -126,7 +126,7 @@ class RISECache(RedisCache):
     ):
         """Return all locations which contain timeseries data and optionally, also a given list of properties. Will return the associated catalogitems / catalogrecords for joins"""
         hasTimeseriesData = "itemStructureId=1"
-        base_url = f"https://data.usbr.gov/rise/api/location?include=catalogRecords.catalogItems&{hasTimeseriesData}"
+        base_url = f"https://data.usbr.gov/rise/api/location?order[id]=asc&include=catalogRecords.catalogItems&{hasTimeseriesData}"
         if properties_to_filter_by:
             base_url += "&"
             for prop in properties_to_filter_by:
