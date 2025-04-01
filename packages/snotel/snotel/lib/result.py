@@ -1,11 +1,12 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-import datetime
 from typing import Optional
 from com.cache import RedisCache
+from com.datetime import datetime_from_iso
 from com.helpers import await_, parse_date
 from snotel.lib.types import StationDataDTO
+from datetime import datetime, timezone
 
 
 class ResultCollection:
@@ -39,7 +40,7 @@ class ResultCollection:
 
     def _get_earliest_and_latest_date_from_filter(
         self, datetime_filter: str
-    ) -> tuple[datetime.datetime, datetime.datetime]:
+    ) -> tuple[datetime, datetime]:
         """
         In EDR you can specify a format like ../1910-01-01
         to fetch all data up to and including 1910-01-01
@@ -57,11 +58,15 @@ class ResultCollection:
         else:
             earliestDate = latestDate = parsed_date
 
-        earliestDate = max(earliestDate, datetime.datetime.fromisoformat("1900-01-01"))
+        earliestDate = max(
+            earliestDate,
+            datetime_from_iso("1900-01-01"),
+        )
 
-        lastDateSupportedInAPI = "2100-01-01"
+        MAGIC_LAST_DATE_FOR_API = "2100-01-01"
         latestDate = min(
-            latestDate, datetime.datetime.fromisoformat(lastDateSupportedInAPI)
+            latestDate,
+            datetime_from_iso(MAGIC_LAST_DATE_FOR_API),
         )
 
         return earliestDate, latestDate
@@ -87,7 +92,10 @@ class ResultCollection:
                 continue
 
             earliestDate, latestDate = (
-                (datetime.datetime.max, datetime.datetime.min)
+                (
+                    datetime.max.replace(tzinfo=timezone.utc),
+                    datetime.min.replace(tzinfo=timezone.utc),
+                )
                 if not datetime_filter
                 else self._get_earliest_and_latest_date_from_filter(datetime_filter)
             )
@@ -102,8 +110,8 @@ class ResultCollection:
                         datastream.stationElement.endDate,
                     )
                     assert start and end
-                    startDate = datetime.datetime.fromisoformat(start)
-                    endDate = datetime.datetime.fromisoformat(end)
+                    startDate = datetime_from_iso(start)
+                    endDate = datetime_from_iso(end)
                     if startDate < earliestDate:
                         earliestDate = startDate
                     if endDate > latestDate:
@@ -115,7 +123,7 @@ class ResultCollection:
             assert earliestDate < latestDate, (
                 f"{earliestDate} was not before {latestDate}"
             )
-            full_results_url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/data?beginDate={earliestDate}&endDate={latestDate}&elements={','.join(elements)}&stationTriplets={station.stationTriplet}"
+            full_results_url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/data?beginDate={earliestDate.strftime('%Y-%m-%d %H:%M:%S')}&endDate={latestDate.strftime('%Y-%m-%d %H:%M:%S')}&elements={','.join(elements)}&stationTriplets={station.stationTriplet}"
             urls_for_full_data.append(full_results_url)
 
         result: dict[str, dict] = await_(

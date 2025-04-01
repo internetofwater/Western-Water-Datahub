@@ -5,6 +5,7 @@ import asyncio
 import logging
 from typing import Any, Coroutine, Literal, Optional, Tuple, Type, TypedDict
 from annotated_types import T
+from com.datetime import datetime_from_iso
 from com.env import iodh_event_loop
 from pydantic import BaseModel
 from rise.lib.types.helpers import ZType
@@ -93,12 +94,12 @@ def parse_date(
         start = (
             datetime.datetime.min.replace(tzinfo=datetime.timezone.utc)
             if start == ".."
-            else datetime.datetime.fromisoformat(start)
+            else datetime_from_iso(start)
         )
         end = (
             datetime.datetime.max.replace(tzinfo=datetime.timezone.utc)
             if end == ".."
-            else datetime.datetime.fromisoformat(end)
+            else datetime_from_iso(end)
         )
 
         if start > end:
@@ -110,7 +111,7 @@ def parse_date(
 
         return (start, end)
     else:
-        return datetime.datetime.fromisoformat(datetime_)
+        return datetime_from_iso(datetime_)
 
 
 def parse_bbox(

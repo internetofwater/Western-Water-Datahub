@@ -3,6 +3,7 @@
 
 from datetime import datetime
 from com.cache import RedisCache
+from com.datetime import datetime_from_iso
 from com.env import TRACER
 from com.geojson.helpers import (
     GeojsonFeatureDict,
@@ -100,8 +101,8 @@ class LocationCollection:
                 skipEndDateCheck = location.endDate.startswith(
                     MAGIC_UPSTREAM_DATE_SIGNIFYING_STILL_IN_SERVICE
                 )
-                startDate = datetime.fromisoformat(location.beginDate)
-                endDate = datetime.fromisoformat(location.endDate)
+                startDate = datetime_from_iso(location.beginDate)
+                endDate = datetime_from_iso(location.endDate)
 
                 locationIsInsideQueryRange = startDate <= startQuery and (
                     endQuery <= endDate if not skipEndDateCheck else True
@@ -117,8 +118,8 @@ class LocationCollection:
                 skipEndDateCheck = (
                     location.endDate == MAGIC_UPSTREAM_DATE_SIGNIFYING_STILL_IN_SERVICE
                 )
-                startDate = datetime.fromisoformat(location.beginDate)
-                endDate = datetime.fromisoformat(location.endDate)
+                startDate = datetime_from_iso(location.beginDate)
+                endDate = datetime_from_iso(location.endDate)
                 if parsed_date < startDate or (
                     not skipEndDateCheck and parsed_date > endDate
                 ):
