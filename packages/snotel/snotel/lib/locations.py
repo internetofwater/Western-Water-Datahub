@@ -191,11 +191,14 @@ class LocationCollection:
             assert len(features) == 1, (
                 "The user queried a single item but we have more than one present. This is a sign that filtering by locationid wasn't done properly"
             )
-            return GeojsonFeatureDict(**features[0].model_dump())
+            return GeojsonFeatureDict(**features[0].model_dump(exclude_unset=True))
         return GeojsonFeatureCollectionDict(
             **{
                 "type": "FeatureCollection",
-                "features": [feature.model_dump(by_alias=True) for feature in features],
+                "features": [
+                    feature.model_dump(by_alias=True, exclude_unset=True)
+                    for feature in features
+                ],
             }
         )
 

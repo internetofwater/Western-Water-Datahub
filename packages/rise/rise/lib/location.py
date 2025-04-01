@@ -294,15 +294,18 @@ class LocationResponse(BaseModel):
         if sortby:
             sort_by_properties_in_place(geojson_features, sortby)
 
-        validated_geojson = FeatureCollection(
-            type="FeatureCollection", features=geojson_features
-        )
         if itemsIDSingleFeature:
-            return GeojsonFeatureDict(**geojson_features[0].model_dump(by_alias=True))
+            return GeojsonFeatureDict(
+                **geojson_features[0].model_dump(by_alias=True, exclude_unset=True)
+            )
+        else:
+            validated_geojson = FeatureCollection(
+                type="FeatureCollection", features=geojson_features
+            )
 
-        return GeojsonFeatureCollectionDict(
-            **validated_geojson.model_dump(by_alias=True)
-        )
+            return GeojsonFeatureCollectionDict(
+                **validated_geojson.model_dump(by_alias=True, exclude_unset=True)
+            )
 
 
 class LocationResponseWithIncluded(LocationResponse):
