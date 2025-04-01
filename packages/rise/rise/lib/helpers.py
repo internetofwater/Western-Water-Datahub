@@ -26,7 +26,7 @@ def no_duplicates_in_pages(pages: dict):
         for data in pages[url]["data"]:
             id = data["attributes"]["_id"]
             assert id not in found, (
-                f"{id} witn name {data['attributes']['locationName']} was found in both {url} and {found[id]}. You may need to clear the cache for {found[id]}"
+                f"{id} with name {data['attributes']['locationName']} was found in both {url} and {found[id]}. You may need to clear the cache for {found[id]}"
             )
             found[id] = url
 

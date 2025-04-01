@@ -19,6 +19,10 @@ from snotel.lib.types import DataDTO, StationDataDTO
 
 
 class CovjsonBuilder:
+    """
+    A helper class for constructing a coveragejson response for EDR queries
+    """
+
     coverages: list[Coverage]
     parameters: dict[str, Parameter] = {}
     triplesToData: dict[str, StationDataDTO]

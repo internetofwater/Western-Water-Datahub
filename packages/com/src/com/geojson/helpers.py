@@ -10,11 +10,21 @@ from typing import assert_never
 
 
 class SortDict(TypedDict):
+    """
+    This represents the schema of the property sort that a user
+    can run in the items/ query
+    """
+
     property: str
     order: Literal["+", "-"]
 
 
 class GeojsonFeatureDict(TypedDict):
+    """
+    A dict representation of a single Geojson Feature as returned by
+    items/{id}
+    """
+
     type: Literal["Feature"]
     geometry: Optional[dict]
     properties: dict

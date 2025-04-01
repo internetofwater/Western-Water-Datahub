@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 from com.helpers import await_
-import redis
+import pytest
 import requests
 import shapely.wkt
 import shapely.geometry
@@ -14,6 +14,7 @@ from rise.lib.location import LocationResponseWithIncluded
 """This file is solely for sanity checks on the upstream repo or underlying libs to make sure that queries are performing as our understanding expects"""
 
 
+@pytest.mark.upstream
 def test_rise_include_parameter_order_matters():
     """
     RISE has odd behavior where the order of the include parameters matters
@@ -52,6 +53,7 @@ def test_rise_filter_by_param_list():
     )
 
 
+@pytest.mark.upstream
 def test_rise_fetch_result_by_catalogItem():
     """Make sure that we can fetch a catalog item and get the associated result for it"""
     catalogItemUrl = "https://data.usbr.gov/rise/api/catalog-item/6811"
@@ -66,6 +68,7 @@ def test_rise_fetch_result_by_catalogItem():
     assert response.json()["data"]["attributes"]
 
 
+@pytest.mark.upstream
 def test_rise_filter_result_by_date():
     """NOTE: Rise appears to do the datetime filter before the items per page filter so if you request a very long date range it will be very long, even with a small subset of items per page"""
     url = "https://data.usbr.gov/rise/api/result?page=1&itemsPerPage=25&dateTime%5Bbefore%5D=2017-01-02&dateTime%5Bafter%5D=2017-01-01"
@@ -75,6 +78,7 @@ def test_rise_filter_result_by_date():
     assert date.startswith("2017-01-01")
 
 
+@pytest.mark.upstream
 def test_rise_filter_invalid_returns_nothing():
     invalid = "https://data.usbr.gov/rise/api/result?page=1&itemsPerPage=25&dateTime%5Bbefore%5D=2016-01-01&dateTime%5Bafter%5D=2017-01-01"
 
@@ -83,6 +87,7 @@ def test_rise_filter_invalid_returns_nothing():
     assert len(response.json()["data"]) == 0
 
 
+@pytest.mark.upstream
 def test_rise_filter_by_same_start_and_end():
     """Make sure that if we set the same start and end, we get all the dates matching the start of the iso timestamp"""
     url = "https://data.usbr.gov/rise/api/result?page=1&itemsPerPage=25&dateTime%5Bbefore%5D=2017-01-01&dateTime%5Bafter%5D=2017-01-01"
@@ -92,6 +97,7 @@ def test_rise_filter_by_same_start_and_end():
     assert len(response.json()["data"]) != 0
 
 
+@pytest.mark.upstream
 def test_rise_can_include_catalog_items_in_location():
     url = "https://data.usbr.gov/rise/api/location/1?include=catalogRecords.catalogItems&page=1&itemsPerPage=5"
     response = requests.get(url, headers={"accept": "application/vnd.api+json"})
@@ -107,6 +113,7 @@ def test_rise_can_include_catalog_items_in_location():
     assert "location" in resp
 
 
+@pytest.mark.upstream
 def test_shapely_sanity_check():
     geo: dict = {
         "type": "Point",
@@ -145,14 +152,7 @@ def test_shapely_sanity_check():
     assert not shapely.geometry.shape(location_6902_geom).contains(point_outside)
 
 
-def test_redis():
-    r = redis.Redis(host="localhost", port=6379, db=0)
-    assert r
-    r.set("test", "test")
-    val = r.get("test")
-    assert val == b"test"
-
-
+@pytest.mark.upstream
 def test_separate_pages_have_distinct_data():
     cache = RISECache()
     url1 = "https://data.usbr.gov/rise/api/location?include=catalogRecords.catalogItems?page=1&itemsPerPage=100"

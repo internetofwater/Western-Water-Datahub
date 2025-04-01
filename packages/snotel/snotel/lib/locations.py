@@ -4,7 +4,7 @@
 from datetime import datetime
 from com.cache import RedisCache
 from com.env import TRACER
-from com.geojson.types import (
+from com.geojson.helpers import (
     GeojsonFeatureDict,
     GeojsonFeatureCollectionDict,
     SortDict,

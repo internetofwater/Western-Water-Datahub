@@ -9,6 +9,12 @@ from snotel.lib.types import StationDataDTO
 
 
 class ResultCollection:
+    """
+    A helper class for fetching results and processing them
+
+    In snotel results are called `data`
+    """
+
     results: list[StationDataDTO]
 
     def __init__(
@@ -21,7 +27,7 @@ class ResultCollection:
     ):
         """
         Fetch the elements for a series of station triplets; since no begin or end date is specified it will return just a small amount of data
-        but still include the begin and end date in the response,
+        but still include the begin and end date in the response
         """
         assert station_triplets, "No station triplets provided"
         station_triplets_comma_separated = ",".join(station_triplets)
@@ -40,6 +46,7 @@ class ResultCollection:
 
         However, SNOTEL fails if you try to pass in datetime.min/max
         since it apparently is too early/late, thus we have to set it to a reasonable date
+        This function is useful for retrieving that info
         """
         if (
             (parsed_date := parse_date(datetime_filter))

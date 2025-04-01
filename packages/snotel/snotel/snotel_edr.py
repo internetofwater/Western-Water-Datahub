@@ -4,8 +4,10 @@
 import logging
 from typing import Optional
 
-from com.geojson.types import GeojsonFeatureCollectionDict, GeojsonFeatureDict
+from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
 from com.helpers import EDRFieldsMapping
+from com.otel import otel_trace
+from com.protocol import EDRProviderProtocol
 from pygeoapi.provider.base_edr import BaseEDRProvider
 from rise.lib.covjson.types import CoverageCollectionDict
 from snotel.lib.locations import LocationCollection
@@ -15,7 +17,7 @@ from pygeoapi.provider.base import ProviderQueryError
 LOGGER = logging.getLogger(__name__)
 
 
-class SnotelEDRProvider(BaseEDRProvider):
+class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
     """The EDR Provider for the Snotel API"""
 
     def __init__(self, provider_def=None):
@@ -27,9 +29,9 @@ class SnotelEDRProvider(BaseEDRProvider):
         :returns: rise.base_edr.RiseEDRProvider
         """
         super().__init__(provider_def)
-
         self.instances = []
 
+    @otel_trace()
     @BaseEDRProvider.register()
     def locations(
         self,
@@ -67,6 +69,7 @@ class SnotelEDRProvider(BaseEDRProvider):
             self._fields = ParametersCollection().get_fields()
         return self._fields
 
+    @otel_trace()
     @BaseEDRProvider.register()
     def cube(
         self,
@@ -95,6 +98,7 @@ class SnotelEDRProvider(BaseEDRProvider):
 
         return collection.to_covjson(self.get_fields(), datetime_)
 
+    @otel_trace()
     @BaseEDRProvider.register()
     def area(
         self,

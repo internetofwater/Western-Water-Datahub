@@ -5,11 +5,12 @@ import logging
 from typing import ClassVar, Optional
 
 from com.helpers import await_
+from com.otel import otel_trace
+from com.protocol import EDRProviderProtocol
 from pygeoapi.provider.base import (
     ProviderQueryError,
 )
 from pygeoapi.provider.base_edr import BaseEDRProvider
-from com.env import TRACER
 from rise.lib.covjson.covjson import CovJSONBuilder
 from rise.lib.location import LocationResponseWithIncluded
 from rise.lib.cache import RISECache
@@ -18,7 +19,7 @@ from rise.lib.add_results import LocationResultBuilder
 LOGGER = logging.getLogger(__name__)
 
 
-class RiseEDRProvider(BaseEDRProvider):
+class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
     """The EDR Provider for the USBR Rise API"""
 
     LOCATION_API: ClassVar[str] = "https://data.usbr.gov/rise/api/location"
@@ -49,9 +50,9 @@ class RiseEDRProvider(BaseEDRProvider):
 
         super().__init__(provider_def)
 
-        self.instances = []
+        self.instances = []  # used so pygeoapi doesn't register the same query multiple times in the UI
 
-    @TRACER.start_as_current_span("locations")
+    @otel_trace()
     @BaseEDRProvider.register()
     def locations(
         self,
@@ -105,7 +106,7 @@ class RiseEDRProvider(BaseEDRProvider):
 
         return self._fields
 
-    @TRACER.start_as_current_span("cube")
+    @otel_trace()
     @BaseEDRProvider.register()
     def cube(
         self,
@@ -137,7 +138,7 @@ class RiseEDRProvider(BaseEDRProvider):
         response_with_results = builder.load_results(time_filter=datetime_)
         return CovJSONBuilder(self.cache).fill_template(response_with_results)
 
-    @TRACER.start_as_current_span("area")
+    @otel_trace()
     @BaseEDRProvider.register()
     def area(
         self,

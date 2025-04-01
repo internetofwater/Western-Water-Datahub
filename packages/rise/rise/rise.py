@@ -5,18 +5,23 @@ import logging
 from typing import Literal, Optional
 
 from com.helpers import OAFFieldsMapping, get_oaf_fields_from_pydantic_model
+from com.otel import otel_trace
+from com.protocol import OAFProviderProtocol
 from pygeoapi.provider.base import BaseProvider
 from pygeoapi.util import crs_transform
-from com.env import TRACER
 from rise.lib.cache import RISECache
-from com.geojson.types import GeojsonFeatureDict, GeojsonFeatureCollectionDict, SortDict
+from com.geojson.helpers import (
+    GeojsonFeatureDict,
+    GeojsonFeatureCollectionDict,
+    SortDict,
+)
 from rise.lib.location import LocationResponseWithIncluded
 from rise.lib.types.location import LocationDataAttributes
 
 LOGGER = logging.getLogger(__name__)
 
 
-class RiseProvider(BaseProvider):
+class RiseProvider(BaseProvider, OAFProviderProtocol):
     """Rise Provider for OGC API Features"""
 
     _fields: OAFFieldsMapping
@@ -30,7 +35,7 @@ class RiseProvider(BaseProvider):
         super().__init__(provider_def)
         self.get_fields()
 
-    @TRACER.start_as_current_span("items")
+    @otel_trace()
     def items(
         self,
         bbox: list = [],

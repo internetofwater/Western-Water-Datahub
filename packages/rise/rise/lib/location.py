@@ -16,7 +16,7 @@ from pydantic import BaseModel, field_validator
 import shapely
 import shapely.wkt
 from com.env import TRACER
-from com.geojson.types import (
+from com.geojson.helpers import (
     GeojsonFeatureDict,
     GeojsonFeatureCollectionDict,
     SortDict,
