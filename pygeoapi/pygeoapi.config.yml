@@ -19,26 +19,26 @@ server:
     attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
 
 logging:
-  level: DEBUG
+  level: ${PYGEOAPI_LOGLEVEL:-ERROR}
   # logfile: /tmp/pygeoapi.log
 
 metadata:
   identification:
-    title: US Bureau of Reclamation Interoperable Data Hub
-    description: US Bureau of Reclamation Interoperable Data Hub
+    title: Western Water Datahub
+    description: The Western Water Datahub is an implementation of OGC API - EDR supported by the United States Bureau of Reclamation. 
     keywords:
       - usbr
-      - iodh
+      - wwdh
       - iow
     keywords_type: theme
-    terms_of_service: https://creativecommons.org/licenses/by/4.0/
-    url: https://github.com/internetofwater/IODH
+    terms_of_service: https://opensource.org/license/MIT
+    url: https://github.com/internetofwater/WWDH
   license:
-    name: CC-BY 4.0 license
-    url: https://creativecommons.org/licenses/by/4.0/
+    name: MIT License
+    url: https://opensource.org/license/MIT
   provider:
     name: Internet of Water
-    url: https://github.com/internetofwater/IODH
+    url: https://github.com/internetofwater/WWDH
   contact:
     address: 113 Brattle St
     city: Cambridge
@@ -53,7 +53,7 @@ metadata:
 resources:   
   rise-edr:
     type: collection
-    title: Reclamation Information Sharing Environment
+    title: Reclamation Information Sharing Environment (RISE)
     description: United States Bureau of Reclamation Information Sharing Environment EDR
     keywords:
       - EDR
@@ -81,8 +81,8 @@ resources:
 
   snotel-edr:
     type: collection
-    title: Snow Telemetry (SNOTEL) Network
-    description: United States Department of Agriculture SNOTEL EDR
+    title: Snow Telemetry Network (SNOTEL)
+    description: United States Department of Agriculture Snow Telemetry Network EDR
     keywords:
       - EDR
       - SNOTEL
@@ -111,7 +111,7 @@ resources:
   usgs-sta:
     type: collection
     title: United States Geologic Survey SensorThings API
-    description: United States Geological Survey SensorThings API EDR
+    description: United States Geologic Survey SensorThings API EDR
     keywords:
       - EDR
       - SensorThings
