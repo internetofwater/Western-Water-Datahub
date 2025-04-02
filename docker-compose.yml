@@ -11,15 +11,12 @@ services:
 
   redis:
     image: redislabs/redismod
-    ports:
-      - '6379:6379'
 
   jaeger:
     image: jaegertracing/all-in-one
     ports:
       # Ports defined here https://www.jaegertracing.io/docs/next-release/getting-started/#all-in-one
       - "16686:16686" # expose the UI
-      - "4317:4317" # Enable OTLP HTTP port
     environment:
       - LOG_LEVEL=debug
     restart: on-failure
