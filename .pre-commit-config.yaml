@@ -54,4 +54,4 @@ repos:
     hooks:
       - id: addlicense
         args:
-          ["-s=only", -l, "CC0 1.0 Universal", -c, "Lincoln Institute of Land Policy"]
+          ["-s=only", -l, "MIT", -c, "Lincoln Institute of Land Policy"]
