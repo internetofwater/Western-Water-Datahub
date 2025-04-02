@@ -122,11 +122,17 @@ class RISECache(RedisCache):
 
     @TRACER.start_as_current_span("get_or_fetch_all_param_filtered_pages")
     def get_or_fetch_all_param_filtered_pages(
-        self, properties_to_filter_by: Optional[list[str]] = None, force_fetch=False
+        self,
+        properties_to_filter_by: Optional[list[str]] = None,
+        only_include_locations_with_data: bool = True,
+        force_fetch=False,
     ):
         """Return all locations which contain timeseries data and optionally, also a given list of properties. Will return the associated catalogitems / catalogrecords for joins"""
+        base_url = "https://data.usbr.gov/rise/api/location?order[id]=asc&include=catalogRecords.catalogItems"
         hasTimeseriesData = "itemStructureId=1"
-        base_url = f"https://data.usbr.gov/rise/api/location?order[id]=asc&include=catalogRecords.catalogItems&{hasTimeseriesData}"
+        if only_include_locations_with_data:
+            base_url += f"&{hasTimeseriesData}"
+
         if properties_to_filter_by:
             base_url += "&"
             for prop in properties_to_filter_by:

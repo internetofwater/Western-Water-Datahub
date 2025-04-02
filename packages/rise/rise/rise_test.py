@@ -9,6 +9,7 @@ from rise.lib.helpers import merge_pages
 from rise.lib.location import LocationResponse
 from rise.rise import RiseProvider
 from rise.rise_edr import RiseEDRProvider
+from pygeoapi.provider.base import ProviderItemNotFoundError
 
 
 def test_get_all_pages_for_items():
@@ -46,6 +47,12 @@ def test_item(oaf_config: dict):
     out = p.items(limit=10)
     assert out["type"] == "FeatureCollection"
     assert len(out["features"]) == 10
+
+
+def test_item_that_doesnt_exist(oaf_config: dict):
+    p = RiseProvider(oaf_config)
+    with pytest.raises(ProviderItemNotFoundError):
+        p.items(itemId="9999999999999999999999999")
 
 
 def test_offset(oaf_config: dict):
@@ -189,3 +196,10 @@ def test_skip_geometry(oaf_config: dict):
     outWithoutSkip = p.items(itemId="1")
     assert outWithoutSkip["type"] == "Feature"
     assert outWithoutSkip["geometry"]
+
+
+def test_getting_a_feature_without_timeseries(oaf_config: dict):
+    """Make sure that itemStructureId=1 is not applied; make sure we can get features even if they don't have timeseries data"""
+    p = RiseProvider(oaf_config)
+    out = p.items(itemId="7165")
+    assert out["type"] == "Feature"

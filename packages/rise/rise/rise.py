@@ -63,7 +63,9 @@ class RiseProvider(BaseProvider, OAFProviderProtocol):
 
         # we don't filter by parameters here since OAF filters features by
         # the attributes of the feature, not the parameters of the associated timeseries data
-        raw_resp = self.cache.get_or_fetch_all_param_filtered_pages()
+        raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(
+            only_include_locations_with_data=False
+        )
         response = LocationResponseWithIncluded.from_api_pages(raw_resp)
 
         if itemId:

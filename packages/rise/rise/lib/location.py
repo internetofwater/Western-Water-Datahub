@@ -32,6 +32,7 @@ from rise.lib.types.helpers import ZType
 from rise.lib.types.includes import LocationIncluded
 from rise.lib.types.location import LocationData, PageLinks
 from geojson_pydantic import Feature, FeatureCollection
+from pygeoapi.provider.base import ProviderItemNotFoundError
 
 LOGGER = logging.getLogger()
 
@@ -294,10 +295,12 @@ class LocationResponse(BaseModel):
         if sortby:
             sort_by_properties_in_place(geojson_features, sortby)
 
-        if itemsIDSingleFeature:
+        if itemsIDSingleFeature and len(geojson_features) == 1:
             return GeojsonFeatureDict(
                 **geojson_features[0].model_dump(by_alias=True, exclude_unset=True)
             )
+        elif itemsIDSingleFeature and len(geojson_features) == 0:
+            raise ProviderItemNotFoundError
         else:
             validated_geojson = FeatureCollection(
                 type="FeatureCollection", features=geojson_features
