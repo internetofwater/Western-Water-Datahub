@@ -48,7 +48,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             "data": "remote",
         } or provider_def
 
-        super().__init__(provider_def)
+        BaseEDRProvider.__init__(self, provider_def)
 
         self.instances = []  # used so pygeoapi doesn't register the same query multiple times in the UI
 
@@ -88,14 +88,15 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return response.to_geojson(
                 itemsIDSingleFeature=location_id is not None,
-                select_properties=select_properties,
                 fields_mapping=self.get_fields(),
             )
 
         # if we are returning covjson we need to fetch the results and fill in the json
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
         response_with_results = builder.load_results(time_filter=datetime_)
-        return CovJSONBuilder(self.cache).fill_template(response_with_results)
+        return CovJSONBuilder(self.cache).fill_template(
+            response_with_results, select_properties
+        )
 
     def get_fields(self):
         """Get the list of all parameters (i.e. fields) that the user can filter by"""
@@ -136,7 +137,9 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
         response_with_results = builder.load_results(time_filter=datetime_)
-        return CovJSONBuilder(self.cache).fill_template(response_with_results)
+        return CovJSONBuilder(self.cache).fill_template(
+            response_with_results, select_properties
+        )
 
     @otel_trace()
     @BaseEDRProvider.register()
@@ -179,7 +182,9 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
         response_with_results = builder.load_results(time_filter=datetime_)
-        return CovJSONBuilder(self.cache).fill_template(response_with_results)
+        return CovJSONBuilder(self.cache).fill_template(
+            response_with_results, select_properties
+        )
 
     @BaseEDRProvider.register()
     def items(self, **kwargs):

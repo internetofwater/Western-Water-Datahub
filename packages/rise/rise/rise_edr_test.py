@@ -97,8 +97,10 @@ def test_location_select_properties(edr_config: dict):
     texasID291 = "291"
     out = p.locations(location_id=texasID291, select_properties=[lakeReservoirStorage])
     assert "coverages" in out
-    assert len(out["coverages"]) == 2, (
-        "We expect to have both Lake/Reservoir Storage and Elevation unless more have been retroactively added"
+    # with select properties you drop any coverages that don't have that property and since there is only one coverage with that property, we should only get one
+    # and the others should be dropped
+    assert len(out["coverages"]) == 1, (
+        "We expect to have only lake reservoir storage for this location since we selected that property"
     )
 
     outAsGeojson = p.locations(select_properties=[lakeReservoirStorage])

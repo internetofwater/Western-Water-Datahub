@@ -28,11 +28,11 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         :returns: rise.base_edr.RiseEDRProvider
         """
-        super().__init__(provider_def)
+        BaseEDRProvider.__init__(self, provider_def)
         self.instances = []
 
-    @otel_trace()
     @BaseEDRProvider.register()
+    @otel_trace()
     def locations(
         self,
         location_id: Optional[str] = None,
@@ -57,11 +57,10 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return collection.to_geojson(
                 itemsIDSingleFeature=location_id is not None,
-                select_properties=select_properties,
                 fields_mapping=self.get_fields(),
             )
 
-        return collection.to_covjson(self.get_fields(), datetime_)
+        return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
     def get_fields(self) -> EDRFieldsMapping:
         """Get the list of all parameters (i.e. fields) that the user can filter by"""
@@ -69,8 +68,8 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             self._fields = ParametersCollection().get_fields()
         return self._fields
 
-    @otel_trace()
     @BaseEDRProvider.register()
+    @otel_trace()
     def cube(
         self,
         bbox: list,
@@ -96,7 +95,7 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         collection.drop_all_locations_outside_bounding_box(bbox, z)
 
-        return collection.to_covjson(self.get_fields(), datetime_)
+        return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
     @otel_trace()
     @BaseEDRProvider.register()
@@ -116,7 +115,7 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         collection = collection.drop_outside_of_wkt(wkt, z)
 
-        return collection.to_covjson(self.get_fields(), datetime_)
+        return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
     @BaseEDRProvider.register()
     def items(self, **kwargs):

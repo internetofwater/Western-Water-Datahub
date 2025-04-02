@@ -72,11 +72,12 @@ def test_cube_with_select_properties():
     assert len(out["coverages"]) == 0, (
         "DUMMY is a property that doesn't exist and thus there should be no features returned"
     )
-    # Since there are 13 coverages, we should get 13 since TAVG is a parameter that exists
-    # and thus no locations are filtered out
+    # We specified a parameter that exists on only one coverage; since all other coverages
+    # don't have it, they will be filtered out from the coverage collection and thus only one
+    # coverage will be returned
     out = p.cube(
         bbox=bboxCovering1175InAlaska,
         datetime_="2010-01-01/..",
         select_properties=["TAVG"],
     )
-    assert len(out["coverages"]) == 13
+    assert len(out["coverages"]) == 1

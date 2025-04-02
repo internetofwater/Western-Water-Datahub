@@ -109,7 +109,7 @@ class CovJSONBuilder:
     def _get_coverages(
         self,
         locationsWithResults: list[DataNeededForCovjson],
-        paramsToGeoJsonOutput,
+        paramsToGeoJsonOutput: EDRFieldsMapping,
     ) -> list[CoverageDict]:
         """Return the data needed for the 'coverage' key in the covjson response"""
 
@@ -123,9 +123,10 @@ class CovJSONBuilder:
                     # we can skip adding the parameter/location combination all together
                     continue
 
-                naturalLanguageName = paramsToGeoJsonOutput[str(param.parameterId)][
-                    "title"
-                ]
+                value = paramsToGeoJsonOutput.get(str(param.parameterId))
+                if not value:
+                    continue
+                naturalLanguageName = value["title"]
 
                 range: dict[str, CoverageRangeDict] = {
                     naturalLanguageName: {
@@ -149,12 +150,19 @@ class CovJSONBuilder:
         return coverages
 
     def fill_template(
-        self, location_response: list[DataNeededForCovjson]
+        self,
+        location_response: list[DataNeededForCovjson],
+        select_properties: list[str] | None,
     ) -> CoverageCollectionDict:
         templated_covjson: CoverageCollectionDict = COVJSON_TEMPLATE
         paramIdToMetadata: EDRFieldsMapping = await_(
             self._cache.get_or_fetch_parameters()
         )
+        if select_properties:
+            paramIdToMetadata = {
+                k: v for k, v in paramIdToMetadata.items() if k in select_properties
+            }
+
         templated_covjson["coverages"] = self._get_coverages(
             location_response, paramIdToMetadata
         )
