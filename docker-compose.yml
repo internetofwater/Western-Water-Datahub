@@ -3,8 +3,23 @@ services:
     build: 
       context: pygeoapi
     ports:
-      - 5000:80
-    # volumes:
-    #   - ./pygeoapi/pygeoapi.config.yml:/pygeoapi/local.config.yml
+      - 5005:80
     environment:
-      - PYGEOAPI_URL=http://localhost:5000
+      - REDIS_HOST=redis
+      - PYGEOAPI_URL=http://localhost:5005
+      - COLLECTOR_ENDPOINT=jaeger
+
+  redis:
+    image: redislabs/redismod
+    ports:
+      - '6379:6379'
+
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+      # Ports defined here https://www.jaegertracing.io/docs/next-release/getting-started/#all-in-one
+      - "16686:16686" # expose the UI
+      - "4317:4317" # Enable OTLP HTTP port
+    environment:
+      - LOG_LEVEL=debug
+    restart: on-failure
