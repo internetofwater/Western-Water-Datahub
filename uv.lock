@@ -8,6 +8,7 @@ members = [
     "awdb-forecasts",
     "com",
     "iodh-integrations",
+    "ontology",
     "rise",
     "snotel",
 ]
@@ -790,6 +791,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/e5/2b/878576190c5cfa29ed896b518cc516aecc7c98a919e20706c12480465f43/numpy-2.2.4-cp313-cp313t-win32.whl", hash = "sha256:05c076d531e9998e7e694c36e8b349969c56eadd2cdcd07242958489d79a7286", size = 6366896 },
     { url = "https://files.pythonhosted.org/packages/3e/05/eb7eec66b95cf697f08c754ef26c3549d03ebd682819f794cb039574a0a6/numpy-2.2.4-cp313-cp313t-win_amd64.whl", hash = "sha256:188dcbca89834cc2e14eb2f106c96d6d46f200fe0200310fc29089657379c58d", size = 12739119 },
 ]
+
+[[package]]
+name = "ontology"
+version = "0.1.0"
+source = { editable = "packages/ontology" }
 
 [[package]]
 name = "opentelemetry-api"

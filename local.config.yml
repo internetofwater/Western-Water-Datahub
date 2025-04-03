@@ -50,6 +50,11 @@ metadata:
     url: https://github.com/cgs-earth/RISE-EDR-Mappings/
 
 resources:
+  ontology:
+    type: process
+    processor:
+      name: ontology.process.OntologyProcessor
+
   rise-edr:
     type: collection
     title: rise edr
