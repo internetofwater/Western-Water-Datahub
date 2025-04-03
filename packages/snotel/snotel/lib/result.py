@@ -5,7 +5,7 @@ from typing import Optional
 from com.cache import RedisCache
 from com.datetime import datetime_from_iso
 from com.helpers import await_, parse_date
-from snotel.lib.types import StationDataDTO
+from awdb_com.types import StationDataDTO
 from datetime import datetime, timezone
 
 

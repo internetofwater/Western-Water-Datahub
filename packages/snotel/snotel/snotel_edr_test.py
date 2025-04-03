@@ -81,3 +81,4 @@ def test_cube_with_select_properties():
         select_properties=["TAVG"],
     )
     assert len(out["coverages"]) == 1
+    assert len(out["parameters"]) == 1

@@ -3,7 +3,7 @@
 
 from com.cache import RedisCache
 from com.helpers import EDRFieldsMapping, await_
-from snotel.lib.types import ReferenceDataDTO
+from awdb_com.types import ReferenceDataDTO
 
 
 class ParametersCollection:

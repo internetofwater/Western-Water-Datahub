@@ -4,20 +4,20 @@
 import logging
 from typing import Optional
 
+from awdb_forecasts.lib.forecast_locations import ForecastLocationCollection
 from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
 from com.helpers import EDRFieldsMapping
 from com.otel import otel_trace
 from com.protocol import EDRProviderProtocol
 from pygeoapi.provider.base_edr import BaseEDRProvider
 from rise.lib.covjson.types import CoverageCollectionDict
-from snotel.lib.locations import SnotelLocationCollection
 from snotel.lib.parameters import ParametersCollection
 from pygeoapi.provider.base import ProviderQueryError
 
 LOGGER = logging.getLogger(__name__)
 
 
-class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
+class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
     """The EDR Provider for the Snotel API"""
 
     def __init__(self, provider_def=None):
@@ -28,11 +28,15 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         :returns: rise.base_edr.RiseEDRProvider
         """
-        BaseEDRProvider.__init__(self, provider_def)
+        BaseEDRProvider.__init__(
+            self,
+            provider_def
+            or {"name": "AWDB Forecasts", "type": "feature", "data": "remote"},
+        )
         self.instances = []
 
-    @BaseEDRProvider.register()
     @otel_trace()
+    @BaseEDRProvider.register()
     def locations(
         self,
         location_id: Optional[str] = None,
@@ -50,13 +54,14 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             raise ProviderQueryError(
                 "Datetime parameter is not supported without location_id"
             )
-        collection = SnotelLocationCollection(select_properties)
+        collection = ForecastLocationCollection(select_properties)
         if location_id:
             collection = collection.drop_all_locations_but_id(location_id)
 
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return collection.to_geojson(
                 itemsIDSingleFeature=location_id is not None,
+                select_properties=select_properties,
                 fields_mapping=self.get_fields(),
             )
 
@@ -68,8 +73,8 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             self._fields = ParametersCollection().get_fields()
         return self._fields
 
-    @BaseEDRProvider.register()
     @otel_trace()
+    @BaseEDRProvider.register()
     def cube(
         self,
         bbox: list,
@@ -86,7 +91,12 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         :param z: vertical level(s)
         :param format_: data format of output
         """
-        collection = SnotelLocationCollection(select_properties)
+        # Example: http://localhost:5000/collections/snotel-edr/cube?bbox=-164.300537,67.195518,-160.620117,68.26125
+        # Example: http://localhost:5000/collections/snotel-edr/cube?bbox=-164.300537,67.195518,-160.620117,68.26125&datetime=2010-01-01/..&f=json
+        # Example: http://localhost:5000/collections/snotel-edr/cube?bbox=-164.300537,67.195518,-160.620117,68.26125&datetime=2010-01-01/..&parameter-name=EVAP
+        # Example: http://localhost:5000/collections/snotel-edr/cube?bbox=-164.300537,67.195518,-160.620117,68.26125&datetime=2010-01-01/..&parameter-name=TAVG
+
+        collection = ForecastLocationCollection(select_properties)
 
         collection.drop_all_locations_outside_bounding_box(bbox, z)
 
@@ -106,7 +116,7 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         """
         Extract and return coverage data from a specified area.
         """
-        collection = SnotelLocationCollection(select_properties)
+        collection = ForecastLocationCollection(select_properties)
 
         collection = collection.drop_outside_of_wkt(wkt, z)
 

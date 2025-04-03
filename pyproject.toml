@@ -56,7 +56,7 @@ dev = [
 package = false
 
 [tool.uv.workspace]
-members = ["packages/rise", "packages/snotel", "packages/com", "packages/awdb_forecasts"]
+members = ["packages/rise", "packages/snotel", "packages/com", "packages/awdb_forecasts", "packages/awdb_com"]
 
 [tool.uv.sources]
 rise = { workspace = true }

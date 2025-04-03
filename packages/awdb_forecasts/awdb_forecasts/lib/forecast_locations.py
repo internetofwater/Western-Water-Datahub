@@ -3,30 +3,37 @@
 
 from awdb_com.locations import LocationCollection
 from awdb_com.types import StationDTO
+from awdb_forecasts.lib.covjson_builder import CovjsonBuilder
 from com.cache import RedisCache
-from com.helpers import (
-    EDRFieldsMapping,
-    await_,
-)
+from com.helpers import EDRFieldsMapping, await_
 from rise.lib.covjson.types import CoverageCollectionDict
-from snotel.lib.covjson_builder import CovjsonBuilder
 from typing import Optional, cast
+
 
 type longitudeAndLatitude = tuple[float, float]
 
 
-class SnotelLocationCollection(LocationCollection):
-    """A wrapper class containing locations and methods to filter them"""
-
-    def __init__(self, select_properties: Optional[list[str]] = None):
+class ForecastLocationCollection(LocationCollection):
+    def __init__(
+        self,
+        select_properties: Optional[list[str]] = None,
+        only_stations_with_forecasts=True,
+    ):
         self.cache = RedisCache()
-        # snotel also proxies usgs so we just want to get SNOTEL stations
-        JUST_SNOTEL_STATIONS = "*:*:SNTL"
-        url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?activeOnly=true&stationTriplets={JUST_SNOTEL_STATIONS}"
+        url = "https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?returnForecastPointMetadata=true&returnReservoirMetadata=false&returnStationElements=false&activeOnly=true"
         if select_properties:
             url += f"&elements={','.join(select_properties)}"
         result = await_(self.cache.get_or_fetch(url))
-        self.locations = [StationDTO.model_validate(res) for res in result]
+        locations: list[StationDTO] = []
+
+        for res in result:
+            if only_stations_with_forecasts:
+                if res.get("forecastPoint"):
+                    locations.append(StationDTO.model_validate(res))
+            else:
+                locations.append(StationDTO.model_validate(res))
+
+        self.locations = locations
 
     def to_covjson(
         self,

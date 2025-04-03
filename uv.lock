@@ -1,8 +1,10 @@
 version = 1
+revision = 1
 requires-python = ">=3.12"
 
 [manifest]
 members = [
+    "awdb-com",
     "awdb-forecasts",
     "com",
     "iodh-integrations",
@@ -122,6 +124,11 @@ wheels = [
 ]
 
 [[package]]
+name = "awdb-com"
+version = "0.1.0"
+source = { editable = "packages/awdb_com" }
+
+[[package]]
 name = "awdb-forecasts"
 version = "0.1.0"
 source = { editable = "packages/awdb_forecasts" }
@@ -193,7 +200,7 @@ name = "click"
 version = "8.1.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "platform_system == 'Windows'" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/b9/2e/0090cbf739cee7d23781ad4b89a9894a41538e4fcf4c31dcdd705b78eb8b/click-8.1.8.tar.gz", hash = "sha256:ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a", size = 226593 }
 wheels = [
@@ -1608,7 +1615,7 @@ name = "tzlocal"
 version = "5.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "tzdata", marker = "platform_system == 'Windows'" },
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/8b/2e/c14812d3d4d9cd1773c6be938f89e5735a1f11a9f184ac3639b93cef35d5/tzlocal-5.3.1.tar.gz", hash = "sha256:cceffc7edecefea1f595541dbd6e990cb1ea3d19bf01b2809f362a03dd7921fd", size = 30761 }
 wheels = [

@@ -15,8 +15,8 @@ from com.geojson.helpers import (
     SortDict,
 )
 from com.cache import RedisCache
-from snotel.lib.locations import LocationCollection
-from snotel.lib.types import StationDTO
+from snotel.lib.locations import SnotelLocationCollection
+from awdb_com.types import StationDTO
 
 LOGGER = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ class SnotelProvider(BaseProvider, OAFProviderProtocol):
         skip_geometry: Optional[bool] = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        collection = LocationCollection()
+        collection = SnotelLocationCollection()
         if itemId:
             collection = collection.drop_all_locations_but_id(itemId)
         if bbox:
