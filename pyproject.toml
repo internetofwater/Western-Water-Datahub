@@ -23,6 +23,7 @@ dependencies = [
     "pygeoapi @ git+https://github.com/geopython/pygeoapi.git",
     "pytest-cov>=6.0.0",
     "radon>=6.0.1",
+    "msgspec>=0.19.0",
 ]
 
 classifiers = [
