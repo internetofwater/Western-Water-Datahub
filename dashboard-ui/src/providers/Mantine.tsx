@@ -1,6 +1,5 @@
 import { createTheme, MantineProvider } from '@mantine/core';
-import { PropsWithChildren, useState } from 'react';
-import ColorScheme from '@/contexts/ColorScheme';
+import { PropsWithChildren } from 'react';
 
 const theme = createTheme({});
 

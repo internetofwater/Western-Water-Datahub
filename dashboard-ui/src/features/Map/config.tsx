@@ -20,24 +20,23 @@ export const BASEMAP = basemaps[BasemapId.Dark];
 
 export enum SourceId {
     Regions = 'regions-source',
-    Reservoirs = 'reservoirs-source'
+    Reservoirs = 'reservoirs-source',
 }
 
 export enum LayerId {
     Regions = 'regions-main',
-    Reservoirs = 'reservoirs'
+    Reservoirs = 'reservoirs',
 }
 
 export enum SubLayerId {
     RegionsBoundary = 'regions-boundary',
-    RegionsFill = 'regions-fill' 
+    RegionsFill = 'regions-fill',
 }
 
 export const allLayerIds = [
     ...Object.values(LayerId),
     ...Object.values(SubLayerId),
 ];
-
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -53,15 +52,15 @@ export const sourceConfigs: SourceConfig[] = [
         id: SourceId.Regions,
         type: Sources.ESRI,
         definition: {
-            url: 'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/ReclamationBoundariesFL/FeatureServer/0'
-        }
+            url: 'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/ReclamationBoundariesFL/FeatureServer/0',
+        },
     },
     {
         id: SourceId.Reservoirs,
         type: Sources.ESRI,
         definition: {
-            url: 'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/RISE_point_locations_(view)/FeatureServer/0'
-        }
+            url: 'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/RISE_point_locations_(view)/FeatureServer/0',
+        },
     },
 ];
 
@@ -82,12 +81,11 @@ export const sourceConfigs: SourceConfig[] = [
 export const getLayerName = (layerId: LayerId | SubLayerId): string => {
     switch (layerId) {
         case LayerId.Regions:
-            return 'Regions'
+            return 'Regions';
         default:
             return '';
     }
 };
-
 
 /**
  * Returns the color for a given layer or sublayer based on its identifier.
@@ -127,10 +125,9 @@ export const getLayerConfig = (
 ): null | LayerSpecification => {
     // Group layer and sublayer configurations together
     switch (id) {
-        case LayerId.Regions: 
+        case LayerId.Regions:
             return null;
-
-        case SubLayerId.RegionsBoundary: 
+        case SubLayerId.RegionsBoundary:
             return {
                 id: SubLayerId.RegionsBoundary,
                 type: LayerType.Line,
@@ -145,7 +142,7 @@ export const getLayerConfig = (
                     'line-width': 3,
                 },
             };
-        case SubLayerId.RegionsFill: 
+        case SubLayerId.RegionsFill:
             return {
                 id: SubLayerId.RegionsFill,
                 type: LayerType.Fill,
@@ -170,14 +167,12 @@ export const getLayerConfig = (
     }
 };
 
-
 // Define and hover functions with curry-ed map and popup objects
 export const getLayerHoverFunction = (
     id: LayerId | SubLayerId
 ): CustomListenerFunction => {
     return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
         switch (id) {
-            
             default:
                 return (e) => {
                     console.log('Hover Event Triggered: ', e);
@@ -209,7 +204,6 @@ export const getLayerCustomHoverExitFunction = (
 ): CustomListenerFunction => {
     return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
         switch (id) {
-            
             default:
                 return (e) => {
                     console.log('Hover Exit Event Triggered: ', e);
@@ -239,7 +233,6 @@ export const getLayerMouseMoveFunction = (
 ): CustomListenerFunction => {
     return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
         switch (id) {
-           
             default:
                 return (e) => {
                     console.log('Hover Exit Event Triggered: ', e);
@@ -268,7 +261,6 @@ export const getLayerClickFunction = (
 ): CustomListenerFunction => {
     return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
         switch (id) {
-            
             default:
                 return (e) => {
                     console.log('Click Event Triggered: ', e);
@@ -306,5 +298,30 @@ export const layerDefinitions: MainLayerDefinition[] = [
     // Use this as the master object to define layer hierarchies. Sublayers are nested layer definitions,
     // meaning they have their own click and hover listeners. The order of layers and sublayers dictates the draw
     // order on the map.
-   
+    {
+        id: LayerId.Regions,
+        config: getLayerConfig(LayerId.Regions),
+        controllable: false,
+        legend: false,
+        subLayers: [
+            {
+                id: SubLayerId.RegionsBoundary,
+                config: getLayerConfig(SubLayerId.RegionsBoundary),
+                controllable: false,
+                legend: false,
+            },
+            {
+                id: SubLayerId.RegionsFill,
+                config: getLayerConfig(SubLayerId.RegionsFill),
+                controllable: false,
+                legend: false,
+            },
+        ],
+    },
+    {
+        id: LayerId.Reservoirs,
+        config: getLayerConfig(LayerId.Reservoirs),
+        controllable: false,
+        legend: false,
+    },
 ];

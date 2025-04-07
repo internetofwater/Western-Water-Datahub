@@ -7,15 +7,19 @@ interface MainState {
     setBasin: (basin: string) => void;
     system: string;
     setSystem: (system: string) => void;
+    reservoir: string;
+    setReservoir: (reservoir: string) => void;
 }
 
 const useMainStore = create<MainState>()((set) => ({
-    region: '',
+    region: 'all',
     setRegion: (region) => set({ region }),
-    basin: '',
+    basin: 'all',
     setBasin: (basin) => set({ basin }),
-    system: '',
+    system: 'all',
     setSystem: (system) => set({ system }),
+    reservoir: 'all',
+    setReservoir: (reservoir) => set({ reservoir }),
 }));
 
 export default useMainStore;

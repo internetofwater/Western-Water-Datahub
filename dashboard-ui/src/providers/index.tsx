@@ -1,6 +1,6 @@
 'use client';
 
-import { PropsWithChildren, Suspense, useState } from 'react';
+import { PropsWithChildren, Suspense } from 'react';
 import { Map as MapProvider } from '@/providers/Map';
 import { Mantine as MantineProvider } from '@/providers/Mantine';
 

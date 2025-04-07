@@ -45,8 +45,7 @@ export default function RootLayout({
                 <ColorSchemeScript />
             </head>
             <Body>
-                <Providers>
-                    {children}</Providers>
+                <Providers>{children}</Providers>
             </Body>
         </html>
     );

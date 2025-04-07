@@ -9,13 +9,10 @@ declare module '@hansdo/mapbox-gl-arcgis-featureserver' {
     }
 
     class FeatureService {
-        _map: Map
+        _map: Map;
         constructor(id: string, map: Map, options: FeatureServiceOptions);
-        _setAttribution() {
-    
-        }
+        _setAttribution() {}
     }
-
 
     export default FeatureService;
 }

@@ -1,6 +1,6 @@
 'use client';
 import Map from '@/components/Map';
-import React, {  } from 'react';
+import React from 'react';
 import {
     layerDefinitions,
     sourceConfigs,
@@ -27,7 +27,6 @@ type Props = {
 const MainMap: React.FC<Props> = (props) => {
     const { accessToken } = props;
 
-   
     return (
         <>
             <Map

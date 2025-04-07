@@ -1,26 +1,26 @@
-"use client";
+'use client';
 // MapComponent.tsx
-import React, { useEffect, useRef } from "react";
-import mapboxgl from "mapbox-gl";
-import { useMap } from "@/contexts/MapContexts";
-import { MapComponentProps } from "@/components/Map/types";
+import React, { useEffect, useRef } from 'react';
+import mapboxgl from 'mapbox-gl';
+import { useMap } from '@/contexts/MapContexts';
+import { MapComponentProps } from '@/components/Map/types';
 import {
-  addClickFunctions,
-  addControls,
-  addHoverFunctions,
-  addLayers,
-  addMouseMoveFunctions,
-  addSources,
-} from "@/components/Map/utils";
+    addClickFunctions,
+    addControls,
+    addHoverFunctions,
+    addLayers,
+    addMouseMoveFunctions,
+    addSources,
+} from '@/components/Map/utils';
 
-import "mapbox-gl/dist/mapbox-gl.css";
+import 'mapbox-gl/dist/mapbox-gl.css';
 import FeatureService, {
-  FeatureServiceOptions,
-} from "@hansdo/mapbox-gl-arcgis-featureserver";
+    FeatureServiceOptions,
+} from '@hansdo/mapbox-gl-arcgis-featureserver';
 
 FeatureService.prototype._setAttribution = function () {
-  // Stub to prevent attribution bug 
-}
+    // Stub to prevent attribution bug
+};
 
 /**
  * This component initializes and renders a Mapbox GL map with specified sources, layers, and controls.
@@ -44,73 +44,83 @@ FeatureService.prototype._setAttribution = function () {
  * @component
  */
 const MapComponent: React.FC<MapComponentProps> = (props) => {
-  const { id, sources, layers, options, controls, accessToken } = props;
+    const { id, sources, layers, options, controls, accessToken } = props;
 
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const { map, setMap } = useMap(id);
+    const mapContainerRef = useRef<HTMLDivElement | null>(null);
+    const { map, setMap } = useMap(id);
 
-  useEffect(() => {
-    if (!map && mapContainerRef.current) {
-      mapboxgl.accessToken = accessToken;
-      const newMap = new mapboxgl.Map({
-        ...options,
-        container: mapContainerRef.current,
-        customAttribution: 'Powered by <a href="https://www.esri.com" >Esri</a>'
-      });
+    useEffect(() => {
+        if (!map && mapContainerRef.current) {
+            mapboxgl.accessToken = accessToken;
+            const newMap = new mapboxgl.Map({
+                ...options,
+                container: mapContainerRef.current,
+                customAttribution:
+                    'Powered by <a href="https://www.esri.com" >Esri</a>',
+            });
 
-      const hoverPopup = new mapboxgl.Popup({
-        closeButton: false,
-        closeOnClick: false,
-      });
+            const hoverPopup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: false,
+            });
 
-      const persistentPopup = new mapboxgl.Popup();
+            const persistentPopup = new mapboxgl.Popup();
 
-      newMap.on("load", () => {
-        const createFeatureService = (
-          sourceId: string,
-          map: mapboxgl.Map,
-          options: FeatureServiceOptions
-        ) => new FeatureService(sourceId, map, options);
+            newMap.on('load', () => {
+                const createFeatureService = (
+                    sourceId: string,
+                    map: mapboxgl.Map,
+                    options: FeatureServiceOptions
+                ) => new FeatureService(sourceId, map, options);
 
-        setMap(newMap, hoverPopup, persistentPopup);
-        addSources(newMap, sources, createFeatureService);
-        addLayers(newMap, layers);
-        addHoverFunctions(newMap, layers, hoverPopup, persistentPopup);
-        addClickFunctions(newMap, layers, hoverPopup, persistentPopup);
-        addMouseMoveFunctions(newMap, layers, hoverPopup, persistentPopup);
-        addControls(newMap, controls);
+                setMap(newMap, hoverPopup, persistentPopup);
+                addSources(newMap, sources, createFeatureService);
+                addLayers(newMap, layers);
+                addHoverFunctions(newMap, layers, hoverPopup, persistentPopup);
+                addClickFunctions(newMap, layers, hoverPopup, persistentPopup);
+                addMouseMoveFunctions(
+                    newMap,
+                    layers,
+                    hoverPopup,
+                    persistentPopup
+                );
+                addControls(newMap, controls);
+            });
 
-      });
+            newMap.on('style.load', () => {
+                const createFeatureService = (
+                    sourceId: string,
+                    map: mapboxgl.Map,
+                    options: FeatureServiceOptions
+                ) => new FeatureService(sourceId, map, options);
 
-      newMap.on("style.load", () => {
-        const createFeatureService = (
-          sourceId: string,
-          map: mapboxgl.Map,
-          options: FeatureServiceOptions
-        ) => new FeatureService(sourceId, map, options);
+                // Layers reset on style changes
+                addSources(newMap, sources, createFeatureService);
+                addLayers(newMap, layers);
+                addHoverFunctions(newMap, layers, hoverPopup, persistentPopup);
+                addClickFunctions(newMap, layers, hoverPopup, persistentPopup);
+                addMouseMoveFunctions(
+                    newMap,
+                    layers,
+                    hoverPopup,
+                    persistentPopup
+                );
+            });
+        }
 
-        // Layers reset on style changes
-        addSources(newMap, sources, createFeatureService);
-        addLayers(newMap, layers);
-        addHoverFunctions(newMap, layers, hoverPopup, persistentPopup);
-        addClickFunctions(newMap, layers, hoverPopup, persistentPopup);
-        addMouseMoveFunctions(newMap, layers, hoverPopup, persistentPopup);
-      });
-    }
+        return () => {
+            if (map) map.remove();
+        };
+    }, []);
 
-    return () => {
-      if (map) map.remove();
-    };
-  }, []);
-
-  // Style the container using #map-container-${id} in a global css file
-  return (
-    <div
-      data-testid={`map-container-${id}`}
-      id={`map-container-${id}`}
-      ref={mapContainerRef}
-    />
-  );
+    // Style the container using #map-container-${id} in a global css file
+    return (
+        <div
+            data-testid={`map-container-${id}`}
+            id={`map-container-${id}`}
+            ref={mapContainerRef}
+        />
+    );
 };
 
 export default MapComponent;
