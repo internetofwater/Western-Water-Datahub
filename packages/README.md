@@ -2,14 +2,6 @@
 
 This repository maps the various federal water data APIs like the USBR RISE API to OGC EDR using pygeoapi for ETL. It defaults to redis for the caching implementation.
 
-## Usage
-
-- To install dependencies run `make deps`
-  - We use uv for dependency management and thus you should have it installed
-  - You can however also use the `requirements.txt` as well for quick checks as it is kept up to date automatically
-- To run the server run: `make dev`
-- To run the redis container for caching, run `docker compose up`
-- To run tests run: `make test`
 
 ## Limitations
 
