@@ -15,15 +15,24 @@ The EDR interface consolidates access to multiple water data sources, offering a
 | USGS        | Streamflow (current)                                      | https://api.wwdh.internetofwater.app/collections/usgs-sta   |
 | PRISM       | Precipitation (historical)                                | https://api.wwdh.internetofwater.app/collections/usgs-prism |
 
-To learn more about custom EDR mappings, visit the [Western Water Datahub Mappings repository](https://github.com/cgs-earth/Western-Water-Datahub-Mappings).
+To learn more about custom EDR mappings, visit the [Western Water Datahub Mappings directory](./packages/README.md).
 
 ## Getting Started
 
 To run with Docker:
 
 ```bash
-docker compose up -d
+docker compose --profile production up 
 ```
+
+### Local Development
+
+- To install dependencies run `make deps`
+  - We use uv for dependency management and thus you should have it installed
+  - You can however also use the `requirements.txt` as well for quick checks as it is kept up to date automatically
+- To run the server run: `make dev`
+- To run the redis container for caching, run `docker compose up`
+- To run tests run: `make test`
 
 ## Contributing
 
