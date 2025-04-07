@@ -10,7 +10,7 @@ server:
   cors: true
   pretty_print: true
   templates:
-    path: /opt/pygeoapi/templates
+    path: /opt/pygeoapi/pygeoapi-deployment/templates
   limits:
     default_items: 500
     max_items: 10000
