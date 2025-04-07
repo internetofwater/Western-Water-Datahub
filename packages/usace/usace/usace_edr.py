@@ -11,8 +11,8 @@ from com.protocol import EDRProviderProtocol
 from pygeoapi.provider.base_edr import BaseEDRProvider
 from rise.lib.covjson.types import CoverageCollectionDict
 from snotel.lib.locations import SnotelLocationCollection
-from snotel.lib.parameters import ParametersCollection
 from pygeoapi.provider.base import ProviderQueryError
+from usace.lib.parameter_collection import ParameterCollection
 
 LOGGER = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
     def get_fields(self) -> EDRFieldsMapping:
         """Get the list of all parameters (i.e. fields) that the user can filter by"""
         if not self._fields:
-            self._fields = ParametersCollection().get_fields()
+            self._fields = ParameterCollection().get_fields()
         return self._fields
 
     @BaseEDRProvider.register()

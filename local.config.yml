@@ -136,7 +136,7 @@ resources:
         name: usace.usace_edr.USACEEDRProvider
         data: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
       - type: feature
-        name: awdb_forecasts.awdb_forecasts.USACEProvider
+        name: usace.usace.USACEProvider
         data: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
         entity: Observation
         title_field: name
