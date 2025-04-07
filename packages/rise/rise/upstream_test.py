@@ -157,8 +157,8 @@ def test_separate_pages_have_distinct_data():
     cache = RISECache()
     url1 = "https://data.usbr.gov/rise/api/location?include=catalogRecords.catalogItems?page=1&itemsPerPage=100"
     url2 = "https://data.usbr.gov/rise/api/location?include=catalogRecords.catalogItems&page=2&itemsPerPage=100"
-    resp1 = cache.get_or_fetch(url1)
-    resp2 = cache.get_or_fetch(url2)
+    resp1 = cache.get_or_fetch_json(url1)
+    resp2 = cache.get_or_fetch_json(url2)
     resp1 = await_(resp1)
     resp2 = await_(resp2)
 

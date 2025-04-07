@@ -23,7 +23,7 @@ class ForecastLocationCollection(LocationCollection):
         url = "https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?returnForecastPointMetadata=true&returnReservoirMetadata=false&returnStationElements=false&activeOnly=true"
         if select_properties:
             url += f"&elements={','.join(select_properties)}"
-        result = await_(self.cache.get_or_fetch(url))
+        result = await_(self.cache.get_or_fetch_json(url))
         locations: list[StationDTO] = []
 
         for res in result:

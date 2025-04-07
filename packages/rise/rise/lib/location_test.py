@@ -13,7 +13,7 @@ from rise.rise_edr import RiseEDRProvider
 def oneItemLocationRespFixture():
     url = "https://data.usbr.gov/rise/api/location/1?include=catalogRecords.catalogItems&page=1&itemsPerPage=5"
     cache = RISECache()
-    resp = await_(cache.get_or_fetch(url))
+    resp = await_(cache.get_or_fetch_json(url))
     return resp
 
 
@@ -31,7 +31,7 @@ def test_get_catalogItemURLs(oneItemLocationRespFixture: dict):
 
 def test_get_catalogItemUrlsForLocationWithNestedRelationships():
     url = "https://data.usbr.gov/rise/api/location/424?include=catalogRecords.catalogItems&itemStructureId=1&page=1&itemsPerPage=100"
-    resp = await_(RISECache().get_or_fetch(url))
+    resp = await_(RISECache().get_or_fetch_json(url))
     model = LocationResponseWithIncluded.model_validate(resp)
     urls = model.get_catalogItemURLs()
     assert len(flatten_values(urls)) >= 6
@@ -43,7 +43,7 @@ def test_associated_results_have_data(oneItemLocationRespFixture: dict):
     urls = model.get_catalogItemURLs()
     for url in urls:
         resultUrl = getResultUrlFromCatalogUrl(url, datetime_=None)
-        resp = await_(cache.get_or_fetch(resultUrl))
+        resp = await_(cache.get_or_fetch_json(resultUrl))
         assert resp["data"], resp["data"]
 
 
@@ -95,7 +95,7 @@ def test_drop_locationid(oneItemLocationRespFixture: dict):
 def allItemsOnePageLocationRespFixture():
     url = "https://data.usbr.gov/rise/api/location?&include=catalogRecords.catalogItems?page=1&itemsPerPage=100"
     cache = RISECache()
-    resp = await_(cache.get_or_fetch(url))
+    resp = await_(cache.get_or_fetch_json(url))
     return resp
 
 

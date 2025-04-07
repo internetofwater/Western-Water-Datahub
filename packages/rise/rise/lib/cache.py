@@ -50,7 +50,7 @@ class RISECache(RedisCache):
             MAX_ITEMS_PER_PAGE = 100
 
         # Get the first response that contains the list of pages
-        response = await self.get_or_fetch(base_url)
+        response = await self.get_or_fetch_json(base_url)
 
         NOT_PAGINATED = "meta" not in response
         if NOT_PAGINATED:

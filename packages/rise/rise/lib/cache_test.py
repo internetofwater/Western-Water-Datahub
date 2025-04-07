@@ -82,12 +82,12 @@ class TestFnsWithCaching:
 
         cache = RISECache()
         await cache.clear(url)
-        remote_res = await cache.get_or_fetch(url)
+        remote_res = await cache.get_or_fetch_json(url)
 
         assert await cache.contains(url)
         await cache.clear(url)
         assert not await cache.contains(url)
-        disk_res = await cache.get_or_fetch(url)
+        disk_res = await cache.get_or_fetch_json(url)
         assert disk_res
         assert remote_res == disk_res
 
