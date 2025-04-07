@@ -28,9 +28,7 @@ RUN apt-get update && apt-get install -y \
     && apt autoremove -y  \
     && rm -rf /var/lib/apt/lists/*
 
-# Move over and install all production dependencies / configurations
-COPY pygeoapi-deployment /opt/pygeoapi/pygeoapi-deployment
-RUN pip install --no-cache -r /opt/pygeoapi/pygeoapi-deployment/deployment-requirements.txt
+
 
 # Install the top level mapping package with any shared dependencies
 COPY packages /opt/pygeoapi/packages
@@ -38,5 +36,9 @@ COPY pyproject.toml /opt/pygeoapi/pyproject.toml
 RUN pip install /opt/pygeoapi
 # Install each individual mapping package with their individual dependencies separately
 RUN bash -c "pip install /opt/pygeoapi/packages/*"
+
+# Move over and install all production dependencies / configurations
+COPY pygeoapi-deployment /opt/pygeoapi/pygeoapi-deployment
+RUN pip install -r /opt/pygeoapi/pygeoapi-deployment/deployment-requirements.txt
 
 ENTRYPOINT [ "/opt/pygeoapi/pygeoapi-deployment/entrypoint.sh" ]

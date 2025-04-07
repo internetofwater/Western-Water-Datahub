@@ -15,7 +15,7 @@ The EDR interface consolidates access to multiple water data sources, offering a
 | USGS        | Streamflow (current)                                      | https://api.wwdh.internetofwater.app/collections/usgs-sta   |
 | PRISM       | Precipitation (historical)                                | https://api.wwdh.internetofwater.app/collections/usgs-prism |
 
-To learn more about custom EDR mappings, visit the [Western Water Datahub Mappings directory](./packages/README.md).
+To learn more about custom EDR mappings, visit the [Western Water Datahub Mappings directory](./docs/mappings.md).
 
 ## Getting Started
 
