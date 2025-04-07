@@ -34,7 +34,7 @@ class ForecastResultCollection:
         station_triplets_comma_separated = ",".join(station_triplets)
         assert element_code
         url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/forecasts?elements={element_code}&stationTriplets={station_triplets_comma_separated}"
-        result = await_(self.cache.get_or_fetch(url))
+        result = await_(self.cache.get_or_fetch_json(url))
         assert "error" not in result, result
 
         assert result

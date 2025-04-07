@@ -15,9 +15,9 @@ HEADERS = {"accept": "application/vnd.api+json, application/json"}
 LOGGER = logging.getLogger(__name__)
 
 
-async def fetch_url(url: str) -> dict:
-    async with aiohttp.ClientSession(headers=HEADERS) as session:
-        async with session.get(url, headers=HEADERS) as response:
+async def fetch_url(url: str, headers=HEADERS) -> dict:
+    async with aiohttp.ClientSession(headers=headers) as session:
+        async with session.get(url, headers=headers) as response:
             try:
                 return await response.json()
             except client_exceptions.ContentTypeError as e:
@@ -61,11 +61,11 @@ class RedisCache:
                 raise KeyError(f"{url} not found in cache")
             return orjson.loads(data)
 
-    async def get_or_fetch(self, url, force_fetch=False) -> dict:
+    async def get_or_fetch_json(self, url, force_fetch=False, headers=HEADERS) -> dict:
         """Send a get request or grab it locally if it already exists in the cache"""
 
         if not await self.contains(url) or force_fetch:
-            res = await fetch_url(url)
+            res = await fetch_url(url, headers=headers)
             await self.set(url, res)
             return res
 

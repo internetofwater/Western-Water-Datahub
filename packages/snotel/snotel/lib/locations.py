@@ -25,7 +25,7 @@ class SnotelLocationCollection(LocationCollection):
         url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?activeOnly=true&stationTriplets={JUST_SNOTEL_STATIONS}"
         if select_properties:
             url += f"&elements={','.join(select_properties)}"
-        result = await_(self.cache.get_or_fetch(url))
+        result = await_(self.cache.get_or_fetch_json(url))
         self.locations = [StationDTO.model_validate(res) for res in result]
 
     def to_covjson(

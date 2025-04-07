@@ -24,7 +24,7 @@ async def test_element_filter():
 
     baseUrl = "https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?activeOnly=true&stationTriplets=*:*:SNTL"
 
-    response = await cache.get_or_fetch(baseUrl)
+    response = await cache.get_or_fetch_json(baseUrl)
 
     """
     According to upstream swagger docs
@@ -34,7 +34,7 @@ async def test_element_filter():
 
     urlWithFilter = f"{baseUrl}&elements=SNRR"
 
-    responseWithFilter = await cache.get_or_fetch(urlWithFilter)
+    responseWithFilter = await cache.get_or_fetch_json(urlWithFilter)
 
     assert len(response) != len(responseWithFilter)
 
@@ -50,10 +50,10 @@ async def test_some_filters_do_nothing():
 
     baseUrl = "https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?activeOnly=true&stationTriplets=*:*:SNTL"
 
-    response = await RedisCache().get_or_fetch(baseUrl)
+    response = await RedisCache().get_or_fetch_json(baseUrl)
 
     urlWithFilter = f"{baseUrl}&elements=TAVG"
 
-    responseWithFilter = await RedisCache().get_or_fetch(urlWithFilter)
+    responseWithFilter = await RedisCache().get_or_fetch_json(urlWithFilter)
 
     assert len(response) == len(responseWithFilter)

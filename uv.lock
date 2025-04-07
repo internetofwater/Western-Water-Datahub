@@ -11,7 +11,7 @@ members = [
     "ontology",
     "rise",
     "snotel",
-    "useace",
+    "usace",
 ]
 
 [[package]]
@@ -1663,7 +1663,7 @@ wheels = [
 ]
 
 [[package]]
-name = "useace"
+name = "usace"
 version = "0.1.0"
 source = { editable = "packages/usace" }
 

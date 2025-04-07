@@ -17,7 +17,7 @@ class ParametersCollection:
     def __init__(self) -> None:
         self.cache = RedisCache()
         result = await_(
-            self.cache.get_or_fetch(
+            self.cache.get_or_fetch_json(
                 "https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/reference-data"
             )
         )
