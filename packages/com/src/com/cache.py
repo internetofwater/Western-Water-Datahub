@@ -25,6 +25,12 @@ async def fetch_url(url: str, headers=HEADERS) -> dict:
                 raise e
 
 
+async def fetch_url_text(url: str, headers=HEADERS) -> str:
+    async with aiohttp.ClientSession(headers=headers) as session:
+        async with session.get(url, headers=headers) as response:
+            return await response.text()
+
+
 class RedisCache:
     """A cache implementation using Redis with ttl support"""
 
@@ -36,6 +42,10 @@ class RedisCache:
         """Associate a url key with json data in the cache"""
         # Serialize the data before storing it in Redis
         await self.db.set(name=url, value=orjson.dumps(json_data))
+        await self.db.expire(name=url, time=self.ttl)
+
+    async def set_text(self, url: str, text_data: str):
+        await self.db.set(name=url, value=text_data)
         await self.db.expire(name=url, time=self.ttl)
 
     async def reset(self):
@@ -61,6 +71,12 @@ class RedisCache:
                 raise KeyError(f"{url} not found in cache")
             return orjson.loads(data)
 
+    async def get_text(self, url: str) -> str:
+        data = await self.db.get(url)
+        if data is None:
+            raise KeyError(f"{url} not found in cache")
+        return data
+
     async def get_or_fetch_json(self, url, force_fetch=False, headers=HEADERS) -> dict:
         """Send a get request or grab it locally if it already exists in the cache"""
 
@@ -72,6 +88,15 @@ class RedisCache:
         else:
             LOGGER.debug(f"Got {url} from cache")
             return await self.get(url)
+
+    async def get_or_fetch_response_text(self, url, force_fetch=False, headers=HEADERS):
+        if not await self.contains(url) or force_fetch:
+            res = await fetch_url_text(url)
+            await self.set_text(url, res)
+            return res
+        else:
+            LOGGER.debug(f"Got {url} from cache")
+            return await self.get_text(url)
 
     async def get_or_fetch_group(
         self, urls: list[str], force_fetch=False
