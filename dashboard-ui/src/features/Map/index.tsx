@@ -103,8 +103,11 @@ const MainMap: React.FC<Props> = (props) => {
             // Unset Filter
             map.setFilter(SubLayerId.RegionsFill, null);
             map.setFilter(SubLayerId.RegionsBoundary, null);
-            map.setFilter(LayerId.Reservoirs, null);
-            map.setFilter(LayerId.Reservoirs, null);
+            // TODO: basin filter
+            if (reservoir === 'all') {
+                map.setFilter(LayerId.Reservoirs, null);
+                map.setFilter(LayerId.Reservoirs, null);
+            }
         } else {
             map.setFilter(SubLayerId.RegionsFill, [
                 '==',
@@ -116,16 +119,19 @@ const MainMap: React.FC<Props> = (props) => {
                 ['get', 'REGION'],
                 region,
             ]);
-            map.setFilter(LayerId.Reservoirs, [
-                '==',
-                ['get', 'region'],
-                region,
-            ]);
-            map.setFilter(LayerId.Reservoirs, [
-                '==',
-                ['get', 'region'],
-                region,
-            ]);
+            // TODO: basin filter
+            if (reservoir === 'all') {
+                map.setFilter(LayerId.Reservoirs, [
+                    '==',
+                    ['get', 'region'],
+                    region,
+                ]);
+                map.setFilter(LayerId.Reservoirs, [
+                    '==',
+                    ['get', 'region'],
+                    region,
+                ]);
+            }
         }
     }, [region]);
 

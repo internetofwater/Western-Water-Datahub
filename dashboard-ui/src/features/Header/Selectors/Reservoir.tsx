@@ -54,6 +54,14 @@ export const Reservoir: React.FC = () => {
                 'All Reservoirs'
             );
             setReservoirOptions(reservoirOptions);
+        } else {
+            const _reservoirOptions = createOptions(
+                map,
+                SourceId.Reservoirs,
+                'locName',
+                'All Reservoirs'
+            );
+            setReservoirOptions(_reservoirOptions);
         }
     }, [region]);
 
