@@ -118,6 +118,15 @@ wheels = [
 ]
 
 [[package]]
+name = "arcgis2geojson"
+version = "3.0.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/7e/bc/9245b2d6f09ab091450f847fc9994c78964f73109760e0dade25b31a5957/arcgis2geojson-3.0.3.tar.gz", hash = "sha256:72350c0652134393130e47e2d5a6d83d695fa7fe79b6bd763725afb146c5c889", size = 5186 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/03/09/f6a251945261e7dceaccb08cacdcbff3618526e8dd03a3607d04f0941bbc/arcgis2geojson-3.0.3-py3-none-any.whl", hash = "sha256:8392988c7fd3460812490126e139a45f72e56574dc3e3fbcee259cfb084306b1", size = 6141 },
+]
+
+[[package]]
 name = "attrs"
 version = "25.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -775,6 +784,12 @@ wheels = [
 name = "noaa-qpf"
 version = "0.1.0"
 source = { editable = "packages/noaa_qpf" }
+dependencies = [
+    { name = "arcgis2geojson" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "arcgis2geojson", specifier = ">=3.0.3" }]
 
 [[package]]
 name = "nodeenv"

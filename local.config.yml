@@ -72,6 +72,10 @@ resources:
         format:
           name: json 
           mimetype: application/json
+        options:
+          zoom:
+            min: 0
+            max: 10
 
   rise-edr:
     type: collection

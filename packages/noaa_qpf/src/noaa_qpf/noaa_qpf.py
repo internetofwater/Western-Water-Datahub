@@ -1,6 +1,12 @@
+from typing import cast
+from arcgis2geojson import arcgis2geojson
+from com.env import TRACER
 from com.helpers import get_oaf_fields_from_pydantic_model
-from noaa_qpf.types import FeatureAttributes
+from com.otel import otel_trace
+from noaa_qpf.types import FeatureAttributes, ForecastResponse
 from pygeoapi.provider.tile import BaseTileProvider
+from pygeoapi.models.provider.base import TileMatrixSetEnum
+import requests
 
 
 class NOAAQPFTileProvider(BaseTileProvider):
@@ -52,9 +58,12 @@ class NOAAQPFTileProvider(BaseTileProvider):
         :returns: `dict` of tiling schemes
         """
 
-        raise NotImplementedError()
+        return [TileMatrixSetEnum.WEBMERCATORQUAD.value]
 
-    def get_tiles_service(self, baseurl, servicepath, dirpath, tile_type) -> dict:
+    @otel_trace()
+    def get_tiles_service(
+        self, baseurl, servicepath, dirpath=None, tile_type=None
+    ) -> dict:
         """
         Gets tile service description
 
@@ -66,7 +75,28 @@ class NOAAQPFTileProvider(BaseTileProvider):
         :returns: `dict` of file listing or `dict` of GeoJSON item or raw file
         """
 
-        raise NotImplementedError()
+        return {
+            "links": [
+                {
+                    "type": "application/json",
+                    "rel": "self",
+                    "title": "This collection as multi vector tilesets",
+                    "href": f"{self.url}?f=json",
+                },
+                {
+                    "type": self.mimetype,
+                    "rel": "item",
+                    "title": "This collection as multi vector tiles",
+                    "href": self.url,
+                },
+                {
+                    "type": "application/json",
+                    "rel": "describedby",
+                    "title": "Collection metadata in TileJSON format",
+                    "href": f"{self.url}?f=json",
+                },
+            ]
+        }
 
     def get_tiles(self, layer, tileset, z, y, x, format_):
         """
@@ -82,7 +112,18 @@ class NOAAQPFTileProvider(BaseTileProvider):
         :returns: `binary` of the tile
         """
 
-        raise NotImplementedError()
+        with TRACER.start_span("fetch_tiles"):
+            response = requests.get(self.url)
+            assert response.ok, response.text
+            res = response.json()
+        with TRACER.start_span("covert_tiles"):
+            res = cast(
+                dict,
+                arcgis2geojson(
+                    ForecastResponse.model_construct(res).features[0]["geometry"]
+                ),
+            )
+            return res
 
     def get_metadata(self):
         """
