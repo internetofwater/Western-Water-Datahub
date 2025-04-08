@@ -7,9 +7,7 @@ authors = [
     { name = "Colton Loftus", email = "70598503+C-Loftus@users.noreply.github.com" }
 ]
 requires-python = ">=3.12"
-dependencies = [
-    "arcgis2geojson>=3.0.3",
-]
+dependencies = []
 
 [build-system]
 requires = ["hatchling"]
