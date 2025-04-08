@@ -1,7 +1,6 @@
-
-![layers to query in esri map server](image.png)
-
 You must query each layer separately and you cannot query 0, 6 or 12 since those appear to be a special top level layer or something analogous
+
+![list of qpf forecasts](./images/forecastList.png)
 
 Works:
 ```sh
