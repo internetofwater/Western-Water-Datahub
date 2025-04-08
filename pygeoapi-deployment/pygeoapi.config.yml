@@ -153,7 +153,6 @@ resources:
       - type: feature
         name: awdb_forecasts.awdb_forecasts.AwdbForecastsProvider
         data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
-        entity: Observation
         title_field: name
 
 
@@ -166,7 +165,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
         hreflang: en-US
     extents:
       spatial:
@@ -188,7 +187,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
         hreflang: en-US
     extents:
       spatial:
@@ -210,7 +209,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
         hreflang: en-US
     extents:
       spatial:
@@ -232,7 +231,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
         hreflang: en-US
     extents:
       spatial:
@@ -254,7 +253,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
         hreflang: en-US
     extents:
       spatial:
@@ -276,7 +275,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
         hreflang: en-US
     extents:
       spatial:
@@ -298,7 +297,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
         hreflang: en-US
     extents:
       spatial:
@@ -320,7 +319,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
         hreflang: en-US
     extents:
       spatial:
@@ -342,7 +341,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
         hreflang: en-US
     extents:
       spatial:
@@ -364,7 +363,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
         hreflang: en-US
     extents:
       spatial:
