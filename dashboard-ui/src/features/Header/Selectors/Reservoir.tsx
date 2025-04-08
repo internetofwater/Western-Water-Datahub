@@ -5,28 +5,41 @@ import useMainStore from '@/lib/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId } from '@/features/Map/config';
 import { useEffect, useState } from 'react';
-import { createFilteredOptions, createOptions } from './utils';
+import {
+    createFilteredOptions,
+    createOptions,
+    shouldLoadOptions,
+} from './utils';
+import { GeoJSONSourceSpecification } from 'mapbox-gl';
+import { FeatureCollection } from 'geojson';
 
 export const Reservoir: React.FC = () => {
     const { map } = useMap(MAP_ID);
 
     const region = useMainStore((state) => state.region);
+    const setRegion = useMainStore((state) => state.setRegion);
     const reservoir = useMainStore((state) => state.reservoir);
     const setReservoir = useMainStore((state) => state.setReservoir);
 
     const [reservoirOptions, setReservoirOptions] = useState<ComboboxData>([]);
+
     useEffect(() => {
         if (!map) {
             return;
         }
 
-        const reservoirOptions = createOptions(
-            map,
-            SourceId.Reservoirs,
-            'locName',
-            'All Reservoirs'
-        );
-        setReservoirOptions(reservoirOptions);
+        map.on('sourcedata', function sourceCallback(e) {
+            if (shouldLoadOptions(map, SourceId.Reservoirs, e)) {
+                const _reservoirOptions = createOptions(
+                    map,
+                    SourceId.Reservoirs,
+                    'locName',
+                    'All Reservoirs'
+                );
+                setReservoirOptions(_reservoirOptions);
+                map.off('sourcedata', sourceCallback); //remove event listener
+            }
+        });
     }, [map]);
 
     useEffect(() => {
@@ -46,6 +59,28 @@ export const Reservoir: React.FC = () => {
         }
     }, [region]);
 
+    const handleChange = (value: string | null) => {
+        if (!value || !map) {
+            return;
+        }
+
+        const features = map.querySourceFeatures(SourceId.Reservoirs, {
+            sourceLayer: SourceId.Reservoirs,
+            filter: ['==', ['get', 'locName'], value],
+        });
+        if (features && features.length > 0) {
+            const feature = features[0];
+
+            if (feature && feature.properties) {
+                const region = feature.properties.region as string;
+
+                setRegion(region);
+            }
+        }
+
+        setReservoir(value);
+    };
+
     return (
         <>
             {reservoirOptions.length > 0 ? (
@@ -56,7 +91,7 @@ export const Reservoir: React.FC = () => {
                     value={reservoir}
                     defaultValue={reservoir}
                     placeholder="Select a Reservior"
-                    onChange={(_value) => setReservoir(_value as string)}
+                    onChange={(_value) => handleChange(_value)}
                 />
             ) : (
                 <Loader color="#c8942b" type="dots" />

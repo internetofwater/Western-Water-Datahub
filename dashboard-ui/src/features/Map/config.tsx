@@ -374,6 +374,7 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 controllable: false,
                 legend: false,
                 clickFunction: getLayerClickFunction(SubLayerId.RegionsFill),
+                hoverFunction: getLayerHoverFunction(SubLayerId.RegionsFill),
             },
         ],
     },
@@ -395,6 +396,7 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 controllable: false,
                 legend: false,
                 clickFunction: getLayerClickFunction(SubLayerId.BasinsFill),
+                hoverFunction: getLayerHoverFunction(SubLayerId.BasinsFill),
             },
         ],
     },
@@ -404,5 +406,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
         controllable: false,
         legend: false,
         clickFunction: getLayerClickFunction(LayerId.Reservoirs),
+        hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
     },
 ];

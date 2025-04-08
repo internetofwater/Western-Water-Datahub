@@ -1,6 +1,12 @@
 import { SourceId } from '@/features/Map/config';
 import { ComboboxData, ComboboxItem } from '@mantine/core';
-import { ExpressionSpecification, Map as MapObj } from 'mapbox-gl';
+import { FeatureCollection } from 'geojson';
+import {
+    ExpressionSpecification,
+    GeoJSONSourceSpecification,
+    Map as MapObj,
+    MapSourceDataEvent,
+} from 'mapbox-gl';
 
 export const createOptions = (
     map: MapObj,
@@ -26,7 +32,6 @@ export const createOptions = (
             }
         }
     });
-
     return Array.from(options.values());
 };
 
@@ -58,4 +63,27 @@ export const createFilteredOptions = (
     });
 
     return Array.from(options.values());
+};
+
+type Event = {
+    type: 'sourcedata';
+    target: MapObj;
+} & MapSourceDataEvent;
+
+export const shouldLoadOptions = (
+    map: MapObj,
+    sourceId: SourceId,
+    event: Event
+): boolean => {
+    return Boolean(
+        event.sourceId === sourceId &&
+            event.source &&
+            (event.source as GeoJSONSourceSpecification).data &&
+            (
+                (event.source as GeoJSONSourceSpecification)
+                    .data as FeatureCollection
+            ).features.length > 0 &&
+            map.getSource(sourceId) &&
+            map.isSourceLoaded(sourceId)
+    );
 };

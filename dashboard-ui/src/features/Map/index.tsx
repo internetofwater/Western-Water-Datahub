@@ -1,4 +1,5 @@
 'use client';
+
 import Map from '@/components/Map';
 import React, { useEffect } from 'react';
 import {
@@ -11,6 +12,7 @@ import {
 } from '@/features/Map/config';
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore from '@/lib/main';
+import { Reservoir } from '../Header/Selectors/Reservoir';
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;
@@ -34,13 +36,15 @@ const MainMap: React.FC<Props> = (props) => {
     const { map } = useMap(MAP_ID);
     const region = useMainStore((state) => state.region);
     const setRegion = useMainStore((state) => state.setRegion);
+    const reservoir = useMainStore((state) => state.reservoir);
+    const setReservoir = useMainStore((state) => state.setReservoir);
 
     useEffect(() => {
         if (!map) {
             return;
         }
 
-        map.on('click', [SubLayerId.RegionsFill], (e) => {
+        map.on('click', SubLayerId.RegionsFill, (e) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [SubLayerId.RegionsFill],
             });
@@ -56,7 +60,7 @@ const MainMap: React.FC<Props> = (props) => {
             }
         });
 
-        map.on('click', [SubLayerId.BasinsFill], (e) => {
+        map.on('click', SubLayerId.BasinsFill, (e) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [SubLayerId.BasinsFill],
             });
@@ -73,21 +77,22 @@ const MainMap: React.FC<Props> = (props) => {
             //     }
             // }
         });
-        map.on('click', [LayerId.Reservoirs], (e) => {
+        map.on('click', LayerId.Reservoirs, (e) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [LayerId.Reservoirs],
             });
-            console.log('RESER', features);
 
-            // if (features && features.length) {
-            //     const feature = features[0];
+            if (features && features.length) {
+                const feature = features[0];
 
-            //     if (feature.properties) {
-            //         const region = feature.properties.REGION as string;
+                if (feature.properties) {
+                    const reservoir = feature.properties.locName as string;
+                    const region = feature.properties.region as string;
 
-            //         setRegion(region);
-            //     }
-            // }
+                    setReservoir(reservoir);
+                    setRegion(region);
+                }
+            }
         });
     }, [map]);
 
@@ -124,6 +129,28 @@ const MainMap: React.FC<Props> = (props) => {
             ]);
         }
     }, [region]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+        if (reservoir === 'all') {
+            // Unset Filter
+            map.setFilter(LayerId.Reservoirs, null);
+            map.setFilter(LayerId.Reservoirs, null);
+        } else {
+            map.setFilter(LayerId.Reservoirs, [
+                '==',
+                ['get', 'locName'],
+                reservoir,
+            ]);
+            map.setFilter(LayerId.Reservoirs, [
+                '==',
+                ['get', 'locName'],
+                reservoir,
+            ]);
+        }
+    }, [reservoir]);
 
     return (
         <>

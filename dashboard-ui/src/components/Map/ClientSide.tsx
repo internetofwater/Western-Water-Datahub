@@ -47,7 +47,7 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
     const { id, sources, layers, options, controls, accessToken } = props;
 
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
-    const { map, setMap } = useMap(id);
+    const { map, hoverPopup, persistentPopup, setMap } = useMap(id);
 
     useEffect(() => {
         if (!map && mapContainerRef.current) {
@@ -55,10 +55,9 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
             const newMap = new mapboxgl.Map({
                 ...options,
                 container: mapContainerRef.current,
-                customAttribution:
-                    'Powered by <a href="https://www.esri.com" >Esri</a>',
+                // customAttribution:
+                //     'Powered by <a href="https://www.esri.com" >Esri</a>',
             });
-
             const hoverPopup = new mapboxgl.Popup({
                 closeButton: false,
                 closeOnClick: false,
@@ -66,7 +65,7 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
 
             const persistentPopup = new mapboxgl.Popup();
 
-            newMap.on('load', () => {
+            newMap.once('load', () => {
                 const createFeatureService = (
                     sourceId: string,
                     map: mapboxgl.Map,
@@ -86,32 +85,33 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
                 );
                 addControls(newMap, controls);
             });
-
-            newMap.on('style.load', () => {
-                const createFeatureService = (
-                    sourceId: string,
-                    map: mapboxgl.Map,
-                    options: FeatureServiceOptions
-                ) => new FeatureService(sourceId, map, options);
-
-                // Layers reset on style changes
-                addSources(newMap, sources, createFeatureService);
-                addLayers(newMap, layers);
-                addHoverFunctions(newMap, layers, hoverPopup, persistentPopup);
-                addClickFunctions(newMap, layers, hoverPopup, persistentPopup);
-                addMouseMoveFunctions(
-                    newMap,
-                    layers,
-                    hoverPopup,
-                    persistentPopup
-                );
-            });
         }
 
         return () => {
             if (map) map.remove();
         };
     }, []);
+
+    useEffect(() => {
+        if (!map || !hoverPopup || !persistentPopup) {
+            return;
+        }
+
+        map.on('style.load', () => {
+            const createFeatureService = (
+                sourceId: string,
+                map: mapboxgl.Map,
+                options: FeatureServiceOptions
+            ) => new FeatureService(sourceId, map, options);
+
+            // Layers reset on style changes
+            addSources(map, sources, createFeatureService);
+            addLayers(map, layers);
+            addHoverFunctions(map, layers, hoverPopup, persistentPopup);
+            addClickFunctions(map, layers, hoverPopup, persistentPopup);
+            addMouseMoveFunctions(map, layers, hoverPopup, persistentPopup);
+        });
+    }, [map]);
 
     // Style the container using #map-container-${id} in a global css file
     return (

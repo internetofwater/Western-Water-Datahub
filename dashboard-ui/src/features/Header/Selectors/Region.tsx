@@ -5,7 +5,7 @@ import useMainStore from '@/lib/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId } from '@/features/Map/config';
 import { useEffect, useState } from 'react';
-import { createOptions } from './utils';
+import { createOptions, shouldLoadOptions } from './utils';
 
 export const Region: React.FC = () => {
     const { map } = useMap(MAP_ID);
@@ -20,13 +20,17 @@ export const Region: React.FC = () => {
             return;
         }
 
-        const regionOptions = createOptions(
-            map,
-            SourceId.Regions,
-            'REGION',
-            'All Regions'
-        );
-        setRegionOptions(regionOptions);
+        map.on('sourcedata', function sourceCallback(e) {
+            if (shouldLoadOptions(map, SourceId.Regions, e)) {
+                const regionOptions = createOptions(
+                    map,
+                    SourceId.Regions,
+                    'REGION',
+                    'All Regions'
+                );
+                setRegionOptions(regionOptions);
+            }
+        });
     }, [map]);
 
     return (

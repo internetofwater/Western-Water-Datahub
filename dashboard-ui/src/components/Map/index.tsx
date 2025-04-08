@@ -1,12 +1,9 @@
-"use client";
-import React from "react";
-import { MapComponentProps } from "@/components/Map/types";
-import dynamic from "next/dynamic";
+'use client';
+import React, { lazy, Suspense } from 'react';
+import { MapComponentProps } from '@/components/Map/types';
 
-
-const ClientSideMap = dynamic(() => import('./ClientSide'), {
-    ssr: false,
-});
+// Dynamic load causes a double render even without strict mode
+const ClientSideMap = lazy(() => import('./ClientSide'));
 
 /**
  * This component renders the map component using a lazy load.
@@ -32,11 +29,13 @@ const ClientSideMap = dynamic(() => import('./ClientSide'), {
  * @component
  */
 const Map: React.FC<MapComponentProps> = (props) => {
-  return (
-    <>
-      <ClientSideMap {...props} />
-    </>
-  );
+    return (
+        <>
+            <Suspense>
+                <ClientSideMap {...props} />
+            </Suspense>
+        </>
+    );
 };
 
 export default Map;
