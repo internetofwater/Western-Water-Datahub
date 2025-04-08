@@ -12,7 +12,6 @@ import {
 } from '@/features/Map/config';
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore from '@/lib/main';
-import { Reservoir } from '../Header/Selectors/Reservoir';
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;

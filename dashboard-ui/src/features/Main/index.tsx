@@ -35,22 +35,25 @@ const Main: React.FC<Props> = (props) => {
     return (
         <Grid grow>
             {hasSelectedRegionOrBasin && (
-                <GridCol span={{ base: 12, md: 3 }}>
+                <GridCol span={{ base: 12, md: 3 }} order={{ base: 2, md: 1 }}>
                     <Grid grow>
                         <GridCol span={{ base: 12 }}>
-                            <Paper shadow="xs" p="xl">
+                            <Paper shadow="xs" p={{ base: 'sm', md: 'xl' }}>
                                 <Text>Region Info</Text>
                             </Paper>
                         </GridCol>
                         <GridCol span={{ base: 12 }}>
-                            <Paper shadow="xs" p="xl">
+                            <Paper shadow="xs" p={{ base: 'sm', md: 'xl' }}>
                                 Summary
                             </Paper>
                         </GridCol>
                     </Grid>
                 </GridCol>
             )}
-            <GridCol span={hasSelectedRegionOrBasin ? 9 : 12}>
+            <GridCol
+                span={hasSelectedRegionOrBasin ? 9 : 12}
+                order={{ base: 1, md: 2 }}
+            >
                 <Box
                     className={
                         hasSelectedReservoir
@@ -63,17 +66,17 @@ const Main: React.FC<Props> = (props) => {
             </GridCol>
             {hasSelectedReservoir && (
                 <>
-                    <GridCol span={{ base: 12, md: 4 }}>
+                    <GridCol span={{ base: 12, md: 4 }} order={3}>
                         <Paper shadow="xs" p="xl">
                             <Text>Reservoir Info</Text>
                         </Paper>
                     </GridCol>
-                    <GridCol span={{ base: 12, md: 4 }}>
+                    <GridCol span={{ base: 12, md: 4 }} order={4}>
                         <Paper shadow="xs" p="xl">
                             <Text>Chart</Text>
                         </Paper>
                     </GridCol>
-                    <GridCol span={{ base: 12, md: 4 }}>
+                    <GridCol span={{ base: 12, md: 4 }} order={5}>
                         <Paper shadow="xs" p="xl">
                             Average
                         </Paper>

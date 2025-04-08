@@ -1,6 +1,6 @@
 'use client';
 
-import { ComboboxData, Loader, Select } from '@mantine/core';
+import { ComboboxData, Select, Skeleton } from '@mantine/core';
 import useMainStore from '@/lib/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId } from '@/features/Map/config';
@@ -10,8 +10,6 @@ import {
     createOptions,
     shouldLoadOptions,
 } from './utils';
-import { GeoJSONSourceSpecification } from 'mapbox-gl';
-import { FeatureCollection } from 'geojson';
 
 export const Reservoir: React.FC = () => {
     const { map } = useMap(MAP_ID);
@@ -82,20 +80,20 @@ export const Reservoir: React.FC = () => {
     };
 
     return (
-        <>
-            {reservoirOptions.length > 0 ? (
-                <Select
-                    id="reservoirSelector"
-                    searchable
-                    data={reservoirOptions}
-                    value={reservoir}
-                    defaultValue={reservoir}
-                    placeholder="Select a Reservior"
-                    onChange={(_value) => handleChange(_value)}
-                />
-            ) : (
-                <Loader color="#c8942b" type="dots" />
-            )}
-        </>
+        <Skeleton
+            height={36} // Default dimensions of select
+            width={207}
+            visible={reservoirOptions.length === 0}
+        >
+            <Select
+                id="reservoirSelector"
+                searchable
+                data={reservoirOptions}
+                value={reservoir}
+                defaultValue={reservoir}
+                placeholder="Select a Reservior"
+                onChange={(_value) => handleChange(_value)}
+            />
+        </Skeleton>
     );
 };

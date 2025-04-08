@@ -1,6 +1,6 @@
 'use client';
 
-import { Select } from '@mantine/core';
+import { ComboboxData, Select, Skeleton } from '@mantine/core';
 import useMainStore from '@/lib/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID } from '@/features/Map/config';
@@ -12,6 +12,10 @@ export const Basin: React.FC = () => {
     const basin = useMainStore((state) => state.basin);
     const setBasin = useMainStore((state) => state.setBasin);
 
+    const [basinOptions] = useState<ComboboxData>([
+        { value: 'all', label: 'All Basins' },
+    ]);
+
     useEffect(() => {
         if (!map) {
             return;
@@ -19,13 +23,19 @@ export const Basin: React.FC = () => {
     }, [map]);
 
     return (
-        <Select
-            id="basinSelector"
-            searchable
-            data={[{ value: 'all', label: 'All Basins' }]}
-            value={basin}
-            placeholder="Select a region"
-            onChange={(_value) => setBasin(_value as string)}
-        />
+        <Skeleton
+            height={36} // Default dimensions of select
+            width={207}
+            visible={basinOptions.length === 0}
+        >
+            <Select
+                id="basinSelector"
+                searchable
+                data={basinOptions}
+                value={basin}
+                placeholder="Select a region"
+                onChange={(_value) => setBasin(_value as string)}
+            />
+        </Skeleton>
     );
 };

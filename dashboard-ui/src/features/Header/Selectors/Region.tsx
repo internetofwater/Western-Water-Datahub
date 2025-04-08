@@ -1,6 +1,6 @@
 'use client';
 
-import { ComboboxData, Loader, Select } from '@mantine/core';
+import { ComboboxData, Select, Skeleton } from '@mantine/core';
 import useMainStore from '@/lib/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId } from '@/features/Map/config';
@@ -34,19 +34,19 @@ export const Region: React.FC = () => {
     }, [map]);
 
     return (
-        <>
-            {regionOptions.length > 0 ? (
-                <Select
-                    id="regionSelector"
-                    searchable
-                    data={regionOptions}
-                    value={region}
-                    placeholder="Select a region"
-                    onChange={(_value) => setRegion(_value as string)}
-                />
-            ) : (
-                <Loader color="#c8942b" type="dots" />
-            )}
-        </>
+        <Skeleton
+            height={36} // Default dimensions of select
+            width={207}
+            visible={regionOptions.length === 0}
+        >
+            <Select
+                id="regionSelector"
+                searchable
+                data={regionOptions}
+                value={region}
+                placeholder="Select a region"
+                onChange={(_value) => setRegion(_value as string)}
+            />
+        </Skeleton>
     );
 };

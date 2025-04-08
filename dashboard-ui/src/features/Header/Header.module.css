@@ -5,7 +5,17 @@
 .topBarPaper {
     height: inherit;
     padding: 0.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
     border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.logoBarPaper {
+    height: 67px;
+}
+
+.darkModeToggleContainer {
+    padding-bottom: 7px;
 }
 
 .filterBackground {
