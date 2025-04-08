@@ -1,6 +1,6 @@
 'use client';
 
-import { PropsWithChildren, Suspense } from 'react';
+import { PropsWithChildren } from 'react';
 import { Map as MapProvider } from '@/providers/Map';
 import { Mantine as MantineProvider } from '@/providers/Mantine';
 
@@ -16,9 +16,7 @@ import { Mantine as MantineProvider } from '@/providers/Mantine';
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
     return (
         <MantineProvider>
-            <Suspense fallback={children}>
-                <MapProvider>{children}</MapProvider>
-            </Suspense>
+            <MapProvider>{children}</MapProvider>
         </MantineProvider>
     );
 };

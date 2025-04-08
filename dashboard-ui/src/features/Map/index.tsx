@@ -1,12 +1,16 @@
 'use client';
 import Map from '@/components/Map';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     layerDefinitions,
     sourceConfigs,
     MAP_ID,
     BASEMAP,
+    SubLayerId,
+    LayerId,
 } from '@/features/Map/config';
+import { useMap } from '@/contexts/MapContexts';
+import useMainStore from '@/lib/main';
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;
@@ -26,6 +30,100 @@ type Props = {
  */
 const MainMap: React.FC<Props> = (props) => {
     const { accessToken } = props;
+
+    const { map } = useMap(MAP_ID);
+    const region = useMainStore((state) => state.region);
+    const setRegion = useMainStore((state) => state.setRegion);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        map.on('click', [SubLayerId.RegionsFill], (e) => {
+            const features = map.queryRenderedFeatures(e.point, {
+                layers: [SubLayerId.RegionsFill],
+            });
+
+            if (features && features.length) {
+                const feature = features[0];
+
+                if (feature.properties) {
+                    const region = feature.properties.REGION as string;
+
+                    setRegion(region);
+                }
+            }
+        });
+
+        map.on('click', [SubLayerId.BasinsFill], (e) => {
+            const features = map.queryRenderedFeatures(e.point, {
+                layers: [SubLayerId.BasinsFill],
+            });
+
+            console.log('BASINS', features);
+
+            // if (features && features.length) {
+            //     const feature = features[0];
+
+            //     if (feature.properties) {
+            //         const region = feature.properties.REGION as string;
+
+            //         setRegion(region);
+            //     }
+            // }
+        });
+        map.on('click', [LayerId.Reservoirs], (e) => {
+            const features = map.queryRenderedFeatures(e.point, {
+                layers: [LayerId.Reservoirs],
+            });
+            console.log('RESER', features);
+
+            // if (features && features.length) {
+            //     const feature = features[0];
+
+            //     if (feature.properties) {
+            //         const region = feature.properties.REGION as string;
+
+            //         setRegion(region);
+            //     }
+            // }
+        });
+    }, [map]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+        if (region === 'all') {
+            // Unset Filter
+            map.setFilter(SubLayerId.RegionsFill, null);
+            map.setFilter(SubLayerId.RegionsBoundary, null);
+            map.setFilter(LayerId.Reservoirs, null);
+            map.setFilter(LayerId.Reservoirs, null);
+        } else {
+            map.setFilter(SubLayerId.RegionsFill, [
+                '==',
+                ['get', 'REGION'],
+                region,
+            ]);
+            map.setFilter(SubLayerId.RegionsBoundary, [
+                '==',
+                ['get', 'REGION'],
+                region,
+            ]);
+            map.setFilter(LayerId.Reservoirs, [
+                '==',
+                ['get', 'region'],
+                region,
+            ]);
+            map.setFilter(LayerId.Reservoirs, [
+                '==',
+                ['get', 'region'],
+                region,
+            ]);
+        }
+    }, [region]);
 
     return (
         <>

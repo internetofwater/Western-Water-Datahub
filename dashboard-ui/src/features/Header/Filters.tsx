@@ -1,5 +1,5 @@
 import { Group, Switch } from '@mantine/core';
-import styles from '@/features/TopBar/TopBar.module.css';
+import styles from '@/features/Header/Header.module.css';
 
 export const Filters: React.FC = () => {
     return (

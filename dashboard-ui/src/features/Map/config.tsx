@@ -20,17 +20,21 @@ export const BASEMAP = basemaps[BasemapId.Dark];
 
 export enum SourceId {
     Regions = 'regions-source',
+    Basins = 'hu04',
     Reservoirs = 'reservoirs-source',
 }
 
 export enum LayerId {
     Regions = 'regions-main',
+    Basins = 'basins-main',
     Reservoirs = 'reservoirs',
 }
 
 export enum SubLayerId {
     RegionsBoundary = 'regions-boundary',
     RegionsFill = 'regions-fill',
+    BasinsBoundary = 'basins-boundary',
+    BasinsFill = 'basins-fill',
 }
 
 export const allLayerIds = [
@@ -60,6 +64,21 @@ export const sourceConfigs: SourceConfig[] = [
         type: Sources.ESRI,
         definition: {
             url: 'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/RISE_point_locations_(view)/FeatureServer/0',
+        },
+    },
+    {
+        id: SourceId.Basins,
+        type: Sources.VectorTile,
+        definition: {
+            type: 'vector',
+            tiles: [
+                `https://reference.geoconnex.dev/collections/hu04/tiles/WebMercatorQuad/{z}/{x}/{y}?f=mvt`,
+            ],
+            minzoom: 0,
+
+            maxzoom: 10,
+            tileSize: 512,
+            bounds: [-179.229468, -14.42442, 179.856484, 71.439451],
         },
     },
 ];
@@ -103,6 +122,12 @@ export const getLayerColor = (
     id: LayerId | SubLayerId
 ): DataDrivenPropertyValueSpecification<string> => {
     switch (id) {
+        case LayerId.Regions:
+            return '#F00';
+        case LayerId.Basins:
+            return '#0F0';
+        case LayerId.Reservoirs:
+            return '#00F';
         default:
             return '#FFF';
     }
@@ -149,6 +174,39 @@ export const getLayerConfig = (
                 source: SourceId.Regions,
                 paint: {
                     'fill-color': getLayerColor(LayerId.Regions),
+                    'fill-opacity': 0.3,
+                },
+            };
+        case LayerId.Basins:
+            return null;
+        case SubLayerId.BasinsBoundary:
+            return {
+                id: SubLayerId.BasinsBoundary,
+                type: LayerType.Line,
+                source: SourceId.Basins,
+                'source-layer': 'hu04',
+                layout: {
+                    visibility: 'none',
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                },
+                paint: {
+                    'line-opacity': 1,
+                    'line-color': getLayerColor(LayerId.Basins),
+                    'line-width': 3,
+                },
+            };
+        case SubLayerId.BasinsFill:
+            return {
+                id: SubLayerId.BasinsFill,
+                type: LayerType.Fill,
+                source: SourceId.Basins,
+                'source-layer': 'hu04',
+                layout: {
+                    visibility: 'none',
+                },
+                paint: {
+                    'fill-color': getLayerColor(LayerId.Basins),
                     'fill-opacity': 0.3,
                 },
             };
@@ -315,6 +373,28 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 config: getLayerConfig(SubLayerId.RegionsFill),
                 controllable: false,
                 legend: false,
+                clickFunction: getLayerClickFunction(SubLayerId.RegionsFill),
+            },
+        ],
+    },
+    {
+        id: LayerId.Basins,
+        config: getLayerConfig(LayerId.Basins),
+        controllable: false,
+        legend: false,
+        subLayers: [
+            {
+                id: SubLayerId.BasinsBoundary,
+                config: getLayerConfig(SubLayerId.BasinsBoundary),
+                controllable: false,
+                legend: false,
+            },
+            {
+                id: SubLayerId.BasinsFill,
+                config: getLayerConfig(SubLayerId.BasinsFill),
+                controllable: false,
+                legend: false,
+                clickFunction: getLayerClickFunction(SubLayerId.BasinsFill),
             },
         ],
     },
@@ -323,5 +403,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
         config: getLayerConfig(LayerId.Reservoirs),
         controllable: false,
         legend: false,
+        clickFunction: getLayerClickFunction(LayerId.Reservoirs),
     },
 ];

@@ -1,42 +1,16 @@
 import styles from '@/app/page.module.css';
-import { Grid, GridCol, Paper, Text } from '@mantine/core';
-import Map from '@/features/Map';
-import TopBar from '@/features/TopBar';
+import Header from '@/features/Header';
+import Main from '@/features/Main';
 
 const Page: React.FC = () => {
     return (
         <>
             <div className={styles.page}>
                 <header className={styles.header}>
-                    <TopBar />
+                    <Header />
                 </header>
                 <main className={styles.main}>
-                    <Grid grow>
-                        <GridCol span={12}>
-                            {/* <AspectRatio ratio={16 / 5}> */}
-                            <Map
-                                accessToken={
-                                    process.env.MAPBOX_ACCESS_TOKEN ?? ''
-                                }
-                            />
-                            {/* </AspectRatio> */}
-                        </GridCol>
-                        <GridCol span={{ base: 12, md: 4 }}>
-                            <Paper shadow="xs" p="xl">
-                                <Text>Reservoir Info</Text>
-                            </Paper>
-                        </GridCol>
-                        <GridCol span={{ base: 12, md: 4 }}>
-                            <Paper shadow="xs" p="xl">
-                                <Text>Chart</Text>
-                            </Paper>
-                        </GridCol>
-                        <GridCol span={{ base: 12, md: 4 }}>
-                            <Paper shadow="xs" p="xl">
-                                Average
-                            </Paper>
-                        </GridCol>
-                    </Grid>
+                    <Main accessToken={process.env.MAPBOX_ACCESS_TOKEN ?? ''} />
                 </main>
                 <footer className={styles.footer}></footer>
             </div>
