@@ -64,6 +64,7 @@ export const sourceConfigs: SourceConfig[] = [
         type: Sources.ESRI,
         definition: {
             url: 'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/RISE_point_locations_(view)/FeatureServer/0',
+            where: "type='Lake/Reservoir' AND locName like '%Reservoir%'",
         },
     },
     {
