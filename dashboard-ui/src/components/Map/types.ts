@@ -14,6 +14,8 @@ import {
     FullscreenControlOptions,
     NavigationControlOptions,
     ScaleControlOptions,
+    IControl,
+    ControlPosition,
 } from 'mapbox-gl';
 
 /**
@@ -124,6 +126,20 @@ export type MainLayerDefinition = LayerDefinition & {
 };
 
 /**
+ * Interface for definining custom controls
+ *
+ * Properties
+ * - control: IControl - Class that implements Mapbox control api
+ * - position: ControlPosition - String value determining where to position control button
+ *
+ * @interface
+ */
+export interface ICustomControl {
+    control: IControl;
+    position: ControlPosition;
+}
+
+/**
  * Defines the properties for the map component.
  *
  * Properties:
@@ -151,6 +167,7 @@ export interface MapComponentProps {
         scaleControl?: ScaleControlOptions | boolean;
         fullscreenControl?: FullscreenControlOptions | boolean;
     };
+    customControls?: ICustomControl[];
 }
 
 /**

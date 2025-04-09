@@ -33,7 +33,8 @@ export const Basin: React.FC = () => {
                 searchable
                 data={basinOptions}
                 value={basin}
-                placeholder="Select a region"
+                aria-label="Select a Basin"
+                placeholder="Select a basin"
                 onChange={(_value) => setBasin(_value as string)}
             />
         </Skeleton>

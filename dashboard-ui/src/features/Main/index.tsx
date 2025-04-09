@@ -7,6 +7,7 @@ import styles from '@/features/Main/Main.module.css';
 import { MAP_ID } from '@/features/Map/config';
 import { useMap } from '@/contexts/MapContexts';
 import { useEffect } from 'react';
+import { MapTools } from '../MapTools';
 
 type Props = {
     accessToken: string;
@@ -62,6 +63,7 @@ const Main: React.FC<Props> = (props) => {
                     }
                 >
                     <Map accessToken={accessToken} />
+                    <MapTools />
                 </Box>
             </GridCol>
             {hasSelectedReservoir && (

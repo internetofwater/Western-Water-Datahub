@@ -1,15 +1,15 @@
 'use client';
 
-import { Box, Button, Collapse, Group, Paper, Select } from '@mantine/core';
+import { Box, Button, Collapse, Group, Paper } from '@mantine/core';
 import styles from '@/features/Header/Header.module.css';
 import { useDisclosure } from '@mantine/hooks';
 import { Filters } from '@/features/Header/Filters';
-import useMainStore from '@/lib/main';
 import { Region } from '@/features/Header/Selectors/Region';
 import { Reservoir } from '@/features/Header/Selectors/Reservoir';
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import { Basin } from '@/features/Header/Selectors/Basin';
 
 const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
     ssr: false,
@@ -17,9 +17,6 @@ const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
 
 const Header: React.FC = () => {
     const [opened, { toggle }] = useDisclosure(false);
-
-    const basin = useMainStore((state) => state.basin);
-    const setBasin = useMainStore((state) => state.setBasin);
 
     return (
         <>
@@ -57,16 +54,7 @@ const Header: React.FC = () => {
                     <Group justify="space-between">
                         <Group gap="xl">
                             <Region />
-                            <Select
-                                id="basinSelector"
-                                searchable
-                                data={[{ value: 'all', label: 'All Basins' }]}
-                                value={basin}
-                                placeholder="Select a region"
-                                onChange={(_value) =>
-                                    setBasin(_value as string)
-                                }
-                            />
+                            <Basin />
                             <Reservoir />
                         </Group>
                         <Button variant="default" onClick={toggle}>

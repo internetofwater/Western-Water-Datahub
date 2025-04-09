@@ -1,0 +1,26 @@
+.mapToolsContainer {
+    position: absolute;
+    top: 138px;
+    z-index: 1000;
+    right: 62px;
+}
+
+.basemapSelectorContainer {
+    min-width: 210px;
+}
+
+.mapToolTitle {
+    text-align: center;
+}
+
+.basemapSelectorCheckboxLabel {
+    text-transform: capitalize;
+}
+
+.screenshotLoaderContainer {
+    width: 200px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

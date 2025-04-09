@@ -6,13 +6,16 @@ import {
     layerDefinitions,
     sourceConfigs,
     MAP_ID,
-    BASEMAP,
     SubLayerId,
     LayerId,
 } from '@/features/Map/config';
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore from '@/lib/main';
 import { loadTeacups as loadImages } from '@/features/Map/utils';
+import { MapButton as BasemapSelector } from '../MapTools/BaseMap/MapButton';
+import { MapButton as Screenshot } from '../MapTools/Screenshot/MapButton';
+import CustomControl from '@/components/Map/tools/CustomControl';
+import { basemaps } from '@/components/Map/consts';
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;
@@ -38,6 +41,7 @@ const MainMap: React.FC<Props> = (props) => {
     const setRegion = useMainStore((state) => state.setRegion);
     const reservoir = useMainStore((state) => state.reservoir);
     const setReservoir = useMainStore((state) => state.setReservoir);
+    const basemap = useMainStore((state) => state.basemap);
 
     useEffect(() => {
         if (!map) {
@@ -164,6 +168,14 @@ const MainMap: React.FC<Props> = (props) => {
         }
     }, [reservoir]);
 
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        map.setStyle(basemaps[basemap]);
+    }, [basemap]);
+
     return (
         <>
             <Map
@@ -172,7 +184,7 @@ const MainMap: React.FC<Props> = (props) => {
                 sources={sourceConfigs}
                 layers={layerDefinitions}
                 options={{
-                    style: BASEMAP,
+                    style: basemaps[basemap],
                     center: INITIAL_CENTER,
                     zoom: INITIAL_ZOOM,
                     maxZoom: 20,
@@ -181,6 +193,19 @@ const MainMap: React.FC<Props> = (props) => {
                     scaleControl: true,
                     navigationControl: true,
                 }}
+                customControls={[
+                    {
+                        control: new CustomControl(
+                            (
+                                <>
+                                    <BasemapSelector />
+                                    <Screenshot />
+                                </>
+                            )
+                        ),
+                        position: 'top-right',
+                    },
+                ]}
             />
         </>
     );

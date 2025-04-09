@@ -7,6 +7,7 @@ import { MapComponentProps } from '@/components/Map/types';
 import {
     addClickFunctions,
     addControls,
+    addCustomControls,
     addHoverFunctions,
     addLayers,
     addMouseMoveFunctions,
@@ -44,7 +45,15 @@ FeatureService.prototype._setAttribution = function () {
  * @component
  */
 const MapComponent: React.FC<MapComponentProps> = (props) => {
-    const { id, sources, layers, options, controls, accessToken } = props;
+    const {
+        id,
+        sources,
+        layers,
+        options,
+        controls,
+        customControls,
+        accessToken,
+    } = props;
 
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const { map, hoverPopup, persistentPopup, setMap } = useMap(id);
@@ -55,8 +64,8 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
             const newMap = new mapboxgl.Map({
                 ...options,
                 container: mapContainerRef.current,
-                // customAttribution:
-                //     'Powered by <a href="https://www.esri.com" >Esri</a>',
+                customAttribution:
+                    'Powered by <a href="https://www.esri.com" >Esri</a>',
             });
             const hoverPopup = new mapboxgl.Popup({
                 closeButton: false,
@@ -84,6 +93,7 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
                     persistentPopup
                 );
                 addControls(newMap, controls);
+                addCustomControls(newMap, customControls);
             });
         }
 
