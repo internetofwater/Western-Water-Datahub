@@ -34,14 +34,14 @@ services:
       - LOG_LEVEL=debug
     restart: on-failure
 
-  dashboard-ui:
-    build:
-      context: dashboard-ui
-      dockerfile: Dockerfile
-    ports:
-      - '3000:3000'
-    profiles:
-      - production
+  # dashboard-ui:
+  #   build:
+  #     context: dashboard-ui
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - '3000:3000'
+  #   profiles:
+  #     - production
     
 
 volumes:
