@@ -52,7 +52,12 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         skip_geometry: Optional[bool] = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        return LocationColletion()
+        collection = LocationColletion()
+        if itemId:
+            collection.drop_all_locations_but_id(itemId)
+
+        res = collection.to_geojson()
+        return res
 
     @crs_transform
     def query(self, **kwargs):
