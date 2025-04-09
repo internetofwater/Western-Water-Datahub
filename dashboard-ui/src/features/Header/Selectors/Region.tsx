@@ -5,7 +5,10 @@ import useMainStore from '@/lib/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId } from '@/features/Map/config';
 import { useEffect, useState } from 'react';
-import { createOptions, shouldLoadOptions } from './utils';
+import {
+    createOptions,
+    shouldLoadOptions,
+} from '@/features/Header/Selectors/utils';
 
 export const Region: React.FC = () => {
     const { map } = useMap(MAP_ID);

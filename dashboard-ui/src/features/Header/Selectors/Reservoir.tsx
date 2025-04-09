@@ -9,7 +9,7 @@ import {
     createFilteredOptions,
     createOptions,
     shouldLoadOptions,
-} from './utils';
+} from '@/features/Header/Selectors/utils';
 
 export const Reservoir: React.FC = () => {
     const { map } = useMap(MAP_ID);

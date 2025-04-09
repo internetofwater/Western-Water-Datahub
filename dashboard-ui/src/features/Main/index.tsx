@@ -7,7 +7,7 @@ import styles from '@/features/Main/Main.module.css';
 import { MAP_ID } from '@/features/Map/config';
 import { useMap } from '@/contexts/MapContexts';
 import { useEffect } from 'react';
-import { MapTools } from '../MapTools';
+import { MapTools } from '@/features/MapTools';
 
 type Props = {
     accessToken: string;

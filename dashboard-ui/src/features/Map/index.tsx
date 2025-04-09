@@ -12,8 +12,8 @@ import {
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore from '@/lib/main';
 import { loadTeacups as loadImages } from '@/features/Map/utils';
-import { MapButton as BasemapSelector } from '../MapTools/BaseMap/MapButton';
-import { MapButton as Screenshot } from '../MapTools/Screenshot/MapButton';
+import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
+import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
 import CustomControl from '@/components/Map/tools/CustomControl';
 import { basemaps } from '@/components/Map/consts';
 
