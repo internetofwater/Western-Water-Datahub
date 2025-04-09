@@ -12,6 +12,7 @@ import {
 } from '@/features/Map/config';
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore from '@/lib/main';
+import { loadTeacups as loadImages } from '@/features/Map/utils';
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;
@@ -76,11 +77,13 @@ const MainMap: React.FC<Props> = (props) => {
             //     }
             // }
         });
+
         map.on('click', LayerId.Reservoirs, (e) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [LayerId.Reservoirs],
             });
 
+            console.log('features', features);
             if (features && features.length) {
                 const feature = features[0];
 
@@ -92,6 +95,10 @@ const MainMap: React.FC<Props> = (props) => {
                     setRegion(region);
                 }
             }
+        });
+        loadImages(map);
+        map.on('style.load', () => {
+            loadImages(map);
         });
     }, [map]);
 

@@ -214,11 +214,33 @@ export const getLayerConfig = (
         case LayerId.Reservoirs:
             return {
                 id: LayerId.Reservoirs,
-                type: 'circle',
+                type: LayerType.Symbol,
                 source: SourceId.Reservoirs,
-                paint: {
-                    'circle-radius': 10,
-                    'circle-color': getLayerColor(LayerId.Reservoirs),
+                layout: {
+                    'icon-image': [
+                        'let',
+                        'storage', // Variable name
+                        ['/', ['get', 'elev_ft'], 10000], // Variable value
+                        [
+                            'step',
+                            ['var', 'storage'],
+                            'default', // Below first step value
+                            0.75,
+                            'teacup-75',
+                            0.8,
+                            'teacup-80',
+                            0.85,
+                            'teacup-85',
+                            0.9,
+                            'teacup-90',
+                            0.95,
+                            'teacup-95',
+                            1,
+                            'teacup-100',
+                        ],
+                    ],
+                    'icon-size': 0.5,
+                    'icon-allow-overlap': true,
                 },
             };
         default:
