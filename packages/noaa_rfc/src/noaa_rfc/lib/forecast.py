@@ -209,9 +209,6 @@ class ForecastCollection:
                 zip(
                     forecast_data.espid,
                     forecast_data.espfdate,
-                    forecast_data.espai or [],
-                    forecast_data.espmi or [],
-                    forecast_data.esppcti or [],
                     forecast_data.espavg30,
                     forecast_data.espname,
                     forecast_data.esplatdd,
@@ -227,18 +224,15 @@ class ForecastCollection:
                     {
                         "espid": relevant_fields[0],
                         "espfdate": relevant_fields[1],
-                        "espai": relevant_fields[2],
-                        "espmi": relevant_fields[3],
-                        "esppcti": relevant_fields[4],
-                        "espavg30": relevant_fields[5],
-                        "espname": relevant_fields[6],
-                        "esplatdd": relevant_fields[7],
-                        "esplngdd": relevant_fields[8],
-                        "espfgroupid": relevant_fields[9],
-                        "espbper": relevant_fields[10],
-                        "espeper": relevant_fields[11],
-                        "espp_500": relevant_fields[12],
-                        "espqpfdays": relevant_fields[13],
+                        "espavg30": relevant_fields[2],
+                        "espname": relevant_fields[3],
+                        "esplatdd": relevant_fields[4],
+                        "esplngdd": relevant_fields[5],
+                        "espfgroupid": relevant_fields[6],
+                        "espbper": relevant_fields[7],
+                        "espeper": relevant_fields[8],
+                        "espp_500": relevant_fields[9],
+                        "espqpfdays": relevant_fields[10],
                     }
                 )
                 pivoted_forecasts.append(item)
