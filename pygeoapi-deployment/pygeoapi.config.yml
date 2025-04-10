@@ -555,7 +555,7 @@ resources:
       - type: feature
         name: noaa_rfc.noaa_rfc.NOAARFCProvider
         data: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
-        title_field: name
+        title_field: espname
 
   # NOHRSC-Snow-Analysis-Depth-Image:
   #   type: collection

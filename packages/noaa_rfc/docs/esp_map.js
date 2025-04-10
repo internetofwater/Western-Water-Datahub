@@ -266,6 +266,7 @@ function gotData() {
     }
 
     console.log(points);
+    console.log(points.length)
 
 }
 

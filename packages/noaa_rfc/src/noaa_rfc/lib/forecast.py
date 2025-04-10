@@ -74,7 +74,7 @@ class ForecastDataSingle(BaseModel):
     espqpfdays: int
 
 
-def calcFill(point, wyr=None):
+def calcFill(point, wyr):
     # Assign values to the point dictionary
     point["id"] = point["espid"]
     point["fdate"] = point["espfdate"]
@@ -158,11 +158,17 @@ class ForecastCollection:
     forecasts: list[ForecastDataSingle] = []
 
     async def _get_data(self):
-        fdate_latest = "2025-04-10"
-        cb_fdate_end = "2025-04-10"
-        cb_fdate_az = "2025-04-10"
-        ab_fdate_end = "2025-04-10"
-        wg_fdate_end = "2025-04-10"
+        now = time.time()
+        wyr = time.strftime("%Y", time.localtime(now))
+        cmo = int(time.strftime("%m", time.localtime(now)))
+        if cmo > 9:
+            wyr = str(int(wyr) + 1)
+
+        fdate_latest = "LATEST"
+        cb_fdate_end = wyr + "-07-15"
+        cb_fdate_az = wyr + "-5-30"
+        ab_fdate_end = wyr + "-06-29"
+        wg_fdate_end = wyr + "-07-15"
 
         ts = time.time() / (6 * 60 * 60)
 
@@ -193,7 +199,7 @@ class ForecastCollection:
         pivoted_forecasts: list[ForecastDataSingle] = []
         for forecast_data in wide_forecasts:
             # Zipping lists to iterate over all of them
-            for index, relevant_fields in enumerate(
+            for _, relevant_fields in enumerate(
                 zip(
                     forecast_data.espid,
                     forecast_data.espfdate,
