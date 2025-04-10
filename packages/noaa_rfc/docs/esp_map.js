@@ -1,9 +1,17 @@
+/*
+This file is a modified version of https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.js
+
+It is called from the map at https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
+and essentially does multiple fetches and then joins together into one json that represents the
+forecasts for all basins
+*/
+
+
+
 var markers=[];
 var mpoints=[];
 var wsupall;
 var wsupmarker = 'espavg';
-
-var points=0;
 
 var fgclip;
 var fglist;
@@ -12,15 +20,6 @@ var map, basins;
 var riverLayer,rfcLayer,fgroupLayer,basinLayer,countyLayer,bmlayer;
 var fg="";
 var select_results, mtitle, mstatus;
-
-
-function double(s) {
-	s=s+"";
-	if (s.length==1) {
-		s="0"+s;
-	}
-	return(s);
-}
 
 bls=[];
 var cb_date;
@@ -54,10 +53,6 @@ function getData() {
     cb_latest="";
     cb_end="";
     cb_az="";
-
-    for (var i=0;i < markers.length;i++) {
-        map.removeLayer(markers[i]);
-    }
 
     var fdate_latest="LATEST";
     var cb_fdate_end=wyr+"-07-15";
