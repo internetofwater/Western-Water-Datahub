@@ -50,18 +50,22 @@ class ForecastData(BaseModel):
 
 
 class ForecastDataSingle(BaseModel):
-    espid: str
-    espfdate: date | str
+    """
+    A class reprsenting the output data of an extended streamflow prediction
+    """
+
+    espid: str  # The id of the station where the data is from
+    espfdate: date | str  # the data the forecast was made
     espai: Optional[int] = None
     espmi: Optional[int] = None
     esppcti: Optional[int] = None
     espavg30: float
-    esppavg: Optional[float] = None
+    esppavg: Optional[float] = None  #
     esppmed: Optional[int] = None
     esppctile: Optional[int] = None
     espplace: Optional[int] = None
     espnyears: Optional[int] = None
-    espname: str
+    espname: str  # The human readable name of the station
     esplatdd: float
     esplngdd: float
     espfgroupid: str
