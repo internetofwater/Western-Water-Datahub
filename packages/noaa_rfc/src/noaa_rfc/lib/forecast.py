@@ -173,6 +173,8 @@ class ForecastCollection:
         ts = time.time() / (6 * 60 * 60)
 
         # Define the URLs
+
+        # fetches basins CB,AB,WG,MB,NW
         urls = {
             "src_latest": f"https://www.cbrfc.noaa.gov/wsup/graph/espcond_data.py?fdate={fdate_latest}&area=CB&qpfdays=0&otype=json&ts={ts}",
             "src_end": f"https://www.cbrfc.noaa.gov/wsup/graph/espcond_data.py?fdate={cb_fdate_end}&area=CB&qpfdays=0&otype=json&ts={ts}",
@@ -190,8 +192,12 @@ class ForecastCollection:
             tasks = [fetch_data(session, url) for url in urls.values()]
             results = await asyncio.gather(*tasks)
 
+            assert any([result["espid"][0] == "BTYO3" for result in results])
+
             # Process results using data2obj
-            return [ForecastData.model_validate(res) for res in results]
+            serialized = [ForecastData.model_validate(res) for res in results]
+            assert any([result.espid[0] == "BTYO3" for result in serialized])
+            return serialized
 
     def __init__(self):
         wide_forecasts = await_(self._get_data())
