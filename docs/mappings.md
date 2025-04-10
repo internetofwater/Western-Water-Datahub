@@ -20,7 +20,7 @@ These tables track the EDR implementation of each mapping in this repo [here](..
 | RISE           | ❌       | ❌     | ✅   | ✅   | ❌         | ❌        | ✅    |
 | SNOTEL         | ❌       | ❌     | ✅   | ✅   | ❌         | ❌        | ✅    |
 | AWDB Forecasts | ❌       | ❌     | ✅   | ✅   | ❌         | ❌        | ✅    |
-| USACE          | ❌       | ❌     | ❌  | ❌  | ❌         | ❌        | ❌    |
+| USACE          | ❌       | ❌     | ❌   | ❌   | ❌         | ❌        | ❌    |
 
 ### EDR Query Options
 

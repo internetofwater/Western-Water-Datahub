@@ -9,9 +9,9 @@ This project is a collaboration between the United States Beaureu of Reclamation
 The interface consolidates access to multiple water data sources, offering a standardized API pattern to retrieve information from different systems. The sources are listed below:
 
 | Data Source | Variables                                                 | OGC API Format |
-|-------------|-----------------------------------------------------------|----------------|
+| ----------- | --------------------------------------------------------- | -------------- |
 | USBR/RISE   | Reservoir Storage/Release/Level/Evap (current/historical) | Features, EDR  |
-| NRCS/SNOTEL | Snow Water Equivalent (station, current/historical)       | Features, EDR  | 
+| NRCS/SNOTEL | Snow Water Equivalent (station, current/historical)       | Features, EDR  |
 | USGS/WMA    | Streamflow (current)                                      | Features, EDR  |
 | AWDB        | Streamflow (forecast)                                     | Features, EDR  |
 | NOAA/QPF    | Precipitation (Raster forecast)                           | Features       |
@@ -25,7 +25,7 @@ To learn more about custom mappings, visit the [Western Water Datahub Mappings d
 To run with Docker:
 
 ```bash
-docker compose --profile production up 
+docker compose --profile production up
 ```
 
 ### Local Development
