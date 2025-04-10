@@ -29,8 +29,9 @@ class ForecastResultCollection:
         """
         Given a list of station triples, fetch all associated data for them
         """
+        if not station_triplets:
+            return {}
 
-        assert station_triplets, "No station triplets provided"
         station_triplets_comma_separated = ",".join(station_triplets)
         assert element_code
         url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/forecasts?elements={element_code}&stationTriplets={station_triplets_comma_separated}"
