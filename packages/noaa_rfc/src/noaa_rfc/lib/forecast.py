@@ -3,8 +3,15 @@ from datetime import date
 import time
 from typing import Optional, cast
 import aiohttp
-from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
-from com.helpers import await_
+from com.geojson.helpers import (
+    GeojsonFeatureCollectionDict,
+    GeojsonFeatureDict,
+    SortDict,
+    all_properties_found_in_feature,
+    filter_out_properties_not_selected,
+    sort_by_properties_in_place,
+)
+from com.helpers import OAFFieldsMapping, await_
 from pydantic import BaseModel
 from geojson_pydantic import Feature, FeatureCollection, Point
 from geojson_pydantic.types import Position2D
@@ -230,26 +237,46 @@ class ForecastCollection:
         ]
 
     def to_geojson(
-        self, single_feature: bool = False, skip_geometry: Optional[bool] = False
+        self,
+        single_feature: bool = False,
+        skip_geometry: Optional[bool] = False,
+        select_properties: Optional[list[str]] = None,
+        properties: Optional[list[tuple[str, str]]] = None,
+        fields_mapping: OAFFieldsMapping = {},
+        sortby: Optional[list[SortDict]] = None,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         features: list[Feature] = []
         for forecast in self.forecasts:
-            features.append(
-                Feature(
-                    type="Feature",
-                    id=forecast.espid,
-                    properties=forecast.model_dump(exclude={"esplatdd", "esplngdd"}),
-                    geometry=Point(
-                        coordinates=Position2D(forecast.esplngdd, forecast.esplatdd),
-                        type="Point",
-                    )
-                    if not skip_geometry
-                    else None,
+            serialized_feature = Feature(
+                type="Feature",
+                id=forecast.espid,
+                properties=forecast.model_dump(exclude={"esplatdd", "esplngdd"}),
+                geometry=Point(
+                    coordinates=Position2D(forecast.esplngdd, forecast.esplatdd),
+                    type="Point",
                 )
+                if not skip_geometry
+                else None,
             )
+            if properties:
+                # narrow the FieldsMapping type here manually since properties is a query arg for oaf and thus we know that OAFFieldsMapping must be used
+                if not all_properties_found_in_feature(
+                    serialized_feature, properties, fields_mapping
+                ):
+                    continue
+
+            if select_properties:
+                filter_out_properties_not_selected(
+                    serialized_feature, select_properties
+                )
+
+            features.append(serialized_feature)
 
         if single_feature:
             return cast(GeojsonFeatureDict, features[0].model_dump())
+
+        if sortby:
+            sort_by_properties_in_place(features, sortby)
 
         return cast(
             GeojsonFeatureCollectionDict,
