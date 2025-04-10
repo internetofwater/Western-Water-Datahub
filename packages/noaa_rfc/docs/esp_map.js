@@ -109,26 +109,6 @@ function getData() {
     }
 }
 
-function threshold(pct) {
-    if (pct <= 25)
-        i = 1
-    else if (pct > 25 && pct <= 50)
-        i = 2
-    else if (pct > 50 && pct <= 75)
-        i = 3
-    else if (pct > 75 && pct <= 90)
-        i = 4
-    else if (pct > 90 && pct <= 110)
-        i = 5
-    else if (pct > 110 && pct <= 125)
-        i = 6
-    else if (pct > 125 && pct <= 150)
-        i = 7
-    else if (pct > 500)
-        i = 8
-    return i
-}
-
 function calcFill(point) {
     point['id'] = point['espid'];
     point['fdate'] = point['espfdate'];

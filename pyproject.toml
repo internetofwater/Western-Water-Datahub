@@ -63,6 +63,7 @@ members = ["packages/*"]
 rise = { workspace = true }
 snotel = { workspace = true }
 awdb_forecasts = { workspace = true }
+noaa_rfc = { workspace = true }
 
 
 

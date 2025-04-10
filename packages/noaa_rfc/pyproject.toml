@@ -9,9 +9,6 @@ authors = [
 requires-python = ">=3.12"
 dependencies = []
 
-[project.scripts]
-noaa-rfc = "noaa_rfc:main"
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
