@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-"use client";
-import { Popup, Map } from "mapbox-gl";
-import React, { createContext, useState, useContext, ReactNode } from "react";
+'use client';
+import { Popup, Map } from 'mapbox-gl';
+import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 /**
  * Defines the structure for a single map context, including the map instance, hover popup, persistent popup, and a function to set the map context.
@@ -18,10 +18,10 @@ import React, { createContext, useState, useContext, ReactNode } from "react";
  * @interface
  */
 interface MapContextType {
-  map: Map | null;
-  hoverPopup: Popup | null;
-  persistentPopup: Popup | null;
-  setMap: (map: Map, hoverPopup: Popup, persistentPopup: Popup) => void;
+    map: Map | null;
+    hoverPopup: Popup | null;
+    persistentPopup: Popup | null;
+    setMap: (map: Map, hoverPopup: Popup, persistentPopup: Popup) => void;
 }
 
 /**
@@ -32,7 +32,7 @@ interface MapContextType {
  * @interface
  */
 interface MapContextsType {
-  [key: string]: MapContextType;
+    [key: string]: MapContextType;
 }
 
 /**
@@ -59,43 +59,43 @@ const MapContexts = createContext<MapContextsType | undefined>(undefined);
  * @component
  */
 export const MapProvider: React.FC<{
-  mapIds: string[];
-  children: ReactNode;
+    mapIds: string[];
+    children: ReactNode;
 }> = ({ mapIds, children }) => {
-  const setMap = (
-    id: string,
-    map: Map | null,
-    hoverPopup: Popup,
-    persistentPopup: Popup,
-  ) => {
-    const _maps: MapContextsType = {
-      ...maps,
-      [id]: {
-        map,
-        hoverPopup,
-        persistentPopup,
-        setMap: (m: Map, h: Popup, p: Popup) => setMap(id, m, h, p),
-      },
+    const setMap = (
+        id: string,
+        map: Map | null,
+        hoverPopup: Popup,
+        persistentPopup: Popup
+    ) => {
+        const _maps: MapContextsType = {
+            ...maps,
+            [id]: {
+                map,
+                hoverPopup,
+                persistentPopup,
+                setMap: (m: Map, h: Popup, p: Popup) => setMap(id, m, h, p),
+            },
+        };
+
+        setMaps(_maps);
     };
 
-    setMaps(_maps);
-  };
+    // Create default map context for all provided map id's
+    const DEFAULT_MAPS: MapContextsType = {};
+    mapIds.forEach((mapId) => {
+        DEFAULT_MAPS[mapId] = {
+            map: null,
+            hoverPopup: null,
+            persistentPopup: null,
+            setMap: (map: Map, hoverPopup: Popup, persistentPopup: Popup) =>
+                setMap(mapId, map, hoverPopup, persistentPopup),
+        };
+    });
 
-  // Create default map context for all provided map id's
-  const DEFAULT_MAPS: MapContextsType = {};
-  mapIds.forEach((mapId) => {
-    DEFAULT_MAPS[mapId] = {
-      map: null,
-      hoverPopup: null,
-      persistentPopup: null,
-      setMap: (map: Map, hoverPopup: Popup, persistentPopup: Popup) =>
-        setMap(mapId, map, hoverPopup, persistentPopup),
-    };
-  });
+    const [maps, setMaps] = useState<MapContextsType>(DEFAULT_MAPS);
 
-  const [maps, setMaps] = useState<MapContextsType>(DEFAULT_MAPS);
-
-  return <MapContexts.Provider value={maps}>{children}</MapContexts.Provider>;
+    return <MapContexts.Provider value={maps}>{children}</MapContexts.Provider>;
 };
 
 /**
@@ -158,10 +158,10 @@ export const MapProvider: React.FC<{
  * @hook
  */
 export const useMap = (id: string): MapContextType => {
-  const context = useContext(MapContexts);
+    const context = useContext(MapContexts);
 
-  if (!context) {
-    throw new Error("useMap must be used within a MapProvider");
-  }
-  return context[id];
+    if (!context) {
+        throw new Error('useMap must be used within a MapProvider');
+    }
+    return context[id];
 };

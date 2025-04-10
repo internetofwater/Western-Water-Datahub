@@ -36,7 +36,10 @@ repos:
     rev: "v4.0.0-alpha.8"
     hooks:
       - id: prettier
-        exclude: pygeoapi-deployment/templates/
+        exclude: |
+          pygeoapi-deployment/templates/
+          dashboard-ui/
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
     rev: v0.9.9
