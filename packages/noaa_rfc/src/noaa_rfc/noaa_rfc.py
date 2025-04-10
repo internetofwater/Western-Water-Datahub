@@ -57,6 +57,14 @@ class NOAARFCProvider(BaseProvider, OAFProviderProtocol):
 
         if itemId:
             collection.drop_all_locations_but_id(itemId)
+
+        if resulttype == "hits":
+            return {
+                "type": "FeatureCollection",
+                "features": [],
+                "numberMatched": len(collection.forecasts),
+            }
+
         return collection.to_geojson(
             single_feature=itemId is not None, skip_geometry=skip_geometry
         )
