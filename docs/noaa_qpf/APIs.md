@@ -19,6 +19,8 @@
     - Seems to fetch differently from other basins: uses https://www.cbrfc.noaa.gov/dbdata/station/flowgraph/flowcond_data.py?otype=js&skey=id&ts=1744119080512
     - https://www.cbrfc.noaa.gov/dbdata/station/ensgraph/map/ensmap.html Doesn't appear to load
 
+    ![basins](images/basins.png)
+
 # Weather Forecasts
 
 - https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer

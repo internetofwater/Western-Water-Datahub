@@ -3,6 +3,7 @@
 
 import asyncio
 import logging
+from typing import Optional
 import redis.asyncio as redis
 import aiohttp
 from aiohttp import client_exceptions
@@ -15,10 +16,14 @@ HEADERS = {"accept": "application/vnd.api+json, application/json"}
 LOGGER = logging.getLogger(__name__)
 
 
-async def fetch_url(url: str, headers=HEADERS) -> dict:
+async def fetch_url(
+    url: str, headers=HEADERS, custom_mimetype: Optional[str] = None
+) -> dict:
     async with aiohttp.ClientSession(headers=headers) as session:
         async with session.get(url, headers=headers) as response:
             try:
+                if custom_mimetype:
+                    return await response.json(content_type=custom_mimetype)
                 return await response.json()
             except client_exceptions.ContentTypeError as e:
                 LOGGER.error(f"{e}: Text: {await response.text()}, URL: {url}")
@@ -99,7 +104,7 @@ class RedisCache:
             return await self.get_text(url)
 
     async def get_or_fetch_group(
-        self, urls: list[str], force_fetch=False
+        self, urls: list[str], force_fetch=False, custom_mimetype: Optional[str] = None
     ) -> dict[str, dict]:
         """Send a GET request to all URLs or grab it locally if it already exists in the cache."""
 
@@ -113,7 +118,9 @@ class RedisCache:
         assert set(urls_in_cache).isdisjoint(set(urls_not_in_cache))
 
         # Fetch from remote API
-        urls_not_in_cache_coroutine = self._fetch_and_set_url_group(urls_not_in_cache)
+        urls_not_in_cache_coroutine = self._fetch_and_set_url_group(
+            urls_not_in_cache, custom_mimetype
+        )
 
         # Fetch from local cache
         with TRACER.start_span("mget") as span:
@@ -131,8 +138,12 @@ class RedisCache:
     async def _fetch_and_set_url_group(
         self,
         urls: list[str],
+        custom_mimetype: Optional[str] = None,
     ):
-        tasks = [asyncio.create_task(fetch_url(url)) for url in urls]
+        tasks = [
+            asyncio.create_task(fetch_url(url, custom_mimetype=custom_mimetype))
+            for url in urls
+        ]
 
         results = {url: {} for url in urls}
 
