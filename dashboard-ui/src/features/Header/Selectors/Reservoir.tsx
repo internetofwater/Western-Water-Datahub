@@ -14,7 +14,7 @@ import {
   createFilteredOptions,
   createOptions,
   shouldLoadOptions,
-} from "./utils";
+} from "@/features/Header/Selectors/utils";
 
 export const Reservoir: React.FC = () => {
   const { map } = useMap(MAP_ID);
@@ -104,6 +104,7 @@ export const Reservoir: React.FC = () => {
         data={reservoirOptions}
         value={reservoir}
         defaultValue={reservoir}
+        aria-label="Select a Reservior"
         placeholder="Select a Reservior"
         onChange={(_value) => handleChange(_value)}
       />

@@ -16,7 +16,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:@next/next/recommended",
   ],
-  ignorePatterns: ["**/__tests__/**", "**/__mocks__/**"],
+  ignorePatterns: ["**/__tests__/**", "**/__mocks__/**", "*.cjs"],
   rules: {
     semi: ["error", "always"],
     "no-console": "warn",

@@ -260,3 +260,14 @@ export const addControls = (
     }
   }
 };
+
+export const addCustomControls = (
+  map: Map,
+  customControls: MapComponentProps["customControls"],
+) => {
+  if (customControls) {
+    customControls.forEach((customControl) =>
+      map.addControl(customControl.control, customControl.position),
+    );
+  }
+};
