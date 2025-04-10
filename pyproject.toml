@@ -52,6 +52,13 @@ dev = [
     "pytest-asyncio>=0.25.3",
     "pytest-xdist>=3.6.1",
 ]
+# dependencies needed for external providers
+deployment = [
+"xarray",
+"zarr<3",
+"s3fs<=2023.6.0",
+"gunicorn"
+]
 
 [tool.uv]
 package = false
