@@ -43,7 +43,9 @@ repos:
       # Run the linter.
       - id: ruff
         args: [--fix]
+        exclude: pygeoapi-deployment/templates/
       - id: ruff-format
+        exclude: pygeoapi-deployment/templates/
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
     rev: 0.6.3
