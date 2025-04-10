@@ -66,7 +66,11 @@ class NOAARFCProvider(BaseProvider, OAFProviderProtocol):
             }
 
         return collection.to_geojson(
-            single_feature=itemId is not None, skip_geometry=skip_geometry
+            single_feature=itemId is not None,
+            skip_geometry=skip_geometry,
+            sortby=sortby,
+            properties=properties,
+            select_properties=select_properties,
         )
 
     @crs_transform
