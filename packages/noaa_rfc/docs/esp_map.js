@@ -1,39 +1,5 @@
-
-
-function clean(str, len) {
-    str=str.replace(/[^a-z0-9-_.]/gi, '');
-    str=str.substring(0,len);
-    return(str);
-}
-
-
-var wsmonths=["","October","November","December","January","February","March","April","May","June","July","August","September"];
-
-function titleCase(str) {
-    return str.replace(/\w\S*/g, function(txt) {
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
-}
-var search_text="";
-
-var west_lat=42.65;
-
-var west_lng=-114.17;
-
-var west_zlevel=5;
-
-var csvdate="";
-
-var autopanning = false;
-
-var thresholds = [.25,.5,.75,.9,1.1,1.25,1.50];
-
-var year, maxDt, minDt, stat_type;
-
 var markers=[];
 var mpoints=[];
-//var selected_marker;
-
 var wsupall;
 var wsupmarker = 'espavg';
 
@@ -44,7 +10,6 @@ var fglist;
 
 var map, basins;
 var riverLayer,rfcLayer,fgroupLayer,basinLayer,countyLayer,bmlayer;
-var search_text;
 var fg="";
 var select_results, mtitle, mstatus;
 
@@ -57,151 +22,6 @@ function double(s) {
 	return(s);
 }
 
-function pointInfo(index) {
-	var html=[];
-    if (points[index]['plot'] == "" || !document.getElementById("espLatest").checked) {
-        html.push("<h5>"+pointLabel(index)+" ("+points[index].id+")</h5>");
-        html.push("Issued By: "+points[index]['rfc']+"RFC<br>");
-        html.push("Forecast Period: "+wsmonths[parseInt(points[index].bper)]+" - "+wsmonths[parseInt(points[index].eper)]+"<br>");
-        html.push("QPF: "+points[index]['qpfdays']+" Days<br>");
-
-        if (points[index].pnormal == 0) {
-            html.push("No Current Forecast<br>");
-        } else {
-            html.push("Forecast Date: "+points[index].fdate+"<br>");
-            if (points[index].p50 != "") html.push("Forecast: "+"<b>"+points[index].p50.toFixed(0)+" kaf</b>"+"<br>");
-            if (points[index].normal != "") html.push("Normal: "+points[index].normal.toFixed(0)+" kaf<br>");
-            if (points[index].pnormal != "") html.push("Pct Normal: "+points[index].pnormal.toFixed(0)+"%<br>");
-
-        }
-
-        html.push("<a target=_blank href="+points[index].link+">More Info</a><br>");
-    } else {
-        html.push("<a target=_blank href="+points[index].link+"><img alt=loading width="+points[index]['plotw']+" height="+points[index]['ploth']+" src="+points[index]['plot']+"></a><br>");
-    }
-	return(html.join("\n"));
-}
-
-function iconSVG(type, fill) {
-
-	var width = 14;
-	var height = 14;
-	var size = 14;
-
-	if (L.Browser.mobile) {
-		width = 16;
-		height = 16;
-		size = 16;
-	}
-
-	var stroke = "#222";
-	var stroke_width = 1;
-    var rad = size/2-stroke_width;
-    var x1 = stroke_width;
-    var x2 = size/2;
-    var x3 = size-stroke_width;
-    var y1 = stroke_width;
-    var y2 = size-stroke_width;
-	var sqsize = size-stroke_width*2;
-	var sqx = stroke_width;
-	var sqy = stroke_width;
-
-	var svg="";
-
-	if (type == "circle") {
-		svg = "<svg height='"+height+"' viewBox='0 0 "+size+" "+size+"' width='"+width+"' xmlns='http://www.w3.org/2000/svg'>";
-		svg = svg+"<circle cx='"+size/2+"' cy='"+size/2+"' r='"+rad+"' style='stroke: "+stroke+"; stroke-width: "+stroke_width+"; fill: "+fill+"'/>";
-		svg = svg+"</svg>";
-	} else if (type == "square") {
-		var svg = "<svg height='"+height+"' viewBox='0 0 "+size+" "+size+"' width='"+width+"' xmlns='http://www.w3.org/2000/svg'>";
-		svg = svg+"<rect x='"+sqx+"' y='"+sqy+"' height='"+sqsize+"' width='"+sqsize+"' style='stroke: "+stroke+"; stroke-width: "+stroke_width+"; fill: "+fill+"'/>";
-		svg = svg+"</svg>";
-	} else if (type == "up") {
-		svg = "<svg height='"+height+"' viewBox='0 0 "+size+" "+size+"' width='"+width+"' xmlns='http://www.w3.org/2000/svg'>";
-		svg = svg+"<polygon points='"+x2+","+y1+" "+x3+","+y2+" "+x1+","+y2+"' style='stroke: "+stroke+"; stroke-width: "+stroke_width+"; fill: "+fill+"'/>";
-		svg = svg+"</svg>";
-	} else if (type == "down") {
-		svg = "<svg height='"+height+"' viewBox='0 0 "+size+" "+size+"' width='"+width+"' xmlns='http://www.w3.org/2000/svg'>";
-		svg = svg+"<polygon points='"+x1+","+y1+" "+x3+","+y1+" "+x2+","+y2+"' style='stroke: "+stroke+"; stroke-width: "+stroke_width+"; fill: "+fill+"'/>";
-		svg = svg+"</svg>";
-	}
-	return(svg);
-}
-
-function makePoint(index) {
-	var fill=points[index].forecast_fill;
-	var type = "circle";
-
-	var svg = iconSVG(type,fill);
-	var p = L.latLng(points[index].lat, points[index].lng);
-	var icon = L.divIcon({html:svg, className: "", iconAnchor: L.point(7, 7)})
-	var marker = new L.marker(p,{icon: icon, title: pointLabel(index), riseOnHover: false, closeOnClick: false, autoClose: false});
-	var popup = L.responsivePopup().setContent(pointInfo(index));
-	marker.bindPopup(popup,{maxWidth:815,minWidth:400, offset: [5,5]});
-
-	// marker.bindPopup(pointInfo(index),{maxWidth: 380, autoPan:true});
-
-	//turn off click marker to close - doesn't work on touch devices
-	marker.off('click');
-	marker.on("click", function() {
-	// 	pickSite(points[index].id, points[index].bper, points[index].eper);
-		if (!this.isPopupOpen()) {
-			this.openPopup()
-		}
-	});
-
-	marker.addTo(map);
-	return marker;
-}
-
-function find() {
-	//selected_marker.setOpacity(0);
-	console.log("find")
-	search2();
-	zoomfit();
-}
-
-function clearSearch() {
-	search_box.value = "";
-	find();
-}
-function search2() {
-		//alert("search "+search_box.value);
-		
-		markers=[];
-		mpoints=[];
-		
-		const searchval="river";
-
-		var matches = [];
-		for (var i=0;i < points.length;i++) {
-			if (points[i].lat == 0) {continue;}
-			var name=points[i].des.toLowerCase()+" "+points[i].id.toLowerCase();	
-			if ((searchval == "") || (searchval!= "" && name.indexOf(searchval) != -1)) {
-				markers[markers.length]=makePoint(i);
-				mpoints[mpoints.length]=points[i];
-				var j=markers.length-1;
-				var info=label+"!"+j;
-	
-				if (searchval != "" || (bounds != null && bounds.contains(ll))) {
-					matches.push(info);
-				}
-			}
-		}
-
-		if (matches.length > 0) {
-			matches.sort();
-			for (var i=0;i < matches.length;i++) {
-				var opt = document.createElement("option");
-				var match = matches[i].split("!");
-       			opt.value = match[1];
-        		opt.text = match[0].substring(0,30);
-        		select_results.add(opt, null);
-			}
-		}
-}
-
-    
 bls=[];
 var cb_date;
 var cb_latest;
