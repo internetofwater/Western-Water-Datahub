@@ -4,28 +4,28 @@
  */
 
 .mapToolsContainer {
-    position: absolute;
-    top: 138px;
-    right: 62px;
-    z-index: 1;
+  position: absolute;
+  top: 138px;
+  right: 62px;
+  z-index: 1;
 }
 
 .basemapSelectorContainer {
-    min-width: 210px;
+  min-width: 210px;
 }
 
 .mapToolTitle {
-    text-align: center;
+  text-align: center;
 }
 
 .basemapSelectorCheckboxLabel {
-    text-transform: capitalize;
+  text-transform: capitalize;
 }
 
 .screenshotLoaderContainer {
-    width: 200px;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 200px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

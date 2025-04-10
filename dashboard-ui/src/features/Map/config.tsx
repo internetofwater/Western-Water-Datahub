@@ -4,47 +4,47 @@
  */
 
 import {
-    BasemapId,
-    CustomListenerFunction,
-    LayerType,
-    MainLayerDefinition,
-    SourceConfig,
-    Sources,
-} from '@/components/Map/types';
+  BasemapId,
+  CustomListenerFunction,
+  LayerType,
+  MainLayerDefinition,
+  SourceConfig,
+  Sources,
+} from "@/components/Map/types";
 import {
-    DataDrivenPropertyValueSpecification,
-    LayerSpecification,
-    Map,
-    Popup,
-} from 'mapbox-gl';
-import { basemaps } from '@/components/Map/consts';
+  DataDrivenPropertyValueSpecification,
+  LayerSpecification,
+  Map,
+  Popup,
+} from "mapbox-gl";
+import { basemaps } from "@/components/Map/consts";
 
-export const MAP_ID = 'main';
+export const MAP_ID = "main";
 
 export const BASEMAP = basemaps[BasemapId.Dark];
 
 export enum SourceId {
-    Regions = 'regions-source',
-    Basins = 'hu04',
-    Reservoirs = 'reservoirs-source',
+  Regions = "regions-source",
+  Basins = "hu04",
+  Reservoirs = "reservoirs-source",
 }
 
 export enum LayerId {
-    Regions = 'regions-main',
-    Basins = 'basins-main',
-    Reservoirs = 'reservoirs',
+  Regions = "regions-main",
+  Basins = "basins-main",
+  Reservoirs = "reservoirs",
 }
 
 export enum SubLayerId {
-    RegionsBoundary = 'regions-boundary',
-    RegionsFill = 'regions-fill',
-    BasinsBoundary = 'basins-boundary',
-    BasinsFill = 'basins-fill',
+  RegionsBoundary = "regions-boundary",
+  RegionsFill = "regions-fill",
+  BasinsBoundary = "basins-boundary",
+  BasinsFill = "basins-fill",
 }
 
 export const allLayerIds = [
-    ...Object.values(LayerId),
-    ...Object.values(SubLayerId),
+  ...Object.values(LayerId),
+  ...Object.values(SubLayerId),
 ];
 
 /**********************************************************************
@@ -57,36 +57,36 @@ export const allLayerIds = [
  * @constant
  */
 export const sourceConfigs: SourceConfig[] = [
-    {
-        id: SourceId.Regions,
-        type: Sources.ESRI,
-        definition: {
-            url: 'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/ReclamationBoundariesFL/FeatureServer/0',
-        },
+  {
+    id: SourceId.Regions,
+    type: Sources.ESRI,
+    definition: {
+      url: "https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/ReclamationBoundariesFL/FeatureServer/0",
     },
-    {
-        id: SourceId.Reservoirs,
-        type: Sources.ESRI,
-        definition: {
-            url: 'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/RISE_point_locations_(view)/FeatureServer/0',
-            where: "type='Lake/Reservoir' AND locName like '%Reservoir%'",
-        },
+  },
+  {
+    id: SourceId.Reservoirs,
+    type: Sources.ESRI,
+    definition: {
+      url: "https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/RISE_point_locations_(view)/FeatureServer/0",
+      where: "type='Lake/Reservoir' AND locName like '%Reservoir%'",
     },
-    {
-        id: SourceId.Basins,
-        type: Sources.VectorTile,
-        definition: {
-            type: 'vector',
-            tiles: [
-                `https://reference.geoconnex.dev/collections/hu04/tiles/WebMercatorQuad/{z}/{x}/{y}?f=mvt`,
-            ],
-            minzoom: 0,
+  },
+  {
+    id: SourceId.Basins,
+    type: Sources.VectorTile,
+    definition: {
+      type: "vector",
+      tiles: [
+        `https://reference.geoconnex.dev/collections/hu04/tiles/WebMercatorQuad/{z}/{x}/{y}?f=mvt`,
+      ],
+      minzoom: 0,
 
-            maxzoom: 10,
-            tileSize: 512,
-            bounds: [-179.229468, -14.42442, 179.856484, 71.439451],
-        },
+      maxzoom: 10,
+      tileSize: 512,
+      bounds: [-179.229468, -14.42442, 179.856484, 71.439451],
     },
+  },
 ];
 
 /**********************************************************************
@@ -104,12 +104,12 @@ export const sourceConfigs: SourceConfig[] = [
  * @function
  */
 export const getLayerName = (layerId: LayerId | SubLayerId): string => {
-    switch (layerId) {
-        case LayerId.Regions:
-            return 'Regions';
-        default:
-            return '';
-    }
+  switch (layerId) {
+    case LayerId.Regions:
+      return "Regions";
+    default:
+      return "";
+  }
 };
 
 /**
@@ -125,18 +125,18 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
  * @function
  */
 export const getLayerColor = (
-    id: LayerId | SubLayerId
+  id: LayerId | SubLayerId,
 ): DataDrivenPropertyValueSpecification<string> => {
-    switch (id) {
-        case LayerId.Regions:
-            return '#F00';
-        case LayerId.Basins:
-            return '#0F0';
-        case LayerId.Reservoirs:
-            return '#00F';
-        default:
-            return '#FFF';
-    }
+  switch (id) {
+    case LayerId.Regions:
+      return "#F00";
+    case LayerId.Basins:
+      return "#0F0";
+    case LayerId.Reservoirs:
+      return "#00F";
+    default:
+      return "#FFF";
+  }
 };
 
 /**
@@ -152,125 +152,125 @@ export const getLayerColor = (
  * @function
  */
 export const getLayerConfig = (
-    id: LayerId | SubLayerId
+  id: LayerId | SubLayerId,
 ): null | LayerSpecification => {
-    // Group layer and sublayer configurations together
-    switch (id) {
-        case LayerId.Regions:
-            return null;
-        case SubLayerId.RegionsBoundary:
-            return {
-                id: SubLayerId.RegionsBoundary,
-                type: LayerType.Line,
-                source: SourceId.Regions,
-                layout: {
-                    'line-cap': 'round',
-                    'line-join': 'round',
-                },
-                paint: {
-                    'line-opacity': 1,
-                    'line-color': getLayerColor(LayerId.Regions),
-                    'line-width': 3,
-                },
-            };
-        case SubLayerId.RegionsFill:
-            return {
-                id: SubLayerId.RegionsFill,
-                type: LayerType.Fill,
-                source: SourceId.Regions,
-                paint: {
-                    'fill-color': getLayerColor(LayerId.Regions),
-                    'fill-opacity': 0.3,
-                },
-            };
-        case LayerId.Basins:
-            return null;
-        case SubLayerId.BasinsBoundary:
-            return {
-                id: SubLayerId.BasinsBoundary,
-                type: LayerType.Line,
-                source: SourceId.Basins,
-                'source-layer': 'hu04',
-                layout: {
-                    visibility: 'none',
-                    'line-cap': 'round',
-                    'line-join': 'round',
-                },
-                paint: {
-                    'line-opacity': 1,
-                    'line-color': getLayerColor(LayerId.Basins),
-                    'line-width': 3,
-                },
-            };
-        case SubLayerId.BasinsFill:
-            return {
-                id: SubLayerId.BasinsFill,
-                type: LayerType.Fill,
-                source: SourceId.Basins,
-                'source-layer': 'hu04',
-                layout: {
-                    visibility: 'none',
-                },
-                paint: {
-                    'fill-color': getLayerColor(LayerId.Basins),
-                    'fill-opacity': 0.3,
-                },
-            };
-        case LayerId.Reservoirs:
-            return {
-                id: LayerId.Reservoirs,
-                type: LayerType.Symbol,
-                source: SourceId.Reservoirs,
-                layout: {
-                    'icon-image': [
-                        'let',
-                        'storage', // Variable name
-                        ['/', ['get', 'elev_ft'], 10000], // Variable value
-                        [
-                            'step',
-                            ['var', 'storage'],
-                            'default', // Below first step value
-                            0.75,
-                            'teacup-75',
-                            0.8,
-                            'teacup-80',
-                            0.85,
-                            'teacup-85',
-                            0.9,
-                            'teacup-90',
-                            0.95,
-                            'teacup-95',
-                            1,
-                            'teacup-100',
-                        ],
-                    ],
-                    'icon-size': 0.5,
-                    'icon-allow-overlap': true,
-                },
-            };
-        default:
-            return null;
-    }
+  // Group layer and sublayer configurations together
+  switch (id) {
+    case LayerId.Regions:
+      return null;
+    case SubLayerId.RegionsBoundary:
+      return {
+        id: SubLayerId.RegionsBoundary,
+        type: LayerType.Line,
+        source: SourceId.Regions,
+        layout: {
+          "line-cap": "round",
+          "line-join": "round",
+        },
+        paint: {
+          "line-opacity": 1,
+          "line-color": getLayerColor(LayerId.Regions),
+          "line-width": 3,
+        },
+      };
+    case SubLayerId.RegionsFill:
+      return {
+        id: SubLayerId.RegionsFill,
+        type: LayerType.Fill,
+        source: SourceId.Regions,
+        paint: {
+          "fill-color": getLayerColor(LayerId.Regions),
+          "fill-opacity": 0.3,
+        },
+      };
+    case LayerId.Basins:
+      return null;
+    case SubLayerId.BasinsBoundary:
+      return {
+        id: SubLayerId.BasinsBoundary,
+        type: LayerType.Line,
+        source: SourceId.Basins,
+        "source-layer": "hu04",
+        layout: {
+          visibility: "none",
+          "line-cap": "round",
+          "line-join": "round",
+        },
+        paint: {
+          "line-opacity": 1,
+          "line-color": getLayerColor(LayerId.Basins),
+          "line-width": 3,
+        },
+      };
+    case SubLayerId.BasinsFill:
+      return {
+        id: SubLayerId.BasinsFill,
+        type: LayerType.Fill,
+        source: SourceId.Basins,
+        "source-layer": "hu04",
+        layout: {
+          visibility: "none",
+        },
+        paint: {
+          "fill-color": getLayerColor(LayerId.Basins),
+          "fill-opacity": 0.3,
+        },
+      };
+    case LayerId.Reservoirs:
+      return {
+        id: LayerId.Reservoirs,
+        type: LayerType.Symbol,
+        source: SourceId.Reservoirs,
+        layout: {
+          "icon-image": [
+            "let",
+            "storage", // Variable name
+            ["/", ["get", "elev_ft"], 10000], // Variable value
+            [
+              "step",
+              ["var", "storage"],
+              "default", // Below first step value
+              0.75,
+              "teacup-75",
+              0.8,
+              "teacup-80",
+              0.85,
+              "teacup-85",
+              0.9,
+              "teacup-90",
+              0.95,
+              "teacup-95",
+              1,
+              "teacup-100",
+            ],
+          ],
+          "icon-size": 0.5,
+          "icon-allow-overlap": true,
+        },
+      };
+    default:
+      return null;
+  }
 };
 
 // Define and hover functions with curry-ed map and popup objects
 export const getLayerHoverFunction = (
-    id: LayerId | SubLayerId
+  id: LayerId | SubLayerId,
 ): CustomListenerFunction => {
-    return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
-        switch (id) {
-            default:
-                return (e) => {
-                    console.log('Hover Event Triggered: ', e);
-                    console.log('The map: ', map);
-                    console.log('Available Popups: ');
-                    console.log('Hover: ', hoverPopup);
-                    console.log('Persistent: ', persistentPopup);
+  return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
+    switch (id) {
+      default:
+        return (e) => {
+          console.log("Hover Event Triggered: ", e);
+          console.log("The map: ", map);
+          console.log("Available Popups: ");
+          console.log("Hover: ", hoverPopup);
+          console.log("Persistent: ", persistentPopup);
 
-                    map.getCanvas().style.cursor = 'pointer';
-                };
-        }
-    };
+          map.getCanvas().style.cursor = "pointer";
+        };
+    }
+  };
 };
 
 /**
@@ -286,20 +286,20 @@ export const getLayerHoverFunction = (
  * @function
  */
 export const getLayerCustomHoverExitFunction = (
-    id: LayerId | SubLayerId
+  id: LayerId | SubLayerId,
 ): CustomListenerFunction => {
-    return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
-        switch (id) {
-            default:
-                return (e) => {
-                    console.log('Hover Exit Event Triggered: ', e);
-                    console.log('The map: ', map);
-                    console.log('Available Popups: ');
-                    console.log('Hover: ', hoverPopup);
-                    console.log('Persistent: ', persistentPopup);
-                };
-        }
-    };
+  return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
+    switch (id) {
+      default:
+        return (e) => {
+          console.log("Hover Exit Event Triggered: ", e);
+          console.log("The map: ", map);
+          console.log("Available Popups: ");
+          console.log("Hover: ", hoverPopup);
+          console.log("Persistent: ", persistentPopup);
+        };
+    }
+  };
 };
 
 /**
@@ -315,20 +315,20 @@ export const getLayerCustomHoverExitFunction = (
  * @function
  */
 export const getLayerMouseMoveFunction = (
-    id: LayerId | SubLayerId
+  id: LayerId | SubLayerId,
 ): CustomListenerFunction => {
-    return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
-        switch (id) {
-            default:
-                return (e) => {
-                    console.log('Hover Exit Event Triggered: ', e);
-                    console.log('The map: ', map);
-                    console.log('Available Popups: ');
-                    console.log('Hover: ', hoverPopup);
-                    console.log('Persistent: ', persistentPopup);
-                };
-        }
-    };
+  return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
+    switch (id) {
+      default:
+        return (e) => {
+          console.log("Hover Exit Event Triggered: ", e);
+          console.log("The map: ", map);
+          console.log("Available Popups: ");
+          console.log("Hover: ", hoverPopup);
+          console.log("Persistent: ", persistentPopup);
+        };
+    }
+  };
 };
 
 /**
@@ -343,20 +343,20 @@ export const getLayerMouseMoveFunction = (
  * @function
  */
 export const getLayerClickFunction = (
-    id: LayerId | SubLayerId
+  id: LayerId | SubLayerId,
 ): CustomListenerFunction => {
-    return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
-        switch (id) {
-            default:
-                return (e) => {
-                    console.log('Click Event Triggered: ', e);
-                    console.log('The map: ', map);
-                    console.log('Available Popups: ');
-                    console.log('Hover: ', hoverPopup);
-                    console.log('Persistent: ', persistentPopup);
-                };
-        }
-    };
+  return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
+    switch (id) {
+      default:
+        return (e) => {
+          console.log("Click Event Triggered: ", e);
+          console.log("The map: ", map);
+          console.log("Available Popups: ");
+          console.log("Hover: ", hoverPopup);
+          console.log("Persistent: ", persistentPopup);
+        };
+    }
+  };
 };
 
 /**
@@ -381,59 +381,59 @@ export const getLayerClickFunction = (
  * @constant
  */
 export const layerDefinitions: MainLayerDefinition[] = [
-    // Use this as the master object to define layer hierarchies. Sublayers are nested layer definitions,
-    // meaning they have their own click and hover listeners. The order of layers and sublayers dictates the draw
-    // order on the map.
-    {
-        id: LayerId.Regions,
-        config: getLayerConfig(LayerId.Regions),
+  // Use this as the master object to define layer hierarchies. Sublayers are nested layer definitions,
+  // meaning they have their own click and hover listeners. The order of layers and sublayers dictates the draw
+  // order on the map.
+  {
+    id: LayerId.Regions,
+    config: getLayerConfig(LayerId.Regions),
+    controllable: false,
+    legend: false,
+    subLayers: [
+      {
+        id: SubLayerId.RegionsBoundary,
+        config: getLayerConfig(SubLayerId.RegionsBoundary),
         controllable: false,
         legend: false,
-        subLayers: [
-            {
-                id: SubLayerId.RegionsBoundary,
-                config: getLayerConfig(SubLayerId.RegionsBoundary),
-                controllable: false,
-                legend: false,
-            },
-            {
-                id: SubLayerId.RegionsFill,
-                config: getLayerConfig(SubLayerId.RegionsFill),
-                controllable: false,
-                legend: false,
-                clickFunction: getLayerClickFunction(SubLayerId.RegionsFill),
-                hoverFunction: getLayerHoverFunction(SubLayerId.RegionsFill),
-            },
-        ],
-    },
-    {
-        id: LayerId.Basins,
-        config: getLayerConfig(LayerId.Basins),
+      },
+      {
+        id: SubLayerId.RegionsFill,
+        config: getLayerConfig(SubLayerId.RegionsFill),
         controllable: false,
         legend: false,
-        subLayers: [
-            {
-                id: SubLayerId.BasinsBoundary,
-                config: getLayerConfig(SubLayerId.BasinsBoundary),
-                controllable: false,
-                legend: false,
-            },
-            {
-                id: SubLayerId.BasinsFill,
-                config: getLayerConfig(SubLayerId.BasinsFill),
-                controllable: false,
-                legend: false,
-                clickFunction: getLayerClickFunction(SubLayerId.BasinsFill),
-                hoverFunction: getLayerHoverFunction(SubLayerId.BasinsFill),
-            },
-        ],
-    },
-    {
-        id: LayerId.Reservoirs,
-        config: getLayerConfig(LayerId.Reservoirs),
+        clickFunction: getLayerClickFunction(SubLayerId.RegionsFill),
+        hoverFunction: getLayerHoverFunction(SubLayerId.RegionsFill),
+      },
+    ],
+  },
+  {
+    id: LayerId.Basins,
+    config: getLayerConfig(LayerId.Basins),
+    controllable: false,
+    legend: false,
+    subLayers: [
+      {
+        id: SubLayerId.BasinsBoundary,
+        config: getLayerConfig(SubLayerId.BasinsBoundary),
         controllable: false,
         legend: false,
-        clickFunction: getLayerClickFunction(LayerId.Reservoirs),
-        hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
-    },
+      },
+      {
+        id: SubLayerId.BasinsFill,
+        config: getLayerConfig(SubLayerId.BasinsFill),
+        controllable: false,
+        legend: false,
+        clickFunction: getLayerClickFunction(SubLayerId.BasinsFill),
+        hoverFunction: getLayerHoverFunction(SubLayerId.BasinsFill),
+      },
+    ],
+  },
+  {
+    id: LayerId.Reservoirs,
+    config: getLayerConfig(LayerId.Reservoirs),
+    controllable: false,
+    legend: false,
+    clickFunction: getLayerClickFunction(LayerId.Reservoirs),
+    hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
+  },
 ];

@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { createTheme, MantineProvider } from '@mantine/core';
-import { PropsWithChildren } from 'react';
+import { createTheme, MantineProvider } from "@mantine/core";
+import { PropsWithChildren } from "react";
 
 const theme = createTheme({});
 
@@ -14,11 +14,11 @@ const theme = createTheme({});
  * @component
  */
 export const Mantine: React.FC<PropsWithChildren> = ({ children }) => {
-    return (
-        <>
-            <MantineProvider defaultColorScheme="auto" theme={theme}>
-                {children}
-            </MantineProvider>
-        </>
-    );
+  return (
+    <>
+      <MantineProvider defaultColorScheme="auto" theme={theme}>
+        {children}
+      </MantineProvider>
+    </>
+  );
 };
