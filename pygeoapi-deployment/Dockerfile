@@ -1,25 +1,28 @@
-FROM python:3.12
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
+
+# Copy from the cache into container and the use system Python interpreter 
+ENV UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=0
 
 WORKDIR /opt/pygeoapi
 
-RUN apt-get update && apt-get install -y libgdal-dev \
+# Copy project metadata for dependency resolution
+COPY pyproject.toml uv.lock /opt/pygeoapi/
+COPY packages /opt/pygeoapi/packages/
+
+# System dependencies for GDAL and others
+RUN apt-get update && apt-get install -y libgdal-dev git build-essential \
     && apt-get clean && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
-# Pre-copy only dependency-related files for cache efficiency
-COPY pyproject.toml /opt/pygeoapi/pyproject.toml
-COPY packages /opt/pygeoapi/packages
+# Install all dependencies
+# Use buildkit with docker to persist uv installation cache for faster builds 
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --all-groups --all-packages
 
-# Install top-level package with shared dependencies
-RUN pip install /opt/pygeoapi
+COPY pygeoapi-deployment/ /opt/pygeoapi/pygeoapi-deployment/
 
-# Install each individual mapping package separately
-RUN bash -c "pip install /opt/pygeoapi/packages/*"
+# Set up environment
+ENV PATH="/opt/pygeoapi/.venv/bin:$PATH"
 
-# Copy deployment stuff separately so this doesn't bust the pip cache unless needed
-COPY pygeoapi-deployment /opt/pygeoapi/pygeoapi-deployment
-
-# Install deployment-specific dependencies
-RUN pip install -r /opt/pygeoapi/pygeoapi-deployment/deployment-requirements.txt
-
+# Entrypoint for running the app
 ENTRYPOINT [ "/opt/pygeoapi/pygeoapi-deployment/entrypoint.sh" ]
