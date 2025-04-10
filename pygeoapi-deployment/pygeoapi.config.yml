@@ -25,7 +25,7 @@ logging:
 metadata:
   identification:
     title: Western Water Datahub
-    description: The Western Water Datahub is an implementation of OGC API - EDR supported by the United States Bureau of Reclamation. 
+    description: The Western Water Datahub is an implementation of OGC API - EDR supported by the United States Bureau of Reclamation.
     keywords:
       - usbr
       - wwdh
@@ -50,7 +50,7 @@ metadata:
     role: pointOfContact
     name: Benjamin Webb
 
-resources:   
+resources:
   rise-edr:
     type: collection
     title: Reclamation Information Sharing Environment (RISE)
@@ -154,7 +154,6 @@ resources:
         name: awdb_forecasts.awdb_forecasts.AwdbForecastsProvider
         data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
         title_field: name
-
 
   noaa-qpf-24-hour-day-1:
     type: collection
@@ -269,7 +268,7 @@ resources:
   noaa-qpf-cumulative-6-hours-day-1:
     type: collection
     title: NOAA QPF Cumulative 6 Hours Day 1
-    description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 6 Hours Day 1  
+    description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 6 Hours Day 1
     keywords: [NOAA, QPF]
     links:
       - type: application/html
@@ -376,29 +375,28 @@ resources:
         id_field: objectid
         time_field: issue_time
 
-
   noaa-day-1-prob-at-least-4-inches-snow:
-      type: collection
-      title: NOAA Day 1 Prob At Least 4 Inches Snow
-      description: NOAA Day 1 Prob At Least 4 Inches Snow
-      keywords: [NOAA, QPF]
-      links:
-        - type: application/html
-          rel: canonical
-          title: data source
-          href: https://data.usbr.gov/
-          hreflang: en-US
-      extents:
-        spatial:
-          bbox: [-170, 15, -51, 72]
-          crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-      providers:
-        - type: feature
-          name: ESRI
-          data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/1
-          id_field: objectid
-          time_field: issue_time
-  
+    type: collection
+    title: NOAA Day 1 Prob At Least 4 Inches Snow
+    description: NOAA Day 1 Prob At Least 4 Inches Snow
+    keywords: [NOAA, QPF]
+    links:
+      - type: application/html
+        rel: canonical
+        title: data source
+        href: https://data.usbr.gov/
+        hreflang: en-US
+    extents:
+      spatial:
+        bbox: [-170, 15, -51, 72]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    providers:
+      - type: feature
+        name: ESRI
+        data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/1
+        id_field: objectid
+        time_field: issue_time
+
   noaa-day-1-prob-at-least-8-inches-snow:
     type: collection
     title: NOAA Day 1 Prob At Least 8 Inches Snow
@@ -420,7 +418,6 @@ resources:
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/2
         id_field: objectid
         time_field: issue_time
-
 
   noaa-day-1-prob-at-least-12-inches-snow:
     type: collection
@@ -466,134 +463,99 @@ resources:
         id_field: objectid
         time_field: issue_time
 
-
-  NOHRSC-Snow-Analysis-Depth-Boundary:
+  nohrsc-swe:
     type: collection
-    title: NOAA NOHRSC Snow Analysis Depth Boundary 
-    description: NOAA NOHRSC Snow Analysis Depth Boundary 
-    keywords: [NOAA, QPF]
+    title: NOAA NOHRSC Snow Water Forecast
+    description: NOAA NOHRSC Snow Water Forecast
+    keywords:
+      - nohrsc
+      - snow water equivalent
     links:
-      - type: application/html
+      - type: text/html
         rel: canonical
-        title: data source
-        href: https://data.usbr.gov/
+        title: information
+        href: https://www.nohrsc.noaa.gov/nsa/
         hreflang: en-US
     extents:
       spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        bbox: [-130.516667, 24.1, -62.25273100000001, 58.240301]
+        crs: http://www.opengis.net/def/crs/EPSG/0/4269
     providers:
-      - type: feature
-        name: ESRI
-        data: https://mapservices.weather.noaa.gov/raster/rest/services/snow/NOHRSC_Snow_Analysis/MapServer/1
-        id_field: objectid
-        time_field: issue_time 
+      - type: map
+        name: WMSFacade
+        data: https://mapservices.weather.noaa.gov/raster/services/snow/NOHRSC_Snow_Analysis/MapServer/WMSServer
+        options:
+          layer: 1
+          style: default
+          projection: 4269
+        format:
+          name: png
+          mimetype: image/png
 
-
-  NOHRSC-Snow-Analysis-Depth-Footprint:
+  nohrsc-sd:
     type: collection
-    title: NOAA NOHRSC Snow Analysis Depth Footprint
-    description: NOAA NOHRSC Snow Analysis Depth Footprint
-    keywords: [NOAA, QPF]
+    title: NOAA NOHRSC Snow Depth Forecast
+    description: NOAA NOHRSC Snow Depth Forecast
+    keywords:
+      - nohrsc
+      - snow depth
     links:
-      - type: application/html
+      - type: text/html
         rel: canonical
-        title: data source
-        href: https://data.usbr.gov/
+        title: information
+        href: https://www.nohrsc.noaa.gov/nsa/
         hreflang: en-US
     extents:
       spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        bbox: [-130.516667, 24.1, -62.25273100000001, 58.240301]
+        crs: http://www.opengis.net/def/crs/EPSG/0/4269
     providers:
-      - type: feature
-        name: ESRI
-        data: https://mapservices.weather.noaa.gov/raster/rest/services/snow/NOHRSC_Snow_Analysis/MapServer/2
-        id_field: objectid
-        time_field: issue_time 
+      - type: map
+        name: WMSFacade
+        data: https://mapservices.weather.noaa.gov/raster/services/snow/NOHRSC_Snow_Analysis/MapServer/WMSServer
+        options:
+          layer: 5
+          style: default
+          projection: 4269
+        format:
+          name: png
+          mimetype: image/png
 
-
-  NOHRSC-Snow-Analysis-Snow-Water-Boundary:
+  usgs-prism:
     type: collection
-    title: NOAA NOHRSC Snow Analysis Snow Water Boundary
-    description: NOAA NOHRSC Snow Analysis Snow Water Boundary
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://data.usbr.gov/
-        hreflang: en-US
+    title: Parameter-elevation Regressions on Independent Slopes Model (PRISM)
+    description: PRISM Monthly Climate Data for the Continental United States
+    keywords:
+      - temperature
+      - precipitation
     extents:
       spatial:
-        bbox: [-170, 15, -51, 72]
+        bbox: [-125.020836, 24.104166, -66.520836, 49.9375]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+      temporal:
+        begin: 1895-01-01T00:00:00Z
+        end: 2020-12-01T00:00:00Z
+        trs: http://www.opengis.net/def/uom/ISO-8601/0/Gregorian
+        values: ["R1500/1895-01-01T00:00:00Z/P1M"]
+    links:
+      - type: text/html
+        rel: canonical
+        title: information
+        href: https://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/prism_v2
+        hreflang: en-US
     providers:
-      - type: feature
-        name: ESRI
-        data: https://mapservices.weather.noaa.gov/raster/rest/services/snow/NOHRSC_Snow_Analysis/MapServer/5
-        id_field: objectid
-        time_field: issue_time 
-
-
-  # NOHRSC-Snow-Analysis-Depth-Image:
-  #   type: collection
-  #   title: NOAA NOHRSC Snow Analysis Depth Image
-  #   description: NOAA NOHRSC Snow Analysis Depth Image
-  #   keywords: [NOAA, QPF]
-  #   links:
-  #     - type: application/html
-  #       rel: canonical
-  #       title: data source
-  #       href: https://data.usbr.gov/
-  #       hreflang: en-US
-  #   extents:
-  #     spatial:
-  #       bbox: [-170, 15, -51, 72]
-  #       crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-  #   providers:
-  #     - type: feature
-  #       name: ESRI
-  #       data: https://mapservices.weather.noaa.gov/raster/rest/services/snow/NOHRSC_Snow_Analysis/MapServer/3
-  #       id_field: objectid
-  #       time_field: issue_time 
-
-  # usgs-prism:
-  #   type: collection
-  #   title: Parameter-elevation Regressions on Independent Slopes Model (PRISM)
-  #   description: PRISM Monthly Climate Data for the Continental United States
-  #   keywords:
-  #     - temperature
-  #     - precipitation
-  #   extents:
-  #     spatial:
-  #       bbox: [-125.020836, 24.104166, -66.520836, 49.9375]
-  #       crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-  #     temporal:
-  #       begin: 1895-01-01T00:00:00Z
-  #       end: 2020-12-01T00:00:00Z
-  #       trs: http://www.opengis.net/def/uom/ISO-8601/0/Gregorian
-  #       values: ['R1500/1895-01-01T00:00:00Z/P1M']
-  #   links:
-  #     - type: text/html
-  #       rel: canonical
-  #       title: information
-  #       href: https://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/prism_v2
-  #       hreflang: en-US
-  #   providers:
-  #     - type: edr
-  #       name: xarray-edr
-  #       data: s3://mdmf/gdp/PRISM_v2.zarr
-  #       format:
-  #         name: zarr
-  #         mimetype: application/zip
-  #       options:
-  #         s3:
-  #           anon: true
-  #           requester_pays: false
-  #           client_kwargs:
-  #             endpoint_url: https://usgs.osn.mghpcc.org/
-
+      - type: edr
+        name: xarray-edr
+        data: s3://mdmf/gdp/PRISM_v2.zarr
+        format:
+          name: zarr
+          mimetype: application/zip
+        options:
+          s3:
+            anon: true
+            requester_pays: false
+            client_kwargs:
+              endpoint_url: https://usgs.osn.mghpcc.org/
 
   # noaa-nwm:
   #   type: collection

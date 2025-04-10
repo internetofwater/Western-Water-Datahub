@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 'use client';
 
 import Map from '@/components/Map';
@@ -145,28 +150,6 @@ const MainMap: React.FC<Props> = (props) => {
             }
         }
     }, [region]);
-
-    useEffect(() => {
-        if (!map) {
-            return;
-        }
-        if (reservoir === 'all') {
-            // Unset Filter
-            map.setFilter(LayerId.Reservoirs, null);
-            map.setFilter(LayerId.Reservoirs, null);
-        } else {
-            map.setFilter(LayerId.Reservoirs, [
-                '==',
-                ['get', 'locName'],
-                reservoir,
-            ]);
-            map.setFilter(LayerId.Reservoirs, [
-                '==',
-                ['get', 'locName'],
-                reservoir,
-            ]);
-        }
-    }, [reservoir]);
 
     useEffect(() => {
         if (!map) {

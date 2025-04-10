@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 'use client';
 // MapComponent.tsx
 import React, { useEffect, useRef } from 'react';
@@ -7,10 +12,10 @@ import { MapComponentProps } from '@/components/Map/types';
 import {
     addClickFunctions,
     addControls,
-    addCustomControls,
     addHoverFunctions,
     addLayers,
     addMouseMoveFunctions,
+    addCustomControls,
     addSources,
 } from '@/components/Map/utils';
 

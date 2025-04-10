@@ -3,6 +3,7 @@ You must query each layer separately and you cannot query 0, 6 or 12 since those
 ![list of qpf forecasts](./images/forecastList.png)
 
 Works:
+
 ```sh
 curl 'https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/1/query?where=1=1&outFields=*&f=json'
 ```
@@ -12,13 +13,13 @@ Does not work:
 ```
  curl 'https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/12/query?where=1=1&outFields=*&f=json'
 
-{"error":{"code":400,"message":"Invalid or missing input parameters.","details":[]}}⏎                                         
+{"error":{"code":400,"message":"Invalid or missing input parameters.","details":[]}}⏎
 
  curl 'https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/6/query?where=1=1&outFields=*&f=json'
 
-{"error":{"code":400,"message":"Invalid or missing input parameters.","details":[]}}⏎                                         
+{"error":{"code":400,"message":"Invalid or missing input parameters.","details":[]}}⏎
 
  curl 'https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/0/query?where=1=1&outFields=*&f=json'
 
-{"error":{"code":400,"message":"Invalid or missing input parameters.","details":[]}}⏎                                          
+{"error":{"code":400,"message":"Invalid or missing input parameters.","details":[]}}⏎
 ```

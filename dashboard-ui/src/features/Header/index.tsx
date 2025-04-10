@@ -1,3 +1,7 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
 'use client';
 
 import { Box, Button, Collapse, Group, Paper } from '@mantine/core';

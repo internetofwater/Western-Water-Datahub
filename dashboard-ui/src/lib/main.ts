@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { BasemapId } from '@/components/Map/types';
 import { create } from 'zustand';
 

@@ -1,44 +1,29 @@
-FROM python:3.12
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
+
+# Copy from the cache into container and the use system Python interpreter 
+ENV UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=0
 
 WORKDIR /opt/pygeoapi
 
-ARG ADD_DEB_PACKAGES="\
-    gunicorn \
-    python3-dask \
-    python3-fiona \
-    python3-gdal \
-    python3-jsonpatch \
-    python3-netcdf4 \
-    python3-pandas \
-    python3-pyproj \
-    python3-rasterio \
-    python3-scipy \
-    python3-shapely \
-    python3-xarray \
-    python3-zarr \
-    python3-starlette \
-    python3-pyld"
+# Copy project metadata for dependency resolution
+COPY pyproject.toml uv.lock /opt/pygeoapi/
+COPY packages /opt/pygeoapi/packages/
 
-# Install GDAL and dependencies
-RUN apt-get update && apt-get install -y \
-    libgdal-dev \
-    build-essential \
-    ${ADD_DEB_PACKAGES} \
-    && apt-get clean \
-    && apt autoremove -y  \
+# System dependencies for GDAL and others
+RUN apt-get update && apt-get install -y libgdal-dev git build-essential \
+    && apt-get clean && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
+# Install all dependencies
+RUN uv sync --all-groups --all-packages
 
+COPY pygeoapi-deployment/ /opt/pygeoapi/pygeoapi-deployment/
 
-# Install the top level mapping package with any shared dependencies
-COPY packages /opt/pygeoapi/packages
-COPY pyproject.toml /opt/pygeoapi/pyproject.toml
-RUN pip install /opt/pygeoapi
-# Install each individual mapping package with their individual dependencies separately
-RUN bash -c "pip install /opt/pygeoapi/packages/*"
+# Set up environment
+ENV PATH="/opt/pygeoapi/.venv/bin:$PATH"
 
-# Move over and install all production dependencies / configurations
-COPY pygeoapi-deployment /opt/pygeoapi/pygeoapi-deployment
-RUN pip install -r /opt/pygeoapi/pygeoapi-deployment/deployment-requirements.txt
-
+# Entrypoint for running the app
 ENTRYPOINT [ "/opt/pygeoapi/pygeoapi-deployment/entrypoint.sh" ]
