@@ -1,8 +1,7 @@
-import asyncio
 from datetime import date
 import time
-from typing import Optional, cast
-import aiohttp
+from typing import Literal, Optional, cast
+from com.cache import RedisCache
 from com.geojson.helpers import (
     GeojsonFeatureCollectionDict,
     GeojsonFeatureDict,
@@ -47,6 +46,7 @@ class ForecastData(BaseModel):
     espobpesp: Optional[list[int]] = None
     espiobpesp: Optional[list[int]] = None
     espqpfdays: list[int]
+    wsobasin: Optional[list[str]] = None
 
 
 class ForecastDataSingle(BaseModel):
@@ -79,112 +79,79 @@ class ForecastDataSingle(BaseModel):
     espobpesp: Optional[int] = None
     espiobpesp: Optional[int] = None
     espqpfdays: int
+    wsobasin: Optional[
+        Literal["AB"]
+        | Literal["MB"]
+        | Literal["WG"]
+        | Literal["CN"]
+        | Literal["NW"]
+        | None
+    ] = None
+
+    dataset_link: Optional[str] = None
+    image_plot_link: Optional[str] = None
+
+    def extend_with_metadata(self):
+        """
+        Add plotting and datasets links to the metadata of the pydantic object in place
+
+        Since this integration fetches from different basins, certain basins need to be handled differently
+        """
+        water_year = get_water_year()
+
+        match self.wsobasin:
+            case "CN":
+                self.dataset_link = f"https://www.cnrfc.noaa.gov/ensembleProduct.php?prodID=7&id={self.espid}"
+                self.image_plot_link = f"https://www.cbrfc.noaa.gov/dbdata/wsup/graph/espgraph_hc.py?id={self.espid}"
+            case "NW":
+                self.dataset_link = f"https://www.nwrfc.noaa.gov/water_supply/ws_forecasts.php?id={self.espid}"
+                self.image_plot_link = (
+                    "https://www.nwrfc.noaa.gov/water_supply/ws_boxplot.php?_jpg_csimd=1&start_month=APR&end_month=SEP&fcst_method=ESP10&overlay=4&image_only=1&fit=0&show_min_max=0&id="
+                    + self.espid
+                    + "&water_year="
+                    + water_year
+                )
+            case _:
+                self.dataset_link = (
+                    "http://www.cbrfc.noaa.gov/wsup/graph/espgraph_hc.html?id="
+                    + self.espid
+                )
+                self.image_plot_link = f"https://www.cbrfc.noaa.gov/dbdata/wsup/graph/espgraph_hc.py?id={self.espid}"
 
 
-class ForecastDataSingleWithLinks(ForecastDataSingle):
-    pass
+class ForecastDataSingleWithLinks:
+    forecastDataSingle: ForecastDataSingle
+
+    link: Optional[str] = None
+    plot: Optional[str] = None
 
 
-def calcFill(point, wyr):
-    # Assign values to the point dictionary
-    point["id"] = point["espid"]
-    point["fdate"] = point["espfdate"]
-    point["des"] = point["espname"]
-    point["lat"] = point["esplatdd"]
-    point["lng"] = point["esplngdd"]
-    point["p50"] = point["espp_500"]
-    # point["p10"] = point["espp_100"]
-    # point["p90"] = point["espp_900"]
-    point["normal"] = point["espavg30"]
-    point["pnormal"] = point["esppavg"]
-    point["bper"] = point["espbper"]
-    point["eper"] = point["espeper"]
-    point["qpfdays"] = point["espqpfdays"]
-
-    if "wsobasin" in point:
-        # Set rfc based on wsobasin
-        if point["wsobasin"] not in ["AB", "MB", "WG", "CN", "NW"]:
-            point["rfc"] = "CB"
-        else:
-            point["rfc"] = point["wsobasin"]
-
-        if point["wsobasin"] == "CN":
-            point["link"] = (
-                f"https://www.cnrfc.noaa.gov/ensembleProduct.php?prodID=7&id={point['id']}"
-            )
-            point["plot"] = ""
-
-        if point["wsobasin"] == "NW":
-            point["link"] = (
-                f"https://www.nwrfc.noaa.gov/water_supply/ws_forecasts.php?id={point['id']}"
-            )
-            point["plot"] = (
-                f"https://www.nwrfc.noaa.gov/water_supply/ws_boxplot.php?_jpg_csimd=1&start_month=APR&end_month=SEP&fcst_method=ESP10&overlay=4&image_only=1&fit=0&show_min_max=0&id={point['id']}&water_year={wyr}"
-            )
-            point["plotw"] = 543
-            point["ploth"] = 400
-
-    # Set links and plot URLs
-    point["link"] = (
-        f"http://www.cbrfc.noaa.gov/wsup/graph/espgraph_hc.html?id={point['id']}"
-    )
-    point["plot"] = (
-        f"https://www.cbrfc.noaa.gov/dbdata/wsup/graph/espgraph_hc.py?id={point['id']}"
-    )
-    point["plotw"] = 700
-    point["ploth"] = 389
-
-    # Handle case where pnormal is -1 or 0
-    if point["pnormal"] == -1:
-        point["pnormal"] = None
-
-    # Parse pnormal, p50, and normal as floats
-    pstat = 0
-    if point["pnormal"] == "" or point["pnormal"] == 0:
-        pstat = 0
-    else:
-        point["p50"] = float(point["p50"])
-        point["normal"] = float(point["normal"])
-        point["pnormal"] = float(point["pnormal"])
-
-    point["forecast_fill"] = None
-
-    return point
-
-
-def data2obj(data, wyr):
-    obj = {}
-    for i, espid in enumerate(data["espid"]):
-        child = {key: data[key][i] for key in data.keys()}
-        obj[espid] = calcFill(child, wyr)
-    return obj
-
-
-async def fetch_data(session: aiohttp.ClientSession, url: str) -> dict:
-    async with session.get(url) as response:
-        return await response.json(content_type="text/plain")
+def get_water_year() -> str:
+    now = time.time()
+    water_year = time.strftime("%Y", time.localtime(now))
+    calendar_month = int(time.strftime("%m", time.localtime(now)))
+    if calendar_month > 9:
+        # if month is greater than 9, increment water year since the water year typically starts on October 1st and ends on September 30th
+        water_year = str(int(water_year) + 1)
+    return water_year
 
 
 class ForecastCollection:
     forecasts: list[ForecastDataSingle] = []
 
-    async def _get_data(self):
-        now = time.time()
-        wyr = time.strftime("%Y", time.localtime(now))
-        cmo = int(time.strftime("%m", time.localtime(now)))
-        if cmo > 9:
-            wyr = str(int(wyr) + 1)
+    def _get_data(self):
+        water_year = get_water_year()
 
         fdate_latest = "LATEST"
-        cb_fdate_end = wyr + "-07-15"
-        cb_fdate_az = wyr + "-5-30"
-        ab_fdate_end = wyr + "-06-29"
-        wg_fdate_end = wyr + "-07-15"
+        cb_fdate_end = water_year + "-07-15"
+        cb_fdate_az = water_year + "-5-30"
+        ab_fdate_end = water_year + "-06-29"
+        wg_fdate_end = water_year + "-07-15"
 
-        ts = time.time() / (6 * 60 * 60)
+        # ts = time.time() / (6 * 60 * 60) js used the equivalent of that < but if we use seconds frm epoch it is uncachable
+        ts = time.mktime(date.today().timetuple()) / (6 * 60 * 60)
 
         # Define the URLs
-
         # fetches basins CB,AB,WG,MB,NW
         urls = {
             "src_latest": f"https://www.cbrfc.noaa.gov/wsup/graph/espcond_data.py?fdate={fdate_latest}&area=CB&qpfdays=0&otype=json&ts={ts}",
@@ -199,23 +166,29 @@ class ForecastCollection:
             "src_nw_latest": f"https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_data_nwrfc.py?&ts={ts}",
         }
 
-        async with aiohttp.ClientSession() as session:
-            tasks = [fetch_data(session, url) for url in urls.values()]
-            results = await asyncio.gather(*tasks)
-
-            assert any([result["espid"][0] == "BTYO3" for result in results]), (
-                "A station from the California basin appears to be missing"
+        # tasks = [fetch_data(session, url) for url in urls.values()]
+        results = await_(
+            RedisCache().get_or_fetch_group(
+                urls=list(urls.values()), custom_mimetype="text/plain"
             )
+        )
+        results = list(results.values())
 
-            # Process results using data2obj
-            serialized = [ForecastData.model_validate(res) for res in results]
-            assert any([result.espid[0] == "BTYO3" for result in serialized]), (
-                "A station from the California basin appears to be missing after serializing to pydantic"
-            )
-            return serialized
+        assert len(results) >= 10
+
+        assert any([result["espid"][0] == "BTYO3" for result in results]), (
+            "A station from the California basin appears to be missing"
+        )
+
+        # Process results using data2obj
+        serialized = [ForecastData.model_validate(res) for res in results]
+        assert any([result.espid[0] == "BTYO3" for result in serialized]), (
+            "A station from the California basin appears to be missing after serializing to pydantic"
+        )
+        return serialized
 
     def __init__(self):
-        wide_forecasts = await_(self._get_data())
+        wide_forecasts = self._get_data()
 
         pivoted_forecasts: list[ForecastDataSingle] = []
         for basin_forecast in wide_forecasts:
@@ -247,6 +220,8 @@ class ForecastCollection:
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         features: list[Feature] = []
         for forecast in self.forecasts:
+            forecast.extend_with_metadata()
+
             serialized_feature = Feature(
                 type="Feature",
                 id=forecast.espid,
