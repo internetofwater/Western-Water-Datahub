@@ -54,7 +54,12 @@ class NOAARFCProvider(BaseProvider, OAFProviderProtocol):
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         collection = ForecastCollection()
-        return collection.to_geojson()
+
+        if itemId:
+            collection.drop_all_locations_but_id(itemId)
+        return collection.to_geojson(
+            single_feature=itemId is not None, skip_geometry=skip_geometry
+        )
 
     @crs_transform
     def query(self, **kwargs):

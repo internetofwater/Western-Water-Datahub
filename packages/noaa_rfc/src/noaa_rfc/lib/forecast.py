@@ -74,6 +74,10 @@ class ForecastDataSingle(BaseModel):
     espqpfdays: int
 
 
+class ForecastDataSingleWithLinks(ForecastDataSingle):
+    pass
+
+
 def calcFill(point, wyr):
     # Assign values to the point dictionary
     point["id"] = point["espid"]
@@ -192,66 +196,61 @@ class ForecastCollection:
             tasks = [fetch_data(session, url) for url in urls.values()]
             results = await asyncio.gather(*tasks)
 
-            assert any([result["espid"][0] == "BTYO3" for result in results])
+            assert any([result["espid"][0] == "BTYO3" for result in results]), (
+                "A station from the California basin appears to be missing"
+            )
 
             # Process results using data2obj
             serialized = [ForecastData.model_validate(res) for res in results]
-            assert any([result.espid[0] == "BTYO3" for result in serialized])
+            assert any([result.espid[0] == "BTYO3" for result in serialized]), (
+                "A station from the California basin appears to be missing after serializing to pydantic"
+            )
             return serialized
 
     def __init__(self):
         wide_forecasts = await_(self._get_data())
 
         pivoted_forecasts: list[ForecastDataSingle] = []
-        for forecast_data in wide_forecasts:
-            # Zipping lists to iterate over all of them
-            for _, relevant_fields in enumerate(
-                zip(
-                    forecast_data.espid,
-                    forecast_data.espfdate,
-                    forecast_data.espavg30,
-                    forecast_data.espname,
-                    forecast_data.esplatdd,
-                    forecast_data.esplngdd,
-                    forecast_data.espfgroupid,
-                    forecast_data.espbper,
-                    forecast_data.espeper,
-                    forecast_data.espp_500,
-                    forecast_data.espqpfdays,
-                )
-            ):
-                item = ForecastDataSingle.model_validate(
-                    {
-                        "espid": relevant_fields[0],
-                        "espfdate": relevant_fields[1],
-                        "espavg30": relevant_fields[2],
-                        "espname": relevant_fields[3],
-                        "esplatdd": relevant_fields[4],
-                        "esplngdd": relevant_fields[5],
-                        "espfgroupid": relevant_fields[6],
-                        "espbper": relevant_fields[7],
-                        "espeper": relevant_fields[8],
-                        "espp_500": relevant_fields[9],
-                        "espqpfdays": relevant_fields[10],
-                    }
-                )
-                pivoted_forecasts.append(item)
+        for basin_forecast in wide_forecasts:
+            dumped = basin_forecast.model_dump()
+            # by iterating over the field with the max length out of all of them, this is the equivalent of zipping them all together,
+            # but we don't need to worry about the case in which a field is null
+            MAX_LENGTH_OF_A_FIELD_LIST = len(dumped["espid"])
+            for i in range(MAX_LENGTH_OF_A_FIELD_LIST):
+                # Get the i indexed item from the list and serialized it with pydantic
+                # This allows us to get a list of all stations instead of grouping them by basin
+                item = {k: v[i] if v else None for k, v in dumped.items()}
+                pivoted_forecasts.append(ForecastDataSingle.model_validate(item))
 
         self.forecasts = pivoted_forecasts
 
-    def to_geojson(self) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        features = []
+    def drop_all_locations_but_id(self, location_id: str):
+        self.forecasts = [
+            forecast for forecast in self.forecasts if forecast.espid == location_id
+        ]
+
+    def to_geojson(
+        self, single_feature: bool = False, skip_geometry: Optional[bool] = False
+    ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
+        features: list[Feature] = []
         for forecast in self.forecasts:
             features.append(
                 Feature(
                     type="Feature",
-                    properties=forecast.model_dump(),
+                    id=forecast.espid,
+                    properties=forecast.model_dump(exclude={"esplatdd", "esplngdd"}),
                     geometry=Point(
                         coordinates=Position2D(forecast.esplngdd, forecast.esplatdd),
                         type="Point",
-                    ),
+                    )
+                    if not skip_geometry
+                    else None,
                 )
             )
+
+        if single_feature:
+            return cast(GeojsonFeatureDict, features[0].model_dump())
+
         return cast(
             GeojsonFeatureCollectionDict,
             FeatureCollection(type="FeatureCollection", features=features).model_dump(),
