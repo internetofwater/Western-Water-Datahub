@@ -1,0 +1,17 @@
+[project]
+name = "noaa-rfc"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Colton Loftus", email = "70598503+C-Loftus@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+noaa-rfc = "noaa_rfc:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
