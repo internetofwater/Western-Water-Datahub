@@ -1,28 +1,31 @@
 # Western Water Datahub
 
-The Wester Water Datahub (WWDH) is an implementation of the [OGC API - Environmental Data Retrieval (EDR)](https://ogcapi.ogc.org/edr/) standard, enabiling access to water data from various sources through a unified interface. It is designed to enhance data interoperability, accessibility, and discoverability across multiple agricultural water data platforms.
+The Wester Water Datahub (WWDH) is an implementation of the [OGC API](https://ogcapi.ogc.org/) suite of standards, enabling access to water data from various sources through a unified interface. It is designed to enhance data interoperability, accessibility, and discoverability across multiple agricultural water data platforms.
 
 This project is a collaboration between the United States Beaureu of Reclamation, the Center for Geospatial Solutions, and Wester States Water Council.
 
 ## Source Systems
 
-The EDR interface consolidates access to multiple water data sources, offering a standardized API pattern to retrieve information from different systems. The supported sources are listed below:
+The interface consolidates access to multiple water data sources, offering a standardized API pattern to retrieve information from different systems. The sources are listed below:
 
-| Data Source | Variables | EDR URL
-|-------------|-----------------------------------------------------------|-------------------------------------------------------------|
-| USBR/RISE   | Reservoir Storage/Release/Level/Evap (current/historical) | https://api.wwdh.internetofwater.app/collections/rise-edr   |
-| NRCS/SNOTEL | Snow Water Equivalent (station, current/historical)       | https://api.wwdh.internetofwater.app/collections/snotel-edr |
-| USGS        | Streamflow (current)                                      | https://api.wwdh.internetofwater.app/collections/usgs-sta   |
-| PRISM       | Precipitation (historical)                                | https://api.wwdh.internetofwater.app/collections/usgs-prism |
+| Data Source | Variables                                                 | OGC API Format |
+| ----------- | --------------------------------------------------------- | -------------- |
+| USBR/RISE   | Reservoir Storage/Release/Level/Evap (current/historical) | Features, EDR  |
+| NRCS/SNOTEL | Snow Water Equivalent (station, current/historical)       | Features, EDR  |
+| USGS/WMA    | Streamflow (current)                                      | Features, EDR  |
+| AWDB        | Streamflow (forecast)                                     | Features, EDR  |
+| NOAA/QPF    | Precipitation (Raster forecast)                           | Features       |
+| NOAA/NOHRSC | Snow Water (forecast)                                     | Maps           |
+| PRISM       | Precipitation (historical)                                | EDR            |
 
-To learn more about custom EDR mappings, visit the [Western Water Datahub Mappings directory](./docs/mappings.md).
+To learn more about custom mappings, visit the [Western Water Datahub Mappings directory](./docs/mappings.md).
 
 ## Getting Started
 
 To run with Docker:
 
 ```bash
-docker compose --profile production up 
+docker compose --profile production up
 ```
 
 ### Local Development

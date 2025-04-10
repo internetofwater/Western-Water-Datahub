@@ -30,6 +30,6 @@
     "**/mapbox-gl.d.ts",
     "jest.config.js",
     ".eslintrc.js"
-],
+  ],
   "exclude": ["node_modules"]
 }

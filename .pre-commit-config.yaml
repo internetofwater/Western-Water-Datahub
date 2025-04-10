@@ -36,6 +36,7 @@ repos:
     rev: "v4.0.0-alpha.8"
     hooks:
       - id: prettier
+        exclude: pygeoapi-deployment/templates/
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
     rev: v0.9.9
@@ -43,7 +44,9 @@ repos:
       # Run the linter.
       - id: ruff
         args: [--fix]
+        exclude: pygeoapi-deployment/templates/
       - id: ruff-format
+        exclude: pygeoapi-deployment/templates/
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
     rev: 0.6.3
