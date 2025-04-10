@@ -145,11 +145,11 @@ def calcFill(point, wyr):
     return point
 
 
-def data2obj(data):
+def data2obj(data, wyr):
     obj = {}
     for i, espid in enumerate(data["espid"]):
         child = {key: data[key][i] for key in data.keys()}
-        obj[espid] = calcFill(child)
+        obj[espid] = calcFill(child, wyr)
     return obj
 
 
