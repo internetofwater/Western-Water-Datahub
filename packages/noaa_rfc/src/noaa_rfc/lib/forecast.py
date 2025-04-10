@@ -1,10 +1,13 @@
 import asyncio
 from datetime import date
 import time
-from typing import Optional
+from typing import Optional, cast
 import aiohttp
+from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
 from com.helpers import await_
 from pydantic import BaseModel
+from geojson_pydantic import Feature, FeatureCollection, Point
+from geojson_pydantic.types import Position2D
 
 
 class ForecastData(BaseModel):
@@ -37,6 +40,38 @@ class ForecastData(BaseModel):
     espobpesp: Optional[list[int]] = None
     espiobpesp: Optional[list[int]] = None
     espqpfdays: list[int]
+
+
+class ForecastDataSingle(BaseModel):
+    espid: str
+    espfdate: date | str
+    espai: Optional[int] = None
+    espmi: Optional[int] = None
+    esppcti: Optional[int] = None
+    espavg30: float
+    esppavg: Optional[float] = None
+    esppmed: Optional[int] = None
+    esppctile: Optional[int] = None
+    espplace: Optional[int] = None
+    espnyears: Optional[int] = None
+    espname: str
+    esplatdd: float
+    esplngdd: float
+    espfgroupid: str
+    espbasin: Optional[str] = None
+    espsubbasin: Optional[str] = None
+    espbper: int
+    espeper: int
+    espp_500: float
+    espobpavg: Optional[int] = None
+    espiobpavg: Optional[int] = None
+    espobpmed: Optional[int] = None
+    espiobpmed: Optional[int] = None
+    espobpntd: Optional[int] = None
+    espiobpntd: Optional[int] = None
+    espobpesp: Optional[int] = None
+    espiobpesp: Optional[int] = None
+    espqpfdays: int
 
 
 def calcFill(point, wyr=None):
@@ -120,7 +155,7 @@ async def fetch_data(session: aiohttp.ClientSession, url: str) -> dict:
 
 
 class ForecastCollection:
-    forecasts: list[ForecastData] = []
+    forecasts: list[ForecastDataSingle] = []
 
     async def _get_data(self):
         fdate_latest = "2025-04-10"
@@ -153,12 +188,65 @@ class ForecastCollection:
             return [ForecastData.model_validate(res) for res in results]
 
     def __init__(self):
-        self.forecasts = await_(self._get_data())
-        # pivotedData = pivotWide(data)
+        wide_forecasts = await_(self._get_data())
 
-        # self.forecasts = pivotedData
+        pivoted_forecasts: list[ForecastDataSingle] = []
+        for forecast_data in wide_forecasts:
+            # Zipping lists to iterate over all of them
+            for index, relevant_fields in enumerate(
+                zip(
+                    forecast_data.espid,
+                    forecast_data.espfdate,
+                    forecast_data.espai or [],
+                    forecast_data.espmi or [],
+                    forecast_data.esppcti or [],
+                    forecast_data.espavg30,
+                    forecast_data.espname,
+                    forecast_data.esplatdd,
+                    forecast_data.esplngdd,
+                    forecast_data.espfgroupid,
+                    forecast_data.espbper,
+                    forecast_data.espeper,
+                    forecast_data.espp_500,
+                    forecast_data.espqpfdays,
+                )
+            ):
+                item = ForecastDataSingle.model_validate(
+                    {
+                        "espid": relevant_fields[0],
+                        "espfdate": relevant_fields[1],
+                        "espai": relevant_fields[2],
+                        "espmi": relevant_fields[3],
+                        "esppcti": relevant_fields[4],
+                        "espavg30": relevant_fields[5],
+                        "espname": relevant_fields[6],
+                        "esplatdd": relevant_fields[7],
+                        "esplngdd": relevant_fields[8],
+                        "espfgroupid": relevant_fields[9],
+                        "espbper": relevant_fields[10],
+                        "espeper": relevant_fields[11],
+                        "espp_500": relevant_fields[12],
+                        "espqpfdays": relevant_fields[13],
+                    }
+                )
+                pivoted_forecasts.append(item)
 
-        # self.forecasts = [
-        #     ForecastData.model_validate(forecast)
-        #     for forecast in await_(self._get_data())
-        # ]
+        self.forecasts = pivoted_forecasts
+
+    def to_geojson(self) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
+        features = []
+        for forecast in self.forecasts:
+            features.append(
+                Feature(
+                    type="Feature",
+                    properties=forecast.model_dump(),
+                    geometry=Point(
+                        coordinates=Position2D(forecast.esplngdd, forecast.esplatdd),
+                        type="Point",
+                    ),
+                )
+            )
+        return cast(
+            GeojsonFeatureCollectionDict,
+            FeatureCollection(type="FeatureCollection", features=features).model_dump(),
+        )
