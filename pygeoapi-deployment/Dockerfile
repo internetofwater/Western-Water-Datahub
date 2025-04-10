@@ -15,7 +15,6 @@ RUN apt-get update && apt-get install -y libgdal-dev git build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Install all dependencies
-# Use buildkit with docker to persist uv installation cache for faster builds 
 RUN uv sync --all-groups --all-packages
 
 COPY pygeoapi-deployment/ /opt/pygeoapi/pygeoapi-deployment/
