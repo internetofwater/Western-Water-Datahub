@@ -545,7 +545,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
         hreflang: en-US
     extents:
       spatial:
