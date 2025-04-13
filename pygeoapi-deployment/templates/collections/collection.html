@@ -1,3 +1,8 @@
+<!--
+ Copyright 2025 Lincoln Institute of Land Policy
+ SPDX-License-Identifier: MIT
+-->
+
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block desc %}{{ data.get('description','') | truncate(250) }}{% endblock %}

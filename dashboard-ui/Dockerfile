@@ -1,3 +1,6 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 FROM node:lts-alpine
 
 WORKDIR /dashboard-ui/app

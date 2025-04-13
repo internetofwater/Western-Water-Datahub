@@ -1,8 +1,11 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 # A docker compose file for spinning up local infrastructure with or without dockerized pygeoapi
 # To spin up pygeoapi use the --profile production flag otherwise run with uv for hot reloading
 services:
   pygeoapi:
-    build: 
+    build:
       context: .
       dockerfile: pygeoapi-deployment/Dockerfile
     ports:
@@ -39,10 +42,9 @@ services:
       context: dashboard-ui
       dockerfile: Dockerfile
     ports:
-      - '3000:3000'
+      - "3000:3000"
     profiles:
       - ui
-    
 
 volumes:
   redis_data:

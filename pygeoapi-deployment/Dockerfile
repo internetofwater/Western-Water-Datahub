@@ -1,3 +1,6 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
 
 # Copy from the cache into container and the use system Python interpreter 
@@ -15,9 +18,7 @@ RUN apt-get update && apt-get install -y libgdal-dev git build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Install all dependencies
-# Use buildkit with docker to persist uv installation cache for faster builds 
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --all-groups --all-packages
+RUN uv sync --all-groups --all-packages
 
 COPY pygeoapi-deployment/ /opt/pygeoapi/pygeoapi-deployment/
 

@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import {
   Map,
   SourceSpecification,
@@ -27,8 +32,8 @@ export const addSources = (
   featureService: (
     sourceId: string,
     map: Map,
-    options: FeatureServiceOptions
-  ) => void
+    options: FeatureServiceOptions,
+  ) => void,
 ) => {
   sourceConfigs.forEach((sourceConfig) => {
     switch (sourceConfig.type) {
@@ -37,7 +42,7 @@ export const addSources = (
           featureService(
             sourceConfig.id,
             map,
-            sourceConfig.definition as FeatureServiceOptions
+            sourceConfig.definition as FeatureServiceOptions,
           );
         }
         break;
@@ -46,7 +51,7 @@ export const addSources = (
         if (!map.getSource(sourceConfig.id)) {
           map.addSource(
             sourceConfig.id,
-            sourceConfig.definition as SourceSpecification
+            sourceConfig.definition as SourceSpecification,
           );
         }
         break;
@@ -55,7 +60,7 @@ export const addSources = (
         if (!map.getSource(sourceConfig.id)) {
           map.addSource(
             sourceConfig.id,
-            sourceConfig.definition as SourceSpecification
+            sourceConfig.definition as SourceSpecification,
           );
         }
         break;
@@ -71,7 +76,7 @@ export const addSources = (
  */
 export const addLayers = (
   map: Map,
-  layerDefinitions: MainLayerDefinition[]
+  layerDefinitions: MainLayerDefinition[],
 ) => {
   layerDefinitions.forEach((layer) => {
     if (layer.config && !map.getLayer(layer.id)) {
@@ -99,20 +104,20 @@ export const addHoverFunctions = (
   map: Map,
   layerDefinitions: MainLayerDefinition[],
   hoverPopup: Popup,
-  persistentPopup: Popup
+  persistentPopup: Popup,
 ) => {
   layerDefinitions.forEach((layer) => {
     if (layer.hoverFunction) {
       map.on(
         "mouseenter",
         layer.id,
-        layer.hoverFunction(map, hoverPopup, persistentPopup)
+        layer.hoverFunction(map, hoverPopup, persistentPopup),
       );
       if (layer.customHoverExitFunction) {
         map.on(
           "mouseleave",
           layer.id,
-          layer.customHoverExitFunction(map, hoverPopup, persistentPopup)
+          layer.customHoverExitFunction(map, hoverPopup, persistentPopup),
         );
       } else {
         map.on("mouseleave", layer.id, () => {
@@ -127,13 +132,17 @@ export const addHoverFunctions = (
           map.on(
             "mouseenter",
             subLayer.id,
-            subLayer.hoverFunction(map, hoverPopup, persistentPopup)
+            subLayer.hoverFunction(map, hoverPopup, persistentPopup),
           );
           if (subLayer.customHoverExitFunction) {
             map.on(
               "mouseleave",
               subLayer.id,
-              subLayer.customHoverExitFunction(map, hoverPopup, persistentPopup)
+              subLayer.customHoverExitFunction(
+                map,
+                hoverPopup,
+                persistentPopup,
+              ),
             );
           } else {
             map.on("mouseleave", subLayer.id, () => {
@@ -159,14 +168,14 @@ export const addMouseMoveFunctions = (
   map: Map,
   layerDefinitions: MainLayerDefinition[],
   hoverPopup: Popup,
-  persistentPopup: Popup
+  persistentPopup: Popup,
 ) => {
   layerDefinitions.forEach((layer) => {
     if (layer.mouseMoveFunction) {
       map.on(
         "mousemove",
         layer.id,
-        layer.mouseMoveFunction(map, hoverPopup, persistentPopup)
+        layer.mouseMoveFunction(map, hoverPopup, persistentPopup),
       );
     }
     if ((layer?.subLayers ?? []).length > 0) {
@@ -175,7 +184,7 @@ export const addMouseMoveFunctions = (
           map.on(
             "mousemove",
             subLayer.id,
-            subLayer.mouseMoveFunction(map, hoverPopup, persistentPopup)
+            subLayer.mouseMoveFunction(map, hoverPopup, persistentPopup),
           );
         }
       });
@@ -195,14 +204,14 @@ export const addClickFunctions = (
   map: Map,
   layerDefinitions: MainLayerDefinition[],
   hoverPopup: Popup,
-  persistentPopup: Popup
+  persistentPopup: Popup,
 ) => {
   layerDefinitions.forEach((layer) => {
     if (layer.clickFunction) {
       map.on(
         "click",
         layer.id,
-        layer.clickFunction(map, hoverPopup, persistentPopup)
+        layer.clickFunction(map, hoverPopup, persistentPopup),
       );
     }
     if ((layer?.subLayers ?? []).length > 0) {
@@ -211,7 +220,7 @@ export const addClickFunctions = (
           map.on(
             "click",
             subLayer.id,
-            subLayer.clickFunction(map, hoverPopup, persistentPopup)
+            subLayer.clickFunction(map, hoverPopup, persistentPopup),
           );
         }
       });
@@ -227,7 +236,7 @@ export const addClickFunctions = (
  */
 export const addControls = (
   map: Map,
-  controls: MapComponentProps["controls"]
+  controls: MapComponentProps["controls"],
 ) => {
   if (controls) {
     const { scaleControl, navigationControl, fullscreenControl } = controls;
@@ -241,7 +250,7 @@ export const addControls = (
         typeof navigationControl === "boolean" ? {} : navigationControl;
       map.addControl(
         new NavigationControl(navigationControlOptions),
-        "bottom-right" // TODO: add ability to position
+        "bottom-right", // TODO: add ability to position
       );
     }
     if (fullscreenControl) {
