@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import React from "react";
 import { screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
@@ -52,7 +57,7 @@ describe("Map Component: ClientSide", () => {
           center: [0, 0],
           zoom: 1,
           testMode: true,
-        })
+        }),
       );
 
       expect(addSources).toHaveBeenCalled();

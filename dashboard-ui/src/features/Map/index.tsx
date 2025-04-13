@@ -1,24 +1,29 @@
-'use client';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
 
-import Map from '@/components/Map';
-import React, { useEffect } from 'react';
+"use client";
+
+import Map from "@/components/Map";
+import React, { useEffect } from "react";
 import {
-    layerDefinitions,
-    sourceConfigs,
-    MAP_ID,
-    BASEMAP,
-    SubLayerId,
-    LayerId,
-} from '@/features/Map/config';
-import { useMap } from '@/contexts/MapContexts';
-import useMainStore from '@/lib/main';
-import { loadTeacups as loadImages } from '@/features/Map/utils';
+  layerDefinitions,
+  sourceConfigs,
+  MAP_ID,
+  BASEMAP,
+  SubLayerId,
+  LayerId,
+} from "@/features/Map/config";
+import { useMap } from "@/contexts/MapContexts";
+import useMainStore from "@/lib/main";
+import { loadTeacups as loadImages } from "@/features/Map/utils";
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;
 
 type Props = {
-    accessToken: string;
+  accessToken: string;
 };
 
 /**
@@ -31,159 +36,139 @@ type Props = {
  * @component
  */
 const MainMap: React.FC<Props> = (props) => {
-    const { accessToken } = props;
+  const { accessToken } = props;
 
-    const { map } = useMap(MAP_ID);
-    const region = useMainStore((state) => state.region);
-    const setRegion = useMainStore((state) => state.setRegion);
-    const reservoir = useMainStore((state) => state.reservoir);
-    const setReservoir = useMainStore((state) => state.setReservoir);
+  const { map } = useMap(MAP_ID);
+  const region = useMainStore((state) => state.region);
+  const setRegion = useMainStore((state) => state.setRegion);
+  const reservoir = useMainStore((state) => state.reservoir);
+  const setReservoir = useMainStore((state) => state.setReservoir);
 
-    useEffect(() => {
-        if (!map) {
-            return;
+  useEffect(() => {
+    if (!map) {
+      return;
+    }
+
+    map.on("click", SubLayerId.RegionsFill, (e) => {
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: [SubLayerId.RegionsFill],
+      });
+
+      if (features && features.length) {
+        const feature = features[0];
+
+        if (feature.properties) {
+          const region = feature.properties.REGION as string;
+
+          setRegion(region);
         }
+      }
+    });
 
-        map.on('click', SubLayerId.RegionsFill, (e) => {
-            const features = map.queryRenderedFeatures(e.point, {
-                layers: [SubLayerId.RegionsFill],
-            });
+    map.on("click", SubLayerId.BasinsFill, (e) => {
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: [SubLayerId.BasinsFill],
+      });
 
-            if (features && features.length) {
-                const feature = features[0];
+      console.log("BASINS", features);
 
-                if (feature.properties) {
-                    const region = feature.properties.REGION as string;
+      // if (features && features.length) {
+      //     const feature = features[0];
 
-                    setRegion(region);
-                }
-            }
-        });
+      //     if (feature.properties) {
+      //         const region = feature.properties.REGION as string;
 
-        map.on('click', SubLayerId.BasinsFill, (e) => {
-            const features = map.queryRenderedFeatures(e.point, {
-                layers: [SubLayerId.BasinsFill],
-            });
+      //         setRegion(region);
+      //     }
+      // }
+    });
 
-            console.log('BASINS', features);
+    map.on("click", LayerId.Reservoirs, (e) => {
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: [LayerId.Reservoirs],
+      });
 
-            // if (features && features.length) {
-            //     const feature = features[0];
+      console.log("features", features);
+      if (features && features.length) {
+        const feature = features[0];
 
-            //     if (feature.properties) {
-            //         const region = feature.properties.REGION as string;
+        if (feature.properties) {
+          const reservoir = feature.properties.locName as string;
+          const region = feature.properties.region as string;
 
-            //         setRegion(region);
-            //     }
-            // }
-        });
-
-        map.on('click', LayerId.Reservoirs, (e) => {
-            const features = map.queryRenderedFeatures(e.point, {
-                layers: [LayerId.Reservoirs],
-            });
-
-            console.log('features', features);
-            if (features && features.length) {
-                const feature = features[0];
-
-                if (feature.properties) {
-                    const reservoir = feature.properties.locName as string;
-                    const region = feature.properties.region as string;
-
-                    setReservoir(reservoir);
-                    setRegion(region);
-                }
-            }
-        });
-        loadImages(map);
-        map.on('style.load', () => {
-            loadImages(map);
-        });
-    }, [map]);
-
-    useEffect(() => {
-        if (!map) {
-            return;
+          setReservoir(reservoir);
+          setRegion(region);
         }
-        if (region === 'all') {
-            // Unset Filter
-            map.setFilter(SubLayerId.RegionsFill, null);
-            map.setFilter(SubLayerId.RegionsBoundary, null);
-            // TODO: basin filter
-            if (reservoir === 'all') {
-                map.setFilter(LayerId.Reservoirs, null);
-                map.setFilter(LayerId.Reservoirs, null);
-            }
-        } else {
-            map.setFilter(SubLayerId.RegionsFill, [
-                '==',
-                ['get', 'REGION'],
-                region,
-            ]);
-            map.setFilter(SubLayerId.RegionsBoundary, [
-                '==',
-                ['get', 'REGION'],
-                region,
-            ]);
-            // TODO: basin filter
-            if (reservoir === 'all') {
-                map.setFilter(LayerId.Reservoirs, [
-                    '==',
-                    ['get', 'region'],
-                    region,
-                ]);
-                map.setFilter(LayerId.Reservoirs, [
-                    '==',
-                    ['get', 'region'],
-                    region,
-                ]);
-            }
-        }
-    }, [region]);
+      }
+    });
+    loadImages(map);
+    map.on("style.load", () => {
+      loadImages(map);
+    });
+  }, [map]);
 
-    useEffect(() => {
-        if (!map) {
-            return;
-        }
-        if (reservoir === 'all') {
-            // Unset Filter
-            map.setFilter(LayerId.Reservoirs, null);
-            map.setFilter(LayerId.Reservoirs, null);
-        } else {
-            map.setFilter(LayerId.Reservoirs, [
-                '==',
-                ['get', 'locName'],
-                reservoir,
-            ]);
-            map.setFilter(LayerId.Reservoirs, [
-                '==',
-                ['get', 'locName'],
-                reservoir,
-            ]);
-        }
-    }, [reservoir]);
+  useEffect(() => {
+    if (!map) {
+      return;
+    }
+    if (region === "all") {
+      // Unset Filter
+      map.setFilter(SubLayerId.RegionsFill, null);
+      map.setFilter(SubLayerId.RegionsBoundary, null);
+      // TODO: basin filter
+      if (reservoir === "all") {
+        map.setFilter(LayerId.Reservoirs, null);
+        map.setFilter(LayerId.Reservoirs, null);
+      }
+    } else {
+      map.setFilter(SubLayerId.RegionsFill, ["==", ["get", "REGION"], region]);
+      map.setFilter(SubLayerId.RegionsBoundary, [
+        "==",
+        ["get", "REGION"],
+        region,
+      ]);
+      // TODO: basin filter
+      if (reservoir === "all") {
+        map.setFilter(LayerId.Reservoirs, ["==", ["get", "region"], region]);
+        map.setFilter(LayerId.Reservoirs, ["==", ["get", "region"], region]);
+      }
+    }
+  }, [region]);
 
-    return (
-        <>
-            <Map
-                accessToken={accessToken}
-                id={MAP_ID}
-                sources={sourceConfigs}
-                layers={layerDefinitions}
-                options={{
-                    style: BASEMAP,
-                    center: INITIAL_CENTER,
-                    zoom: INITIAL_ZOOM,
-                    maxZoom: 20,
-                }}
-                controls={{
-                    scaleControl: true,
-                    navigationControl: true,
-                }}
-            />
-        </>
-    );
+  useEffect(() => {
+    if (!map) {
+      return;
+    }
+    if (reservoir === "all") {
+      // Unset Filter
+      map.setFilter(LayerId.Reservoirs, null);
+      map.setFilter(LayerId.Reservoirs, null);
+    } else {
+      map.setFilter(LayerId.Reservoirs, ["==", ["get", "locName"], reservoir]);
+      map.setFilter(LayerId.Reservoirs, ["==", ["get", "locName"], reservoir]);
+    }
+  }, [reservoir]);
+
+  return (
+    <>
+      <Map
+        accessToken={accessToken}
+        id={MAP_ID}
+        sources={sourceConfigs}
+        layers={layerDefinitions}
+        options={{
+          style: BASEMAP,
+          center: INITIAL_CENTER,
+          zoom: INITIAL_ZOOM,
+          maxZoom: 20,
+        }}
+        controls={{
+          scaleControl: true,
+          navigationControl: true,
+        }}
+      />
+    </>
+  );
 };
 
 export default MainMap;

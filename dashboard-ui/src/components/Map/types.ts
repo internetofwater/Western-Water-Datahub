@@ -1,20 +1,25 @@
-import { FeatureServiceOptions } from '@hansdo/mapbox-gl-arcgis-featureserver';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import { FeatureServiceOptions } from "@hansdo/mapbox-gl-arcgis-featureserver";
 import {
-    GeoJSONSource,
-    VectorTileSource as VectorSource,
-    RasterTileSource as RasterSource,
-    ImageSource,
-    VideoSource,
-    SourceSpecification,
-    LayerSpecification,
-    MapOptions,
-    MapMouseEvent,
-    Map,
-    Popup,
-    FullscreenControlOptions,
-    NavigationControlOptions,
-    ScaleControlOptions,
-} from 'mapbox-gl';
+  GeoJSONSource,
+  VectorTileSource as VectorSource,
+  RasterTileSource as RasterSource,
+  ImageSource,
+  VideoSource,
+  SourceSpecification,
+  LayerSpecification,
+  MapOptions,
+  MapMouseEvent,
+  Map,
+  Popup,
+  FullscreenControlOptions,
+  NavigationControlOptions,
+  ScaleControlOptions,
+} from "mapbox-gl";
 
 /**
  * Defines the possible types of sources that can be used in the map.
@@ -28,11 +33,11 @@ import {
  * @type
  */
 export type SourceDefinition =
-    | GeoJSONSource
-    | VectorSource
-    | RasterSource<'raster'>
-    | ImageSource
-    | VideoSource;
+  | GeoJSONSource
+  | VectorSource
+  | RasterSource<"raster">
+  | ImageSource
+  | VideoSource;
 
 /**
  * Defines the types of sources that can be used in the map.
@@ -45,9 +50,9 @@ export type SourceDefinition =
  * @enum
  */
 export enum Sources {
-    GeoJSON = 'geojson',
-    VectorTile = 'vector-tile',
-    ESRI = 'esri',
+  GeoJSON = "geojson",
+  VectorTile = "vector-tile",
+  ESRI = "esri",
 }
 
 /**
@@ -61,9 +66,9 @@ export enum Sources {
  * @type
  */
 export type SourceConfig = {
-    id: string;
-    type: Sources;
-    definition: SourceSpecification | FeatureServiceOptions;
+  id: string;
+  type: Sources;
+  definition: SourceSpecification | FeatureServiceOptions;
 };
 
 /**
@@ -80,9 +85,9 @@ export type SourceConfig = {
  * @type
  */
 export type CustomListenerFunction = (
-    map: Map,
-    hoverPopup: Popup,
-    persistentPopup: Popup
+  map: Map,
+  hoverPopup: Popup,
+  persistentPopup: Popup,
 ) => (e: MapMouseEvent) => void;
 
 /**
@@ -101,14 +106,14 @@ export type CustomListenerFunction = (
  * @type
  */
 export type LayerDefinition = {
-    id: string;
-    controllable: boolean;
-    legend: boolean;
-    config: LayerSpecification | null;
-    hoverFunction?: CustomListenerFunction;
-    customHoverExitFunction?: CustomListenerFunction;
-    clickFunction?: CustomListenerFunction;
-    mouseMoveFunction?: CustomListenerFunction;
+  id: string;
+  controllable: boolean;
+  legend: boolean;
+  config: LayerSpecification | null;
+  hoverFunction?: CustomListenerFunction;
+  customHoverExitFunction?: CustomListenerFunction;
+  clickFunction?: CustomListenerFunction;
+  mouseMoveFunction?: CustomListenerFunction;
 };
 
 /**
@@ -120,7 +125,7 @@ export type LayerDefinition = {
  * @type
  */
 export type MainLayerDefinition = LayerDefinition & {
-    subLayers?: LayerDefinition[];
+  subLayers?: LayerDefinition[];
 };
 
 /**
@@ -141,16 +146,16 @@ export type MainLayerDefinition = LayerDefinition & {
  * @interface
  */
 export interface MapComponentProps {
-    accessToken: string;
-    id: string;
-    sources: SourceConfig[];
-    layers: MainLayerDefinition[];
-    options: Omit<MapOptions, 'container'>;
-    controls?: {
-        navigationControl?: NavigationControlOptions | boolean;
-        scaleControl?: ScaleControlOptions | boolean;
-        fullscreenControl?: FullscreenControlOptions | boolean;
-    };
+  accessToken: string;
+  id: string;
+  sources: SourceConfig[];
+  layers: MainLayerDefinition[];
+  options: Omit<MapOptions, "container">;
+  controls?: {
+    navigationControl?: NavigationControlOptions | boolean;
+    scaleControl?: ScaleControlOptions | boolean;
+    fullscreenControl?: FullscreenControlOptions | boolean;
+  };
 }
 
 /**
@@ -171,16 +176,16 @@ export interface MapComponentProps {
  * @enum
  */
 export enum BasemapId {
-    Standard = 'standard',
-    StandardSatellite = 'standard-satellite',
-    Streets = 'streets',
-    Outdoors = 'outdoors',
-    Light = 'light',
-    Dark = 'dark',
-    Satellite = 'satellite',
-    SatelliteStreets = 'satellite-streets',
-    NavigationDay = 'navigation-day',
-    NavigationNight = 'navigation-night',
+  Standard = "standard",
+  StandardSatellite = "standard-satellite",
+  Streets = "streets",
+  Outdoors = "outdoors",
+  Light = "light",
+  Dark = "dark",
+  Satellite = "satellite",
+  SatelliteStreets = "satellite-streets",
+  NavigationDay = "navigation-day",
+  NavigationNight = "navigation-night",
 }
 
 /**
@@ -201,16 +206,16 @@ export enum BasemapId {
  * @type
  */
 export type BasemapStyles =
-    | 'mapbox://styles/mapbox/standard'
-    | 'mapbox://styles/mapbox/standard-satellite'
-    | 'mapbox://styles/mapbox/streets-v12'
-    | 'mapbox://styles/mapbox/outdoors-v12'
-    | 'mapbox://styles/mapbox/light-v11'
-    | 'mapbox://styles/mapbox/dark-v11'
-    | 'mapbox://styles/mapbox/satellite-v9'
-    | 'mapbox://styles/mapbox/satellite-streets-v12'
-    | 'mapbox://styles/mapbox/navigation-day-v1'
-    | 'mapbox://styles/mapbox/navigation-night-v1';
+  | "mapbox://styles/mapbox/standard"
+  | "mapbox://styles/mapbox/standard-satellite"
+  | "mapbox://styles/mapbox/streets-v12"
+  | "mapbox://styles/mapbox/outdoors-v12"
+  | "mapbox://styles/mapbox/light-v11"
+  | "mapbox://styles/mapbox/dark-v11"
+  | "mapbox://styles/mapbox/satellite-v9"
+  | "mapbox://styles/mapbox/satellite-streets-v12"
+  | "mapbox://styles/mapbox/navigation-day-v1"
+  | "mapbox://styles/mapbox/navigation-night-v1";
 
 /**
  * Defines the mapping of basemap identifiers to their corresponding styles.
@@ -221,7 +226,7 @@ export type BasemapStyles =
  * @type
  */
 export type Basemaps = {
-    [key in BasemapId]: BasemapStyles;
+  [key in BasemapId]: BasemapStyles;
 };
 
 /**
@@ -236,8 +241,8 @@ export type Basemaps = {
  * @enum
  */
 export enum LayerType {
-    Line = 'line',
-    Symbol = 'symbol',
-    Circle = 'circle',
-    Fill = 'fill',
+  Line = "line",
+  Symbol = "symbol",
+  Circle = "circle",
+  Fill = "fill",
 }

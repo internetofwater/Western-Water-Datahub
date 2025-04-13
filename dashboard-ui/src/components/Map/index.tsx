@@ -1,9 +1,14 @@
-'use client';
-import React, { lazy, Suspense } from 'react';
-import { MapComponentProps } from '@/components/Map/types';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+"use client";
+import React, { lazy, Suspense } from "react";
+import { MapComponentProps } from "@/components/Map/types";
 
 // Dynamic load causes a double render even without strict mode
-const ClientSideMap = lazy(() => import('./ClientSide'));
+const ClientSideMap = lazy(() => import("./ClientSide"));
 
 /**
  * This component renders the map component using a lazy load.
@@ -29,13 +34,13 @@ const ClientSideMap = lazy(() => import('./ClientSide'));
  * @component
  */
 const Map: React.FC<MapComponentProps> = (props) => {
-    return (
-        <>
-            <Suspense>
-                <ClientSideMap {...props} />
-            </Suspense>
-        </>
-    );
+  return (
+    <>
+      <Suspense>
+        <ClientSideMap {...props} />
+      </Suspense>
+    </>
+  );
 };
 
 export default Map;
