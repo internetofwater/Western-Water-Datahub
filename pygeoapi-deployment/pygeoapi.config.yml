@@ -536,7 +536,7 @@ resources:
         time_field: issue_time 
 
 
-  NOAA-RFC:
+  noaa-rfc:
     type: collection
     title: NOAA RFC Forecasts
     description: NOAA River Forecast Center Forecasts 
