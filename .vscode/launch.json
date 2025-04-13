@@ -6,12 +6,7 @@
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
-      "args": [
-        "pygeoapi.starlette_app:APP",
-        "--reload",
-        "--port",
-        "5005"
-      ],
+      "args": ["pygeoapi.starlette_app:APP", "--reload", "--port", "5005"],
       "env": {
         "PYGEOAPI_CONFIG": "${workspaceFolder}/pygeoapi-deployment/pygeoapi.config.yml",
         "PYGEOAPI_OPENAPI": "${workspaceFolder}/local.openapi.yml"

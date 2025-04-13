@@ -561,13 +561,12 @@ resources:
         name: ESRI
         data: https://mapservices.weather.noaa.gov/raster/rest/services/snow/NOHRSC_Snow_Analysis/MapServer/5
         id_field: objectid
-        time_field: issue_time 
-
+        time_field: issue_time
 
   noaa-rfc:
     type: collection
     title: NOAA RFC Forecasts
-    description: NOAA River Forecast Center Forecasts 
+    description: NOAA River Forecast Center Forecasts
     keywords: [NOAA]
     links:
       - type: application/html
