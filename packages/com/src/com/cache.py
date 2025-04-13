@@ -89,9 +89,9 @@ class RedisCache:
             LOGGER.debug(f"Got {url} from cache")
             return await self.get(url)
 
-    async def get_or_fetch_response_text(self, url, force_fetch=False, headers=HEADERS):
+    async def get_or_fetch_response_text(self, url, force_fetch=True, headers=HEADERS):
         if not await self.contains(url) or force_fetch:
-            res = await fetch_url_text(url)
+            res = await fetch_url_text(url, headers=headers)
             await self.set_text(url, res)
             return res
         else:
