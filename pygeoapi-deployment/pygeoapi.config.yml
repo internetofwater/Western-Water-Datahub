@@ -155,10 +155,9 @@ resources:
         data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
         title_field: name
 
-
   usace-edr:
     type: collection
-    title: US Army Corps of Engineers (USACE) EDR 
+    title: US Army Corps of Engineers (USACE) EDR
     description: US Army Corps of Engineers EDR
     keywords:
       - open data
@@ -175,7 +174,6 @@ resources:
         data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
         entity: Observation
         title_field: name
-
 
   noaa-qpf-24-hour-day-1:
     type: collection
