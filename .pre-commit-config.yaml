@@ -38,7 +38,7 @@ repos:
       - id: prettier
         exclude: |
           (?x)^(
-              pygeoapi-deployment/templates/|
+              pygeoapi-deployment/templates/.*|
               dashboard-ui/.*
           )$
   - repo: https://github.com/astral-sh/ruff-pre-commit
