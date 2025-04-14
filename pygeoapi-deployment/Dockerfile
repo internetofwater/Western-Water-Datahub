@@ -17,11 +17,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends libgdal-dev git
 
 # Copy project metadata for dependency resolution
 COPY pyproject.toml uv.lock /opt/pygeoapi/
-# Install dependencies and also include the deployment group
+# Sync to install dependencies; includes --group to also include the extra deployment group
 # We install this before the integration packages so it can be cached and reused
 RUN uv sync --group deployment
 
 COPY packages /opt/pygeoapi/packages/
+# Install all local integrations
 # --inexact makes it so the deployment packages we just copied aren't removed
 RUN uv sync --all-packages --inexact 
 
