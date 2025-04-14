@@ -140,7 +140,9 @@ class RedisCache:
         urls: list[str],
         custom_mimetype: Optional[str] = None,
     ):
-        results = await asyncio.gather(*(fetch_url(url) for url in urls))
+        results = await asyncio.gather(
+            *(fetch_url(url, custom_mimetype=custom_mimetype) for url in urls)
+        )
 
         for url, result in zip(urls, results):
             await self.set(url, result)
