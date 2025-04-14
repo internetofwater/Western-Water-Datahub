@@ -132,13 +132,9 @@ class RedisCache:
         self,
         urls: list[str],
     ):
-        tasks = [asyncio.create_task(fetch_url(url)) for url in urls]
+        results = await asyncio.gather(*(fetch_url(url) for url in urls))
 
-        results = {url: {} for url in urls}
-
-        for coroutine, url in zip(asyncio.as_completed(tasks), urls):
-            result = await coroutine
-            results[url] = result
+        for url, result in zip(urls, results):
             await self.set(url, result)
 
-        return results
+        return dict(zip(urls, results))
