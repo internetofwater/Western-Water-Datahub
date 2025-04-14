@@ -10,7 +10,7 @@ def test_location_collection():
 
 def test_to_geojson():
     collection = LocationCollection()
-    geojson = collection.to_geojson()
+    geojson = collection.to_geojson(itemsIDSingleFeature=False)
     assert geojson["type"] == "FeatureCollection"
 
 

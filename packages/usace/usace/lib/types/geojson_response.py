@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 from typing import List, Literal, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, FiniteFloat
 
 
 class TimeseriesParameter(BaseModel):
@@ -36,10 +36,17 @@ class GeojsonProperties(BaseModel):
     name: Optional[str] = None
 
 
+class PointCoordinates(BaseModel):
+    type: Literal["Point"]
+    coordinates: tuple[
+        FiniteFloat, FiniteFloat
+    ]  # Expecting exactly two values: [longitude, latitude]
+
+
 class Feature(BaseModel):
     type: Literal["Feature"]
     properties: GeojsonProperties
-    geometry: dict
+    geometry: PointCoordinates
     id: Optional[str] = None
 
 

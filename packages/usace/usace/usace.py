@@ -58,7 +58,7 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         if itemId:
             collection.drop_all_locations_but_id(itemId)
 
-        res = collection.to_geojson()
+        res = collection.to_geojson(itemsIDSingleFeature=itemId is not None)
         return res
 
     @crs_transform
