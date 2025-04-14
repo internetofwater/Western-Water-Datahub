@@ -3,8 +3,10 @@
 
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
 
-# Copy from the cache into container and the use system Python interpreter 
-ENV UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=0
+# Copy from the cache into container and the use system Python interpreter
+# Set no cache to true so we don't use the uv cache but instead use the docker layer cache
+# this is since we are not using buildkit and thus cannot cache to a mount dir on the host
+ENV UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=0 UV_NO_CACHE=true
 
 WORKDIR /opt/pygeoapi
 
