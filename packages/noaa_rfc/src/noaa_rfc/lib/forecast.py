@@ -216,6 +216,12 @@ class ForecastCollection:
             forecast for forecast in self.forecasts if forecast.espid == location_id
         ]
 
+    def drop_all_locations_past_limit(self, limit: int):
+        self.forecasts = self.forecasts[limit:]
+
+    def drop_before_offset(self, offset: int):
+        self.forecasts = self.forecasts[offset:]
+
     def to_geojson(
         self,
         single_feature: bool = False,

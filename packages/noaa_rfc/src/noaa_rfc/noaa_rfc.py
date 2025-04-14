@@ -65,6 +65,12 @@ class NOAARFCProvider(BaseProvider, OAFProviderProtocol):
                 "numberMatched": len(collection.forecasts),
             }
 
+        if offset:
+            collection.drop_before_offset(offset)
+
+        if limit:
+            collection.drop_all_locations_past_limit(limit)
+
         return collection.to_geojson(
             single_feature=itemId is not None,
             skip_geometry=skip_geometry,
