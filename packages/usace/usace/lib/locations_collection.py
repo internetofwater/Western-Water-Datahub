@@ -4,14 +4,22 @@
 from typing import Optional, cast, assert_never
 from com.cache import RedisCache
 from com.env import TRACER
-from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
-from com.helpers import EDRFieldsMapping, await_, parse_bbox, parse_z
+from com.geojson.helpers import (
+    GeojsonFeatureCollectionDict,
+    GeojsonFeatureDict,
+    SortDict,
+    all_properties_found_in_feature,
+    filter_out_properties_not_selected,
+)
+from com.helpers import EDRFieldsMapping, OAFFieldsMapping, await_, parse_bbox, parse_z
+import geojson_pydantic
 import orjson
 from rise.lib.covjson.types import CoverageCollectionDict
 from rise.lib.types.helpers import ZType
 import shapely
 from usace.lib.types.geojson_response import FeatureCollection
 import shapely.wkt
+from geojson_pydantic.types import Position2D
 
 
 class LocationCollection:
@@ -30,18 +38,41 @@ class LocationCollection:
             loc.id = str(loc.properties.location_code)
             loc.properties.name = loc.properties.public_name
 
-    def _drop_geometry(self):
-        """
-        Remove all geometry from each feature
-        """
-        for loc in self.fc.features:
-            loc.geometry = None
-
     def to_geojson(
-        self, itemsIDSingleFeature, skip_geometry: Optional[bool] = False
+        self,
+        itemsIDSingleFeature,
+        skip_geometry: Optional[bool] = False,
+        select_properties: Optional[list[str]] = None,
+        properties: list[tuple[str, str]] = [],
+        fields_mapping: EDRFieldsMapping | OAFFieldsMapping = {},
+        sortby: Optional[list[SortDict]] = None,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        if skip_geometry:
-            self._drop_geometry()
+        for feature in self.fc.features:
+            serialized_feature = geojson_pydantic.Feature(
+                type="Feature",
+                id=feature.id,
+                properties=feature.properties,
+                geometry=geojson_pydantic.Point(
+                    type="Point",
+                    coordinates=Position2D(
+                        feature.geometry.coordinates[0], feature.geometry.coordinates[1]
+                    ),
+                )
+                if not skip_geometry
+                else None,
+            )
+
+            if properties:
+                # narrow the FieldsMapping type here manually since properties is a query arg for oaf and thus we know that OAFFieldsMapping must be used
+                fields_mapping = cast(OAFFieldsMapping, fields_mapping)
+                if not all_properties_found_in_feature(
+                    serialized_feature, properties, fields_mapping
+                ):
+                    continue
+            if select_properties:
+                filter_out_properties_not_selected(
+                    serialized_feature, select_properties
+                )
 
         if itemsIDSingleFeature:
             assert len(self.fc.features) == 1

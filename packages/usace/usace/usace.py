@@ -57,13 +57,12 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         collection = LocationCollection()
         if itemId:
             collection.drop_all_locations_but_id(itemId)
-
         if bbox:
             collection.drop_outside_of_bbox(bbox)
         if limit:
-            collection = collection.drop_after_limit(limit)
+            collection.drop_after_limit(limit)
         if offset:
-            collection = collection.drop_before_offset(offset)
+            collection.drop_before_offset(offset)
 
         if resulttype == "hits":
             return {

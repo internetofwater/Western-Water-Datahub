@@ -46,7 +46,7 @@ class PointCoordinates(BaseModel):
 class Feature(BaseModel):
     type: Literal["Feature"]
     properties: GeojsonProperties
-    geometry: Optional[PointCoordinates]
+    geometry: PointCoordinates
     id: Optional[str] = None
 
 
