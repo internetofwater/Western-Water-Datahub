@@ -8,6 +8,7 @@ import useMainStore, { Tools } from '@/lib/main';
 
 export const MapButton: React.FC = () => {
     const tools = useMainStore((state) => state.tools);
+
     const setOpenTools = useMainStore((state) => state.setOpenTools);
 
     const onClick = () => {
