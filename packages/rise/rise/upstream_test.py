@@ -27,6 +27,7 @@ def test_rise_include_parameter_order_matters():
     assert "included" not in resp2.json().keys()
 
 
+@pytest.mark.upstream
 def test_rise_filter_by_param_list():
     """Make sure that rise is actually filtering by parameters correctly"""
     out812 = requests.get(
