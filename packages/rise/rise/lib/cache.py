@@ -78,22 +78,6 @@ class RISECache(RedisCache):
 
         pages = await self.get_or_fetch_group(urls, force_fetch=force_fetch)
         assert len(pages) == pages_to_complete
-        # found = {}
-        # for base_url in pages:
-        #     for location in pages[base_url]["data"]:
-        #         id = location["attributes"]["_id"]
-
-        #         if id in found:
-        #             data = found[id]
-        #             raise RuntimeError(
-        #                 f"{id} previously had {data} but now has {base_url}"
-        #             )
-
-        #         found[id] = {
-        #             "url": base_url,
-        #             "data": location["attributes"]["_id"],
-        #         }
-
         return pages
 
     async def get_or_fetch_parameters(self, force_fetch=False) -> EDRFieldsMapping:
