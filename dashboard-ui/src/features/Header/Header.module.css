@@ -4,31 +4,31 @@
  */
 
 .topBarContainer {
-  width: 100vw;
+    width: 100vw;
 }
 
 .topBarPaper {
-  height: inherit;
-  padding: 0.5rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  border-bottom: 1px solid var(--mantine-color-default-border);
+    height: inherit;
+    padding: 0.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    border-bottom: 1px solid var(--mantine-color-default-border);
 }
 
 .logoBarPaper {
-  height: 67px;
+    height: 67px;
 }
 
 .darkModeToggleContainer {
-  padding-bottom: 7px;
+    padding-bottom: 7px;
 }
 
 .filterBackground {
-  background-color: #242424;
+    background-color: #242424;
 }
 
 .filterGroupContainer {
-  margin-top: 1rem;
+    margin-top: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
