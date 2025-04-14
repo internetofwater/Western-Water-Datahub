@@ -1,6 +1,7 @@
 # How to write an EDR proxy mapping
 
 For EDR you need a way to both
+
 - fetch all locations with their associated parameters
 - filter the locations by things like parameters, dates, bbox, etc.
 - join the locations' parameters to their results
