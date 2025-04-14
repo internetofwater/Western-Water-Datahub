@@ -11,7 +11,6 @@ dependencies = [
     "aiohttp>=3.11.13",
     "covjson-pydantic>=0.5.0",
     "jsonpatch>=1.33",
-    "pytest>=8.3.4",
     "redis>=5.2.1",
     "starlette>=0.46.0",
     "uvicorn>=0.34.0",
@@ -21,8 +20,6 @@ dependencies = [
     "opentelemetry-exporter-otlp>=1.30.0",
     "orjson>=3.10.15",
     "pygeoapi @ git+https://github.com/geopython/pygeoapi.git",
-    "pytest-cov>=6.0.0",
-    "radon>=6.0.1",
     "msgspec>=0.19.0",
 ]
 
@@ -46,11 +43,14 @@ keywords = [
 ]
 
 [dependency-groups]
+# Dependencies needed for development and testing
 dev = [
-    "packages>=0.1.0",
     "pyright>=1.1.397",
     "pytest-asyncio>=0.25.3",
     "pytest-xdist>=3.6.1",
+    "radon>=6.0.1",
+    "pytest-cov>=6.0.0",
+    "pytest>=8.3.4",
 ]
 # dependencies needed for external providers
 deployment = [
@@ -60,22 +60,8 @@ deployment = [
 "gunicorn"
 ]
 
-[tool.uv]
-package = false
-
 [tool.uv.workspace]
 members = ["packages/*"]
-
-[tool.uv.sources]
-rise = { workspace = true }
-snotel = { workspace = true }
-awdb_forecasts = { workspace = true }
-
-
-
-[tool.pyright]
-# we can't resolve shapely from source so we need to just disable this check
-# reportMissingModuleSource = false
 
 [tool.pytest.ini_options]
 # needed to prevent a deprecation warning; doesnt really affect any behavior
@@ -86,7 +72,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-# don't include tests 
+# don't include code in test files in coverage
 omit = [
     "**/*_test.py"
 ]

@@ -55,6 +55,9 @@ iodh_event_loop = asyncio.new_event_loop()
 
 
 def loop_forever():
+    """
+    Start a shared event loop so we can run async code across providers
+    """
     try:
         iodh_event_loop.run_forever()
     finally:

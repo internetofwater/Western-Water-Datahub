@@ -4,7 +4,6 @@
 import logging
 from typing import Literal, Optional
 
-from com.helpers import get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
 from com.protocol import OAFProviderProtocol
 from pygeoapi.provider.base import BaseProvider
@@ -15,7 +14,7 @@ from com.geojson.helpers import (
     SortDict,
 )
 from com.cache import RedisCache
-from awdb_com.types import StationDTO
+from usace.lib.locations_collection import LocationColletion
 
 LOGGER = logging.getLogger(__name__)
 
@@ -52,7 +51,13 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         offset: Optional[int] = 0,
         skip_geometry: Optional[bool] = False,
         **kwargs,
-    ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict: ...
+    ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
+        collection = LocationColletion()
+        if itemId:
+            collection.drop_all_locations_but_id(itemId)
+
+        res = collection.to_geojson()
+        return res
 
     @crs_transform
     def query(self, **kwargs):
@@ -78,5 +83,5 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         :returns: dict of field names and their associated JSON Schema types
         """
         if not self._fields:
-            self._fields = get_oaf_fields_from_pydantic_model(StationDTO)
+            self._fields = {}
         return self._fields

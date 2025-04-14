@@ -157,7 +157,7 @@ def get_oaf_fields_from_pydantic_model(model: Type[BaseModel]) -> OAFFieldsMappi
             dataType = "number"
         else:
             LOGGER.warning(
-                f"Skipping field '{name}' with unmappable data type {pydanticFields[fieldName].annotation}"
+                f"Skipping OAF field '{name}' with unmappable type {pydanticFields[fieldName].annotation}"
             )
             continue
 

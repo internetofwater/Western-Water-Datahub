@@ -91,7 +91,7 @@ class RedisCache:
 
     async def get_or_fetch_response_text(self, url, force_fetch=False, headers=HEADERS):
         if not await self.contains(url) or force_fetch:
-            res = await fetch_url_text(url)
+            res = await fetch_url_text(url, headers=headers)
             await self.set_text(url, res)
             return res
         else:
@@ -132,13 +132,9 @@ class RedisCache:
         self,
         urls: list[str],
     ):
-        tasks = [asyncio.create_task(fetch_url(url)) for url in urls]
+        results = await asyncio.gather(*(fetch_url(url) for url in urls))
 
-        results = {url: {} for url in urls}
-
-        for coroutine, url in zip(asyncio.as_completed(tasks), urls):
-            result = await coroutine
-            results[url] = result
+        for url, result in zip(urls, results):
             await self.set(url, result)
 
-        return results
+        return dict(zip(urls, results))
