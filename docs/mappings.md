@@ -6,12 +6,13 @@
 
 These tables track the EDR implementation of each mapping in this repo [here](../packages/)
 
-| Provider         | Property Filters/Display | Result Type | BBox | Datetime | Sort By | Skip Geometry | CQL | Transactions | CRS |
-| ---------------- | ------------------------ | ----------- | ---- | -------- | ------- | ------------- | --- | ------------ | --- |
-| `RISE`           | ✅ / ✅                  | ✅          | ✅   | ✅       | ✅      | ✅            | ❌  | ❌           | ✅  |
-| `SNOTEL`         | ✅ / ✅                  | ✅          | ✅   | ✅       | ✅      | ✅            | ❌  | ❌           | ✅  |
-| `AWDB Forecasts` | ✅ / ✅                  | ✅          | ✅   | ✅       | ✅      | ✅            | ❌  | ❌           | ✅  |
-| `USACE`          | ❌ / ❌                  | ❌          | ❌   | ❌       | ❌      | ❌            | ❌  | ❌           | ❌  |
+| Provider             | Property Filters/Display | Result Type | BBox | Datetime | Sort By | Skip Geometry | CQL | Transactions | CRS |
+| -------------------- | ------------------------ | ----------- | ---- | -------- | ------- | ------------- | --- | ------------ | --- |
+| `RISE`               | ✅ / ✅                  | ✅          | ✅   | ✅       | ✅      | ✅            | ❌  | ❌           | ✅  |
+| `SNOTEL`             | ✅ / ✅                  | ✅          | ✅   | ✅       | ✅      | ✅            | ❌  | ❌           | ✅  |
+| `AWDB Forecasts`     | ✅ / ✅                  | ✅          | ✅   | ✅       | ✅      | ✅            | ❌  | ❌           | ✅  |
+| `USACE`              | ❌ / ❌                  | ❌          | ❌   | ❌       | ❌      | ❌            | ❌  | ❌           | ❌  |
+| `NOAA RFC Forecasts` | ✅ / ✅                  | ✅          | ❌   | ❌       | ✅      | ✅            | ❌  | ❌           | ✅  |
 
 ## OGC EDR Spec Compliance
 

@@ -541,6 +541,49 @@ resources:
           name: png
           mimetype: image/png
 
+  NOHRSC-Snow-Analysis-Snow-Water-Boundary:
+    type: collection
+    title: NOAA NOHRSC Snow Analysis Snow Water Boundary
+    description: NOAA NOHRSC Snow Analysis Snow Water Boundary
+    keywords: [NOAA, QPF]
+    links:
+      - type: application/html
+        rel: canonical
+        title: data source
+        href: https://data.usbr.gov/
+        hreflang: en-US
+    extents:
+      spatial:
+        bbox: [-170, 15, -51, 72]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    providers:
+      - type: feature
+        name: ESRI
+        data: https://mapservices.weather.noaa.gov/raster/rest/services/snow/NOHRSC_Snow_Analysis/MapServer/5
+        id_field: objectid
+        time_field: issue_time
+
+  noaa-rfc:
+    type: collection
+    title: NOAA RFC Forecasts
+    description: NOAA River Forecast Center Forecasts
+    keywords: [NOAA]
+    links:
+      - type: application/html
+        rel: canonical
+        title: data source
+        href: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
+        hreflang: en-US
+    extents:
+      spatial:
+        bbox: [-170, 15, -51, 72]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    providers:
+      - type: feature
+        name: noaa_rfc.noaa_rfc.NOAARFCProvider
+        data: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
+        title_field: espname
+
   usgs-prism:
     type: collection
     title: Parameter-elevation Regressions on Independent Slopes Model (PRISM)

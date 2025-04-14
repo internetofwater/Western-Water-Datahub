@@ -6,14 +6,17 @@ There appear to be two publicly available USACE APIs for water data:
    - Seems to be able to be proxied to EDR assuming no rate limit / throughput latency issues (ETL requires a few joins however unfortunately)
 
    1. Fetch `https://water.sec.usace.army.mil/cda/reporting/providers/projects?fmt=geojson`
+
       - geojson format is completely undocumented and just happened to work from guessing
       <!-- ```sh
       curl -X 'GET' \
       'https://water.usace.army.mil/cda/reporting/providers/NAB/locations' \
       -H 'accept: application/json'
+
       ```-->
 
       ```
+
    2. Each of the locations has:
       - an associated office like (office is the same as provider in the API ontology, confusingly)
       ```
