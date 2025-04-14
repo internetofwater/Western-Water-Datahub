@@ -9,16 +9,17 @@ ENV UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=0
 WORKDIR /opt/pygeoapi
 
 # System dependencies for GDAL and others
-RUN apt-get update && apt-get install -y libgdal-dev git build-essential \
+RUN apt-get update && apt-get install -y --no-install-recommends libgdal-dev git build-essential \
     && apt-get clean && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy project metadata for dependency resolution
 COPY pyproject.toml uv.lock /opt/pygeoapi/
-COPY packages /opt/pygeoapi/packages/
+RUN uv sync --group deployment
 
-# Install all dependencies
-RUN uv sync --all-groups --all-packages
+COPY packages /opt/pygeoapi/packages/
+# --inexact makes it so the deployment packages we just copied aren't removed
+RUN uv sync --all-packages --inexact 
 
 COPY pygeoapi-deployment/ /opt/pygeoapi/pygeoapi-deployment/
 
