@@ -30,9 +30,19 @@ class LocationCollection:
             loc.id = str(loc.properties.location_code)
             loc.properties.name = loc.properties.public_name
 
+    def _drop_geometry(self):
+        """
+        Remove all geometry from each feature
+        """
+        for loc in self.fc.features:
+            loc.geometry = None
+
     def to_geojson(
-        self, itemsIDSingleFeature
+        self, itemsIDSingleFeature, skip_geometry: Optional[bool] = False
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
+        if skip_geometry:
+            self._drop_geometry()
+
         if itemsIDSingleFeature:
             assert len(self.fc.features) == 1
             return cast(GeojsonFeatureDict, self.fc.features[0].model_dump())
@@ -73,6 +83,7 @@ class LocationCollection:
                         assert_never(parsed_z)
 
             if geometry:
+                assert v.geometry
                 if all([coord is None for coord in v.geometry.coordinates]):
                     indices_to_pop.add(i)
                     continue
