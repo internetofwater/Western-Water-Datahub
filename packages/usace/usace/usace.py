@@ -4,6 +4,7 @@
 import logging
 from typing import Literal, Optional
 
+from com.helpers import get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
 from com.protocol import OAFProviderProtocol
 from pygeoapi.provider.base import BaseProvider
@@ -14,7 +15,8 @@ from com.geojson.helpers import (
     SortDict,
 )
 from com.cache import RedisCache
-from usace.lib.locations_collection import LocationColletion
+from usace.lib.locations_collection import LocationCollection
+from usace.lib.types.geojson_response import GeojsonProperties
 
 LOGGER = logging.getLogger(__name__)
 
@@ -52,7 +54,7 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         skip_geometry: Optional[bool] = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        collection = LocationColletion()
+        collection = LocationCollection()
         if itemId:
             collection.drop_all_locations_but_id(itemId)
 
@@ -83,5 +85,5 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         :returns: dict of field names and their associated JSON Schema types
         """
         if not self._fields:
-            self._fields = {}
+            self._fields = get_oaf_fields_from_pydantic_model(GeojsonProperties)
         return self._fields
