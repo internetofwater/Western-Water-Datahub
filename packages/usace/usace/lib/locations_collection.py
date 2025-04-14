@@ -131,6 +131,20 @@ class LocationCollection:
     def to_covjson(self) -> CoverageCollectionDict:
         raise NotImplementedError
 
+    def drop_after_limit(self, limit: int):
+        """
+        Return only the location data for the locations in the list up to the limit
+        """
+        self.fc.features = self.fc.features[:limit]
+        return self
+
+    def drop_before_offset(self, offset: int):
+        """
+        Return only the location data for the locations in the list after the offset
+        """
+        self.fc.features = self.fc.features[offset:]
+        return self
+
     def drop_all_locations_but_id(self, location_id: str):
         self.fc.features = [loc for loc in self.fc.features if loc.id == location_id]
         assert len(self.fc.features) == 1
