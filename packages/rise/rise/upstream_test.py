@@ -9,7 +9,7 @@ import shapely.geometry
 
 from rise.lib.cache import RISECache
 from rise.lib.helpers import merge_pages
-from rise.lib.location import LocationResponseWithIncluded
+from rise.lib.location import LocationResponse
 
 """This file is solely for sanity checks on the upstream repo or underlying libs to make sure that queries are performing as our understanding expects"""
 
@@ -163,8 +163,8 @@ def test_separate_pages_have_distinct_data():
     resp1 = await_(resp1)
     resp2 = await_(resp2)
 
-    model1 = LocationResponseWithIncluded.model_validate(resp1)
-    model2 = LocationResponseWithIncluded.model_validate(resp2)
+    model1 = LocationResponse.model_validate(resp1)
+    model2 = LocationResponse.model_validate(resp2)
 
     model2Ids = {location.attributes.id for location in model2.data}
 
@@ -173,7 +173,7 @@ def test_separate_pages_have_distinct_data():
 
     all_resp = merge_pages({url1: resp1, url2: resp2})
 
-    model = LocationResponseWithIncluded.model_validate(all_resp)
+    model = LocationResponse.model_validate(all_resp)
     seenData = set()
     for loc in model.data:
         if loc.attributes.id in seenData:

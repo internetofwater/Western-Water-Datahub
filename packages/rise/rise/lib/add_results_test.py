@@ -5,7 +5,7 @@ import pytest
 import requests
 
 from rise.lib.cache import RISECache
-from rise.lib.location import LocationResponseWithIncluded
+from rise.lib.location import LocationResponse
 from rise.lib.add_results import LocationResultBuilder
 
 
@@ -18,6 +18,8 @@ def locationRespFixture():
 
 
 def test_add_results_to_location(locationRespFixture: dict):
-    model = LocationResponseWithIncluded.model_validate(locationRespFixture)
+    model = LocationResponse.model_validate(
+        locationRespFixture
+    ).to_collection_with_included()
     resultBuilder = LocationResultBuilder(cache=RISECache(), base_response=model)
     resultBuilder.load_results()

@@ -15,7 +15,7 @@ from com.geojson.helpers import (
     GeojsonFeatureCollectionDict,
     SortDict,
 )
-from rise.lib.location import LocationResponseWithIncluded
+from rise.lib.location import LocationResponse
 from rise.lib.types.location import LocationDataAttributes
 
 LOGGER = logging.getLogger(__name__)
@@ -66,10 +66,10 @@ class RiseProvider(BaseProvider, OAFProviderProtocol):
         raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(
             only_include_locations_with_data=False
         )
-        response = LocationResponseWithIncluded.from_api_pages(raw_resp)
+        response = LocationResponse.from_api_pages_with_included_catalog_items(raw_resp)
 
         if itemId:
-            response.drop_everything_but_one_location(int(itemId))
+            response.drop_all_locations_but_id(itemId)
 
         if datetime_:
             response.drop_outside_of_date_range(datetime_)
@@ -88,7 +88,7 @@ class RiseProvider(BaseProvider, OAFProviderProtocol):
             return {
                 "type": "FeatureCollection",
                 "features": [],
-                "numberMatched": len(response.data),
+                "numberMatched": len(response.locations),
             }
 
         return response.to_geojson(

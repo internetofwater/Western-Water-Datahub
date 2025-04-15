@@ -12,7 +12,7 @@ from pygeoapi.provider.base import (
 )
 from pygeoapi.provider.base_edr import BaseEDRProvider
 from rise.lib.covjson.covjson import CovJSONBuilder
-from rise.lib.location import LocationResponseWithIncluded
+from rise.lib.location import LocationResponse
 from rise.lib.cache import RISECache
 from rise.lib.add_results import LocationResultBuilder
 
@@ -70,7 +70,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             raise ProviderQueryError("Can't filter by date on every location")
 
         raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(select_properties)
-        response = LocationResponseWithIncluded.from_api_pages(raw_resp)
+        response = LocationResponse.from_api_pages_with_included_catalog_items(raw_resp)
 
         if location_id:
             try:
@@ -79,7 +79,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
                 raise ProviderQueryError(
                     f"Invalid location id: '{location_id}'; RISE location IDs must be integers"
                 )
-            response.drop_everything_but_one_location(location_id_as_int)
+            response.drop_all_locations_but_id(str(location_id_as_int))
 
         # If a location exists but has no CatalogItems, it should not appear in locations
         response.drop_locations_without_catalogitems()
@@ -128,7 +128,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         """
         # Example: http://localhost:5000/collections/rise-edr/cube?bbox=-101.381836,27.215556,-92.680664,32.23139
         raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(select_properties)
-        response = LocationResponseWithIncluded.from_api_pages(raw_resp)
+        response = LocationResponse.from_api_pages_with_included_catalog_items(raw_resp)
 
         if datetime_:
             response.drop_outside_of_date_range(datetime_)
@@ -168,7 +168,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
                     f"{id} is a duplicate with name {data['attributes']['locationName']} in {url}"
                 )
                 found.add(id)
-        response = LocationResponseWithIncluded.from_api_pages(raw_resp)
+        response = LocationResponse.from_api_pages_with_included_catalog_items(raw_resp)
 
         assert not response.has_duplicate_locations()
 
