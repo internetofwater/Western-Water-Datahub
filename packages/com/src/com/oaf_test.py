@@ -1,3 +1,6 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 from awdb_forecasts.awdb_forecasts import AwdbForecastsProvider
 from com.protocol import OAFProviderProtocol
 from noaa_rfc.noaa_rfc import NOAARFCProvider
