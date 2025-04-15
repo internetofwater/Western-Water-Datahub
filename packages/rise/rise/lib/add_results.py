@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from com.env import TRACER
 from rise.lib.cache import RISECache
 from rise.lib.helpers import flatten_values, getResultUrlFromCatalogUrl
-from rise.lib.location import LocationResponseWithIncluded
+from rise.lib.location import LocationCollectionWithIncluded
 from rise.lib.types.results import ResultResponse
 
 LOGGER = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ class LocationResultBuilder:
     with its associated timeseries data results
     """
 
-    def __init__(self, cache: RISECache, base_response: LocationResponseWithIncluded):
+    def __init__(self, cache: RISECache, base_response: LocationCollectionWithIncluded):
         self.cache = cache
         self.base_response = base_response
         self.locationToCatalogItemUrls = self.base_response.get_catalogItemURLs()
@@ -93,7 +93,7 @@ class LocationResultBuilder:
 
         locations_with_data: list[DataNeededForCovjson] = []
 
-        for location in self.base_response.data:
+        for location in self.base_response.locations:
             paramAndResults: list[ParameterWithResults] = []
 
             associatedCatalogItems = self.locationToCatalogItemUrls.get(location.id)

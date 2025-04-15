@@ -3,7 +3,7 @@
 
 import pytest
 import requests
-from rise.lib.location import LocationResponse, LocationResponseWithIncluded
+from rise.lib.location import LocationResponse
 
 
 @pytest.fixture
@@ -15,10 +15,12 @@ def locationRespFixture():
 
 
 def test_location_parse(locationRespFixture: dict):
-    serializedLocation = LocationResponse.model_validate(locationRespFixture)
+    serializedLocation = LocationResponse.model_validate(
+        locationRespFixture
+    ).to_collection()
     assert serializedLocation
 
-    serializedWithIncluded = LocationResponseWithIncluded.model_validate(
+    serializedWithIncluded = LocationResponse.model_validate(
         locationRespFixture
-    )
+    ).to_collection_with_included()
     assert serializedWithIncluded
