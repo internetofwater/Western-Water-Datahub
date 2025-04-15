@@ -59,10 +59,10 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
             collection.drop_all_locations_but_id(itemId)
         if bbox:
             collection.drop_all_locations_outside_bounding_box(bbox)
-        if limit:
-            collection.drop_after_limit(limit)
         if offset:
             collection.drop_before_offset(offset)
+        if limit:
+            collection.drop_after_limit(limit)
         if datetime_:
             raise NotImplementedError(
                 "Datetime filters are not supported since the OAF properties do not contain any temporal data"
@@ -79,6 +79,7 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
             itemsIDSingleFeature=itemId is not None,
             skip_geometry=skip_geometry,
             select_properties=select_properties,
+            fields_mapping=self.get_fields(),
             sortby=sortby,
             properties=properties,
         )

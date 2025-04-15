@@ -10,4 +10,4 @@ def test_fetch_locations():
 
     collection.drop_all_locations_but_id("AFPU1")
 
-    assert len(collection.forecasts) == 3
+    assert len(collection.locations) == 3

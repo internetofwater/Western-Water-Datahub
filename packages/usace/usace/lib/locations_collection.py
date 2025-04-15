@@ -63,7 +63,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
             serialized_feature = geojson_pydantic.Feature(
                 type="Feature",
                 id=feature.id,
-                properties=feature.properties,
+                properties=feature.properties.model_dump(),
                 geometry=geojson_pydantic.Point(
                     type="Point",
                     coordinates=Position2D(
@@ -93,12 +93,12 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
 
         if itemsIDSingleFeature:
             assert len(self.locations) == 1
-            return cast(GeojsonFeatureDict, self.locations[0].model_dump())
+            return cast(GeojsonFeatureDict, features_to_keep[0].model_dump())
         return cast(
             GeojsonFeatureCollectionDict,
             geojson_pydantic.FeatureCollection(
                 type="FeatureCollection", features=features_to_keep
-            ).model_dump(),
+            ).model_dump(exclude_unset=True),
         )
 
     @TRACER.start_as_current_span("geometry_filter")

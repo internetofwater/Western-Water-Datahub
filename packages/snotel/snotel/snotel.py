@@ -63,10 +63,11 @@ class SnotelProvider(BaseProvider, OAFProviderProtocol):
         if datetime_:
             collection.select_date_range(datetime_)
 
-        if limit:
-            collection.drop_after_limit(limit)
         if offset:
             collection.drop_before_offset(offset)
+
+        if limit:
+            collection.drop_after_limit(limit)
 
         if resulttype == "hits":
             return {

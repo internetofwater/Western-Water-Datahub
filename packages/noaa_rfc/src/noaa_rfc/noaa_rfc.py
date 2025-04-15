@@ -62,7 +62,7 @@ class NOAARFCProvider(BaseProvider, OAFProviderProtocol):
             return {
                 "type": "FeatureCollection",
                 "features": [],
-                "numberMatched": len(collection.forecasts),
+                "numberMatched": len(collection.locations),
             }
 
         if offset:
@@ -75,6 +75,7 @@ class NOAARFCProvider(BaseProvider, OAFProviderProtocol):
             itemsIDSingleFeature=itemId is not None,
             skip_geometry=skip_geometry,
             sortby=sortby,
+            fields_mapping=self.get_fields(),
             properties=properties,
             select_properties=select_properties,
         )
