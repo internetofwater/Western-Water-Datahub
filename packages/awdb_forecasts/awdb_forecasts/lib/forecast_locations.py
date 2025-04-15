@@ -6,6 +6,7 @@ from awdb_com.types import StationDTO
 from awdb_forecasts.lib.covjson_builder import CovjsonBuilder
 from com.cache import RedisCache
 from com.helpers import EDRFieldsMapping, await_
+from com.protocol import LocationCollectionProtocolWithEDR
 from rise.lib.covjson.types import CoverageCollectionDict
 from typing import Optional, cast
 
@@ -13,7 +14,7 @@ from typing import Optional, cast
 type longitudeAndLatitude = tuple[float, float]
 
 
-class ForecastLocationCollection(LocationCollection):
+class ForecastLocationCollection(LocationCollection, LocationCollectionProtocolWithEDR):
     def __init__(
         self,
         select_properties: Optional[list[str]] = None,

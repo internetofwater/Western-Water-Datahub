@@ -15,10 +15,10 @@ from com.geojson.helpers import (
 from com.helpers import (
     EDRFieldsMapping,
     OAFFieldsMapping,
-    parse_bbox,
     parse_date,
     parse_z,
 )
+from com.protocol import LocationCollectionProtocolWithEDR
 import geojson_pydantic
 from rise.lib.covjson.types import CoverageCollectionDict
 from rise.lib.types.helpers import ZType
@@ -31,7 +31,7 @@ import shapely.wkt
 type longitudeAndLatitude = tuple[float, float]
 
 
-class LocationCollection:
+class LocationCollection(LocationCollectionProtocolWithEDR):
     """A wrapper class containing locations and methods to filter them"""
 
     locations: list[StationDTO]
@@ -39,36 +39,6 @@ class LocationCollection:
     def drop_all_locations_but_id(self, location_id: str):
         data = [v for v in self.locations if v.stationId == str(location_id)]
         self.locations = data
-        return self
-
-    def drop_after_limit(self, limit: int):
-        """
-        Return only the location data for the locations in the list up to the limit
-        """
-        self.locations = self.locations[:limit]
-        return self
-
-    def drop_before_offset(self, offset: int):
-        """
-        Return only the location data for the locations in the list after the offset
-        """
-        self.locations = self.locations[offset:]
-        return self
-
-    def drop_outside_of_wkt(self, wkt: Optional[str] = None, z: Optional[str] = None):
-        parsed_geo = shapely.wkt.loads(str(wkt)) if wkt else None
-        return self._filter_by_geometry(parsed_geo, z)
-
-    def drop_all_locations_outside_bounding_box(self, bbox, z=None):
-        if bbox:
-            parse_result = parse_bbox(bbox)
-            shapely_box = parse_result[0] if parse_result else None
-            z = parse_result[1] if parse_result else z
-
-        shapely_box = parse_bbox(bbox)[0] if bbox else None
-        # TODO what happens if they specify both a bbox with z and a z value?
-        z = parse_bbox(bbox)[1] if bbox else z
-        return self._filter_by_geometry(shapely_box, z)
 
     def select_date_range(self, datetime_: str):
         """
@@ -242,8 +212,6 @@ class LocationCollection:
         # indices will be in the correct even after removing items
         for i in sorted(indices_to_pop, reverse=True):
             self.locations.pop(i)
-
-        return self
 
     def to_covjson(
         self,

@@ -5,7 +5,7 @@ import requests
 import pytest
 
 from rise.lib.helpers import merge_pages
-from rise.lib.location import LocationResponseWithIncluded
+from rise.lib.location import LocationResponse
 from rise.rise_edr import RiseEDRProvider
 import datetime
 from pygeoapi.provider.base import ProviderQueryError
@@ -79,11 +79,11 @@ def test_get_or_fetch_all_param_filtered_pages(edr_config: dict):
     )
 
     allparams = p.cache.get_or_fetch_all_param_filtered_pages()
-    model = LocationResponseWithIncluded.from_api_pages(allparams)
+    model = LocationResponse.from_api_pages(allparams)
     seenData = set()
-    for loc in model.data:
+    for loc in model.locations:
         assert loc.attributes.id not in seenData, (
-            f"Got a duplicate location with id {loc.attributes.id} and name {loc.attributes.locationName} after scanning {len(seenData)} out of {len(model.data)} locations in total"
+            f"Got a duplicate location with id {loc.attributes.id} and name {loc.attributes.locationName} after scanning {len(seenData)} out of {len(model.locations)} locations in total"
         )
         seenData.add(loc.attributes.id)
 
