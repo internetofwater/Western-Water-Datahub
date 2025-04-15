@@ -56,7 +56,11 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return collection.to_geojson(itemsIDSingleFeature=location_id is not None)
 
-        return collection.to_covjson()
+        return collection.to_covjson(
+            fieldMapper=self.get_fields(),
+            datetime_=datetime_,
+            select_properties=select_properties,
+        )
 
     def get_fields(self) -> EDRFieldsMapping:
         """Get the list of all parameters (i.e. fields) that the user can filter by"""

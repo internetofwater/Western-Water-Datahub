@@ -13,10 +13,12 @@ from com.geojson.helpers import (
     filter_out_properties_not_selected,
     sort_by_properties_in_place,
 )
-from com.helpers import OAFFieldsMapping, await_
+from com.helpers import EDRFieldsMapping, OAFFieldsMapping, await_
+from com.protocol import LocationCollectionProtocol
 from pydantic import BaseModel
 from geojson_pydantic import Feature, FeatureCollection, Point
 from geojson_pydantic.types import Position2D
+from shapely.geometry.base import BaseGeometry
 
 
 class ForecastData(BaseModel):
@@ -143,7 +145,7 @@ def get_water_year() -> str:
     return water_year
 
 
-class ForecastCollection:
+class ForecastCollection(LocationCollectionProtocol):
     forecasts: list[ForecastDataSingle] = []
 
     def _get_data(self):
@@ -216,19 +218,18 @@ class ForecastCollection:
             forecast for forecast in self.forecasts if forecast.espid == location_id
         ]
 
-    def drop_all_locations_past_limit(self, limit: int):
-        self.forecasts = self.forecasts[limit:]
-
-    def drop_before_offset(self, offset: int):
-        self.forecasts = self.forecasts[offset:]
+    def _filter_by_geometry(
+        self, geometry: BaseGeometry | None, z: str | None = None
+    ) -> None:
+        raise NotImplementedError
 
     def to_geojson(
         self,
-        single_feature: bool = False,
+        itemsIDSingleFeature: bool = False,
         skip_geometry: Optional[bool] = False,
         select_properties: Optional[list[str]] = None,
         properties: Optional[list[tuple[str, str]]] = None,
-        fields_mapping: OAFFieldsMapping = {},
+        fields_mapping: EDRFieldsMapping | OAFFieldsMapping = {},
         sortby: Optional[list[SortDict]] = None,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         features: list[Feature] = []
@@ -247,6 +248,7 @@ class ForecastCollection:
                 else None,
             )
             if properties:
+                fields_mapping = cast(OAFFieldsMapping, fields_mapping)
                 # narrow the FieldsMapping type here manually since properties is a query arg for oaf and thus we know that OAFFieldsMapping must be used
                 if not all_properties_found_in_feature(
                     serialized_feature, properties, fields_mapping
@@ -260,7 +262,7 @@ class ForecastCollection:
 
             features.append(serialized_feature)
 
-        if single_feature:
+        if itemsIDSingleFeature:
             return cast(GeojsonFeatureDict, features[0].model_dump())
 
         if sortby:

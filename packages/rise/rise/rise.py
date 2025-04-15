@@ -15,7 +15,7 @@ from com.geojson.helpers import (
     GeojsonFeatureCollectionDict,
     SortDict,
 )
-from rise.lib.location import LocationResponseWithIncluded
+from rise.lib.location import LocationResponse
 from rise.lib.types.location import LocationDataAttributes
 
 LOGGER = logging.getLogger(__name__)
@@ -66,29 +66,29 @@ class RiseProvider(BaseProvider, OAFProviderProtocol):
         raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(
             only_include_locations_with_data=False
         )
-        response = LocationResponseWithIncluded.from_api_pages(raw_resp)
+        response = LocationResponse.from_api_pages_with_included_catalog_items(raw_resp)
 
         if itemId:
-            response = response.drop_everything_but_one_location(int(itemId))
+            response.drop_all_locations_but_id(itemId)
 
         if datetime_:
-            response = response.drop_outside_of_date_range(datetime_)
+            response.drop_outside_of_date_range(datetime_)
 
         # Even though bbox is required, it can be an empty list. If it is empty just skip filtering
         if bbox:
-            response = response.drop_outside_of_bbox(bbox)
+            response.drop_outside_of_bbox(bbox)
 
         if offset:
-            response = response.drop_before_offset(offset)
+            response.drop_before_offset(offset)
 
         if limit:
-            response = response.drop_after_limit(limit)
+            response.drop_after_limit(limit)
 
         if resulttype == "hits":
             return {
                 "type": "FeatureCollection",
                 "features": [],
-                "numberMatched": len(response.data),
+                "numberMatched": len(response.locations),
             }
 
         return response.to_geojson(

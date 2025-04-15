@@ -56,7 +56,7 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             )
         collection = ForecastLocationCollection(select_properties)
         if location_id:
-            collection = collection.drop_all_locations_but_id(location_id)
+            collection.drop_all_locations_but_id(location_id)
 
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return collection.to_geojson(
@@ -118,7 +118,7 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         """
         collection = ForecastLocationCollection(select_properties)
 
-        collection = collection.drop_outside_of_wkt(wkt, z)
+        collection.drop_outside_of_wkt(wkt, z)
 
         return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 

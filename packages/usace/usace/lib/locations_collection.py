@@ -16,47 +16,50 @@ from com.helpers import (
     EDRFieldsMapping,
     OAFFieldsMapping,
     await_,
-    parse_bbox,
     parse_z,
 )
+from com.protocol import LocationCollectionProtocolWithEDR
 import geojson_pydantic
 import orjson
 from rise.lib.covjson.types import CoverageCollectionDict
 from rise.lib.types.helpers import ZType
 import shapely
-from usace.lib.types.geojson_response import FeatureCollection
-import shapely.wkt
 from geojson_pydantic.types import Position2D
+from usace.lib.types.geojson_response import Feature, FeatureCollection
 
 
-class LocationCollection:
+class LocationCollection(LocationCollectionProtocolWithEDR):
+    locations: list[Feature]
+
     def __init__(self):
         self.cache = RedisCache()
         url = "https://water.sec.usace.army.mil/cda/reporting/providers/projects?fmt=geojson"
 
         res = await_(self.cache.get_or_fetch_response_text(url))
-        self.fc = FeatureCollection.model_validate(
+        fc = FeatureCollection.model_validate(
             {
                 "type": "FeatureCollection",
                 "features": orjson.loads(res),
             }
         )
-        for loc in self.fc.features:
-            loc.id = str(loc.properties.location_code)
-            loc.properties.name = loc.properties.public_name
+        for feature in fc.features:
+            assert feature.properties
+            feature.id = str(feature.properties.location_code)
+            feature.properties.name = feature.properties.public_name
+        self.locations = fc.features
 
     def to_geojson(
         self,
-        itemsIDSingleFeature,
+        itemsIDSingleFeature: bool = False,
         skip_geometry: Optional[bool] = False,
         select_properties: Optional[list[str]] = None,
-        properties: list[tuple[str, str]] = [],
+        properties: Optional[list[tuple[str, str]]] = [],
         fields_mapping: EDRFieldsMapping | OAFFieldsMapping = {},
         sortby: Optional[list[SortDict]] = None,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         features_to_keep: list[geojson_pydantic.Feature] = []
 
-        for feature in self.fc.features:
+        for feature in self.locations:
             serialized_feature = geojson_pydantic.Feature(
                 type="Feature",
                 id=feature.id,
@@ -89,9 +92,14 @@ class LocationCollection:
             sort_by_properties_in_place(features_to_keep, sortby)
 
         if itemsIDSingleFeature:
-            assert len(self.fc.features) == 1
-            return cast(GeojsonFeatureDict, self.fc.features[0].model_dump())
-        return cast(GeojsonFeatureCollectionDict, self.fc.model_dump())
+            assert len(self.locations) == 1
+            return cast(GeojsonFeatureDict, self.locations[0].model_dump())
+        return cast(
+            GeojsonFeatureCollectionDict,
+            geojson_pydantic.FeatureCollection(
+                type="FeatureCollection", features=features_to_keep
+            ).model_dump(),
+        )
 
     @TRACER.start_as_current_span("geometry_filter")
     def _filter_by_geometry(
@@ -106,7 +114,7 @@ class LocationCollection:
         indices_to_pop = set()
         parsed_z = parse_z(str(z)) if z else None
 
-        for i, v in enumerate(self.fc.features):
+        for i, v in enumerate(self.locations):
             elevation = v.properties.elevation
 
             if elevation is None:
@@ -145,58 +153,26 @@ class LocationCollection:
         # by reversing the list we pop from the end so the
         # indices will be in the correct even after removing items
         for i in sorted(indices_to_pop, reverse=True):
-            self.fc.features.pop(i)
-
-        return self
-
-    def drop_outside_of_wkt(
-        self,
-        wkt: Optional[str] = None,
-        z: Optional[str] = None,
-    ):
-        """Filter a location by the well-known-text geometry representation"""
-        parsed_geo = shapely.wkt.loads(str(wkt)) if wkt else None
-        return self._filter_by_geometry(parsed_geo, z)
-
-    def drop_outside_of_bbox(self, bbox, z=None):
-        if bbox:
-            parse_result = parse_bbox(bbox)
-            shapely_box = parse_result[0] if parse_result else None
-            z = parse_result[1] if parse_result else z
-
-        shapely_box = parse_bbox(bbox)[0] if bbox else None
-        # TODO what happens if they specify both a bbox with z and a z value?
-        z = parse_bbox(bbox)[1] if bbox else z
-
-        return self._filter_by_geometry(shapely_box, z)
+            self.locations.pop(i)
 
     def drop_outside_of_geometry(self, geometry):
         return self._filter_by_geometry(geometry)
 
-    def to_covjson(self) -> CoverageCollectionDict:
+    def to_covjson(
+        self,
+        fieldMapper: EDRFieldsMapping,
+        datetime_: Optional[str],
+        select_properties: Optional[list[str]],
+    ) -> CoverageCollectionDict:
         raise NotImplementedError
 
-    def drop_after_limit(self, limit: int):
-        """
-        Return only the location data for the locations in the list up to the limit
-        """
-        self.fc.features = self.fc.features[:limit]
-        return self
-
-    def drop_before_offset(self, offset: int):
-        """
-        Return only the location data for the locations in the list after the offset
-        """
-        self.fc.features = self.fc.features[offset:]
-        return self
-
     def drop_all_locations_but_id(self, location_id: str):
-        self.fc.features = [loc for loc in self.fc.features if loc.id == location_id]
-        assert len(self.fc.features) == 1
+        self.locations = [loc for loc in self.locations if loc.id == location_id]
+        assert len(self.locations) == 1
 
     def get_fields(self) -> EDRFieldsMapping:
         fields: EDRFieldsMapping = {}
-        for location in self.fc.features:
+        for location in self.locations:
             params = location.properties.timeseries
             if not params:
                 continue

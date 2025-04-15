@@ -58,7 +58,7 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         if itemId:
             collection.drop_all_locations_but_id(itemId)
         if bbox:
-            collection.drop_outside_of_bbox(bbox)
+            collection.drop_all_locations_outside_bounding_box(bbox)
         if limit:
             collection.drop_after_limit(limit)
         if offset:
@@ -72,7 +72,7 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
             return {
                 "type": "FeatureCollection",
                 "features": [],
-                "numberMatched": len(collection.fc.features),
+                "numberMatched": len(collection.locations),
             }
 
         return collection.to_geojson(

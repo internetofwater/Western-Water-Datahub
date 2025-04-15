@@ -11,6 +11,7 @@ from com.helpers import (
     parse_date,
     parse_z,
 )
+from com.protocol import LocationCollectionProtocol
 import geojson_pydantic
 from pydantic import BaseModel, field_validator
 import shapely
@@ -41,6 +42,10 @@ class LocationResponse(BaseModel):
     """
     This class represents the top level location/ response that is returned from the API
     It is validated with pydantic on initialization and multiple methods are added to it to make it easier to manipulate data
+
+    Once the data is validated, it is converted to a LocationCollection or LocationCollectionWithIncluded
+    which contain the methods to manipulate the data. This is since pydantic limits protocol usage and other
+    metaclass features
     """
 
     # links and pagination may not be present if there is only one location
@@ -53,15 +58,40 @@ class LocationResponse(BaseModel):
     ] = None
     # data represents the list of locations returned
     data: list[LocationData]
+    included: Optional[list[LocationIncluded]] = None
 
     @classmethod
     @TRACER.start_as_current_span("loading_data_from_api_pages")
-    def from_api_pages(cls, pages: dict[str, dict]):
+    def from_api_pages_with_included_catalog_items(
+        cls, pages: dict[str, dict]
+    ) -> "LocationCollectionWithIncluded":
         """Create a location response from multiple paged API responses by first merging them together"""
         no_duplicates_in_pages(pages)
         merged = merge_pages(pages)
         with TRACER.start_span("pydantic_validation"):
-            return cls.model_validate(merged)
+            model = cls.model_validate(merged)
+            assert model.included
+            return LocationCollectionWithIncluded(
+                data=model.data, included=model.included
+            )
+
+    @classmethod
+    @TRACER.start_as_current_span("loading_data_from_api_pages")
+    def from_api_pages(cls, pages: dict[str, dict]) -> "LocationCollection":
+        """Create a location response from multiple paged API responses by first merging them together"""
+        no_duplicates_in_pages(pages)
+        merged = merge_pages(pages)
+        with TRACER.start_span("pydantic_validation"):
+            model = cls.model_validate(merged)
+            assert model.included
+            return LocationCollection(data=model.data)
+
+    def to_collection_with_included(self):
+        assert self.included
+        return LocationCollectionWithIncluded(data=self.data, included=self.included)
+
+    def to_collection(self):
+        return LocationCollection(data=self.data)
 
     @field_validator("data", check_fields=True, mode="before")
     @classmethod
@@ -74,12 +104,24 @@ class LocationResponse(BaseModel):
             return [data]
         return data
 
+
+class LocationCollection(LocationCollectionProtocol):
+    """
+    A collection of locations from rise with methods to filter them
+    Does not include catalog item or catalog record data
+    """
+
+    locations: list[LocationData]
+
+    def __init__(self, data: list[LocationData]):
+        self.locations = data
+
     @TRACER.start_as_current_span("date_filter")
     def drop_outside_of_date_range(self, datetime_: str):
         """
         Filter a list of locations by date
         """
-        if not self.data[0].attributes:
+        if not self.locations[0].attributes:
             raise RuntimeError("Can't filter by date")
 
         location_indices_to_remove = set()
@@ -88,19 +130,19 @@ class LocationResponse(BaseModel):
         if isinstance(parsed_date, tuple) and len(parsed_date) == 2:
             start, end = parsed_date
 
-            for i, location in enumerate(self.data):
+            for i, location in enumerate(self.locations):
                 updateDate = datetime.fromisoformat(location.attributes.updateDate)
                 if updateDate < start or updateDate > end:
                     location_indices_to_remove.add(i)
 
         elif isinstance(parsed_date, datetime) == 1:
             parsed_date_str = str(parsed_date)
-            self.data = [
+            self.locations = [
                 location
-                for location in self.data
+                for location in self.locations
                 if location.attributes.updateDate.startswith(parsed_date_str)
             ]
-            for i, location in enumerate(self.data):
+            for i, location in enumerate(self.locations):
                 if not location.attributes.updateDate.startswith(parsed_date_str):
                     location_indices_to_remove.add(i)
 
@@ -113,7 +155,7 @@ class LocationResponse(BaseModel):
 
         # delete them backwards so we don't have to make a copy of the list or mess up indices while iterating
         for index in sorted(location_indices_to_remove, reverse=True):
-            del self.data[index]
+            del self.locations[index]
 
         return self
 
@@ -130,7 +172,7 @@ class LocationResponse(BaseModel):
         indices_to_pop = set()
         parsed_z = parse_z(str(z)) if z else None
 
-        for i, v in enumerate(self.data):
+        for i, v in enumerate(self.locations):
             elevation = v.attributes.elevation
 
             if elevation is None:
@@ -164,32 +206,21 @@ class LocationResponse(BaseModel):
         # by reversing the list we pop from the end so the
         # indices will be in the correct even after removing items
         for i in sorted(indices_to_pop, reverse=True):
-            self.data.pop(i)
-
-        return self
-
-    def drop_outside_of_wkt(
-        self,
-        wkt: Optional[str] = None,
-        z: Optional[str] = None,
-    ):
-        """Filter a location by the well-known-text geometry representation"""
-        parsed_geo = shapely.wkt.loads(str(wkt)) if wkt else None
-        return self._filter_by_geometry(parsed_geo, z)
+            self.locations.pop(i)
 
     def drop_specific_location(self, location_id: int):
         """Given a location id, drop all all data that is associated with that location"""
 
-        self.data = [loc for loc in self.data if loc.attributes.id != location_id]
+        self.locations = [
+            loc for loc in self.locations if loc.attributes.id != location_id
+        ]
 
-        return self
-
-    def drop_everything_but_one_location(self, location_id: int):
+    def drop_all_locations_but_id(self, location_id: str):
         """Given a location id, drop all all data that is not associated with that location"""
 
-        self.data = [loc for loc in self.data if loc.attributes.id == location_id]
-
-        return self
+        self.locations = [
+            loc for loc in self.locations if loc.attributes.id == int(location_id)
+        ]
 
     def drop_outside_of_bbox(
         self,
@@ -213,37 +244,9 @@ class LocationResponse(BaseModel):
 
         return self._filter_by_geometry(shapely_box, z)
 
-    def drop_after_limit(self, limit: int):
-        """
-        Return only the location data for the locations in the list up to the limit
-        """
-        self.data = self.data[:limit]
-        return self
-
-    def drop_before_offset(self, offset: int):
-        """
-        Return only the location data for the locations in the list after the offset
-        """
-        self.data = self.data[offset:]
-        return self
-
-    def drop_all_but_id(
-        self,
-        identifier: Optional[str] = None,
-    ):
-        """
-        Return only the location data for the location with the given identifier
-        """
-        self.data = [
-            location
-            for location in self.data
-            if str(location.attributes.id) == identifier
-        ]
-        return self
-
     def to_geojson(
         self,
-        itemsIDSingleFeature: bool,
+        itemsIDSingleFeature: bool = False,
         skip_geometry: Optional[bool] = False,
         select_properties: Optional[list[str]] = None,
         properties: Optional[list[tuple[str, str]]] = None,
@@ -255,7 +258,7 @@ class LocationResponse(BaseModel):
         """
         geojson_features: list[geojson_pydantic.Feature] = []
 
-        for location_feature in self.data:
+        for location_feature in self.locations:
             feature_as_geojson = {
                 "type": "Feature",
                 "id": location_feature.attributes.id,
@@ -311,15 +314,19 @@ class LocationResponse(BaseModel):
             )
 
 
-class LocationResponseWithIncluded(LocationResponse):
+class LocationCollectionWithIncluded(LocationCollection):
     """
-    This class represents the model of the data returned by location/ in RISE, specifically called
+    A collection of location data from RISE with the additional data specifically returned
     with the query param, "include" This will make it so we have access to an extra "included:" key
     with links to catalogitems/catalogrecords
     """
 
     # included represents the additional data that is explicitly requested in the fetch request
     included: list[LocationIncluded]
+
+    def __init__(self, data: list[LocationData], included: list[LocationIncluded]):
+        super().__init__(data)
+        self.included = included
 
     def get_catalogItemURLs(self) -> dict[str, list[str]]:
         """Get all catalog items associated with a particular location"""
@@ -382,7 +389,7 @@ class LocationResponseWithIncluded(LocationResponse):
         # and we do not have guarantees that they will follow a particular order
 
         relevantLocations = set()
-        for location in self.data:
+        for location in self.locations:
             relevantLocations.add(location.id)
 
         locationIDToCatalogItemsUrls: dict[str, list[str]] = {}
@@ -411,18 +418,18 @@ class LocationResponseWithIncluded(LocationResponse):
         """
         locationIdToCatalogItems = self.get_catalogItemURLs()
         location_indices_to_remove = set()
-        for i, location in enumerate(self.data):
+        for i, location in enumerate(self.locations):
             if location.id not in locationIdToCatalogItems:
                 location_indices_to_remove.add(i)
 
         for i in sorted(location_indices_to_remove, reverse=True):
-            self.data.pop(i)
+            self.locations.pop(i)
 
         return self
 
     def has_duplicate_locations(self) -> bool:
         seenLocations = set()
-        for location in self.data:
+        for location in self.locations:
             if location.attributes.locationName in seenLocations:
                 return True
             seenLocations.add(location.attributes.locationName)

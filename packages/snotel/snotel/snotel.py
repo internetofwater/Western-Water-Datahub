@@ -56,17 +56,17 @@ class SnotelProvider(BaseProvider, OAFProviderProtocol):
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         collection = SnotelLocationCollection()
         if itemId:
-            collection = collection.drop_all_locations_but_id(itemId)
+            collection.drop_all_locations_but_id(itemId)
         if bbox:
-            collection = collection.drop_all_locations_outside_bounding_box(bbox)
+            collection.drop_all_locations_outside_bounding_box(bbox)
 
         if datetime_:
-            collection = collection.select_date_range(datetime_)
+            collection.select_date_range(datetime_)
 
         if limit:
-            collection = collection.drop_after_limit(limit)
+            collection.drop_after_limit(limit)
         if offset:
-            collection = collection.drop_before_offset(offset)
+            collection.drop_before_offset(offset)
 
         if resulttype == "hits":
             return {
