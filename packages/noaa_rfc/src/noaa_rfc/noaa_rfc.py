@@ -69,10 +69,10 @@ class NOAARFCProvider(BaseProvider, OAFProviderProtocol):
             collection.drop_before_offset(offset)
 
         if limit:
-            collection.drop_all_locations_past_limit(limit)
+            collection.drop_after_limit(limit)
 
         return collection.to_geojson(
-            single_feature=itemId is not None,
+            itemsIDSingleFeature=itemId is not None,
             skip_geometry=skip_geometry,
             sortby=sortby,
             properties=properties,

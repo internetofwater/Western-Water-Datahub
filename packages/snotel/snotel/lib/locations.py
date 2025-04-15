@@ -8,6 +8,7 @@ from com.helpers import (
     EDRFieldsMapping,
     await_,
 )
+from com.protocol import LocationCollectionProtocol
 from rise.lib.covjson.types import CoverageCollectionDict
 from snotel.lib.covjson_builder import CovjsonBuilder
 from typing import Optional, cast
@@ -15,7 +16,7 @@ from typing import Optional, cast
 type longitudeAndLatitude = tuple[float, float]
 
 
-class SnotelLocationCollection(LocationCollection):
+class SnotelLocationCollection(LocationCollection, LocationCollectionProtocol):
     """A wrapper class containing locations and methods to filter them"""
 
     def __init__(self, select_properties: Optional[list[str]] = None):

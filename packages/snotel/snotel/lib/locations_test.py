@@ -7,9 +7,8 @@ from snotel.lib.locations import SnotelLocationCollection
 
 def test_filter_by_id():
     brightonInSaltLakeCounty = "361"
-    newCollection = SnotelLocationCollection().drop_all_locations_but_id(
-        brightonInSaltLakeCounty
-    )
+    newCollection = SnotelLocationCollection()
+    newCollection.drop_all_locations_but_id(brightonInSaltLakeCounty)
     assert len(newCollection.locations) == 1
 
 
