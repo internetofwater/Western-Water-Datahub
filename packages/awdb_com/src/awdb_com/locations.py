@@ -18,7 +18,7 @@ from com.helpers import (
     parse_date,
     parse_z,
 )
-from com.protocol import LocationCollectionProtocol
+from com.protocol import LocationCollectionProtocolWithEDR
 import geojson_pydantic
 from rise.lib.covjson.types import CoverageCollectionDict
 from rise.lib.types.helpers import ZType
@@ -31,7 +31,7 @@ import shapely.wkt
 type longitudeAndLatitude = tuple[float, float]
 
 
-class LocationCollection(LocationCollectionProtocol):
+class LocationCollection(LocationCollectionProtocolWithEDR):
     """A wrapper class containing locations and methods to filter them"""
 
     locations: list[StationDTO]

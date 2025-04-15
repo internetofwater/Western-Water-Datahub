@@ -79,10 +79,10 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
                 raise ProviderQueryError(
                     f"Invalid location id: '{location_id}'; RISE location IDs must be integers"
                 )
-            response = response.drop_everything_but_one_location(location_id_as_int)
+            response.drop_everything_but_one_location(location_id_as_int)
 
         # If a location exists but has no CatalogItems, it should not appear in locations
-        response = response.drop_locations_without_catalogitems()
+        response.drop_locations_without_catalogitems()
 
         # FROM SPEC: If a location id is not defined the API SHALL return a GeoJSON features array of valid location identifiers,
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
@@ -131,9 +131,9 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         response = LocationResponseWithIncluded.from_api_pages(raw_resp)
 
         if datetime_:
-            response = response.drop_outside_of_date_range(datetime_)
+            response.drop_outside_of_date_range(datetime_)
 
-        response = response.drop_outside_of_bbox(bbox, z)
+        response.drop_outside_of_bbox(bbox, z)
 
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
         response_with_results = builder.load_results(time_filter=datetime_)
@@ -176,7 +176,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             response = response.drop_outside_of_date_range(datetime_)
 
         if wkt != "":
-            response = response.drop_outside_of_wkt(wkt, z)
+            response.drop_outside_of_wkt(wkt, z)
 
         assert not response.has_duplicate_locations()
 

@@ -69,20 +69,20 @@ class RiseProvider(BaseProvider, OAFProviderProtocol):
         response = LocationResponseWithIncluded.from_api_pages(raw_resp)
 
         if itemId:
-            response = response.drop_everything_but_one_location(int(itemId))
+            response.drop_everything_but_one_location(int(itemId))
 
         if datetime_:
-            response = response.drop_outside_of_date_range(datetime_)
+            response.drop_outside_of_date_range(datetime_)
 
         # Even though bbox is required, it can be an empty list. If it is empty just skip filtering
         if bbox:
-            response = response.drop_outside_of_bbox(bbox)
+            response.drop_outside_of_bbox(bbox)
 
         if offset:
-            response = response.drop_before_offset(offset)
+            response.drop_before_offset(offset)
 
         if limit:
-            response = response.drop_after_limit(limit)
+            response.drop_after_limit(limit)
 
         if resulttype == "hits":
             return {

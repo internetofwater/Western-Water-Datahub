@@ -49,24 +49,24 @@ def test_associated_results_have_data(oneItemLocationRespFixture: dict):
 
 def test_filter_by_wkt(oneItemLocationRespFixture: dict):
     squareInOcean = "POLYGON ((-70.64209 40.86368, -70.817871 37.840157, -65.236816 38.013476, -65.500488 41.162114, -70.64209 40.86368))"
-    emptyModel = LocationResponseWithIncluded.model_validate(
-        oneItemLocationRespFixture
-    ).drop_outside_of_wkt(squareInOcean)
+    emptyModel = LocationResponseWithIncluded.model_validate(oneItemLocationRespFixture)
+    emptyModel.drop_outside_of_wkt(squareInOcean)
     assert emptyModel.data == []
     entireUS = "POLYGON ((-144.492188 57.891497, -146.25 11.695273, -26.894531 12.382928, -29.179688 59.977005, -144.492188 57.891497))"
-    fullModel = LocationResponseWithIncluded.model_validate(
-        oneItemLocationRespFixture
-    ).drop_outside_of_wkt(entireUS)
+    fullModel = LocationResponseWithIncluded.model_validate(oneItemLocationRespFixture)
+    fullModel.drop_outside_of_wkt(entireUS)
     assert len(fullModel.data) == 1
     areaWhereLocation1IsLocatedInDenver = "GEOMETRYCOLLECTION (POLYGON ((-109.204102 47.010226, -104.655762 47.010226, -104.655762 49.267805, -109.204102 49.267805, -109.204102 47.010226)), POLYGON ((-106.578369 38.513788, -102.722168 38.513788, -102.722168 41.228249, -106.578369 41.228249, -106.578369 38.513788)))"
     denverModel = LocationResponseWithIncluded.model_validate(
         oneItemLocationRespFixture
-    ).drop_outside_of_wkt(areaWhereLocation1IsLocatedInDenver)
+    )
+    denverModel.drop_outside_of_wkt(areaWhereLocation1IsLocatedInDenver)
     assert len(denverModel.data) == 1
     victoriaTexas = "GEOMETRYCOLLECTION (POLYGON ((-97.789307 29.248063, -97.789307 29.25046, -97.789307 29.25046, -97.789307 29.248063)), POLYGON ((-97.588806 29.307956, -97.58606 29.307956, -97.58606 29.310351, -97.588806 29.310351, -97.588806 29.307956)), POLYGON ((-97.410278 28.347899, -95.314636 28.347899, -95.314636 29.319931, -97.410278 29.319931, -97.410278 28.347899)))"
     victoriaModel = LocationResponseWithIncluded.model_validate(
         oneItemLocationRespFixture
-    ).drop_outside_of_wkt(victoriaTexas)
+    )
+    victoriaModel.drop_outside_of_wkt(victoriaTexas)
     assert len(victoriaModel.data) == 0
 
 
@@ -75,7 +75,7 @@ def test_filter_everything_by_wkt():
     georgeWestTexasID291 = "POLYGON ((-98.66272 28.062286, -97.756348 28.062286, -97.756348 28.688178, -98.66272 28.688178, -98.66272 28.062286))"
     raw_resp = p.cache.get_or_fetch_all_param_filtered_pages()
     response = LocationResponseWithIncluded.from_api_pages(raw_resp)
-    response = response.drop_outside_of_wkt(wkt=georgeWestTexasID291)
+    response.drop_outside_of_wkt(wkt=georgeWestTexasID291)
     length = len(response.data)
     names = [location.attributes.locationName for location in response.data]
     assert length == 1, names
@@ -111,8 +111,8 @@ def test_drop_by_location_id(allItemsOnePageLocationRespFixture: dict):
     model = LocationResponseWithIncluded.model_validate(
         allItemsOnePageLocationRespFixture
     )
-    droppedModel = model.drop_everything_but_one_location(model.data[0].attributes.id)
-    assert len(droppedModel.data) == 1
+    model.drop_everything_but_one_location(model.data[0].attributes.id)
+    assert len(model.data) == 1
 
     model = LocationResponseWithIncluded.model_validate(
         allItemsOnePageLocationRespFixture
