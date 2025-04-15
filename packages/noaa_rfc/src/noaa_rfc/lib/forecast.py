@@ -146,7 +146,7 @@ def get_water_year() -> str:
 
 
 class ForecastCollection(LocationCollectionProtocol):
-    forecasts: list[ForecastDataSingle] = []
+    locations: list[ForecastDataSingle] = []
 
     def _get_data(self):
         water_year = get_water_year()
@@ -211,11 +211,11 @@ class ForecastCollection(LocationCollectionProtocol):
                 item = {k: v[i] if v else None for k, v in dumped.items()}
                 pivoted_forecasts.append(ForecastDataSingle.model_validate(item))
 
-        self.forecasts = pivoted_forecasts
+        self.locations = pivoted_forecasts
 
     def drop_all_locations_but_id(self, location_id: str):
-        self.forecasts = [
-            forecast for forecast in self.forecasts if forecast.espid == location_id
+        self.locations = [
+            forecast for forecast in self.locations if forecast.espid == location_id
         ]
 
     def _filter_by_geometry(
@@ -233,7 +233,7 @@ class ForecastCollection(LocationCollectionProtocol):
         sortby: Optional[list[SortDict]] = None,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         features: list[Feature] = []
-        for forecast in self.forecasts:
+        for forecast in self.locations:
             forecast.extend_with_metadata()
 
             serialized_feature = Feature(
@@ -263,12 +263,14 @@ class ForecastCollection(LocationCollectionProtocol):
             features.append(serialized_feature)
 
         if itemsIDSingleFeature:
-            return cast(GeojsonFeatureDict, features[0].model_dump())
+            return cast(GeojsonFeatureDict, features[0].model_dump(exclude_unset=True))
 
         if sortby:
             sort_by_properties_in_place(features, sortby)
 
         return cast(
             GeojsonFeatureCollectionDict,
-            FeatureCollection(type="FeatureCollection", features=features).model_dump(),
+            FeatureCollection(type="FeatureCollection", features=features).model_dump(
+                exclude_unset=True
+            ),
         )

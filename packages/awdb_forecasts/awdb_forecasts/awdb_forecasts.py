@@ -39,7 +39,7 @@ class AwdbForecastsProvider(BaseProvider, OAFProviderProtocol):
         bbox: list = [],
         datetime_: Optional[str] = None,
         resulttype: Optional[Literal["hits", "results"]] = "results",
-        # select only features that contains all the `select_properties` values
+        # Filter out any properties in a given feature not in this list
         select_properties: Optional[
             list[str]
         ] = None,  # query this with ?properties in the actual url
@@ -55,9 +55,7 @@ class AwdbForecastsProvider(BaseProvider, OAFProviderProtocol):
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         # items/ returns all features, locations/ returns only features with timeseries, and thus forecasts
-        collection = ForecastLocationCollection(
-            select_properties, only_stations_with_forecasts=False
-        )
+        collection = ForecastLocationCollection(only_stations_with_forecasts=False)
         if itemId:
             collection.drop_all_locations_but_id(itemId)
         if bbox:
@@ -66,10 +64,11 @@ class AwdbForecastsProvider(BaseProvider, OAFProviderProtocol):
         if datetime_:
             collection.select_date_range(datetime_)
 
-        if limit:
-            collection.drop_after_limit(limit)
         if offset:
             collection.drop_before_offset(offset)
+
+        if limit:
+            collection.drop_after_limit(limit)
 
         if resulttype == "hits":
             return {

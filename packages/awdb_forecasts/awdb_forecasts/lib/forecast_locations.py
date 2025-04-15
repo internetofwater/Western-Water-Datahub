@@ -9,7 +9,7 @@ from com.helpers import EDRFieldsMapping, await_
 from com.protocol import LocationCollectionProtocolWithEDR
 from rise.lib.covjson.types import CoverageCollectionDict
 from typing import Optional, cast
-
+from pygeoapi.provider.base import ProviderQueryError
 
 type longitudeAndLatitude = tuple[float, float]
 
@@ -26,6 +26,9 @@ class ForecastLocationCollection(LocationCollection, LocationCollectionProtocolW
             url += f"&elements={','.join(select_properties)}"
         result = await_(self.cache.get_or_fetch_json(url))
         locations: list[StationDTO] = []
+
+        if "error" in result:
+            raise ProviderQueryError(result["error"])
 
         for res in result:
             if only_stations_with_forecasts:
