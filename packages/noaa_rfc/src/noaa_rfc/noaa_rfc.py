@@ -6,7 +6,7 @@ from typing import Literal, Optional
 
 from com.helpers import get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
-from com.protocol import OAFProviderProtocol
+from com.protocols.providers import OAFProviderProtocol
 from noaa_rfc.lib.forecast import ForecastCollection, ForecastDataSingle
 from pygeoapi.provider.base import BaseProvider
 from pygeoapi.util import crs_transform

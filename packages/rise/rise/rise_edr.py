@@ -6,7 +6,7 @@ from typing import ClassVar, Optional
 
 from com.helpers import await_
 from com.otel import otel_trace
-from com.protocol import EDRProviderProtocol
+from protocols.locations import EDRProviderProtocol
 from pygeoapi.provider.base import (
     ProviderQueryError,
 )

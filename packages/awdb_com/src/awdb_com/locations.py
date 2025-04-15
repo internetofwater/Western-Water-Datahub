@@ -18,7 +18,7 @@ from com.helpers import (
     parse_date,
     parse_z,
 )
-from com.protocol import LocationCollectionProtocolWithEDR
+from protocols.locations import LocationCollectionProtocolWithEDR
 import geojson_pydantic
 from rise.lib.covjson.types import CoverageCollectionDict
 from rise.lib.types.helpers import ZType

@@ -14,7 +14,7 @@ from com.geojson.helpers import (
     sort_by_properties_in_place,
 )
 from com.helpers import EDRFieldsMapping, OAFFieldsMapping, await_
-from com.protocol import LocationCollectionProtocol
+from protocols.locations import LocationCollectionProtocol
 from pydantic import BaseModel
 from geojson_pydantic import Feature, FeatureCollection, Point
 from geojson_pydantic.types import Position2D

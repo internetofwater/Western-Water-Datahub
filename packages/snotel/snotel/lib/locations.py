@@ -8,7 +8,7 @@ from com.helpers import (
     EDRFieldsMapping,
     await_,
 )
-from com.protocol import LocationCollectionProtocolWithEDR
+from protocols.locations import LocationCollectionProtocolWithEDR
 from rise.lib.covjson.types import CoverageCollectionDict
 from snotel.lib.covjson_builder import CovjsonBuilder
 from typing import Optional, cast

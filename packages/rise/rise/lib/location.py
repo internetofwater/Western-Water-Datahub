@@ -11,7 +11,7 @@ from com.helpers import (
     parse_date,
     parse_z,
 )
-from com.protocol import LocationCollectionProtocol
+from protocols.locations import LocationCollectionProtocol
 import geojson_pydantic
 from pydantic import BaseModel, field_validator
 import shapely

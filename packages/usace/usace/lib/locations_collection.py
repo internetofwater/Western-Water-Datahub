@@ -18,7 +18,7 @@ from com.helpers import (
     await_,
     parse_z,
 )
-from com.protocol import LocationCollectionProtocolWithEDR
+from com.protocols.locations import LocationCollectionProtocolWithEDR
 import geojson_pydantic
 import orjson
 from rise.lib.covjson.types import CoverageCollectionDict
