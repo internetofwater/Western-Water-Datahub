@@ -10,8 +10,15 @@ from com.geojson.helpers import (
     SortDict,
     all_properties_found_in_feature,
     filter_out_properties_not_selected,
+    sort_by_properties_in_place,
 )
-from com.helpers import EDRFieldsMapping, OAFFieldsMapping, await_, parse_bbox, parse_z
+from com.helpers import (
+    EDRFieldsMapping,
+    OAFFieldsMapping,
+    await_,
+    parse_bbox,
+    parse_z,
+)
 import geojson_pydantic
 import orjson
 from rise.lib.covjson.types import CoverageCollectionDict
@@ -47,6 +54,8 @@ class LocationCollection:
         fields_mapping: EDRFieldsMapping | OAFFieldsMapping = {},
         sortby: Optional[list[SortDict]] = None,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
+        features_to_keep: list[geojson_pydantic.Feature] = []
+
         for feature in self.fc.features:
             serialized_feature = geojson_pydantic.Feature(
                 type="Feature",
@@ -73,6 +82,11 @@ class LocationCollection:
                 filter_out_properties_not_selected(
                     serialized_feature, select_properties
                 )
+
+            features_to_keep.append(serialized_feature)
+
+        if sortby:
+            sort_by_properties_in_place(features_to_keep, sortby)
 
         if itemsIDSingleFeature:
             assert len(self.fc.features) == 1

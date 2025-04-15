@@ -63,6 +63,10 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
             collection.drop_after_limit(limit)
         if offset:
             collection.drop_before_offset(offset)
+        if datetime_:
+            raise NotImplementedError(
+                "Datetime filters are not supported since the OAF properties do not contain any temporal data"
+            )
 
         if resulttype == "hits":
             return {
@@ -71,10 +75,13 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
                 "numberMatched": len(collection.fc.features),
             }
 
-        res = collection.to_geojson(
-            itemsIDSingleFeature=itemId is not None, skip_geometry=skip_geometry
+        return collection.to_geojson(
+            itemsIDSingleFeature=itemId is not None,
+            skip_geometry=skip_geometry,
+            select_properties=select_properties,
+            sortby=sortby,
+            properties=properties,
         )
-        return res
 
     @crs_transform
     def query(self, **kwargs):

@@ -4,7 +4,7 @@
 [project]
 name = "usace"
 version = "0.1.0"
-description = "EDR mappings for the API for the US army corps of engineers"
+description = "EDR mappings for the Acccess to Water API for the US army corps of engineers"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = []
