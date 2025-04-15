@@ -16,3 +16,5 @@ coverage.xml
 htmlcov/
 
 .venv/
+
+node_modules/
