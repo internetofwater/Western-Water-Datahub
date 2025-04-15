@@ -4,6 +4,7 @@
 from datetime import datetime, timezone
 from typing import Optional
 from com.helpers import EDRFieldsMapping
+from com.protocols.covjson import CovjsonBuilderProtocol
 from covjson_pydantic.coverage import Coverage, CoverageCollection
 from covjson_pydantic.parameter import Parameter
 from covjson_pydantic.unit import Unit
@@ -18,7 +19,7 @@ from snotel.lib.result import ResultCollection
 from awdb_com.types import DataDTO, StationDataDTO
 
 
-class CovjsonBuilder:
+class CovjsonBuilder(CovjsonBuilderProtocol):
     """
     A helper class for constructing a coveragejson response for EDR queries
     """

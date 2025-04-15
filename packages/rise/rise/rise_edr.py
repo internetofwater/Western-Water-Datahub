@@ -94,7 +94,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         # if we are returning covjson we need to fetch the results and fill in the json
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
         response_with_results = builder.load_results(time_filter=datetime_)
-        return CovJSONBuilder(self.cache).fill_template(
+        return CovJSONBuilder(self.cache).render(
             response_with_results, select_properties
         )
 
@@ -137,7 +137,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
         response_with_results = builder.load_results(time_filter=datetime_)
-        return CovJSONBuilder(self.cache).fill_template(
+        return CovJSONBuilder(self.cache).render(
             response_with_results, select_properties
         )
 
@@ -182,7 +182,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
         response_with_results = builder.load_results(time_filter=datetime_)
-        return CovJSONBuilder(self.cache).fill_template(
+        return CovJSONBuilder(self.cache).render(
             response_with_results, select_properties
         )
 

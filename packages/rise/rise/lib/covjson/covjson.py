@@ -149,7 +149,7 @@ class CovJSONBuilder:
 
         return coverages
 
-    def fill_template(
+    def render(
         self,
         location_response: list[DataNeededForCovjson],
         select_properties: list[str] | None,

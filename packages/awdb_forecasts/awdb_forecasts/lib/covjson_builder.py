@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Optional
 from awdb_forecasts.lib.forecasts import ForecastResultCollection
 from com.helpers import EDRFieldsMapping
+from com.protocols.covjson import CovjsonBuilderProtocol
 from covjson_pydantic.coverage import Coverage, CoverageCollection
 from covjson_pydantic.parameter import Parameter
 from covjson_pydantic.unit import Unit
@@ -18,7 +19,7 @@ from covjson_pydantic.reference_system import (
 from awdb_com.types import ForecastDataDTO
 
 
-class CovjsonBuilder:
+class CovjsonBuilder(CovjsonBuilderProtocol):
     """
     A helper class for constructing a coveragejson response for EDR queries
     """
