@@ -8,7 +8,7 @@ from awdb_forecasts.lib.forecast_locations import ForecastLocationCollection
 from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
 from com.helpers import EDRFieldsMapping
 from com.otel import otel_trace
-from protocols.locations import EDRProviderProtocol
+from com.protocols.providers import EDRProviderProtocol
 from pygeoapi.provider.base_edr import BaseEDRProvider
 from rise.lib.covjson.types import CoverageCollectionDict
 from snotel.lib.parameters import ParametersCollection

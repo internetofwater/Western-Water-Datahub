@@ -6,7 +6,7 @@ from awdb_com.types import StationDTO
 from awdb_forecasts.lib.covjson_builder import CovjsonBuilder
 from com.cache import RedisCache
 from com.helpers import EDRFieldsMapping, await_
-from protocols.locations import LocationCollectionProtocolWithEDR
+from com.protocols.locations import LocationCollectionProtocolWithEDR
 from rise.lib.covjson.types import CoverageCollectionDict
 from typing import Optional, cast
 from pygeoapi.provider.base import ProviderQueryError

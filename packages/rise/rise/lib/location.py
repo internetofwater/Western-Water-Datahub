@@ -11,11 +11,10 @@ from com.helpers import (
     parse_date,
     parse_z,
 )
-from protocols.locations import LocationCollectionProtocol
+from com.protocols.locations import LocationCollectionProtocol
 import geojson_pydantic
 from pydantic import BaseModel, field_validator
 import shapely
-import shapely.wkt
 from com.env import TRACER
 from com.geojson.helpers import (
     GeojsonFeatureDict,
