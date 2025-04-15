@@ -86,12 +86,11 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         :param z: vertical level(s)
         :param format_: data format of output
         """
-        # collection = LocationColletion(select_properties)
+        collection = LocationCollection()
 
-        # collection.drop_all_locations_outside_bounding_box(bbox, z)
+        collection.drop_all_locations_outside_bounding_box(bbox, z)
 
-        # return collection.to_covjson(self.get_fields(), datetime_, select_properties)
-        ...
+        return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
     @otel_trace()
     @BaseEDRProvider.register()
