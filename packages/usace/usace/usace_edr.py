@@ -10,9 +10,8 @@ from com.otel import otel_trace
 from com.protocol import EDRProviderProtocol
 from pygeoapi.provider.base_edr import BaseEDRProvider
 from rise.lib.covjson.types import CoverageCollectionDict
-from snotel.lib.locations import SnotelLocationCollection
 from pygeoapi.provider.base import ProviderQueryError
-from usace.lib.parameter_collection import ParameterCollection
+from usace.lib.locations_collection import LocationCollection
 
 LOGGER = logging.getLogger(__name__)
 
@@ -50,22 +49,19 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             raise ProviderQueryError(
                 "Datetime parameter is not supported without location_id"
             )
-        collection = SnotelLocationCollection(select_properties)
+        collection = LocationCollection()
         if location_id:
-            collection = collection.drop_all_locations_but_id(location_id)
+            collection.drop_all_locations_but_id(location_id)
 
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
-            return collection.to_geojson(
-                itemsIDSingleFeature=location_id is not None,
-                fields_mapping=self.get_fields(),
-            )
+            return collection.to_geojson(itemsIDSingleFeature=location_id is not None)
 
-        return collection.to_covjson(self.get_fields(), datetime_, select_properties)
+        return collection.to_covjson()
 
     def get_fields(self) -> EDRFieldsMapping:
         """Get the list of all parameters (i.e. fields) that the user can filter by"""
         if not self._fields:
-            self._fields = ParameterCollection().get_fields()
+            self._fields = LocationCollection().get_fields()
         return self._fields
 
     @BaseEDRProvider.register()
@@ -86,11 +82,12 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         :param z: vertical level(s)
         :param format_: data format of output
         """
-        collection = SnotelLocationCollection(select_properties)
+        # collection = LocationColletion(select_properties)
 
-        collection.drop_all_locations_outside_bounding_box(bbox, z)
+        # collection.drop_all_locations_outside_bounding_box(bbox, z)
 
-        return collection.to_covjson(self.get_fields(), datetime_, select_properties)
+        # return collection.to_covjson(self.get_fields(), datetime_, select_properties)
+        ...
 
     @otel_trace()
     @BaseEDRProvider.register()
@@ -106,11 +103,7 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         """
         Extract and return coverage data from a specified area.
         """
-        collection = SnotelLocationCollection(select_properties)
-
-        collection = collection.drop_outside_of_wkt(wkt, z)
-
-        return collection.to_covjson(self.get_fields(), datetime_, select_properties)
+        ...
 
     @BaseEDRProvider.register()
     def items(self, **kwargs):

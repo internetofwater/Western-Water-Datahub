@@ -4,6 +4,7 @@
 import logging
 from typing import Literal, Optional
 
+from com.helpers import get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
 from com.protocol import OAFProviderProtocol
 from pygeoapi.provider.base import BaseProvider
@@ -14,7 +15,8 @@ from com.geojson.helpers import (
     SortDict,
 )
 from com.cache import RedisCache
-from usace.lib.locations_collection import LocationColletion
+from usace.lib.locations_collection import LocationCollection
+from usace.lib.types.geojson_response import GeojsonProperties
 
 LOGGER = logging.getLogger(__name__)
 
@@ -52,12 +54,34 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         skip_geometry: Optional[bool] = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        collection = LocationColletion()
+        collection = LocationCollection()
         if itemId:
             collection.drop_all_locations_but_id(itemId)
+        if bbox:
+            collection.drop_outside_of_bbox(bbox)
+        if limit:
+            collection.drop_after_limit(limit)
+        if offset:
+            collection.drop_before_offset(offset)
+        if datetime_:
+            raise NotImplementedError(
+                "Datetime filters are not supported since the OAF properties do not contain any temporal data"
+            )
 
-        res = collection.to_geojson()
-        return res
+        if resulttype == "hits":
+            return {
+                "type": "FeatureCollection",
+                "features": [],
+                "numberMatched": len(collection.fc.features),
+            }
+
+        return collection.to_geojson(
+            itemsIDSingleFeature=itemId is not None,
+            skip_geometry=skip_geometry,
+            select_properties=select_properties,
+            sortby=sortby,
+            properties=properties,
+        )
 
     @crs_transform
     def query(self, **kwargs):
@@ -83,5 +107,5 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         :returns: dict of field names and their associated JSON Schema types
         """
         if not self._fields:
-            self._fields = {}
+            self._fields = get_oaf_fields_from_pydantic_model(GeojsonProperties)
         return self._fields

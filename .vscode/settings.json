@@ -7,11 +7,13 @@
     // hide cache folders in every subdirectory
     "**/__pycache__/": true,
     "**/.pytest_cache/": true,
+    ".ruff_cache/": true,
     // hide build artifacts / dependency installations
     "**/*.egg-info/": true,
     ".venv/": true,
     "dist/": true,
-    "htmlcov/": true
+    "htmlcov/": true,
+    "node_modules/": true
   },
   "[python]": {
     "editor.formatOnSave": true,
