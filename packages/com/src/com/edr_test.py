@@ -21,7 +21,7 @@ provider_def = {
         SnotelEDRProvider,
     ],
 )
-def test_oaf_provider(provider_class):
+def test_edr_provider(provider_class):
     provider: EDRProviderProtocol = provider_class(provider_def=provider_def)
     assert provider
 
