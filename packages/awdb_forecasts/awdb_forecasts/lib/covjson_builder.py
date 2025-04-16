@@ -51,34 +51,27 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
         """Given a datastream generate a covjson coverage for the timeseries data"""
 
         assert datastream.forecastValues
-
-        # get the value of the biggest key in the forecastValues dict
-        maxProb: int = 0
-        maxVal = 0
-        for probability, value in datastream.forecastValues.items():
-            if int(probability) > maxProb:
-                maxProb = int(probability)
-                maxVal = value
-        values = [maxVal]
-
         assert datastream.issueDate
         times = [
             datetime.fromisoformat(datastream.issueDate).replace(tzinfo=timezone.utc)
         ]
-        assert len(values) == len(times)
+
         longitude, latitude = self.triplesToGeometry[triple]
         assert datastream.elementCode
-
         edr_field = self.fieldsMapper[datastream.elementCode]
         parameterName = f"{edr_field['title']} {datastream.forecastPeriod}"
+
+        probabilities = list(datastream.forecastValues.keys())
+        values = list(datastream.forecastValues.values())
 
         cov = Coverage(
             type="Coverage",
             domain=Domain(
                 type="Domain",
-                domainType=DomainType.point,
+                domainType=DomainType.vertical_profile,
                 axes=Axes(
                     t=ValuesAxis(values=times),
+                    z=ValuesAxis(values=probabilities),
                     x=ValuesAxis(values=[longitude]),
                     y=ValuesAxis(values=[latitude]),
                 ),
@@ -91,6 +84,10 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                         ),
                     ),
                     ReferenceSystemConnectionObject(
+                        coordinates=["z"],
+                        system=ReferenceSystem(type="VerticalCRS", id="Probability"),
+                    ),
+                    ReferenceSystemConnectionObject(
                         coordinates=["t"],
                         system=ReferenceSystem(
                             type="TemporalRS",
@@ -101,9 +98,9 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
             ),
             ranges={
                 parameterName: NdArrayFloat(
-                    shape=[len(values)],
-                    values=values,  # type: ignore
-                    axisNames=["t"],
+                    shape=[len(probabilities)],
+                    values=list[float | None](values),
+                    axisNames=["z"],
                 ),
             },
         )
