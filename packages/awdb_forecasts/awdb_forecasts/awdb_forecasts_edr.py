@@ -70,6 +70,10 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
     def get_fields(self) -> EDRFieldsMapping:
         """Get the list of all parameters (i.e. fields) that the user can filter by"""
         if not self._fields:
+            # We share the same parameter list as Snotel
+            # This is since in the awdb forecasts / snotel api
+            # the parameter API does not distinguish if the parameter is for
+            # an observation or a forecast
             self._fields = ParametersCollection().get_fields()
         return self._fields
 
