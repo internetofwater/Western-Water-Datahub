@@ -7,9 +7,9 @@ from typing import Optional
 from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
 from com.helpers import EDRFieldsMapping
 from com.otel import otel_trace
-from com.protocol import EDRProviderProtocol
+from com.protocols.providers import EDRProviderProtocol
 from pygeoapi.provider.base_edr import BaseEDRProvider
-from rise.lib.covjson.types import CoverageCollectionDict
+from com.covjson import CoverageCollectionDict
 from snotel.lib.locations import SnotelLocationCollection
 from snotel.lib.parameters import ParametersCollection
 from pygeoapi.provider.base import ProviderQueryError

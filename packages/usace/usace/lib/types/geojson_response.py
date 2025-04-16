@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: MIT
 
 from typing import List, Literal, Optional
+from com.cache import RedisCache
 from pydantic import BaseModel, FiniteFloat
+from usace.lib.result_collection import ResultCollection
 
 
 class TimeseriesParameter(BaseModel):
@@ -16,6 +18,32 @@ class TimeseriesParameter(BaseModel):
     latest_value: float
     delta24h: Optional[float] = None
     sort_order: int
+
+    # This field is not returned from the upstream
+    # API but is appended at runtime to create the covjson
+    results: Optional[ResultCollection] = None
+
+    async def _get_results(
+        self, office: str, start_date: str, end_date: str
+    ) -> ResultCollection:
+        """
+        Get results by fetching from the USACE API; note that the office is also known as the
+        provider in the API terminology; these terms are interchangable
+        """
+        assert office and start_date and end_date
+        # parse start_date and end_date and make sure start is before end
+
+        url = f"https://water.usace.army.mil/cda/reporting/providers/{office.lower()}/timeseries?name={self.tsid}&begin={start_date}&end={end_date}"
+        result = await RedisCache().get_or_fetch_json(url)
+        assert result
+        return ResultCollection(**result)
+
+    async def fill_results(self, office: str, start_date: str, end_date: str):
+        """
+        Given the office, start date, and end date, fetch the results
+        and store them in the results field of the class
+        """
+        self.results = await self._get_results(office, start_date, end_date)
 
 
 class GeojsonProperties(BaseModel):

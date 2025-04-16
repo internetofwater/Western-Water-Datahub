@@ -2,9 +2,10 @@
 # SPDX-License-Identifier: MIT
 
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, cast
 from awdb_forecasts.lib.forecasts import ForecastResultCollection
 from com.helpers import EDRFieldsMapping
+from com.protocols.covjson import CovjsonBuilderProtocol
 from covjson_pydantic.coverage import Coverage, CoverageCollection
 from covjson_pydantic.parameter import Parameter
 from covjson_pydantic.unit import Unit
@@ -16,9 +17,10 @@ from covjson_pydantic.reference_system import (
     ReferenceSystem,
 )
 from awdb_com.types import ForecastDataDTO
+from com.covjson import CoverageCollectionDict
 
 
-class CovjsonBuilder:
+class CovjsonBuilder(CovjsonBuilderProtocol):
     """
     A helper class for constructing a coveragejson response for EDR queries
     """
@@ -143,6 +145,6 @@ class CovjsonBuilder:
             domainType=DomainType.point_series,
             parameters=parameters,
         )
-        return covCol.model_dump(
-            by_alias=True, exclude_none=True
+        return cast(
+            CoverageCollectionDict, covCol.model_dump(by_alias=True, exclude_none=True)
         )  # pydantic covjson must dump with exclude none

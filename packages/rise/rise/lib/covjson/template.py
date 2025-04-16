@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # The template that we will fill in with data and return to the user
-from rise.lib.covjson.types import CoverageCollectionDict
+from com.covjson import CoverageCollectionDict
 
 COVJSON_TEMPLATE: CoverageCollectionDict = {
     "type": "CoverageCollection",

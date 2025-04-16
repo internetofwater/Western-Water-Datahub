@@ -7,9 +7,9 @@ from typing import Optional
 from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
 from com.helpers import EDRFieldsMapping
 from com.otel import otel_trace
-from com.protocol import EDRProviderProtocol
+from com.protocols.providers import EDRProviderProtocol
 from pygeoapi.provider.base_edr import BaseEDRProvider
-from rise.lib.covjson.types import CoverageCollectionDict
+from com.covjson import CoverageCollectionDict
 from pygeoapi.provider.base import ProviderQueryError
 from usace.lib.locations_collection import LocationCollection
 
@@ -44,6 +44,8 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         """
         Extract data from location
         """
+        # Example: http://localhost:5005/collections/usace-edr/locations/2796555126?f=html&datetime=2025-01-01/..
+        # Example: http://localhost:5005/collections/usace-edr/locations/2796555126?f=html&datetime=2025-01-01/..&properties=MCDA.Stage.Inst.15Minutes.0.USGS-RAW
 
         if not location_id and datetime_:
             raise ProviderQueryError(
@@ -86,12 +88,11 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         :param z: vertical level(s)
         :param format_: data format of output
         """
-        # collection = LocationColletion(select_properties)
+        collection = LocationCollection()
 
-        # collection.drop_all_locations_outside_bounding_box(bbox, z)
+        collection.drop_all_locations_outside_bounding_box(bbox, z)
 
-        # return collection.to_covjson(self.get_fields(), datetime_, select_properties)
-        ...
+        return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
     @otel_trace()
     @BaseEDRProvider.register()
@@ -107,7 +108,11 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         """
         Extract and return coverage data from a specified area.
         """
-        ...
+        collection = LocationCollection()
+
+        collection.drop_outside_of_wkt(wkt, z)
+
+        return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
     @BaseEDRProvider.register()
     def items(self, **kwargs):
