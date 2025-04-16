@@ -2,7 +2,10 @@
 # SPDX-License-Identifier: MIT
 
 from typing import List, Literal, Optional
+from com.cache import RedisCache
+from com.helpers import await_
 from pydantic import BaseModel, FiniteFloat
+from usace.lib.result_collection import ResultCollection
 
 
 class TimeseriesParameter(BaseModel):
@@ -16,6 +19,19 @@ class TimeseriesParameter(BaseModel):
     latest_value: float
     delta24h: Optional[float] = None
     sort_order: int
+
+    def get_results(
+        self, office: str, start_date: str, end_date: str
+    ) -> ResultCollection:
+        """
+        Get results by fetching from the USACE API; note that the office is also known as the
+        provider in the API terminology; these terms are interchangable
+        """
+        assert office and start_date and end_date
+        url = f"https://water.usace.army.mil/cda/reporting/providers/{office.lower()}/timeseries?name={self.tsid}&begin={start_date}&end={end_date}"
+        result = await_(RedisCache().get_or_fetch_json(url))
+        assert result
+        return ResultCollection(**result)
 
 
 class GeojsonProperties(BaseModel):
