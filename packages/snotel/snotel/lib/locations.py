@@ -9,7 +9,7 @@ from com.helpers import (
     await_,
 )
 from com.protocols.locations import LocationCollectionProtocolWithEDR
-from rise.lib.covjson.types import CoverageCollectionDict
+from com.covjson import CoverageCollectionDict
 from snotel.lib.covjson_builder import CovjsonBuilder
 from typing import Optional, cast
 

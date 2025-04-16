@@ -9,7 +9,7 @@ from com.geojson.helpers import (
     GeojsonFeatureDict,
     SortDict,
 )
-from rise.lib.covjson.types import CoverageCollectionDict
+from com.covjson import CoverageCollectionDict
 from com.helpers import EDRFieldsMapping, OAFFieldsMapping, parse_bbox
 import shapely
 import shapely.wkt

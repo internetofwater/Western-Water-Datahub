@@ -9,7 +9,7 @@ from com.helpers import EDRFieldsMapping
 from com.otel import otel_trace
 from com.protocols.providers import EDRProviderProtocol
 from pygeoapi.provider.base_edr import BaseEDRProvider
-from rise.lib.covjson.types import CoverageCollectionDict
+from com.covjson import CoverageCollectionDict
 from pygeoapi.provider.base import ProviderQueryError
 from usace.lib.locations_collection import LocationCollection
 

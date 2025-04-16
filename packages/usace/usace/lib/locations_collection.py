@@ -1,6 +1,7 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+import asyncio
 from typing import Optional, cast, assert_never
 from com.cache import RedisCache
 from com.env import TRACER
@@ -21,11 +22,24 @@ from com.helpers import (
 from com.protocols.locations import LocationCollectionProtocolWithEDR
 import geojson_pydantic
 import orjson
-from rise.lib.covjson.types import CoverageCollectionDict
+from com.covjson import CoverageCollectionDict
 from rise.lib.types.helpers import ZType
 import shapely
 from geojson_pydantic.types import Position2D
 from usace.lib.types.geojson_response import Feature, FeatureCollection
+from com.helpers import parse_date
+from com.protocols.covjson import CovjsonBuilderProtocol
+from covjson_pydantic.parameter import Parameter
+from covjson_pydantic.unit import Unit
+from covjson_pydantic.observed_property import ObservedProperty
+from usace.lib.types.geojson_response import TimeseriesParameter
+from covjson_pydantic.domain import Domain, Axes, ValuesAxis, DomainType
+from covjson_pydantic.ndarray import NdArrayFloat
+from covjson_pydantic.reference_system import (
+    ReferenceSystemConnectionObject,
+    ReferenceSystem,
+)
+from covjson_pydantic.coverage import Coverage, CoverageCollection
 
 
 class LocationCollection(LocationCollectionProtocolWithEDR):
@@ -137,6 +151,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
 
             if geometry:
                 assert v.geometry
+
                 if all([coord is None for coord in v.geometry.coordinates]):
                     indices_to_pop.add(i)
                     continue
@@ -164,7 +179,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         datetime_: Optional[str],
         select_properties: Optional[list[str]],
     ) -> CoverageCollectionDict:
-        raise NotImplementedError
+        return CovjsonBuilder(self, datetime_).render()
 
     def drop_all_locations_but_id(self, location_id: str):
         self.locations = [loc for loc in self.locations if loc.id == location_id]
@@ -184,3 +199,127 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                     "x-ogc-unit": param.unit,
                 }
         return fields
+
+    async def fill_all_results(self, start: str, end: str) -> None:
+        tasks = []
+        for location in self.locations:
+            if not location.properties.timeseries:
+                continue
+            for param in location.properties.timeseries:
+                tasks.append(
+                    param.fill_results(
+                        office=location.properties.provider,
+                        start_date=start,
+                        end_date=end,
+                    )
+                )
+
+        await asyncio.gather(*tasks)
+
+
+class CovjsonBuilder(CovjsonBuilderProtocol):
+    def __init__(
+        self, locationCollection: LocationCollection, datetime_: Optional[str]
+    ):
+        self.locationCollection = locationCollection
+        if datetime_:
+            parsed = parse_date(datetime_)
+            if isinstance(parsed, tuple) and len(parsed) == 2:
+                start, end = parsed
+            else:
+                start, end = parsed, parsed
+            start, end = start.isoformat(), end.isoformat()
+        else:
+            start, end = "1900-01-01T00:00:00.000Z", "2100-01-01T00:00:00.000Z"
+
+        def assert_results_not_yet_filled():
+            for loc in self.locationCollection.locations:
+                if not loc.properties.timeseries:
+                    continue
+                for param in loc.properties.timeseries:
+                    if param.results is not None:
+                        raise Exception("results already filled")
+
+        assert_results_not_yet_filled()
+
+        await_(self.locationCollection.fill_all_results(start, end))
+
+    def _generate_parameter(self, datastream: TimeseriesParameter):
+        """Given a triple and an associated datastream, generate a covjson parameter that describes its properties and unit"""
+
+        param = Parameter(
+            type="Parameter",
+            unit=Unit(symbol=datastream.unit),
+            id=datastream.tsid,
+            observedProperty=ObservedProperty(
+                label={"en": datastream.parameter},
+                id=datastream.tsid,
+                description={"en": datastream.unit_long_name},
+            ),
+        )
+        return param
+
+    def _generate_coverage(self, datastream: TimeseriesParameter, longitude, latitude):
+        assert datastream.results
+        times, values = datastream.results.get_values_as_separate_lists()
+
+        return Coverage(
+            type="Coverage",
+            domain=Domain(
+                type="Domain",
+                domainType=DomainType.point_series,
+                axes=Axes(
+                    t=ValuesAxis(values=times),
+                    x=ValuesAxis(values=[longitude]),
+                    y=ValuesAxis(values=[latitude]),
+                ),
+                referencing=[
+                    ReferenceSystemConnectionObject(
+                        coordinates=["x", "y"],
+                        system=ReferenceSystem(
+                            type="GeographicCRS",
+                            id="http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+                        ),
+                    ),
+                    ReferenceSystemConnectionObject(
+                        coordinates=["t"],
+                        system=ReferenceSystem(
+                            type="TemporalRS",
+                            id="http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+                        ),
+                    ),
+                ],
+            ),
+            ranges={
+                datastream.tsid: NdArrayFloat(
+                    shape=[len(datastream.results.values)],
+                    values=list[float | None](values),
+                    axisNames=["t"],
+                ),
+            },
+        )
+
+    def render(self) -> CoverageCollectionDict:
+        """
+        Return a covjson response
+        """
+        coverages: list[Coverage] = []
+        parameters: dict[str, Parameter] = {}
+
+        for loc in self.locationCollection.locations:
+            if not loc.properties.timeseries:
+                continue
+            for param in loc.properties.timeseries:
+                longitude, latitude = loc.geometry.coordinates
+                cov = self._generate_coverage(param, longitude, latitude)
+                coverages.append(cov)
+                parameters[param.tsid] = self._generate_parameter(param)
+
+        covCol = CoverageCollection(
+            coverages=coverages,
+            domainType=DomainType.point_series,
+            parameters=parameters,
+        )
+        return cast(
+            CoverageCollectionDict, covCol.model_dump(by_alias=True, exclude_none=True)
+        )  # pydantic covjson must dump with exclude none

@@ -6,7 +6,7 @@ from typing import Any, Tuple
 
 from com.helpers import EDRFieldsMapping, await_
 from rise.lib.covjson.template import COVJSON_TEMPLATE
-from rise.lib.covjson.types import (
+from com.covjson import (
     CoverageCollectionDict,
     CoverageDict,
     CoverageRangeDict,

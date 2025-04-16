@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 from dataclasses import dataclass
+from datetime import datetime
 
 type DateAndValue = tuple[str, float]
 
@@ -20,3 +21,11 @@ class ResultCollection:
     unit: str
     unit_long_name: str
     values: list[DateAndValue]
+
+    def get_values_as_separate_lists(self) -> tuple[list[datetime], list[float]]:
+        dates: list[datetime] = []
+        values: list[float] = []
+        for date, value in self.values:
+            dates.append(datetime.fromisoformat(date))
+            values.append(value)
+        return dates, values
