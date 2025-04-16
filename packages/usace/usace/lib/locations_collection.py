@@ -202,6 +202,9 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         return fields
 
     async def fill_all_results(self, start: str, end: str) -> None:
+        """
+        For every location, go through every parameter and fill in the associated results
+        """
         tasks = []
         for location in self.locations:
             if not location.properties.timeseries:
@@ -214,7 +217,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                         end_date=end,
                     )
                 )
-
+        # Run all the tasks in parallel
         await asyncio.gather(*tasks)
 
 
@@ -229,11 +232,16 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                 start, end = parsed
             else:
                 start, end = parsed, parsed
+
+            # Make sure the start and end are a reasonable time; if we put it too far in the future
+            # the api will return nothing or error
             end = min(end, datetime.now().replace(tzinfo=timezone.utc))
             start = max(
                 datetime.fromisoformat("1900-01-01").replace(tzinfo=timezone.utc), start
             )
             # Ensure both are timezone-aware and in UTC
+            # We have to add the Z since the isoformat function doesn't add it
+            # and otherwise causes an issue in the upstream api
             start = (
                 start.astimezone(timezone.utc)
                 .isoformat(timespec="milliseconds")

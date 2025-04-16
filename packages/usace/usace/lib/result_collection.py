@@ -23,6 +23,9 @@ class ResultCollection:
     values: list[DateAndValue]
 
     def get_values_as_separate_lists(self) -> tuple[list[datetime], list[float]]:
+        """
+        Pivot the data so we can get it into two separate lists that covjson needs
+        """
         dates: list[datetime] = []
         values: list[float] = []
         for date, value in self.values:
