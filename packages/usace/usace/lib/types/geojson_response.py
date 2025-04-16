@@ -28,6 +28,8 @@ class TimeseriesParameter(BaseModel):
         provider in the API terminology; these terms are interchangable
         """
         assert office and start_date and end_date
+        # parse start_date and end_date and make sure start is before end
+
         url = f"https://water.usace.army.mil/cda/reporting/providers/{office.lower()}/timeseries?name={self.tsid}&begin={start_date}&end={end_date}"
         result = await_(RedisCache().get_or_fetch_json(url))
         assert result
