@@ -44,6 +44,8 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         """
         Extract data from location
         """
+        # Example: http://localhost:5005/collections/usace-edr/locations/2796555126?f=html&datetime=2025-01-01/..
+        # Example: http://localhost:5005/collections/usace-edr/locations/2796555126?f=html&datetime=2025-01-01/..&properties=MCDA.Stage.Inst.15Minutes.0.USGS-RAW
 
         if not location_id and datetime_:
             raise ProviderQueryError(
