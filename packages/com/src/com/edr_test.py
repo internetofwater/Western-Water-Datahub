@@ -1,3 +1,6 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 from awdb_forecasts.awdb_forecasts_edr import AwdbForecastsEDRProvider
 from com.protocols.providers import EDRProviderProtocol
 import pytest
