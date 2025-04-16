@@ -132,11 +132,11 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         for i, v in enumerate(self.locations):
             elevation = v.properties.elevation
 
-            if elevation is None:
+            if elevation is None and parsed_z:
                 indices_to_pop.add(i)
                 continue
 
-            if parsed_z:
+            if parsed_z and elevation:
                 match parsed_z:
                     case [ZType.RANGE, x]:
                         if elevation < x[0] or elevation > x[1]:

@@ -34,13 +34,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         :returns: rise.base_edr.RiseEDRProvider
         """
-        try:
-            self.cache = RISECache()
-        except KeyError:
-            LOGGER.error(
-                "You must specify a cache implementation in the config.yml for RISE"
-            )
-            raise
+        self.cache = RISECache()
 
         provider_def = {
             "name": "Rise EDR",
