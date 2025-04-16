@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import asyncio
+from datetime import datetime, timezone
 from typing import Optional, cast, assert_never
 from com.cache import RedisCache
 from com.env import TRACER
@@ -228,9 +229,24 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                 start, end = parsed
             else:
                 start, end = parsed, parsed
-            start, end = start.isoformat(), end.isoformat()
+            end = min(end, datetime.now().replace(tzinfo=timezone.utc))
+            start = max(
+                datetime.fromisoformat("1900-01-01").replace(tzinfo=timezone.utc), start
+            )
+            # Ensure both are timezone-aware and in UTC
+            start = (
+                start.astimezone(timezone.utc)
+                .isoformat(timespec="milliseconds")
+                .replace("+00:00", "Z")
+            )
+            end = (
+                end.astimezone(timezone.utc)
+                .isoformat(timespec="milliseconds")
+                .replace("+00:00", "Z")
+            )
         else:
-            start, end = "1900-01-01T00:00:00.000Z", "2100-01-01T00:00:00.000Z"
+            start = "1900-01-01T00:00:00.000Z"
+            end = "2100-01-01T00:00:00.000Z"
 
         def assert_results_not_yet_filled():
             for loc in self.locationCollection.locations:

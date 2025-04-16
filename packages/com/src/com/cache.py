@@ -22,6 +22,7 @@ async def fetch_url(
     async with aiohttp.ClientSession(headers=headers) as session:
         async with session.get(url, headers=headers) as response:
             try:
+                response.raise_for_status()
                 if custom_mimetype:
                     return await response.json(content_type=custom_mimetype)
                 return await response.json()

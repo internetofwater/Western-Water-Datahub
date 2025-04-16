@@ -106,7 +106,11 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         """
         Extract and return coverage data from a specified area.
         """
-        ...
+        collection = LocationCollection()
+
+        collection.drop_outside_of_wkt(wkt, z)
+
+        return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
     @BaseEDRProvider.register()
     def items(self, **kwargs):
