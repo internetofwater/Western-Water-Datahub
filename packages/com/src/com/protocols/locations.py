@@ -82,7 +82,7 @@ class LocationCollectionProtocolWithEDR(LocationCollectionProtocol):
     A location collection that supports EDR and covjson transformations
     """
 
-    def select_properties(self, properties: Optional[list[tuple[str, str]]]) -> None:
+    def select_properties(self, properties: Optional[list[str]]) -> None:
         """
         The EDR select properties filter
         """

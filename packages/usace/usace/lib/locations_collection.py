@@ -180,7 +180,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         datetime_: Optional[str],
         select_properties: Optional[list[str]],
     ) -> CoverageCollectionDict:
-        return CovjsonBuilder(self, datetime_).render()
+        return CovjsonBuilder(self, datetime_, select_properties).render()
 
     def drop_all_locations_but_id(self, location_id: str):
         self.locations = [loc for loc in self.locations if loc.id == location_id]
@@ -220,12 +220,41 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         # Run all the tasks in parallel
         await asyncio.gather(*tasks)
 
+    def select_properties(self, properties: list[str] | None) -> None:
+        if not properties:
+            return
+
+        locations_to_pop = set()
+        for i, location in enumerate(self.locations):
+            if not location.properties.timeseries:
+                locations_to_pop.add(i)
+                continue
+            params_to_pop = set()
+            for j, param in enumerate(location.properties.timeseries):
+                if param.tsid not in properties:
+                    params_to_pop.add(j)
+
+            for j in sorted(params_to_pop, reverse=True):
+                location.properties.timeseries.pop(j)
+
+            if not location.properties.timeseries:
+                locations_to_pop.add(i)
+
+        for i in sorted(locations_to_pop, reverse=True):
+            self.locations.pop(i)
+
 
 class CovjsonBuilder(CovjsonBuilderProtocol):
     def __init__(
-        self, locationCollection: LocationCollection, datetime_: Optional[str]
+        self,
+        locationCollection: LocationCollection,
+        datetime_: Optional[str],
+        select_properties: Optional[list[str]],
     ):
         self.locationCollection = locationCollection
+
+        locationCollection.select_properties(select_properties)
+
         if datetime_:
             parsed = parse_date(datetime_)
             if isinstance(parsed, tuple) and len(parsed) == 2:

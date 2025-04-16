@@ -35,3 +35,20 @@ def test_fill_all_results():
     await_(collection.fill_all_results(start, end))
     assert collection.locations[0].properties.timeseries
     assert collection.locations[0].properties.timeseries[0].results
+
+
+def test_select_properties():
+    collection1 = LocationCollection()
+    collection1.select_properties(["SC18.Elev.Inst.1Hour.0.Best-NWO"])
+    assert collection1.locations[0].properties.timeseries
+
+    collection2 = LocationCollection()
+    collection2.select_properties(["DUMMY"])
+    assert not collection2.locations
+
+    collection3 = LocationCollection()
+    collection3.select_properties(["SC18.Elev.Inst.1Hour.0.Best-NWO", "DUMMY"])
+    assert (
+        collection1.locations[0].properties.timeseries
+        == collection3.locations[0].properties.timeseries
+    )
