@@ -56,7 +56,7 @@ class LocationResponse(BaseModel):
         ]
     ] = None
     # data represents the list of locations returned
-    data: list[LocationData]
+    data: list[LocationData] = []
     included: Optional[list[LocationIncluded]] = None
 
     @classmethod

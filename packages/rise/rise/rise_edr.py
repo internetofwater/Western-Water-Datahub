@@ -7,9 +7,7 @@ from typing import ClassVar, Optional
 from com.helpers import await_
 from com.otel import otel_trace
 from com.protocols.providers import EDRProviderProtocol
-from pygeoapi.provider.base import (
-    ProviderQueryError,
-)
+from pygeoapi.provider.base import ProviderQueryError, ProviderNoDataError
 from pygeoapi.provider.base_edr import BaseEDRProvider
 from rise.lib.covjson.covjson import CovJSONBuilder
 from rise.lib.location import LocationResponse
@@ -64,6 +62,10 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             raise ProviderQueryError("Can't filter by date on every location")
 
         raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(select_properties)
+        if not raw_resp:
+            raise ProviderNoDataError(
+                f"No locations found with properties {select_properties}"
+            )
         response = LocationResponse.from_api_pages_with_included_catalog_items(raw_resp)
 
         if location_id:

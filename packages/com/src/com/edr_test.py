@@ -7,6 +7,7 @@ import pytest
 from rise.rise_edr import RiseEDRProvider
 from snotel.snotel_edr import SnotelEDRProvider
 from usace.usace_edr import USACEEDRProvider
+from pygeoapi.provider.base import ProviderNoDataError
 
 provider_def = {
     "name": "test",
@@ -51,14 +52,19 @@ def test_edr_provider(provider_class):
     test_location_id()
 
     def test_select_properties():
-        selectedProvider = provider.locations(
-            select_properties=[list(fields.keys())[0]]
-        )
-        assert "features" in selectedProvider
-        # awdb forecasts contains parameters that could potentially not have
-        # data associated with them; this is since it shares the same upstream param api as snotel
-        if not isinstance(provider, AwdbForecastsEDRProvider):
-            assert len(selectedProvider["features"]) > 0
+        try:
+            selectedProvider = provider.locations(
+                select_properties=[list(fields.keys())[0]]
+            )
+            assert "features" in selectedProvider
+            # awdb forecasts contains parameters that could potentially not have
+            # data associated with them; this is since it shares the same upstream param api as snotel
+            if not isinstance(provider, AwdbForecastsEDRProvider):
+                assert len(selectedProvider["features"]) > 0
+        except ProviderNoDataError:
+            # it is possible for rise to have no data associated with a parameter
+            if not isinstance(provider, RiseEDRProvider):
+                raise
 
     test_select_properties()
 
