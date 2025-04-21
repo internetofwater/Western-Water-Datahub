@@ -12,6 +12,7 @@ from pygeoapi.provider.base_edr import BaseEDRProvider
 from com.covjson import CoverageCollectionDict
 from pygeoapi.provider.base import ProviderQueryError
 from usace.lib.locations_collection import LocationCollection
+from usace.lib.param_helpers import get_upstream_ids_of_select_properties
 
 LOGGER = logging.getLogger(__name__)
 
@@ -45,7 +46,7 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         Extract data from location
         """
         # Example: http://localhost:5005/collections/usace-edr/locations/2796555126?f=html&datetime=2025-01-01/..
-        # Example: http://localhost:5005/collections/usace-edr/locations/2796555126?f=html&datetime=2025-01-01/..&properties=MCDA.Stage.Inst.15Minutes.0.USGS-RAW
+        # Example: http://localhost:5005/collections/usace-edr/locations/2796555126?f=html&datetime=2025-01-01/..&parameter-name=Stage
 
         if not location_id and datetime_:
             raise ProviderQueryError(
@@ -54,6 +55,11 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         collection = LocationCollection()
         if location_id:
             collection.drop_all_locations_but_id(location_id)
+
+        if select_properties:
+            select_properties = get_upstream_ids_of_select_properties(
+                select_properties, collection
+            )
 
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return collection.to_geojson(itemsIDSingleFeature=location_id is not None)
@@ -92,8 +98,10 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         collection.drop_all_locations_outside_bounding_box(bbox, z)
 
-        # replace param with proper name
-        # collection.replace_param_names(select_properties)
+        if select_properties:
+            select_properties = get_upstream_ids_of_select_properties(
+                select_properties, collection
+            )
 
         return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
@@ -114,6 +122,11 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         collection = LocationCollection()
 
         collection.drop_outside_of_wkt(wkt, z)
+
+        if select_properties:
+            select_properties = get_upstream_ids_of_select_properties(
+                select_properties, collection
+            )
 
         return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
