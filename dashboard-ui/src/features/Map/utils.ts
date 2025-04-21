@@ -4,7 +4,10 @@
  */
 
 import { Map } from 'mapbox-gl';
-import { ComplexReservoirProperties, ReservoirProperties } from './types';
+import {
+    ComplexReservoirProperties,
+    ReservoirProperties,
+} from '@/features/Map/types';
 
 export const loadTeacups = (map: Map) => {
     if (!map.hasImage('default')) {

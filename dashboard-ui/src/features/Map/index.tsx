@@ -27,7 +27,7 @@ import { basemaps } from '@/components/Map/consts';
 import {
     ReservoirIdentifierField,
     ReservoirRegionConnectorField,
-} from './types';
+} from '@/features/Map/types';
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;

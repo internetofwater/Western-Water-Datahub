@@ -441,10 +441,4 @@ export const layerDefinitions: MainLayerDefinition[] = [
         clickFunction: getLayerClickFunction(LayerId.Reservoirs),
         // hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
     },
-    {
-        id: LayerId.SnowWater,
-        config: getLayerConfig(LayerId.SnowWater),
-        controllable: false,
-        legend: false,
-    },
 ];
