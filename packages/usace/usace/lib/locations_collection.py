@@ -190,7 +190,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         """
         Return all fields used for EDR queries
         """
-        # Two sets for running assertions against
+        # Set for running assertions against
         # We want to make sure we don't have params that are
         # the same location with
         # multiple parameters of the same category
@@ -212,7 +212,9 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                     # If the param already exists but has a different unit,
                     # that is a failure and would make the results ambiguous
                     unit = fields[param.label]["x-ogc-unit"]
-                    assert unit == param.unit
+                    assert unit == param.unit, (
+                        f"There are two parameters with the same label {param.label} but different units thus making it ambiguous"
+                    )
                 else:
                     fields[param.label] = {
                         "title": param.label,
