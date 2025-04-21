@@ -16,11 +16,18 @@ import {
 } from '@/features/Map/config';
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore from '@/lib/main';
-import { loadTeacups as loadImages } from '@/features/Map/utils';
+import {
+    loadTeacups as loadImages,
+    parseReservoirProperties,
+} from '@/features/Map/utils';
 import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
 import CustomControl from '@/components/Map/tools/CustomControl';
 import { basemaps } from '@/components/Map/consts';
+import {
+    ReservoirIdentifierField,
+    ReservoirRegionConnectorField,
+} from '@/features/Map/types';
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;
@@ -92,16 +99,26 @@ const MainMap: React.FC<Props> = (props) => {
                 layers: [LayerId.Reservoirs],
             });
 
-            console.log('features', features);
             if (features && features.length) {
                 const feature = features[0];
 
                 if (feature.properties) {
-                    const reservoir = feature.properties.locName as string;
-                    const region = feature.properties.region as string;
+                    const reservoir = feature.properties[
+                        ReservoirIdentifierField
+                    ] as string;
+                    const value = feature.properties[
+                        ReservoirRegionConnectorField
+                    ] as string;
+                    const locationRegionNames = parseReservoirProperties(
+                        ReservoirRegionConnectorField,
+                        value
+                    );
 
                     setReservoir(reservoir);
-                    setRegion(region);
+                    if (locationRegionNames.length === 1) {
+                        const region = locationRegionNames[0];
+                        setRegion(region);
+                    }
                 }
             }
         });
@@ -122,7 +139,6 @@ const MainMap: React.FC<Props> = (props) => {
             // TODO: basin filter
             if (reservoir === 'all') {
                 map.setFilter(LayerId.Reservoirs, null);
-                map.setFilter(LayerId.Reservoirs, null);
             }
         } else {
             map.setFilter(SubLayerId.RegionsFill, [
@@ -138,18 +154,37 @@ const MainMap: React.FC<Props> = (props) => {
             // TODO: basin filter
             if (reservoir === 'all') {
                 map.setFilter(LayerId.Reservoirs, [
-                    '==',
-                    ['get', 'region'],
+                    'in',
                     region,
-                ]);
-                map.setFilter(LayerId.Reservoirs, [
-                    '==',
-                    ['get', 'region'],
-                    region,
+                    ['get', ReservoirRegionConnectorField],
                 ]);
             }
         }
     }, [region]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+        if (reservoir === 'all') {
+            // Unset Filter
+            if (region === 'all') {
+                map.setFilter(LayerId.Reservoirs, null);
+            } else {
+                map.setFilter(LayerId.Reservoirs, [
+                    'in',
+                    region,
+                    ['get', ReservoirRegionConnectorField],
+                ]);
+            }
+        } else {
+            map.setFilter(LayerId.Reservoirs, [
+                '==',
+                ['get', ReservoirIdentifierField],
+                reservoir,
+            ]);
+        }
+    }, [reservoir]);
 
     useEffect(() => {
         if (!map) {

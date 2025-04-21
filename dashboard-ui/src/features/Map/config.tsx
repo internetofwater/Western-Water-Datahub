@@ -27,12 +27,14 @@ export enum SourceId {
     Regions = 'regions-source',
     Basins = 'hu04',
     Reservoirs = 'reservoirs-source',
+    SnowWater = 'snow-water',
 }
 
 export enum LayerId {
     Regions = 'regions-main',
     Basins = 'basins-main',
     Reservoirs = 'reservoirs',
+    SnowWater = 'snow-water',
 }
 
 export enum SubLayerId {
@@ -66,10 +68,12 @@ export const sourceConfigs: SourceConfig[] = [
     },
     {
         id: SourceId.Reservoirs,
-        type: Sources.ESRI,
+        type: Sources.GeoJSON,
         definition: {
-            url: 'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/RISE_point_locations_(view)/FeatureServer/0',
-            where: "type='Lake/Reservoir' AND locName like '%Reservoir%'",
+            type: 'geojson',
+
+            data: 'https://api.wwdh.internetofwater.app/collections/rise-edr/items?f=json&locationTypeName=Lake/Reservoir',
+            filter: ['in', 'Reservoir', ['get', 'name']],
         },
     },
     {
@@ -222,28 +226,29 @@ export const getLayerConfig = (
                 type: LayerType.Symbol,
                 source: SourceId.Reservoirs,
                 layout: {
-                    'icon-image': [
-                        'let',
-                        'storage', // Variable name
-                        ['/', ['get', 'elev_ft'], 10000], // Variable value
-                        [
-                            'step',
-                            ['var', 'storage'],
-                            'default', // Below first step value
-                            0.75,
-                            'teacup-75',
-                            0.8,
-                            'teacup-80',
-                            0.85,
-                            'teacup-85',
-                            0.9,
-                            'teacup-90',
-                            0.95,
-                            'teacup-95',
-                            1,
-                            'teacup-100',
-                        ],
-                    ],
+                    'icon-image': 'default',
+                    // 'icon-image': [
+                    //     'let',
+                    //     'storage', // Variable name
+                    //     ['/', ['get', 'elev_ft'], 10000], // Variable value
+                    //     [
+                    //         'step',
+                    //         ['var', 'storage'],
+                    //         'default', // Below first step value
+                    //         0.75,
+                    //         'teacup-75',
+                    //         0.8,
+                    //         'teacup-80',
+                    //         0.85,
+                    //         'teacup-85',
+                    //         0.9,
+                    //         'teacup-90',
+                    //         0.95,
+                    //         'teacup-95',
+                    //         1,
+                    //         'teacup-100',
+                    //     ],
+                    // ],
                     'icon-size': 0.5,
                     'icon-allow-overlap': true,
                 },
@@ -402,7 +407,7 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 controllable: false,
                 legend: false,
                 clickFunction: getLayerClickFunction(SubLayerId.RegionsFill),
-                hoverFunction: getLayerHoverFunction(SubLayerId.RegionsFill),
+                // hoverFunction: getLayerHoverFunction(SubLayerId.RegionsFill),
             },
         ],
     },
@@ -424,7 +429,7 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 controllable: false,
                 legend: false,
                 clickFunction: getLayerClickFunction(SubLayerId.BasinsFill),
-                hoverFunction: getLayerHoverFunction(SubLayerId.BasinsFill),
+                // hoverFunction: getLayerHoverFunction(SubLayerId.BasinsFill),
             },
         ],
     },
@@ -434,6 +439,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
         controllable: false,
         legend: false,
         clickFunction: getLayerClickFunction(LayerId.Reservoirs),
-        hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
+        // hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
     },
 ];

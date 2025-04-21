@@ -15,6 +15,11 @@ import {
     createOptions,
     shouldLoadOptions,
 } from '@/features/Header/Selectors/utils';
+import {
+    ReservoirIdentifierField,
+    ReservoirRegionConnectorField,
+} from '@/features/Map/types';
+import { parseReservoirProperties } from '@/features/Map/utils';
 
 export const Reservoir: React.FC = () => {
     const { map } = useMap(MAP_ID);
@@ -36,7 +41,7 @@ export const Reservoir: React.FC = () => {
                 const _reservoirOptions = createOptions(
                     map,
                     SourceId.Reservoirs,
-                    'locName',
+                    'name',
                     'All Reservoirs'
                 );
                 setReservoirOptions(_reservoirOptions);
@@ -50,12 +55,16 @@ export const Reservoir: React.FC = () => {
             return;
         }
 
-        if (region !== 'all') {
+        if (region && region !== 'all') {
             const reservoirOptions = createFilteredOptions(
                 map,
                 SourceId.Reservoirs,
-                ['==', ['get', 'region'], region],
-                'locName',
+                [
+                    'all',
+                    ['in', region, ['get', ReservoirRegionConnectorField]],
+                    ['in', 'Reservoir', ['get', 'name']],
+                ],
+                'name',
                 'All Reservoirs'
             );
             setReservoirOptions(reservoirOptions);
@@ -63,7 +72,7 @@ export const Reservoir: React.FC = () => {
             const _reservoirOptions = createOptions(
                 map,
                 SourceId.Reservoirs,
-                'locName',
+                'name',
                 'All Reservoirs'
             );
             setReservoirOptions(_reservoirOptions);
@@ -77,15 +86,24 @@ export const Reservoir: React.FC = () => {
 
         const features = map.querySourceFeatures(SourceId.Reservoirs, {
             sourceLayer: SourceId.Reservoirs,
-            filter: ['==', ['get', 'locName'], value],
+            filter: ['==', ['get', ReservoirIdentifierField], value],
         });
         if (features && features.length > 0) {
             const feature = features[0];
 
             if (feature && feature.properties) {
-                const region = feature.properties.region as string;
+                const value = feature.properties[
+                    ReservoirRegionConnectorField
+                ] as string;
+                const locationRegionNames = parseReservoirProperties(
+                    ReservoirRegionConnectorField,
+                    value
+                );
 
-                setRegion(region);
+                if (locationRegionNames.length === 1) {
+                    const region = locationRegionNames[0];
+                    setRegion(region);
+                }
             }
         }
 
