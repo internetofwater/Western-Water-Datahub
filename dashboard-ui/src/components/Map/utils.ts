@@ -47,14 +47,8 @@ export const addSources = (
                 }
                 break;
 
+            case Sources.Raster:
             case Sources.VectorTile:
-                if (!map.getSource(sourceConfig.id)) {
-                    map.addSource(
-                        sourceConfig.id,
-                        sourceConfig.definition as SourceSpecification
-                    );
-                }
-                break;
             case Sources.GeoJSON:
             default:
                 if (!map.getSource(sourceConfig.id)) {

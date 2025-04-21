@@ -5,10 +5,8 @@
 
 import { SourceId } from '@/features/Map/config';
 import { ComboboxData, ComboboxItem } from '@mantine/core';
-import { FeatureCollection } from 'geojson';
 import {
     ExpressionSpecification,
-    GeoJSONSourceSpecification,
     Map as MapObj,
     MapSourceDataEvent,
 } from 'mapbox-gl';
@@ -82,13 +80,8 @@ export const shouldLoadOptions = (
 ): boolean => {
     return Boolean(
         event.sourceId === sourceId &&
-            event.source &&
-            (event.source as GeoJSONSourceSpecification).data &&
-            (
-                (event.source as GeoJSONSourceSpecification)
-                    .data as FeatureCollection
-            ).features.length > 0 &&
             map.getSource(sourceId) &&
-            map.isSourceLoaded(sourceId)
+            map.isSourceLoaded(sourceId) &&
+            map.querySourceFeatures(sourceId).length
     );
 };

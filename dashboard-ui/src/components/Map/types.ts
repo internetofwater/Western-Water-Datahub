@@ -55,6 +55,7 @@ export enum Sources {
     GeoJSON = 'geojson',
     VectorTile = 'vector-tile',
     ESRI = 'esri',
+    Raster = 'raster',
 }
 
 /**
@@ -262,4 +263,5 @@ export enum LayerType {
     Symbol = 'symbol',
     Circle = 'circle',
     Fill = 'fill',
+    Raster = 'raster',
 }
