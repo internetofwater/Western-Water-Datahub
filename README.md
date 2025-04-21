@@ -1,6 +1,6 @@
 # Western Water Datahub
 
-The Wester Water Datahub (WWDH) is an implementation of the [OGC API](https://ogcapi.ogc.org/) suite of standards, enabling access to water data from various sources through a unified interface. It is designed to enhance data interoperability, accessibility, and discoverability across multiple agricultural water data platforms.
+The Wester Water Datahub (WWDH) is an implementation of the [OGC API](https://ogcapi.ogc.org/) suite of standards, enabling access to water data from various sources through a unified interface. It is designed to enhance data interoperability, accessibility, and discoverability across multiple water data platforms.
 
 This project is a collaboration between the United States Beaureu of Reclamation, the Center for Geospatial Solutions, and Wester States Water Council.
 
@@ -14,28 +14,33 @@ The interface consolidates access to multiple water data sources, offering a sta
 | NRCS/SNOTEL | Snow Water Equivalent (station, current/historical)       | Features, EDR  |
 | USGS/WMA    | Streamflow (current)                                      | Features, EDR  |
 | AWDB        | Streamflow (forecast)                                     | Features, EDR  |
+| USACE       | Reservoir Storage/Release/Level/Evap (forecast)           | Features, EDR  |
 | NOAA/QPF    | Precipitation (Raster forecast)                           | Features       |
-| NOAA/NOHRSC | Snow Water (forecast)                                     | Maps           |
+| NOAA/RFC    | Streamflow (forecast)                                     | Features       |
+| NOAA/NOHRSC | Snow Water/Depth (forecast)                               | Maps           |
 | PRISM       | Precipitation (historical)                                | EDR            |
 
 To learn more about custom mappings, visit the [Western Water Datahub Mappings directory](./docs/mappings.md).
 
 ## Getting Started
 
-To run with Docker:
+In both production and development, the server can be accessed at `http://localhost:5005`
+
+### Local Development
+
+- Spin up the redis db using `docker compose up -d`
+- To install dependencies run `make deps`
+  - We use [`uv`](https://github.com/astral-sh/uv) for dependency management and thus you should have it installed
+- To run the server run: `make dev`
+- To run tests run: `make test`
+
+### Production
+
+The following command will spin up all infrastructure for production and build both the server and UI as docker images
 
 ```bash
 docker compose --profile production up
 ```
-
-### Local Development
-
-- To install dependencies run `make deps`
-  - We use uv for dependency management and thus you should have it installed
-  - You can however also use the `requirements.txt` as well for quick checks as it is kept up to date automatically
-- To run the server run: `make dev`
-- To run the redis container for caching, run `docker compose up`
-- To run tests run: `make test`
 
 ## Contributing
 
@@ -43,4 +48,4 @@ Contributions are welcome! Please open an issue or submit a pull request to help
 
 ## License
 
-This project is licensed under the MIT. See the `LICENSE` file for details.
+This project is licensed under the MIT license. See the [`LICENSE` file](./LICENSE) for details.
