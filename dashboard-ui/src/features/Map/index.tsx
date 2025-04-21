@@ -155,8 +155,8 @@ const MainMap: React.FC<Props> = (props) => {
             if (reservoir === 'all') {
                 map.setFilter(LayerId.Reservoirs, [
                     'in',
-                    ['get', ReservoirRegionConnectorField],
                     region,
+                    ['get', ReservoirRegionConnectorField],
                 ]);
             }
         }
@@ -168,7 +168,15 @@ const MainMap: React.FC<Props> = (props) => {
         }
         if (reservoir === 'all') {
             // Unset Filter
-            map.setFilter(LayerId.Reservoirs, null);
+            if (region === 'all') {
+                map.setFilter(LayerId.Reservoirs, null);
+            } else {
+                map.setFilter(LayerId.Reservoirs, [
+                    'in',
+                    region,
+                    ['get', ReservoirRegionConnectorField],
+                ]);
+            }
         } else {
             map.setFilter(LayerId.Reservoirs, [
                 '==',
