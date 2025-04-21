@@ -210,11 +210,9 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                 locationWithCategory.add((location.id, param.label))
                 if param.label in fields:
                     # If the param already exists but has a different unit,
-                    # add the new unit as another option in the field
+                    # that is a failure and would make the results ambiguous
                     unit = fields[param.label]["x-ogc-unit"]
                     assert unit == param.unit
-                    # if unit != param.unit:
-                    #     fields[param.label]["x-ogc-unit"] = f"{unit} / {param.unit}"
                 else:
                     fields[param.label] = {
                         "title": param.label,
