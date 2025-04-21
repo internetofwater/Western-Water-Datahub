@@ -3,7 +3,7 @@
 
 import asyncio
 from datetime import datetime, timezone
-from typing import Optional, cast, assert_never
+from typing import Optional, Set, Tuple, cast, assert_never
 from com.cache import RedisCache
 from com.env import TRACER
 from com.geojson.helpers import (
@@ -187,17 +187,29 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         assert len(self.locations) == 1
 
     def get_fields(self) -> EDRFieldsMapping:
+        categories = set()
+
+        locationWithCategory: Set[Tuple[str, str]] = set()
+
         fields: EDRFieldsMapping = {}
         for location in self.locations:
             params = location.properties.timeseries
             if not params:
                 continue
+
             for param in params:
-                fields[param.tsid] = {
+                if param.label in categories:
+                    continue
+                categories.add(param.label)
+                assert (location.id, param.label) not in locationWithCategory, (
+                    "There was a location with multiple parameters of the same label; this makes it ambiguous which one to use after decoding"
+                )
+                categories.add((location.id, param.label))
+                fields[param.label] = {
                     "title": param.label,
-                    "type": "string",
                     "description": f"{param.label} ({param.unit_long_name}) with id {param.tsid}",
                     "x-ogc-unit": param.unit,
+                    "type": "string",
                 }
         return fields
 

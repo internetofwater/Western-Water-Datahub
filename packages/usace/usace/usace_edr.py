@@ -92,6 +92,9 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         collection.drop_all_locations_outside_bounding_box(bbox, z)
 
+        # replace param with proper name
+        # collection.replace_param_names(select_properties)
+
         return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
     @otel_trace()
