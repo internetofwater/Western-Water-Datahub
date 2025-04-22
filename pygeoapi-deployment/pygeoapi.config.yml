@@ -404,7 +404,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer
         hreflang: en-US
     extents:
       spatial:
@@ -426,7 +426,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer
         hreflang: en-US
     extents:
       spatial:
@@ -448,7 +448,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer
         hreflang: en-US
     extents:
       spatial:
@@ -470,7 +470,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://data.usbr.gov/
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer
         hreflang: en-US
     extents:
       spatial:
