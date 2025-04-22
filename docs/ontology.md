@@ -7,18 +7,18 @@ use consistent language when refering to parameters of interest.
 The Ontology consists of two separate utilities:
 
 1. **OGC API - Process** that takes in an optional list of ODM2 Vocabulary
-   terms. The process formats a version of the `Collections` document, 
+   terms. The process formats a version of the `Collections` document,
    compliant with *http://www.opengis.net/spec/ogcapi-edr-1/1.1/req/collections*,
    with ODM2 parameters and units replacing the native values from the source
    system while staying compliant with [Requirement A.25](https://docs.ogc.org/is/19-086r6/19-086r6.html#req_edr_rc-parameters).
-   When the list of ODM2 terms is provided, only terms in that list will 
+   When the list of ODM2 terms is provided, only terms in that list will
    be in the returned collections JSON document.
 
-2. **OGC API - EDR** endpoint interceptor that dereferences ODM2 parameters 
+2. **OGC API - EDR** endpoint interceptor that dereferences ODM2 parameters
    to the parameters of the source system for the EDR Query. This formats
    the returned CoverageJSON from an EDR Query to use the ODM2 parameter
    provided in the request. Should there be multiple unit representations,
-   the response Coverages are converted to the requested unit. This will 
+   the response Coverages are converted to the requested unit. This will
    not change the output of the GeoJSON.
 
 ### Dashboard
@@ -27,8 +27,7 @@ The Reservoir Storage Dashboard allows a streamlined view of Reservoir
 Storage Data. Optional additioanl views of precipitation forecast and
 streamgage data may also be made availible in this view. In the diagram
 below OntologyProcess, SourceEDR1, and SourceEDR2 are all endpoints of
-a *single* pygeoapi endpoint.
-
+a _single_ pygeoapi endpoint.
 
 ```mermaid
 sequenceDiagram
@@ -58,7 +57,7 @@ sequenceDiagram
 
 This example uses the Reservoir Storage parameter, representated
 at *http://vocabulary.odm2.org/variablename/reservoirStorage/* but is
-refered to with shorthand, *reservoirStorage*. The same pattern could
+refered to with shorthand, _reservoirStorage_. The same pattern could
 be repeated with *http://vocabulary.odm2.org/variablename/streamflow/* for
 streamgage data.
 
@@ -83,11 +82,10 @@ sequenceDiagram
 ### Hub
 
 The Hub serves as the primary interface to explore and download
-data from the Western Water Datahub. It makes greater use out of the 
+data from the Western Water Datahub. It makes greater use out of the
 Ontology layer, with a larger set of possible parameters to filter by.
 Furthermore, the Hub is going to enable the full suite of EDR query
 parameters by also enable users to filter spatiotemporally.
-
 
 ```mermaid
 sequenceDiagram
@@ -124,7 +122,7 @@ sequenceDiagram
         Hub->>SourceEDR3: GET /collections/{SourceEDR3}/locations?parameter-name=streamflow
         SourceEDR3->>Hub: Return GeoJSON
     end
-    
+
     User->>Hub: Select Site of interest
     Hub->>SourceEDR1: GET /collections/{SourceEDR2}/locations/{LocationId}?parameter-name=streamflow
     SourceEDR2->>Hub: Return transformed CovJSON
