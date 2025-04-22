@@ -42,7 +42,7 @@ The following command will spin up all infrastructure for a containerized deploy
 docker compose --profile production up
 ```
 
-(Note: in production we deploy the pygeoapi server as a container on cloud run as defined by the [cloudbuild.yml](./cloudbuild.yml) file)
+(Note: in production we deploy the pygeoapi server as a container on cloud run as defined by the [cloudbuild.yaml](./cloudbuild.yaml) file)
 
 ## Contributing
 
