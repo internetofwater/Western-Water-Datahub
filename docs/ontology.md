@@ -1,7 +1,7 @@
 # Ontology
 
-The Ontology abstraction layer serves to disambiguate alike ODM2 parameters
-across different mapped source systems. This allows user interfaces to
+The Ontology abstraction layer serves to map standardized ODM2 parameters
+to the associated parameters in multiple different upstream APIs. This allows user interfaces to
 use consistent language when refering to parameters of interest.
 
 The Ontology consists of two separate utilities:
@@ -14,7 +14,7 @@ The Ontology consists of two separate utilities:
    When the list of ODM2 terms is provided, only terms in that list will
    be in the returned collections JSON document.
 
-2. **OGC API - EDR** endpoint interceptor that dereferences ODM2 parameters
+2. **OGC API - EDR** endpoint interceptor that maps ODM2 parameters
    to the parameters of the source system for the EDR Query. This formats
    the returned CoverageJSON from an EDR Query to use the ODM2 parameter
    provided in the request. Should there be multiple unit representations,
@@ -24,10 +24,10 @@ The Ontology consists of two separate utilities:
 ### Dashboard
 
 The Reservoir Storage Dashboard allows a streamlined view of Reservoir
-Storage Data. Optional additioanl views of precipitation forecast and
-streamgage data may also be made availible in this view. In the diagram
+Storage Data. Optional additional views of precipitation forecast and
+streamgage data may also be made available in this view. In the diagram
 below OntologyProcess, SourceEDR1, and SourceEDR2 are all endpoints of
-a _single_ pygeoapi endpoint.
+a _single_ pygeoapi server.
 
 ```mermaid
 sequenceDiagram
