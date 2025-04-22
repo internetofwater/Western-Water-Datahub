@@ -24,7 +24,7 @@ To learn more about custom mappings, visit the [Western Water Datahub Mappings d
 
 ## Getting Started
 
-In both production and development, the server can be accessed at `http://localhost:5005`
+In both development and containerized deployments, the server can be accessed at `http://localhost:5005`
 
 ### Local Development
 
@@ -34,13 +34,15 @@ In both production and development, the server can be accessed at `http://localh
 - To run the server run: `make dev`
 - To run tests run: `make test`
 
-### Production
+### Containerized Deployment
 
-The following command will spin up all infrastructure for production and build both the server and UI as docker images
+The following command will spin up all infrastructure for a containerized deployment and build both the server and UI as docker images
 
 ```bash
 docker compose --profile production up
 ```
+
+(Note: in production we deploy the pygeoapi server as a container on cloud run as defined by the [cloudbuild.yml](./cloudbuild.yml) file)
 
 ## Contributing
 
