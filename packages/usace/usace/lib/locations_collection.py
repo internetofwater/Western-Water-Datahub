@@ -3,7 +3,7 @@
 
 import asyncio
 from datetime import datetime, timezone
-from typing import Optional, cast, assert_never
+from typing import Optional, Set, Tuple, cast, assert_never
 from com.cache import RedisCache
 from com.env import TRACER
 from com.geojson.helpers import (
@@ -187,18 +187,41 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         assert len(self.locations) == 1
 
     def get_fields(self) -> EDRFieldsMapping:
+        """
+        Return all fields used for EDR queries
+        """
+        # Set for running assertions against
+        # We want to make sure we don't have params that are
+        # the same location with
+        # multiple parameters of the same category
+        locationWithCategory: Set[Tuple[str, str]] = set()
+
         fields: EDRFieldsMapping = {}
         for location in self.locations:
             params = location.properties.timeseries
             if not params:
                 continue
+
+            assert location.id
             for param in params:
-                fields[param.tsid] = {
-                    "title": param.label,
-                    "type": "string",
-                    "description": f"{param.label} ({param.unit_long_name}) with id {param.tsid}",
-                    "x-ogc-unit": param.unit,
-                }
+                assert (location.id, param.label) not in locationWithCategory, (
+                    "There was a location with multiple parameters of the same label; this makes it ambiguous which one to use after decoding"
+                )
+                locationWithCategory.add((location.id, param.label))
+                if param.label in fields:
+                    # If the param already exists but has a different unit,
+                    # that is a failure and would make the results ambiguous
+                    unit = fields[param.label]["x-ogc-unit"]
+                    assert unit == param.unit, (
+                        f"There are two parameters with the same label {param.label} but different units thus making it ambiguous"
+                    )
+                else:
+                    fields[param.label] = {
+                        "title": param.label,
+                        "description": f"{param.label}",
+                        "x-ogc-unit": param.unit,
+                        "type": "string",
+                    }
         return fields
 
     async def fill_all_results(self, start: str, end: str) -> None:
@@ -224,12 +247,12 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         if not properties:
             return
 
-        locations_to_pop = set()
+        locations_to_pop: Set[int] = set()
         for i, location in enumerate(self.locations):
             if not location.properties.timeseries:
                 locations_to_pop.add(i)
                 continue
-            params_to_pop = set()
+            params_to_pop: Set[int] = set()
             for j, param in enumerate(location.properties.timeseries):
                 if param.tsid not in properties:
                     params_to_pop.add(j)

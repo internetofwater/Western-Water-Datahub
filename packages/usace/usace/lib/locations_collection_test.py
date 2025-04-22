@@ -19,10 +19,10 @@ def test_get_edr_fields():
     collection = LocationCollection()
     fields = collection.get_fields()
     assert fields
-    assert fields["SC18.Elev.Inst.1Hour.0.Best-NWO"] == {
+    assert fields["Elevation"] == {
         "title": "Elevation",
         "type": "string",
-        "description": "Elevation (Feet) with id SC18.Elev.Inst.1Hour.0.Best-NWO",
+        "description": "Elevation",
         "x-ogc-unit": "ft",
     }
 
