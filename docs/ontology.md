@@ -12,7 +12,7 @@ The Ontology consists of two separate utilities:
    with ODM2 parameters and units replacing the native values from the source
    system while staying compliant with [Requirement A.25](https://docs.ogc.org/is/19-086r6/19-086r6.html#req_edr_rc-parameters).
    When the list of ODM2 terms is provided, only terms in that list will
-   be in the returned collections JSON document. The general behavior can be 
+   be in the returned collections JSON document. The general behavior can be
    seen in the diagram below:
 
 ```mermaid
@@ -29,7 +29,7 @@ flowchart LR
    the returned CoverageJSON from an EDR Query to use the ODM2 parameter
    provided in the request. Should there be multiple unit representations,
    the response Coverages are converted to the requested unit. This will
-   not change the output of the GeoJSON. The general behavior can be 
+   not change the output of the GeoJSON. The general behavior can be
    seen in the diagram below:
 
 ```mermaid
