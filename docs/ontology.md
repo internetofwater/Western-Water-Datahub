@@ -33,26 +33,28 @@ a _single_ pygeoapi server.
 sequenceDiagram
     participant User
     participant Dashboard
+    participant pygeoapi
     participant OntologyProcess
     participant SourceEDR1
     participant SourceEDR2
 
     %% Initial discovery via process execution
-    Dashboard->>OntologyProcess: POST /processes/ontology/execution\n(input: reservoirStorage)
-    OntologyProcess->>Dashboard: Return filtered view of Collections JSON document
+    Dashboard->>pygeoapi: POST /processes/ontology/execution\n(input: reservoirStorage)
+    pygeoapi->>OntologyProcess: Fetch filtered view of Collections document
 
     %% Loop over URLs to GeoJSON of Reservoirs
     par Task A
-        Dashboard->>SourceEDR1: GET /collections/{SourceEDR1}/locations?parameter-name=reservoirStorage
-        SourceEDR1->>Dashboard: Return GeoJSON
+        Dashboard->>pygeoapi: GET /collections/{SourceEDR1}/locations?parameter-name=reservoirStorage
+        pygeoapi->>SourceEDR1: Fetch Reservoir locations from Source1
     and Task B
-        Dashboard->>SourceEDR2: GET /collections/{SourceEDR2}/locations?parameter-name=reservoirStorage
-        SourceEDR2->>Dashboard: Return GeoJSON
+        Dashboard->>pygeoapi: GET /collections/{SourceEDR2}/locations?parameter-name=reservoirStorage
+        pygeoapi->>SourceEDR2: Fetch Reservoir locations from Source2
+
     end
 
     User->>Dashboard: Select Reservoir of interest
-    Dashboard->>SourceEDR1: GET /collections/{SourceEDR1}/locations/{LocationId}?parameter-name=reservoirStorage
-    SourceEDR1->>Dashboard: Return CovSON
+    Dashboard->>pygeoapi: GET /collections/{SourceEDR1}/locations/{LocationId}?parameter-name=reservoirStorage
+    pygeoapi->>SourceEDR1: Fetch Reservoir timeseries
 ```
 
 This example uses the Reservoir Storage parameter, representated
@@ -91,39 +93,40 @@ parameters by also enable users to filter spatiotemporally.
 sequenceDiagram
     participant User
     participant Hub
+    participant pygeoapi
     participant OntologyProcess
     participant SourceEDR1
     participant SourceEDR2
     participant SourceEDR3
 
     %% Initial discovery via process execution
-    Hub->>OntologyProcess: POST /processes/ontology/execution
-    OntologyProcess->>Hub: Return ODM2 representation of Collections JSON document
+    Hub->>pygeoapi: POST /processes/ontology/execution
+    pygeoapi->>OntologyProcess: Fetch ODM2 representation of Collections document
 
     User->>Hub: Select parameter(s) or parameter group(s) of interest
 
     opt Refresh Collections with desired parameters
-        Hub->>OntologyProcess: POST /processes/ontology/execution\n(input: streamflow)
-        OntologyProcess->>Hub: Return filtered view of Collections JSON document
+        Hub->>pygeoapi: POST /processes/ontology/execution\n(input: streamflow)
+        pygeoapi->>OntologyProcess: Fetch filtered view of Collections document
     end
 
     User->>Hub: Add additional Spatiotemporal filters
 
     opt Filter by provider
         User->>Hub: Choose specific provider(s)
-        Hub->>SourceEDR1: Drop SourceEDR1 collection metadata
+        Hub->SourceEDR1: Ignores SourceEDR1 collection metadata
     end
 
     %% Show locations matching filters
     par Task A
-        Hub->>SourceEDR2: GET /collections/{SourceEDR2}/locations?parameter-name=streamflow
-        SourceEDR2->>Hub: Return GeoJSON
+        Hub->>pygeoapi: GET /collections/{SourceEDR2}/locations?parameter-name=streamflow
+        pygeoapi->>SourceEDR2: Fetch Streamflow locations from Source2
     and Task B
-        Hub->>SourceEDR3: GET /collections/{SourceEDR3}/locations?parameter-name=streamflow
-        SourceEDR3->>Hub: Return GeoJSON
+        Hub->>pygeoapi: GET /collections/{SourceEDR3}/locations?parameter-name=streamflow
+        pygeoapi->>SourceEDR3: Fetch Streamflow locations from Source3
     end
 
     User->>Hub: Select Site of interest
-    Hub->>SourceEDR1: GET /collections/{SourceEDR2}/locations/{LocationId}?parameter-name=streamflow
-    SourceEDR2->>Hub: Return transformed CovJSON
+    Hub->>pygeoapi: GET /collections/{SourceEDR2}/locations/{LocationId}?parameter-name=streamflow
+    pygeoapi->>SourceEDR2: Fetch Streamflow timeseries from Source2
 ```
