@@ -21,7 +21,7 @@ flowchart LR
     P{pygeoapi}
     A[Ontology OGC API - Process]
 
-    I -- POST /processes/ontology/execution --> P -- Request ODM2 Collections document --> A -- Return Collections document --> I
+    I -- POST<br>/processes/ontology/execution --> P -- Request ODM2 Collections<br>document --> A -- Return Collections<br>document --> I
 ```
 
 2. **OGC API - EDR** endpoint interceptor that maps ODM2 parameters
@@ -38,7 +38,7 @@ flowchart LR
     P{pygeoapi}
     E@{ shape: procs, label: "OGC API - EDR Collection"}
 
-    I -- GET /collection/{cid}/locations --> P -- Map ODM2 Vocab to collection --> E  -- Insert ODM2 Vocab in response --> I
+    I -- GET<br>/collection/{cid}/locations --> P -- Map ODM2 Vocab to<br>EDR Parameter --> E  -- Replace EDR Parameter<br>with ODM2 Vocab --> I
 ```
 
 ### Dashboard
