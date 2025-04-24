@@ -99,6 +99,8 @@ const MainMap: React.FC<Props> = (props) => {
                 layers: [LayerId.Reservoirs],
             });
 
+            console.log('features', features);
+
             if (features && features.length) {
                 const feature = features[0];
 
