@@ -4,7 +4,6 @@
 import asyncio
 import logging
 import math
-from typing import Optional
 from urllib.parse import urlparse
 from com.helpers import EDRFieldsMapping, await_
 from rise.custom_types import JsonPayload, Url
@@ -105,9 +104,8 @@ class RISECache(RedisCache):
         return fields
 
     @TRACER.start_as_current_span("get_or_fetch_all_param_filtered_pages")
-    def get_or_fetch_all_param_filtered_pages(
+    def get_or_fetch_all_locations(
         self,
-        properties_to_filter_by: Optional[list[str]] = None,
         only_include_locations_with_data: bool = True,
         force_fetch=False,
     ):
@@ -117,12 +115,6 @@ class RISECache(RedisCache):
         if only_include_locations_with_data:
             base_url += f"&{hasTimeseriesData}"
 
-        if properties_to_filter_by:
-            base_url += "&"
-            for prop in properties_to_filter_by:
-                assert isinstance(prop, str)
-                base_url += f"parameterId%5B%5D={prop}&"
-            base_url = base_url.removesuffix("&")
         return await_(self.get_or_fetch_all_pages(base_url, force_fetch=force_fetch))
 
     async def get_or_fetch_all_results(

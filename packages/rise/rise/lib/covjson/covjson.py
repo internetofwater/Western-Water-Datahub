@@ -14,6 +14,7 @@ from com.covjson import (
 )
 from rise.lib.cache import RISECache
 from rise.lib.add_results import DataNeededForCovjson
+from pygeoapi.provider.base import ProviderNoDataError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -162,6 +163,8 @@ class CovJSONBuilder:
             paramIdToMetadata = {
                 k: v for k, v in paramIdToMetadata.items() if k in select_properties
             }
+            if not paramIdToMetadata:
+                raise ProviderNoDataError()
 
         templated_covjson["coverages"] = self._get_coverages(
             location_response, paramIdToMetadata

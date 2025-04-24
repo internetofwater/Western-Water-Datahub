@@ -445,3 +445,14 @@ class LocationCollectionWithIncluded(LocationCollection):
             seenLocations.add(location.attributes.locationName)
 
         return False
+
+    def drop_all_properties_but_selected(self, selected_properties: list[str]) -> None:
+        itemsToPop = set()
+        for i, included_item in enumerate(self.included):
+            if included_item.type == "CatalogItem":
+                if included_item.id in selected_properties:
+                    continue
+                itemsToPop.add(i)
+
+        for i in sorted(itemsToPop, reverse=True):
+            self.included.pop(i)
