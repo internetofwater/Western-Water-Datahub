@@ -132,10 +132,8 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         raw_resp = self.cache.get_or_fetch_all_locations()
         response = LocationResponse.from_api_pages_with_included_catalog_items(raw_resp)
 
-        if datetime_:
-            response.drop_outside_of_date_range(datetime_)
-
         response.drop_outside_of_bbox(bbox, z)
+
         if select_properties:
             response.drop_all_properties_but_selected(select_properties)
         response.drop_locations_without_catalogitems()
@@ -176,9 +174,6 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         response = LocationResponse.from_api_pages_with_included_catalog_items(raw_resp)
 
         assert not response.has_duplicate_locations()
-
-        if datetime_:
-            response = response.drop_outside_of_date_range(datetime_)
 
         if wkt != "":
             response.drop_outside_of_wkt(wkt, z)
