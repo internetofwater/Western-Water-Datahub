@@ -1,10 +1,23 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+from pathlib import Path
 from typing import Optional
 
 
 from typing import Dict
+
+
+def get_reservoir_capacity_json_path():
+    """
+    Get the path to the json file with reservoir capacity data that
+    was generated from the excel document
+    """
+    return (
+        Path(__file__).parent.parent.parent
+        / "generated"
+        / "Reservoirs_and_Capacity_Data.json"
+    )
 
 
 def merge_pages(pages: Dict[str, dict]) -> dict:
