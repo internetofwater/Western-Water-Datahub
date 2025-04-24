@@ -38,7 +38,9 @@ from pygeoapi.provider.base import ProviderItemNotFoundError
 
 LOGGER = logging.getLogger()
 
-# Get the extra static
+# Get the extra static reservoir capacity data
+# like capacity and storage and cache it in memory here
+# so it can be appended to our geojson response
 with open(get_reservoir_capacity_json_path()) as f:
     RESERVOIR_CAPACITY_DATA: dict[str, dict] = json.load(f)
 
