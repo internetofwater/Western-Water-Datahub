@@ -7,6 +7,7 @@ from com.helpers import await_
 from pydantic import BaseModel
 from rise.lib.cache import RISECache
 from rise.lib.helpers import merge_pages
+from rise.lib.helpers import get_reservoir_capacity_json_path
 
 
 def test_merge_pages():
@@ -71,3 +72,8 @@ def test_dump_none():
     model = DummyModel(a=1, b=DummyNestedModel(a=1, b=None))
     assert model.model_dump() == {"a": 1, "b": {"a": 1, "b": None}}
     assert model.model_dump(exclude_none=True) == {"a": 1, "b": {"a": 1}}
+
+
+def test_get_reservoir_capacity_json_path():
+    path = get_reservoir_capacity_json_path()
+    assert path.exists()
