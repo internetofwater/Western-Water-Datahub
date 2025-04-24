@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 from datetime import datetime
+import json
 import logging
 from typing import Literal, Optional, assert_never, cast
 from com.helpers import (
@@ -25,6 +26,7 @@ from com.geojson.helpers import (
     sort_by_properties_in_place,
 )
 from rise.lib.helpers import (
+    get_reservoir_capacity_json_path,
     merge_pages,
     no_duplicates_in_pages,
 )
@@ -35,6 +37,12 @@ from geojson_pydantic import Feature, FeatureCollection
 from pygeoapi.provider.base import ProviderItemNotFoundError
 
 LOGGER = logging.getLogger()
+
+# Get the extra static reservoir capacity data
+# like capacity and storage and cache it in memory here
+# so it can be appended to our geojson response
+with open(get_reservoir_capacity_json_path()) as f:
+    RESERVOIR_CAPACITY_DATA: dict[str, dict] = json.load(f)
 
 
 class LocationResponse(BaseModel):
@@ -270,10 +278,13 @@ class LocationCollection(LocationCollectionProtocol):
                     else None
                 ),
             }
+            name = location_feature.attributes.locationName
+            extra_props: Optional[dict] = RESERVOIR_CAPACITY_DATA.get(name)
+            if extra_props:
+                for k, v in extra_props.items():
+                    feature_as_geojson["properties"][k] = v
 
-            feature_as_geojson["properties"]["name"] = (
-                location_feature.attributes.locationName
-            )
+            feature_as_geojson["properties"]["name"] = name
 
             z = location_feature.attributes.elevation
             if z is not None:

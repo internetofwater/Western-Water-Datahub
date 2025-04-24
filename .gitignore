@@ -18,3 +18,8 @@ htmlcov/
 .venv/
 
 node_modules/
+
+*.sql
+
+*.sql.gz
+*.sql.zip
