@@ -16,6 +16,7 @@
         "@mantine/hooks": "^7.17.3",
         "@mantine/notifications": "^7.17.3",
         "@next/env": "^15.1.6",
+        "@ogcapi-js/shared": "^1.1.1",
         "@turf/turf": "^7.2.0",
         "@types/geojson": "^7946.0.16",
         "@types/lodash.debounce": "^4.0.9",
