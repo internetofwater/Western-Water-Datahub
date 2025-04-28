@@ -6,9 +6,10 @@ import pytest
 
 from rise.lib.helpers import merge_pages
 from rise.lib.location import LocationResponse
+from rise.rise import RiseProvider
 from rise.rise_edr import RiseEDRProvider
 import datetime
-from pygeoapi.provider.base import ProviderQueryError
+from pygeoapi.provider.base import ProviderQueryError, ProviderNoDataError
 
 
 @pytest.fixture()
@@ -105,10 +106,25 @@ def test_location_select_properties(edr_config: dict):
 
     outAsGeojson = p.locations(select_properties=[lakeReservoirStorage])
     found = False
-    for feature in outAsGeojson["features"]:  # type: ignore
+    assert "features" in outAsGeojson
+    for feature in outAsGeojson["features"]:
         if feature["id"] == int(texasID291):
             found = True
     assert found
+
+    noFilter = p.locations(location_id="1")
+    assert "coverages" in noFilter
+    assert len(noFilter["parameters"]) > 1, (
+        "There should be more than 1 parameter; we don't compare against an exact number since RISE could add more upstream"
+    )
+
+    outWithExtraTerm = p.locations(
+        location_id=texasID291,
+        select_properties=[lakeReservoirStorage, "DUMMY"],
+    )
+    assert out == outWithExtraTerm, (
+        "In EDR if we filter by a property that doesn't exist but it is not such a strict filter that no data exists, we should get the same results"
+    )
 
 
 def test_location_select_properties_with_id_filter(edr_config: dict):
@@ -196,3 +212,14 @@ def test_polygon_output(edr_config: dict):
 
     out = p.locations(location_id="3526", format_="covjson")
     assert out["type"] == "CoverageCollection"
+
+
+def test_item_with_no_data_isnt_in_locations(edr_config: dict):
+    """items with no timeseries data should show up in items but not in locations"""
+    p = RiseEDRProvider()
+    out = RiseProvider(
+        {"name": "RiseEDRProvider", "type": "features", "data": "remote"}
+    ).items(location_id="3526")
+    assert out
+    with pytest.raises(ProviderNoDataError):
+        p.locations(location_id="3526")

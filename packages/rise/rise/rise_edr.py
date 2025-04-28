@@ -80,6 +80,9 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         # If a location exists but has no CatalogItems, it should not appear in locations
         response.drop_locations_without_catalogitems()
 
+        if len(response.locations) == 0:
+            raise ProviderNoDataError()
+
         # FROM SPEC: If a location id is not defined the API SHALL return a GeoJSON features array of valid location identifiers,
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return response.to_geojson(
