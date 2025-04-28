@@ -12,6 +12,7 @@ from com.helpers import (
     parse_date,
     parse_z,
 )
+from com.otel import otel_trace
 from com.protocols.locations import LocationCollectionProtocol
 import geojson_pydantic
 from pydantic import BaseModel, field_validator
@@ -422,6 +423,7 @@ class LocationCollectionWithIncluded(LocationCollection):
 
         return locationIDToCatalogItemsUrls
 
+    @otel_trace()
     def drop_locations_without_catalogitems(self):
         """
         Filter out any locations which do not have catalogitems and thus do not have data

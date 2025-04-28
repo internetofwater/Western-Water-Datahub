@@ -172,6 +172,8 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         assert not response.has_duplicate_locations()
 
+        response.drop_locations_without_catalogitems()
+
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
         response_with_results = builder.load_results(time_filter=datetime_)
         return CovJSONBuilder(self.cache).render(
