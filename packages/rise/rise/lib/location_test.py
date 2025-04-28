@@ -79,7 +79,7 @@ def test_filter_by_wkt(oneItemLocationRespFixture: dict):
 def test_filter_everything_by_wkt():
     p = RiseEDRProvider()
     georgeWestTexasID291 = "POLYGON ((-98.66272 28.062286, -97.756348 28.062286, -97.756348 28.688178, -98.66272 28.688178, -98.66272 28.062286))"
-    raw_resp = p.cache.get_or_fetch_all_locations()
+    raw_resp = p.cache.get_or_fetch_all_param_filtered_pages()
     response = LocationResponse.from_api_pages(raw_resp)
     response.drop_outside_of_wkt(wkt=georgeWestTexasID291)
     length = len(response.locations)
