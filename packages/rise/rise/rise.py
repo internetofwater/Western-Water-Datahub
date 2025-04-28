@@ -63,37 +63,35 @@ class RiseProvider(BaseProvider, OAFProviderProtocol):
 
         # we don't filter by parameters here since OAF filters features by
         # the attributes of the feature, not the parameters of the associated timeseries data
-        raw_resp = self.cache.get_or_fetch_all_locations(
+        raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(
             only_include_locations_with_data=False
         )
-        collection = LocationResponse.from_api_pages_with_included_catalog_items(
-            raw_resp
-        )
+        response = LocationResponse.from_api_pages_with_included_catalog_items(raw_resp)
 
         if itemId:
-            collection.drop_all_locations_but_id(itemId)
+            response.drop_all_locations_but_id(itemId)
 
         if datetime_:
-            collection.drop_outside_of_date_range(datetime_)
+            response.drop_outside_of_date_range(datetime_)
 
         # Even though bbox is required, it can be an empty list. If it is empty just skip filtering
         if bbox:
-            collection.drop_outside_of_bbox(bbox)
+            response.drop_outside_of_bbox(bbox)
 
         if offset:
-            collection.drop_before_offset(offset)
+            response.drop_before_offset(offset)
 
         if limit:
-            collection.drop_after_limit(limit)
+            response.drop_after_limit(limit)
 
         if resulttype == "hits":
             return {
                 "type": "FeatureCollection",
                 "features": [],
-                "numberMatched": len(collection.locations),
+                "numberMatched": len(response.locations),
             }
 
-        return collection.to_geojson(
+        return response.to_geojson(
             itemsIDSingleFeature=itemId is not None,
             skip_geometry=skip_geometry,
             select_properties=select_properties,

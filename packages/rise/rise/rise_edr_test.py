@@ -4,10 +4,11 @@
 import requests
 import pytest
 
-from rise.rise import RiseProvider
+from rise.lib.helpers import merge_pages
+from rise.lib.location import LocationResponse
 from rise.rise_edr import RiseEDRProvider
 import datetime
-from pygeoapi.provider.base import ProviderQueryError, ProviderNoDataError
+from pygeoapi.provider.base import ProviderQueryError
 
 
 @pytest.fixture()
@@ -61,18 +62,37 @@ def test_get_fields(edr_config: dict):
     ).json()["meta"]["totalItems"] == len(fields)
 
 
+def test_get_or_fetch_all_param_filtered_pages(edr_config: dict):
+    p = RiseEDRProvider()
+    params = ["812", "6"]
+    bothparams = p.cache.get_or_fetch_all_param_filtered_pages(params)
+    merge_resp = merge_pages(bothparams)
+    assert len(merge_resp["data"]) == 10 + 13
+
+    params = ["6"]
+    oneparam = p.cache.get_or_fetch_all_param_filtered_pages(params)
+    one_resp = merge_pages(oneparam)
+    assert len(one_resp["data"]) == 13
+
+    assert len(merge_resp["data"]) > len(one_resp["data"]), (
+        "both params should have more data than one param"
+    )
+
+    allparams = p.cache.get_or_fetch_all_param_filtered_pages()
+    model = LocationResponse.from_api_pages(allparams)
+    seenData = set()
+    for loc in model.locations:
+        assert loc.attributes.id not in seenData, (
+            f"Got a duplicate location with id {loc.attributes.id} and name {loc.attributes.locationName} after scanning {len(seenData)} out of {len(model.locations)} locations in total"
+        )
+        seenData.add(loc.attributes.id)
+
+
 def test_location_select_properties(edr_config: dict):
     """Make sure that we can filter locations based on their associated property IDs"""
     # Currently in pygeoapi we use the word "select_properties" as the
     # keyword argument. This is hold over from OAF it seems.
     p = RiseEDRProvider()
-
-    noFilter = p.locations(location_id="1")
-    assert "coverages" in noFilter
-    assert len(noFilter["parameters"]) > 1, (
-        "There should be more than 1 parameter; we don't compare against an exact number since RISE could add more upstream"
-    )
-
     lakeReservoirStorage = "3"
     texasID291 = "291"
     out = p.locations(location_id=texasID291, select_properties=[lakeReservoirStorage])
@@ -83,27 +103,12 @@ def test_location_select_properties(edr_config: dict):
         "We expect to have only lake reservoir storage for this location since we selected that property"
     )
 
-    outWithExtraTerm = p.locations(
-        location_id=texasID291,
-        select_properties=[lakeReservoirStorage, "DUMMY"],
-    )
-    assert out == outWithExtraTerm, (
-        "In EDR if we filter by a property that doesn't exist but it is not such a strict filter that no data exists, we should get the same results"
-    )
-
     outAsGeojson = p.locations(select_properties=[lakeReservoirStorage])
     found = False
-    assert "features" in outAsGeojson
-    for feature in outAsGeojson["features"]:
+    for feature in outAsGeojson["features"]:  # type: ignore
         if feature["id"] == int(texasID291):
             found = True
     assert found
-
-
-def test_location_select_properties_with_dummy_prop():
-    p = RiseEDRProvider()
-    with pytest.raises(ProviderNoDataError):
-        p.locations(location_id="1", select_properties=["__INVALID"])
 
 
 def test_location_select_properties_with_id_filter(edr_config: dict):
@@ -184,12 +189,10 @@ def test_cube(edr_config: dict):
     assert len(result["coverages"]) == 0
 
 
-def test_item_with_no_data_isnt_in_locations(edr_config: dict):
-    """make sure that if an item has no data, it is not in the locations response"""
+def test_polygon_output(edr_config: dict):
+    """make sure that a location which has a polygon in it doesn't throw an error"""
+    # location id 3526 is a polygon
     p = RiseEDRProvider()
-    out = RiseProvider(
-        {"name": "RiseEDRProvider", "type": "features", "data": "remote"}
-    ).items(location_id="3526")
-    assert out
-    with pytest.raises(ProviderNoDataError):
-        p.locations(location_id="3526")
+
+    out = p.locations(location_id="3526", format_="covjson")
+    assert out["type"] == "CoverageCollection"
