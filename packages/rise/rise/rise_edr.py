@@ -61,7 +61,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         if not location_id and datetime_:
             raise ProviderQueryError("Can't filter by date on every location")
 
-        raw_resp = self.cache.get_or_fetch_all_locations()
+        raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(select_properties)
         if not raw_resp:
             raise ProviderNoDataError(
                 f"No locations found with properties {select_properties}"
@@ -77,14 +77,8 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
                 )
             response.drop_all_locations_but_id(str(location_id_as_int))
 
-        if select_properties:
-            response.drop_all_properties_but_selected(select_properties)
-
         # If a location exists but has no CatalogItems, it should not appear in locations
         response.drop_locations_without_catalogitems()
-
-        if len(response.locations) == 0:
-            raise ProviderNoDataError()
 
         # FROM SPEC: If a location id is not defined the API SHALL return a GeoJSON features array of valid location identifiers,
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
@@ -129,16 +123,13 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         :param format_: data format of output
         """
         # Example: http://localhost:5000/collections/rise-edr/cube?bbox=-101.381836,27.215556,-92.680664,32.23139
-        raw_resp = self.cache.get_or_fetch_all_locations()
+        raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(select_properties)
         response = LocationResponse.from_api_pages_with_included_catalog_items(raw_resp)
 
         if datetime_:
             response.drop_outside_of_date_range(datetime_)
 
         response.drop_outside_of_bbox(bbox, z)
-        if select_properties:
-            response.drop_all_properties_but_selected(select_properties)
-        response.drop_locations_without_catalogitems()
 
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
         response_with_results = builder.load_results(time_filter=datetime_)
@@ -163,7 +154,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         Example: http://localhost:5000/collections/rise-edr/area?coords=POLYGON%20((-109.204102%2047.010226,%20-104.655762%2047.010226,%20-104.655762%2049.267805,%20-109.204102%2049.267805,%20-109.204102%2047.010226))&f=json
         """
 
-        raw_resp = self.cache.get_or_fetch_all_locations()
+        raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(select_properties)
         assert len(raw_resp) > 1
         found = set()
         for url in raw_resp:
@@ -184,10 +175,6 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             response.drop_outside_of_wkt(wkt, z)
 
         assert not response.has_duplicate_locations()
-        if select_properties:
-            response.drop_all_properties_but_selected(select_properties)
-
-        response.drop_locations_without_catalogitems()
 
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
         response_with_results = builder.load_results(time_filter=datetime_)
