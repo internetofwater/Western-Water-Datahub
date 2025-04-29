@@ -72,7 +72,7 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'geojson',
 
-            data: '/api/reservoirs?parameter-name=3',
+            data: 'https://api.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=3',
         },
     },
     {

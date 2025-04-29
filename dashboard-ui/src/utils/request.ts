@@ -74,7 +74,6 @@ const getRequestArgsMap: Record<TRequestMethods, TRequestArgsGetter> = {
             headers,
             method: 'GET',
         };
-        console.log('url', url);
         return { url, init };
     },
     POST: ({

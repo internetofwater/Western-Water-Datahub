@@ -14,11 +14,16 @@ import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { Basin } from '@/features/Header/Selectors/Basin';
+import { ClearAll } from '@/features/Header/Selectors/ClearAll';
 
 const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
     ssr: false,
 });
 
+/**
+
+ * @component
+ */
 const Header: React.FC = () => {
     const [opened, { toggle }] = useDisclosure(false);
 
@@ -60,6 +65,7 @@ const Header: React.FC = () => {
                             <Region />
                             <Basin />
                             <Reservoir />
+                            <ClearAll />
                         </Group>
                         <Button variant="default" onClick={toggle}>
                             Show Filters

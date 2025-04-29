@@ -488,7 +488,9 @@ export class EDRService extends Service {
      * - `crs`: Identifier (id) of the coordinate system to return data in list of valid crs identifiers for the chosen collection are defined in the metadata responses. If not supplied the coordinate reference system will default to WGS84.
      * - `f`: Format of the response.
      */
-    async getLocation<T extends JSON | GeoJSON | string = GeoJSON>(
+    async getLocation<
+        T extends JSON | GeoJSON | CoverageCollection | string = GeoJSON
+    >(
         collectionId: string,
         locId: string,
         options: IServiceRequestOptions<IGetLocationParams> = {}
@@ -982,6 +984,47 @@ export interface IGetCollectionsResponse {
     links: ILink[];
 }
 
+export type CoverageCollection = {
+    type: 'CoverageCollection';
+    parameters: {
+        [key: string]: {
+            type: 'Parameter';
+            description: {
+                en: string;
+            };
+            unit: {
+                symbol: string;
+            };
+            observedProperty: {
+                id: string;
+                label: {
+                    en: string;
+                };
+            };
+        };
+    };
+    referencing: Array<{
+        coordinates: string[];
+        system: {
+            type: string;
+            id?: string;
+            cs?: {
+                csAxes: Array<{
+                    name: {
+                        en: string;
+                    };
+                    direction: string;
+                    unit: {
+                        symbol: string;
+                    };
+                }>;
+            };
+            calendar?: string;
+        };
+    }>;
+    coverages: CoverageJSON[];
+};
+
 export interface CoverageJSON {
     type: string;
     domain: {
@@ -989,7 +1032,7 @@ export interface CoverageJSON {
         domainType: string;
         axes: {
             [key: string]: {
-                values: number[];
+                values: (number | string)[];
             };
         };
         referencing: {

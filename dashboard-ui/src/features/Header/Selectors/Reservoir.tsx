@@ -14,6 +14,7 @@ import {
     createFilteredOptions,
     createOptions,
     shouldLoadOptions,
+    SourceDataEvent,
 } from '@/features/Header/Selectors/utils';
 import {
     ReservoirIdentifierField,
@@ -21,6 +22,10 @@ import {
 } from '@/features/Map/types';
 import { parseReservoirProperties } from '@/features/Map/utils';
 
+/**
+
+ * @component
+ */
 export const Reservoir: React.FC = () => {
     const { map } = useMap(MAP_ID);
 
@@ -36,7 +41,7 @@ export const Reservoir: React.FC = () => {
             return;
         }
 
-        map.on('sourcedata', function sourceCallback(e) {
+        const sourceCallback = (e: SourceDataEvent) => {
             if (shouldLoadOptions(map, SourceId.Reservoirs, e)) {
                 const _reservoirOptions = createOptions(
                     map,
@@ -47,7 +52,13 @@ export const Reservoir: React.FC = () => {
                 setReservoirOptions(_reservoirOptions);
                 map.off('sourcedata', sourceCallback); //remove event listener
             }
-        });
+        };
+
+        map.on('sourcedata', sourceCallback);
+
+        return () => {
+            map.off('sourcedata', sourceCallback);
+        };
     }, [map]);
 
     useEffect(() => {
