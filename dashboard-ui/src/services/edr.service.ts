@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { request } from '@/utils/request';
 import { IRequestParams, Service, ILink } from '@ogcapi-js/shared';
 import { BBox, GeoJSON } from 'geojson';

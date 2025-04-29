@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import edrService from '@/services/edr.init';
 import { NextRequest } from 'next/server';
 

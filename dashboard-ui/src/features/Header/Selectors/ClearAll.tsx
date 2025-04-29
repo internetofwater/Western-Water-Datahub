@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import Close from '@/icons/Close';
 import useMainStore from '@/lib/main';
 import { ActionIcon } from '@mantine/core';

@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { LineChart } from '@/components/LineChart';
 import edrService from '@/services/edr.init';
 import React, { useEffect, useRef, useState } from 'react';

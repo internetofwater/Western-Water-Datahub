@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { GridCol, Paper, Text } from '@mantine/core';
 import { MAP_ID, SourceId } from '@/features/Map/config';
 import { useMap } from '@/contexts/MapContexts';
