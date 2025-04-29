@@ -26,7 +26,6 @@ export const ClearAll: React.FC = () => {
             aria-label="Clear all"
             title="Clear All"
             color="rgba(0, 119, 154, 1)"
-            className={styles.clearAllButton}
             disabled={noSelections}
             onClick={handleClick}
         >

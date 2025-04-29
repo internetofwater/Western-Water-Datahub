@@ -64,8 +64,11 @@ const Header: React.FC = () => {
                         <Group gap="xl">
                             <Region />
                             <Basin />
-                            <Reservoir />
-                            <ClearAll />
+                            {/* Group these so they move together when decreasing screen width */}
+                            <Group>
+                                <Reservoir />
+                                <ClearAll />
+                            </Group>
                         </Group>
                         <Button variant="default" onClick={toggle}>
                             Show Filters

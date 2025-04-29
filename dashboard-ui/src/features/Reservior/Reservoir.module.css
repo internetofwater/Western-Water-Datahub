@@ -16,6 +16,12 @@
     align-items: center;
 }
 
+@media screen and (max-width: 1258px) {
+    .chartContainer {
+        height: 79%;
+    }
+}
+
 @media screen and (max-width: 992px) {
     .infoContainer {
         max-height: unset;
