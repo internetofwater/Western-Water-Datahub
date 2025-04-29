@@ -6,7 +6,6 @@
 import Close from '@/icons/Close';
 import useMainStore from '@/lib/main';
 import { ActionIcon } from '@mantine/core';
-import styles from '@/features/Header/Selectors/Selectors.module.css';
 
 /**
 
