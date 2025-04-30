@@ -5,7 +5,7 @@
 
 .mapContainerSmall {
     width: 100%;
-    height: calc(100vh - 241px);
+    height: calc(100vh - 480px);
 }
 
 .mapContainerLarge {

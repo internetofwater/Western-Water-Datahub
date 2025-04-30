@@ -6,7 +6,7 @@
 'use client';
 
 import Map from '@/components/Map';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
     layerDefinitions,
     sourceConfigs,
@@ -55,6 +55,14 @@ const MainMap: React.FC<Props> = (props) => {
     const setReservoir = useMainStore((state) => state.setReservoir);
     const basemap = useMainStore((state) => state.basemap);
 
+    const isMounted = useRef(true);
+
+    useEffect(() => {
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
+
     useEffect(() => {
         if (!map) {
             return;
@@ -102,6 +110,8 @@ const MainMap: React.FC<Props> = (props) => {
             if (features && features.length) {
                 const feature = features[0];
 
+                console.log('feature', feature);
+
                 if (feature.properties) {
                     const reservoir = feature.properties[
                         ReservoirIdentifierField
@@ -127,6 +137,32 @@ const MainMap: React.FC<Props> = (props) => {
             loadImages(map);
         });
     }, [map]);
+
+    // useEffect(() => {
+    //     if (!map) {
+    //         return;
+    //     }
+
+    //     const now = new Date();
+    //     const today = new Date(
+    //         now.getFullYear(),
+    //         now.getMonth(),
+    //         now.getDate()
+    //     );
+    //     // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    //     (async () => {
+    //         controller.current = new AbortController();
+    //         const data = await edrService.getCube('rise-edr', {
+    //             signal: controller.current.signal,
+    //             params: {
+    //                 'parameter-name': '3',
+    //                 bbox: [-130.516667, 24.1, -62.25273100000001, 58.240301],
+    //                 datetime: today.toISOString().split('T')[0] + '/',
+    //             },
+    //         });
+    //         console.log('data', data);
+    //     })();
+    // }, [map]);
 
     useEffect(() => {
         if (!map) {

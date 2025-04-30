@@ -72,8 +72,7 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'geojson',
 
-            data: 'https://api.wwdh.internetofwater.app/collections/rise-edr/items?f=json&locationTypeName=Lake/Reservoir',
-            filter: ['in', 'Reservoir', ['get', 'name']],
+            data: 'https://api.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=3',
         },
     },
     {

@@ -13,8 +13,13 @@ import { useEffect, useState } from 'react';
 import {
     createOptions,
     shouldLoadOptions,
+    SourceDataEvent,
 } from '@/features/Header/Selectors/utils';
 
+/**
+
+ * @component
+ */
 export const Region: React.FC = () => {
     const { map } = useMap(MAP_ID);
 
@@ -28,7 +33,7 @@ export const Region: React.FC = () => {
             return;
         }
 
-        map.on('sourcedata', function sourceCallback(e) {
+        const sourceCallback = (e: SourceDataEvent) => {
             if (shouldLoadOptions(map, SourceId.Regions, e)) {
                 const regionOptions = createOptions(
                     map,
@@ -37,8 +42,15 @@ export const Region: React.FC = () => {
                     'All Regions'
                 );
                 setRegionOptions(regionOptions);
+                map.off('sourcedata', sourceCallback);
             }
-        });
+        };
+
+        map.on('sourcedata', sourceCallback);
+
+        return () => {
+            map.off('sourcedata', sourceCallback);
+        };
     }, [map]);
 
     return (

@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+/**
+ *
+ * @interface
+ */
 export interface RegionProperties {
     Interior: string;
     LABEL: string;
@@ -11,25 +15,41 @@ export interface RegionProperties {
     REGION: string;
 }
 
-export type RawReservoirProperties = {
+/**
+ *
+ * @type
+ */
+type PropertiesBase = {
+    _id: number;
     createDate: string;
     elevation: number;
-    horizontalDatum: string;
     locationName: string;
-    locationRegionNames: string;
     locationStatusId: number;
-    locationTags: string;
     locationTypeName: string;
-    locationUnifiedRegionNames: string;
     name: string;
-    projectNames: string;
     timezone: string;
     timezoneName: string;
     timezoneOffset: number;
     updateDate: string;
+};
+
+/**
+ *
+ * @type
+ */
+export type ReservoirPropertiesRaw = PropertiesBase & {
+    horizontalDatum: string;
+    locationRegionNames: string;
+    locationTags: string;
+    locationUnifiedRegionNames: string;
+    projectNames: string;
     verticalDatum: string;
 };
 
+/**
+ *
+ * @constant
+ */
 export const ComplexReservoirProperties = [
     'horizontalDatum',
     'locationRegionNames',
@@ -39,24 +59,26 @@ export const ComplexReservoirProperties = [
     'verticalDatum',
 ];
 
+/**
+ *
+ * @constant
+ */
 export const ReservoirIdentifierField = 'name';
+/**
+ *
+ * @constant
+ */
 export const ReservoirRegionConnectorField = 'locationRegionNames';
 
-export type ReservoirProperties = {
-    createDate: string;
-    elevation: number;
+/**
+ *
+ * @type
+ */
+export type ReservoirProperties = PropertiesBase & {
     horizontalDatum: { _id: string; definition: string | null };
-    locationName: string;
     locationRegionNames: string[];
-    locationStatusId: number;
     locationTags: { id: number; tag: string; createDate: string }[];
-    locationTypeName: string;
     locationUnifiedRegionNames: string[];
-    name: string;
     projectNames: string[];
-    timezone: string;
-    timezoneName: string;
-    timezoneOffset: number;
-    updateDate: string;
     verticalDatum: { _id: string; definition: string | null };
 };

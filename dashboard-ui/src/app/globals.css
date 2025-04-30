@@ -57,3 +57,8 @@ html[data-mantine-color-scheme='light'] {
     --background: #f5f5f5;
     --foreground: #171717;
 }
+
+.mantine-Radio-body *,
+.mantine-Switch-body * {
+    cursor: pointer;
+}
