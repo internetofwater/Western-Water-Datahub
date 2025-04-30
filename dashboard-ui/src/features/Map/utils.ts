@@ -6,9 +6,14 @@
 import { Map } from 'mapbox-gl';
 import {
     ComplexReservoirProperties,
+    ReservoirPropertiesRaw,
     ReservoirProperties,
 } from '@/features/Map/types';
 
+/**
+ *
+ * @function
+ */
 export const loadTeacups = (map: Map) => {
     if (!map.hasImage('default')) {
         map.loadImage('/map-icons/default.png', (error, image) => {
@@ -75,7 +80,13 @@ export const loadTeacups = (map: Map) => {
     }
 };
 
-export const parseReservoirProperties = <T extends keyof ReservoirProperties>(
+/**
+ *
+ * @function
+ */
+export const parseReservoirProperties = <
+    T extends keyof ReservoirPropertiesRaw
+>(
     key: T,
     value: string | number
 ): ReservoirProperties[T] => {

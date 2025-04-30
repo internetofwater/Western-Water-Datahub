@@ -11,6 +11,10 @@ import {
     MapSourceDataEvent,
 } from 'mapbox-gl';
 
+/**
+
+ * @function
+ */
 export const createOptions = (
     map: MapObj,
     sourceId: SourceId,
@@ -38,6 +42,10 @@ export const createOptions = (
     return Array.from(options.values());
 };
 
+/**
+
+ * @function
+ */
 export const createFilteredOptions = (
     map: MapObj,
     sourceId: SourceId,
@@ -68,15 +76,23 @@ export const createFilteredOptions = (
     return Array.from(options.values());
 };
 
-type Event = {
+/**
+
+ * @type
+ */
+export type SourceDataEvent = {
     type: 'sourcedata';
     target: MapObj;
 } & MapSourceDataEvent;
 
+/**
+
+ * @function
+ */
 export const shouldLoadOptions = (
     map: MapObj,
     sourceId: SourceId,
-    event: Event
+    event: SourceDataEvent
 ): boolean => {
     return Boolean(
         event.sourceId === sourceId &&

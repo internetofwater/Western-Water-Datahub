@@ -13,11 +13,16 @@ import { MAP_ID } from '@/features/Map/config';
 import { useMap } from '@/contexts/MapContexts';
 import { useEffect } from 'react';
 import { MapTools } from '@/features/MapTools';
+import Reservoir from '@/features/Reservior';
 
 type Props = {
     accessToken: string;
 };
 
+/**
+
+ * @component
+ */
 const Main: React.FC<Props> = (props) => {
     const { accessToken } = props;
 
@@ -71,25 +76,7 @@ const Main: React.FC<Props> = (props) => {
                     <MapTools />
                 </Box>
             </GridCol>
-            {hasSelectedReservoir && (
-                <>
-                    <GridCol span={{ base: 12, md: 4 }} order={3}>
-                        <Paper shadow="xs" p="xl">
-                            <Text>Reservoir Info</Text>
-                        </Paper>
-                    </GridCol>
-                    <GridCol span={{ base: 12, md: 4 }} order={4}>
-                        <Paper shadow="xs" p="xl">
-                            <Text>Chart</Text>
-                        </Paper>
-                    </GridCol>
-                    <GridCol span={{ base: 12, md: 4 }} order={5}>
-                        <Paper shadow="xs" p="xl">
-                            Average
-                        </Paper>
-                    </GridCol>
-                </>
-            )}
+            {hasSelectedReservoir && <Reservoir reservoir={reservoir} />}
         </Grid>
     );
 };

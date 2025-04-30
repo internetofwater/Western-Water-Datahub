@@ -80,6 +80,9 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         # If a location exists but has no CatalogItems, it should not appear in locations
         response.drop_locations_without_catalogitems()
 
+        if len(response.locations) == 0:
+            raise ProviderNoDataError()
+
         # FROM SPEC: If a location id is not defined the API SHALL return a GeoJSON features array of valid location identifiers,
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return response.to_geojson(
@@ -126,10 +129,9 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         raw_resp = self.cache.get_or_fetch_all_param_filtered_pages(select_properties)
         response = LocationResponse.from_api_pages_with_included_catalog_items(raw_resp)
 
-        if datetime_:
-            response.drop_outside_of_date_range(datetime_)
-
         response.drop_outside_of_bbox(bbox, z)
+
+        response.drop_locations_without_catalogitems()
 
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
         response_with_results = builder.load_results(time_filter=datetime_)
@@ -168,13 +170,12 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         assert not response.has_duplicate_locations()
 
-        if datetime_:
-            response = response.drop_outside_of_date_range(datetime_)
-
         if wkt != "":
             response.drop_outside_of_wkt(wkt, z)
 
         assert not response.has_duplicate_locations()
+
+        response.drop_locations_without_catalogitems()
 
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
         response_with_results = builder.load_results(time_filter=datetime_)
