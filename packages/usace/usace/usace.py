@@ -4,6 +4,8 @@
 import logging
 from typing import Literal, Optional
 
+import aiohttp
+import aiohttp.client_exceptions
 from com.helpers import get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
 from com.protocols.providers import OAFProviderProtocol
@@ -108,5 +110,8 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         :returns: dict of field names and their associated JSON Schema types
         """
         if not self._fields:
-            self._fields = get_oaf_fields_from_pydantic_model(GeojsonProperties)
+            try:
+                self._fields = get_oaf_fields_from_pydantic_model(GeojsonProperties)
+            except aiohttp.client_exceptions.ClientConnectorCertificateError:
+                self._fields = {}
         return self._fields

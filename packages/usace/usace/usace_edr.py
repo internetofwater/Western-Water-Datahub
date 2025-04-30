@@ -4,6 +4,8 @@
 import logging
 from typing import Optional
 
+import aiohttp
+import aiohttp.client_exceptions
 from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
 from com.helpers import EDRFieldsMapping
 from com.otel import otel_trace
@@ -73,7 +75,10 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
     def get_fields(self) -> EDRFieldsMapping:
         """Get the list of all parameters (i.e. fields) that the user can filter by"""
         if not self._fields:
-            self._fields = LocationCollection().get_fields()
+            try:
+                self._fields: EDRFieldsMapping = LocationCollection().get_fields()
+            except aiohttp.client_exceptions.ClientConnectorCertificateError:
+                self._fields: EDRFieldsMapping = {}
         return self._fields
 
     @BaseEDRProvider.register()
