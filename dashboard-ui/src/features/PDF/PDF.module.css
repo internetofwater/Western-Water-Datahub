@@ -1,0 +1,12 @@
+.PDFViewer {
+    width: 100%;
+}
+
+.PDFViewer iframe {
+    height: 70vh;
+    width: 100%;
+}
+
+.controlButton {
+    min-width: 105px;
+}
