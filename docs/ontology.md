@@ -6,8 +6,8 @@ use consistent language when refering to parameters of interest.
 
 The Ontology consists of two separate utilities:
 
-1. **OGC API - Process** that takes in an optional list of ODM2 Vocabulary
-   terms. The process formats a version of the `Collections` document,
+1. **OGC API - Common** that takes in an optional list of ODM2 Vocabulary
+   terms as OGC API - EDR parameters. The process modifies the `Landing Page` and `Collections` document,
    compliant with *http://www.opengis.net/spec/ogcapi-edr-1/1.1/req/collections*,
    with ODM2 parameters and units replacing the native values from the source
    system while staying compliant with [Requirement A.25](https://docs.ogc.org/is/19-086r6/19-086r6.html#req_edr_rc-parameters).
@@ -19,9 +19,9 @@ The Ontology consists of two separate utilities:
 flowchart LR
     I{Dashboard/Hub}
     P{pygeoapi}
-    A[Ontology OGC API - Process]
+    A[Ontology OGC API - Collection]
 
-    I -- POST<br>/processes/ontology/execution --> P -- Request ODM2 Collections<br>document --> A -- Return Collections<br>document --> I
+    I -- GET<br>/collections?parameter-name=reservoirStorage --> P -- Request ODM2 Collections<br>document --> A -- Return Collections<br>document --> I
 ```
 
 2. **OGC API - EDR** endpoint interceptor that maps ODM2 parameters
@@ -38,7 +38,7 @@ flowchart LR
     P{pygeoapi}
     E@{ shape: procs, label: "OGC API - EDR Collection"}
 
-    I -- GET<br>/collection/{cid}/locations --> P -- Map ODM2 Vocab to<br>EDR Parameter --> E  -- Replace EDR Parameter<br>with ODM2 Vocab --> I
+    I -- GET<br>/collection/{cid}/locations?parameter-name=reservoirStorage --> P -- Map ODM2 Vocab to<br>EDR Parameter --> E  -- Replace EDR Parameter<br>with ODM2 Vocab --> I
 ```
 
 ### Dashboard
@@ -59,7 +59,8 @@ sequenceDiagram
     participant SourceEDR2
 
     %% Initial discovery via process execution
-    Dashboard->>pygeoapi: POST /processes/ontology/execution\n(input: reservoirStorage)
+    Dashboard->>pygeoapi: GET /?parameter-name=reservoirStorage
+    Dashboard->>pygeoapi: GET /collections?parameter-name=reservoirStorage
     pygeoapi->>OntologyProcess: Fetch filtered view of Collections document
 
     %% Loop over URLs to GeoJSON of Reservoirs
@@ -120,13 +121,13 @@ sequenceDiagram
     participant SourceEDR3
 
     %% Initial discovery via process execution
-    Hub->>pygeoapi: POST /processes/ontology/execution
+    Hub->>pygeoapi: GET /collections?parameter-name=*
     pygeoapi->>OntologyProcess: Fetch ODM2 representation of Collections document
 
     User->>Hub: Select parameter(s) or parameter group(s) of interest
 
     opt Refresh Collections with desired parameters
-        Hub->>pygeoapi: POST /processes/ontology/execution\n(input: streamflow)
+        Hub->>pygeoapi: GET /collections?parameter-name=streamflow
         pygeoapi->>OntologyProcess: Fetch filtered view of Collections document
     end
 
