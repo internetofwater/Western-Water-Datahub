@@ -71,7 +71,9 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                 domainType=DomainType.vertical_profile,
                 axes=Axes(
                     t=ValuesAxis(values=times),
-                    z=ValuesAxis(values=probabilities),
+                    z=ValuesAxis(
+                        dataType="float", values=[float(prob) for prob in probabilities]
+                    ),
                     x=ValuesAxis(values=[longitude]),
                     y=ValuesAxis(values=[latitude]),
                 ),
@@ -92,6 +94,7 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                         system=ReferenceSystem(
                             type="TemporalRS",
                             id="http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+                            calendar="Gregorian",
                         ),
                     ),
                 ],
