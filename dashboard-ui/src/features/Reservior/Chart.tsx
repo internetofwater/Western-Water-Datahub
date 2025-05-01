@@ -11,6 +11,7 @@ import { CoverageCollection } from '@/services/edr.service';
 import { Box, Group, Loader, Paper, Radio, Space, Title } from '@mantine/core';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { Chart as ChartJS, ChartData } from 'chart.js';
+import useMainStore from '@/lib/main';
 
 type Props = {
     id: number;
@@ -29,8 +30,11 @@ export const Chart: React.FC<Props> = (props) => {
     const [range, setRange] = useState<1 | 5>(1);
     const [error, setError] = useState('');
 
+    const setChartUpdate = useMainStore((state) => state.setChartUpdate);
+
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
+    const chartDidUpdate = useRef(false);
 
     useEffect(() => {
         isMounted.current = true;
@@ -95,6 +99,7 @@ export const Chart: React.FC<Props> = (props) => {
 
     useEffect(() => {
         setError('');
+        chartDidUpdate.current = false;
         void getReservoirStorage(range);
     }, [id, range]);
 
@@ -159,6 +164,14 @@ export const Chart: React.FC<Props> = (props) => {
                             plugins: {
                                 legend: {
                                     display: false,
+                                },
+                            },
+                            animation: {
+                                onComplete: function () {
+                                    if (!chartDidUpdate.current) {
+                                        chartDidUpdate.current = true;
+                                        setChartUpdate(Date.now());
+                                    }
                                 },
                             },
                         }}

@@ -26,6 +26,8 @@ interface MainState {
     setBasemap: (basemap: BasemapId) => void;
     reservoirStorageData: Array<{ x: string; y: number }>;
     setReservoirStorageData: (basemap: Array<{ x: string; y: number }>) => void;
+    chartUpdate: number;
+    setChartUpdate: (chartUpdate: number) => void;
     tools: {
         [Tools.BasemapSelector]: boolean;
         [Tools.Print]: boolean;
@@ -47,6 +49,8 @@ const useMainStore = create<MainState>()((set) => ({
     reservoirStorageData: [],
     setReservoirStorageData: (reservoirStorageData) =>
         set({ reservoirStorageData }),
+    chartUpdate: 0,
+    setChartUpdate: (chartUpdate) => set({ chartUpdate }),
     tools: {
         [Tools.BasemapSelector]: false,
         [Tools.Print]: false,

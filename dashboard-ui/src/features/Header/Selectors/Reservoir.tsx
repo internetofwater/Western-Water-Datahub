@@ -70,11 +70,7 @@ export const Reservoir: React.FC = () => {
             const reservoirOptions = createFilteredOptions(
                 map,
                 SourceId.Reservoirs,
-                [
-                    'all',
-                    ['in', region, ['get', ReservoirRegionConnectorField]],
-                    ['in', 'Reservoir', ['get', 'name']],
-                ],
+                ['all', ['in', region, ['get', ReservoirRegionConnectorField]]],
                 'name',
                 'All Reservoirs'
             );

@@ -174,7 +174,7 @@ const duplicateChartInstance = (
     const newChart = new ChartJS(canvas, originalChart.config);
 
     // TODO: these alterations are not working as expected, resolve to speed up conversion to image
-    newChart.options.animation = false;
+    // newChart.options.animation = false;
     newChart.config.data.datasets.forEach((dataset) => {
         dataset.animation = false;
     });

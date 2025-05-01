@@ -13,6 +13,7 @@ import {
     handleCreateMapImage,
 } from '@/features/Reservior/PDF/utils';
 import { ReservoirProperties } from '@/features/Map/types';
+import useMainStore from '@/lib/main';
 
 type Props = {
     accessToken: string;
@@ -30,6 +31,8 @@ const PDF: React.FC<Props> = (props) => {
     const [mapImage, setMapImage] = useState<Blob | null>(null);
     const [chartImage, setChartImage] = useState<Blob | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+
+    const chartUpdate = useMainStore((state) => state.chartUpdate);
 
     const { map } = useMap(MAP_ID);
 
@@ -55,7 +58,6 @@ const PDF: React.FC<Props> = (props) => {
         };
     }, [map, center]);
 
-    const update = chartRef.current?.data;
     useEffect(() => {
         if (!chartRef.current) {
             return;
@@ -76,7 +78,7 @@ const PDF: React.FC<Props> = (props) => {
         return () => {
             cancel = true;
         };
-    }, [update, reservoirProperties._id]);
+    }, [chartUpdate, reservoirProperties._id]);
 
     const [opened, { open, close }] = useDisclosure(false);
 
