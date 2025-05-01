@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import { usePDF, DocumentProps } from '@react-pdf/renderer';
 import { Button, Group } from '@mantine/core';

@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, Button, Loader, Stack, Box } from '@mantine/core';
 import { RefObject, useEffect, useState } from 'react';

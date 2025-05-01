@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { Dispatch, SetStateAction } from 'react';
 import { LngLatLike, Map } from 'mapbox-gl';
 import { loadTeacups as loadImages } from '@/features/Map/utils';

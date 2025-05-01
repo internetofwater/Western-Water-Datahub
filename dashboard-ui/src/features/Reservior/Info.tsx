@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { Paper, Stack, Title, Text, Group } from '@mantine/core';
 import PDF from '@/features/Reservior/PDF';
 import { ReservoirProperties } from '../Map/types';
