@@ -92,6 +92,4 @@ export type ReservoirProperties = PropertiesBase & {
     locationUnifiedRegionNames: string[];
     projectNames: string[];
     verticalDatum: { _id: string; definition: string | null };
-    activeCapacity: number;
-    assetName: string;
 };
