@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import { usePDF, DocumentProps } from '@react-pdf/renderer';
 import { Button, Group } from '@mantine/core';
-import styles from '@/features/PDF/PDF.module.css';
+import styles from '@/features/Reservior/Reservoir.module.css';
 
 type Props = {
     fileName: string;
@@ -12,12 +12,12 @@ export const Controls: React.FC<Props> = (props) => {
     const { fileName, pdf } = props;
 
     const [instance] = usePDF({ document: pdf });
-    const [url, set] = useState<string>();
+    const [url, setUrl] = useState<string>();
     const frameRef = useRef<HTMLIFrameElement>(null);
 
     useEffect(() => {
         if (instance.blob) {
-            set(
+            setUrl(
                 URL.createObjectURL(
                     new Blob([instance.blob], {
                         type: instance.blob.type,
@@ -41,14 +41,6 @@ export const Controls: React.FC<Props> = (props) => {
             frameRef.current.contentWindow.print();
         }
     };
-
-    console.log(
-        'url',
-        !url,
-        instance.loading,
-        frameRef.current,
-        frameRef.current?.contentWindow
-    );
 
     return (
         <>

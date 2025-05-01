@@ -31,6 +31,17 @@ type PropertiesBase = {
     timezoneName: string;
     timezoneOffset: number;
     updateDate: string;
+    ['Active Capacity']: number;
+    ['Asset Name (in tessel)']: string;
+    ['Dead Capacity']: number;
+    ['Dead Capacity Elevation']: number;
+    ['Inactive Capacity Elevation']: number;
+    ['Live Capcity']: number;
+    ['Maximum Water Surface Elevation']: number;
+    ['Surcharge Capacity']: number;
+    ['Total Capacity']: number;
+    ['Total Capacity Elevation']: number;
+    ['Total Capacity Surface Area']: number;
 };
 
 /**
@@ -81,4 +92,6 @@ export type ReservoirProperties = PropertiesBase & {
     locationUnifiedRegionNames: string[];
     projectNames: string[];
     verticalDatum: { _id: string; definition: string | null };
+    activeCapacity: number;
+    assetName: string;
 };

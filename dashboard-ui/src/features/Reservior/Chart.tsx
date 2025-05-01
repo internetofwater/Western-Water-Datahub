@@ -5,15 +5,16 @@
 
 import { LineChart } from '@/components/LineChart';
 import edrService from '@/services/edr.init';
-import React, { useEffect, useRef, useState } from 'react';
-import { getDateRange, getLabelsAndValues } from './utils';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
+import { getDateRange, getLabelsAndValues } from '@/features/Reservior/utils';
 import { CoverageCollection } from '@/services/edr.service';
 import { Box, Group, Loader, Paper, Radio, Space, Title } from '@mantine/core';
 import styles from '@/features/Reservior/Reservoir.module.css';
-import { ChartData } from 'chart.js';
+import { Chart as ChartJS, ChartData } from 'chart.js';
 
 type Props = {
     id: number;
+    ref: RefObject<ChartJS<'line', Array<{ x: string; y: number }>> | null>;
 };
 
 /**
@@ -21,7 +22,7 @@ type Props = {
  * @component
  */
 export const Chart: React.FC<Props> = (props) => {
-    const { id } = props;
+    const { ref, id } = props;
 
     const [data, setData] = useState<Array<{ x: string; y: number }>>([]);
     const [loading, setLoading] = useState(true);
@@ -37,6 +38,10 @@ export const Chart: React.FC<Props> = (props) => {
             isMounted.current = false;
             if (controller.current) {
                 controller.current.abort('Component unmount');
+            }
+            // Remove chart instance on unmount
+            if (ref.current) {
+                ref.current.destroy();
             }
         };
     }, []);
@@ -133,6 +138,7 @@ export const Chart: React.FC<Props> = (props) => {
                     <>{error}</>
                 ) : (
                     <LineChart
+                        ref={ref}
                         data={chartData}
                         options={{
                             responsive: true,

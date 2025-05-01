@@ -22,6 +22,10 @@ import { Map } from 'mapbox-gl';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Image from 'next/image';
 
+/**
+ *
+ * @component
+ */
 const Screenshot: React.FC = () => {
     const [src, setSrc] = useState<string>('');
     const [name, setName] = useState<string>('WWDH-Map');

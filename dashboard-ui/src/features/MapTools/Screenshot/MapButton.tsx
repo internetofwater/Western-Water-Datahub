@@ -6,6 +6,10 @@
 import Screenshot from '@/icons/Screenshot';
 import useMainStore, { Tools } from '@/lib/main';
 
+/**
+ *
+ * @component
+ */
 export const MapButton: React.FC = () => {
     const tools = useMainStore((state) => state.tools);
 
