@@ -46,5 +46,5 @@ type Props = {
 export const LineChart: React.FC<Props> = (props) => {
     const { data, options } = props;
 
-    return <Line data={data} options={options} />;
+    return <Line data-testid="line-chart" data={data} options={options} />;
 };

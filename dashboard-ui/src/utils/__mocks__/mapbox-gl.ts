@@ -8,14 +8,55 @@ import { GeoJSONFeature } from 'mapbox-gl';
 
 let zoom = 0;
 
+const mapEvents = [
+    'load',
+    'idle',
+    'render',
+    'resize',
+    'remove',
+    'mousedown',
+    'mouseup',
+    'click',
+    'dblclick',
+    'mousemove',
+    'mouseover',
+    'mouseout',
+    'mouseenter',
+    'mouseleave',
+    'touchstart',
+    'touchend',
+    'touchmove',
+    'contextmenu',
+    'wheel',
+    'boxzoomstart',
+    'boxzoomend',
+    'boxzoomcancel',
+    'dragstart',
+    'dragend',
+    'drag',
+    'zoomstart',
+    'zoomend',
+    'rotatestart',
+    'rotateend',
+    'pitchstart',
+    'pitchend',
+];
+
 const mapMock = {
-    on: jest.fn((event, callback) => {
-        if (event === 'load') {
-            callback();
-        } else if (event === 'zoom') {
+    // on/once can include the layer id or not
+    on: jest.fn((event, ...args) => {
+        if (mapEvents.includes(event)) {
+            const callback = args.length === 2 ? args[1] : args[0];
             callback();
         }
     }),
+    once: jest.fn((event, ...args) => {
+        if (mapEvents.includes(event)) {
+            const callback = args.length === 2 ? args[1] : args[0];
+            callback();
+        }
+    }),
+
     remove: jest.fn(),
     addLayer: jest.fn(),
     addSource: jest.fn(),
