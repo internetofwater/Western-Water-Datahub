@@ -12,8 +12,7 @@ const createJestConfig = nextJest({
 });
 
 const config: Config = {
-    preset: 'ts-jest',
-    testEnvironment: 'jsdom',
+    preset: 'jest-puppeteer',
     setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
     transform: {
@@ -24,13 +23,26 @@ const config: Config = {
             },
         ],
     },
-    testMatch: ['**/?(*.)+(spec|test).ts?(x)'],
+    testMatch: ['**/?(*.)+(spec|test).e2e.ts?(x)'],
     verbose: true,
     moduleDirectories: ['node_modules', 'utils'],
     moduleNameMapper: {
         '^mapbox-gl$': '<rootDir>/src/utils/__mocks__/mapbox-gl.ts',
         '^@/(.*)$': '<rootDir>/src/$1',
     },
+
+    globals: {
+        'jest-puppeteer': {
+            launch: {
+                headless: false,
+                slowMo: 200,
+                devtools: true,
+                product: 'chrome',
+                args: ['--window-size=1920,1080'],
+            },
+        },
+    },
+    testTimeout: 30000,
 };
 
 export default createJestConfig(config);

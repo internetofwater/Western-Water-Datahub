@@ -28,7 +28,8 @@
         "**/*.tsx",
         ".next/types/**/*.ts",
         "**/mapbox-gl.d.ts",
-        "jest.config.js",
+        "jest.config.unit.ts",
+        "jest.config.e2e.ts",
         ".eslintrc.js"
     ],
     "exclude": ["node_modules"]
