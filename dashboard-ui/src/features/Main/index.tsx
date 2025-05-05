@@ -76,7 +76,9 @@ const Main: React.FC<Props> = (props) => {
                     <MapTools />
                 </Box>
             </GridCol>
-            {hasSelectedReservoir && <Reservoir reservoir={reservoir} />}
+            {hasSelectedReservoir && (
+                <Reservoir reservoir={reservoir} accessToken={accessToken} />
+            )}
         </Grid>
     );
 };

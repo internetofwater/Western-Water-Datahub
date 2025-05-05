@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from 'react';
+import React, { RefObject } from 'react';
 import {
     Chart as ChartJS,
     Tooltip,
@@ -37,6 +37,8 @@ type Props = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: ChartData<'line', any>;
     options: ChartOptions<'line'>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ref?: RefObject<ChartJS<'line', any> | null>;
 };
 
 /**
@@ -44,7 +46,14 @@ type Props = {
  * @component
  */
 export const LineChart: React.FC<Props> = (props) => {
-    const { data, options } = props;
+    const { ref = null, data, options } = props;
 
-    return <Line data-testid="line-chart" data={data} options={options} />;
+    return (
+        <Line
+            data-testid="line-chart"
+            ref={ref}
+            data={data}
+            options={options}
+        />
+    );
 };

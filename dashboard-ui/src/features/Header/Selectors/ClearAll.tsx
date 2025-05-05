@@ -29,7 +29,6 @@ export const ClearAll: React.FC = () => {
             variant="filled"
             aria-label="Clear all"
             title="Clear All"
-            color="rgba(0, 119, 154, 1)"
             disabled={noSelections}
             onClick={handleClick}
         >

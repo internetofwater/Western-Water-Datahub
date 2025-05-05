@@ -11,6 +11,8 @@ export enum Tools {
     Print = 'print',
 }
 
+export type ReservoirStorageData = Array<{ x: string; y: number }>;
+
 interface MainState {
     region: string;
     setRegion: (region: string) => void;
@@ -22,6 +24,10 @@ interface MainState {
     setReservoir: (reservoir: string) => void;
     basemap: BasemapId;
     setBasemap: (basemap: BasemapId) => void;
+    reservoirStorageData: Array<{ x: string; y: number }>;
+    setReservoirStorageData: (basemap: Array<{ x: string; y: number }>) => void;
+    chartUpdate: number;
+    setChartUpdate: (chartUpdate: number) => void;
     tools: {
         [Tools.BasemapSelector]: boolean;
         [Tools.Print]: boolean;
@@ -40,6 +46,11 @@ const useMainStore = create<MainState>()((set) => ({
     setReservoir: (reservoir) => set({ reservoir }),
     basemap: BasemapId.Standard,
     setBasemap: (basemap) => set({ basemap }),
+    reservoirStorageData: [],
+    setReservoirStorageData: (reservoirStorageData) =>
+        set({ reservoirStorageData }),
+    chartUpdate: 0,
+    setChartUpdate: (chartUpdate) => set({ chartUpdate }),
     tools: {
         [Tools.BasemapSelector]: false,
         [Tools.Print]: false,

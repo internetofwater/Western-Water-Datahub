@@ -11,6 +11,10 @@ import { lazy } from 'react';
 
 const Screenshot = lazy(() => import('./Screenshot/Screenshot'));
 
+/**
+ *
+ * @component
+ */
 export const MapTools: React.FC = () => {
     const tools = useMainStore((state) => state.tools);
 
