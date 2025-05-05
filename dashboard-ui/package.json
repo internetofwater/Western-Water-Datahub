@@ -7,9 +7,10 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "test": "jest -c jest.config.unit.ts && jest -c jest.config.e2e.ts",
+        "test": "jest -c jest.config.unit.ts",
         "unit-test": "jest -c jest.config.unit.ts",
-        "e2e-test": "jest -c jest.config.e2e.ts",
+        "e2e-test": "npx playwright test",
+        "e2e-test-ui": "npx playwright test --ui",
         "test-coverage": "jest -c jest.config.unit.ts --coverage"
     },
     "dependencies": {
@@ -27,7 +28,6 @@
         "chartjs-adapter-moment": "^1.0.1",
         "fetch-mock": "^12.3.0",
         "geojson": "^0.5.0",
-        "jest-puppeteer": "^11.0.0",
         "lodash.debounce": "^4.0.8",
         "mapbox-gl": "^3.9.4",
         "moment": "^2.30.1",
@@ -39,6 +39,7 @@
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",
+        "@playwright/test": "^1.52.0",
         "@testing-library/dom": "^10.4.0",
         "@testing-library/jest-dom": "^6.6.3",
         "@testing-library/react": "^16.2.0",
@@ -59,8 +60,6 @@
         "postcss": "^8.5.3",
         "postcss-preset-mantine": "^1.17.0",
         "postcss-simple-vars": "^7.0.1",
-        "puppeteer": "^24.7.2",
-        "puppeteer-core": "^24.7.2",
         "tailwindcss": "^3.4.1",
         "ts-jest": "^29.2.5",
         "ts-node": "^10.9.2",

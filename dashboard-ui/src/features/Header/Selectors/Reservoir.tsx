@@ -133,6 +133,7 @@ export const Reservoir: React.FC = () => {
                 data={reservoirOptions}
                 value={reservoir}
                 defaultValue={reservoir}
+                data-testid="reservoir-select"
                 aria-label="Select a Reservior"
                 placeholder="Select a Reservior"
                 onChange={(_value) => handleChange(_value)}
