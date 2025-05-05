@@ -5,15 +5,17 @@
 
 import { LineChart } from '@/components/LineChart';
 import edrService from '@/services/edr.init';
-import React, { useEffect, useRef, useState } from 'react';
-import { getDateRange, getLabelsAndValues } from './utils';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
+import { getDateRange, getLabelsAndValues } from '@/features/Reservior/utils';
 import { CoverageCollection } from '@/services/edr.service';
 import { Box, Group, Loader, Paper, Radio, Space, Title } from '@mantine/core';
 import styles from '@/features/Reservior/Reservoir.module.css';
-import { ChartData } from 'chart.js';
+import { Chart as ChartJS, ChartData } from 'chart.js';
+import useMainStore from '@/lib/main';
 
 type Props = {
     id: number;
+    ref: RefObject<ChartJS<'line', Array<{ x: string; y: number }>> | null>;
 };
 
 /**
@@ -21,15 +23,18 @@ type Props = {
  * @component
  */
 export const Chart: React.FC<Props> = (props) => {
-    const { id } = props;
+    const { ref, id } = props;
 
     const [data, setData] = useState<Array<{ x: string; y: number }>>([]);
     const [loading, setLoading] = useState(true);
     const [range, setRange] = useState<1 | 5>(1);
     const [error, setError] = useState('');
 
+    const setChartUpdate = useMainStore((state) => state.setChartUpdate);
+
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
+    const chartDidUpdate = useRef(false);
 
     useEffect(() => {
         isMounted.current = true;
@@ -37,6 +42,10 @@ export const Chart: React.FC<Props> = (props) => {
             isMounted.current = false;
             if (controller.current) {
                 controller.current.abort('Component unmount');
+            }
+            // Remove chart instance on unmount
+            if (ref.current) {
+                ref.current.destroy();
             }
         };
     }, []);
@@ -90,6 +99,7 @@ export const Chart: React.FC<Props> = (props) => {
 
     useEffect(() => {
         setError('');
+        chartDidUpdate.current = false;
         void getReservoirStorage(range);
     }, [id, range]);
 
@@ -133,6 +143,7 @@ export const Chart: React.FC<Props> = (props) => {
                     <>{error}</>
                 ) : (
                     <LineChart
+                        ref={ref}
                         data={chartData}
                         options={{
                             responsive: true,
@@ -153,6 +164,14 @@ export const Chart: React.FC<Props> = (props) => {
                             plugins: {
                                 legend: {
                                     display: false,
+                                },
+                            },
+                            animation: {
+                                onComplete: function () {
+                                    if (!chartDidUpdate.current) {
+                                        chartDidUpdate.current = true;
+                                        setChartUpdate(Date.now());
+                                    }
                                 },
                             },
                         }}

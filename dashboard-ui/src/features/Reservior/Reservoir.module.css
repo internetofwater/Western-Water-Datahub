@@ -21,6 +21,19 @@
     align-items: center;
 }
 
+.PDFViewer {
+    width: 100%;
+}
+
+.PDFViewer iframe {
+    height: 70vh;
+    width: 100%;
+}
+
+.controlButton {
+    min-width: 105px;
+}
+
 @media screen and (max-width: 1258px) {
     .chartContainer {
         height: 79%;

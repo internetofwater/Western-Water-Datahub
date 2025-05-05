@@ -9,6 +9,10 @@ import useMainStore from '@/lib/main';
 import { Box, Card, CardSection, Checkbox, Stack, Title } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
 
+/**
+ *
+ * @component
+ */
 export const Selector: React.FC = () => {
     const basemap = useMainStore((state) => state.basemap);
     const setBasemap = useMainStore((state) => state.setBasemap);
