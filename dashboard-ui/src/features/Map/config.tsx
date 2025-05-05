@@ -13,6 +13,7 @@ import {
 } from '@/components/Map/types';
 import {
     DataDrivenPropertyValueSpecification,
+    ExpressionSpecification,
     LayerSpecification,
     Map,
     Popup,
@@ -49,6 +50,52 @@ export const allLayerIds = [
     ...Object.values(SubLayerId),
 ];
 
+const TeacupStepExpression: ExpressionSpecification = [
+    'step',
+    ['var', 'storage'],
+    'default', // Below first step value
+    0.05,
+    'teacup-5',
+    0.1,
+    'teacup-10',
+    0.15,
+    'teacup-15',
+    0.2,
+    'teacup-20',
+    0.25,
+    'teacup-25',
+    0.3,
+    'teacup-30',
+    0.35,
+    'teacup-35',
+    0.4,
+    'teacup-40',
+    0.45,
+    'teacup-45',
+    0.5,
+    'teacup-50',
+    0.55,
+    'teacup-55',
+    0.6,
+    'teacup-60',
+    0.65,
+    'teacup-65',
+    0.7,
+    'teacup-70',
+    0.75,
+    'teacup-75',
+    0.8,
+    'teacup-80',
+    0.85,
+    'teacup-85',
+    0.9,
+    'teacup-90',
+    0.95,
+    'teacup-95',
+    1.0,
+    'teacup-100',
+];
+
 /**********************************************************************
  * Define the various datasources this map will use
  **********************************************************************/
@@ -72,7 +119,7 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'geojson',
 
-            data: 'https://api.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=3',
+            data: 'https://api.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=reservoirStorage',
         },
     },
     {
@@ -225,30 +272,134 @@ export const getLayerConfig = (
                 type: LayerType.Symbol,
                 source: SourceId.Reservoirs,
                 layout: {
-                    'icon-image': 'default',
-                    // 'icon-image': [
-                    //     'let',
-                    //     'storage', // Variable name
-                    //     ['/', ['get', 'elev_ft'], 10000], // Variable value
-                    //     [
-                    //         'step',
-                    //         ['var', 'storage'],
-                    //         'default', // Below first step value
-                    //         0.75,
-                    //         'teacup-75',
-                    //         0.8,
-                    //         'teacup-80',
-                    //         0.85,
-                    //         'teacup-85',
-                    //         0.9,
-                    //         'teacup-90',
-                    //         0.95,
-                    //         'teacup-95',
-                    //         1,
-                    //         'teacup-100',
-                    //     ],
-                    // ],
-                    'icon-size': 0.5,
+                    // 'icon-image': 'default',
+                    'icon-image': [
+                        'let',
+                        'capacity', // Variable name
+                        ['coalesce', ['get', 'Active Capacity'], 1], // Variable value
+                        'storage', // Variable name
+                        [
+                            '/',
+                            ['/', ['get', 'Live Capcity'], 2],
+                            ['coalesce', ['get', 'Active Capacity'], 1],
+                        ], // Variable value
+                        [
+                            'step',
+                            ['zoom'],
+                            TeacupStepExpression,
+
+                            ...[
+                                [1, 2010000],
+                                [2, 985000],
+                                [3, 745000],
+                                [4, 465000],
+                                [5, 320000],
+                                [6, 250000],
+                                [7, 190000],
+                                [8, 145000],
+                                [9, 90000],
+                                [10, 65000],
+                                [11, 45000],
+                                [12, 30000],
+                                [13, 25000],
+                                [14, 13000],
+                                [15, 7000],
+                                [16, 3300],
+                            ].flatMap(([zoom, capacity]) => [
+                                zoom, // At this zoom
+                                [
+                                    // Evaluate this expression
+                                    'case',
+                                    ['>=', ['var', 'capacity'], capacity],
+                                    TeacupStepExpression, // If GTE, evaluate sub-step expression
+                                    'default', // Fallback to basic point symbol
+                                ],
+                            ]),
+                        ],
+                    ],
+                    'icon-size': [
+                        'let',
+                        'capacity',
+                        ['coalesce', ['get', 'Active Capacity'], 1],
+                        [
+                            'step',
+                            ['var', 'capacity'],
+                            0.3,
+                            3300,
+                            0.31,
+                            7000,
+                            0.32,
+                            13000,
+                            0.34,
+                            25000,
+                            0.36,
+                            30000,
+                            0.38,
+                            45000,
+                            0.4,
+                            65000,
+                            0.42,
+                            90000,
+                            0.44,
+                            190000,
+                            0.46,
+                            250000,
+                            0.48,
+                            320000,
+                            0.5,
+                            465000,
+                            0.52,
+                            745000,
+                            0.54,
+                            985000,
+                            0.56,
+                            1500000,
+                            0.58,
+                            2010000,
+                            0.6,
+                        ],
+                    ],
+
+                    'symbol-sort-key': [
+                        'let',
+                        'capacity', // Variable name
+                        ['coalesce', ['get', 'Active Capacity'], 1], // Variable value
+                        [
+                            'step',
+                            ['var', 'capacity'],
+                            1,
+                            3300,
+                            2,
+                            7000,
+                            3,
+                            13000,
+                            4,
+                            25000,
+                            5,
+                            30000,
+                            6,
+                            45000,
+                            7,
+                            65000,
+                            8,
+                            90000,
+                            9,
+                            190000,
+                            10,
+                            250000,
+                            11,
+                            320000,
+                            12,
+                            465000,
+                            13,
+                            745000,
+                            14,
+                            985000,
+                            15,
+                            2010000,
+                            16,
+                        ],
+                    ],
                     'icon-allow-overlap': true,
                 },
             };
