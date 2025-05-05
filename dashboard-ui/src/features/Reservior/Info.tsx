@@ -28,7 +28,12 @@ export const Info: React.FC<Props> = (props) => {
     const { accessToken, reservoirProperties, center, chartRef } = props;
 
     return (
-        <Paper shadow="xs" p="xs" className={styles.infoContainer}>
+        <Paper
+            shadow="xs"
+            p="xs"
+            className={styles.infoContainer}
+            data-testid="reservoir-info"
+        >
             <Stack justify="space-between" align="flex-start">
                 <Title order={2} size={'h3'}>
                     {reservoirProperties.locationName}

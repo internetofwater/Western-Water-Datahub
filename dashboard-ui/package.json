@@ -7,7 +7,7 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "test": "jest -c jest.config.unit.ts",
+        "test": "jest -c jest.config.unit.ts && npx playwright test",
         "unit-test": "jest -c jest.config.unit.ts",
         "e2e-test": "npx playwright test",
         "e2e-test-ui": "npx playwright test --ui",

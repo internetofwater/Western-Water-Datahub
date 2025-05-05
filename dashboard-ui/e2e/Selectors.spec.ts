@@ -110,5 +110,15 @@ test.describe('Reservoir', () => {
                 'Lake Mead Hoover Dam and Powerplant'
             );
         });
+
+        await test.step('Info box renders after selection', async () => {
+            const reservoirInfo = page.getByTestId('reservoir-info');
+            expect(reservoirInfo).toBeDefined();
+
+            const textContent = await reservoirInfo.textContent();
+            expect(textContent).toMatch(
+                /Active Capacity:\s*25,614,000 acre-feet/
+            );
+        });
     });
 });
