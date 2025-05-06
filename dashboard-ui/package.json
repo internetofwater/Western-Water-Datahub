@@ -7,8 +7,11 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "test": "jest",
-        "test-coverage": "jest --coverage"
+        "test": "jest -c jest.config.unit.ts && npx playwright test",
+        "unit-test": "jest -c jest.config.unit.ts",
+        "e2e-test": "npx playwright test",
+        "e2e-test-ui": "npx playwright test --ui",
+        "test-coverage": "jest -c jest.config.unit.ts --coverage"
     },
     "dependencies": {
         "@hansdo/mapbox-gl-arcgis-featureserver": "^0.0.9",
@@ -37,6 +40,7 @@
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",
+        "@playwright/test": "^1.52.0",
         "@testing-library/dom": "^10.4.0",
         "@testing-library/jest-dom": "^6.6.3",
         "@testing-library/react": "^16.2.0",

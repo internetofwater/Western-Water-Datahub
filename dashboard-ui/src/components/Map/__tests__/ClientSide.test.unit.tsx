@@ -15,6 +15,7 @@ import {
     addLayers,
     addSources,
     addControls,
+    addCustomControls,
 } from '../utils';
 
 jest.mock('mapbox-gl');
@@ -25,6 +26,7 @@ jest.mock('../utils', () => ({
     addClickFunctions: jest.fn(),
     addMouseMoveFunctions: jest.fn(),
     addControls: jest.fn(),
+    addCustomControls: jest.fn(),
 }));
 describe('Map Component: ClientSide', () => {
     test('renders MapComponent', async () => {
@@ -43,6 +45,7 @@ describe('Map Component: ClientSide', () => {
                 center: [0, 0] as LngLatLike,
                 testMode: true,
             },
+            customControls: [],
         };
 
         render(<MapComponent {...props} />);
@@ -65,6 +68,7 @@ describe('Map Component: ClientSide', () => {
             expect(addHoverFunctions).toHaveBeenCalled();
             expect(addClickFunctions).toHaveBeenCalled();
             expect(addControls).toHaveBeenCalled();
+            expect(addCustomControls).toHaveBeenCalled();
         });
     });
 });

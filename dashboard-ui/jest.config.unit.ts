@@ -24,7 +24,7 @@ const config: Config = {
             },
         ],
     },
-    testMatch: ['**/?(*.)+(spec|test).ts?(x)'],
+    testMatch: ['**/?(*.)+(spec|test).unit.ts?(x)'],
     verbose: true,
     moduleDirectories: ['node_modules', 'utils'],
     moduleNameMapper: {

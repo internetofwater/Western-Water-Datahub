@@ -64,6 +64,7 @@ export const Region: React.FC = () => {
                 searchable
                 data={regionOptions}
                 value={region}
+                data-testid="region-select"
                 aria-label="Select a region"
                 placeholder="Select a region"
                 onChange={(_value) => setRegion(_value as string)}

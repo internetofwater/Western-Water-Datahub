@@ -152,7 +152,7 @@ describe('Map Component: utils', () => {
                 controllable: true,
                 legend: false,
                 config: { id: 'layer1', type: 'fill', source: 'source1' },
-                hoverFunction: jest.fn(() => jest.fn()),
+                hoverFunction: jest.fn(() => jest.fn(jest.fn())),
             },
         ];
         addHoverFunctions(map, layerDefinitions, hoverPopup, persistentPopup);
