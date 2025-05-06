@@ -125,11 +125,13 @@ export const Chart: React.FC<Props> = (props) => {
                 <Group>
                     <Radio
                         label="1 year"
+                        data-testid="1-year-radio"
                         checked={range === 1}
                         onChange={() => setRange(1)}
                     />
                     <Radio
                         label="5 years"
+                        data-testid="5-year-radio"
                         checked={range === 5}
                         onChange={() => setRange(5)}
                     />

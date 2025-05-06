@@ -48,5 +48,12 @@ type Props = {
 export const LineChart: React.FC<Props> = (props) => {
     const { ref = null, data, options } = props;
 
-    return <Line ref={ref} data={data} options={options} />;
+    return (
+        <Line
+            data-testid="line-chart"
+            ref={ref}
+            data={data}
+            options={options}
+        />
+    );
 };
