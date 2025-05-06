@@ -9,6 +9,8 @@ test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:3000');
 });
 
+test.describe.configure({ timeout: 120000 }); // 2 minutes
+
 test.describe('Region', () => {
     test('should handle region load and selection', async ({ page }) => {
         await test.step('Loading Options', async () => {

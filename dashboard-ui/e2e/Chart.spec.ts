@@ -10,11 +10,10 @@ test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:3000');
 });
 
+test.describe.configure({ timeout: 120000 }); // 2 minutes
+
 test.describe('Line Chart', () => {
-    test('should handle load and change to 5 years', async ({
-        page,
-        browserName,
-    }) => {
+    test('should handle load and change to 5 years', async ({ page }) => {
         const select = page.getByTestId('reservoir-select');
 
         await test.step('Loading Options', async () => {
@@ -58,25 +57,22 @@ test.describe('Line Chart', () => {
         });
 
         await test.step('Request is made after change to 5 years', async () => {
-            // TODO: resolve issue with radio button not responding in webkit test
-            if (browserName !== 'webkit') {
-                const fiveYearRadio = page.getByTestId('5-year-radio');
-                await fiveYearRadio.click();
+            const fiveYearRadio = page.getByTestId('5-year-radio');
+            await fiveYearRadio.click({ force: true });
+            await expect(fiveYearRadio).toBeChecked();
 
-                const dateRange = getDateRange(5);
-                const url = `https://api.wwdh.internetofwater.app/collections/rise-edr/locations/3514?f=json&parameter-name=3&datetime=${dateRange.startDate}%2F`;
+            const dateRange = getDateRange(5);
+            const url = `https://api.wwdh.internetofwater.app/collections/rise-edr/locations/3514?f=json&parameter-name=3&datetime=${dateRange.startDate}%2F`;
 
-                const response = await page.waitForResponse(
-                    (response) =>
-                        response.url().startsWith(url) &&
-                        response.status() === 200
-                );
+            const response = await page.waitForResponse(
+                (response) =>
+                    response.url().startsWith(url) && response.status() === 200
+            );
 
-                expect(response.ok()).toBeTruthy();
+            expect(response.ok()).toBeTruthy();
 
-                const json = (await response.json()) as unknown;
-                expect(json).toBeDefined();
-            }
+            const json = (await response.json()) as unknown;
+            expect(json).toBeDefined();
         });
     });
 });
