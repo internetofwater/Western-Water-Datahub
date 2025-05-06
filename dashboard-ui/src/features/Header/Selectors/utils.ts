@@ -5,11 +5,7 @@
 
 import { SourceId } from '@/features/Map/config';
 import { ComboboxData, ComboboxItem } from '@mantine/core';
-import {
-    ExpressionSpecification,
-    Map as MapObj,
-    MapSourceDataEvent,
-} from 'mapbox-gl';
+import { ExpressionSpecification, Map as MapObj } from 'mapbox-gl';
 
 /**
 
@@ -74,30 +70,4 @@ export const createFilteredOptions = (
     });
 
     return Array.from(options.values());
-};
-
-/**
-
- * @type
- */
-export type SourceDataEvent = {
-    type: 'sourcedata';
-    target: MapObj;
-} & MapSourceDataEvent;
-
-/**
-
- * @function
- */
-export const shouldLoadOptions = (
-    map: MapObj,
-    sourceId: SourceId,
-    event: SourceDataEvent
-): boolean => {
-    return Boolean(
-        event.sourceId === sourceId &&
-            map.getSource(sourceId) &&
-            map.isSourceLoaded(sourceId) &&
-            map.querySourceFeatures(sourceId).length
-    );
 };

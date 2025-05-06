@@ -13,10 +13,13 @@ import {
     MAP_ID,
     SubLayerId,
     LayerId,
+    SourceId,
 } from '@/features/Map/config';
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore from '@/lib/main';
 import {
+    createReservoirOffsets,
+    isSourceDataLoaded,
     loadTeacups as loadImages,
     parseReservoirProperties,
 } from '@/features/Map/utils';
@@ -27,7 +30,9 @@ import { basemaps } from '@/components/Map/consts';
 import {
     ReservoirIdentifierField,
     ReservoirRegionConnectorField,
+    SourceDataEvent,
 } from '@/features/Map/types';
+import { MapMouseEvent } from 'mapbox-gl';
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;
@@ -68,7 +73,7 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
-        map.on('click', SubLayerId.RegionsFill, (e) => {
+        const handleRegionsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [SubLayerId.RegionsFill],
             });
@@ -82,9 +87,9 @@ const MainMap: React.FC<Props> = (props) => {
                     setRegion(region);
                 }
             }
-        });
+        };
 
-        map.on('click', SubLayerId.BasinsFill, (e) => {
+        const handleBasinsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [SubLayerId.BasinsFill],
             });
@@ -100,9 +105,9 @@ const MainMap: React.FC<Props> = (props) => {
             //         setRegion(region);
             //     }
             // }
-        });
+        };
 
-        map.on('click', LayerId.Reservoirs, (e) => {
+        const handleReservoirsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [LayerId.Reservoirs],
             });
@@ -131,11 +136,41 @@ const MainMap: React.FC<Props> = (props) => {
                     }
                 }
             }
-        });
+            // }
+        };
+
+        const handleReservoirOffsetAdjustment = (e: SourceDataEvent) => {
+            if (isSourceDataLoaded(map, SourceId.Reservoirs, e)) {
+                createReservoirOffsets(map);
+                console.log('Again');
+                map.off('sourcedata', handleReservoirOffsetAdjustment); //remove event listener
+            }
+        };
+
+        map.on('click', SubLayerId.RegionsFill, handleRegionsClick);
+
+        map.on('click', SubLayerId.BasinsFill, handleBasinsClick);
+
+        map.on('click', LayerId.Reservoirs, handleReservoirsClick);
+
+        // map.on('sourcedata', handleReservoirOffsetAdjustment);
+
         loadImages(map);
         map.on('style.load', () => {
             loadImages(map);
+            createReservoirOffsets(map);
         });
+
+        map.on('zoom', () => {
+            console.log('zoom: ', map.getZoom());
+        });
+
+        return () => {
+            map.off('click', SubLayerId.RegionsFill, handleRegionsClick);
+            map.off('click', SubLayerId.BasinsFill, handleBasinsClick);
+            map.off('click', LayerId.Reservoirs, handleReservoirsClick);
+            // map.off('sourcedata', handleReservoirOffsetAdjustment);
+        };
     }, [map]);
 
     // useEffect(() => {
@@ -241,6 +276,7 @@ const MainMap: React.FC<Props> = (props) => {
                     style: basemaps[basemap],
                     center: INITIAL_CENTER,
                     zoom: INITIAL_ZOOM,
+                    minZoom: 4,
                     maxZoom: 20,
                 }}
                 controls={{

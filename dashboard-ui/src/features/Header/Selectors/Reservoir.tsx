@@ -13,14 +13,16 @@ import { useEffect, useState } from 'react';
 import {
     createFilteredOptions,
     createOptions,
-    shouldLoadOptions,
-    SourceDataEvent,
 } from '@/features/Header/Selectors/utils';
 import {
     ReservoirIdentifierField,
     ReservoirRegionConnectorField,
+    SourceDataEvent,
 } from '@/features/Map/types';
-import { parseReservoirProperties } from '@/features/Map/utils';
+import {
+    parseReservoirProperties,
+    isSourceDataLoaded,
+} from '@/features/Map/utils';
 
 /**
 
@@ -42,7 +44,7 @@ export const Reservoir: React.FC = () => {
         }
 
         const sourceCallback = (e: SourceDataEvent) => {
-            if (shouldLoadOptions(map, SourceId.Reservoirs, e)) {
+            if (isSourceDataLoaded(map, SourceId.Reservoirs, e)) {
                 const _reservoirOptions = createOptions(
                     map,
                     SourceId.Reservoirs,

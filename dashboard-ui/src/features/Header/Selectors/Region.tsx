@@ -10,11 +10,9 @@ import useMainStore from '@/lib/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId } from '@/features/Map/config';
 import { useEffect, useState } from 'react';
-import {
-    createOptions,
-    shouldLoadOptions,
-    SourceDataEvent,
-} from '@/features/Header/Selectors/utils';
+import { createOptions } from '@/features/Header/Selectors/utils';
+import { SourceDataEvent } from '@/features/Map/types';
+import { isSourceDataLoaded } from '@/features/Map/utils';
 
 /**
 
@@ -34,7 +32,7 @@ export const Region: React.FC = () => {
         }
 
         const sourceCallback = (e: SourceDataEvent) => {
-            if (shouldLoadOptions(map, SourceId.Regions, e)) {
+            if (isSourceDataLoaded(map, SourceId.Regions, e)) {
                 const regionOptions = createOptions(
                     map,
                     SourceId.Regions,
