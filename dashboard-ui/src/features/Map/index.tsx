@@ -7,19 +7,11 @@
 
 import Map from '@/components/Map';
 import React, { useEffect, useRef } from 'react';
-import {
-    layerDefinitions,
-    sourceConfigs,
-    MAP_ID,
-    SubLayerId,
-    LayerId,
-    SourceId,
-} from '@/features/Map/config';
+import { layerDefinitions, sourceConfigs } from '@/features/Map/config';
+import { MAP_ID, SubLayerId, LayerId } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore from '@/lib/main';
 import {
-    createReservoirOffsets,
-    isSourceDataLoaded,
     loadTeacups as loadImages,
     parseReservoirProperties,
 } from '@/features/Map/utils';
@@ -30,7 +22,6 @@ import { basemaps } from '@/components/Map/consts';
 import {
     ReservoirIdentifierField,
     ReservoirRegionConnectorField,
-    SourceDataEvent,
 } from '@/features/Map/types';
 import { MapMouseEvent } from 'mapbox-gl';
 
@@ -139,37 +130,21 @@ const MainMap: React.FC<Props> = (props) => {
             // }
         };
 
-        const handleReservoirOffsetAdjustment = (e: SourceDataEvent) => {
-            if (isSourceDataLoaded(map, SourceId.Reservoirs, e)) {
-                createReservoirOffsets(map);
-                console.log('Again');
-                map.off('sourcedata', handleReservoirOffsetAdjustment); //remove event listener
-            }
-        };
-
         map.on('click', SubLayerId.RegionsFill, handleRegionsClick);
 
         map.on('click', SubLayerId.BasinsFill, handleBasinsClick);
 
         map.on('click', LayerId.Reservoirs, handleReservoirsClick);
 
-        // map.on('sourcedata', handleReservoirOffsetAdjustment);
-
         loadImages(map);
         map.on('style.load', () => {
             loadImages(map);
-            createReservoirOffsets(map);
-        });
-
-        map.on('zoom', () => {
-            console.log('zoom: ', map.getZoom());
         });
 
         return () => {
             map.off('click', SubLayerId.RegionsFill, handleRegionsClick);
             map.off('click', SubLayerId.BasinsFill, handleBasinsClick);
             map.off('click', LayerId.Reservoirs, handleReservoirsClick);
-            // map.off('sourcedata', handleReservoirOffsetAdjustment);
         };
     }, [map]);
 

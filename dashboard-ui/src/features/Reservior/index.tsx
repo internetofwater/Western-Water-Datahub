@@ -4,7 +4,7 @@
  */
 import { useRef } from 'react';
 import { GridCol, Paper } from '@mantine/core';
-import { MAP_ID, SourceId } from '@/features/Map/config';
+import { MAP_ID, SourceId } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { useEffect, useState } from 'react';
 import {
@@ -81,12 +81,12 @@ const Reservoir: React.FC<Props> = (props) => {
                         />
                     </GridCol>
                     <GridCol span={{ base: 12, md: 4 }} order={4}>
-                        <Chart id={reservoirProperties._id} ref={chartRef} />
-                    </GridCol>
-                    <GridCol span={{ base: 12, md: 4 }} order={5}>
                         <Paper shadow="xs" p="xl">
                             Average
                         </Paper>
+                    </GridCol>
+                    <GridCol span={{ base: 12, md: 4 }} order={5}>
+                        <Chart id={reservoirProperties._id} ref={chartRef} />
                     </GridCol>
                 </>
             )}

@@ -8,7 +8,7 @@
 import { ComboboxData, Select, Skeleton } from '@mantine/core';
 import useMainStore from '@/lib/main';
 import { useMap } from '@/contexts/MapContexts';
-import { MAP_ID, SourceId } from '@/features/Map/config';
+import { MAP_ID, SourceId } from '@/features/Map/consts';
 import { useEffect, useState } from 'react';
 import {
     createFilteredOptions,
@@ -48,7 +48,7 @@ export const Reservoir: React.FC = () => {
                 const _reservoirOptions = createOptions(
                     map,
                     SourceId.Reservoirs,
-                    'name',
+                    ReservoirIdentifierField,
                     'All Reservoirs'
                 );
                 setReservoirOptions(_reservoirOptions);
@@ -73,7 +73,7 @@ export const Reservoir: React.FC = () => {
                 map,
                 SourceId.Reservoirs,
                 ['all', ['in', region, ['get', ReservoirRegionConnectorField]]],
-                'name',
+                ReservoirIdentifierField,
                 'All Reservoirs'
             );
             setReservoirOptions(reservoirOptions);
@@ -81,7 +81,7 @@ export const Reservoir: React.FC = () => {
             const _reservoirOptions = createOptions(
                 map,
                 SourceId.Reservoirs,
-                'name',
+                ReservoirIdentifierField,
                 'All Reservoirs'
             );
             setReservoirOptions(_reservoirOptions);

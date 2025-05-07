@@ -8,7 +8,7 @@
 import { ComboboxData, Select, Skeleton } from '@mantine/core';
 import useMainStore from '@/lib/main';
 import { useMap } from '@/contexts/MapContexts';
-import { MAP_ID, SourceId } from '@/features/Map/config';
+import { MAP_ID, SourceId } from '@/features/Map/consts';
 import { useEffect, useState } from 'react';
 import { createOptions } from '@/features/Header/Selectors/utils';
 import { SourceDataEvent } from '@/features/Map/types';

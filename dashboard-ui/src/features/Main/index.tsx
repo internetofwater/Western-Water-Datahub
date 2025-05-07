@@ -9,7 +9,7 @@ import { Box, Grid, GridCol, Paper, Text } from '@mantine/core';
 import Map from '@/features/Map';
 import useMainStore from '@/lib/main';
 import styles from '@/features/Main/Main.module.css';
-import { MAP_ID } from '@/features/Map/config';
+import { MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { useEffect } from 'react';
 import { MapTools } from '@/features/MapTools';

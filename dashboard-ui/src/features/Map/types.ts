@@ -77,6 +77,7 @@ export const ComplexReservoirProperties = [
  * @constant
  */
 export const ReservoirIdentifierField = 'name';
+export const ReservoirLabelField = 'name';
 /**
  *
  * @constant
