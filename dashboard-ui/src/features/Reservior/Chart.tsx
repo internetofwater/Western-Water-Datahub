@@ -4,7 +4,7 @@
  */
 
 import { LineChart } from '@/components/LineChart';
-import edrService from '@/services/edr.init';
+import edrService from '@/services/init/edr.init';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { getDateRange, getLabelsAndValues } from '@/features/Reservior/utils';
 import { CoverageCollection } from '@/services/edr.service';

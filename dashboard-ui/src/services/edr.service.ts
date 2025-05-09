@@ -448,8 +448,10 @@ export class EDRService extends Service {
         options: IServiceRequestOptions = {}
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/items/${itemId}`;
+        const params = Object.assign({}, options.params);
         const result: T = await request({
             url,
+            params: params,
             signal: options.signal,
             headers: options.headers,
         });

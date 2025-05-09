@@ -61,31 +61,6 @@ export type ReservoirPropertiesRaw = PropertiesBase & {
 
 /**
  *
- * @constant
- */
-export const ComplexReservoirProperties = [
-    'horizontalDatum',
-    'locationRegionNames',
-    'locationTags',
-    'locationUnifiedRegionNames',
-    'projectNames',
-    'verticalDatum',
-];
-
-/**
- *
- * @constant
- */
-export const ReservoirIdentifierField = 'name';
-export const ReservoirLabelField = 'name';
-/**
- *
- * @constant
- */
-export const ReservoirRegionConnectorField = 'locationRegionNames';
-
-/**
- *
  * @type
  */
 export type ReservoirProperties = PropertiesBase & {

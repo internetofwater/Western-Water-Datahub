@@ -1,10 +1,14 @@
 import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
 import { ExpressionSpecification } from 'mapbox-gl';
+import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 export const MAP_ID = 'main';
 
 export const BASEMAP = basemaps[BasemapId.Dark];
+
+export const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
+export const INITIAL_ZOOM = 4;
 
 export enum SourceId {
     Regions = 'regions-source',
@@ -111,3 +115,38 @@ export const ReserviorIconImageExpression: ExpressionSpecification = [
         ]),
     ],
 ];
+
+/**
+ *
+ * @constant
+ */
+export const ComplexReservoirProperties = [
+    'horizontalDatum',
+    'locationRegionNames',
+    'locationTags',
+    'locationUnifiedRegionNames',
+    'projectNames',
+    'verticalDatum',
+];
+
+/**
+ *
+ * @constant
+ */
+export const ReservoirIdentifierField = '_id';
+export const ReservoirLabelField = 'name';
+/**
+ *
+ * @constant
+ */
+export const ReservoirRegionConnectorField = 'locationRegionNames';
+
+export const ReservoirSource =
+    'https://api.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=reservoirStorage';
+export const RegionsSource =
+    'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/ReclamationBoundariesFL/FeatureServer/0';
+
+export const defaultGeoJson: FeatureCollection<Geometry, GeoJsonProperties> = {
+    type: 'FeatureCollection',
+    features: [],
+};

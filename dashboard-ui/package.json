@@ -14,13 +14,14 @@
         "test-coverage": "jest -c jest.config.unit.ts --coverage"
     },
     "dependencies": {
+        "@esri/arcgis-rest-feature-service": "^4.1.0",
         "@hansdo/mapbox-gl-arcgis-featureserver": "^0.0.9",
         "@mantine/core": "^7.17.3",
         "@mantine/hooks": "^7.17.3",
         "@mantine/notifications": "^7.17.3",
         "@next/env": "^15.1.6",
-        "@react-pdf/renderer": "^4.3.0",
         "@ogcapi-js/shared": "^1.1.1",
+        "@react-pdf/renderer": "^4.3.0",
         "@turf/turf": "^7.2.0",
         "@types/geojson": "^7946.0.16",
         "@types/lodash.debounce": "^4.0.9",

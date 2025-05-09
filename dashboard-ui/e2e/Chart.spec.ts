@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { ReservoirSource } from '@/features/Map/consts';
 import { getDateRange } from '@/features/Reservior/utils';
 import { test, expect } from '@playwright/test';
 
@@ -18,9 +19,7 @@ test.describe('Line Chart', () => {
 
         await test.step('Loading Options', async () => {
             // Await data load into map
-            await page.waitForRequest(
-                'https://api.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=3'
-            );
+            await page.waitForRequest(ReservoirSource);
         });
 
         await test.step('Select updates after selection', async () => {

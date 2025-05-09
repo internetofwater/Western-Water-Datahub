@@ -5,11 +5,11 @@
 
 import { Map } from 'mapbox-gl';
 import {
-    ComplexReservoirProperties,
+    SourceDataEvent,
     ReservoirPropertiesRaw,
     ReservoirProperties,
-    SourceDataEvent,
 } from '@/features/Map/types';
+import { ComplexReservoirProperties } from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/consts';
 
 /**

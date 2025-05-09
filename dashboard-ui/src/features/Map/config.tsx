@@ -21,6 +21,8 @@ import {
     LayerId,
     SourceId,
     ReserviorIconImageExpression,
+    ReservoirSource,
+    RegionsSource,
 } from '@/features/Map/consts';
 
 /**********************************************************************
@@ -37,7 +39,7 @@ export const sourceConfigs: SourceConfig[] = [
         id: SourceId.Regions,
         type: Sources.ESRI,
         definition: {
-            url: 'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/ReclamationBoundariesFL/FeatureServer/0',
+            url: RegionsSource,
         },
     },
     {
@@ -46,7 +48,7 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'geojson',
 
-            data: 'https://api.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=reservoirStorage',
+            data: ReservoirSource,
             filter: ['!=', ['get', '_id'], 3688],
         },
     },

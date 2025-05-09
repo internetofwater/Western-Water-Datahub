@@ -3,8 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { useMap } from '@/contexts/MapContexts';
+import { INITIAL_CENTER, INITIAL_ZOOM, MAP_ID } from '@/features/Map/consts';
 import Close from '@/icons/Close';
-import useMainStore from '@/lib/main';
+import useMainStore, { ReservoirDefault } from '@/lib/main';
 import { ActionIcon } from '@mantine/core';
 
 /**
@@ -17,11 +19,23 @@ export const ClearAll: React.FC = () => {
     const reservoir = useMainStore((state) => state.reservoir);
     const setReservoir = useMainStore((state) => state.setReservoir);
 
-    const noSelections = region === 'all' && reservoir === 'all';
+    const noSelections = region === 'all' && reservoir === ReservoirDefault;
+
+    const { map } = useMap(MAP_ID);
 
     const handleClick = () => {
         setRegion('all');
-        setReservoir('all');
+        setReservoir(ReservoirDefault);
+        if (map) {
+            map.once('idle', () => {
+                requestAnimationFrame(() => {
+                    map.flyTo({
+                        center: INITIAL_CENTER,
+                        zoom: INITIAL_ZOOM,
+                    });
+                });
+            });
+        }
     };
 
     return (
