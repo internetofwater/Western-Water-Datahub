@@ -151,8 +151,6 @@ export const Reservoir: React.FC = () => {
         setReservoir(reservoidId);
     };
 
-    console.log('reservoirOptions', reservoirOptions);
-
     return (
         <Skeleton
             height={36} // Default dimensions of select
