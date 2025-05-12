@@ -6,7 +6,7 @@
 'use client';
 
 import { ComboboxData, Select, Skeleton } from '@mantine/core';
-import useMainStore from '@/lib/main';
+import useMainStore, { ReservoirDefault } from '@/lib/main';
 import {
     ReservoirRegionConnectorField,
     ReservoirLabelField,
@@ -81,7 +81,8 @@ export const Reservoir: React.FC = () => {
                 reservoirCollection.features,
                 (feature) => String(feature?.id),
                 (feature) => String(feature?.properties?.[ReservoirLabelField]),
-                'All Reservoirs'
+                'All Reservoirs',
+                String(ReservoirDefault)
             );
 
             setReservoirOptions(reservoirOptions);
@@ -104,7 +105,8 @@ export const Reservoir: React.FC = () => {
                 features,
                 (feature) => String(feature?.id),
                 (feature) => String(feature?.properties?.[ReservoirLabelField]),
-                'All Reservoirs'
+                'All Reservoirs',
+                String(ReservoirDefault)
             );
 
             setReservoirOptions(reservoirOptions);
@@ -113,7 +115,8 @@ export const Reservoir: React.FC = () => {
                 reservoirCollection.features,
                 (feature) => String(feature?.id),
                 (feature) => String(feature?.properties?.[ReservoirLabelField]),
-                'All Reservoirs'
+                'All Reservoirs',
+                String(ReservoirDefault)
             );
 
             setReservoirOptions(reservoirOptions);
@@ -147,6 +150,8 @@ export const Reservoir: React.FC = () => {
 
         setReservoir(reservoidId);
     };
+
+    console.log('reservoirOptions', reservoirOptions);
 
     return (
         <Skeleton

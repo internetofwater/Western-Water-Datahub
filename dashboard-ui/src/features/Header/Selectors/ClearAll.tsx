@@ -32,6 +32,7 @@ export const ClearAll: React.FC = () => {
                     map.flyTo({
                         center: INITIAL_CENTER,
                         zoom: INITIAL_ZOOM,
+                        speed: 2,
                     });
                 });
             });

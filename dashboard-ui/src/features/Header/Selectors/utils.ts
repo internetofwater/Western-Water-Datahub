@@ -12,10 +12,11 @@ export const formatOptions = (
     features: Feature<Geometry, GeoJsonProperties>[],
     getValueProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
     getLabelProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
-    defaultLabel: string = 'All'
+    defaultLabel: string = 'All',
+    defaultValue: string = 'all'
 ): ComboboxData => {
     const options = new Map<string, ComboboxItem>();
-    options.set('all', { value: 'all', label: defaultLabel });
+    options.set('all', { value: defaultValue, label: defaultLabel });
     features.forEach((feature) => {
         if (feature.properties) {
             // Value and label must be a string

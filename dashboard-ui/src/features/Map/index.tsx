@@ -250,6 +250,7 @@ const MainMap: React.FC<Props> = (props) => {
                             map.flyTo({
                                 center: center,
                                 zoom: 10,
+                                speed: 2,
                                 easing: (t) => t, // linear easing
                             });
                         });
