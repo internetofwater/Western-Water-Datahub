@@ -51,6 +51,11 @@ export const getLabelsAndValues = (
             y: value,
         });
     }
+    // Ensure correct sorting to prevent fill render bug
+    data.sort(
+        (pointA, pointB) =>
+            new Date(pointA.x).getTime() - new Date(pointB.x).getTime()
+    );
 
     return data;
 };

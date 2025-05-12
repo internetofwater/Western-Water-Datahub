@@ -7,9 +7,9 @@
 
 import { Box, Grid, GridCol, Paper, Text } from '@mantine/core';
 import Map from '@/features/Map';
-import useMainStore from '@/lib/main';
+import useMainStore, { ReservoirDefault } from '@/lib/main';
 import styles from '@/features/Main/Main.module.css';
-import { MAP_ID } from '@/features/Map/config';
+import { MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { useEffect } from 'react';
 import { MapTools } from '@/features/MapTools';
@@ -33,13 +33,12 @@ const Main: React.FC<Props> = (props) => {
     const { map } = useMap(MAP_ID);
 
     const hasSelectedRegionOrBasin = region !== 'all' || basin !== 'all';
-    const hasSelectedReservoir = reservoir !== 'all';
+    const hasSelectedReservoir = reservoir !== ReservoirDefault;
     // Whenever reservoir or region change, resize map
     useEffect(() => {
         if (!map) {
             return;
         }
-
         map.resize();
     }, [reservoir, region, basin]);
 

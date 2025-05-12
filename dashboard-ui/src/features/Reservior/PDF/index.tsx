@@ -7,7 +7,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { Modal, Button, Loader, Stack, Box } from '@mantine/core';
 import { RefObject, useEffect, useState } from 'react';
 import { useMap } from '@/contexts/MapContexts';
-import { MAP_ID } from '@/features/Map/config';
+import { MAP_ID } from '@/features/Map/consts';
 import { Document } from '@/features/Reservior/PDF/Document';
 import { PDFViewer } from '@react-pdf/renderer';
 import styles from '@/features/Reservior/Reservoir.module.css';

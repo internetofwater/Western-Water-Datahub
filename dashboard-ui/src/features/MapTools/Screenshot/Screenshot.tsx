@@ -16,7 +16,7 @@ import {
     Title,
 } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
-import { MAP_ID } from '@/features/Map/config';
+import { MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { Map } from 'mapbox-gl';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';

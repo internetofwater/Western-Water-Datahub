@@ -4,7 +4,7 @@
  */
 
 import { LineChart } from '@/components/LineChart';
-import edrService from '@/services/edr.init';
+import edrService from '@/services/init/edr.init';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { getDateRange, getLabelsAndValues } from '@/features/Reservior/utils';
 import { CoverageCollection } from '@/services/edr.service';
@@ -66,7 +66,7 @@ export const Chart: React.FC<Props> = (props) => {
                     {
                         signal: controller.current.signal,
                         params: {
-                            'parameter-name': '3',
+                            'parameter-name': 'reservoirStorage',
                             datetime: dateRange.startDate + '/',
                         },
                     }

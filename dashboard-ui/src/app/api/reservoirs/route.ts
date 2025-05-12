@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import edrService from '@/services/edr.init';
+import edrService from '@/services/init/edr.init';
 import { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {

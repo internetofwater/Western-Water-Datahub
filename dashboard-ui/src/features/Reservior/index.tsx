@@ -4,22 +4,17 @@
  */
 import { useRef } from 'react';
 import { GridCol, Paper } from '@mantine/core';
-import { MAP_ID, SourceId } from '@/features/Map/config';
-import { useMap } from '@/contexts/MapContexts';
 import { useEffect, useState } from 'react';
-import {
-    ReservoirPropertiesRaw,
-    ReservoirIdentifierField,
-    ReservoirProperties,
-} from '@/features/Map/types';
-import { parseReservoirProperties } from '@/features/Map/utils';
+import { ReservoirProperties } from '@/features/Map/types';
+import { ReservoirIdentifierField } from '@/features/Map/consts';
 import { Chart } from '@/features/Reservior/Chart';
 import { Chart as ChartJS } from 'chart.js';
-import { Feature, GeoJsonProperties, Point } from 'geojson';
 import { Info } from '@/features/Reservior/Info';
+import styles from '@/features/Reservior/Reservoir.module.css';
+import useMainStore from '@/lib/main';
 
 type Props = {
-    reservoir: string;
+    reservoir: number;
     accessToken: string;
 };
 
@@ -30,7 +25,10 @@ type Props = {
 const Reservoir: React.FC<Props> = (props) => {
     const { reservoir, accessToken } = props;
 
-    const { map } = useMap(MAP_ID);
+    const reservoirCollection = useMainStore(
+        (state) => state.reservoirCollection
+    );
+
     const chartRef =
         useRef<ChartJS<'line', Array<{ x: string; y: number }>>>(null);
 
@@ -39,34 +37,24 @@ const Reservoir: React.FC<Props> = (props) => {
     const [center, setCenter] = useState<[number, number] | null>(null);
 
     useEffect(() => {
-        if (!map) {
+        if (!reservoirCollection) {
             return;
         }
 
-        const features = map.querySourceFeatures(SourceId.Reservoirs, {
-            sourceLayer: SourceId.Reservoirs,
-            filter: ['==', ['get', ReservoirIdentifierField], reservoir],
-        });
+        const features = reservoirCollection.features.filter(
+            (feature) =>
+                feature.properties[ReservoirIdentifierField] === reservoir
+        );
 
         if (features.length) {
-            const feature = features[0] as Feature<Point, GeoJsonProperties>;
-            const properties = feature.properties as ReservoirPropertiesRaw;
+            const feature = features[0];
+            const properties = feature.properties;
 
             setCenter(feature.geometry.coordinates as [number, number]);
-            const reservoirProperties = Object.entries(
-                properties
-            ).reduce<ReservoirProperties>((acc, [key, value]) => {
-                const typedKey = key as keyof ReservoirPropertiesRaw;
-                const parsedValue = parseReservoirProperties(typedKey, value);
-                return {
-                    ...acc,
-                    [typedKey]: parsedValue,
-                };
-            }, {} as ReservoirProperties);
 
-            setReservoirProperties(reservoirProperties);
+            setReservoirProperties(properties);
         }
-    }, [map, reservoir]);
+    }, [reservoir]);
 
     return (
         <>
@@ -81,12 +69,16 @@ const Reservoir: React.FC<Props> = (props) => {
                         />
                     </GridCol>
                     <GridCol span={{ base: 12, md: 4 }} order={4}>
-                        <Chart id={reservoirProperties._id} ref={chartRef} />
-                    </GridCol>
-                    <GridCol span={{ base: 12, md: 4 }} order={5}>
-                        <Paper shadow="xs" p="xl">
+                        <Paper
+                            shadow="xs"
+                            p="xl"
+                            className={styles.infoContainer}
+                        >
                             Average
                         </Paper>
+                    </GridCol>
+                    <GridCol span={{ base: 12, md: 4 }} order={5}>
+                        <Chart id={reservoirProperties._id} ref={chartRef} />
                     </GridCol>
                 </>
             )}

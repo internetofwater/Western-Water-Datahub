@@ -7,15 +7,18 @@
 
 import Map from '@/components/Map';
 import React, { useEffect, useRef } from 'react';
+import { layerDefinitions, sourceConfigs } from '@/features/Map/config';
 import {
-    layerDefinitions,
-    sourceConfigs,
     MAP_ID,
     SubLayerId,
     LayerId,
-} from '@/features/Map/config';
+    ReservoirIdentifierField,
+    ReservoirRegionConnectorField,
+    INITIAL_CENTER,
+    INITIAL_ZOOM,
+} from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
-import useMainStore from '@/lib/main';
+import useMainStore, { ReservoirDefault } from '@/lib/main';
 import {
     loadTeacups as loadImages,
     parseReservoirProperties,
@@ -24,13 +27,8 @@ import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapBut
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
 import CustomControl from '@/components/Map/tools/CustomControl';
 import { basemaps } from '@/components/Map/consts';
-import {
-    ReservoirIdentifierField,
-    ReservoirRegionConnectorField,
-} from '@/features/Map/types';
-
-const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
-const INITIAL_ZOOM = 4;
+import { LngLatLike, MapMouseEvent } from 'mapbox-gl';
+import { useReservoirData } from '@/app/hooks/useReservoirData';
 
 type Props = {
     accessToken: string;
@@ -57,6 +55,8 @@ const MainMap: React.FC<Props> = (props) => {
 
     const isMounted = useRef(true);
 
+    const { reservoirCollection } = useReservoirData();
+
     useEffect(() => {
         return () => {
             isMounted.current = false;
@@ -68,23 +68,23 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
-        map.on('click', SubLayerId.RegionsFill, (e) => {
+        const handleRegionsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [SubLayerId.RegionsFill],
             });
 
             if (features && features.length) {
                 const feature = features[0];
-
+                console.log('Region', feature);
                 if (feature.properties) {
                     const region = feature.properties.REGION as string;
 
                     setRegion(region);
                 }
             }
-        });
+        };
 
-        map.on('click', SubLayerId.BasinsFill, (e) => {
+        const handleBasinsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [SubLayerId.BasinsFill],
             });
@@ -100,9 +100,9 @@ const MainMap: React.FC<Props> = (props) => {
             //         setRegion(region);
             //     }
             // }
-        });
+        };
 
-        map.on('click', LayerId.Reservoirs, (e) => {
+        const handleReservoirsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [LayerId.Reservoirs],
             });
@@ -115,7 +115,7 @@ const MainMap: React.FC<Props> = (props) => {
                 if (feature.properties) {
                     const reservoir = feature.properties[
                         ReservoirIdentifierField
-                    ] as string;
+                    ] as number;
                     const value = feature.properties[
                         ReservoirRegionConnectorField
                     ] as string;
@@ -131,11 +131,25 @@ const MainMap: React.FC<Props> = (props) => {
                     }
                 }
             }
-        });
+            // }
+        };
+
+        map.on('click', SubLayerId.RegionsFill, handleRegionsClick);
+
+        map.on('click', SubLayerId.BasinsFill, handleBasinsClick);
+
+        map.on('click', LayerId.Reservoirs, handleReservoirsClick);
+
         loadImages(map);
         map.on('style.load', () => {
             loadImages(map);
         });
+
+        return () => {
+            map.off('click', SubLayerId.RegionsFill, handleRegionsClick);
+            map.off('click', SubLayerId.BasinsFill, handleBasinsClick);
+            map.off('click', LayerId.Reservoirs, handleReservoirsClick);
+        };
     }, [map]);
 
     // useEffect(() => {
@@ -173,7 +187,7 @@ const MainMap: React.FC<Props> = (props) => {
             map.setFilter(SubLayerId.RegionsFill, null);
             map.setFilter(SubLayerId.RegionsBoundary, null);
             // TODO: basin filter
-            if (reservoir === 'all') {
+            if (reservoir === ReservoirDefault) {
                 map.setFilter(LayerId.Reservoirs, null);
             }
         } else {
@@ -188,7 +202,7 @@ const MainMap: React.FC<Props> = (props) => {
                 region,
             ]);
             // TODO: basin filter
-            if (reservoir === 'all') {
+            if (reservoir === ReservoirDefault) {
                 map.setFilter(LayerId.Reservoirs, [
                     'in',
                     region,
@@ -202,7 +216,7 @@ const MainMap: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
-        if (reservoir === 'all') {
+        if (reservoir === ReservoirDefault) {
             // Unset Filter
             if (region === 'all') {
                 map.setFilter(LayerId.Reservoirs, null);
@@ -219,6 +233,30 @@ const MainMap: React.FC<Props> = (props) => {
                 ['get', ReservoirIdentifierField],
                 reservoir,
             ]);
+            if (reservoirCollection) {
+                const features = reservoirCollection.features.filter(
+                    (feature) =>
+                        feature.properties[ReservoirIdentifierField] ===
+                        reservoir
+                );
+
+                if (features.length) {
+                    const feature = features[0];
+                    const center = feature.geometry.coordinates as LngLatLike;
+
+                    map.once('idle', () => {
+                        // Wait for the next animation frame to ensure layout is complete
+                        requestAnimationFrame(() => {
+                            map.flyTo({
+                                center: center,
+                                zoom: 10,
+                                speed: 2,
+                                easing: (t) => t, // linear easing
+                            });
+                        });
+                    });
+                }
+            }
         }
     }, [reservoir]);
 
@@ -241,6 +279,7 @@ const MainMap: React.FC<Props> = (props) => {
                     style: basemaps[basemap],
                     center: INITIAL_CENTER,
                     zoom: INITIAL_ZOOM,
+                    minZoom: 4,
                     maxZoom: 20,
                 }}
                 controls={{

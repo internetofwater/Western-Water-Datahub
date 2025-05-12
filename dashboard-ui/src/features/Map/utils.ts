@@ -5,16 +5,23 @@
 
 import { Map } from 'mapbox-gl';
 import {
-    ComplexReservoirProperties,
+    SourceDataEvent,
     ReservoirPropertiesRaw,
     ReservoirProperties,
 } from '@/features/Map/types';
+import { ComplexReservoirProperties } from '@/features/Map/consts';
+import { SourceId } from '@/features/Map/consts';
 
 /**
  *
  * @function
  */
 export const loadTeacups = (map: Map) => {
+    const teacupLevels = [
+        100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15,
+        10, 5, 0,
+    ];
+
     if (!map.hasImage('default')) {
         map.loadImage('/map-icons/default.png', (error, image) => {
             if (error) throw error;
@@ -24,60 +31,19 @@ export const loadTeacups = (map: Map) => {
             map.addImage('default', image);
         });
     }
-    if (!map.hasImage('teacup-100')) {
-        map.loadImage('/map-icons/teacup-100.png', (error, image) => {
-            if (error) throw error;
-            if (!image) {
-                throw new Error('Image not found: teacup-100.png');
-            }
-            map.addImage('teacup-100', image);
-        });
-    }
-    if (!map.hasImage('teacup-95')) {
-        map.loadImage('/map-icons/teacup-95.png', (error, image) => {
-            if (error) throw error;
-            if (!image) {
-                throw new Error('Image not found: teacup-95.png');
-            }
-            map.addImage('teacup-95', image);
-        });
-    }
-    if (!map.hasImage('teacup-90')) {
-        map.loadImage('/map-icons/teacup-90.png', (error, image) => {
-            if (error) throw error;
-            if (!image) {
-                throw new Error('Image not found: teacup-90.png');
-            }
-            map.addImage('teacup-90', image);
-        });
-    }
-    if (!map.hasImage('teacup-85')) {
-        map.loadImage('/map-icons/teacup-85.png', (error, image) => {
-            if (error) throw error;
-            if (!image) {
-                throw new Error('Image not found: teacup-85.png');
-            }
-            map.addImage('teacup-85', image);
-        });
-    }
-    if (!map.hasImage('teacup-80')) {
-        map.loadImage('/map-icons/teacup-80.png', (error, image) => {
-            if (error) throw error;
-            if (!image) {
-                throw new Error('Image not found: teacup-80.png');
-            }
-            map.addImage('teacup-80', image);
-        });
-    }
-    if (!map.hasImage('teacup-75')) {
-        map.loadImage('/map-icons/teacup-75.png', (error, image) => {
-            if (error) throw error;
-            if (!image) {
-                throw new Error('Image not found: teacup-75.png');
-            }
-            map.addImage('teacup-75', image);
-        });
-    }
+
+    teacupLevels.forEach((level) => {
+        const id = `teacup-${level}`;
+        if (!map.hasImage(id)) {
+            map.loadImage(`/map-icons/${id}.png`, (error, image) => {
+                if (error) throw error;
+                if (!image) {
+                    throw new Error(`Image not found: ${id}.png`);
+                }
+                map.addImage(id, image);
+            });
+        }
+    });
 };
 
 /**
@@ -94,4 +60,21 @@ export const parseReservoirProperties = <
         return JSON.parse(value as string) as ReservoirProperties[T];
     }
     return value as ReservoirProperties[T];
+};
+
+/**
+
+ * @function
+ */
+export const isSourceDataLoaded = (
+    map: Map,
+    sourceId: SourceId,
+    event: SourceDataEvent
+): boolean => {
+    return Boolean(
+        event.sourceId === sourceId &&
+            map.getSource(sourceId) &&
+            map.isSourceLoaded(sourceId) &&
+            map.querySourceFeatures(sourceId).length
+    );
 };

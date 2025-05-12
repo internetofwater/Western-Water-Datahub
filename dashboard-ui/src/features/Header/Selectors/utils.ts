@@ -3,38 +3,30 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { SourceId } from '@/features/Map/config';
+import { SourceId } from '@/features/Map/consts';
 import { ComboboxData, ComboboxItem } from '@mantine/core';
-import {
-    ExpressionSpecification,
-    Map as MapObj,
-    MapSourceDataEvent,
-} from 'mapbox-gl';
+import { Feature, GeoJsonProperties, Geometry } from 'geojson';
+import { ExpressionSpecification, Map as MapObj } from 'mapbox-gl';
 
-/**
-
- * @function
- */
-export const createOptions = (
-    map: MapObj,
-    sourceId: SourceId,
-    property: string,
-    defaultLabel: string
+export const formatOptions = (
+    features: Feature<Geometry, GeoJsonProperties>[],
+    getValueProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
+    getLabelProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
+    defaultLabel: string = 'All',
+    defaultValue: string = 'all'
 ): ComboboxData => {
-    const features = map.querySourceFeatures(sourceId, {
-        sourceLayer: sourceId,
-    });
-
     const options = new Map<string, ComboboxItem>();
-    options.set('all', { value: 'all', label: defaultLabel });
+    options.set('all', { value: defaultValue, label: defaultLabel });
     features.forEach((feature) => {
         if (feature.properties) {
-            const value = feature.properties[property] as string;
+            // Value and label must be a string
+            const value = getValueProperty(feature);
+            const label = getLabelProperty(feature);
 
             if (!options.has(value)) {
                 options.set(value, {
                     value: value,
-                    label: value,
+                    label: label,
                 });
             }
         }
@@ -46,11 +38,35 @@ export const createOptions = (
 
  * @function
  */
-export const createFilteredOptions = (
+export const createOptionsFromMapboxSource = (
+    map: MapObj,
+    sourceId: SourceId,
+    getValueProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
+    getLabelProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
+    defaultLabel: string
+): ComboboxData => {
+    const features = map.querySourceFeatures(sourceId, {
+        sourceLayer: sourceId,
+    });
+
+    return formatOptions(
+        features,
+        getValueProperty,
+        getLabelProperty,
+        defaultLabel
+    );
+};
+
+/**
+
+ * @function
+ */
+export const createFilteredOptionsFromMapboxSource = (
     map: MapObj,
     sourceId: SourceId,
     filter: ExpressionSpecification,
-    property: string,
+    getValueProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
+    getLabelProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
     defaultLabel: string
 ): ComboboxData => {
     const features = map.querySourceFeatures(sourceId, {
@@ -58,46 +74,10 @@ export const createFilteredOptions = (
         filter: filter,
     });
 
-    const options = new Map<string, ComboboxItem>();
-    options.set('all', { value: 'all', label: defaultLabel });
-    features.forEach((feature) => {
-        if (feature.properties) {
-            const value = feature.properties[property] as string;
-
-            if (!options.has(value)) {
-                options.set(value, {
-                    value: value,
-                    label: value,
-                });
-            }
-        }
-    });
-
-    return Array.from(options.values());
-};
-
-/**
-
- * @type
- */
-export type SourceDataEvent = {
-    type: 'sourcedata';
-    target: MapObj;
-} & MapSourceDataEvent;
-
-/**
-
- * @function
- */
-export const shouldLoadOptions = (
-    map: MapObj,
-    sourceId: SourceId,
-    event: SourceDataEvent
-): boolean => {
-    return Boolean(
-        event.sourceId === sourceId &&
-            map.getSource(sourceId) &&
-            map.isSourceLoaded(sourceId) &&
-            map.querySourceFeatures(sourceId).length
+    return formatOptions(
+        features,
+        getValueProperty,
+        getLabelProperty,
+        defaultLabel
     );
 };

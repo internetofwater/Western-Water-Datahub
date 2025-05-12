@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { MapSourceDataEvent, Map } from 'mapbox-gl';
+
 /**
  *
  * @interface
@@ -59,30 +61,6 @@ export type ReservoirPropertiesRaw = PropertiesBase & {
 
 /**
  *
- * @constant
- */
-export const ComplexReservoirProperties = [
-    'horizontalDatum',
-    'locationRegionNames',
-    'locationTags',
-    'locationUnifiedRegionNames',
-    'projectNames',
-    'verticalDatum',
-];
-
-/**
- *
- * @constant
- */
-export const ReservoirIdentifierField = 'name';
-/**
- *
- * @constant
- */
-export const ReservoirRegionConnectorField = 'locationRegionNames';
-
-/**
- *
  * @type
  */
 export type ReservoirProperties = PropertiesBase & {
@@ -93,3 +71,12 @@ export type ReservoirProperties = PropertiesBase & {
     projectNames: string[];
     verticalDatum: { _id: string; definition: string | null };
 };
+
+/**
+
+ * @type
+ */
+export type SourceDataEvent = {
+    type: 'sourcedata';
+    target: Map;
+} & MapSourceDataEvent;

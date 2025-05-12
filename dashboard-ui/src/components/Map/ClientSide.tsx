@@ -79,6 +79,8 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
 
             const persistentPopup = new mapboxgl.Popup();
 
+            // newMap.showCollisionBoxes = true;
+
             newMap.once('load', () => {
                 const createFeatureService = (
                     sourceId: string,

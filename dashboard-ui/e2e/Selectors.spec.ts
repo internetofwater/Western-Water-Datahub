@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { ReservoirSource } from '@/features/Map/consts';
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -25,9 +26,7 @@ test.describe('Region', () => {
                         )
                 ),
                 // Load Reservoirs
-                page.waitForRequest(
-                    'https://api.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=3'
-                ),
+                page.waitForRequest(ReservoirSource),
             ]);
         });
         const regionSelect = page.getByTestId('region-select');
@@ -89,9 +88,7 @@ test.describe('Reservoir', () => {
                         )
                 ),
                 // Load Reservoirs
-                page.waitForRequest(
-                    'https://api.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=3'
-                ),
+                page.waitForRequest(ReservoirSource),
             ]);
         });
 

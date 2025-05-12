@@ -42,10 +42,16 @@ export const Info: React.FC<Props> = (props) => {
                     <Group gap="xs" justify="flex-start">
                         <Text fw={700}>Active Capacity:</Text>
                         <Text>
-                            {reservoirProperties[
-                                'Active Capacity'
-                            ].toLocaleString('en-US')}{' '}
-                            acre-feet
+                            {reservoirProperties?.['Active Capacity'] ? (
+                                <>
+                                    {reservoirProperties[
+                                        'Active Capacity'
+                                    ].toLocaleString('en-US')}{' '}
+                                    acre-feet
+                                </>
+                            ) : (
+                                <>Unknown</>
+                            )}
                         </Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">

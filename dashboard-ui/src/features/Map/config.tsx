@@ -4,7 +4,6 @@
  */
 
 import {
-    BasemapId,
     CustomListenerFunction,
     LayerType,
     MainLayerDefinition,
@@ -17,37 +16,14 @@ import {
     Map,
     Popup,
 } from 'mapbox-gl';
-import { basemaps } from '@/components/Map/consts';
-
-export const MAP_ID = 'main';
-
-export const BASEMAP = basemaps[BasemapId.Dark];
-
-export enum SourceId {
-    Regions = 'regions-source',
-    Basins = 'hu04',
-    Reservoirs = 'reservoirs-source',
-    SnowWater = 'snow-water',
-}
-
-export enum LayerId {
-    Regions = 'regions-main',
-    Basins = 'basins-main',
-    Reservoirs = 'reservoirs',
-    SnowWater = 'snow-water',
-}
-
-export enum SubLayerId {
-    RegionsBoundary = 'regions-boundary',
-    RegionsFill = 'regions-fill',
-    BasinsBoundary = 'basins-boundary',
-    BasinsFill = 'basins-fill',
-}
-
-export const allLayerIds = [
-    ...Object.values(LayerId),
-    ...Object.values(SubLayerId),
-];
+import {
+    SubLayerId,
+    LayerId,
+    SourceId,
+    ReserviorIconImageExpression,
+    ReservoirSource,
+    RegionsSource,
+} from '@/features/Map/consts';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -63,7 +39,7 @@ export const sourceConfigs: SourceConfig[] = [
         id: SourceId.Regions,
         type: Sources.ESRI,
         definition: {
-            url: 'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/ReclamationBoundariesFL/FeatureServer/0',
+            url: RegionsSource,
         },
     },
     {
@@ -72,7 +48,8 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'geojson',
 
-            data: 'https://api.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=3',
+            data: ReservoirSource,
+            filter: ['!=', ['get', '_id'], 3688],
         },
     },
     {
@@ -225,30 +202,38 @@ export const getLayerConfig = (
                 type: LayerType.Symbol,
                 source: SourceId.Reservoirs,
                 layout: {
-                    'icon-image': 'default',
-                    // 'icon-image': [
-                    //     'let',
-                    //     'storage', // Variable name
-                    //     ['/', ['get', 'elev_ft'], 10000], // Variable value
-                    //     [
-                    //         'step',
-                    //         ['var', 'storage'],
-                    //         'default', // Below first step value
-                    //         0.75,
-                    //         'teacup-75',
-                    //         0.8,
-                    //         'teacup-80',
-                    //         0.85,
-                    //         'teacup-85',
-                    //         0.9,
-                    //         'teacup-90',
-                    //         0.95,
-                    //         'teacup-95',
-                    //         1,
-                    //         'teacup-100',
-                    //     ],
-                    // ],
-                    'icon-size': 0.5,
+                    'icon-image': ReserviorIconImageExpression,
+                    'icon-size': [
+                        'let',
+                        'capacity',
+                        ['coalesce', ['get', 'Active Capacity'], 1],
+                        [
+                            'step',
+                            ['var', 'capacity'],
+                            0.3,
+                            45000,
+                            0.4,
+                            320000,
+                            0.5,
+                            2010000,
+                            0.6,
+                        ],
+                    ],
+
+                    'symbol-sort-key': [
+                        'coalesce',
+                        ['get', 'Active Capacity'],
+                        1,
+                    ],
+                    'icon-offset': [
+                        'step',
+                        ['zoom'],
+                        [0, 0],
+                        0,
+                        ['coalesce', ['get', 'offset'], [0, 0]],
+                        5,
+                        [0, 0],
+                    ],
                     'icon-allow-overlap': true,
                 },
             };

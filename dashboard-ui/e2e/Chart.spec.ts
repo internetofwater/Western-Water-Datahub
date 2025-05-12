@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { ReservoirSource } from '@/features/Map/consts';
 import { getDateRange } from '@/features/Reservior/utils';
 import { test, expect } from '@playwright/test';
 
@@ -18,9 +19,7 @@ test.describe('Line Chart', () => {
 
         await test.step('Loading Options', async () => {
             // Await data load into map
-            await page.waitForRequest(
-                'https://api.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=3'
-            );
+            await page.waitForRequest(ReservoirSource);
         });
 
         await test.step('Select updates after selection', async () => {
@@ -43,7 +42,7 @@ test.describe('Line Chart', () => {
 
         await test.step('Load chart at 1 year range', async () => {
             const dateRange = getDateRange(1);
-            const url = `https://api.wwdh.internetofwater.app/collections/rise-edr/locations/3514?f=json&parameter-name=3&datetime=${dateRange.startDate}%2F`;
+            const url = `https://api.wwdh.internetofwater.app/collections/rise-edr/locations/3514?f=json&parameter-name=reservoirStorage&datetime=${dateRange.startDate}%2F`;
 
             const response = await page.waitForResponse(
                 (response) =>
@@ -62,7 +61,7 @@ test.describe('Line Chart', () => {
             await expect(fiveYearRadio).toBeChecked();
 
             const dateRange = getDateRange(5);
-            const url = `https://api.wwdh.internetofwater.app/collections/rise-edr/locations/3514?f=json&parameter-name=3&datetime=${dateRange.startDate}%2F`;
+            const url = `https://api.wwdh.internetofwater.app/collections/rise-edr/locations/3514?f=json&parameter-name=reservoirStorage&datetime=${dateRange.startDate}%2F`;
 
             const response = await page.waitForResponse(
                 (response) =>
