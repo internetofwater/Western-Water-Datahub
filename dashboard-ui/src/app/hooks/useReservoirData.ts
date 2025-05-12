@@ -42,22 +42,6 @@ export const useReservoirData = () => {
         }
     };
 
-    // const findReservoirs = <T extends keyof ReservoirProperties>(
-    //     searchObject: { [key in T]: ReservoirProperties[key] },
-    //     comparisonLogic: (
-    //         property: ReservoirProperties[T],
-    //         value: ReservoirProperties[T]
-    //     ) => boolean
-    // ): Feature<Point, ReservoirProperties>[] => {
-    //     return reservoirCollection.features.filter((feature) =>
-    //         (
-    //             Object.entries(searchObject) as [T, ReservoirProperties[T]][]
-    //         ).every(([key, value]) =>
-    //             comparisonLogic(feature.properties[key], value)
-    //         )
-    //     );
-    // };
-
     const fetchReservoirItem = async (
         reservoirId: string
     ): Promise<Feature<Point, ReservoirProperties> | null> => {
@@ -95,6 +79,5 @@ export const useReservoirData = () => {
         reservoirCollection,
         loading,
         fetchReservoirItem,
-        // findReservoirs,
     };
 };

@@ -66,7 +66,7 @@ export const Chart: React.FC<Props> = (props) => {
                     {
                         signal: controller.current.signal,
                         params: {
-                            'parameter-name': '3',
+                            'parameter-name': 'reservoirStorage',
                             datetime: dateRange.startDate + '/',
                         },
                     }
