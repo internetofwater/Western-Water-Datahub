@@ -6,7 +6,6 @@
 import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
 import { ExpressionSpecification } from 'mapbox-gl';
-import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import { ReservoirConfig } from '@/features/Map/types';
 
 export const MAP_ID = 'main';
@@ -113,16 +112,6 @@ export const RISEEDRReservoirSource =
 export const RegionsSource =
     'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/ReclamationBoundariesFL/FeatureServer/0';
 
-export const getDefaultGeoJSON = (): FeatureCollection<
-    Geometry,
-    GeoJsonProperties
-> => {
-    return {
-        type: 'FeatureCollection',
-        features: [],
-    };
-};
-
 /**
  *
  * @constant
@@ -130,7 +119,7 @@ export const getDefaultGeoJSON = (): FeatureCollection<
 export const ReservoirConfigs: ReservoirConfig[] = [
     {
         id: SourceId.RiseEDRReservoirs,
-        storageProperty: 'Live Capcity',
+        storageProperty: 'Live Capcity', // Mock value, stand in for current storage
         capacityProperty: 'Active Capacity',
         identifierProperty: '_id',
         identifierType: 'number',

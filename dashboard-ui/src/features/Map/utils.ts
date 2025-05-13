@@ -16,6 +16,7 @@ import {
     TeacupStepExpression,
 } from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/consts';
+import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 /**
  *
@@ -68,7 +69,7 @@ export const parseReservoirProperties = <
 };
 
 /**
-
+ *
  * @function
  */
 export const isSourceDataLoaded = (
@@ -85,7 +86,7 @@ export const isSourceDataLoaded = (
 };
 
 /**
-
+ *
  * @function
  */
 export const getReservoirConfig = (id: SourceId): ReservoirConfig | null => {
@@ -93,7 +94,7 @@ export const getReservoirConfig = (id: SourceId): ReservoirConfig | null => {
 };
 
 /**
-
+ *
  * @function
  */
 export const getReservoirIconImageExpression = (
@@ -106,7 +107,7 @@ export const getReservoirIconImageExpression = (
         'storage', // Variable name
         [
             '/',
-            ['/', ['coalesce', ['get', config.storageProperty], 1], 2], // Mock value, stand in for current storage
+            ['/', ['coalesce', ['get', config.storageProperty], 1], 2],
             ['coalesce', ['get', config.capacityProperty], 1],
         ], // Variable value
         [
@@ -132,4 +133,18 @@ export const getReservoirIconImageExpression = (
             ]),
         ],
     ];
+};
+
+/**
+ *
+ * @function
+ */
+export const getDefaultGeoJSON = (): FeatureCollection<
+    Geometry,
+    GeoJsonProperties
+> => {
+    return {
+        type: 'FeatureCollection',
+        features: [],
+    };
 };
