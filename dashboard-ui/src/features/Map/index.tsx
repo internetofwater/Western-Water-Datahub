@@ -12,16 +12,16 @@ import {
     MAP_ID,
     SubLayerId,
     LayerId,
-    ReservoirIdentifierField,
-    ReservoirRegionConnectorField,
     INITIAL_CENTER,
     INITIAL_ZOOM,
+    SourceId,
+    ReservoirConfigs,
 } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore, { ReservoirDefault } from '@/lib/main';
 import {
     loadTeacups as loadImages,
-    parseReservoirProperties,
+    getReservoirConfig,
 } from '@/features/Map/utils';
 import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
@@ -55,7 +55,7 @@ const MainMap: React.FC<Props> = (props) => {
 
     const isMounted = useRef(true);
 
-    const { reservoirCollection } = useReservoirData();
+    const { reservoirCollections } = useReservoirData();
 
     useEffect(() => {
         return () => {
@@ -102,33 +102,45 @@ const MainMap: React.FC<Props> = (props) => {
             // }
         };
 
+        const reservoirLayers = ReservoirConfigs.flatMap(
+            (config) => config.connectedLayers
+        );
+
         const handleReservoirsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
-                layers: [LayerId.Reservoirs],
+                layers: reservoirLayers,
             });
 
             if (features && features.length) {
                 const feature = features[0];
 
+                const config = getReservoirConfig(feature.source as SourceId);
+
                 console.log('feature', feature);
 
-                if (feature.properties) {
-                    const reservoir = feature.properties[
-                        ReservoirIdentifierField
-                    ] as number;
-                    const value = feature.properties[
-                        ReservoirRegionConnectorField
-                    ] as string;
-                    const locationRegionNames = parseReservoirProperties(
-                        ReservoirRegionConnectorField,
-                        value
+                if (config && feature.properties) {
+                    const identifier = (feature.properties[
+                        config.identifierProperty
+                    ] ?? feature.id) as string | number;
+                    const regionProperty = JSON.parse(
+                        feature.properties[
+                            config.regionConnectorProperty
+                        ] as string
+                    ) as string | string[];
+
+                    setRegion(
+                        Array.isArray(regionProperty)
+                            ? regionProperty[0]
+                            : regionProperty
                     );
 
-                    setReservoir(reservoir);
-                    if (locationRegionNames.length === 1) {
-                        const region = locationRegionNames[0];
-                        setRegion(region);
-                    }
+                    setReservoir({
+                        identifier:
+                            config.identifierType === 'number'
+                                ? Number(identifier)
+                                : identifier,
+                        source: feature.source as SourceId,
+                    });
                 }
             }
             // }
@@ -138,7 +150,7 @@ const MainMap: React.FC<Props> = (props) => {
 
         map.on('click', SubLayerId.BasinsFill, handleBasinsClick);
 
-        map.on('click', LayerId.Reservoirs, handleReservoirsClick);
+        map.on('click', reservoirLayers, handleReservoirsClick);
 
         loadImages(map);
         map.on('style.load', () => {
@@ -148,7 +160,7 @@ const MainMap: React.FC<Props> = (props) => {
         return () => {
             map.off('click', SubLayerId.RegionsFill, handleRegionsClick);
             map.off('click', SubLayerId.BasinsFill, handleBasinsClick);
-            map.off('click', LayerId.Reservoirs, handleReservoirsClick);
+            map.off('click', reservoirLayers, handleReservoirsClick);
         };
     }, [map]);
 
@@ -188,7 +200,7 @@ const MainMap: React.FC<Props> = (props) => {
             map.setFilter(SubLayerId.RegionsBoundary, null);
             // TODO: basin filter
             if (reservoir === ReservoirDefault) {
-                map.setFilter(LayerId.Reservoirs, null);
+                map.setFilter(LayerId.RiseEDRReservoirs, null);
             }
         } else {
             map.setFilter(SubLayerId.RegionsFill, [
@@ -203,11 +215,23 @@ const MainMap: React.FC<Props> = (props) => {
             ]);
             // TODO: basin filter
             if (reservoir === ReservoirDefault) {
-                map.setFilter(LayerId.Reservoirs, [
-                    'in',
-                    region,
-                    ['get', ReservoirRegionConnectorField],
-                ]);
+                ReservoirConfigs.forEach((config) => {
+                    config.connectedLayers.forEach((layerId) => {
+                        map.setFilter(layerId, [
+                            'any',
+                            [
+                                'in',
+                                region,
+                                ['get', config.regionConnectorProperty],
+                            ],
+                            [
+                                '==',
+                                ['get', config.regionConnectorProperty],
+                                region,
+                            ],
+                        ]);
+                    });
+                });
             }
         }
     }, [region]);
@@ -219,43 +243,87 @@ const MainMap: React.FC<Props> = (props) => {
         if (reservoir === ReservoirDefault) {
             // Unset Filter
             if (region === 'all') {
-                map.setFilter(LayerId.Reservoirs, null);
+                ReservoirConfigs.forEach((config) => {
+                    config.connectedLayers.forEach((layerId) => {
+                        map.setFilter(layerId, null);
+                    });
+                });
             } else {
-                map.setFilter(LayerId.Reservoirs, [
-                    'in',
-                    region,
-                    ['get', ReservoirRegionConnectorField],
-                ]);
+                ReservoirConfigs.forEach((config) => {
+                    config.connectedLayers.forEach((layerId) => {
+                        map.setFilter(layerId, [
+                            'any',
+                            [
+                                'in',
+                                region,
+                                ['get', config.regionConnectorProperty],
+                            ],
+                            [
+                                '==',
+                                ['get', config.regionConnectorProperty],
+                                region,
+                            ],
+                        ]);
+                    });
+                });
             }
         } else {
-            map.setFilter(LayerId.Reservoirs, [
-                '==',
-                ['get', ReservoirIdentifierField],
-                reservoir,
-            ]);
-            if (reservoirCollection) {
-                const features = reservoirCollection.features.filter(
-                    (feature) =>
-                        feature.properties[ReservoirIdentifierField] ===
-                        reservoir
-                );
-
-                if (features.length) {
-                    const feature = features[0];
-                    const center = feature.geometry.coordinates as LngLatLike;
-
-                    map.once('idle', () => {
-                        // Wait for the next animation frame to ensure layout is complete
-                        requestAnimationFrame(() => {
-                            map.flyTo({
-                                center: center,
-                                zoom: 10,
-                                speed: 2,
-                                easing: (t) => t, // linear easing
-                            });
+            if (reservoirCollections) {
+                ReservoirConfigs.forEach((config) => {
+                    if (config.id === (reservoir.source as SourceId)) {
+                        config.connectedLayers.forEach((layerId) => {
+                            map.setFilter(layerId, [
+                                'any',
+                                [
+                                    '==',
+                                    ['get', config.identifierProperty],
+                                    reservoir.identifier,
+                                ],
+                                ['==', ['id'], reservoir.identifier],
+                            ]);
                         });
-                    });
-                }
+
+                        const collection =
+                            reservoirCollections[reservoir.source as SourceId];
+
+                        if (collection) {
+                            const features = collection.features.filter(
+                                (feature) =>
+                                    (feature.properties &&
+                                        feature.properties[
+                                            config.identifierProperty
+                                        ] === reservoir.identifier) ||
+                                    feature.id === reservoir.identifier
+                            );
+
+                            if (features.length) {
+                                const feature = features[0];
+                                const center = feature.geometry
+                                    .coordinates as LngLatLike;
+
+                                map.once('idle', () => {
+                                    // Wait for the next animation frame to ensure layout is complete
+                                    requestAnimationFrame(() => {
+                                        map.flyTo({
+                                            center: center,
+                                            zoom: 10,
+                                            speed: 2,
+                                            easing: (t) => t, // linear easing
+                                        });
+                                    });
+                                });
+                            }
+                        }
+                    } else {
+                        config.connectedLayers.forEach((layerId) => {
+                            map.setFilter(layerId, [
+                                '==',
+                                ['get', 'nonexistent_property'],
+                                '__never__',
+                            ]);
+                        });
+                    }
+                });
             }
         }
     }, [reservoir]);

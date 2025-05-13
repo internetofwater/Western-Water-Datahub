@@ -4,8 +4,8 @@
  */
 
 import { BasemapId } from '@/components/Map/types';
-import { ReservoirProperties } from '@/features/Map/types';
-import { FeatureCollection, Point } from 'geojson';
+import { SourceId } from '@/features/Map/consts';
+import { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
 import { create } from 'zustand';
 
 export enum Tools {
@@ -15,25 +15,32 @@ export enum Tools {
 
 export type ReservoirStorageData = Array<{ x: string; y: number }>;
 
-export const ReservoirDefault = 0;
+export const ReservoirDefault = null;
 
-interface MainState {
+export type ReservoirCollections = {
+    [key in SourceId]?: FeatureCollection<Point, GeoJsonProperties>;
+};
+
+export type Reservoir = {
+    identifier: string | number;
+    source: string;
+};
+
+export interface MainState {
     region: string;
     setRegion: (region: string) => void;
     basin: string;
     setBasin: (basin: string) => void;
     system: string;
     setSystem: (system: string) => void;
-    reservoir: number;
-    setReservoir: (reservoir: number) => void;
-    reservoirCollection: FeatureCollection<Point, ReservoirProperties> | null;
-    setReservoirCollection: (
-        reservoirCollection: FeatureCollection<Point, ReservoirProperties>
+    reservoir: Reservoir | null;
+    setReservoir: (reservoir: Reservoir | null) => void;
+    reservoirCollections: ReservoirCollections | null;
+    setReservoirCollections: (
+        reservoirCollection: ReservoirCollections
     ) => void;
     basemap: BasemapId;
     setBasemap: (basemap: BasemapId) => void;
-    reservoirStorageData: Array<{ x: string; y: number }>;
-    setReservoirStorageData: (basemap: Array<{ x: string; y: number }>) => void;
     chartUpdate: number;
     setChartUpdate: (chartUpdate: number) => void;
     tools: {
@@ -52,14 +59,11 @@ const useMainStore = create<MainState>()((set) => ({
     setSystem: (system) => set({ system }),
     reservoir: ReservoirDefault,
     setReservoir: (reservoir) => set({ reservoir }),
-    reservoirCollection: null,
-    setReservoirCollection: (reservoirCollection) =>
-        set({ reservoirCollection }),
+    reservoirCollections: null,
+    setReservoirCollections: (reservoirCollection) =>
+        set({ reservoirCollections: reservoirCollection }),
     basemap: BasemapId.Standard,
     setBasemap: (basemap) => set({ basemap }),
-    reservoirStorageData: [],
-    setReservoirStorageData: (reservoirStorageData) =>
-        set({ reservoirStorageData }),
     chartUpdate: 0,
     setChartUpdate: (chartUpdate) => set({ chartUpdate }),
     tools: {
