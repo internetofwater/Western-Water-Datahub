@@ -4,6 +4,7 @@
  */
 
 import { MapSourceDataEvent, Map } from 'mapbox-gl';
+import { LayerId, SourceId } from '@/features/Map/consts';
 
 /**
  *
@@ -80,3 +81,18 @@ export type SourceDataEvent = {
     type: 'sourcedata';
     target: Map;
 } & MapSourceDataEvent;
+
+/**
+ *
+ * @type
+ */
+export type ReservoirConfig = {
+    id: SourceId;
+    storageProperty: string;
+    capacityProperty: string;
+    identifierProperty: string;
+    identifierType: 'string' | 'number';
+    labelProperty: string;
+    regionConnectorProperty: string;
+    connectedLayers: LayerId[];
+};

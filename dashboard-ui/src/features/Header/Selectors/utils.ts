@@ -4,18 +4,21 @@
  */
 
 import { SourceId } from '@/features/Map/consts';
-import { ComboboxData, ComboboxItem } from '@mantine/core';
+import { ComboboxItem } from '@mantine/core';
 import { Feature, GeoJsonProperties, Geometry } from 'geojson';
 import { ExpressionSpecification, Map as MapObj } from 'mapbox-gl';
+
+export type ItemWithSource = ComboboxItem & { source?: string };
 
 export const formatOptions = (
     features: Feature<Geometry, GeoJsonProperties>[],
     getValueProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
     getLabelProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
     defaultLabel: string = 'All',
-    defaultValue: string = 'all'
-): ComboboxData => {
-    const options = new Map<string, ComboboxItem>();
+    defaultValue: string = 'all',
+    source?: string
+): ItemWithSource[] => {
+    const options = new Map<string, ItemWithSource>();
     options.set('all', { value: defaultValue, label: defaultLabel });
     features.forEach((feature) => {
         if (feature.properties) {
@@ -27,6 +30,7 @@ export const formatOptions = (
                 options.set(value, {
                     value: value,
                     label: label,
+                    source,
                 });
             }
         }
@@ -44,7 +48,7 @@ export const createOptionsFromMapboxSource = (
     getValueProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
     getLabelProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
     defaultLabel: string
-): ComboboxData => {
+): ComboboxItem[] => {
     const features = map.querySourceFeatures(sourceId, {
         sourceLayer: sourceId,
     });
@@ -68,7 +72,7 @@ export const createFilteredOptionsFromMapboxSource = (
     getValueProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
     getLabelProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
     defaultLabel: string
-): ComboboxData => {
+): ComboboxItem[] => {
     const features = map.querySourceFeatures(sourceId, {
         sourceLayer: sourceId,
         filter: filter,

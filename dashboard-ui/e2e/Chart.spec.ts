@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ReservoirSource } from '@/features/Map/consts';
+import { RISEEDRReservoirSource } from '@/features/Map/consts';
 import { getDateRange } from '@/features/Reservior/utils';
 import { test, expect } from '@playwright/test';
 
@@ -19,7 +19,7 @@ test.describe('Line Chart', () => {
 
         await test.step('Loading Options', async () => {
             // Await data load into map
-            await page.waitForRequest(ReservoirSource);
+            await page.waitForRequest(RISEEDRReservoirSource);
         });
 
         await test.step('Select updates after selection', async () => {

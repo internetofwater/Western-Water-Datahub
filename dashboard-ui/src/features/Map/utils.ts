@@ -3,14 +3,20 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Map } from 'mapbox-gl';
+import { ExpressionSpecification, Map } from 'mapbox-gl';
 import {
     SourceDataEvent,
     ReservoirPropertiesRaw,
     ReservoirProperties,
+    ReservoirConfig,
 } from '@/features/Map/types';
-import { ComplexReservoirProperties } from '@/features/Map/consts';
+import {
+    ComplexReservoirProperties,
+    ReservoirConfigs,
+    TeacupStepExpression,
+} from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/consts';
+import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 /**
  *
@@ -63,7 +69,7 @@ export const parseReservoirProperties = <
 };
 
 /**
-
+ *
  * @function
  */
 export const isSourceDataLoaded = (
@@ -77,4 +83,68 @@ export const isSourceDataLoaded = (
             map.isSourceLoaded(sourceId) &&
             map.querySourceFeatures(sourceId).length
     );
+};
+
+/**
+ *
+ * @function
+ */
+export const getReservoirConfig = (id: SourceId): ReservoirConfig | null => {
+    return ReservoirConfigs.find((config) => config.id === id) ?? null;
+};
+
+/**
+ *
+ * @function
+ */
+export const getReservoirIconImageExpression = (
+    config: ReservoirConfig
+): ExpressionSpecification => {
+    return [
+        'let',
+        'capacity', // Variable name
+        ['coalesce', ['get', config.capacityProperty], 1], // Variable value
+        'storage', // Variable name
+        [
+            '/',
+            ['/', ['coalesce', ['get', config.storageProperty], 1], 2],
+            ['coalesce', ['get', config.capacityProperty], 1],
+        ], // Variable value
+        [
+            'step',
+            ['zoom'],
+            TeacupStepExpression,
+
+            ...[
+                [0, 2010000],
+                [4, 465000],
+                [5, 320000],
+                [7, 65000],
+                [8, -1],
+            ].flatMap(([zoom, capacity]) => [
+                zoom, // At this zoom
+                [
+                    // Evaluate this expression
+                    'case',
+                    ['>=', ['var', 'capacity'], capacity],
+                    TeacupStepExpression, // If GTE capacity, evaluate sub-step expression
+                    'default', // Fallback to basic point symbol
+                ],
+            ]),
+        ],
+    ];
+};
+
+/**
+ *
+ * @function
+ */
+export const getDefaultGeoJSON = (): FeatureCollection<
+    Geometry,
+    GeoJsonProperties
+> => {
+    return {
+        type: 'FeatureCollection',
+        features: [],
+    };
 };

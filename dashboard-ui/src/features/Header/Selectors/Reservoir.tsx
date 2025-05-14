@@ -5,20 +5,17 @@
 
 'use client';
 
-import { ComboboxData, Select, Skeleton } from '@mantine/core';
+import { Select, Skeleton } from '@mantine/core';
 import useMainStore, { ReservoirDefault } from '@/lib/main';
-import {
-    ReservoirRegionConnectorField,
-    ReservoirLabelField,
-    ReservoirIdentifierField,
-    MAP_ID,
-    SourceId,
-} from '@/features/Map/consts';
+import { MAP_ID, SourceId, ReservoirConfigs } from '@/features/Map/consts';
 import { useEffect, useRef, useState } from 'react';
-import { formatOptions } from '@/features/Header/Selectors/utils';
+import {
+    formatOptions,
+    ItemWithSource,
+} from '@/features/Header/Selectors/utils';
 import { useReservoirData } from '@/app/hooks/useReservoirData';
 import { useMap } from '@/contexts/MapContexts';
-import { isSourceDataLoaded } from '@/features/Map/utils';
+import { getReservoirConfig, isSourceDataLoaded } from '@/features/Map/utils';
 import { SourceDataEvent } from '@/features/Map/types';
 
 /**
@@ -31,7 +28,9 @@ export const Reservoir: React.FC = () => {
     const reservoir = useMainStore((state) => state.reservoir);
     const setReservoir = useMainStore((state) => state.setReservoir);
 
-    const [reservoirOptions, setReservoirOptions] = useState<ComboboxData>([]);
+    const [reservoirOptions, setReservoirOptions] = useState<ItemWithSource[]>(
+        []
+    );
     const [loading, setLoading] = useState(true);
 
     const controller = useRef<AbortController>(null);
@@ -39,7 +38,36 @@ export const Reservoir: React.FC = () => {
 
     const { map } = useMap(MAP_ID);
 
-    const { reservoirCollection } = useReservoirData();
+    const { reservoirCollections } = useReservoirData();
+
+    const createDefaultOptions = () => {
+        if (!reservoirCollections) {
+            return;
+        }
+
+        const reservoirOptions: ItemWithSource[] = [];
+        for (const config of ReservoirConfigs) {
+            const collection = reservoirCollections[config.id];
+
+            if (collection) {
+                const features = collection.features;
+
+                if (features.length) {
+                    const options = formatOptions(
+                        features,
+                        (feature) => String(feature?.id),
+                        (feature) =>
+                            String(feature?.properties?.[config.labelProperty]),
+                        'All Reservoirs',
+                        String(ReservoirDefault),
+                        config.id
+                    );
+                    reservoirOptions.push(...options);
+                }
+            }
+        }
+        setReservoirOptions(reservoirOptions);
+    };
 
     useEffect(() => {
         isMounted.current = true;
@@ -58,7 +86,11 @@ export const Reservoir: React.FC = () => {
 
         // Ensure both map and populating fetch are finished
         const sourceCallback = (e: SourceDataEvent) => {
-            if (isSourceDataLoaded(map, SourceId.Reservoirs, e)) {
+            if (
+                ReservoirConfigs.every((config) =>
+                    isSourceDataLoaded(map, config.id, e)
+                )
+            ) {
                 setLoading(false);
                 map.off('sourcedata', sourceCallback); //remove event listener
             }
@@ -72,83 +104,108 @@ export const Reservoir: React.FC = () => {
     }, [map]);
 
     useEffect(() => {
-        if (!reservoirCollection) {
-            return;
-        }
-
-        if (reservoirCollection.features.length) {
-            const reservoirOptions = formatOptions(
-                reservoirCollection.features,
-                (feature) => String(feature?.id),
-                (feature) => String(feature?.properties?.[ReservoirLabelField]),
-                'All Reservoirs',
-                String(ReservoirDefault)
-            );
-
-            setReservoirOptions(reservoirOptions);
-        }
-    }, [reservoirCollection]);
+        createDefaultOptions();
+    }, [reservoirCollections]);
 
     useEffect(() => {
-        if (!reservoirCollection) {
+        if (!reservoirCollections) {
             return;
         }
 
         if (region && region !== 'all') {
-            const features = reservoirCollection.features.filter(
-                (feature) =>
-                    feature.properties[ReservoirRegionConnectorField]?.[0] ===
-                    region
-            );
+            const reservoirOptions: ItemWithSource[] = [];
+            for (const config of ReservoirConfigs) {
+                const collection = reservoirCollections[config.id];
 
-            const reservoirOptions = formatOptions(
-                features,
-                (feature) => String(feature?.id),
-                (feature) => String(feature?.properties?.[ReservoirLabelField]),
-                'All Reservoirs',
-                String(ReservoirDefault)
-            );
+                if (collection && config.regionConnectorProperty) {
+                    const features = collection.features.filter(
+                        (feature) =>
+                            feature.properties &&
+                            (Array.isArray(
+                                feature.properties[
+                                    config.regionConnectorProperty
+                                ]
+                            )
+                                ? (
+                                      feature.properties[
+                                          config.regionConnectorProperty
+                                      ] as string[] | number[]
+                                  )?.[0] === region
+                                : feature.properties[
+                                      config.regionConnectorProperty
+                                  ] === region)
+                    );
+
+                    if (features.length) {
+                        const options = formatOptions(
+                            features,
+                            (feature) =>
+                                String(
+                                    feature?.id ??
+                                        feature?.properties?.[
+                                            config.identifierProperty
+                                        ]
+                                ),
+                            (feature) =>
+                                String(
+                                    feature?.properties?.[config.labelProperty]
+                                ),
+                            'All Reservoirs',
+                            String(ReservoirDefault),
+                            config.id
+                        );
+                        reservoirOptions.push(...options);
+                    }
+                }
+            }
 
             setReservoirOptions(reservoirOptions);
         } else {
-            const reservoirOptions = formatOptions(
-                reservoirCollection.features,
-                (feature) => String(feature?.id),
-                (feature) => String(feature?.properties?.[ReservoirLabelField]),
-                'All Reservoirs',
-                String(ReservoirDefault)
-            );
-
-            setReservoirOptions(reservoirOptions);
+            createDefaultOptions();
         }
     }, [region]);
 
-    const handleChange = (value: string | null) => {
-        if (!value) {
+    const handleChange = (option: ItemWithSource) => {
+        if (!reservoirCollections || !option.value || !option.source) {
             return;
         }
 
-        const reservoidId = Number(value);
-        if (reservoirCollection) {
-            const features = reservoirCollection.features.filter(
-                (feature) =>
-                    feature.properties[ReservoirIdentifierField] === reservoidId
-            );
-            if (features.length) {
-                const feature = features[0];
-                const locationRegionNames =
-                    feature.properties[ReservoirRegionConnectorField];
+        const config = getReservoirConfig(option.source as SourceId);
+        const identifier =
+            config && config.identifierType === 'number'
+                ? Number(option.value)
+                : option.value;
+        if (config) {
+            const collection = reservoirCollections[config.id];
+            if (collection) {
+                const features = collection.features.filter(
+                    (feature) =>
+                        (feature.properties &&
+                            feature.properties[config.identifierProperty] ===
+                                identifier) ||
+                        feature.id === identifier
+                );
 
-                if (locationRegionNames.length === 1) {
-                    const region = locationRegionNames[0];
-                    if (isMounted.current) {
-                        setRegion(region);
+                if (features.length) {
+                    const feature = features[0];
+                    if (feature.properties) {
+                        const region = feature.properties[
+                            config.regionConnectorProperty
+                        ] as string[] | string;
+                        if (isMounted.current) {
+                            setRegion(
+                                Array.isArray(region) ? region[0] : region
+                            );
+                        }
                     }
                 }
             }
         }
 
-        setReservoir(reservoidId);
+        setReservoir({
+            identifier,
+            source: option.source,
+        });
     };
 
     return (
@@ -161,11 +218,11 @@ export const Reservoir: React.FC = () => {
                 id="reservoirSelector"
                 searchable
                 data={reservoirOptions}
-                value={String(reservoir)}
+                value={String(reservoir?.identifier ?? null)}
                 data-testid="reservoir-select"
                 aria-label="Select a Reservior"
                 placeholder="Select a Reservior"
-                onChange={(_value) => handleChange(_value)}
+                onChange={(_, option) => handleChange(option)}
             />
         </Skeleton>
     );

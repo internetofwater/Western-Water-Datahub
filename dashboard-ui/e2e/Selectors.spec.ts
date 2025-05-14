@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ReservoirSource } from '@/features/Map/consts';
+import { RISEEDRReservoirSource } from '@/features/Map/consts';
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -26,7 +26,7 @@ test.describe('Region', () => {
                         )
                 ),
                 // Load Reservoirs
-                page.waitForRequest(ReservoirSource),
+                page.waitForRequest(RISEEDRReservoirSource),
             ]);
         });
         const regionSelect = page.getByTestId('region-select');
@@ -88,7 +88,7 @@ test.describe('Reservoir', () => {
                         )
                 ),
                 // Load Reservoirs
-                page.waitForRequest(ReservoirSource),
+                page.waitForRequest(RISEEDRReservoirSource),
             ]);
         });
 

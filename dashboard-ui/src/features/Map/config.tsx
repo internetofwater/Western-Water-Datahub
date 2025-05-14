@@ -20,10 +20,13 @@ import {
     SubLayerId,
     LayerId,
     SourceId,
-    ReserviorIconImageExpression,
-    ReservoirSource,
+    RISEEDRReservoirSource,
     RegionsSource,
 } from '@/features/Map/consts';
+import {
+    getReservoirConfig,
+    getReservoirIconImageExpression,
+} from '@/features/Map/utils';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -43,12 +46,12 @@ export const sourceConfigs: SourceConfig[] = [
         },
     },
     {
-        id: SourceId.Reservoirs,
+        id: SourceId.RiseEDRReservoirs,
         type: Sources.GeoJSON,
         definition: {
             type: 'geojson',
 
-            data: ReservoirSource,
+            data: RISEEDRReservoirSource,
             filter: ['!=', ['get', '_id'], 3688],
         },
     },
@@ -112,7 +115,7 @@ export const getLayerColor = (
             return '#F00';
         case LayerId.Basins:
             return '#0F0';
-        case LayerId.Reservoirs:
+        case LayerId.RiseEDRReservoirs:
             return '#00F';
         default:
             return '#FFF';
@@ -196,13 +199,15 @@ export const getLayerConfig = (
                     'fill-opacity': 0.3,
                 },
             };
-        case LayerId.Reservoirs:
+        case LayerId.RiseEDRReservoirs:
             return {
-                id: LayerId.Reservoirs,
+                id: LayerId.RiseEDRReservoirs,
                 type: LayerType.Symbol,
-                source: SourceId.Reservoirs,
+                source: SourceId.RiseEDRReservoirs,
                 layout: {
-                    'icon-image': ReserviorIconImageExpression,
+                    'icon-image': getReservoirIconImageExpression(
+                        getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                    ),
                     'icon-size': [
                         'let',
                         'capacity',
@@ -418,11 +423,11 @@ export const layerDefinitions: MainLayerDefinition[] = [
         ],
     },
     {
-        id: LayerId.Reservoirs,
-        config: getLayerConfig(LayerId.Reservoirs),
+        id: LayerId.RiseEDRReservoirs,
+        config: getLayerConfig(LayerId.RiseEDRReservoirs),
         controllable: false,
         legend: false,
-        clickFunction: getLayerClickFunction(LayerId.Reservoirs),
+        clickFunction: getLayerClickFunction(LayerId.RiseEDRReservoirs),
         // hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
     },
 ];

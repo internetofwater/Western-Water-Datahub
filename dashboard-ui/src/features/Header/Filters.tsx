@@ -7,14 +7,11 @@ import { Group, Switch } from '@mantine/core';
 import styles from '@/features/Header/Header.module.css';
 import { useEffect, useState } from 'react';
 import { useMap } from '@/contexts/MapContexts';
-import {
-    LayerId,
-    MAP_ID,
-    ReserviorIconImageExpression,
-} from '@/features/Map/consts';
+import { MAP_ID, ReservoirConfigs } from '@/features/Map/consts';
+import { getReservoirIconImageExpression } from '@/features/Map/utils';
 
 export const Filters: React.FC = () => {
-    const [showTeacups, setShowTeacups] = useState(false);
+    const [showTeacups, setShowTeacups] = useState(true);
 
     const { map } = useMap(MAP_ID);
 
@@ -22,27 +19,22 @@ export const Filters: React.FC = () => {
         if (!map) {
             return;
         }
-
-        const iconImage = map.getLayoutProperty(
-            LayerId.Reservoirs,
-            'icon-image'
-        );
-
-        setShowTeacups(iconImage !== 'default');
-    }, [map]);
-
-    useEffect(() => {
-        if (!map) {
-            return;
-        }
         if (showTeacups) {
-            map.setLayoutProperty(
-                LayerId.Reservoirs,
-                'icon-image',
-                ReserviorIconImageExpression
+            ReservoirConfigs.forEach((config) =>
+                config.connectedLayers.forEach((layerId) =>
+                    map.setLayoutProperty(
+                        layerId,
+                        'icon-image',
+                        getReservoirIconImageExpression(config)
+                    )
+                )
             );
         } else {
-            map.setLayoutProperty(LayerId.Reservoirs, 'icon-image', 'default');
+            ReservoirConfigs.forEach((config) =>
+                config.connectedLayers.forEach((layerId) =>
+                    map.setLayoutProperty(layerId, 'icon-image', 'default')
+                )
+            );
         }
     }, [showTeacups]);
 

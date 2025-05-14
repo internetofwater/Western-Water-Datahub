@@ -7,14 +7,15 @@ import { useEffect, useRef, useState } from 'react';
 import edrService from '@/services/init/edr.init';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { ReservoirProperties } from '@/features/Map/types';
-import useMainStore from '@/lib/main';
+import useMainStore, { ReservoirCollections } from '@/lib/main';
+import { ReservoirConfigs } from '@/features/Map/consts';
 
 export const useReservoirData = () => {
-    const reservoirCollection = useMainStore(
-        (state) => state.reservoirCollection
+    const reservoirCollections = useMainStore(
+        (state) => state.reservoirCollections
     );
-    const setReservoirCollection = useMainStore(
-        (state) => state.setReservoirCollection
+    const setReservoirCollections = useMainStore(
+        (state) => state.setReservoirCollections
     );
 
     const [loading, setLoading] = useState(false);
@@ -25,18 +26,22 @@ export const useReservoirData = () => {
         try {
             setLoading(true);
             controller.current = new AbortController();
+            const reservoirCollections: ReservoirCollections = {};
 
-            const result = await edrService.getLocations<
-                FeatureCollection<Point, ReservoirProperties>
-            >('rise-edr', {
-                signal: controller.current.signal,
-                params: {
-                    'parameter-name': 'reservoirStorage',
-                },
-            });
+            for (const config of ReservoirConfigs) {
+                const result = await edrService.getLocations<
+                    FeatureCollection<Point, ReservoirProperties>
+                >(config.id, {
+                    signal: controller.current.signal,
+                    params: {
+                        'parameter-name': 'reservoirStorage',
+                    },
+                });
+                reservoirCollections[config.id] = result;
+            }
 
             if (isMounted.current) {
-                setReservoirCollection(result);
+                setReservoirCollections(reservoirCollections);
                 setLoading(false);
             }
         } catch (error) {
@@ -70,7 +75,7 @@ export const useReservoirData = () => {
 
     useEffect(() => {
         isMounted.current = true;
-        if (!reservoirCollection) {
+        if (!reservoirCollections) {
             void fetchReservoirLocations();
         }
 
@@ -81,7 +86,7 @@ export const useReservoirData = () => {
     }, []);
 
     return {
-        reservoirCollection,
+        reservoirCollections,
         loading,
         fetchReservoirItem,
     };

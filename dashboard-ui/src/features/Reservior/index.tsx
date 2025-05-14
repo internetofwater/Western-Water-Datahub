@@ -6,15 +6,16 @@ import { useRef } from 'react';
 import { GridCol, Paper } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { ReservoirProperties } from '@/features/Map/types';
-import { ReservoirIdentifierField } from '@/features/Map/consts';
+import { SourceId } from '@/features/Map/consts';
+import { getReservoirConfig } from '@/features/Map/utils';
 import { Chart } from '@/features/Reservior/Chart';
 import { Chart as ChartJS } from 'chart.js';
 import { Info } from '@/features/Reservior/Info';
 import styles from '@/features/Reservior/Reservoir.module.css';
-import useMainStore from '@/lib/main';
+import useMainStore, { Reservoir as ReservoirType } from '@/lib/main';
 
 type Props = {
-    reservoir: number;
+    reservoir: ReservoirType;
     accessToken: string;
 };
 
@@ -25,8 +26,8 @@ type Props = {
 const Reservoir: React.FC<Props> = (props) => {
     const { reservoir, accessToken } = props;
 
-    const reservoirCollection = useMainStore(
-        (state) => state.reservoirCollection
+    const reservoirCollections = useMainStore(
+        (state) => state.reservoirCollections
     );
 
     const chartRef =
@@ -37,22 +38,31 @@ const Reservoir: React.FC<Props> = (props) => {
     const [center, setCenter] = useState<[number, number] | null>(null);
 
     useEffect(() => {
-        if (!reservoirCollection) {
+        if (!reservoirCollections) {
             return;
         }
 
-        const features = reservoirCollection.features.filter(
-            (feature) =>
-                feature.properties[ReservoirIdentifierField] === reservoir
-        );
+        const collection = reservoirCollections[reservoir.source as SourceId];
 
-        if (features.length) {
-            const feature = features[0];
-            const properties = feature.properties;
+        const config = getReservoirConfig(reservoir.source as SourceId);
 
-            setCenter(feature.geometry.coordinates as [number, number]);
+        if (collection && config) {
+            const features = collection.features.filter(
+                (feature) =>
+                    (feature.properties &&
+                        feature.properties[config.identifierProperty] ===
+                            reservoir.identifier) ||
+                    feature.id === reservoir.identifier
+            );
 
-            setReservoirProperties(properties);
+            if (features.length) {
+                const feature = features[0];
+                const properties = feature.properties as ReservoirProperties;
+
+                setCenter(feature.geometry.coordinates as [number, number]);
+
+                setReservoirProperties(properties);
+            }
         }
     }, [reservoir]);
 

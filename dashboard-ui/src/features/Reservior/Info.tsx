@@ -5,7 +5,7 @@
 
 import { Paper, Stack, Title, Text, Group } from '@mantine/core';
 import PDF from '@/features/Reservior/PDF';
-import { ReservoirProperties } from '../Map/types';
+import { ReservoirProperties } from '@/features/Map/types';
 import { Chart as ChartJS } from 'chart.js';
 import { RefObject } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
