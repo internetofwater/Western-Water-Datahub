@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: MIT
  */
 import { useRef } from 'react';
-import { GridCol, Paper } from '@mantine/core';
+import { GridCol } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { ReservoirProperties } from '@/features/Map/types';
+import { ReservoirConfig, ReservoirProperties } from '@/features/Map/types';
 import { SourceId } from '@/features/Map/consts';
 import { getReservoirConfig } from '@/features/Map/utils';
 import { Chart } from '@/features/Reservior/Chart';
 import { Chart as ChartJS } from 'chart.js';
 import { Info } from '@/features/Reservior/Info';
-import styles from '@/features/Reservior/Reservoir.module.css';
 import useMainStore, { Reservoir as ReservoirType } from '@/lib/main';
+import { Graphic } from './Graphic';
 
 type Props = {
     reservoir: ReservoirType;
@@ -35,6 +35,7 @@ const Reservoir: React.FC<Props> = (props) => {
 
     const [reservoirProperties, setReservoirProperties] =
         useState<ReservoirProperties>();
+    const [config, setConfig] = useState<ReservoirConfig>();
     const [center, setCenter] = useState<[number, number] | null>(null);
 
     useEffect(() => {
@@ -47,6 +48,8 @@ const Reservoir: React.FC<Props> = (props) => {
         const config = getReservoirConfig(reservoir.source as SourceId);
 
         if (collection && config) {
+            setConfig(config);
+
             const features = collection.features.filter(
                 (feature) =>
                     (feature.properties &&
@@ -68,7 +71,7 @@ const Reservoir: React.FC<Props> = (props) => {
 
     return (
         <>
-            {reservoirProperties && (
+            {reservoirProperties && config && (
                 <>
                     <GridCol span={{ base: 12, md: 4 }} order={3}>
                         <Info
@@ -79,13 +82,10 @@ const Reservoir: React.FC<Props> = (props) => {
                         />
                     </GridCol>
                     <GridCol span={{ base: 12, md: 4 }} order={4}>
-                        <Paper
-                            shadow="xs"
-                            p="xl"
-                            className={styles.infoContainer}
-                        >
-                            Average
-                        </Paper>
+                        <Graphic
+                            reservoirProperties={reservoirProperties}
+                            config={config}
+                        />
                     </GridCol>
                     <GridCol span={{ base: 12, md: 4 }} order={5}>
                         <Chart id={reservoirProperties._id} ref={chartRef} />

@@ -59,3 +59,100 @@ export const getLabelsAndValues = (
 
     return data;
 };
+
+export const calculateInnerTrapezoidHeight = (
+    size: number,
+    base1: number,
+    base2: number,
+    height: number
+): number => {
+    if (base1 === base2) return height / 2;
+    const sqrt2 = Math.SQRT2;
+    const numerator =
+        size *
+        height *
+        (2 * base1 - sqrt2 * Math.sqrt(base1 ** 2 + base2 ** 2));
+    const denominator = base1 - base2;
+    return numerator / denominator;
+};
+
+export const calculateXPositionConstructor =
+    (pointA: [number, number], pointB: [number, number], offset: number) =>
+    (y: number): number => {
+        const x1 = pointA[0];
+        const x2 = pointB[0];
+        const y1 = pointA[1];
+        const y2 = pointB[1];
+
+        return y / ((y2 - y1) / (x2 - x1)) - offset;
+    };
+
+export const addLineConstructor =
+    (
+        width: number,
+        svg: SVGElement,
+        calculateXPosition: (value: number) => number
+    ) =>
+    (
+        id: string,
+        value: number,
+        color: string,
+        mouseEnterFunction: () => void,
+        mouseLeaveFunction: () => void
+    ): SVGPathElement => {
+        const lineElement = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'path'
+        );
+        lineElement.setAttribute('id', id);
+
+        const lineStart = calculateXPosition(value);
+        const lineEnd = width - lineStart;
+
+        lineElement.setAttribute(
+            'd',
+            `M${lineStart} ${value} H${lineStart} ${lineEnd}`
+        );
+        lineElement.setAttribute('stroke-dasharray', '3,3');
+        lineElement.setAttribute(
+            'style',
+            `fill:none;stroke:${color};stroke-width:3`
+        );
+        svg.appendChild(lineElement);
+
+        lineElement.addEventListener('mouseenter', mouseEnterFunction);
+        lineElement.addEventListener('mouseleave', mouseLeaveFunction);
+
+        return lineElement;
+    };
+
+export const addTextConstructor =
+    (width: number, svg: SVGElement) =>
+    (
+        id: string,
+        text: string,
+        position: number,
+        color: string,
+        display: boolean = true
+        // mouseEnterFunction: () => void,
+        // mouseLeaveFunction: () => void
+    ): SVGTextElement => {
+        const textElement = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'text'
+        );
+        textElement.setAttribute('id', id);
+
+        textElement.innerHTML = text;
+
+        textElement.setAttribute('x', '50%');
+        textElement.setAttribute('y', `${position}`);
+        textElement.setAttribute('text-anchor', 'middle');
+        textElement.setAttribute('font-size', '7px');
+        textElement.setAttribute('fill', color);
+        textElement.setAttribute('display', display ? 'inline' : 'none');
+
+        svg.appendChild(textElement);
+
+        return textElement;
+    };

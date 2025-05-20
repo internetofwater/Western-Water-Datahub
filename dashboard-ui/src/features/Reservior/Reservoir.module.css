@@ -21,6 +21,10 @@
     align-items: center;
 }
 
+.graphicContainer {
+    margin: auto;
+}
+
 .PDFViewer {
     width: 100%;
 }
