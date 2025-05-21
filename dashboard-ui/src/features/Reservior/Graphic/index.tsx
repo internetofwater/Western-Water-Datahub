@@ -23,7 +23,7 @@ import {
     calculateInnerTrapezoidHeight,
     calculateXPositionConstructor,
     propagateEventToContainerElemConstructor,
-} from '@/features/Reservior/utils';
+} from '@/features/Reservior/Graphic/utils';
 import { GeoJsonProperties } from 'geojson';
 import { renderToStaticMarkup } from 'react-dom/server';
 
@@ -75,6 +75,7 @@ export const Graphic: React.FC<Props> = (props) => {
         setShowLabels(showLabels);
     };
 
+    // Event listener functions
     const handleStorageEnter = () => {
         const storageElement = document.getElementById(storagePolygonId);
         const storageTextElement = document.getElementById(storageTextId);
@@ -633,7 +634,6 @@ export const Graphic: React.FC<Props> = (props) => {
                     <Box className={styles.svgWrapper}>
                         <svg
                             id="trapezoidSVG"
-                            height="260"
                             viewBox="-5 -10 220 127"
                             className={styles.svg}
                         >
