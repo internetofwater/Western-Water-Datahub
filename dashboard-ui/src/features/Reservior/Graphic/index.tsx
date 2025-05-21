@@ -618,7 +618,14 @@ export const Graphic: React.FC<Props> = (props) => {
                 );
             }
         };
-    }, [showLabels, cutHeight, highPercentile, average, lowPercentile]);
+    }, [
+        colorScheme,
+        showLabels,
+        cutHeight,
+        highPercentile,
+        average,
+        lowPercentile,
+    ]);
 
     return (
         <Paper

@@ -1,12 +1,3 @@
-// import {
-//     calculateInnerTrapezoidHeight,
-//     calculateXPositionConstructor,
-//     addLineConstructor,
-//     addTextConstructor,
-//     addLabelConstructor,
-//     propagateEventToContainerElemConstructor,
-//   } from './utils';
-
 import {
     addLabelConstructor,
     addLineConstructor,
