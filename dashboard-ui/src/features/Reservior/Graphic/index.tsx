@@ -3,12 +3,15 @@ import { AspectRatio, Box, Group, Paper, Stack, Title } from '@mantine/core';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { useEffect, useRef, useState } from 'react';
 import {
+    addLabelConstructor,
     addLineConstructor,
     addTextConstructor,
     calculateInnerTrapezoidHeight,
     calculateXPositionConstructor,
-} from '../utils';
+    propagateEventToContainerElemConstructor,
+} from '@/features/Reservior/utils';
 import { GeoJsonProperties } from 'geojson';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
@@ -27,6 +30,7 @@ export const Graphic: React.FC<Props> = (props) => {
     const storagePolygonId = 'storage-polygon';
     const capacityPolygonId = 'capacity-polygon';
     const highPercentileId = 'high-percentile-line';
+    const highPercentileLabelId = 'high-percentile-label';
     const averageId = 'average-line';
     const lowPercentileId = 'low-percentile-line';
     const capacityTextId = 'capacity-text';
@@ -39,7 +43,7 @@ export const Graphic: React.FC<Props> = (props) => {
         const storageTextElement = document.getElementById(storageTextId);
 
         if (storageElement && storageTextElement) {
-            storageElement.setAttribute('stroke-width', '3');
+            storageElement.setAttribute('stroke-width', '2');
             storageTextElement.setAttribute('display', 'inline');
         }
     };
@@ -55,9 +59,23 @@ export const Graphic: React.FC<Props> = (props) => {
     };
     const handleCapacityEnter = () => {
         setCapacityHover(true);
+        const capacityElement = document.getElementById(capacityPolygonId);
+        const capacityTextElement = document.getElementById(capacityTextId);
+
+        if (capacityElement && capacityTextElement) {
+            // capacityElement.setAttribute('stroke-width', '2');
+            capacityTextElement.setAttribute('display', 'inline');
+        }
     };
     const handleCapacityLeave = () => {
         setCapacityHover(false);
+        const capacityElement = document.getElementById(capacityPolygonId);
+        const capacityTextElement = document.getElementById(capacityTextId);
+
+        if (capacityElement && capacityTextElement) {
+            capacityElement.setAttribute('stroke-width', '0');
+            capacityTextElement.setAttribute('display', 'none');
+        }
     };
 
     useEffect(() => {
@@ -102,8 +120,6 @@ export const Graphic: React.FC<Props> = (props) => {
         // Calculate the points of the inner (storage) trapezoid
         const baseCut =
             upperBase + (lowerBase - upperBase) * (cutHeight / height);
-        const E: [number, number] = [0, 0];
-        const F: [number, number] = [upperBase * scale, 0];
         const G: [number, number] = [
             ((upperBase + baseCut) / 2) * scale,
             cutHeight * scale,
@@ -119,13 +135,14 @@ export const Graphic: React.FC<Props> = (props) => {
             'polygon'
         );
         capacity.setAttribute('id', capacityPolygonId);
-        capacity.setAttribute('stroke', 'red');
+        capacity.setAttribute('stroke', '#00b8f0');
         capacity.setAttribute('stroke-width', '0');
+        capacity.setAttribute('filter', 'url(#shadow)');
         capacity.setAttribute(
             'points',
             `${A.join(',')} ${B.join(',')} ${C.join(',')} ${D.join(',')}`
         );
-        capacity.setAttribute('fill', '#1c638e');
+        capacity.setAttribute('fill', '#a6d5e3');
         svgRef.current.appendChild(capacity);
 
         // Draw inner trapezoid
@@ -134,18 +151,26 @@ export const Graphic: React.FC<Props> = (props) => {
             'polygon'
         );
         storage.setAttribute('id', storagePolygonId);
-        storage.setAttribute('stroke', 'red');
+        storage.setAttribute('stroke', '#00b8f0');
         storage.setAttribute('stroke-width', '0');
+        // storage.setAttribute('class', 'grow');
         storage.setAttribute(
             'points',
-            `${E.join(',')} ${F.join(',')} ${G.join(',')} ${H.join(',')}`
+            `${H.join(',')} ${G.join(',')} ${C.join(',')} ${D.join(',')}`
         );
-        storage.setAttribute('fill', '#a6d5e3');
+        storage.setAttribute('fill', '#1c638e');
         svgRef.current.appendChild(storage);
 
         const highPercentile = height - 95;
         const average = height - 81;
         const lowPercentile = height - 40;
+
+        const propagateEventToContainerElem =
+            propagateEventToContainerElemConstructor(
+                capacityPolygonId,
+                storagePolygonId,
+                cutHeight
+            );
 
         const calculateXPosition = calculateXPositionConstructor(A, D, 0);
 
@@ -161,24 +186,77 @@ export const Graphic: React.FC<Props> = (props) => {
             highPercentileId,
             highPercentile,
             '#FFF',
-            () => {},
-            () => {}
+            () => {
+                propagateEventToContainerElem('mouseenter', highPercentile);
+            },
+            () => {
+                propagateEventToContainerElem('mouseenter', highPercentile);
+            }
         );
+        // const addHighLabel = addLabelConstructor(
+        //     upperBase,
+        //     svgRef.current,
+        //     calculateXPosition
+        // );
+        // const highLabelText = renderToStaticMarkup(
+        //     <>
+        //         <tspan dy="0" fontWeight="bold">
+        //             High
+        //         </tspan>
+        //         <tspan dy="20">
+        //             {' '}
+        //             (90
+        //             <tspan dy="-10" fontSize="12">
+        //                 th
+        //             </tspan>{' '}
+        //             Percentile)
+        //         </tspan>
+        //     </>
+        // );
+        // console.log('highLabelText', highLabelText);
+        // addHighLabel(
+        //     highPercentileLabelId,
+        //     highLabelText,
+        //     highPercentile,
+        //     '#000'
+        // );
 
         addLine(
             averageId,
             average,
             '#d0a02a',
-            () => {},
-            () => {}
+            () => {
+                const averageTextElement =
+                    document.getElementById(averageTextId);
+
+                if (averageTextElement) {
+                    averageTextElement.setAttribute('display', 'inline');
+                }
+
+                propagateEventToContainerElem('mouseenter', average);
+            },
+            () => {
+                const averageTextElement =
+                    document.getElementById(averageTextId);
+
+                if (averageTextElement) {
+                    averageTextElement.setAttribute('display', 'none');
+                }
+
+                propagateEventToContainerElem('mouseleave', average);
+            }
         );
 
         addLine(
             lowPercentileId,
             lowPercentile,
             '#FFF',
-            () => {},
-            () => {}
+            () => {
+                propagateEventToContainerElem('mouseenter', lowPercentile);
+            },
+            () => {
+                propagateEventToContainerElem('mouseleave', lowPercentile);
+            }
         );
 
         addText(
@@ -190,28 +268,28 @@ export const Graphic: React.FC<Props> = (props) => {
             '#000',
             false
         );
-        addText(averageTextId, `${0} acre-feet`, average - 1, '#000', false);
+        addText(averageTextId, `${0} acre-feet`, average - 2, '#d0a02a', false);
         addText(
             storageTextId,
             `${(
                 Number(reservoirProperties[config.storageProperty]) / 2
             ).toLocaleString('en-us')} acre-feet`,
             cutHeight - 1,
-            '#000',
+            '#FFF',
             false
         );
 
         const addHandleCapacityEnter = () => {
-            handleCapacityEnter(capacity);
+            handleCapacityEnter();
         };
         const addHandleCapacityLeave = () => {
-            handleCapacityLeave(capacity);
+            handleCapacityLeave();
         };
         const addHandleStorageEnter = () => {
-            handleStorageEnter(storage);
+            handleStorageEnter();
         };
         const addHandleStorageLeave = () => {
-            handleStorageLeave(storage);
+            handleStorageLeave();
         };
 
         capacity.addEventListener('mouseenter', addHandleCapacityEnter);
@@ -241,11 +319,22 @@ export const Graphic: React.FC<Props> = (props) => {
                 </Title>
                 <Box className={styles.svgWrapper}>
                     <svg
-                        ref={svgRef}
                         id="trapezoidSVG"
                         height="290"
-                        viewBox="0 -10 160 127"
-                    ></svg>
+                        viewBox="-5 -10 170 127"
+                        className={styles.svg}
+                    >
+                        <defs>
+                            <filter id="shadow">
+                                <feDropShadow
+                                    dx="0.5"
+                                    dy="0.4"
+                                    stdDeviation="0.4"
+                                />
+                            </filter>
+                        </defs>
+                        <g ref={svgRef}></g>
+                    </svg>
                 </Box>
             </Stack>
         </Paper>

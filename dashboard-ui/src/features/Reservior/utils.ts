@@ -97,8 +97,8 @@ export const addLineConstructor =
         id: string,
         value: number,
         color: string,
-        mouseEnterFunction: () => void,
-        mouseLeaveFunction: () => void
+        mouseEnterFunction: (e: MouseEvent) => void,
+        mouseLeaveFunction: (e: MouseEvent) => void
     ): SVGPathElement => {
         const lineElement = document.createElementNS(
             'http://www.w3.org/2000/svg',
@@ -118,10 +118,26 @@ export const addLineConstructor =
             'style',
             `fill:none;stroke:${color};stroke-width:3`
         );
-        svg.appendChild(lineElement);
+        const ghostLine = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'path'
+        );
+        ghostLine.setAttribute('id', id + '-ghost');
+        ghostLine.setAttribute(
+            'd',
+            `M${lineStart} ${value} H${lineStart} ${lineEnd}`
+        );
+        ghostLine.setAttribute(
+            'style',
+            `stroke:#FFF;stroke-width:5;opacity:0;`
+        );
 
         lineElement.addEventListener('mouseenter', mouseEnterFunction);
         lineElement.addEventListener('mouseleave', mouseLeaveFunction);
+        ghostLine.addEventListener('mouseenter', mouseEnterFunction);
+        ghostLine.addEventListener('mouseleave', mouseLeaveFunction);
+        svg.appendChild(lineElement);
+        svg.appendChild(ghostLine);
 
         return lineElement;
     };
@@ -149,10 +165,79 @@ export const addTextConstructor =
         textElement.setAttribute('y', `${position}`);
         textElement.setAttribute('text-anchor', 'middle');
         textElement.setAttribute('font-size', '7px');
+        textElement.setAttribute('font-weight', 'bold');
         textElement.setAttribute('fill', color);
         textElement.setAttribute('display', display ? 'inline' : 'none');
 
         svg.appendChild(textElement);
 
         return textElement;
+    };
+
+export const addLabelConstructor =
+    (
+        width: number,
+        svg: SVGElement,
+        calculateXPosition: (value: number) => number
+    ) =>
+    (
+        id: string,
+        text: string,
+        value: number,
+        color: string,
+        display: boolean = true,
+        bold: boolean = false
+        // mouseEnterFunction: () => void,
+        // mouseLeaveFunction: () => void
+    ): SVGTextElement => {
+        const textElement = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'text'
+        );
+        textElement.setAttribute('id', id);
+
+        textElement.innerHTML = text;
+
+        const lineStart = calculateXPosition(value);
+        const lineEnd = width - lineStart;
+
+        textElement.setAttribute('x', `${lineEnd + 20}`);
+        textElement.setAttribute('y', `${value}`);
+        // textElement.setAttribute('text-anchor', 'middle');
+        textElement.setAttribute('font-size', '9px');
+        if (bold) {
+            textElement.setAttribute('font-weight', 'bold');
+        }
+        textElement.setAttribute('fill', color);
+        textElement.setAttribute('display', display ? 'inline' : 'none');
+
+        svg.appendChild(textElement);
+
+        return textElement;
+    };
+
+export const propagateEventToContainerElemConstructor =
+    (capacityPolygonId: string, storagePolygonId: string, cutHeight: number) =>
+    (which: 'mouseenter' | 'mouseleave', value: number) => {
+        const hoverEvent = new Event(which, { bubbles: true });
+        if (value < cutHeight) {
+            const capacityElement = document.getElementById(capacityPolygonId);
+            if (capacityElement) {
+                capacityElement.dispatchEvent(hoverEvent);
+            }
+        } else if (value > cutHeight) {
+            const storageElement = document.getElementById(storagePolygonId);
+            if (storageElement) {
+                storageElement.dispatchEvent(hoverEvent);
+            }
+        } else {
+            const storageElement = document.getElementById(storagePolygonId);
+            if (storageElement) {
+                storageElement.dispatchEvent(hoverEvent);
+            }
+            const capacityElement = document.getElementById(capacityPolygonId);
+            if (capacityElement) {
+                capacityElement.dispatchEvent(hoverEvent);
+            }
+        }
     };

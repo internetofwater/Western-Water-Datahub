@@ -38,6 +38,15 @@
     min-width: 105px;
 }
 
+.svg {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.svg:hover {
+    transform: scale(1.05);
+}
+
 @media screen and (max-width: 1258px) {
     .chartContainer {
         height: 79%;
