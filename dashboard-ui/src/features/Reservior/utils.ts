@@ -150,8 +150,6 @@ export const addTextConstructor =
         position: number,
         color: string,
         display: boolean = true
-        // mouseEnterFunction: () => void,
-        // mouseLeaveFunction: () => void
     ): SVGTextElement => {
         const textElement = document.createElementNS(
             'http://www.w3.org/2000/svg',
@@ -161,7 +159,7 @@ export const addTextConstructor =
 
         textElement.innerHTML = text;
 
-        textElement.setAttribute('x', '50%');
+        textElement.setAttribute('x', '35%'); // (160 / 2) / 230 = ~0.35
         textElement.setAttribute('y', `${position}`);
         textElement.setAttribute('text-anchor', 'middle');
         textElement.setAttribute('font-size', '7px');
@@ -187,8 +185,6 @@ export const addLabelConstructor =
         color: string,
         display: boolean = true,
         bold: boolean = false
-        // mouseEnterFunction: () => void,
-        // mouseLeaveFunction: () => void
     ): SVGTextElement => {
         const textElement = document.createElementNS(
             'http://www.w3.org/2000/svg',
@@ -201,9 +197,9 @@ export const addLabelConstructor =
         const lineStart = calculateXPosition(value);
         const lineEnd = width - lineStart;
 
-        textElement.setAttribute('x', `${lineEnd + 20}`);
+        textElement.setAttribute('x', `${lineEnd + 18}`);
         textElement.setAttribute('y', `${value}`);
-        // textElement.setAttribute('text-anchor', 'middle');
+        textElement.setAttribute('text-anchor', 'middle');
         textElement.setAttribute('font-size', '9px');
         if (bold) {
             textElement.setAttribute('font-weight', 'bold');

@@ -23,10 +23,11 @@
 
 .graphicContainer {
     margin: auto;
+    min-width: 590px;
 }
 
 .PDFViewer {
-    width: 100%;
+    max-width: 100%;
 }
 
 .PDFViewer iframe {
@@ -37,6 +38,13 @@
 .controlButton {
     min-width: 105px;
 }
+/* .svgWrapper {
+
+}
+
+.svgWrapper svg {
+    width: 74%;
+} */
 
 .svg {
     cursor: pointer;
@@ -45,6 +53,16 @@
 
 .svg:hover {
     transform: scale(1.05);
+}
+
+.graphicLegendColor {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+.graphicLegendText {
+    color: #000;
 }
 
 @media screen and (max-width: 1258px) {

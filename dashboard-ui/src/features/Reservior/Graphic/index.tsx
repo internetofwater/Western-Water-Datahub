@@ -1,5 +1,14 @@
 import { ReservoirConfig } from '@/features/Map/types';
-import { AspectRatio, Box, Group, Paper, Stack, Title } from '@mantine/core';
+import {
+    Box,
+    Group,
+    Paper,
+    Stack,
+    Switch,
+    Title,
+    Text,
+    useMantineColorScheme,
+} from '@mantine/core';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -21,10 +30,13 @@ type Props = {
 export const Graphic: React.FC<Props> = (props) => {
     const { reservoirProperties, config } = props;
 
-    const [storageHover, setStorageHover] = useState(false);
-    const [capacityHover, setCapacityHover] = useState(false);
+    const [showLabels, setShowLabels] = useState(false);
+    // const [storageHover, setStorageHover] = useState(false);
+    // const [capacityHover, setCapacityHover] = useState(false);
 
     const svgRef = useRef<SVGSVGElement>(null);
+
+    const { colorScheme } = useMantineColorScheme();
 
     // Define Id's of elements for reference
     const storagePolygonId = 'storage-polygon';
@@ -32,13 +44,31 @@ export const Graphic: React.FC<Props> = (props) => {
     const highPercentileId = 'high-percentile-line';
     const highPercentileLabelId = 'high-percentile-label';
     const averageId = 'average-line';
-    const lowPercentileId = 'low-percentile-line';
-    const capacityTextId = 'capacity-text';
     const averageTextId = 'average-text';
+    const averageLabelId = 'average-label';
+    const lowPercentileId = 'low-percentile-line';
+    const lowPercentileLabelId = 'low-percentile-label';
+    const capacityTextId = 'capacity-text';
     const storageTextId = 'storage-text';
 
+    const capacityFill = '#a6d5e3';
+    const storageFill = '#1c638e';
+
+    const handleShowLabels = (showLabels: boolean) => {
+        if (showLabels) {
+            handleStorageEnter();
+            handleCapacityEnter();
+            handleAverageLineEnter();
+        } else {
+            handleStorageLeave(false);
+            handleCapacityLeave(false);
+            handleAverageLineLeave(false);
+        }
+
+        setShowLabels(showLabels);
+    };
+
     const handleStorageEnter = () => {
-        setStorageHover(true);
         const storageElement = document.getElementById(storagePolygonId);
         const storageTextElement = document.getElementById(storageTextId);
 
@@ -47,8 +77,11 @@ export const Graphic: React.FC<Props> = (props) => {
             storageTextElement.setAttribute('display', 'inline');
         }
     };
-    const handleStorageLeave = () => {
-        setStorageHover(false);
+    const handleStorageLeave = (_showLabels: boolean = showLabels) => {
+        if (_showLabels) {
+            return;
+        }
+
         const storageElement = document.getElementById(storagePolygonId);
         const storageTextElement = document.getElementById(storageTextId);
 
@@ -58,7 +91,6 @@ export const Graphic: React.FC<Props> = (props) => {
         }
     };
     const handleCapacityEnter = () => {
-        setCapacityHover(true);
         const capacityElement = document.getElementById(capacityPolygonId);
         const capacityTextElement = document.getElementById(capacityTextId);
 
@@ -67,14 +99,35 @@ export const Graphic: React.FC<Props> = (props) => {
             capacityTextElement.setAttribute('display', 'inline');
         }
     };
-    const handleCapacityLeave = () => {
-        setCapacityHover(false);
+    const handleCapacityLeave = (_showLabels: boolean = showLabels) => {
+        if (_showLabels) {
+            return;
+        }
         const capacityElement = document.getElementById(capacityPolygonId);
         const capacityTextElement = document.getElementById(capacityTextId);
 
         if (capacityElement && capacityTextElement) {
             capacityElement.setAttribute('stroke-width', '0');
             capacityTextElement.setAttribute('display', 'none');
+        }
+    };
+
+    const handleAverageLineEnter = () => {
+        const averageTextElement = document.getElementById(averageTextId);
+
+        if (averageTextElement) {
+            averageTextElement.setAttribute('display', 'inline');
+        }
+    };
+    const handleAverageLineLeave = (_showLabels: boolean = showLabels) => {
+        if (_showLabels) {
+            return;
+        }
+
+        const averageTextElement = document.getElementById(averageTextId);
+
+        if (averageTextElement) {
+            averageTextElement.setAttribute('display', 'none');
         }
     };
 
@@ -92,40 +145,42 @@ export const Graphic: React.FC<Props> = (props) => {
 
         // Determine basic dimensions of teacup trapezoid
         const size = 1 - Number(percentOfFull.toFixed(2));
-        const upperBase = 160;
-        const lowerBase = 64;
+        const upperWidth = 160;
+        const lowerWidth = 64;
         const height = 107;
         const scale = 1;
+
+        const textColor = colorScheme === 'light' ? '#000' : '#FFF';
 
         // Calculate the height of the sub-trapezoid representing storage
         const cutHeight = calculateInnerTrapezoidHeight(
             size,
-            upperBase,
-            lowerBase,
+            upperWidth,
+            lowerWidth,
             height
         );
 
         // Calculate points defining the primary (capacity) trapezoid
-        const A: [number, number] = [0, 0];
-        const B: [number, number] = [upperBase * scale, 0];
-        const C: [number, number] = [
-            ((upperBase + lowerBase) / 2) * scale,
+        const upperLeft: [number, number] = [0, 0];
+        const upperRight: [number, number] = [upperWidth * scale, 0];
+        const lowerRight: [number, number] = [
+            ((upperWidth + lowerWidth) / 2) * scale,
             height * scale,
         ];
-        const D: [number, number] = [
-            ((upperBase - lowerBase) / 2) * scale,
+        const lowerLeft: [number, number] = [
+            ((upperWidth - lowerWidth) / 2) * scale,
             height * scale,
         ];
 
         // Calculate the points of the inner (storage) trapezoid
         const baseCut =
-            upperBase + (lowerBase - upperBase) * (cutHeight / height);
-        const G: [number, number] = [
-            ((upperBase + baseCut) / 2) * scale,
+            upperWidth + (lowerWidth - upperWidth) * (cutHeight / height);
+        const innerUpperLeft: [number, number] = [
+            ((upperWidth - baseCut) / 2) * scale,
             cutHeight * scale,
         ];
-        const H: [number, number] = [
-            ((upperBase - baseCut) / 2) * scale,
+        const innerUpperRight: [number, number] = [
+            ((upperWidth + baseCut) / 2) * scale,
             cutHeight * scale,
         ];
 
@@ -137,12 +192,14 @@ export const Graphic: React.FC<Props> = (props) => {
         capacity.setAttribute('id', capacityPolygonId);
         capacity.setAttribute('stroke', '#00b8f0');
         capacity.setAttribute('stroke-width', '0');
+        capacity.setAttribute('fill', capacityFill);
         capacity.setAttribute('filter', 'url(#shadow)');
         capacity.setAttribute(
             'points',
-            `${A.join(',')} ${B.join(',')} ${C.join(',')} ${D.join(',')}`
+            `${upperLeft.join(',')} ${upperRight.join(',')} ${lowerRight.join(
+                ','
+            )} ${lowerLeft.join(',')}`
         );
-        capacity.setAttribute('fill', '#a6d5e3');
         svgRef.current.appendChild(capacity);
 
         // Draw inner trapezoid
@@ -153,18 +210,21 @@ export const Graphic: React.FC<Props> = (props) => {
         storage.setAttribute('id', storagePolygonId);
         storage.setAttribute('stroke', '#00b8f0');
         storage.setAttribute('stroke-width', '0');
+        storage.setAttribute('fill', storageFill);
         // storage.setAttribute('class', 'grow');
         storage.setAttribute(
             'points',
-            `${H.join(',')} ${G.join(',')} ${C.join(',')} ${D.join(',')}`
+            `${innerUpperLeft.join(',')} ${innerUpperRight.join(
+                ','
+            )} ${lowerRight.join(',')} ${lowerLeft.join(',')}`
         );
-        storage.setAttribute('fill', '#1c638e');
         svgRef.current.appendChild(storage);
 
         const highPercentile = height - 95;
         const average = height - 81;
         const lowPercentile = height - 40;
 
+        // Define constructors for
         const propagateEventToContainerElem =
             propagateEventToContainerElemConstructor(
                 capacityPolygonId,
@@ -172,16 +232,27 @@ export const Graphic: React.FC<Props> = (props) => {
                 cutHeight
             );
 
-        const calculateXPosition = calculateXPositionConstructor(A, D, 0);
+        const calculateXPosition = calculateXPositionConstructor(
+            upperLeft,
+            lowerLeft,
+            0
+        );
 
         const addLine = addLineConstructor(
-            upperBase,
+            upperWidth,
             svgRef.current,
             calculateXPosition
         );
 
-        const addText = addTextConstructor(upperBase, svgRef.current);
+        const addLabel = addLabelConstructor(
+            upperWidth,
+            svgRef.current,
+            calculateXPosition
+        );
 
+        const addText = addTextConstructor(upperWidth, svgRef.current);
+
+        // Add high percentile line and label
         addLine(
             highPercentileId,
             highPercentile,
@@ -193,59 +264,80 @@ export const Graphic: React.FC<Props> = (props) => {
                 propagateEventToContainerElem('mouseenter', highPercentile);
             }
         );
-        // const addHighLabel = addLabelConstructor(
-        //     upperBase,
-        //     svgRef.current,
-        //     calculateXPosition
-        // );
-        // const highLabelText = renderToStaticMarkup(
-        //     <>
-        //         <tspan dy="0" fontWeight="bold">
-        //             High
-        //         </tspan>
-        //         <tspan dy="20">
-        //             {' '}
-        //             (90
-        //             <tspan dy="-10" fontSize="12">
-        //                 th
-        //             </tspan>{' '}
-        //             Percentile)
-        //         </tspan>
-        //     </>
-        // );
-        // console.log('highLabelText', highLabelText);
-        // addHighLabel(
-        //     highPercentileLabelId,
-        //     highLabelText,
-        //     highPercentile,
-        //     '#000'
-        // );
+
+        const highLabelText = renderToStaticMarkup(
+            <>
+                <tspan dx="10" dy="0" fontWeight="bold" fontSize="9">
+                    High
+                </tspan>
+                <tspan dx="-35" dy="9" fontSize="8">
+                    (90
+                    <tspan dy="-5" fontSize="4">
+                        th
+                    </tspan>
+                    &nbsp;
+                    <tspan dy="5" fontSize="8">
+                        Percentile)
+                    </tspan>
+                </tspan>
+            </>
+        );
+
+        const highLabel = addLabel(
+            highPercentileLabelId,
+            highLabelText,
+            highPercentile,
+            textColor
+        );
+
+        // Add average line and label
+
+        // Adjust the average label position if too close to high percentile label
+        let averageAdjust = 0;
+        if (average - highPercentile < 40) {
+            const height = highLabel.getBoundingClientRect().height;
+
+            averageAdjust = Math.max(
+                0,
+                height / 2 - (average - highPercentile + 1)
+            );
+        }
 
         addLine(
             averageId,
             average,
             '#d0a02a',
             () => {
-                const averageTextElement =
-                    document.getElementById(averageTextId);
-
-                if (averageTextElement) {
-                    averageTextElement.setAttribute('display', 'inline');
-                }
+                handleAverageLineEnter();
 
                 propagateEventToContainerElem('mouseenter', average);
             },
             () => {
-                const averageTextElement =
-                    document.getElementById(averageTextId);
-
-                if (averageTextElement) {
-                    averageTextElement.setAttribute('display', 'none');
-                }
+                handleAverageLineLeave();
 
                 propagateEventToContainerElem('mouseleave', average);
             }
         );
+
+        const averageLabelText = renderToStaticMarkup(
+            <>
+                <tspan dx="2" dy={averageAdjust}>
+                    30-year
+                </tspan>
+                <tspan dx="-35" dy="8">
+                    Average
+                </tspan>
+            </>
+        );
+
+        const averageLabel = addLabel(
+            averageLabelId,
+            averageLabelText,
+            average,
+            '#d0a02a'
+        );
+
+        // Add low percentile line and label
 
         addLine(
             lowPercentileId,
@@ -259,16 +351,55 @@ export const Graphic: React.FC<Props> = (props) => {
             }
         );
 
+        // Adjust the low percentile label position if too close to average label
+        // Handle if average is also too close to high percentile
+        let lowPercentileAdjust = 0;
+        if (lowPercentile - average < 40) {
+            const height = averageLabel.getBoundingClientRect().height;
+
+            lowPercentileAdjust =
+                Math.max(0, height / 2 - (lowPercentile - average + 1)) +
+                averageAdjust;
+        }
+
+        const lowLabelText = renderToStaticMarkup(
+            <>
+                <tspan
+                    dx="10"
+                    dy={lowPercentileAdjust}
+                    fontWeight="bold"
+                    fontSize="9"
+                >
+                    Low
+                </tspan>
+                <tspan dx="-35" dy="8" fontSize="8">
+                    (90
+                    <tspan dy="-5" fontSize="4">
+                        th
+                    </tspan>
+                    &nbsp;
+                    <tspan dy="5" fontSize="8">
+                        Percentile)
+                    </tspan>
+                </tspan>
+            </>
+        );
+
+        addLabel(lowPercentileLabelId, lowLabelText, lowPercentile, textColor);
+
+        // Total capacity of reservoir
         addText(
             capacityTextId,
             `${Number(
                 reservoirProperties[config.capacityProperty]
             ).toLocaleString('en-us')} acre-feet`,
             -1,
-            '#000',
+            textColor,
             false
         );
+        // Renders just above the average line
         addText(averageTextId, `${0} acre-feet`, average - 2, '#d0a02a', false);
+        // Current Storage of reservoir
         addText(
             storageTextId,
             `${(
@@ -278,7 +409,9 @@ export const Graphic: React.FC<Props> = (props) => {
             '#FFF',
             false
         );
+    }, [svgRef, colorScheme]);
 
+    useEffect(() => {
         const addHandleCapacityEnter = () => {
             handleCapacityEnter();
         };
@@ -292,20 +425,54 @@ export const Graphic: React.FC<Props> = (props) => {
             handleStorageLeave();
         };
 
-        capacity.addEventListener('mouseenter', addHandleCapacityEnter);
-        capacity.addEventListener('mouseleave', addHandleCapacityLeave);
+        const storageElement = document.getElementById(storagePolygonId);
+        const capacityElement = document.getElementById(capacityPolygonId);
+        if (capacityElement) {
+            capacityElement.addEventListener(
+                'mouseenter',
+                addHandleCapacityEnter
+            );
+            capacityElement.addEventListener(
+                'mouseleave',
+                addHandleCapacityLeave
+            );
+        }
 
-        storage.addEventListener('mouseenter', addHandleStorageEnter);
-        storage.addEventListener('mouseleave', addHandleStorageLeave);
+        if (storageElement) {
+            storageElement.addEventListener(
+                'mouseenter',
+                addHandleStorageEnter
+            );
+            storageElement.addEventListener(
+                'mouseleave',
+                addHandleStorageLeave
+            );
+        }
 
         return () => {
-            capacity.removeEventListener('mouseenter', addHandleCapacityEnter);
-            capacity.removeEventListener('mouseleave', addHandleCapacityLeave);
+            if (capacityElement) {
+                capacityElement.removeEventListener(
+                    'mouseenter',
+                    addHandleCapacityEnter
+                );
+                capacityElement.removeEventListener(
+                    'mouseleave',
+                    addHandleCapacityLeave
+                );
+            }
 
-            storage.removeEventListener('mouseenter', addHandleStorageEnter);
-            storage.removeEventListener('mouseleave', addHandleStorageLeave);
+            if (storageElement) {
+                storageElement.removeEventListener(
+                    'mouseenter',
+                    addHandleStorageEnter
+                );
+                storageElement.removeEventListener(
+                    'mouseleave',
+                    addHandleStorageLeave
+                );
+            }
         };
-    }, [svgRef]);
+    }, [showLabels]);
 
     return (
         <Paper
@@ -313,29 +480,85 @@ export const Graphic: React.FC<Props> = (props) => {
             p="xs"
             className={`${styles.infoContainer} ${styles.graphicContainer}`}
         >
-            <Stack justify="space-between">
+            <Stack align="space-between" h="100%">
                 <Title order={3} size="h5">
                     Storage Volume (acre-feet)
                 </Title>
-                <Box className={styles.svgWrapper}>
-                    <svg
-                        id="trapezoidSVG"
-                        height="290"
-                        viewBox="-5 -10 170 127"
-                        className={styles.svg}
+                <Group justify="space-between">
+                    <Box className={styles.svgWrapper}>
+                        <svg
+                            id="trapezoidSVG"
+                            height="260"
+                            viewBox="-5 -10 220 127"
+                            className={styles.svg}
+                        >
+                            <defs>
+                                <filter id="shadow">
+                                    <feDropShadow
+                                        dx="0.5"
+                                        dy="0.4"
+                                        stdDeviation="0.4"
+                                    />
+                                </filter>
+                            </defs>
+                            <g ref={svgRef}></g>
+                        </svg>
+                    </Box>
+                    <Stack
+                        align="space-between"
+                        justify="flex-start"
+                        h="100%"
+                        pt={15}
                     >
-                        <defs>
-                            <filter id="shadow">
-                                <feDropShadow
-                                    dx="0.5"
-                                    dy="0.4"
-                                    stdDeviation="0.4"
-                                />
-                            </filter>
-                        </defs>
-                        <g ref={svgRef}></g>
-                    </svg>
-                </Box>
+                        <Switch
+                            label="Show Labels"
+                            checked={showLabels}
+                            onClick={() => handleShowLabels(!showLabels)}
+                        />
+                        <Paper bg="#fff">
+                            <Stack p={8}>
+                                <Group
+                                    gap={5}
+                                    onMouseEnter={handleCapacityEnter}
+                                    onMouseLeave={() => handleCapacityLeave()}
+                                >
+                                    <Box
+                                        style={{
+                                            backgroundColor: capacityFill,
+                                        }}
+                                        className={styles.graphicLegendColor}
+                                    ></Box>
+                                    <Text
+                                        size="sm"
+                                        c="#000"
+                                        fw={700}
+                                        className={styles.graphicLegendText}
+                                    >
+                                        Capacity
+                                    </Text>
+                                </Group>
+                                <Group
+                                    gap={5}
+                                    onMouseEnter={handleStorageEnter}
+                                    onMouseLeave={() => handleStorageLeave()}
+                                >
+                                    <Box
+                                        style={{ backgroundColor: storageFill }}
+                                        className={styles.graphicLegendColor}
+                                    ></Box>
+                                    <Text
+                                        size="sm"
+                                        c="#000"
+                                        fw={700}
+                                        className={styles.graphicLegendText}
+                                    >
+                                        Storage
+                                    </Text>
+                                </Group>
+                            </Stack>
+                        </Paper>
+                    </Stack>
+                </Group>
             </Stack>
         </Paper>
     );
