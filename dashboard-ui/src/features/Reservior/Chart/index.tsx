@@ -143,7 +143,7 @@ export const Chart: React.FC<Props> = (props) => {
             <Space h="sm" />
             <Box className={styles.chartContainer}>
                 {loading ? (
-                    <Loader />
+                    <Loader data-testid="chart-loader-bar" />
                 ) : error.length > 0 ? (
                     <>{error}</>
                 ) : (

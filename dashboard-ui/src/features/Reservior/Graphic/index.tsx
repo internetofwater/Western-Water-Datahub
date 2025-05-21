@@ -633,7 +633,7 @@ export const Graphic: React.FC<Props> = (props) => {
                 <Group justify="space-between">
                     <Box className={styles.svgWrapper}>
                         <svg
-                            id="trapezoidSVG"
+                            data-testid="graphic-svg"
                             viewBox="-5 -10 220 127"
                             className={styles.svg}
                         >
@@ -661,7 +661,7 @@ export const Graphic: React.FC<Props> = (props) => {
                             onClick={() => handleShowLabels(!showLabels)}
                         />
                         <Paper bg="#fff">
-                            <Stack p={8}>
+                            <Stack p={8} data-testid="graphic-legend">
                                 <Group
                                     gap={5}
                                     onMouseEnter={handleCapacityEnter}
