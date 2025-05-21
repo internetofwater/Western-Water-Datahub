@@ -93,13 +93,7 @@ export const addLineConstructor =
         svg: SVGElement,
         calculateXPosition: (value: number) => number
     ) =>
-    (
-        id: string,
-        value: number,
-        color: string,
-        mouseEnterFunction: (e: MouseEvent) => void,
-        mouseLeaveFunction: (e: MouseEvent) => void
-    ): SVGPathElement => {
+    (id: string, value: number, color: string): SVGPathElement => {
         const lineElement = document.createElementNS(
             'http://www.w3.org/2000/svg',
             'path'
@@ -132,10 +126,6 @@ export const addLineConstructor =
             `stroke:#FFF;stroke-width:5;opacity:0;`
         );
 
-        lineElement.addEventListener('mouseenter', mouseEnterFunction);
-        lineElement.addEventListener('mouseleave', mouseLeaveFunction);
-        ghostLine.addEventListener('mouseenter', mouseEnterFunction);
-        ghostLine.addEventListener('mouseleave', mouseLeaveFunction);
         svg.appendChild(lineElement);
         svg.appendChild(ghostLine);
 
@@ -143,7 +133,7 @@ export const addLineConstructor =
     };
 
 export const addTextConstructor =
-    (width: number, svg: SVGElement) =>
+    (svg: SVGElement) =>
     (
         id: string,
         text: string,

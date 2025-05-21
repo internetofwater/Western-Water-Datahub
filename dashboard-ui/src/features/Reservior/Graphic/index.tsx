@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { ReservoirConfig } from '@/features/Map/types';
 import {
     Box,
@@ -31,8 +36,10 @@ export const Graphic: React.FC<Props> = (props) => {
     const { reservoirProperties, config } = props;
 
     const [showLabels, setShowLabels] = useState(false);
-    // const [storageHover, setStorageHover] = useState(false);
-    // const [capacityHover, setCapacityHover] = useState(false);
+    const [cutHeight, setCutHeight] = useState<number>();
+    const [highPercentile, setHighPercentile] = useState<number>();
+    const [average, setAverage] = useState<number>();
+    const [lowPercentile, setLowPercentile] = useState<number>();
 
     const svgRef = useRef<SVGSVGElement>(null);
 
@@ -138,6 +145,7 @@ export const Graphic: React.FC<Props> = (props) => {
 
         svgRef.current.innerHTML = '';
 
+        // TODO: remove the division by 2 once we have an actual storage value
         const percentOfFull =
             Number(reservoirProperties[config.storageProperty]) /
             2 /
@@ -150,6 +158,15 @@ export const Graphic: React.FC<Props> = (props) => {
         const height = 107;
         const scale = 1;
 
+        // TODO: replace these with the actual percentages
+        const highPercentile = height - height * 0.95;
+        const average = height - height * 0.81;
+        const lowPercentile = height - height * 0.4;
+
+        setHighPercentile(highPercentile);
+        setAverage(average);
+        setLowPercentile(lowPercentile);
+
         const textColor = colorScheme === 'light' ? '#000' : '#FFF';
 
         // Calculate the height of the sub-trapezoid representing storage
@@ -159,6 +176,7 @@ export const Graphic: React.FC<Props> = (props) => {
             lowerWidth,
             height
         );
+        setCutHeight(cutHeight);
 
         // Calculate points defining the primary (capacity) trapezoid
         const upperLeft: [number, number] = [0, 0];
@@ -220,18 +238,7 @@ export const Graphic: React.FC<Props> = (props) => {
         );
         svgRef.current.appendChild(storage);
 
-        const highPercentile = height - 95;
-        const average = height - 81;
-        const lowPercentile = height - 40;
-
-        // Define constructors for
-        const propagateEventToContainerElem =
-            propagateEventToContainerElemConstructor(
-                capacityPolygonId,
-                storagePolygonId,
-                cutHeight
-            );
-
+        // Define constructors for helper functions and repeated elements
         const calculateXPosition = calculateXPositionConstructor(
             upperLeft,
             lowerLeft,
@@ -250,20 +257,10 @@ export const Graphic: React.FC<Props> = (props) => {
             calculateXPosition
         );
 
-        const addText = addTextConstructor(upperWidth, svgRef.current);
+        const addText = addTextConstructor(svgRef.current);
 
         // Add high percentile line and label
-        addLine(
-            highPercentileId,
-            highPercentile,
-            '#FFF',
-            () => {
-                propagateEventToContainerElem('mouseenter', highPercentile);
-            },
-            () => {
-                propagateEventToContainerElem('mouseenter', highPercentile);
-            }
-        );
+        addLine(highPercentileId, highPercentile, '#FFF');
 
         const highLabelText = renderToStaticMarkup(
             <>
@@ -303,21 +300,7 @@ export const Graphic: React.FC<Props> = (props) => {
             );
         }
 
-        addLine(
-            averageId,
-            average,
-            '#d0a02a',
-            () => {
-                handleAverageLineEnter();
-
-                propagateEventToContainerElem('mouseenter', average);
-            },
-            () => {
-                handleAverageLineLeave();
-
-                propagateEventToContainerElem('mouseleave', average);
-            }
-        );
+        addLine(averageId, average, '#d0a02a');
 
         const averageLabelText = renderToStaticMarkup(
             <>
@@ -339,17 +322,7 @@ export const Graphic: React.FC<Props> = (props) => {
 
         // Add low percentile line and label
 
-        addLine(
-            lowPercentileId,
-            lowPercentile,
-            '#FFF',
-            () => {
-                propagateEventToContainerElem('mouseenter', lowPercentile);
-            },
-            () => {
-                propagateEventToContainerElem('mouseleave', lowPercentile);
-            }
-        );
+        addLine(lowPercentileId, lowPercentile, '#FFF');
 
         // Adjust the low percentile label position if too close to average label
         // Handle if average is also too close to high percentile
@@ -395,10 +368,16 @@ export const Graphic: React.FC<Props> = (props) => {
             ).toLocaleString('en-us')} acre-feet`,
             -1,
             textColor,
-            false
+            showLabels
         );
         // Renders just above the average line
-        addText(averageTextId, `${0} acre-feet`, average - 2, '#d0a02a', false);
+        addText(
+            averageTextId,
+            `${0} acre-feet`,
+            average - 2,
+            '#d0a02a',
+            showLabels
+        );
         // Current Storage of reservoir
         addText(
             storageTextId,
@@ -407,26 +386,30 @@ export const Graphic: React.FC<Props> = (props) => {
             ).toLocaleString('en-us')} acre-feet`,
             cutHeight - 1,
             '#FFF',
-            false
+            showLabels
         );
     }, [svgRef, colorScheme]);
 
     useEffect(() => {
+        if (!cutHeight || !highPercentile || !average || !lowPercentile) {
+            return;
+        }
+
+        const propagateEventToContainerElem =
+            propagateEventToContainerElemConstructor(
+                capacityPolygonId,
+                storagePolygonId,
+                cutHeight
+            );
+
+        const capacityElement = document.getElementById(capacityPolygonId);
         const addHandleCapacityEnter = () => {
             handleCapacityEnter();
         };
         const addHandleCapacityLeave = () => {
             handleCapacityLeave();
         };
-        const addHandleStorageEnter = () => {
-            handleStorageEnter();
-        };
-        const addHandleStorageLeave = () => {
-            handleStorageLeave();
-        };
 
-        const storageElement = document.getElementById(storagePolygonId);
-        const capacityElement = document.getElementById(capacityPolygonId);
         if (capacityElement) {
             capacityElement.addEventListener(
                 'mouseenter',
@@ -438,6 +421,14 @@ export const Graphic: React.FC<Props> = (props) => {
             );
         }
 
+        const storageElement = document.getElementById(storagePolygonId);
+
+        const addHandleStorageEnter = () => {
+            handleStorageEnter();
+        };
+        const addHandleStorageLeave = () => {
+            handleStorageLeave();
+        };
         if (storageElement) {
             storageElement.addEventListener(
                 'mouseenter',
@@ -449,6 +440,103 @@ export const Graphic: React.FC<Props> = (props) => {
             );
         }
 
+        const addHandleHPercentileEnter = () => {
+            propagateEventToContainerElem('mouseenter', highPercentile);
+        };
+        const addHandleHPercentileLeave = () => {
+            propagateEventToContainerElem('mouseenter', highPercentile);
+        };
+
+        const highPercentileLineElement =
+            document.getElementById(highPercentileId);
+        const highPercentileGhostLineElement = document.getElementById(
+            highPercentileId + '-ghost'
+        );
+        if (highPercentileLineElement && highPercentileGhostLineElement) {
+            highPercentileLineElement.addEventListener(
+                'mouseenter',
+                addHandleHPercentileEnter
+            );
+            highPercentileGhostLineElement.addEventListener(
+                'mouseenter',
+                addHandleHPercentileEnter
+            );
+            highPercentileLineElement.addEventListener(
+                'mouseleave',
+                addHandleHPercentileLeave
+            );
+            highPercentileGhostLineElement.addEventListener(
+                'mouseleave',
+                addHandleHPercentileLeave
+            );
+        }
+
+        const addHandleAverageEnter = () => {
+            handleAverageLineEnter();
+
+            propagateEventToContainerElem('mouseenter', average);
+        };
+        const addHandleAverageLeave = () => {
+            handleAverageLineLeave();
+
+            propagateEventToContainerElem('mouseleave', average);
+        };
+
+        const averageLineElement = document.getElementById(averageId);
+        const averageGhostLineElement = document.getElementById(
+            averageId + '-ghost'
+        );
+        if (averageLineElement && averageGhostLineElement) {
+            averageLineElement.addEventListener(
+                'mouseenter',
+                addHandleAverageEnter
+            );
+            averageGhostLineElement.addEventListener(
+                'mouseenter',
+                addHandleAverageEnter
+            );
+            averageLineElement.addEventListener(
+                'mouseleave',
+                addHandleAverageLeave
+            );
+            averageGhostLineElement.addEventListener(
+                'mouseleave',
+                addHandleAverageLeave
+            );
+        }
+
+        const addHandleLPercentileEnter = () => {
+            propagateEventToContainerElem('mouseenter', lowPercentile);
+        };
+        const addHandleLPercentileLeave = () => {
+            propagateEventToContainerElem('mouseenter', lowPercentile);
+        };
+
+        const lowPercentileLineElement =
+            document.getElementById(lowPercentileId);
+        const lowPercentileGhostLineElement = document.getElementById(
+            lowPercentileId + '-ghost'
+        );
+        if (lowPercentileLineElement && lowPercentileGhostLineElement) {
+            lowPercentileLineElement.addEventListener(
+                'mouseenter',
+                addHandleLPercentileEnter
+            );
+            lowPercentileGhostLineElement.addEventListener(
+                'mouseenter',
+                addHandleLPercentileEnter
+            );
+            lowPercentileLineElement.addEventListener(
+                'mouseleave',
+                addHandleLPercentileLeave
+            );
+            lowPercentileGhostLineElement.addEventListener(
+                'mouseleave',
+                addHandleLPercentileLeave
+            );
+        }
+
+        // Cleanup
         return () => {
             if (capacityElement) {
                 capacityElement.removeEventListener(
@@ -471,8 +559,65 @@ export const Graphic: React.FC<Props> = (props) => {
                     addHandleStorageLeave
                 );
             }
+
+            if (highPercentileLineElement && highPercentileGhostLineElement) {
+                highPercentileLineElement.removeEventListener(
+                    'mouseenter',
+                    addHandleHPercentileEnter
+                );
+                highPercentileGhostLineElement.removeEventListener(
+                    'mouseenter',
+                    addHandleHPercentileEnter
+                );
+                highPercentileLineElement.removeEventListener(
+                    'mouseleave',
+                    addHandleHPercentileLeave
+                );
+                highPercentileGhostLineElement.removeEventListener(
+                    'mouseleave',
+                    addHandleHPercentileLeave
+                );
+            }
+
+            if (averageLineElement && averageGhostLineElement) {
+                averageLineElement.removeEventListener(
+                    'mouseenter',
+                    addHandleAverageEnter
+                );
+                averageGhostLineElement.removeEventListener(
+                    'mouseenter',
+                    addHandleAverageEnter
+                );
+                averageLineElement.removeEventListener(
+                    'mouseleave',
+                    addHandleAverageLeave
+                );
+                averageGhostLineElement.removeEventListener(
+                    'mouseleave',
+                    addHandleAverageLeave
+                );
+            }
+
+            if (lowPercentileLineElement && lowPercentileGhostLineElement) {
+                lowPercentileLineElement.removeEventListener(
+                    'mouseenter',
+                    addHandleLPercentileEnter
+                );
+                lowPercentileGhostLineElement.removeEventListener(
+                    'mouseenter',
+                    addHandleLPercentileEnter
+                );
+                lowPercentileLineElement.removeEventListener(
+                    'mouseleave',
+                    addHandleLPercentileLeave
+                );
+                lowPercentileGhostLineElement.removeEventListener(
+                    'mouseleave',
+                    addHandleLPercentileLeave
+                );
+            }
         };
-    }, [showLabels]);
+    }, [showLabels, cutHeight, highPercentile, average, lowPercentile]);
 
     return (
         <Paper
