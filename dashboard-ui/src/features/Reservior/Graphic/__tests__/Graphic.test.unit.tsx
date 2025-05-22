@@ -18,7 +18,7 @@ const mockProps = {
 describe('Graphic component', () => {
     test('renders title and switch', () => {
         render(<Graphic {...mockProps} />);
-        expect(screen.getByText(/Storage Volume/i)).toBeInTheDocument();
+        expect(screen.getByText(/Current Storage Levels/i)).toBeInTheDocument();
         expect(screen.getByRole('switch')).toBeInTheDocument();
     });
 

@@ -103,7 +103,7 @@ export const Graphic: React.FC<Props> = (props) => {
         const capacityTextElement = document.getElementById(capacityTextId);
 
         if (capacityElement && capacityTextElement) {
-            // capacityElement.setAttribute('stroke-width', '2');
+            // capacityElement.setAttribute('stroke-width', '1');
             capacityTextElement.setAttribute('display', 'inline');
         }
     };
@@ -635,7 +635,7 @@ export const Graphic: React.FC<Props> = (props) => {
         >
             <Stack align="space-between" h="100%">
                 <Title order={3} size="h5">
-                    Storage Volume (acre-feet)
+                    Current Storage Levels
                 </Title>
                 <Group justify="space-between">
                     <Box className={styles.svgWrapper}>
