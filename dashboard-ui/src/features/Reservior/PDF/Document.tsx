@@ -12,7 +12,7 @@ import {
     View,
     Text,
 } from '@react-pdf/renderer';
-import { ReservoirProperties } from '@/features/Map/types';
+import { GeoJsonProperties } from 'geojson';
 
 const styles = StyleSheet.create({
     page: {
@@ -28,13 +28,17 @@ const styles = StyleSheet.create({
 });
 
 type Props = {
-    reservoirProperties: ReservoirProperties;
+    reservoirProperties: GeoJsonProperties;
     mapImage: Blob;
     chartImage: Blob;
 };
 
 export const Document: React.FC<Props> = (props) => {
     const { reservoirProperties, mapImage, chartImage } = props;
+
+    if (!reservoirProperties) {
+        return null;
+    }
 
     return (
         <PDFDocument title="test">

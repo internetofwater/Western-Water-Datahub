@@ -371,10 +371,13 @@ export const Graphic: React.FC<Props> = (props) => {
             textColor,
             showLabels
         );
+        // TODO: replace the two displayed values below, when available
         // Renders just above the average line
         addText(
             averageTextId,
-            `${0} acre-feet`,
+            `${Math.round(
+                (Number(reservoirProperties[config.storageProperty]) / 2) * 1.3
+            ).toLocaleString('en-us')} acre-feet`,
             average - 2,
             '#d0a02a',
             showLabels

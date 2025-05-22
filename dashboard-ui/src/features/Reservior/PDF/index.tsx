@@ -17,12 +17,12 @@ import {
     handleCreateChartImage,
     handleCreateMapImage,
 } from '@/features/Reservior/PDF/utils';
-import { ReservoirProperties } from '@/features/Map/types';
 import useMainStore from '@/lib/main';
+import { GeoJsonProperties } from 'geojson';
 
 type Props = {
     accessToken: string;
-    reservoirProperties: ReservoirProperties;
+    reservoirProperties: GeoJsonProperties;
     center: [number, number] | null;
     chartRef: RefObject<ChartJS<
         'line',
@@ -83,11 +83,15 @@ const PDF: React.FC<Props> = (props) => {
         return () => {
             cancel = true;
         };
-    }, [chartUpdate, reservoirProperties._id]);
+    }, [chartUpdate, reservoirProperties!._id]);
 
     const [opened, { open, close }] = useDisclosure(false);
 
-    const fileName = reservoirProperties.locationName
+    if (!reservoirProperties) {
+        return null;
+    }
+
+    const fileName = String(reservoirProperties.locationName)
         .toLowerCase()
         .split(' ')
         .join('-');

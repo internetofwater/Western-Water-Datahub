@@ -79,6 +79,7 @@ const Reservoir: React.FC<Props> = (props) => {
                             accessToken={accessToken}
                             center={center}
                             chartRef={chartRef}
+                            config={config}
                         />
                     </GridCol>
                     <GridCol span={{ base: 12, md: 4 }} order={4}>
