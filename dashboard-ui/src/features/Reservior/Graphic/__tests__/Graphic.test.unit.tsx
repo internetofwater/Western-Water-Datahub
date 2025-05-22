@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { render } from '@/utils/test-utils';
