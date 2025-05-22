@@ -21,8 +21,13 @@
     align-items: center;
 }
 
+.graphicContainer {
+    margin: auto;
+    min-width: 590px;
+}
+
 .PDFViewer {
-    width: 100%;
+    max-width: 100%;
 }
 
 .PDFViewer iframe {
@@ -34,9 +39,36 @@
     min-width: 105px;
 }
 
-@media screen and (max-width: 1258px) {
+.svgWrapper {
+    max-width: 74%;
+    height: 260px;
+}
+
+.svg {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.svg:hover {
+    transform: scale(1.05);
+}
+
+.graphicLegendColor {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+.graphicLegendText {
+    color: #000;
+}
+
+@media screen and (max-width: 1817px) {
     .chartContainer {
         height: 79%;
+        max-width: unset;
     }
 }
 
@@ -49,5 +81,11 @@
 
     .chartContainer {
         max-width: unset;
+    }
+}
+
+@media screen and (max-width: 605px) {
+    .svgWrapper {
+        max-width: 74%;
     }
 }

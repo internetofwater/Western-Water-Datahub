@@ -107,7 +107,7 @@ export const getReservoirIconImageExpression = (
         'storage', // Variable name
         [
             '/',
-            ['/', ['coalesce', ['get', config.storageProperty], 1], 2],
+            ['/', ['coalesce', ['get', config.storageProperty], 1], 2], // TODO: remove the division by 2 when data is available
             ['coalesce', ['get', config.capacityProperty], 1],
         ], // Variable value
         [

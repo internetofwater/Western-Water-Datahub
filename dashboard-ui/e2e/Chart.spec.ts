@@ -4,7 +4,7 @@
  */
 
 import { RISEEDRReservoirSource } from '@/features/Map/consts';
-import { getDateRange } from '@/features/Reservior/utils';
+import { getDateRange } from '@/features/Reservior/Chart/utils';
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
