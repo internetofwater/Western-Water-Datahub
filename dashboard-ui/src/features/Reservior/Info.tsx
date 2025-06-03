@@ -102,6 +102,7 @@ export const Info: React.FC<Props> = (props) => {
                     accessToken={accessToken}
                     center={center}
                     chartRef={chartRef}
+                    config={config}
                 />
             </Stack>
         </Paper>

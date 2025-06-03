@@ -27,10 +27,15 @@
 }
 
 .PDFViewer {
-    max-width: 100%;
+    width: 100%;
 }
 
 .PDFViewer iframe {
+    height: 70vh;
+    width: 100%;
+}
+
+.loaderGroup {
     height: 70vh;
     width: 100%;
 }

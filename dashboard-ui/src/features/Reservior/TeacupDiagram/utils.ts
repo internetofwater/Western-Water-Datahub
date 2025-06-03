@@ -194,3 +194,31 @@ export const propagateEventToContainerElemConstructor =
             }
         }
     };
+
+/**
+ *
+ * @function
+ */
+export const addListeners = (
+    id: string,
+    handlers: { mouseenter?: () => void; mouseleave?: () => void }
+) => {
+    const element = document.getElementById(id);
+    if (!element) return;
+
+    if (handlers.mouseenter) {
+        element.addEventListener('mouseenter', handlers.mouseenter);
+    }
+    if (handlers.mouseleave) {
+        element.addEventListener('mouseleave', handlers.mouseleave);
+    }
+
+    return () => {
+        if (handlers.mouseenter) {
+            element.removeEventListener('mouseenter', handlers.mouseenter);
+        }
+        if (handlers.mouseleave) {
+            element.removeEventListener('mouseleave', handlers.mouseleave);
+        }
+    };
+};

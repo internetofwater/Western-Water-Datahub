@@ -3,10 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Dispatch, SetStateAction } from 'react';
+import { createElement, Dispatch, RefObject, SetStateAction } from 'react';
 import { LngLatLike, Map } from 'mapbox-gl';
 import { loadTeacups as loadImages } from '@/features/Map/utils';
 import { Chart as ChartJS } from 'chart.js';
+import { createRoot } from 'react-dom/client';
+import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
+import { GeoJsonProperties } from 'geojson';
+import { ReservoirConfig } from '@/features/Map/types';
 
 /**
  * Creates an image from the current state of the Mapbox map.
@@ -85,18 +89,15 @@ const duplicateMapInstance = (
  * @param {Map} map - The Mapbox map instance.
  * @param {boolean} cancel - A flag indicating the calling component has unmounted.
  * @param {Dispatch<SetStateAction<Blob | null>>} setMapImage - A state setter function for the map image.
- * @param {Dispatch<SetStateAction<boolean>>} setLoading - A state setter function for the loading state.
  */
 const handleMapLoad = async (
     map: Map,
     cancel: boolean,
-    setMapImage: Dispatch<SetStateAction<Blob | null>>,
-    setLoading: Dispatch<SetStateAction<boolean>>
+    setMapImage: Dispatch<SetStateAction<Blob | null>>
 ) => {
     const data = await createMapImage(map);
     if (!cancel) {
         setMapImage(data);
-        setLoading(false);
         // Delete new map instance
         map.remove();
     }
@@ -111,20 +112,18 @@ const handleMapLoad = async (
  * @param {string} accessToken - The Mapbox access token.
  * @param {boolean} cancel - A flag indicating the calling component has unmounted.
  * @param {Dispatch<SetStateAction<Blob | null>>} setMapImage - A state setter function for the map image.
- * @param {Dispatch<SetStateAction<boolean>>} setLoading - A state setter function for the loading state.
  */
 export const handleCreateMapImage = (
     map: Map,
     center: LngLatLike,
     accessToken: string,
     cancel: boolean,
-    setMapImage: Dispatch<SetStateAction<Blob | null>>,
-    setLoading: Dispatch<SetStateAction<boolean>>
+    setMapImage: Dispatch<SetStateAction<Blob | null>>
 ) => {
     const newMap = duplicateMapInstance(map, center, accessToken, [1600, 900]);
     loadImages(newMap);
     newMap.once('load', () => {
-        void handleMapLoad(newMap, cancel, setMapImage, setLoading);
+        void handleMapLoad(newMap, cancel, setMapImage);
     });
 };
 
@@ -195,13 +194,11 @@ const duplicateChartInstance = (
  * @param {ChartJS<'line', Array<{ x: string; y: number }>>} chart - The original Chart.js chart instance.
  * @param {boolean} cancel - A flag indicating the calling component has unmounted.
  * @param {Dispatch<SetStateAction<Blob | null>>} setChartImage - A state setter function for the chart image.
- * @param {Dispatch<SetStateAction<boolean>>} setLoading - A state setter function for the loading state.
  */
 export const handleCreateChartImage = (
     chart: ChartJS<'line', Array<{ x: string; y: number }>>,
     cancel: boolean,
-    setChartImage: Dispatch<SetStateAction<Blob | null>>,
-    setLoading: Dispatch<SetStateAction<boolean>>
+    setChartImage: Dispatch<SetStateAction<Blob | null>>
 ) => {
     const { newChart, container } = duplicateChartInstance(chart, [616, 271]);
 
@@ -210,7 +207,6 @@ export const handleCreateChartImage = (
             const data = await createChartImage(newChart);
             if (!cancel) {
                 setChartImage(data);
-                setLoading(false);
                 // Remove container and extra chart instance
                 newChart.destroy();
                 container.remove();
@@ -219,4 +215,102 @@ export const handleCreateChartImage = (
     }, 1000);
 
     return () => clearTimeout(animationTimeout);
+};
+
+/**
+ * Creates an image from a svg then draws it onto a canvas to convert it to a react-pdf friendly png blob
+ *
+ * @function
+ * @param {SVGSVGElement} svgElement - The diagram svg.
+ * @param {[number, number]} aspectRatio - The aspect ratio for the new diagram container.
+ */
+const svgToBlob = (
+    svgElement: SVGSVGElement,
+    aspectRatio: [number, number]
+): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+        const serializer = new XMLSerializer();
+        const svgString = serializer.serializeToString(svgElement);
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(svgBlob);
+
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = aspectRatio[0];
+            canvas.height = aspectRatio[1];
+            const context = canvas.getContext('2d');
+            if (!context) {
+                reject(new Error('Failed to get canvas context'));
+                return;
+            }
+            context.drawImage(img, 0, 0, aspectRatio[0], aspectRatio[1]);
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    resolve(blob);
+                } else {
+                    reject(new Error('Failed to convert canvas to blob'));
+                }
+                URL.revokeObjectURL(url);
+            }, 'image/png');
+        };
+        img.onerror = reject;
+        img.src = url;
+    });
+};
+
+/**
+ * Renders a teacup diagram with all labels turned on and saves it as a png blob
+ *
+ * @function
+ * @param {GeoJsonProperties} reservoirProperties - Properties of the currently selected reservoir feature.
+ * @param {ReservoirConfig} config - Defines the property keys of the reservoir feature to use for creating the diagram.
+ * @param {RefObject<SVGSVGElement | null>} graphicRef - Ref object used to hold the diagram svg.
+ * @param {boolean} cancel - A flag indicating the calling component has unmounted.
+ * @param {Dispatch<SetStateAction<Blob | null>>} setDiagramImage - A state setter function for the diagram image.
+ */
+export const handleCreateDiagramImage = (
+    reservoirProperties: GeoJsonProperties,
+    config: ReservoirConfig,
+    graphicRef: RefObject<SVGSVGElement | null>,
+    cancel: boolean,
+    setDiagramImage: Dispatch<SetStateAction<Blob | null>>
+) => {
+    const container = document.createElement('div');
+    container.style.display = 'none';
+
+    const root = createRoot(container);
+
+    const cleanup = () => {
+        setTimeout(() => {
+            root.unmount();
+            container.remove();
+        }, 0);
+    };
+    let createBlob = true;
+    const handleRendered = () => {
+        if (graphicRef.current && createBlob) {
+            createBlob = false;
+            svgToBlob(graphicRef.current, [450, 260])
+                .then((blob) => {
+                    if (!cancel) {
+                        setDiagramImage(blob);
+                        cleanup();
+                    }
+                })
+                .catch((error) => console.error(error));
+        }
+    };
+
+    const element = createElement(Graphic, {
+        reservoirProperties,
+        config,
+        colorScheme: 'light',
+        showLabels: true,
+        listeners: false,
+        graphicRef,
+        svgRenderCallback: handleRendered,
+    });
+
+    root.render(element);
 };

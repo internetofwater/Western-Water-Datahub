@@ -4,8 +4,8 @@
  */
 
 import { useDisclosure } from '@mantine/hooks';
-import { Modal, Button, Loader, Stack, Box } from '@mantine/core';
-import { RefObject, useEffect, useState } from 'react';
+import { Modal, Button, Loader, Stack, Box, Group } from '@mantine/core';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID } from '@/features/Map/consts';
 import { Document } from '@/features/Reservior/PDF/Document';
@@ -15,10 +15,12 @@ import { Controls } from '@/features/Reservior/PDF/Controls';
 import { Chart as ChartJS } from 'chart.js';
 import {
     handleCreateChartImage,
+    handleCreateDiagramImage,
     handleCreateMapImage,
 } from '@/features/Reservior/PDF/utils';
 import useMainStore from '@/lib/main';
 import { GeoJsonProperties } from 'geojson';
+import { ReservoirConfig } from '@/features/Map/types';
 
 type Props = {
     accessToken: string;
@@ -28,14 +30,18 @@ type Props = {
         'line',
         Array<{ x: string; y: number }>
     > | null>;
+    config: ReservoirConfig;
 };
 
 const PDF: React.FC<Props> = (props) => {
-    const { accessToken, reservoirProperties, center, chartRef } = props;
+    const { accessToken, reservoirProperties, center, chartRef, config } =
+        props;
 
     const [mapImage, setMapImage] = useState<Blob | null>(null);
     const [chartImage, setChartImage] = useState<Blob | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [diagramImage, setDiagramImage] = useState<Blob | null>(null);
+
+    const graphicRef = useRef<SVGSVGElement>(null);
 
     const chartUpdate = useMainStore((state) => state.chartUpdate);
 
@@ -46,7 +52,6 @@ const PDF: React.FC<Props> = (props) => {
             return;
         }
         let cancel = false;
-        setLoading(true);
         setMapImage(null);
 
         void handleCreateMapImage(
@@ -54,8 +59,7 @@ const PDF: React.FC<Props> = (props) => {
             center,
             accessToken,
             cancel,
-            setMapImage,
-            setLoading
+            setMapImage
         );
 
         return () => {
@@ -68,15 +72,13 @@ const PDF: React.FC<Props> = (props) => {
             return;
         }
         let cancel = false;
-        setLoading(true);
         setChartImage(null);
 
         if (chartRef.current) {
             void handleCreateChartImage(
                 chartRef.current,
                 cancel,
-                setChartImage,
-                setLoading
+                setChartImage
             );
         }
 
@@ -84,6 +86,21 @@ const PDF: React.FC<Props> = (props) => {
             cancel = true;
         };
     }, [chartUpdate, reservoirProperties!._id]);
+
+    useEffect(() => {
+        let cancel = false;
+        handleCreateDiagramImage(
+            reservoirProperties,
+            config,
+            graphicRef,
+            cancel,
+            setDiagramImage
+        );
+
+        return () => {
+            cancel = true;
+        };
+    }, [reservoirProperties!._id]);
 
     const [opened, { open, close }] = useDisclosure(false);
 
@@ -99,8 +116,14 @@ const PDF: React.FC<Props> = (props) => {
     return (
         <>
             <Modal opened={opened} onClose={close} title="Report" size="xl">
-                {loading || !mapImage || !chartImage ? (
-                    <Loader />
+                {!mapImage || !chartImage || !diagramImage ? (
+                    <Group
+                        justify="center"
+                        align="center"
+                        className={styles.loaderGroup}
+                    >
+                        <Loader size="xl" />
+                    </Group>
                 ) : (
                     <Stack align="center" className={styles.PDFStack}>
                         <Box className={styles.PDFViewer}>
@@ -109,6 +132,7 @@ const PDF: React.FC<Props> = (props) => {
                                     reservoirProperties={reservoirProperties}
                                     mapImage={mapImage}
                                     chartImage={chartImage}
+                                    diagramImage={diagramImage}
                                 />
                             </PDFViewer>
                         </Box>
@@ -119,6 +143,7 @@ const PDF: React.FC<Props> = (props) => {
                                     reservoirProperties={reservoirProperties}
                                     mapImage={mapImage}
                                     chartImage={chartImage}
+                                    diagramImage={diagramImage}
                                 />
                             }
                         />
@@ -129,7 +154,7 @@ const PDF: React.FC<Props> = (props) => {
             <Button
                 variant="default"
                 onClick={open}
-                disabled={loading || !mapImage || !chartImage}
+                disabled={!mapImage || !chartImage || !diagramImage}
             >
                 Download Report
             </Button>

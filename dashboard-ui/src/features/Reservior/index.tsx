@@ -12,7 +12,7 @@ import { Chart } from '@/features/Reservior/Chart';
 import { Chart as ChartJS } from 'chart.js';
 import { Info } from '@/features/Reservior/Info';
 import useMainStore, { Reservoir as ReservoirType } from '@/lib/main';
-import { Graphic } from './Graphic';
+import { TeacupDiagram } from '@/features/Reservior/TeacupDiagram';
 
 type Props = {
     reservoir: ReservoirType;
@@ -83,7 +83,7 @@ const Reservoir: React.FC<Props> = (props) => {
                         />
                     </GridCol>
                     <GridCol span={{ base: 12, md: 4 }} order={4}>
-                        <Graphic
+                        <TeacupDiagram
                             reservoirProperties={reservoirProperties}
                             config={config}
                         />

@@ -10,7 +10,7 @@ import {
     calculateInnerTrapezoidHeight,
     calculateXPositionConstructor,
     propagateEventToContainerElemConstructor,
-} from '@/features/Reservior/Graphic/utils';
+} from '@/features/Reservior/TeacupDiagram/utils';
 
 describe('Reservoir Graphic Utils', () => {
     describe('calculateInnerTrapezoidHeight', () => {
