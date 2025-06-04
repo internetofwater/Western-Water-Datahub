@@ -434,20 +434,18 @@ export const Graphic: React.FC<Props> = (props) => {
     ]);
 
     return (
-        <div className={styles.svgWrapper}>
-            <svg
-                data-testid="graphic-svg"
-                viewBox="-5 -10 220 127"
-                className={styles.svg}
-                ref={_graphicRef}
-            >
-                <defs>
-                    <filter id="shadow">
-                        <feDropShadow dx="0.5" dy="0.4" stdDeviation="0.4" />
-                    </filter>
-                </defs>
-                <g ref={svgRef}></g>
-            </svg>
-        </div>
+        <svg
+            data-testid="graphic-svg"
+            viewBox="-5 -10 220 127"
+            className={styles.svg}
+            ref={_graphicRef}
+        >
+            <defs>
+                <filter id="shadow">
+                    <feDropShadow dx="0.5" dy="0.4" stdDeviation="0.4" />
+                </filter>
+            </defs>
+            <g ref={svgRef}></g>
+        </svg>
     );
 };

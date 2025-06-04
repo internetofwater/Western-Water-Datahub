@@ -67,18 +67,26 @@ export const TeacupDiagram: React.FC<Props> = (props) => {
                 <Title order={3} size="h5">
                     Current Storage Levels
                 </Title>
-                <Group justify="space-between">
-                    <Graphic
-                        reservoirProperties={reservoirProperties}
-                        config={config}
-                        showLabels={showLabels}
-                        listeners
-                        colorScheme={colorScheme}
-                    />
+                <Group
+                    justify="space-between"
+                    align="flex-start"
+                    wrap="nowrap"
+                    style={{ flexGrow: 1 }}
+                >
+                    <Box style={{ flex: 1, minWidth: 0 }}>
+                        <Graphic
+                            reservoirProperties={reservoirProperties}
+                            config={config}
+                            showLabels={showLabels}
+                            listeners
+                            colorScheme={colorScheme}
+                        />
+                    </Box>
                     <Stack
                         align="space-between"
                         justify="flex-start"
                         h="100%"
+                        w="132px"
                         pt={15}
                     >
                         <Switch
@@ -91,7 +99,9 @@ export const TeacupDiagram: React.FC<Props> = (props) => {
                                 <Group
                                     gap={5}
                                     onMouseEnter={handleCapacityEnter}
-                                    onMouseLeave={() => handleCapacityLeave()}
+                                    onMouseLeave={() =>
+                                        handleCapacityLeave(showLabels)
+                                    }
                                 >
                                     <Box
                                         style={{
@@ -111,7 +121,9 @@ export const TeacupDiagram: React.FC<Props> = (props) => {
                                 <Group
                                     gap={5}
                                     onMouseEnter={handleStorageEnter}
-                                    onMouseLeave={() => handleStorageLeave()}
+                                    onMouseLeave={() =>
+                                        handleStorageLeave(showLabels)
+                                    }
                                 >
                                     <Box
                                         style={{ backgroundColor: storageFill }}
