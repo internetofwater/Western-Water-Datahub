@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 export const storagePolygonId = 'storage-polygon';
 export const capacityPolygonId = 'capacity-polygon';
 export const highPercentileId = 'high-percentile-line';

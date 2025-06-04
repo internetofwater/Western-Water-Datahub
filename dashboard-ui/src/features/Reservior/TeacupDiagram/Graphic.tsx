@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { MantineColorScheme } from '@mantine/core';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
