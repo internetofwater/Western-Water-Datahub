@@ -384,7 +384,7 @@ export const Graphic: React.FC<Props> = (props) => {
         const averageHandler = (type: 'mouseenter' | 'mouseleave') => () => {
             if (type === 'mouseenter') handleAverageLineEnter();
             else handleAverageLineLeave(showLabels);
-            console.log('Called');
+
             propagateEventToContainerElem(type, average);
         };
 
