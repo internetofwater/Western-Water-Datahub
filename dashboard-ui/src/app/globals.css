@@ -35,6 +35,14 @@ div.mantine-Switch-root:hover {
     cursor: pointer;
 }
 
+.grow {
+    transition: all 0.2s ease-in-out;
+}
+
+.grow:hover {
+    transform: scale(1.05);
+}
+
 * {
     box-sizing: border-box;
     padding: 0;

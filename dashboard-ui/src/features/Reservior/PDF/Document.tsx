@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from 'react';
+import React, { memo } from 'react';
 import {
     Page,
     Document as PDFDocument,
@@ -12,7 +12,7 @@ import {
     View,
     Text,
 } from '@react-pdf/renderer';
-import { ReservoirProperties } from '@/features/Map/types';
+import { GeoJsonProperties } from 'geojson';
 
 const styles = StyleSheet.create({
     page: {
@@ -28,16 +28,25 @@ const styles = StyleSheet.create({
 });
 
 type Props = {
-    reservoirProperties: ReservoirProperties;
+    reservoirProperties: GeoJsonProperties;
     mapImage: Blob;
     chartImage: Blob;
+    diagramImage: Blob;
 };
 
-export const Document: React.FC<Props> = (props) => {
-    const { reservoirProperties, mapImage, chartImage } = props;
+export const Document: React.FC<Props> = memo((props) => {
+    const { reservoirProperties, mapImage, chartImage, diagramImage } = props;
+
+    if (!reservoirProperties) {
+        return null;
+    }
+
+    const title = String(reservoirProperties.locationName)
+        .toLowerCase()
+        .replace(/ /g, '_');
 
     return (
-        <PDFDocument title="test">
+        <PDFDocument title={title}>
             <Page size="A4" style={styles.page}>
                 <View style={styles.section}>
                     <Text>{reservoirProperties.locationName}</Text>
@@ -45,8 +54,9 @@ export const Document: React.FC<Props> = (props) => {
                 <View style={styles.section}>
                     <Image src={mapImage} />
                     <Image src={chartImage} />
+                    <Image src={diagramImage} />
                 </View>
             </Page>
         </PDFDocument>
     );
-};
+});
