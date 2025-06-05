@@ -277,7 +277,8 @@ export const handleCreateDiagramImage = (
     setDiagramImage: Dispatch<SetStateAction<Blob | null>>
 ) => {
     const container = document.createElement('div');
-    container.style.display = 'none';
+    container.style.visibility = 'hidden';
+    container.style.position = 'fixed';
 
     const root = createRoot(container);
 

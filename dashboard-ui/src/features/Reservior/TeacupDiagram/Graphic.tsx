@@ -225,11 +225,11 @@ export const Graphic: React.FC<Props> = (props) => {
         // Adjust the average label position if too close to high percentile label
         let averageAdjust = 0;
         if (average - highPercentile < 40) {
-            const height = highLabel.getBoundingClientRect().height;
+            const height = highLabel.getBBox().height;
 
             averageAdjust = Math.max(
                 0,
-                height / 2 - (average - highPercentile + 1)
+                height - (average - highPercentile + 1)
             );
         }
 
@@ -261,10 +261,10 @@ export const Graphic: React.FC<Props> = (props) => {
         // Handle if average is also too close to high percentile
         let lowPercentileAdjust = 0;
         if (lowPercentile - average < 40) {
-            const height = averageLabel.getBoundingClientRect().height;
+            const height = averageLabel.getBBox().height;
 
             lowPercentileAdjust =
-                Math.max(0, height / 2 - (lowPercentile - average + 1)) +
+                Math.max(0, height - (lowPercentile - average + 1)) +
                 averageAdjust;
         }
 
