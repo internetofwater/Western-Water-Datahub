@@ -384,7 +384,7 @@ export const Graphic: React.FC<Props> = (props) => {
         const averageHandler = (type: 'mouseenter' | 'mouseleave') => () => {
             if (type === 'mouseenter') handleAverageLineEnter();
             else handleAverageLineLeave(showLabels);
-
+            console.log('Called');
             propagateEventToContainerElem(type, average);
         };
 
@@ -397,6 +397,13 @@ export const Graphic: React.FC<Props> = (props) => {
 
         cleanups.push(
             addListeners(`${averageId}-ghost`, {
+                mouseenter: averageHandler('mouseenter'),
+                mouseleave: averageHandler('mouseleave'),
+            })!
+        );
+
+        cleanups.push(
+            addListeners(averageTextId, {
                 mouseenter: averageHandler('mouseenter'),
                 mouseleave: averageHandler('mouseleave'),
             })!

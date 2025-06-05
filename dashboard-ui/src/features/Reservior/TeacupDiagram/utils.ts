@@ -78,7 +78,7 @@ export const addLineConstructor =
         );
         ghostLine.setAttribute(
             'style',
-            `stroke:#FFF;stroke-width:5;opacity:0;`
+            `stroke:#FFF;stroke-width:10;opacity:0;`
         );
 
         svg.appendChild(lineElement);
