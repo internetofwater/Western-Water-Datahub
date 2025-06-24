@@ -381,7 +381,7 @@ resources:
             client_kwargs:
               endpoint_url: https://usgs.osn.mghpcc.org/
 
-  cpnr-edr:
+  resviz-edr:
     type: collection
     title: Columbia Pacific Northwest Region
     description: Columbia Pacific Northwest Region
@@ -404,14 +404,14 @@ resources:
           dbname: ${POSTGRES_DB:-edr}
           user: ${POSTGRES_USER:-postgres}
           password: ${POSTGRES_PASSWORD:-password}
-        table: cpnr
+        table: resviz
         id_field: ogc_fid
         title_field: site_name
         geom_field: geom
       - type: edr
         name: pg_edr.edr.PostgresEDRProvider
         data: *postgres-data
-        table: cpnr
+        table: resviz
 
         edr_fields: # Required EDR Fields
           id_field: ogc_fid # Result identifier field

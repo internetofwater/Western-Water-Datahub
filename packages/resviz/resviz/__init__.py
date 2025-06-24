@@ -2,18 +2,18 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-
-import subprocess
+import click
 from datetime import date, timedelta
 from dateutil.parser import parse as dateparse
-from tempfile import TemporaryDirectory
-import click
 from pathlib import Path
 import multiprocessing as mp
+import subprocess
+from tempfile import TemporaryDirectory
+
 from time import sleep
 
-from cpnr.env import BASE_URL, POSTGRES_URL
-from cpnr.lib import VRT_TEMPLATE, VRT_ROW, file_exists, fetch_csv, date_range
+from resviz.env import BASE_URL, POSTGRES_URL
+from resviz.lib import VRT_TEMPLATE, VRT_ROW, file_exists, fetch_csv, date_range
 
 
 def run_subprocess(csv_url, layer_name):
@@ -36,7 +36,7 @@ def run_subprocess(csv_url, layer_name):
         POSTGRES_URL,
         vrt_file,
         "-nln",
-        "cpnr",
+        "resviz",
         "--config",
         "OGR_PG_RETRIEVE_FID",
         "NO",

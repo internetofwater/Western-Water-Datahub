@@ -11,7 +11,7 @@ members = [
     "awdb-com",
     "awdb-forecasts",
     "com",
-    "cpnr",
+    "resviz",
     "iodh-integrations",
     "noaa-rfc",
     "rise",
@@ -386,9 +386,9 @@ wheels = [
 ]
 
 [[package]]
-name = "cpnr"
+name = "resviz"
 version = "0.1.0"
-source = { editable = "packages/cpnr" }
+source = { editable = "packages/resviz" }
 dependencies = [
     { name = "geoalchemy2" },
     { name = "pg-edr" },

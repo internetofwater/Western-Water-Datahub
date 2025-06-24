@@ -108,10 +108,10 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: cpnr; Type: TABLE; Schema: public; Owner: -
+-- Name: resviz; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.cpnr (
+CREATE TABLE public.resviz (
     ogc_fid integer NOT NULL,
     id character varying,
     monitoring_location_id character varying,
@@ -128,10 +128,10 @@ CREATE TABLE public.cpnr (
 
 
 --
--- Name: cpnr_ogc_fid_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: resviz_ogc_fid_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.cpnr_ogc_fid_seq
+CREATE SEQUENCE public.resviz_ogc_fid_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -141,32 +141,32 @@ CREATE SEQUENCE public.cpnr_ogc_fid_seq
 
 
 --
--- Name: cpnr_ogc_fid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: resviz_ogc_fid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.cpnr_ogc_fid_seq OWNED BY public.cpnr.ogc_fid;
-
-
---
--- Name: cpnr ogc_fid; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.cpnr ALTER COLUMN ogc_fid SET DEFAULT nextval('public.cpnr_ogc_fid_seq'::regclass);
+ALTER SEQUENCE public.resviz_ogc_fid_seq OWNED BY public.resviz.ogc_fid;
 
 
 --
--- Name: cpnr cpnr_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: resviz ogc_fid; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.cpnr
-    ADD CONSTRAINT cpnr_pkey PRIMARY KEY (ogc_fid);
+ALTER TABLE ONLY public.resviz ALTER COLUMN ogc_fid SET DEFAULT nextval('public.resviz_ogc_fid_seq'::regclass);
 
 
 --
--- Name: cpnr unique_id; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: resviz resviz_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.cpnr
+ALTER TABLE ONLY public.resviz
+    ADD CONSTRAINT resviz_pkey PRIMARY KEY (ogc_fid);
+
+
+--
+-- Name: resviz unique_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.resviz
     ADD CONSTRAINT unique_id UNIQUE (id);
 
 
@@ -174,14 +174,14 @@ ALTER TABLE ONLY public.cpnr
 -- Name: covjson; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX covjson ON public.cpnr USING btree (monitoring_location_id, parameter_id, data_date, value);
+CREATE INDEX covjson ON public.resviz USING btree (monitoring_location_id, parameter_id, data_date, value);
 
 
 --
--- Name: cpnr_geom_geom_idx; Type: INDEX; Schema: public; Owner: -
+-- Name: resviz_geom_geom_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX cpnr_geom_geom_idx ON public.cpnr USING gist (geom);
+CREATE INDEX resviz_geom_geom_idx ON public.resviz USING gist (geom);
 
 
 --
