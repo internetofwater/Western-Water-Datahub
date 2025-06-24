@@ -16,7 +16,7 @@ from resviz.env import BASE_URL, POSTGRES_URL
 from resviz.lib import VRT_TEMPLATE, VRT_ROW, file_exists, fetch_csv, date_range
 
 
-def run_subprocess(csv_url, layer_name):
+def run_subprocess(csv_url: str, layer_name: str):
     tmpdir = TemporaryDirectory()
     tmp = Path(tmpdir.name)
     tmp.mkdir(parents=True, exist_ok=True)
