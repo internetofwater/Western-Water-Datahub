@@ -1,4 +1,7 @@
 #!/bin/sh
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 
 . /opt/container.env
 
