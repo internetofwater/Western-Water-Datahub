@@ -1,3 +1,6 @@
+-- Copyright 2025 Lincoln Institute of Land Policy
+-- SPDX-License-Identifier: MIT
+
 --
 -- PostgreSQL database dump
 --
@@ -184,4 +187,3 @@ CREATE INDEX cpnr_geom_geom_idx ON public.cpnr USING gist (geom);
 --
 -- PostgreSQL database dump complete
 --
-

@@ -362,7 +362,7 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                         system=ReferenceSystem(
                             type="TemporalRS",
                             id="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian",
-                            calendar="Gregorian"
+                            calendar="Gregorian",
                         ),
                     ),
                 ],

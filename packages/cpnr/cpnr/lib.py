@@ -1,3 +1,5 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
 
 from datetime import timedelta, date
 import requests
@@ -25,7 +27,7 @@ VRT_TEMPLATE = """<OGRVRTDataSource>
 </OGRVRTDataSource>"""
 
 # GDAL Select insert
-VRT_ROW = '''
+VRT_ROW = """
 SELECT 
   CONCAT(SiteShortName, '.', DataDate) AS id,
   SiteShortName AS monitoring_location_id,
@@ -40,7 +42,8 @@ SELECT
   geom
 FROM input
 WHERE DoiRegion = 'CPN'
-'''
+"""
+
 
 def file_exists(url: str) -> bool:
     """Check if the URL exists by requesting only the first byte."""
@@ -50,6 +53,7 @@ def file_exists(url: str) -> bool:
     except requests.RequestException:
         return False
 
+
 def fetch_csv(url: str) -> pd.DataFrame:
     """Fetch CSV and insert into pandas dataframe"""
     df = pd.read_csv(url, skipinitialspace=True)
@@ -57,16 +61,16 @@ def fetch_csv(url: str) -> pd.DataFrame:
     # Strip excess whitespace because the csv does not
     # conform to https://www.rfc-editor.org/rfc/rfc4180
     df.columns = df.columns.str.strip()
-    for col in df.select_dtypes(include='object'):
+    for col in df.select_dtypes(include="object"):
         df[col] = df[col].str.strip()
 
     # Format date as ISO8601 compatible
-    df["DataDate"] = pd.to_datetime(
-        df["DataDate"], errors='coerce'
-    ).dt.strftime("%Y-%m-%d")
+    df["DataDate"] = pd.to_datetime(df["DataDate"], errors="coerce").dt.strftime(
+        "%Y-%m-%d"
+    )
 
     # Create URL friendly monitoring location identifier
-    df['SiteShortName'] = df['TeacupUrl'].str.extract(r'/([^/]+)\.png$')[0]
+    df["SiteShortName"] = df["TeacupUrl"].str.extract(r"/([^/]+)\.png$")[0]
 
     return df
 
