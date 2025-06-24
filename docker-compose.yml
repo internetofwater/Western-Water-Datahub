@@ -10,6 +10,8 @@ services:
       dockerfile: pygeoapi-deployment/Dockerfile
     ports:
       - 5005:80
+    env_file:
+      - .env.example
     environment:
       - REDIS_HOST=redis
       - PYGEOAPI_URL=http://localhost:5005
