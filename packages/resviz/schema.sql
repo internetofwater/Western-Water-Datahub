@@ -23,21 +23,21 @@ SET row_security = off;
 -- Name: tiger; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE SCHEMA tiger;
+CREATE SCHEMA IF NOT EXISTS tiger;
 
 
 --
 -- Name: tiger_data; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE SCHEMA tiger_data;
+CREATE SCHEMA  IF NOT EXISTS tiger_data;
 
 
 --
 -- Name: topology; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE SCHEMA topology;
+CREATE SCHEMA  IF NOT EXISTS topology;
 
 
 --
@@ -119,6 +119,7 @@ CREATE TABLE public.resviz (
     state character varying,
     doi_region character varying,
     value double precision,
+    max_capacity integer,
     data_date character varying,
     parameter_name character varying,
     parameter_id integer,
@@ -174,7 +175,7 @@ ALTER TABLE ONLY public.resviz
 -- Name: covjson; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX covjson ON public.resviz USING btree (monitoring_location_id, parameter_id, data_date, value);
+CREATE INDEX covjson ON public.resviz USING btree (monitoring_location_id, parameter_id, data_date desc, value);
 
 
 --

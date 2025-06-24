@@ -22,6 +22,7 @@ VRT_TEMPLATE = """<OGRVRTDataSource>
     <Field name="DataUnits"     type="String" />
     <Field name="DataDate"      type="String" />
     <Field name="TeacupUrl"     type="String" />
+    <Field name="MaxCapacity"   type="Integer" />
     <GeometryField name="geom" encoding="PointFromColumns" x="Lon" y="Lat" />
   </OGRVRTLayer>
 </OGRVRTDataSource>"""
@@ -35,6 +36,7 @@ SELECT
   State AS state,
   DoiRegion AS doi_region,
   DataValue AS value,
+  MaxCapacity AS max_capacity,
   DataDate AS data_date,
   'Lake/Reservoir Storage' AS parameter_name,
   3 AS parameter_id,
