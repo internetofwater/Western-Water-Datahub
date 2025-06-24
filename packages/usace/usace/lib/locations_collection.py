@@ -361,7 +361,8 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                         coordinates=["t"],
                         system=ReferenceSystem(
                             type="TemporalRS",
-                            id="http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+                            id="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian",
+                            calendar="Gregorian"
                         ),
                     ),
                 ],
