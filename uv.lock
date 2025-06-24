@@ -398,7 +398,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "geoalchemy2", specifier = ">=0.17.1" },
-    { name = "pg-edr", url = "https://github.com/internetofwater/pgedr/archive/refs/heads/main.zip" },
+    { name = "pg-edr", git = "https://github.com/internetofwater/pgedr.git?rev=main" },
     { name = "psycopg2", specifier = ">=2.9.10" },
 ]
 
@@ -1329,7 +1329,7 @@ wheels = [
 [[package]]
 name = "pg-edr"
 version = "0.1.0"
-source = { url = "https://github.com/internetofwater/pgedr/archive/refs/heads/main.zip" }
+source = { git = "https://github.com/internetofwater/pgedr.git?rev=main#1debe50483d7d806c894834b0a529be4779c049a" }
 dependencies = [
     { name = "cryptography" },
     { name = "geoalchemy2" },
