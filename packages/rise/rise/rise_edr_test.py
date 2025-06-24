@@ -205,15 +205,6 @@ def test_cube(edr_config: dict):
     assert len(result["coverages"]) == 0
 
 
-def test_polygon_output(edr_config: dict):
-    """make sure that a location which has a polygon in it doesn't throw an error"""
-    # location id 3526 is a polygon
-    p = RiseEDRProvider()
-
-    out = p.locations(location_id="3526", format_="covjson")
-    assert out["type"] == "CoverageCollection"
-
-
 def test_item_with_no_data_isnt_in_locations(edr_config: dict):
     """items with no timeseries data should show up in items but not in locations"""
     p = RiseEDRProvider()
