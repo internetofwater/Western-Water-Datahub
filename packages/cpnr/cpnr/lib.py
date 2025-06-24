@@ -41,7 +41,6 @@ SELECT
   DataUnits AS parameter_unit,
   geom
 FROM input
-WHERE DoiRegion = 'CPN'
 """
 
 
