@@ -381,6 +381,43 @@ resources:
             client_kwargs:
               endpoint_url: https://usgs.osn.mghpcc.org/
 
+  cpnr-edr:
+    type: collection
+    title: Columbia Pacific Northwest Region
+    description: Columbia Pacific Northwest Region
+    keywords:
+      - temperature
+      - precipitation
+    extents: 
+      spatial:
+        bbox: [-124.76, 41.13, -109.74, 48.99]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    links:
+      - <<: *default-link
+        title: information
+        href: https://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/prism_v2
+    providers:
+      - type: feature
+        name: PostgreSQL
+        data: &postgres-data
+          host: ${POSTGRES_HOST:-localhost}
+          dbname: ${POSTGRES_DB:-edr}
+          user: ${POSTGRES_USER:-postgres}
+          password: ${POSTGRES_PASSWORD:-password}
+        table: cpnr
+        id_field: ogc_fid
+        title_field: site_name
+        geom_field: geom
+      - type: edr
+        name: pg_edr.edr.PostgresEDRProvider
+        data: *postgres-data
+        table: cpnr
+
+        edr_fields: # Required EDR Fields
+          id_field: ogc_fid # Result identifier field
+          geom_field: geom # Result identifier field
+          time_field: data_date # Result time field
+
   # noaa-nwm:
   #   type: collection
   #   title: NOAA National Water Model CONUS Retrospective Dataset
