@@ -112,7 +112,7 @@ export const getLayerColor = (
 ): DataDrivenPropertyValueSpecification<string> => {
     switch (id) {
         case LayerId.Regions:
-            return '#F00';
+            return '#000';
         case LayerId.Basins:
             return '#0F0';
         case LayerId.RiseEDRReservoirs:
@@ -163,7 +163,7 @@ export const getLayerConfig = (
                 source: SourceId.Regions,
                 paint: {
                     'fill-color': getLayerColor(LayerId.Regions),
-                    'fill-opacity': 0.3,
+                    'fill-opacity': 0,
                 },
             };
         case LayerId.Basins:
@@ -214,14 +214,44 @@ export const getLayerConfig = (
                         ['coalesce', ['get', 'Active Capacity'], 1],
                         [
                             'step',
-                            ['var', 'capacity'],
-                            0.3,
-                            45000,
-                            0.4,
-                            320000,
-                            0.5,
-                            2010000,
-                            0.6,
+                            ['zoom'],
+                            1,
+                            0,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                0.3,
+                                45000,
+                                0.4,
+                                320000,
+                                0.3,
+                                2010000,
+                                0.5,
+                            ],
+                            5,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                0.3,
+                                45000,
+                                0.3,
+                                320000,
+                                0.4,
+                                2010000,
+                                0.5,
+                            ],
+                            8,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                0.3,
+                                45000,
+                                0.4,
+                                320000,
+                                0.5,
+                                2010000,
+                                0.6,
+                            ],
                         ],
                     ],
 
@@ -240,6 +270,112 @@ export const getLayerConfig = (
                         [0, 0],
                     ],
                     'icon-allow-overlap': true,
+                },
+            };
+        case SubLayerId.RiseEDRReservoirLabels:
+            return {
+                id: SubLayerId.RiseEDRReservoirLabels,
+                type: LayerType.Symbol,
+                source: SourceId.RiseEDRReservoirs,
+                layout: {
+                    'text-field': ['get', 'Asset Name (in tessel)'],
+                    'text-anchor': 'bottom',
+                    'text-size': 14,
+                    'symbol-sort-key': [
+                        'coalesce',
+                        ['get', 'Active Capacity'],
+                        1,
+                    ],
+                    'text-offset': [
+                        'let',
+                        'capacity',
+                        ['coalesce', ['get', 'Active Capacity'], 1],
+                        [
+                            'step',
+                            ['zoom'],
+                            [0, 0],
+                            0,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                [0, 0.5],
+                                45000,
+                                [0, 1],
+                                320000,
+                                [0, 2.4],
+                                2010000,
+                                [0, 3.2],
+                            ],
+                            5,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                [0, 0.5],
+                                45000,
+                                [0, 2.1],
+                                320000,
+                                [0, 2.8],
+                                2010000,
+                                [0, 3.2],
+                            ],
+                            8,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                [0, 2.4],
+                                45000,
+                                [0, 2.8],
+                                320000,
+                                [0, 3.2],
+                                2010000,
+                                [0, 3.5],
+                            ],
+                        ],
+                    ],
+                },
+                paint: {
+                    'text-color': getLayerColor(
+                        SubLayerId.RiseEDRReservoirLabels
+                    ),
+                    'text-opacity': [
+                        'let',
+                        'capacity',
+                        ['coalesce', ['get', 'Active Capacity'], 1],
+                        [
+                            'step',
+                            ['zoom'],
+                            0,
+                            0,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                0,
+                                45000,
+                                0,
+                                320000,
+                                1,
+                                2010000,
+                                1,
+                            ],
+                            5,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                0,
+                                45000,
+                                1,
+                                320000,
+                                1,
+                                2010000,
+                                1,
+                            ],
+                            8,
+                            1,
+                        ],
+                    ],
+                    'text-halo-blur': 1,
+                    'text-halo-color': '#000000',
+                    'text-halo-width': 2,
                 },
             };
         default:
@@ -418,7 +554,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 controllable: false,
                 legend: false,
                 clickFunction: getLayerClickFunction(SubLayerId.BasinsFill),
-                // hoverFunction: getLayerHoverFunction(SubLayerId.BasinsFill),
             },
         ],
     },
@@ -428,6 +563,15 @@ export const layerDefinitions: MainLayerDefinition[] = [
         controllable: false,
         legend: false,
         clickFunction: getLayerClickFunction(LayerId.RiseEDRReservoirs),
+        hoverFunction: getLayerHoverFunction(LayerId.RiseEDRReservoirs),
+        subLayers: [
+            {
+                id: SubLayerId.RiseEDRReservoirLabels,
+                config: getLayerConfig(SubLayerId.RiseEDRReservoirLabels),
+                controllable: false,
+                legend: false,
+            },
+        ],
         // hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
     },
 ];

@@ -12,8 +12,8 @@ export const MAP_ID = 'main';
 
 export const BASEMAP = basemaps[BasemapId.Dark];
 
-export const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
-export const INITIAL_ZOOM = 4;
+export const INITIAL_CENTER: [number, number] = [-107.85792, 38.1736];
+export const INITIAL_ZOOM = 4.15;
 
 export enum SourceId {
     Regions = 'regions-source',
@@ -35,11 +35,134 @@ export enum SubLayerId {
     RegionsFill = 'regions-fill',
     BasinsBoundary = 'basins-boundary',
     BasinsFill = 'basins-fill',
+    RiseEDRReservoirLabels = 'rise-edr-reservoir-labels',
 }
 
 export const allLayerIds = [
     ...Object.values(LayerId),
     ...Object.values(SubLayerId),
+];
+
+export const ReservoirStyleConfig = {
+    2010000: {
+        0: {
+            iconSize: 0.5,
+            showTeacup: true,
+        },
+        4: {
+            iconSize: 0.5,
+            showTeacup: true,
+        },
+        5: {
+            iconSize: 0.5,
+            showTeacup: true,
+        },
+        7: {
+            iconSize: 0.6,
+            showTeacup: true,
+        },
+        8: {
+            iconSize: 0.6,
+            showTeacup: true,
+        },
+    },
+    465000: {
+        0: {
+            iconSize: 0.4,
+            showTeacup: false,
+        },
+        4: {
+            iconSize: 0.4,
+            showTeacup: true,
+        },
+        5: {
+            iconSize: 0.4,
+            showTeacup: true,
+        },
+        7: {
+            iconSize: 0.5,
+            showTeacup: true,
+        },
+        8: {
+            iconSize: 0.5,
+            showTeacup: true,
+        },
+    },
+    320000: {
+        0: {
+            iconSize: 0.4,
+            showTeacup: false,
+        },
+        4: {
+            iconSize: 0.4,
+            showTeacup: false,
+        },
+        5: {
+            iconSize: 0.4,
+            showTeacup: true,
+        },
+        7: {
+            iconSize: 0.5,
+            showTeacup: true,
+        },
+        8: {
+            iconSize: 0.5,
+            showTeacup: true,
+        },
+    },
+    65000: {
+        0: {
+            iconSize: 0.4,
+            showTeacup: false,
+        },
+        4: {
+            iconSize: 0.4,
+            showTeacup: false,
+        },
+        5: {
+            iconSize: 0.4,
+            showTeacup: false,
+        },
+        7: {
+            iconSize: 0.5,
+            showTeacup: true,
+        },
+        8: {
+            iconSize: 0.5,
+            showTeacup: true,
+        },
+    },
+    [-1]: {
+        // All other reservoirs
+        0: {
+            iconSize: 0.4,
+            showTeacup: false,
+        },
+        4: {
+            iconSize: 0.4,
+            showTeacup: false,
+        },
+        5: {
+            iconSize: 0.4,
+            showTeacup: false,
+        },
+        7: {
+            iconSize: 0.5,
+            showTeacup: true,
+        },
+        8: {
+            iconSize: 0.5,
+            showTeacup: true,
+        },
+    },
+};
+
+export const ZoomCapacityArray = [
+    [0, 2010000],
+    [4, 465000],
+    [5, 320000],
+    [7, 65000],
+    [8, -1],
 ];
 
 export const TeacupStepExpression: ExpressionSpecification = [

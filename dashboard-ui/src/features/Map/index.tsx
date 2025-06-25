@@ -345,6 +345,7 @@ const MainMap: React.FC<Props> = (props) => {
                 layers={layerDefinitions}
                 options={{
                     style: basemaps[basemap],
+                    projection: 'mercator',
                     center: INITIAL_CENTER,
                     zoom: INITIAL_ZOOM,
                     minZoom: 4,
