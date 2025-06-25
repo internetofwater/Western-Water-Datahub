@@ -6,7 +6,10 @@
 import { LineChart } from '@/components/LineChart';
 import edrService from '@/services/init/edr.init';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
-import { getDateRange, getLabelsAndValues } from '@/features/Reservior/utils';
+import {
+    getDateRange,
+    getLabelsAndValues,
+} from '@/features/Reservior/Chart/utils';
 import { CoverageCollection } from '@/services/edr.service';
 import { Box, Group, Loader, Paper, Radio, Space, Title } from '@mantine/core';
 import styles from '@/features/Reservior/Reservoir.module.css';
@@ -140,7 +143,7 @@ export const Chart: React.FC<Props> = (props) => {
             <Space h="sm" />
             <Box className={styles.chartContainer}>
                 {loading ? (
-                    <Loader />
+                    <Loader data-testid="chart-loader-bar" />
                 ) : error.length > 0 ? (
                     <>{error}</>
                 ) : (

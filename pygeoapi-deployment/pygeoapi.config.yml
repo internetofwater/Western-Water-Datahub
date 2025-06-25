@@ -60,7 +60,8 @@ resources:
       - RISE
       - USBR
     links:
-      - type: application/html
+      - &default-link
+        type: application/html
         rel: canonical
         title: data source
         href: https://data.usbr.gov/
@@ -70,11 +71,13 @@ resources:
         bbox: [-123.60518, 28.4667, -95.875, 48.8283]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: edr
+      - &default-edr
+        type: edr
         name: rise.rise_edr.RiseEDRProvider
         data: https://data.usbr.gov/
         title_field: name
-      - type: feature
+      - &default-feature
+        type: feature
         name: rise.rise.RiseProvider
         data: https://data.usbr.gov/
         title_field: name
@@ -89,24 +92,19 @@ resources:
       - NRCS
       - USDA
     links:
-      - type: application/html
-        rel: canonical
-        title: data source
+      - <<: *default-link
         href: https://www.nrcs.usda.gov/wps/portal/wcc/home/aboutUs/monitoringPrograms/automatedSnowMonitoring/
-        hreflang: en-US
     extents:
       spatial:
         bbox: [-164.92472, 32.92342, -103.78758, 70.28062]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: edr
+      - <<: *default-edr
         name: snotel.snotel_edr.SnotelEDRProvider
         data: https://wcc.sc.egov.usda.gov/
-        title_field: name
-      - type: feature
+      - <<: *default-feature
         name: snotel.snotel.SnotelProvider
         data: https://wcc.sc.egov.usda.gov/
-        title_field: name
 
   usgs-sta:
     type: collection
@@ -117,12 +115,9 @@ resources:
       - SensorThings
       - USGS
     links:
-      - type: application/html
-        rel: canonical
-        title: data source
+      - <<: *default-link
         href: https://labs.waterdata.usgs.gov
-        hreflang: en-US
-    extents:
+    extents: &default-extent
       spatial:
         bbox: [-170, 15, -51, 72]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
@@ -142,10 +137,7 @@ resources:
     description: United States Department of Agriculture Air and Water Database Forecasts EDR
     keywords:
       - open data
-    extents:
-      spatial:
-        bbox: [-171.791110603, 18.91619, -66.96466, 71.3577635769]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    extents: *default-extent
     providers:
       - type: edr
         name: awdb_forecasts.awdb_forecasts_edr.AwdbForecastsEDRProvider
@@ -161,10 +153,7 @@ resources:
     description: US Army Corps of Engineers EDR
     keywords:
       - open data
-    extents:
-      spatial:
-        bbox: [-171.791110603, 18.91619, -66.96466, 71.3577635769]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    extents: *default-extent
     providers:
       - type: edr
         name: usace.usace_edr.USACEEDRProvider
@@ -175,313 +164,129 @@ resources:
         entity: Observation
         title_field: name
 
-  noaa-qpf-24-hour-day-1:
+  noaa-qpf-24-hour-day-1: &default-qpf
     type: collection
     title: NOAA QPF 24 Hours Day 1
     description: NOAA Quantitative Precipitation Forecast (QPF) 24 Hours Day 1
     keywords: [NOAA, QPF]
     links:
-      - type: application/html
-        rel: canonical
-        title: data source
+      - <<: *default-link
         href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    extents: *default-extent
     providers:
-      - type: feature
+      - &default-feature-qpf
+        type: feature
         name: ESRI
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/1
         id_field: objectid
         time_field: issue_time
 
   noaa-qpf-24-hour-day-2:
-    type: collection
+    <<: *default-qpf
     title: NOAA QPF 24 Hours Day 2
     description: NOAA Quantitative Precipitation Forecast (QPF) 24 Hours Day 2
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/2
-        id_field: objectid
-        time_field: issue_time
 
   noaa-qpf-24-hour-day-3:
-    type: collection
+    <<: *default-qpf
     title: NOAA QPF 24 Hours Day 3
     description: NOAA Quantitative Precipitation Forecast (QPF) 24 Hours Day 3
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/3
-        id_field: objectid
-        time_field: issue_time
 
   noaa-qpf-48-hour-day-4:
-    type: collection
+    <<: *default-qpf
     title: NOAA QPF 48 Hours Day 4-5
     description: NOAA Quantitative Precipitation Forecast (QPF) 48 Hours Day 4-5
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/4
-        id_field: objectid
-        time_field: issue_time
 
   noaa-qpf-48-hour-day-6-7:
-    type: collection
+    <<: *default-qpf
     title: NOAA QPF 48 Hour Day 6-7
     description: NOAA Quantitative Precipitation Forecast (QPF) 48 Hour Day 6-7
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/5
-        id_field: objectid
-        time_field: issue_time
 
   noaa-qpf-cumulative-6-hours-day-1:
-    type: collection
+    <<: *default-qpf
     title: NOAA QPF Cumulative 6 Hours Day 1
     description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 6 Hours Day 1
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/7
-        id_field: objectid
-        time_field: issue_time
 
   noaa-qpf-cumulative-48-hours-day-1-2:
-    type: collection
+    <<: *default-qpf
     title: NOAA QPF Cumulative 48 Hours Day 1-2
     description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 48 Hours Day 1-2
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/8
-        id_field: objectid
-        time_field: issue_time
 
   noaa-qpf-cumulative-72-hours-day-1-3:
-    type: collection
+    <<: *default-qpf
     title: NOAA QPF Cumulative 72 Hours Day 1-3
     description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 72 Hours Day 1-3
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/9
-        id_field: objectid
-        time_field: issue_time
 
   noaa-qpf-cumulative-120-hours-day-1-5:
-    type: collection
+    <<: *default-qpf
     title: NOAA QPF Cumulative 120 Hours Day 1-5
     description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 120 Hours Day 1-5
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/10
-        id_field: objectid
-        time_field: issue_time
 
   noaa-qpf-cumulative-168-hours-day-1-7:
-    type: collection
+    <<: *default-qpf
     title: NOAA QPF Cumulative 168 Hours Day 1-7
     description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 168 Hours Day 1-7
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/11
-        id_field: objectid
-        time_field: issue_time
 
-  noaa-day-1-prob-at-least-4-inches-snow:
-    type: collection
+  noaa-day-1-prob-at-least-4-inches-snow: &default-wpc
+    <<: *default-qpf
     title: NOAA Day 1 Prob At Least 4 Inches Snow
     description: NOAA Day 1 Prob At Least 4 Inches Snow
-    keywords: [NOAA, QPF]
     links:
-      - type: application/html
-        rel: canonical
-        title: data source
+      - <<: *default-link
         href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/1
-        id_field: objectid
-        time_field: issue_time
 
   noaa-day-1-prob-at-least-8-inches-snow:
-    type: collection
+    <<: *default-qpf
     title: NOAA Day 1 Prob At Least 8 Inches Snow
     description: NOAA Day 1 Prob At Least 8 Inches Snow
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/2
-        id_field: objectid
-        time_field: issue_time
 
   noaa-day-1-prob-at-least-12-inches-snow:
-    type: collection
+    <<: *default-wpc
     title: NOAA Day 1 Prob At Least 12 Inches Snow
     description: NOAA Day 1 Prob At Least 12 Inches Snow
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/3
-        id_field: objectid
-        time_field: issue_time
 
   noaa-day-1-prob-icing-at-least-.25-inches:
-    type: collection
+    <<: *default-wpc
     title: NOAA Day 1 Prob Icing At Least .25 Inches
     description: NOAA Day 1 Prob Icing At Least .25 Inches
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/4
-        id_field: objectid
-        time_field: issue_time
 
   nohrsc-swe:
     type: collection
@@ -491,17 +296,16 @@ resources:
       - nohrsc
       - snow water equivalent
     links:
-      - type: text/html
-        rel: canonical
+      - <<: *default-link
         title: information
         href: https://www.nohrsc.noaa.gov/nsa/
-        hreflang: en-US
     extents:
       spatial:
         bbox: [-130.516667, 24.1, -62.25273100000001, 58.240301]
         crs: http://www.opengis.net/def/crs/EPSG/0/4269
     providers:
-      - type: map
+      - &default-wms
+        type: map
         name: WMSFacade
         data: https://mapservices.weather.noaa.gov/raster/services/snow/NOHRSC_Snow_Analysis/MapServer/WMSServer
         options:
@@ -520,48 +324,21 @@ resources:
       - nohrsc
       - snow depth
     links:
-      - type: text/html
-        rel: canonical
+      - <<: *default-link
         title: information
         href: https://www.nohrsc.noaa.gov/nsa/
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-130.516667, 24.1, -62.25273100000001, 58.240301]
-        crs: http://www.opengis.net/def/crs/EPSG/0/4269
+    extents: *default-extent
     providers:
-      - type: map
-        name: WMSFacade
+      - <<: *default-wms
         data: https://mapservices.weather.noaa.gov/raster/services/snow/NOHRSC_Snow_Analysis/MapServer/WMSServer
-        options:
-          layer: 5
-          style: default
-          projection: 4269
-        format:
-          name: png
-          mimetype: image/png
 
   NOHRSC-Snow-Analysis-Snow-Water-Boundary:
-    type: collection
+    <<: *default-wpc
     title: NOAA NOHRSC Snow Analysis Snow Water Boundary
     description: NOAA NOHRSC Snow Analysis Snow Water Boundary
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: data source
-        href: https://data.usbr.gov/
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/raster/rest/services/snow/NOHRSC_Snow_Analysis/MapServer/5
-        id_field: objectid
-        time_field: issue_time
 
   noaa-rfc:
     type: collection
@@ -569,15 +346,9 @@ resources:
     description: NOAA River Forecast Center Forecasts
     keywords: [NOAA]
     links:
-      - type: application/html
-        rel: canonical
-        title: data source
+      - <<: *default-link
         href: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
-        hreflang: en-US
-    extents:
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    extents: *default-extent
     providers:
       - type: feature
         name: noaa_rfc.noaa_rfc.NOAARFCProvider
@@ -591,21 +362,11 @@ resources:
     keywords:
       - temperature
       - precipitation
-    extents:
-      spatial:
-        bbox: [-125.020836, 24.104166, -66.520836, 49.9375]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-      temporal:
-        begin: 1895-01-01T00:00:00Z
-        end: 2020-12-01T00:00:00Z
-        trs: http://www.opengis.net/def/uom/ISO-8601/0/Gregorian
-        values: ["R1500/1895-01-01T00:00:00Z/P1M"]
+    extents: *default-extent
     links:
-      - type: text/html
-        rel: canonical
+      - <<: *default-link
         title: information
         href: https://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/prism_v2
-        hreflang: en-US
     providers:
       - type: edr
         name: xarray-edr
@@ -620,6 +381,44 @@ resources:
             client_kwargs:
               endpoint_url: https://usgs.osn.mghpcc.org/
 
+  resviz-edr:
+    type: collection
+    title: Columbia Pacific Northwest Region
+    description: Columbia Pacific Northwest Region
+    keywords:
+      - temperature
+      - precipitation
+    extents:
+      spatial:
+        bbox: [-124.76, 41.13, -109.74, 48.99]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    links:
+      - <<: *default-link
+        title: information
+        href: https://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/prism_v2
+    providers:
+      - type: feature
+        name: PostgreSQL
+        data: &postgres-data
+          host: ${POSTGRES_HOST:-localhost}
+          dbname: ${POSTGRES_DB:-edr}
+          user: ${POSTGRES_USER:-postgres}
+          password: ${POSTGRES_PASSWORD:-password}
+        table: resviz
+        id_field: ogc_fid
+        title_field: site_name
+        geom_field: geom
+      - type: edr
+        name: pg_edr.edr.PostgresEDRProvider
+        data: *postgres-data
+        table: resviz
+
+        edr_fields: # Required EDR Fields
+          id_field: ogc_fid # Result identifier field
+          geom_field: geom # Result identifier field
+          time_field: data_date # Result time field
+
+
   # noaa-nwm:
   #   type: collection
   #   title: NOAA National Water Model CONUS Retrospective Dataset
@@ -632,11 +431,8 @@ resources:
   #       bbox: [-125.020836, 24.104166, -66.520836, 49.9375]
   #       crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
   #   links:
-  #     - type: text/html
-  #       rel: canonical
-  #       title: information
+  #     - <<: *default-link
   #       href: https://registry.opendata.aws/nwm-archive/
-  #       hreflang: en-US
   #   providers:
   #     - type: edr
   #       name: xarray-edr

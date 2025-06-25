@@ -5,20 +5,24 @@
 
 .infoContainer {
     width: 100%;
-    min-height: 328px; /* map container - header height = info container */
-    height: 328px;
+    height: 328px; /* map container - header height = info container */
     max-height: 328px;
 }
 
 .chartContainer {
     width: 100%;
-    height: 88%;
+    min-width: 600px;
     max-width: calc(
         33vw - 48px
     ); /* container - (padding between containers + padding on edges = 48)*/
+    height: 88%;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.graphicContainer {
+    margin: auto;
 }
 
 .PDFViewer {
@@ -30,13 +34,42 @@
     width: 100%;
 }
 
+.loaderGroup {
+    height: 70vh;
+    width: 100%;
+}
+
 .controlButton {
     min-width: 105px;
 }
 
-@media screen and (max-width: 1258px) {
+.svg {
+    width: 100%;
+    min-width: 250px;
+    height: 100%;
+    max-height: 260px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.svg:hover {
+    transform: scale(1.05);
+}
+
+.graphicLegendColor {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+.graphicLegendText {
+    color: #000;
+}
+
+@media screen and (max-width: 1817px) {
     .chartContainer {
         height: 79%;
+        max-width: unset;
     }
 }
 
@@ -48,6 +81,7 @@
     }
 
     .chartContainer {
+        min-width: unset;
         max-width: unset;
     }
 }

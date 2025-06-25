@@ -30,7 +30,7 @@ from geojson_pydantic.types import Position2D
 from usace.lib.types.geojson_response import Feature, FeatureCollection
 from com.helpers import parse_date
 from com.protocols.covjson import CovjsonBuilderProtocol
-from covjson_pydantic.parameter import Parameter
+from covjson_pydantic.parameter import Parameter, Parameters
 from covjson_pydantic.unit import Unit
 from covjson_pydantic.observed_property import ObservedProperty
 from usace.lib.types.geojson_response import TimeseriesParameter
@@ -361,7 +361,8 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                         coordinates=["t"],
                         system=ReferenceSystem(
                             type="TemporalRS",
-                            id="http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+                            id="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian",
+                            calendar="Gregorian",
                         ),
                     ),
                 ],
@@ -394,7 +395,7 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
         covCol = CoverageCollection(
             coverages=coverages,
             domainType=DomainType.point_series,
-            parameters=parameters,
+            parameters=Parameters(root=parameters),
         )
         return cast(
             CoverageCollectionDict, covCol.model_dump(by_alias=True, exclude_none=True)

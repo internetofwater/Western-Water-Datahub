@@ -6,9 +6,14 @@
 import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { MapProvider } from '@/contexts/MapContexts';
+import { Mantine as MantineProvider } from '@/providers/Mantine';
 
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
-    return <MapProvider mapIds={['test']}>{children}</MapProvider>;
+    return (
+        <MantineProvider>
+            <MapProvider mapIds={['test']}>{children}</MapProvider>
+        </MantineProvider>
+    );
 };
 
 const customRender = (
