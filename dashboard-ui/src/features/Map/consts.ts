@@ -246,8 +246,11 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         capacityProperty: 'Active Capacity',
         identifierProperty: '_id',
         identifierType: 'number',
-        labelProperty: 'name',
+        labelProperty: 'Asset Name (in tessel)',
         regionConnectorProperty: 'locationRegionNames',
-        connectedLayers: [LayerId.RiseEDRReservoirs],
+        connectedLayers: [
+            LayerId.RiseEDRReservoirs,
+            SubLayerId.RiseEDRReservoirLabels,
+        ],
     },
 ];

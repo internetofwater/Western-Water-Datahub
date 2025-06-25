@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Paper, Stack, Title, Text, Group } from '@mantine/core';
+import { Stack, Text, Group, Box } from '@mantine/core';
 import PDF from '@/features/Reservior/PDF';
 import { ReservoirConfig } from '@/features/Map/types';
 import { Chart as ChartJS } from 'chart.js';
 import { RefObject } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { GeoJsonProperties } from 'geojson';
+import { TextBlock } from '@/components/TextBlock';
 
 type Props = {
     accessToken: string;
@@ -51,19 +52,23 @@ export const Info: React.FC<Props> = (props) => {
             : reservoirProperties[config.regionConnectorProperty]
     );
 
+    const today = new Date();
+    const lastUpdateDate = `${String(today.getMonth() + 1).padStart(
+        2,
+        '0'
+    )}/${String(today.getDate()).padStart(2, '0')}/${today.getFullYear()}`;
+
     return (
-        <Paper
-            shadow="xs"
-            p="xs"
-            className={styles.infoContainer}
-            data-testid="reservoir-info"
+        <Stack
+            justify="space-between"
+            align="flex-start"
+            gap="xs"
+            className={styles.infoPanel}
         >
-            <Stack justify="space-between" align="flex-start">
-                <Title order={2} size={'h3'}>
-                    {reservoirProperties.locationName}
-                </Title>
-                <Group justify="start" w="100%" gap="xs">
-                    <Stack mr="xl" gap="xs">
+            <Stack gap="xs" w="100%">
+                <Box>
+                    <Text>Last Updated Date: {lastUpdateDate}</Text>
+                    <TextBlock w="100%">
                         <Group gap="xs" justify="flex-start">
                             <Text fw={700}>Storage:</Text>
                             <Text>
@@ -71,32 +76,32 @@ export const Info: React.FC<Props> = (props) => {
                             </Text>
                         </Group>
                         <Group gap="xs" justify="flex-start">
-                            <Text fw={700}>Capacity:</Text>
-                            <Text>
-                                {capacity.toLocaleString('en-US')}
-                                &nbsp;acre-feet
-                            </Text>
-                        </Group>
-                        <Group gap="xs" justify="flex-start">
                             <Text fw={700}>Percent Full:</Text>
                             <Text>{percentFull}%</Text>
                         </Group>
-                    </Stack>
-                    <Stack gap="xs">
                         <Group gap="xs" justify="flex-start">
                             <Text fw={700}>Percent of Average:</Text>
                             <Text>{percentOfAverage}%</Text>
                         </Group>
-                        <Group gap="xs" justify="flex-start">
-                            <Text fw={700}>Region:</Text>
-                            <Text>{region}</Text>
-                        </Group>
-                        <Group gap="xs" justify="flex-start">
-                            <Text fw={700}>Basin:</Text>
-                            <Text>Unknown Basin</Text>
-                        </Group>
-                    </Stack>
-                </Group>
+                    </TextBlock>
+                </Box>
+                <TextBlock>
+                    <Group gap="xs" justify="flex-start">
+                        <Text fw={700}>Capacity:</Text>
+                        <Text>
+                            {capacity.toLocaleString('en-US')}
+                            &nbsp;acre-feet
+                        </Text>
+                    </Group>
+                    <Group gap="xs" justify="flex-start">
+                        <Text fw={700}>Region:</Text>
+                        <Text>{region}</Text>
+                    </Group>
+                    <Group gap="xs" justify="flex-start">
+                        <Text fw={700}>Basin:</Text>
+                        <Text>Unknown Basin</Text>
+                    </Group>
+                </TextBlock>
                 <PDF
                     reservoirProperties={reservoirProperties}
                     accessToken={accessToken}
@@ -105,6 +110,6 @@ export const Info: React.FC<Props> = (props) => {
                     config={config}
                 />
             </Stack>
-        </Paper>
+        </Stack>
     );
 };

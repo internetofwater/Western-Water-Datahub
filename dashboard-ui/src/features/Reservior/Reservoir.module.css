@@ -9,12 +9,13 @@
     max-height: 328px;
 }
 
+.infoPanel {
+    width: 37%;
+}
+
 .chartContainer {
     width: 100%;
-    min-width: 600px;
-    max-width: calc(
-        33vw - 48px
-    ); /* container - (padding between containers + padding on edges = 48)*/
+    /* container - (padding between containers + padding on edges = 48)*/
     height: 88%;
     display: flex;
     justify-content: center;
@@ -23,6 +24,10 @@
 
 .graphicContainer {
     margin: auto;
+}
+
+.graphicPanel {
+    width: 60%;
 }
 
 .PDFViewer {

@@ -11,7 +11,6 @@ import { layerDefinitions, sourceConfigs } from '@/features/Map/config';
 import {
     MAP_ID,
     SubLayerId,
-    LayerId,
     INITIAL_CENTER,
     INITIAL_ZOOM,
     SourceId,
@@ -200,7 +199,11 @@ const MainMap: React.FC<Props> = (props) => {
             map.setFilter(SubLayerId.RegionsBoundary, null);
             // TODO: basin filter
             if (reservoir === ReservoirDefault) {
-                map.setFilter(LayerId.RiseEDRReservoirs, null);
+                ReservoirConfigs.forEach((config) => {
+                    config.connectedLayers.forEach((layerId) => {
+                        map.setFilter(layerId, null);
+                    });
+                });
             }
         } else {
             map.setFilter(SubLayerId.RegionsFill, [
@@ -214,25 +217,15 @@ const MainMap: React.FC<Props> = (props) => {
                 region,
             ]);
             // TODO: basin filter
-            if (reservoir === ReservoirDefault) {
-                ReservoirConfigs.forEach((config) => {
-                    config.connectedLayers.forEach((layerId) => {
-                        map.setFilter(layerId, [
-                            'any',
-                            [
-                                'in',
-                                region,
-                                ['get', config.regionConnectorProperty],
-                            ],
-                            [
-                                '==',
-                                ['get', config.regionConnectorProperty],
-                                region,
-                            ],
-                        ]);
-                    });
+            ReservoirConfigs.forEach((config) => {
+                config.connectedLayers.forEach((layerId) => {
+                    map.setFilter(layerId, [
+                        'any',
+                        ['in', region, ['get', config.regionConnectorProperty]],
+                        ['==', ['get', config.regionConnectorProperty], region],
+                    ]);
                 });
-            }
+            });
         }
     }, [region]);
 
@@ -241,47 +234,47 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
         if (reservoir === ReservoirDefault) {
-            // Unset Filter
-            if (region === 'all') {
-                ReservoirConfigs.forEach((config) => {
-                    config.connectedLayers.forEach((layerId) => {
-                        map.setFilter(layerId, null);
-                    });
-                });
-            } else {
-                ReservoirConfigs.forEach((config) => {
-                    config.connectedLayers.forEach((layerId) => {
-                        map.setFilter(layerId, [
-                            'any',
-                            [
-                                'in',
-                                region,
-                                ['get', config.regionConnectorProperty],
-                            ],
-                            [
-                                '==',
-                                ['get', config.regionConnectorProperty],
-                                region,
-                            ],
-                        ]);
-                    });
-                });
-            }
+            // // Unset Filter
+            // if (region === 'all') {
+            //     ReservoirConfigs.forEach((config) => {
+            //         config.connectedLayers.forEach((layerId) => {
+            //             map.setFilter(layerId, null);
+            //         });
+            //     });
+            // } else {
+            //     ReservoirConfigs.forEach((config) => {
+            //         config.connectedLayers.forEach((layerId) => {
+            //             map.setFilter(layerId, [
+            //                 'any',
+            //                 [
+            //                     'in',
+            //                     region,
+            //                     ['get', config.regionConnectorProperty],
+            //                 ],
+            //                 [
+            //                     '==',
+            //                     ['get', config.regionConnectorProperty],
+            //                     region,
+            //                 ],
+            //             ]);
+            //         });
+            //     });
+            // }
         } else {
             if (reservoirCollections) {
                 ReservoirConfigs.forEach((config) => {
                     if (config.id === (reservoir.source as SourceId)) {
-                        config.connectedLayers.forEach((layerId) => {
-                            map.setFilter(layerId, [
-                                'any',
-                                [
-                                    '==',
-                                    ['get', config.identifierProperty],
-                                    reservoir.identifier,
-                                ],
-                                ['==', ['id'], reservoir.identifier],
-                            ]);
-                        });
+                        // config.connectedLayers.forEach((layerId) => {
+                        //     map.setFilter(layerId, [
+                        //         'any',
+                        //         [
+                        //             '==',
+                        //             ['get', config.identifierProperty],
+                        //             reservoir.identifier,
+                        //         ],
+                        //         ['==', ['id'], reservoir.identifier],
+                        //     ]);
+                        // });
 
                         const collection =
                             reservoirCollections[reservoir.source as SourceId];
@@ -315,13 +308,13 @@ const MainMap: React.FC<Props> = (props) => {
                             }
                         }
                     } else {
-                        config.connectedLayers.forEach((layerId) => {
-                            map.setFilter(layerId, [
-                                '==',
-                                ['get', 'nonexistent_property'],
-                                '__never__',
-                            ]);
-                        });
+                        // config.connectedLayers.forEach((layerId) => {
+                        //     map.setFilter(layerId, [
+                        //         '==',
+                        //         ['get', 'nonexistent_property'],
+                        //         '__never__',
+                        //     ]);
+                        // });
                     }
                 });
             }
