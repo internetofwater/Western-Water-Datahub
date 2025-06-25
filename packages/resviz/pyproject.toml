@@ -1,0 +1,30 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
+[project]
+name = "resviz"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "geoalchemy2>=0.17.1",
+    "pg-edr @ git+https://github.com/internetofwater/pgedr.git@main",
+    "psycopg2>=2.9.10",
+]
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+resviz = "resviz:load"
+
+[tool.hatch.build.targets.wheel]
+packages = ["resviz"]
+
+[tool.hatch.metadata]
+allow-direct-references = true

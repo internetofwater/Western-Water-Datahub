@@ -32,6 +32,11 @@ function error() {
 	exit -1
 }
 
+# Start cron in background
+echo "Starting cron..."
+cron
+export -p > /opt/container.env
+
 # Workdir
 cd ${PYGEOAPI_HOME}
 
