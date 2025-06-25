@@ -279,7 +279,7 @@ export const Graphic: React.FC<Props> = (props) => {
                     Low
                 </tspan>
                 <tspan dx="-35" dy="8" fontSize="8">
-                    (90
+                    (10
                     <tspan dy="-5" fontSize="4">
                         th
                     </tspan>

@@ -211,7 +211,15 @@ export const getLayerConfig = (
                     'icon-size': [
                         'let',
                         'capacity',
-                        ['coalesce', ['get', 'Active Capacity'], 1],
+                        [
+                            'coalesce',
+                            [
+                                'get',
+                                getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                                    .capacityProperty,
+                            ],
+                            1,
+                        ],
                         [
                             'step',
                             ['zoom'],
@@ -257,7 +265,11 @@ export const getLayerConfig = (
 
                     'symbol-sort-key': [
                         'coalesce',
-                        ['get', 'Active Capacity'],
+                        [
+                            'get',
+                            getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                                .capacityProperty,
+                        ],
                         1,
                     ],
                     'icon-offset': [
@@ -278,18 +290,34 @@ export const getLayerConfig = (
                 type: LayerType.Symbol,
                 source: SourceId.RiseEDRReservoirs,
                 layout: {
-                    'text-field': ['get', 'Asset Name (in tessel)'],
+                    'text-field': [
+                        'get',
+                        getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                            .labelProperty,
+                    ],
                     'text-anchor': 'bottom',
                     'text-size': 14,
                     'symbol-sort-key': [
                         'coalesce',
-                        ['get', 'Active Capacity'],
+                        [
+                            'get',
+                            getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                                .capacityProperty,
+                        ],
                         1,
                     ],
                     'text-offset': [
                         'let',
                         'capacity',
-                        ['coalesce', ['get', 'Active Capacity'], 1],
+                        [
+                            'coalesce',
+                            [
+                                'get',
+                                getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                                    .capacityProperty,
+                            ],
+                            1,
+                        ],
                         [
                             'step',
                             ['zoom'],
@@ -340,7 +368,15 @@ export const getLayerConfig = (
                     'text-opacity': [
                         'let',
                         'capacity',
-                        ['coalesce', ['get', 'Active Capacity'], 1],
+                        [
+                            'coalesce',
+                            [
+                                'get',
+                                getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                                    .capacityProperty,
+                            ],
+                            1,
+                        ],
                         [
                             'step',
                             ['zoom'],

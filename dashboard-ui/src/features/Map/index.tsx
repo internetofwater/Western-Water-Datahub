@@ -67,6 +67,10 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
+        const reservoirLayers = ReservoirConfigs.flatMap(
+            (config) => config.connectedLayers
+        );
+
         const handleRegionsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [SubLayerId.RegionsFill],
@@ -100,10 +104,6 @@ const MainMap: React.FC<Props> = (props) => {
             //     }
             // }
         };
-
-        const reservoirLayers = ReservoirConfigs.flatMap(
-            (config) => config.connectedLayers
-        );
 
         const handleReservoirsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
@@ -233,49 +233,38 @@ const MainMap: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
+        const reservoirLayers = ReservoirConfigs.flatMap(
+            (config) => config.connectedLayers
+        );
+
+        const handleClickOffReservoir = (e: MapMouseEvent) => {
+            if (reservoir !== ReservoirDefault) {
+                const features = map.queryRenderedFeatures(e.point, {
+                    layers: reservoirLayers,
+                });
+                if (!features.length) {
+                    setRegion('all');
+                    setReservoir(ReservoirDefault);
+                    map.once('idle', () => {
+                        requestAnimationFrame(() => {
+                            map.flyTo({
+                                center: INITIAL_CENTER,
+                                zoom: INITIAL_ZOOM,
+                                speed: 2,
+                            });
+                        });
+                    });
+                }
+            }
+        };
+
         if (reservoir === ReservoirDefault) {
-            // // Unset Filter
-            // if (region === 'all') {
-            //     ReservoirConfigs.forEach((config) => {
-            //         config.connectedLayers.forEach((layerId) => {
-            //             map.setFilter(layerId, null);
-            //         });
-            //     });
-            // } else {
-            //     ReservoirConfigs.forEach((config) => {
-            //         config.connectedLayers.forEach((layerId) => {
-            //             map.setFilter(layerId, [
-            //                 'any',
-            //                 [
-            //                     'in',
-            //                     region,
-            //                     ['get', config.regionConnectorProperty],
-            //                 ],
-            //                 [
-            //                     '==',
-            //                     ['get', config.regionConnectorProperty],
-            //                     region,
-            //                 ],
-            //             ]);
-            //         });
-            //     });
-            // }
+            map.off('click', handleClickOffReservoir);
         } else {
+            map.on('click', handleClickOffReservoir);
             if (reservoirCollections) {
                 ReservoirConfigs.forEach((config) => {
                     if (config.id === (reservoir.source as SourceId)) {
-                        // config.connectedLayers.forEach((layerId) => {
-                        //     map.setFilter(layerId, [
-                        //         'any',
-                        //         [
-                        //             '==',
-                        //             ['get', config.identifierProperty],
-                        //             reservoir.identifier,
-                        //         ],
-                        //         ['==', ['id'], reservoir.identifier],
-                        //     ]);
-                        // });
-
                         const collection =
                             reservoirCollections[reservoir.source as SourceId];
 
@@ -307,18 +296,14 @@ const MainMap: React.FC<Props> = (props) => {
                                 });
                             }
                         }
-                    } else {
-                        // config.connectedLayers.forEach((layerId) => {
-                        //     map.setFilter(layerId, [
-                        //         '==',
-                        //         ['get', 'nonexistent_property'],
-                        //         '__never__',
-                        //     ]);
-                        // });
                     }
                 });
             }
         }
+
+        return () => {
+            map.off('click', handleClickOffReservoir);
+        };
     }, [reservoir]);
 
     useEffect(() => {
