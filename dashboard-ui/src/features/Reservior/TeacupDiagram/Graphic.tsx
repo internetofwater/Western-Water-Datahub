@@ -141,8 +141,6 @@ export const Graphic: React.FC<Props> = (props) => {
             'polygon'
         );
         capacity.setAttribute('id', capacityPolygonId);
-        capacity.setAttribute('stroke', '#00b8f0');
-        capacity.setAttribute('stroke-width', '0');
         capacity.setAttribute('fill', capacityFill);
         capacity.setAttribute('filter', 'url(#shadow)');
         capacity.setAttribute(
@@ -159,8 +157,6 @@ export const Graphic: React.FC<Props> = (props) => {
             'polygon'
         );
         storage.setAttribute('id', storagePolygonId);
-        storage.setAttribute('stroke', '#00b8f0');
-        storage.setAttribute('stroke-width', '0');
         storage.setAttribute('fill', storageFill);
         // storage.setAttribute('class', 'grow');
         storage.setAttribute(

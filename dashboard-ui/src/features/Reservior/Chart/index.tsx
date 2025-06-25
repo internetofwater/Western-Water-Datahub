@@ -7,6 +7,7 @@ import { LineChart } from '@/components/LineChart';
 import edrService from '@/services/init/edr.init';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import {
+    DateRange,
     getDateRange,
     getLabelsAndValues,
 } from '@/features/Reservior/Chart/utils';
@@ -30,7 +31,7 @@ export const Chart: React.FC<Props> = (props) => {
 
     const [data, setData] = useState<Array<{ x: string; y: number }>>([]);
     const [loading, setLoading] = useState(true);
-    const [range, setRange] = useState<1 | 5>(1);
+    const [range, setRange] = useState<DateRange>(1);
     const [error, setError] = useState('');
 
     const setChartUpdate = useMainStore((state) => state.setChartUpdate);
@@ -53,7 +54,7 @@ export const Chart: React.FC<Props> = (props) => {
         };
     }, []);
 
-    const getReservoirStorage = async (range: 1 | 5) => {
+    const getReservoirStorage = async (range: DateRange) => {
         try {
             if (isMounted.current) {
                 setLoading(true);
@@ -137,6 +138,18 @@ export const Chart: React.FC<Props> = (props) => {
                         data-testid="5-year-radio"
                         checked={range === 5}
                         onChange={() => setRange(5)}
+                    />
+                    <Radio
+                        label="10 years"
+                        data-testid="10-year-radio"
+                        checked={range === 10}
+                        onChange={() => setRange(10)}
+                    />
+                    <Radio
+                        label="30 years"
+                        data-testid="30-year-radio"
+                        checked={range === 30}
+                        onChange={() => setRange(30)}
                     />
                 </Group>
             </Group>
