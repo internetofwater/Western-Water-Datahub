@@ -1309,7 +1309,7 @@ wheels = [
 [[package]]
 name = "pg-edr"
 version = "0.1.0"
-source = { git = "https://github.com/internetofwater/pgedr.git?rev=main#1debe50483d7d806c894834b0a529be4779c049a" }
+source = { git = "https://github.com/internetofwater/pgedr.git?rev=main#d12acadb966c929f562bf55760936c6fe8840332" }
 dependencies = [
     { name = "cryptography" },
     { name = "geoalchemy2" },
@@ -1481,7 +1481,7 @@ wheels = [
 [[package]]
 name = "pygeoapi"
 version = "0.21.dev0"
-source = { git = "https://github.com/internetofwater/pygeoapi.git?rev=wwdh#a7d5c1510f4bfee4f152cdd09bc4bde4b009ba92" }
+source = { git = "https://github.com/internetofwater/pygeoapi.git?rev=wwdh#0ba15264dd8bb0f6f54c5d6753778c75bee19a34" }
 dependencies = [
     { name = "babel" },
     { name = "click" },
