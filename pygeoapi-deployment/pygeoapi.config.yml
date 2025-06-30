@@ -389,7 +389,7 @@ resources:
 
   us-drought-monitor:
     type: collection
-    title: US Drought Monitor 
+    title: US Drought Monitor
     description: US Drought Monitor current drought intensity
     keywords: ["drought"]
     links:
@@ -399,7 +399,7 @@ resources:
     providers:
       - type: feature
         name: ESRI
-        data:  https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
+        data: https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
         id_field: OBJECTID
         time_field: ddate
 
