@@ -149,7 +149,7 @@ def test_location_datetime(edr_config: dict):
 def test_area(edr_config: dict):
     p = RiseEDRProvider()
 
-    secondQueryForQeorgeWestTexasID291 = "POLYGON ((-99.717407 28.637568, -97.124634 28.608637, -97.020264 27.210671, -100.184326 26.980829, -101.392822 28.139816, -99.717407 28.637568)))"
+    secondQueryForQeorgeWestTexasID291 = "POLYGON ((-99.717407 28.637568, -97.124634 28.608637, -97.020264 27.210671, -100.184326 26.980829, -101.392822 28.139816, -99.717407 28.637568))"
     response = p.area(
         wkt=secondQueryForQeorgeWestTexasID291,
     )
