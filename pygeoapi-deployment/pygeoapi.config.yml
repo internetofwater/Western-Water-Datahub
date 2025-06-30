@@ -290,7 +290,7 @@ resources:
 
   nohrsc-swe:
     type: collection
-    title: NOAA NOHRSC Snow Water Forecast
+    title: Snow Water Forecast
     description: NOAA NOHRSC Snow Water Forecast
     keywords:
       - nohrsc
@@ -342,7 +342,7 @@ resources:
 
   noaa-rfc:
     type: collection
-    title: NOAA RFC Forecasts
+    title: River Forecast Center Seasonal Forecasts
     description: NOAA River Forecast Center Forecasts
     keywords: [NOAA]
     links:
@@ -393,7 +393,7 @@ resources:
 
   us-drought-monitor:
     type: collection
-    title: US Drought Monitor
+    title: Drought Monitor
     description: US Drought Monitor current drought intensity
     keywords: ["drought"]
     links:
