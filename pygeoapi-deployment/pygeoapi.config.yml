@@ -371,8 +371,6 @@ resources:
         id_field: objectid
         time_field: fcst_date
 
-
-
   noaa-6-10-day-precip:
     type: collection
     title: NOAA 6-10 Day Precipitation Forecast
@@ -389,10 +387,9 @@ resources:
         id_field: objectid
         time_field: fcst_date
 
-
   us-drought-monitor:
     type: collection
-    title: US Drought Monitor 
+    title: US Drought Monitor
     description: US Drought Monitor current drought intensity
     keywords: ["drought"]
     links:
@@ -402,7 +399,7 @@ resources:
     providers:
       - type: feature
         name: ESRI
-        data:  https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
+        data: https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
         id_field: OBJECTID
         time_field: ddate
 
