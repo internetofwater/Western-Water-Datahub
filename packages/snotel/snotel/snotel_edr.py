@@ -31,7 +31,6 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         BaseEDRProvider.__init__(self, provider_def)
         self.instances = []
 
-
     @otel_trace()
     def locations(
         self,
@@ -68,7 +67,6 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             self._fields = ParametersCollection().get_fields()
         return self._fields
 
-
     @otel_trace()
     def cube(
         self,
@@ -93,7 +91,6 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
     @otel_trace()
-
     def area(
         self,
         # Well known text (WKT) representation of the geometry for the area
@@ -111,7 +108,6 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         collection.drop_outside_of_wkt(wkt, z)
 
         return collection.to_covjson(self.get_fields(), datetime_, select_properties)
-
 
     def items(self, **kwargs):
         # We have to define this since pygeoapi has a limitation and needs both EDR and OAF for items
