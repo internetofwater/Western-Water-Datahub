@@ -120,7 +120,7 @@ CREATE TABLE public.resviz (
     doi_region character varying,
     value double precision,
     max_capacity integer,
-    data_date character varying,
+    data_date date,
     parameter_name character varying,
     parameter_id integer,
     parameter_unit character varying,
@@ -172,17 +172,23 @@ ALTER TABLE ONLY public.resviz
 
 
 --
--- Name: covjson; Type: INDEX; Schema: public; Owner: -
+-- Name: covjson_param_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX covjson ON public.resviz USING btree (monitoring_location_id, parameter_id, data_date desc, value);
+CREATE INDEX covjson_param_idx ON public.resviz (parameter_id, monitoring_location_id) INCLUDE (parameter_name, parameter_unit);
+
+--
+-- Name: covjson_time_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX covjson_time_idx ON public.resviz (data_date DESC) INCLUDE (value);
 
 
 --
--- Name: resviz_geom_geom_idx; Type: INDEX; Schema: public; Owner: -
+-- Name: resviz_geom_loc_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX resviz_geom_geom_idx ON public.resviz USING gist (geom);
+CREATE INDEX resviz_geom_loc_idx ON public.resviz USING gist (geom);
 
 
 --

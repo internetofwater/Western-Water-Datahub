@@ -5,55 +5,64 @@
 import click
 from datetime import date, timedelta
 from dateutil.parser import parse as dateparse
-from pathlib import Path
-import multiprocessing as mp
-import subprocess
-from tempfile import TemporaryDirectory
 
+import logging
+import multiprocessing as mp
+from osgeo import ogr
+import os
 from time import sleep
 
 from resviz.env import BASE_URL, POSTGRES_URL
-from resviz.lib import VRT_TEMPLATE, VRT_ROW, file_exists, fetch_csv, date_range
+from resviz.lib import create_feature, date_range, file_exists
 
 
-def run_subprocess(csv_url: str, layer_name: str):
-    tmpdir = TemporaryDirectory()
-    tmp = Path(tmpdir.name)
-    tmp.mkdir(parents=True, exist_ok=True)
-    csv_file = tmp / "input.csv"
-    vrt_file = tmp / f"{layer_name}.vrt"
+LOGGER = logging.getLogger(__name__)
 
-    with open(vrt_file, "w") as vrt:
-        vrt.write(VRT_TEMPLATE.format(file=csv_file))
 
-    fh = fetch_csv(csv_url)
-    fh.to_csv(csv_file, index=False)
+os.environ["CPL_VSIL_CURL_USE_HEAD"] = "NO"
+os.environ["PG_USE_COPY"] = "OFF"
+os.environ["OGR_PG_RETRIEVE_FID"] = "NO"
+os.environ["OGR_PG_SKIP_CONFLICTS"] = "YES"
 
-    ogr_cmd = [
-        "ogr2ogr",
-        "-f",
-        "PostgreSQL",
-        POSTGRES_URL,
-        vrt_file,
-        "-nln",
-        "resviz",
-        "--config",
-        "OGR_PG_RETRIEVE_FID",
-        "NO",
-        "--config",
-        "OGR_PG_SKIP_CONFLICTS",
-        "YES",
-        "-append",
-        "-update",
-        "-sql",
-        VRT_ROW,
-    ]
-    try:
-        subprocess.run(ogr_cmd, check=True)
-    except subprocess.CalledProcessError as e:
-        click.echo(f"ogr2ogr failed: {e}")
-    finally:
-        tmpdir.cleanup()
+
+def run_subprocess(csv_url: str):
+    """
+    Downloads a CSV, processes and loads it into PostgreSQL
+    using OGR Python bindings.
+    """
+
+    # Open the CSV datasource
+    csv_driver = ogr.GetDriverByName("CSV")
+    csv_ds = csv_driver.Open(f"/vsicurl/{csv_url}", 0)
+    if csv_ds is None:
+        LOGGER.warning(f"Could not open CSV file: {csv_url}")
+        return
+    
+    # Get the source layer.
+    layer = csv_ds.GetLayer()
+    layer_def = layer.GetLayerDefn()
+
+    # Open the PostgreSQL datasource
+    pg_driver = ogr.GetDriverByName("PostgreSQL")
+    pg_ds = pg_driver.Open(POSTGRES_URL, 1) # 1 for update mode
+    if pg_ds is None:
+        LOGGER.error(f"Could not open PostgreSQL database")
+
+    # Get the target layer.
+    pg_layer = pg_ds.GetLayerByName("resviz")
+
+    # Process source 'layer'
+    for feature in layer:
+        row = {
+            layer_def.GetFieldDefn(i).GetName().strip(): 
+            feature.GetField(i).strip()
+            for i in range(layer_def.GetFieldCount())
+        }
+
+        # Upsert data value
+        create_feature(pg_layer, row, 3)
+        # Upsert average value
+        create_feature(pg_layer, row, 1)
 
 
 @click.command()
@@ -79,10 +88,10 @@ def load(start, end):
             sleep(0.1)
 
         click.echo(f"Loading: {csv_url}")
-        p = mp.Process(target=run_subprocess, args=(csv_url, layer_name))
+        p = mp.Process(target=run_subprocess, args=(csv_url,))
         p.start()
 
-    click.echo("Done")
+    click.echo("All loading processes done.")
 
 
 if __name__ == "__main__":
