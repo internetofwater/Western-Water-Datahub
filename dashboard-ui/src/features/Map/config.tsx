@@ -22,6 +22,7 @@ import {
     SourceId,
     RISEEDRReservoirSource,
     RegionsSource,
+    ZoomCapacityArray,
 } from '@/features/Map/consts';
 import {
     getReservoirConfig,
@@ -68,6 +69,43 @@ export const sourceConfigs: SourceConfig[] = [
             maxzoom: 10,
             tileSize: 512,
             bounds: [-179.229468, -14.42442, 179.856484, 71.439451],
+        },
+    },
+    {
+        id: SourceId.USDroughtMonitor,
+        type: Sources.Raster,
+        definition: {
+            type: 'raster',
+            tiles: [
+                'https://ndmcgeodata.unl.edu/cgi-bin/mapserv.exe?map=/ms4w/apps/usdm/map/usdm_current_wms.map&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=usdm_current&WIDTH=640&HEIGHT=480&crs=EPSG:3857&styles=default&format=image/png&&bbox={bbox-epsg-3857}',
+            ],
+            tileSize: 256,
+        },
+    },
+    {
+        id: SourceId.NOAAPrecipSixToTen,
+        type: Sources.Raster,
+        definition: {
+            type: 'raster',
+            tiles: [
+                'https://mapservices.weather.noaa.gov/vector/services/outlooks/cpc_6_10_day_outlk/MapServer/WMSServer?' +
+                    'service=WMS&request=GetMap&version=1.3.0&layers=0&styles=&format=image/png&transparent=true&' +
+                    'height=256&width=256&crs=EPSG:3857&bbox={bbox-epsg-3857}',
+            ],
+            tileSize: 256,
+        },
+    },
+    {
+        id: SourceId.NOAATempSixToTen,
+        type: Sources.Raster,
+        definition: {
+            type: 'raster',
+            tiles: [
+                'https://mapservices.weather.noaa.gov/vector/services/outlooks/cpc_6_10_day_outlk/MapServer/WMSServer?' +
+                    'service=WMS&request=GetMap&version=1.3.0&layers=1&styles=&format=image/png&transparent=true&' +
+                    'height=256&width=256&crs=EPSG:3857&bbox={bbox-epsg-3857}',
+            ],
+            tileSize: 256,
         },
     },
 ];
@@ -381,32 +419,16 @@ export const getLayerConfig = (
                             'step',
                             ['zoom'],
                             0,
-                            0,
-                            [
-                                'step',
-                                ['var', 'capacity'],
-                                0,
-                                45000,
-                                0,
-                                320000,
-                                1,
-                                2010000,
-                                1,
-                            ],
-                            5,
-                            [
-                                'step',
-                                ['var', 'capacity'],
-                                0,
-                                45000,
-                                1,
-                                320000,
-                                1,
-                                2010000,
-                                1,
-                            ],
-                            8,
-                            1,
+                            ...ZoomCapacityArray.flatMap(([zoom, capacity]) => [
+                                zoom, // At this zoom
+                                [
+                                    // Evaluate this expression
+                                    'case',
+                                    ['>=', ['var', 'capacity'], capacity],
+                                    1, // If GTE capacity, evaluate sub-step expression
+                                    0, // Fallback to basic point symbol
+                                ],
+                            ]),
                         ],
                     ],
                     'text-halo-blur': 1,
@@ -414,6 +436,41 @@ export const getLayerConfig = (
                     'text-halo-width': 2,
                 },
             };
+
+        case LayerId.USDroughtMonitor:
+            return {
+                id: LayerId.USDroughtMonitor,
+                type: LayerType.Raster,
+                source: SourceId.USDroughtMonitor,
+                paint: {
+                    'raster-opacity': 0.7,
+                },
+            };
+        case LayerId.NOAAPrecipSixToTen:
+            return {
+                id: LayerId.NOAAPrecipSixToTen,
+                type: LayerType.Raster,
+                source: SourceId.NOAAPrecipSixToTen,
+                paint: {
+                    'raster-opacity': 0.7,
+                },
+                layout: {
+                    visibility: 'none',
+                },
+            };
+        case LayerId.NOAATempSixToTen:
+            return {
+                id: LayerId.NOAATempSixToTen,
+                type: LayerType.Raster,
+                source: SourceId.NOAATempSixToTen,
+                paint: {
+                    'raster-opacity': 0.7,
+                },
+                layout: {
+                    visibility: 'none',
+                },
+            };
+
         default:
             return null;
     }
