@@ -355,6 +355,54 @@ resources:
         data: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
         title_field: espname
 
+  noaa-6-10-day-temp:
+    type: collection
+    title: NOAA 6-10 Day Temperature Forecast
+    description: NOAA 6-10 Day Temperature Forecast
+    keywords: [NOAA, temperature]
+    links:
+      - <<: *default-link
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/0r
+    extents: *default-extent
+    providers:
+      - type: feature
+        name: ESRI
+        data: https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/0
+        id_field: objectid
+        time_field: fcst_date
+
+  noaa-6-10-day-precip:
+    type: collection
+    title: NOAA 6-10 Day Precipitation Forecast
+    description: NOAA 6-10 Day Precipitation Forecast
+    keywords: [NOAA, temperature]
+    links:
+      - <<: *default-link
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/1
+    extents: *default-extent
+    providers:
+      - type: feature
+        name: ESRI
+        data: https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/1
+        id_field: objectid
+        time_field: fcst_date
+
+  us-drought-monitor:
+    type: collection
+    title: US Drought Monitor
+    description: US Drought Monitor current drought intensity
+    keywords: ["drought"]
+    links:
+      - <<: *default-link
+        href: https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
+    extents: *default-extent
+    providers:
+      - type: feature
+        name: ESRI
+        data: https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
+        id_field: OBJECTID
+        time_field: ddate
+
   usgs-prism:
     type: collection
     title: Parameter-elevation Regressions on Independent Slopes Model (PRISM)
