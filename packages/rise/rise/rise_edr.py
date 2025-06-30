@@ -45,7 +45,6 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         self.instances = []  # used so pygeoapi doesn't register the same query multiple times in the UI
 
     @otel_trace()
-    @BaseEDRProvider.register()
     def locations(
         self,
         location_id: Optional[str] = None,
@@ -107,7 +106,6 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         return self._fields
 
     @otel_trace()
-    @BaseEDRProvider.register()
     def cube(
         self,
         bbox: list,
@@ -140,7 +138,6 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         )
 
     @otel_trace()
-    @BaseEDRProvider.register()
     def area(
         self,
         # Well known text (WKT) representation of the geometry for the area
@@ -183,7 +180,6 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             response_with_results, select_properties
         )
 
-    @BaseEDRProvider.register()
     def items(self, **kwargs):
         # We have to define this since pygeoapi has a limitation and needs both EDR and OAF for items
         # https://github.com/geopython/pygeoapi/issues/1748

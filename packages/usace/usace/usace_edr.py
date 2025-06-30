@@ -33,7 +33,6 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         BaseEDRProvider.__init__(self, provider_def)
         self.instances = []
 
-    @BaseEDRProvider.register()
     @otel_trace()
     def locations(
         self,
@@ -81,7 +80,6 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
                 self._fields: EDRFieldsMapping = {}
         return self._fields
 
-    @BaseEDRProvider.register()
     @otel_trace()
     def cube(
         self,
@@ -111,7 +109,6 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
     @otel_trace()
-    @BaseEDRProvider.register()
     def area(
         self,
         # Well known text (WKT) representation of the geometry for the area
@@ -135,7 +132,6 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
-    @BaseEDRProvider.register()
     def items(self, **kwargs):
         # We have to define this since pygeoapi has a limitation and needs both EDR and OAF for items
         # https://github.com/geopython/pygeoapi/issues/1748
