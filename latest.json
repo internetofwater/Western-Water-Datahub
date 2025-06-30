@@ -1,0 +1,2702 @@
+{
+    "reservoirs": [
+        {
+            "id": 3683,
+            "name": "Crawford Dam and Reservoir",
+            "reservoir_storage": 11419.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Crawford Reservoir",
+                "Total Capacity": 14395.0,
+                "Total Capacity Elevation": 6553.0,
+                "Active Capacity": 14064.0,
+                "Inactive Capacity Elevation": 6471.4,
+                "Live Capcity": 14126.0,
+                "Dead Capacity": 269.0,
+                "Dead Capacity Elevation": 6469.0,
+                "Surcharge Capacity": 3880.0,
+                "Maximum Water Surface Elevation": 6562.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 406.0
+            }
+        },
+        {
+            "id": 3511,
+            "name": "Nambe Falls Reservoir and Dam ",
+            "reservoir_storage": 1740.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Nambe Falls Reservoir",
+                "Total Capacity": 1729.0,
+                "Total Capacity Elevation": 6826.6,
+                "Active Capacity": 1548.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 1729.0,
+                "Dead Capacity": 0.0,
+                "Dead Capacity Elevation": 6760.9,
+                "Surcharge Capacity": 872.0,
+                "Maximum Water Surface Elevation": 6839.8,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 365,
+            "name": "Heron Reservoir and Dam",
+            "reservoir_storage": 149900.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Heron Reservoir",
+                "Total Capacity": 428360.0,
+                "Total Capacity Elevation": 7190.8,
+                "Active Capacity": 400034.0,
+                "Inactive Capacity Elevation": 7054.0,
+                "Live Capcity": 427267.0,
+                "Dead Capacity": 1093.0,
+                "Dead Capacity Elevation": 7003.0,
+                "Surcharge Capacity": 28326.0,
+                "Maximum Water Surface Elevation": 71901.8,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": "From the 2010 ACAP: All data for these tables are tied to the project vertical datum that is NGVD29 and 4.3 feet less than NAVD88",
+                "Total Capacity Surface Area": 6148.0
+            }
+        },
+        {
+            "id": 324,
+            "name": "El Vado Lake and Dam",
+            "reservoir_storage": 86400.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "El Vado Reservoir",
+                "Total Capacity": 214091.0,
+                "Total Capacity Elevation": 6908.6,
+                "Active Capacity": 191050.0,
+                "Inactive Capacity Elevation": 6810.0,
+                "Live Capcity": 213834.0,
+                "Dead Capacity": 257.0,
+                "Dead Capacity Elevation": 6775.0,
+                "Surcharge Capacity": 23041.0,
+                "Maximum Water Surface Elevation": 6912.0,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "The vertical datum is called RVPD or Reclamation Vertical Project Datum.",
+                "Total Capacity Surface Area": 3602.0
+            }
+        },
+        {
+            "id": 267,
+            "name": "Avalon Reservoir and Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Avalon Reservoir",
+                "Total Capacity": 4466.0,
+                "Total Capacity Elevation": 3177.4,
+                "Active Capacity": 4466.0,
+                "Inactive Capacity Elevation": 3157.0,
+                "Live Capcity": 4466.0,
+                "Dead Capacity": 0.0,
+                "Dead Capacity Elevation": 3157.0,
+                "Surcharge Capacity": 9755.0,
+                "Maximum Water Surface Elevation": 3185.4,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "Built over 100 years ago to local datum, approximately 14 feet difference from NGVD 29.",
+                "Total Capacity Surface Area": 905.0
+            }
+        },
+        {
+            "id": 509,
+            "name": "Whiskeytown Lake and Dam",
+            "reservoir_storage": 217.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Whiskeytown Lake",
+                "Total Capacity": 241096.0,
+                "Total Capacity Elevation": 1210.0,
+                "Active Capacity": 213554.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 241088.0,
+                "Dead Capacity": 8.0,
+                "Dead Capacity Elevation": 972.0,
+                "Surcharge Capacity": 35021.0,
+                "Maximum Water Surface Elevation": 1220.5,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 3203,
+            "name": "Trinity Lake Dam and Powerplant",
+            "reservoir_storage": 1829.78,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Trinity Lake",
+                "Total Capacity": 2447650.0,
+                "Total Capacity Elevation": 2345.0,
+                "Active Capacity": 2135010.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 2437630.0,
+                "Dead Capacity": 10020.0,
+                "Dead Capacity Elevation": 1995.5,
+                "Surcharge Capacity": 313220.0,
+                "Maximum Water Surface Elevation": 2388.2,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 16535.0
+            }
+        },
+        {
+            "id": 471,
+            "name": "Shasta Lake Dam and Powerplant",
+            "reservoir_storage": 2266020.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Shasta Lake",
+                "Total Capacity": 4552090.0,
+                "Total Capacity Elevation": 1067.0,
+                "Active Capacity": 3964960.0,
+                "Inactive Capacity Elevation": 840.0,
+                "Live Capcity": 4436300.0,
+                "Dead Capacity": 115790.0,
+                "Dead Capacity Elevation": 737.75,
+                "Surcharge Capacity": 109770.0,
+                "Maximum Water Surface Elevation": 1070.65,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 29740.0
+            }
+        },
+        {
+            "id": 397,
+            "name": "Lewiston Lake Dam and Powerplant ",
+            "reservoir_storage": 13808.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lewiston Lake",
+                "Total Capacity": 14660.0,
+                "Total Capacity Elevation": 1902.0,
+                "Active Capacity": 2890.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 14620.0,
+                "Dead Capacity": 40.0,
+                "Dead Capacity Elevation": 1943.25,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 1902.0,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 750.0
+            }
+        },
+        {
+            "id": 387,
+            "name": "Keswick Reservoir Dam and Powerplant",
+            "reservoir_storage": 23.8,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Keswick Reservoir",
+                "Total Capacity": 23772.0,
+                "Total Capacity Elevation": 587.0,
+                "Active Capacity": 7470.0,
+                "Inactive Capacity Elevation": 574.0,
+                "Live Capcity": 23674.0,
+                "Dead Capacity": 98.0,
+                "Dead Capacity Elevation": 504.17,
+                "Surcharge Capacity": 1360.0,
+                "Maximum Water Surface Elevation": 589.8,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 640.0
+            }
+        },
+        {
+            "id": 282,
+            "name": "Brantley Reservoir and Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Brantley Reservoir",
+                "Total Capacity": 384035.0,
+                "Total Capacity Elevation": 3284.6,
+                "Active Capacity": 382020.0,
+                "Inactive Capacity Elevation": 0.0,
+                "Live Capcity": 383996.0,
+                "Dead Capacity": 39.0,
+                "Dead Capacity Elevation": 3212.3,
+                "Surcharge Capacity": 626512.0,
+                "Maximum Water Surface Elevation": 3305.1,
+                "Vertical Datum": "NAVD 88",
+                "Vertical Datum Description": "Brantley reservoir was built to NGVD 29 datum, however the elevations used herein are NAVD 88 because storages posted to the internet use that datum. Conversion factor NAVD 88 to NGVD 29 is 1.6 ft.",
+                "Total Capacity Surface Area": 22511.0
+            }
+        },
+        {
+            "id": 388,
+            "name": "Keyhole Reservoir and Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Keyhole Reservoir",
+                "Total Capacity": 329134.0,
+                "Total Capacity Elevation": 4111.5,
+                "Active Capacity": 322542.0,
+                "Inactive Capacity Elevation": 4051.0,
+                "Live Capcity": 328847.0,
+                "Dead Capacity": 287.0,
+                "Dead Capacity Elevation": 4036.0,
+                "Surcharge Capacity": 294809.0,
+                "Maximum Water Surface Elevation": 4128.73,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 13686.0
+            }
+        },
+        {
+            "id": 268,
+            "name": "Box Butte Reservoir and Dam",
+            "reservoir_storage": 8231.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Box Butte Reservoir",
+                "Total Capacity": 29161.0,
+                "Total Capacity Elevation": 4007.0,
+                "Active Capacity": 26769.0,
+                "Inactive Capacity Elevation": 3979.0,
+                "Live Capcity": 28973.0,
+                "Dead Capacity": 188.0,
+                "Dead Capacity Elevation": 3969.0,
+                "Surcharge Capacity": 16740.0,
+                "Maximum Water Surface Elevation": 4016.0,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 1605.0
+            }
+        },
+        {
+            "id": 257,
+            "name": "Angostura Reservoir and Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Angostura Reservoir",
+                "Total Capacity": 123048.0,
+                "Total Capacity Elevation": 3187.2,
+                "Active Capacity": 80843.0,
+                "Inactive Capacity Elevation": 3163.0,
+                "Live Capcity": 117390.0,
+                "Dead Capacity": 5658.0,
+                "Dead Capacity Elevation": 3139.75,
+                "Surcharge Capacity": 57308.0,
+                "Maximum Water Surface Elevation": 3198.1,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 4706.0
+            }
+        },
+        {
+            "id": 498,
+            "name": "Turquoise Lake and Sugar Loaf Dam",
+            "reservoir_storage": 34681.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Turquoise Lake",
+                "Total Capacity": 129398.0,
+                "Total Capacity Elevation": 9869.4,
+                "Active Capacity": 120478.0,
+                "Inactive Capacity Elevation": 9775.4,
+                "Live Capcity": 126588.0,
+                "Dead Capacity": 2810.0,
+                "Dead Capacity Elevation": 9765.9,
+                "Surcharge Capacity": 6127.0,
+                "Maximum Water Surface Elevation": 9872.8,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 424,
+            "name": "Nelson Reservoir and Nelson Dikes",
+            "reservoir_storage": 50137.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Nelson Reservoir",
+                "Total Capacity": 78950.0,
+                "Total Capacity Elevation": 2221.6,
+                "Active Capacity": 60810.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 60810.0,
+                "Dead Capacity": 18140.0,
+                "Dead Capacity Elevation": 2200.0,
+                "Surcharge Capacity": 6225.0,
+                "Maximum Water Surface Elevation": 2223.0,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "RPVD is 1.70 feet lower than National Geodetic Vertical Datum of 1929.",
+                "Total Capacity Surface Area": 4331.0
+            }
+        },
+        {
+            "id": 275,
+            "name": "Bighorn Lake Yellowtail Dam and Powerplant",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Bighorn Lake",
+                "Total Capacity": 1263682.0,
+                "Total Capacity Elevation": 3657.0,
+                "Active Capacity": 796209.0,
+                "Inactive Capacity Elevation": 3547.0,
+                "Live Capcity": 1245327.0,
+                "Dead Capacity": 18355.0,
+                "Dead Capacity Elevation": 3296.5,
+                "Surcharge Capacity": 48708.0,
+                "Maximum Water Surface Elevation": 3660.0,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 16026.0
+            }
+        },
+        {
+            "id": 1,
+            "name": "Marys Lake",
+            "reservoir_storage": 634.0,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 274,
+            "name": "Belle Fourche Reservoir and Dam",
+            "reservoir_storage": 73150.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Belle Fourche Reservoir",
+                "Total Capacity": 172873.0,
+                "Total Capacity Elevation": 2975.0,
+                "Active Capacity": 169790.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 169790.0,
+                "Dead Capacity": 3083.0,
+                "Dead Capacity Elevation": 2927.0,
+                "Surcharge Capacity": 86139.0,
+                "Maximum Water Surface Elevation": 2984.4,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 8000.0
+            }
+        },
+        {
+            "id": 281,
+            "name": "Boysen Reservoir Dam and Powerplant",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Boysen Reservoir",
+                "Total Capacity": 892226.0,
+                "Total Capacity Elevation": 4732.0,
+                "Active Capacity": 673045.0,
+                "Inactive Capacity Elevation": 4685.0,
+                "Live Capcity": 852142.0,
+                "Dead Capacity": 40084.0,
+                "Dead Capacity Elevation": 4657.0,
+                "Surcharge Capacity": 520679.0,
+                "Maximum Water Surface Elevation": 4752.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 269,
+            "name": "Buffalo Bill Reservoir Dam and Powerplant",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Buffalo Bill Reservoir",
+                "Total Capacity": 646565.0,
+                "Total Capacity Elevation": 5393.5,
+                "Active Capacity": 604817.0,
+                "Inactive Capacity Elevation": 5259.6,
+                "Live Capcity": null,
+                "Dead Capacity": null,
+                "Dead Capacity Elevation": 5158.0,
+                "Surcharge Capacity": 144645.0,
+                "Maximum Water Surface Elevation": 5410.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 6720.0
+            }
+        },
+        {
+            "id": 287,
+            "name": "Calamus Reservoir and Virginia Smith Dam",
+            "reservoir_storage": 128067.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Calamus Reservoir",
+                "Total Capacity": 119469.0,
+                "Total Capacity Elevation": 2244.0,
+                "Active Capacity": 99319.0,
+                "Inactive Capacity Elevation": 2213.3,
+                "Live Capcity": 119434.0,
+                "Dead Capacity": 35.0,
+                "Dead Capacity Elevation": 2185.0,
+                "Surcharge Capacity": 50061.0,
+                "Maximum Water Surface Elevation": 2252.8,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 5073.0
+            }
+        },
+        {
+            "id": 294,
+            "name": "Clark Canyon Reservoir and Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Clark Canyon Reservoir",
+                "Total Capacity": 251436.0,
+                "Total Capacity Elevation": 5560.0,
+                "Active Capacity": 250321.0,
+                "Inactive Capacity Elevation": 5470.6,
+                "Live Capcity": 251433.0,
+                "Dead Capacity": 3.0,
+                "Dead Capacity Elevation": 5455.0,
+                "Surcharge Capacity": 69697.0,
+                "Maximum Water Surface Elevation": 5571.9,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 5740.0
+            }
+        },
+        {
+            "id": 331,
+            "name": "Flatiron Reservoir and Dam",
+            "reservoir_storage": 550.614,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Flatiron Reservoir",
+                "Total Capacity": 730.0,
+                "Total Capacity Elevation": 5472.8,
+                "Active Capacity": 418.0,
+                "Inactive Capacity Elevation": 5462.0,
+                "Live Capcity": 600.0,
+                "Dead Capacity": 130.0,
+                "Dead Capacity Elevation": 5454.75,
+                "Surcharge Capacity": 364.0,
+                "Maximum Water Surface Elevation": 5480.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 47.0
+            }
+        },
+        {
+            "id": 334,
+            "name": "Folsom Lake Dam and Powerplant",
+            "reservoir_storage": 402.963,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Folsom Lake",
+                "Total Capacity": 977000.0,
+                "Total Capacity Elevation": 466.0,
+                "Active Capacity": 894000.0,
+                "Inactive Capacity Elevation": 327.0,
+                "Live Capcity": 977000.0,
+                "Dead Capacity": 0.0,
+                "Dead Capacity Elevation": 205.0,
+                "Surcharge Capacity": 108000.0,
+                "Maximum Water Surface Elevation": 475.4,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 11450.0
+            }
+        },
+        {
+            "id": 337,
+            "name": "Fresno Reservoir and Dam",
+            "reservoir_storage": 82715.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Fresno Reservoir",
+                "Total Capacity": 91746.0,
+                "Total Capacity Elevation": 2575.0,
+                "Active Capacity": 91588.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 91588.0,
+                "Dead Capacity": 158.0,
+                "Dead Capacity Elevation": 2232.0,
+                "Surcharge Capacity": 112264.0,
+                "Maximum Water Surface Elevation": 2591.0,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "Reclamation project vertical  datum established during construction and confirmed to be 4.7 feet higher than National Geodetic Vertical Datum of 1929 (NGVD29)",
+                "Total Capacity Surface Area": 5163.0
+            }
+        },
+        {
+            "id": 342,
+            "name": "Gibson Reservoir and Dam",
+            "reservoir_storage": 3965.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Gibson Reservoir",
+                "Total Capacity": 98688.0,
+                "Total Capacity Elevation": 4724.0,
+                "Active Capacity": 98688.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 98688.0,
+                "Dead Capacity": 0.0,
+                "Dead Capacity Elevation": 4557.5,
+                "Surcharge Capacity": 23220.0,
+                "Maximum Water Surface Elevation": 4741.0,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "Reclamation Project Vertical Datum established during construction and confirmed by this study to be 7.5 feet lower than the North American Vertical Datum of 1988 (NAVD88)",
+                "Total Capacity Surface Area": 1334.0
+            }
+        },
+        {
+            "id": 345,
+            "name": "Glendo Reservoir Dam and Powerplant",
+            "reservoir_storage": 300.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Glendo Reservoir",
+                "Total Capacity": 763039.0,
+                "Total Capacity Elevation": 4653.0,
+                "Active Capacity": 711466.0,
+                "Inactive Capacity Elevation": 4570.0,
+                "Live Capcity": 756029.0,
+                "Dead Capacity": 7010.0,
+                "Dead Capacity Elevation": 4545.0,
+                "Surcharge Capacity": 329251.0,
+                "Maximum Water Surface Elevation": 4669.0,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "The 2003 survey found Reclamation's datum to be around 2.55 feet less than the North American Vertical Datum of 1988 (NAVD88).",
+                "Total Capacity Surface Area": 17986.0
+            }
+        },
+        {
+            "id": 357,
+            "name": "Guernsey Reservoir Dam and Powerplant",
+            "reservoir_storage": 18712.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Guernsey Reservoir",
+                "Total Capacity": 45612.0,
+                "Total Capacity Elevation": 4420.0,
+                "Active Capacity": 45612.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 45612.0,
+                "Dead Capacity": 0.0,
+                "Dead Capacity Elevation": 4370.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 4420.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 2380.0
+            }
+        },
+        {
+            "id": 402,
+            "name": "Lake Tschida and Heart Butte Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Tschida",
+                "Total Capacity": 212696.0,
+                "Total Capacity Elevation": 2094.5,
+                "Active Capacity": 208368.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 208368.0,
+                "Dead Capacity": 4328.0,
+                "Dead Capacity Elevation": 2030.0,
+                "Surcharge Capacity": 222427.0,
+                "Maximum Water Surface Elevation": 2119.5,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 6576.0
+            }
+        },
+        {
+            "id": 372,
+            "name": "Hyrum Reservoir and Dam",
+            "reservoir_storage": 10524.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Hyrum Reservoir",
+                "Total Capacity": 17746.0,
+                "Total Capacity Elevation": 4672.5,
+                "Active Capacity": 13881.0,
+                "Inactive Capacity Elevation": 4633.5,
+                "Live Capcity": 14734.0,
+                "Dead Capacity": 3012.0,
+                "Dead Capacity Elevation": 4629.6,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 4682.5,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 479.0
+            }
+        },
+        {
+            "id": 379,
+            "name": "Jamestown Dam and Reservoir",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Jamestown Reservoir",
+                "Total Capacity": 220990.0,
+                "Total Capacity Elevation": 1454.0,
+                "Active Capacity": 220698.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 220698.0,
+                "Dead Capacity": 292.0,
+                "Dead Capacity Elevation": 1400.0,
+                "Surcharge Capacity": 158917.0,
+                "Maximum Water Surface Elevation": 1464.4,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 13200.0
+            }
+        },
+        {
+            "id": 390,
+            "name": "Keith Sebelius Lake and Norton Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Keith Sebelius Lake",
+                "Total Capacity": 133740.0,
+                "Total Capacity Elevation": 2331.4,
+                "Active Capacity": 129747.0,
+                "Inactive Capacity Elevation": 2280.4,
+                "Live Capcity": 132104.0,
+                "Dead Capacity": 1636.0,
+                "Dead Capacity Elevation": 2275.0,
+                "Surcharge Capacity": 58287.0,
+                "Maximum Water Surface Elevation": 2341.0,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 5316.0
+            }
+        },
+        {
+            "id": 391,
+            "name": "Kirwin Reservoir and Dam",
+            "reservoir_storage": 52875.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Kirwin Reservoir",
+                "Total Capacity": 313290.0,
+                "Total Capacity Elevation": 1757.0,
+                "Active Capacity": 304775.0,
+                "Inactive Capacity Elevation": 1697.0,
+                "Live Capcity": 308321.0,
+                "Dead Capacity": 4969.0,
+                "Dead Capacity Elevation": 1693.0,
+                "Surcharge Capacity": 198467.0,
+                "Maximum Water Surface Elevation": 1773.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 10639.0
+            }
+        },
+        {
+            "id": 429,
+            "name": "Lake Estes and Olympus Dam",
+            "reservoir_storage": 2237.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Estes",
+                "Total Capacity": 2783.0,
+                "Total Capacity Elevation": 7475.0,
+                "Active Capacity": 2470.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 2470.0,
+                "Dead Capacity": 313.0,
+                "Dead Capacity Elevation": 7450.25,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 7475.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 185.0
+            }
+        },
+        {
+            "id": 318,
+            "name": "Edward Arthur Patterson Lake",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 3514,
+            "name": "Lake Mead Hoover Dam and Powerplant",
+            "reservoir_storage": 10046000.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Mead",
+                "Total Capacity": 30167000.0,
+                "Total Capacity Elevation": 1229.0,
+                "Active Capacity": 25614000.0,
+                "Inactive Capacity Elevation": 950.0,
+                "Live Capcity": 27620000.0,
+                "Dead Capacity": 2547000.0,
+                "Dead Capacity Elevation": 895.0,
+                "Surcharge Capacity": 1222000.0,
+                "Maximum Water Surface Elevation": 1229.0,
+                "Vertical Datum": "Other",
+                "Vertical Datum Description": "Elevations are referenced to the United States Geological Survey datum, adjustment of 1912, locally known as “Power House Datum.” One can add 0.55 feet to convert to the National Geodetic Vertical Datum of 1929, leveling of 1935 (NGVD27).",
+                "Total Capacity Surface Area": 162900.0
+            }
+        },
+        {
+            "id": 3515,
+            "name": "Lake Havasu Parker Dam and Powerplant",
+            "reservoir_storage": 24900.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Havasu",
+                "Total Capacity": 651000.0,
+                "Total Capacity Elevation": 450.0,
+                "Active Capacity": 180000.0,
+                "Inactive Capacity Elevation": 440.0,
+                "Live Capcity": 624200.0,
+                "Dead Capacity": 26800.0,
+                "Dead Capacity Elevation": 400.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 450.0,
+                "Vertical Datum": "Other",
+                "Vertical Datum Description": "Elevations are referenced to the United States Geological Survey datum, adjustment of 1912, locally known as “Power House Datum.” One can add 0.55 feet to convert to the National Geodetic Vertical Datum of 1929, leveling of 1935 (NGVD27).",
+                "Total Capacity Surface Area": 20390.0
+            }
+        },
+        {
+            "id": 396,
+            "name": "Lake Elwell and Tiber Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Elwell",
+                "Total Capacity": 1328723.0,
+                "Total Capacity Elevation": 3012.5,
+                "Active Capacity": 774393.0,
+                "Inactive Capacity Elevation": 2966.4,
+                "Live Capcity": 1309102.0,
+                "Dead Capacity": 19621.0,
+                "Dead Capacity Elevation": 2870.0,
+                "Surcharge Capacity": 186799.0,
+                "Maximum Water Surface Elevation": 3020.2,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "RPVD was determined to be 2.9 feet lower than the North American Vertical Datum of 1988 (NAVD88).",
+                "Total Capacity Surface Area": 23165.0
+            }
+        },
+        {
+            "id": 489,
+            "name": "Lake Sumner and Dam",
+            "reservoir_storage": 42970.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Sumner Lake",
+                "Total Capacity": 124119.0,
+                "Total Capacity Elevation": 4283.88,
+                "Active Capacity": 126813.0,
+                "Inactive Capacity Elevation": 4232.28,
+                "Live Capcity": 124119.0,
+                "Dead Capacity": 0.0,
+                "Dead Capacity Elevation": 4201.88,
+                "Surcharge Capacity": 98248.0,
+                "Maximum Water Surface Elevation": 4298.88,
+                "Vertical Datum": "NAVD 88",
+                "Vertical Datum Description": "The vertical \"as built\" drawings are Project Datum, but for capacity I'm using the NAVD 88 because that is what is shown on the internet. To get Project Datum subtract 1.88 ft from the elevations above.",
+                "Total Capacity Surface Area": 6038.0
+            }
+        },
+        {
+            "id": 458,
+            "name": "Santa Rosa Lake and Reservoir",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": null,
+                "Total Capacity": null,
+                "Total Capacity Elevation": null,
+                "Active Capacity": null,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": null,
+                "Dead Capacity": null,
+                "Dead Capacity Elevation": null,
+                "Surcharge Capacity": null,
+                "Maximum Water Surface Elevation": null,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 422,
+            "name": "Lake Natoma Nimbus Dam and Powerplant",
+            "reservoir_storage": 8158.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Natoma",
+                "Total Capacity": 8760.0,
+                "Total Capacity Elevation": 125.0,
+                "Active Capacity": 2800.0,
+                "Inactive Capacity Elevation": 118.5,
+                "Live Capcity": 6960.0,
+                "Dead Capacity": 1800.0,
+                "Dead Capacity Elevation": 102.4,
+                "Surcharge Capacity": 800.0,
+                "Maximum Water Surface Elevation": 126.5,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 540.0
+            }
+        },
+        {
+            "id": 413,
+            "name": "Millerton Lake and Friant Dam",
+            "reservoir_storage": 178916.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Millerton Lake",
+                "Total Capacity": 520500.0,
+                "Total Capacity Elevation": 578.0,
+                "Active Capacity": 433800.0,
+                "Inactive Capacity Elevation": 442.0,
+                "Live Capcity": 503100.0,
+                "Dead Capacity": 17400.0,
+                "Dead Capacity Elevation": 375.4,
+                "Surcharge Capacity": 35000.0,
+                "Maximum Water Surface Elevation": 585.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 4900.0
+            }
+        },
+        {
+            "id": 292,
+            "name": "Cachuma Lake and Bradbury Dam",
+            "reservoir_storage": 122919.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Cachuma",
+                "Total Capacity": 193305.0,
+                "Total Capacity Elevation": 753.0,
+                "Active Capacity": 171193.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 193208.0,
+                "Dead Capacity": 97.0,
+                "Dead Capacity Elevation": 600.0,
+                "Surcharge Capacity": 24757.0,
+                "Maximum Water Surface Elevation": null,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 3100.0
+            }
+        },
+        {
+            "id": 272,
+            "name": "Lake Berryessa and Monticello Dam",
+            "reservoir_storage": 1164690.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Berryessa",
+                "Total Capacity": 1602278.0,
+                "Total Capacity Elevation": 440.0,
+                "Active Capacity": 1591938.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 1591938.0,
+                "Dead Capacity": 10340.0,
+                "Dead Capacity Elevation": 253.25,
+                "Surcharge Capacity": 299808.0,
+                "Maximum Water Surface Elevation": 455.5,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 20700.0
+            }
+        },
+        {
+            "id": 6,
+            "name": "Spring Creek Reservoir and Debris Dam",
+            "reservoir_storage": 1425.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Spring Creek Reservoir",
+                "Total Capacity": 5874.0,
+                "Total Capacity Elevation": 795.0,
+                "Active Capacity": 5649.0,
+                "Inactive Capacity Elevation": 679.0,
+                "Live Capcity": 5649.0,
+                "Dead Capacity": 225.0,
+                "Dead Capacity Elevation": 678.5,
+                "Surcharge Capacity": 1412.0,
+                "Maximum Water Surface Elevation": 809.5,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 87.0
+            }
+        },
+        {
+            "id": 394,
+            "name": "Little Lake Alice Reservoir",
+            "reservoir_storage": 218.01,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Alice 2",
+                "Total Capacity": 1166.0,
+                "Total Capacity Elevation": 4139.0,
+                "Active Capacity": 1143.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 1143.0,
+                "Dead Capacity": 23.0,
+                "Dead Capacity Elevation": 4128.94,
+                "Surcharge Capacity": null,
+                "Maximum Water Surface Elevation": 4139.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 515,
+            "name": "Willow Creek Reservoir and Dam (CO)",
+            "reservoir_storage": 10251.1,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Willow Creek Reservoir CO",
+                "Total Capacity": 10553.0,
+                "Total Capacity Elevation": 8130.0,
+                "Active Capacity": 3329.0,
+                "Inactive Capacity Elevation": 8117.0,
+                "Live Capcity": 9067.0,
+                "Dead Capacity": 1486.0,
+                "Dead Capacity Elevation": 8077.0,
+                "Surcharge Capacity": 624.0,
+                "Maximum Water Surface Elevation": 8132.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 508,
+            "name": "Willow Creek Reservoir and Dam (MT)",
+            "reservoir_storage": 15248.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Willow Creek Reservoir MT",
+                "Total Capacity": 31848.0,
+                "Total Capacity Elevation": 4142.0,
+                "Active Capacity": 31847.0,
+                "Inactive Capacity Elevation": 4085.28,
+                "Live Capcity": 31847.0,
+                "Dead Capacity": 1.0,
+                "Dead Capacity Elevation": 4085.28,
+                "Surcharge Capacity": 2971.0,
+                "Maximum Water Surface Elevation": 4144.0,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "RPVD is 3.4 feet lower than the National Geodetic Vertical Datum of 1929 (NGVD29) and 6.7 feet lower than North American Vertical Datum of 1988 NAVD88.",
+                "Total Capacity Surface Area": 1462.0
+            }
+        },
+        {
+            "id": 507,
+            "name": "Winters Creek Lake",
+            "reservoir_storage": 326.0,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 506,
+            "name": "Webster Reservoir and Dam",
+            "reservoir_storage": 39340.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Webster Reservoir",
+                "Total Capacity": 259510.0,
+                "Total Capacity Elevation": 1923.7,
+                "Active Capacity": 255279.0,
+                "Inactive Capacity Elevation": 1860.0,
+                "Live Capcity": 258254.0,
+                "Dead Capacity": 1256.0,
+                "Dead Capacity Elevation": 1855.5,
+                "Surcharge Capacity": 140912.0,
+                "Maximum Water Surface Elevation": 1938.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 8478.0
+            }
+        },
+        {
+            "id": 504,
+            "name": "Waconda Lake and Glen Elder Dam",
+            "reservoir_storage": 230565.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Waconda Lake",
+                "Total Capacity": 942408.0,
+                "Total Capacity Elevation": 1488.3,
+                "Active Capacity": 916171.0,
+                "Inactive Capacity Elevation": 1428.0,
+                "Live Capcity": 942160.0,
+                "Dead Capacity": 248.0,
+                "Dead Capacity Elevation": 1407.8,
+                "Surcharge Capacity": 165081.0,
+                "Maximum Water Surface Elevation": 1492.9,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "RPVD is 1.2 feet greater then the NGVD29",
+                "Total Capacity Surface Area": 33682.0
+            }
+        },
+        {
+            "id": 499,
+            "name": "Twin Lakes Reservoir and Dam",
+            "reservoir_storage": 105639.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Twin Lakes",
+                "Total Capacity": 141000.0,
+                "Total Capacity Elevation": 9200.0,
+                "Active Capacity": 68000.0,
+                "Inactive Capacity Elevation": 9168.7,
+                "Live Capcity": 86000.0,
+                "Dead Capacity": 55000.0,
+                "Dead Capacity Elevation": 9157.5,
+                "Surcharge Capacity": 6500.0,
+                "Maximum Water Surface Elevation": 9202.3,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 490,
+            "name": "Swift Dam and Reservoir",
+            "reservoir_storage": 15431.7,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": null,
+                "Total Capacity": null,
+                "Total Capacity Elevation": null,
+                "Active Capacity": null,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": null,
+                "Dead Capacity": null,
+                "Dead Capacity Elevation": null,
+                "Surcharge Capacity": null,
+                "Maximum Water Surface Elevation": null,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 476,
+            "name": "Shadehill Reservoir and Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Shadehill Reservoir",
+                "Total Capacity": 350176.0,
+                "Total Capacity Elevation": 2302.0,
+                "Active Capacity": 306307.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 306307.0,
+                "Dead Capacity": 43869.0,
+                "Dead Capacity Elevation": 2250.8,
+                "Surcharge Capacity": 119560.0,
+                "Maximum Water Surface Elevation": 2312.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 9900.0
+            }
+        },
+        {
+            "id": 475,
+            "name": "Lake Sherburne and Dam",
+            "reservoir_storage": 3732.63,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Sherburne",
+                "Total Capacity": 66147.0,
+                "Total Capacity Elevation": 4788.0,
+                "Active Capacity": 64248.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 64248.0,
+                "Dead Capacity": 1899.0,
+                "Dead Capacity Elevation": 4729.3,
+                "Surcharge Capacity": 42833.0,
+                "Maximum Water Surface Elevation": 4810.0,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "RPVD was was found to be 9.45 feet lower than the National Geodetic Vertical Datum of 1929 (NGVD29) and 13.75 feet lower than the North American Vertical Datum of 1988 (NAVD88).",
+                "Total Capacity Surface Area": 1719.0
+            }
+        },
+        {
+            "id": 473,
+            "name": "Shadow Mountain Lake and Dam",
+            "reservoir_storage": 18130.2,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Shadow Mountain Lake",
+                "Total Capacity": 18369.0,
+                "Total Capacity Elevation": 8367.0,
+                "Active Capacity": 1839.0,
+                "Inactive Capacity Elevation": 8366.0,
+                "Live Capcity": 17863.0,
+                "Dead Capacity": 506.0,
+                "Dead Capacity Elevation": 8347.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 8367.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 1852.0
+            }
+        },
+        {
+            "id": 467,
+            "name": "Seminoe Reservoir Dam and Powerplant",
+            "reservoir_storage": 743440.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Seminoe Reservoir",
+                "Total Capacity": 1017273.0,
+                "Total Capacity Elevation": 6357.0,
+                "Active Capacity": 985603.0,
+                "Inactive Capacity Elevation": 6239.0,
+                "Live Capcity": 1016717.0,
+                "Dead Capacity": 556.0,
+                "Dead Capacity Elevation": 6185.09,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 6357.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 20921.0
+            }
+        },
+        {
+            "id": 456,
+            "name": "Ruedi Reservoir and Dam ",
+            "reservoir_storage": 48116.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Ruedi Reservoir",
+                "Total Capacity": 102373.0,
+                "Total Capacity Elevation": 7766.0,
+                "Active Capacity": 101278.0,
+                "Inactive Capacity Elevation": 7566.0,
+                "Live Capcity": 102310.0,
+                "Dead Capacity": 63.0,
+                "Dead Capacity Elevation": 7540.0,
+                "Surcharge Capacity": 16637.0,
+                "Maximum Water Surface Elevation": 7781.8,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 997.0
+            }
+        },
+        {
+            "id": 445,
+            "name": "Pueblo Reservoir and Dam",
+            "reservoir_storage": 22410.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Pueblo Reservoir",
+                "Total Capacity": 338374.0,
+                "Total Capacity Elevation": 4898.7,
+                "Active Capacity": 312773.0,
+                "Inactive Capacity Elevation": 4796.7,
+                "Live Capcity": 336479.0,
+                "Dead Capacity": 1895.0,
+                "Dead Capacity Elevation": 4764.0,
+                "Surcharge Capacity": 131504.0,
+                "Maximum Water Surface Elevation": 4919.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 4645.0
+            }
+        },
+        {
+            "id": 444,
+            "name": "Pactola Reservoir and Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Pactola Reservoir",
+                "Total Capacity": 99029.0,
+                "Total Capacity Elevation": 4621.5,
+                "Active Capacity": 98012.0,
+                "Inactive Capacity Elevation": 4456.1,
+                "Live Capcity": 98907.0,
+                "Dead Capacity": 122.0,
+                "Dead Capacity Elevation": 4440.0,
+                "Surcharge Capacity": 41892.0,
+                "Maximum Water Surface Elevation": 4651.7,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 1232.0
+            }
+        },
+        {
+            "id": 443,
+            "name": "Pishkun Reservoir and Dikes",
+            "reservoir_storage": 35544.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Pishkun Reservoir",
+                "Total Capacity": 46694.0,
+                "Total Capacity Elevation": 4370.0,
+                "Active Capacity": 30686.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 30686.0,
+                "Dead Capacity": 16008.0,
+                "Dead Capacity Elevation": 4342.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 4370.0,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "RPVD is 6.4 feet lower than the North American Vertical Datum of 1988 (NAVD88).",
+                "Total Capacity Surface Area": 1522.0
+            }
+        },
+        {
+            "id": 438,
+            "name": "Pinewood Reservoir and Rattlesnake Dam ",
+            "reservoir_storage": 1570.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Pinewood Lake",
+                "Total Capacity": 2104.0,
+                "Total Capacity Elevation": 6580.0,
+                "Active Capacity": 1561.0,
+                "Inactive Capacity Elevation": 6556.0,
+                "Live Capcity": 1754.0,
+                "Dead Capacity": 350.0,
+                "Dead Capacity Elevation": 6550.0,
+                "Surcharge Capacity": 991.0,
+                "Maximum Water Surface Elevation": 6589.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 97.0
+            }
+        },
+        {
+            "id": 435,
+            "name": "Pilot Butte Reservoir and Dam",
+            "reservoir_storage": 8546.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Pilot Butte Reservoir",
+                "Total Capacity": 33721.0,
+                "Total Capacity Elevation": 5460.0,
+                "Active Capacity": 29918.0,
+                "Inactive Capacity Elevation": 5410.0,
+                "Live Capcity": 31073.0,
+                "Dead Capacity": 2648.0,
+                "Dead Capacity Elevation": 5405.5,
+                "Surcharge Capacity": 1271.0,
+                "Maximum Water Surface Elevation": 5461.4,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 900.0
+            }
+        },
+        {
+            "id": 433,
+            "name": "Pathfinder Reservoir and Dam",
+            "reservoir_storage": 29650.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Pathfinder Reservoir",
+                "Total Capacity": 1070185.0,
+                "Total Capacity Elevation": 5852.49,
+                "Active Capacity": 1038780.0,
+                "Inactive Capacity Elevation": 5746.0,
+                "Live Capcity": 1070178.0,
+                "Dead Capacity": 7.0,
+                "Dead Capacity Elevation": 5693.2,
+                "Surcharge Capacity": 135000.0,
+                "Maximum Water Surface Elevation": 5858.1,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 22012.0
+            }
+        },
+        {
+            "id": 421,
+            "name": "Lake Nasworthy and Dam",
+            "reservoir_storage": 9710.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": null,
+                "Total Capacity": null,
+                "Total Capacity Elevation": null,
+                "Active Capacity": null,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": null,
+                "Dead Capacity": null,
+                "Dead Capacity Elevation": null,
+                "Surcharge Capacity": null,
+                "Maximum Water Surface Elevation": null,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 419,
+            "name": "Mount Elbert Forebay Reservoir and Dam",
+            "reservoir_storage": 3519.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Mt. Elbert Forebay",
+                "Total Capacity": 11143.0,
+                "Total Capacity Elevation": 9645.7,
+                "Active Capacity": 7318.0,
+                "Inactive Capacity Elevation": 9615.0,
+                "Live Capcity": 10582.0,
+                "Dead Capacity": 561.0,
+                "Dead Capacity Elevation": 9590.0,
+                "Surcharge Capacity": 359.0,
+                "Maximum Water Surface Elevation": 9647.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 279.0
+            }
+        },
+        {
+            "id": 418,
+            "name": "Merritt Reservoir and Dam",
+            "reservoir_storage": 74486.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Merritt Reservoir",
+                "Total Capacity": 66726.0,
+                "Total Capacity Elevation": 2946.0,
+                "Active Capacity": 62064.0,
+                "Inactive Capacity Elevation": 2896.0,
+                "Live Capcity": 65952.0,
+                "Dead Capacity": 774.0,
+                "Dead Capacity Elevation": 2875.0,
+                "Surcharge Capacity": 11649.0,
+                "Maximum Water Surface Elevation": 2949.8,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 2906.0
+            }
+        },
+        {
+            "id": 408,
+            "name": "Mcgee Creek Reservoir and Dam",
+            "reservoir_storage": 622.201,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "McGee Creek Reservoir",
+                "Total Capacity": 199276.0,
+                "Total Capacity Elevation": 595.5,
+                "Active Capacity": 193328.0,
+                "Inactive Capacity Elevation": 515.1,
+                "Live Capcity": 198833.0,
+                "Dead Capacity": 443.0,
+                "Dead Capacity Elevation": 483.9,
+                "Surcharge Capacity": 91385.0,
+                "Maximum Water Surface Elevation": 609.9,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 5549.0
+            }
+        },
+        {
+            "id": 404,
+            "name": "Lovewell Reservoir and Dam",
+            "reservoir_storage": 36340.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lovewell Reservoir",
+                "Total Capacity": 86131.0,
+                "Total Capacity Elevation": 1595.3,
+                "Active Capacity": 74487.0,
+                "Inactive Capacity Elevation": 1571.7,
+                "Live Capcity": 84472.0,
+                "Dead Capacity": 1659.0,
+                "Dead Capacity Elevation": 1562.07,
+                "Surcharge Capacity": 94145.0,
+                "Maximum Water Surface Elevation": 1610.3,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 5024.0
+            }
+        },
+        {
+            "id": 399,
+            "name": "Lake Minatare and Dam",
+            "reservoir_storage": 7699.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Minatare",
+                "Total Capacity": 58795.0,
+                "Total Capacity Elevation": 4125.0,
+                "Active Capacity": 58697.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 58697.0,
+                "Dead Capacity": 98.0,
+                "Dead Capacity Elevation": 4075.0,
+                "Surcharge Capacity": 4776.0,
+                "Maximum Water Surface Elevation": 4127.2,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 2160.0
+            }
+        },
+        {
+            "id": 398,
+            "name": "Lima Reservoir Upstream of Clark Canyon Reservoir",
+            "reservoir_storage": 5140.94,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": null,
+                "Total Capacity": null,
+                "Total Capacity Elevation": null,
+                "Active Capacity": null,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": null,
+                "Dead Capacity": null,
+                "Dead Capacity Elevation": null,
+                "Surcharge Capacity": null,
+                "Maximum Water Surface Elevation": null,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 369,
+            "name": "Horsetooth Reservoir and Dam",
+            "reservoir_storage": 137484.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Horsetooth Reservoir",
+                "Total Capacity": 156735.0,
+                "Total Capacity Elevation": 5430.0,
+                "Active Capacity": 139135.0,
+                "Inactive Capacity Elevation": 5325.0,
+                "Live Capcity": 149732.0,
+                "Dead Capacity": 7003.0,
+                "Dead Capacity Elevation": 5320.0,
+                "Surcharge Capacity": 20262.0,
+                "Maximum Water Surface Elevation": 5439.6,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 1873.0
+            }
+        },
+        {
+            "id": 353,
+            "name": "Green Mountain Reservoir Dam and Powerplant",
+            "reservoir_storage": 145459.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Green Mountain Reservoir",
+                "Total Capacity": 153639.0,
+                "Total Capacity Elevation": 7950.0,
+                "Active Capacity": 112794.0,
+                "Inactive Capacity Elevation": 7870.0,
+                "Live Capcity": 146779.0,
+                "Dead Capacity": 6860.0,
+                "Dead Capacity Elevation": 7800.0,
+                "Surcharge Capacity": 8212.0,
+                "Maximum Water Surface Elevation": 7953.8,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 2130.0
+            }
+        },
+        {
+            "id": 351,
+            "name": "Lake Granby and Dam",
+            "reservoir_storage": 480222.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Granby",
+                "Total Capacity": 539758.0,
+                "Total Capacity Elevation": 8280.0,
+                "Active Capacity": 465568.0,
+                "Inactive Capacity Elevation": 8186.0,
+                "Live Capcity": 490291.0,
+                "Dead Capacity": 49467.0,
+                "Dead Capacity Elevation": 8174.63,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 8280.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 7260.0
+            }
+        },
+        {
+            "id": 344,
+            "name": "Grand Lake",
+            "reservoir_storage": 821.398,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 315,
+            "name": "Deerfield Reservoir and Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Deerfield Lake",
+                "Total Capacity": 15654.0,
+                "Total Capacity Elevation": 5908.0,
+                "Active Capacity": 15503.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 15503.0,
+                "Dead Capacity": 151.0,
+                "Dead Capacity Elevation": 5839.0,
+                "Surcharge Capacity": 26657.0,
+                "Maximum Water Surface Elevation": 5953.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 414.0
+            }
+        },
+        {
+            "id": 311,
+            "name": "Davis Creek Reservoir and Dam",
+            "reservoir_storage": 10000.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Davis Creek Reservoir",
+                "Total Capacity": 31158.0,
+                "Total Capacity Elevation": 2076.0,
+                "Active Capacity": 30986.0,
+                "Inactive Capacity Elevation": 2003.0,
+                "Live Capcity": 31082.0,
+                "Dead Capacity": 76.0,
+                "Dead Capacity Elevation": 1998.5,
+                "Surcharge Capacity": 13760.0,
+                "Maximum Water Surface Elevation": 2086.7,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 1139.0
+            }
+        },
+        {
+            "id": 295,
+            "name": "Canyon Ferry Lake Dam Powerplant and Helena Valley Pumping Plant",
+            "reservoir_storage": 45205.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Canyon Ferry Lake",
+                "Total Capacity": 1993036.0,
+                "Total Capacity Elevation": 3800.0,
+                "Active Capacity": 1604395.0,
+                "Inactive Capacity Elevation": 3728.0,
+                "Live Capcity": 1991937.0,
+                "Dead Capacity": 1099.0,
+                "Dead Capacity Elevation": 3650.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 3800.0,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "Reclamation Project Vertical Datum (RVPD), which is 0.08 feet lower than National Geodetic Vertical Datum (NGVD) of 1929 and 3.15 feet lower than North American Vertical Datum (NAVD) of 1988.",
+                "Total Capacity Surface Area": 35678.0
+            }
+        },
+        {
+            "id": 291,
+            "name": "Choke Canyon Reservoir and Dam",
+            "reservoir_storage": 200987.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Choke Canyon Reservoir",
+                "Total Capacity": 695271.0,
+                "Total Capacity Elevation": 220.5,
+                "Active Capacity": 694500.0,
+                "Inactive Capacity Elevation": 150.0,
+                "Live Capcity": 695262.0,
+                "Dead Capacity": 9.0,
+                "Dead Capacity Elevation": 136.38,
+                "Surcharge Capacity": 346568.0,
+                "Maximum Water Surface Elevation": 232.18,
+                "Vertical Datum": "NGVD 29",
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 25989.0
+            }
+        },
+        {
+            "id": 288,
+            "name": "Carter Lake Reservoir and Dam ",
+            "reservoir_storage": 106945.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Carter Lake Reservoir",
+                "Total Capacity": 112230.0,
+                "Total Capacity Elevation": 5759.0,
+                "Active Capacity": 101022.0,
+                "Inactive Capacity Elevation": 5640.0,
+                "Live Capcity": 108924.0,
+                "Dead Capacity": 3306.0,
+                "Dead Capacity Elevation": 5618.0,
+                "Surcharge Capacity": 4609.0,
+                "Maximum Water Surface Elevation": 5763.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 1140.0
+            }
+        },
+        {
+            "id": 278,
+            "name": "Bull Lake Reservoir and Dam ",
+            "reservoir_storage": 119109.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Bull Lake",
+                "Total Capacity": 152459.0,
+                "Total Capacity Elevation": 5805.0,
+                "Active Capacity": 151737.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 151737.0,
+                "Dead Capacity": 722.0,
+                "Dead Capacity Elevation": 5739.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 5805.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 3157.0
+            }
+        },
+        {
+            "id": 276,
+            "name": "Bighorn River and BIA Canal near St. Xavier",
+            "reservoir_storage": 1978.39,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 271,
+            "name": "South Fork Dike at Buffalo Bill Reservoir",
+            "reservoir_storage": 1878.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Buffalo Bill Reservoir",
+                "Total Capacity": 646565.0,
+                "Total Capacity Elevation": 5393.5,
+                "Active Capacity": 604817.0,
+                "Inactive Capacity Elevation": 5259.6,
+                "Live Capcity": null,
+                "Dead Capacity": null,
+                "Dead Capacity Elevation": 5158.0,
+                "Surcharge Capacity": 144645.0,
+                "Maximum Water Surface Elevation": 5410.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 6720.0
+            }
+        },
+        {
+            "id": 266,
+            "name": "Lake Alice and Dams",
+            "reservoir_storage": 2562.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Alice",
+                "Total Capacity": 11034.0,
+                "Total Capacity Elevation": 4182.0,
+                "Active Capacity": 11034.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 11034.0,
+                "Dead Capacity": 0.0,
+                "Dead Capacity Elevation": 4159.0,
+                "Surcharge Capacity": 4255.0,
+                "Maximum Water Surface Elevation": 4187.27,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 262,
+            "name": "Anchor Reservoir and Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Anchor Reservoir",
+                "Total Capacity": 17228.0,
+                "Total Capacity Elevation": 6441.0,
+                "Active Capacity": 17162.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 17162.0,
+                "Dead Capacity": 66.0,
+                "Dead Capacity Elevation": 6343.75,
+                "Surcharge Capacity": 5036.0,
+                "Maximum Water Surface Elevation": 6451.5,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 437.0
+            }
+        },
+        {
+            "id": 259,
+            "name": "Alcova Reservoir Dam and Powerplant",
+            "reservoir_storage": 33120.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Alcova Reservoir",
+                "Total Capacity": 184405.0,
+                "Total Capacity Elevation": 5500.0,
+                "Active Capacity": 30603.0,
+                "Inactive Capacity Elevation": 5487.0,
+                "Live Capcity": 184314.0,
+                "Dead Capacity": 91.0,
+                "Dead Capacity Elevation": 5334.08,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 5500.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 2470.0
+            }
+        },
+        {
+            "id": 5,
+            "name": "Lake Frances Reservoir",
+            "reservoir_storage": 113306.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": null,
+                "Total Capacity": null,
+                "Total Capacity Elevation": null,
+                "Active Capacity": null,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": null,
+                "Dead Capacity": null,
+                "Dead Capacity Elevation": null,
+                "Surcharge Capacity": null,
+                "Maximum Water Surface Elevation": null,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 3,
+            "name": "Gray Reef Dam",
+            "reservoir_storage": 1362.11,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Gray Reef Reservoir",
+                "Total Capacity": 1800.0,
+                "Total Capacity Elevation": 5332.0,
+                "Active Capacity": 1744.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 1744.0,
+                "Dead Capacity": 56.0,
+                "Dead Capacity Elevation": 5312.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 5332.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 2,
+            "name": "Audubon Lake North Dakota",
+            "reservoir_storage": 322469.0,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 3513,
+            "name": "Lake Mohave Davis Dam and Powerplant",
+            "reservoir_storage": 220200.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Mohave",
+                "Total Capacity": 1818300.0,
+                "Total Capacity Elevation": 647.0,
+                "Active Capacity": 1592300.0,
+                "Inactive Capacity Elevation": 570.0,
+                "Live Capcity": 1809770.0,
+                "Dead Capacity": 8530.0,
+                "Dead Capacity Elevation": 533.39,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 647.0,
+                "Vertical Datum": "Other",
+                "Vertical Datum Description": "Elevations are referenced to the United States Geological Survey datum, adjustment of 1912, locally known as “Power House Datum.” One can add 0.55 feet to convert to the National Geodetic Vertical Datum of 1929, leveling of 1935 (NGVD27).",
+                "Total Capacity Surface Area": 28200.0
+            }
+        },
+        {
+            "id": 3512,
+            "name": "Platoro Reservoir and Dam ",
+            "reservoir_storage": 19385.2,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Platoro Reservoir",
+                "Total Capacity": 59571.0,
+                "Total Capacity Elevation": 10327.5,
+                "Active Capacity": 59571.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 59571.0,
+                "Dead Capacity": 0.0,
+                "Dead Capacity Elevation": 9911.4,
+                "Surcharge Capacity": 8223.0,
+                "Maximum Water Surface Elevation": 10042.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 948.0
+            }
+        },
+        {
+            "id": 477,
+            "name": "Silver Jack Reservoir and Dam",
+            "reservoir_storage": 12812.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Silver Jack Reservoir",
+                "Total Capacity": 13520.0,
+                "Total Capacity Elevation": 8925.6,
+                "Active Capacity": 12820.0,
+                "Inactive Capacity Elevation": 8840.5,
+                "Live Capcity": 13000.0,
+                "Dead Capacity": 520.0,
+                "Dead Capacity Elevation": 8836.0,
+                "Surcharge Capacity": 1843.0,
+                "Maximum Water Surface Elevation": 8931.6,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 293.0
+            }
+        },
+        {
+            "id": 448,
+            "name": "Ridgway Reservoir and Dam",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Ridgway Reservoir",
+                "Total Capacity": 84410.0,
+                "Total Capacity Elevation": 6871.13,
+                "Active Capacity": 59396.0,
+                "Inactive Capacity Elevation": 6794.9,
+                "Live Capcity": 82980.0,
+                "Dead Capacity": 1430.0,
+                "Dead Capacity Elevation": 6726.0,
+                "Surcharge Capacity": 9535.0,
+                "Maximum Water Surface Elevation": 6880.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 1065.0
+            }
+        },
+        {
+            "id": 431,
+            "name": "Paonia Reservoir and Dam",
+            "reservoir_storage": 532.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Paonia Reservoir",
+                "Total Capacity": 15522.0,
+                "Total Capacity Elevation": 6447.5,
+                "Active Capacity": 15514.0,
+                "Inactive Capacity Elevation": 6362.0,
+                "Live Capcity": 15522.0,
+                "Dead Capacity": 0.0,
+                "Dead Capacity Elevation": 6358.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 6454.1,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 332.0
+            }
+        },
+        {
+            "id": 338,
+            "name": "Fruitgrowers Reservoir and Dam",
+            "reservoir_storage": 643.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Fruitgrowers Reservoir",
+                "Total Capacity": 4030.0,
+                "Total Capacity Elevation": 5485.0,
+                "Active Capacity": 4025.0,
+                "Inactive Capacity Elevation": 0.0,
+                "Live Capcity": 4025.0,
+                "Dead Capacity": 5.0,
+                "Dead Capacity Elevation": 5460.0,
+                "Surcharge Capacity": 2160.0,
+                "Maximum Water Surface Elevation": 5489.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 426.0
+            }
+        },
+        {
+            "id": 3209,
+            "name": "Lost Lake",
+            "reservoir_storage": 418.7,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 3208,
+            "name": "Trial Lake",
+            "reservoir_storage": 527.2,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 3207,
+            "name": "Washington Lake",
+            "reservoir_storage": 1074.5,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 3206,
+            "name": "Utah Lake ",
+            "reservoir_storage": 737206.0,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 3205,
+            "name": "Abiquiu Lake",
+            "reservoir_storage": 78827.0,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 3204,
+            "name": "New Melones Lake Dam and Powerplant",
+            "reservoir_storage": 1644.45,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "New Melones Lake",
+                "Total Capacity": 2400000.0,
+                "Total Capacity Elevation": null,
+                "Active Capacity": null,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": null,
+                "Dead Capacity": null,
+                "Dead Capacity Elevation": null,
+                "Surcharge Capacity": null,
+                "Maximum Water Surface Elevation": null,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 3200,
+            "name": "Lake Oroville",
+            "reservoir_storage": 2273.51,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 1536,
+            "name": "Fontenelle Reservoir Dam and Powerplant",
+            "reservoir_storage": 27965.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Fontenelle Reservoir",
+                "Total Capacity": 334459.0,
+                "Total Capacity Elevation": 6506.0,
+                "Active Capacity": 264244.0,
+                "Inactive Capacity Elevation": 6484.9,
+                "Live Capcity": 333899.0,
+                "Dead Capacity": 560.0,
+                "Dead Capacity Elevation": 6408.0,
+                "Surcharge Capacity": 85900.0,
+                "Maximum Water Surface Elevation": 6515.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 8058.0
+            }
+        },
+        {
+            "id": 1535,
+            "name": "Flaming Gorge Reservoir Dam and Powerplant",
+            "reservoir_storage": 200.001,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Flaming Gorge Reservoir",
+                "Total Capacity": 3791700.0,
+                "Total Capacity Elevation": 6040.0,
+                "Active Capacity": 3515500.0,
+                "Inactive Capacity Elevation": 5871.0,
+                "Live Capcity": 3752000.0,
+                "Dead Capacity": 39700.0,
+                "Dead Capacity Elevation": 5740.0,
+                "Surcharge Capacity": 215000.0,
+                "Maximum Water Surface Elevation": 6045.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 42020.0
+            }
+        },
+        {
+            "id": 1534,
+            "name": "Crystal Reservoir Dam and Powerplant",
+            "reservoir_storage": 38.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Crystal Reservoir",
+                "Total Capacity": 25273.0,
+                "Total Capacity Elevation": 6755.0,
+                "Active Capacity": 12928.0,
+                "Inactive Capacity Elevation": 6700.0,
+                "Live Capcity": 17573.0,
+                "Dead Capacity": 7700.0,
+                "Dead Capacity Elevation": 6670.0,
+                "Surcharge Capacity": 5490.0,
+                "Maximum Water Surface Elevation": 6772.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 340.0
+            }
+        },
+        {
+            "id": 1533,
+            "name": "Blue Mesa Reservoir Dam and Powerplant",
+            "reservoir_storage": 6502.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Blue Mesa Reservoir",
+                "Total Capacity": 938469.0,
+                "Total Capacity Elevation": 7519.4,
+                "Active Capacity": 748430.0,
+                "Inactive Capacity Elevation": 7393.0,
+                "Live Capcity": 827269.0,
+                "Dead Capacity": 111200.0,
+                "Dead Capacity Elevation": 7358.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 7519.4,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 9180.0
+            }
+        },
+        {
+            "id": 512,
+            "name": "Willard Bay Reservoir and Arthur V Watkins Dam",
+            "reservoir_storage": 158032.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Willard Bay Reservoir",
+                "Total Capacity": 247302.0,
+                "Total Capacity Elevation": 4226.0,
+                "Active Capacity": 202160.0,
+                "Inactive Capacity Elevation": 0.0,
+                "Live Capcity": 222273.0,
+                "Dead Capacity": 25029.0,
+                "Dead Capacity Elevation": 4205.0,
+                "Surcharge Capacity": 7925.0,
+                "Maximum Water Surface Elevation": 4226.8,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 9950.0
+            }
+        },
+        {
+            "id": 501,
+            "name": "Vallecito Reservoir and Dam",
+            "reservoir_storage": 1776.14,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Vallecito Reservoir",
+                "Total Capacity": 129700.0,
+                "Total Capacity Elevation": 7665.0,
+                "Active Capacity": 125400.0,
+                "Inactive Capacity Elevation": 0.0,
+                "Live Capcity": 125400.0,
+                "Dead Capacity": 4300.0,
+                "Dead Capacity Elevation": 7582.54,
+                "Surcharge Capacity": 9500.0,
+                "Maximum Water Surface Elevation": 7668.5,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 2720.0
+            }
+        },
+        {
+            "id": 500,
+            "name": "Upper Stillwater Reservoir and Dam",
+            "reservoir_storage": 30934.8,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Upper Stillwater Reservoir",
+                "Total Capacity": 32009.0,
+                "Total Capacity Elevation": 8172.0,
+                "Active Capacity": 29884.0,
+                "Inactive Capacity Elevation": 8028.4,
+                "Live Capcity": 31382.0,
+                "Dead Capacity": 627.0,
+                "Dead Capacity Elevation": 8010.0,
+                "Surcharge Capacity": 3244.0,
+                "Maximum Water Surface Elevation": 8182.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 329.0
+            }
+        },
+        {
+            "id": 491,
+            "name": "Taylor Park Reservoir and Dam",
+            "reservoir_storage": 51571.9,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Taylor Park Reservoir",
+                "Total Capacity": 106225.0,
+                "Total Capacity Elevation": 9330.0,
+                "Active Capacity": 106210.0,
+                "Inactive Capacity Elevation": 9183.0,
+                "Live Capcity": 106210.0,
+                "Dead Capacity": 15.0,
+                "Dead Capacity Elevation": 9183.0,
+                "Surcharge Capacity": 5035.0,
+                "Maximum Water Surface Elevation": 9336.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 2040.0
+            }
+        },
+        {
+            "id": 488,
+            "name": "Strawberry Reservoir and Soldier Creek Dam",
+            "reservoir_storage": 11422.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Strawberry Reservoir",
+                "Total Capacity": 1106500.0,
+                "Total Capacity Elevation": 7602.4,
+                "Active Capacity": 951360.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 1105910.0,
+                "Dead Capacity": 590.0,
+                "Dead Capacity Elevation": 7388.0,
+                "Surcharge Capacity": 66100.0,
+                "Maximum Water Surface Elevation": 7606.2,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 486,
+            "name": "Steinaker Reservoir and Dam",
+            "reservoir_storage": 12014.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Steinaker Reservoir",
+                "Total Capacity": 40043.0,
+                "Total Capacity Elevation": 5520.5,
+                "Active Capacity": 34955.0,
+                "Inactive Capacity Elevation": 5451.4,
+                "Live Capcity": 36148.0,
+                "Dead Capacity": 3895.0,
+                "Dead Capacity Elevation": 5446.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 5520.5,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 820.0
+            }
+        },
+        {
+            "id": 485,
+            "name": "Stateline Reservoir and Dam",
+            "reservoir_storage": 2936.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Stateline Reservoir",
+                "Total Capacity": 14000.0,
+                "Total Capacity Elevation": 9163.2,
+                "Active Capacity": 12000.0,
+                "Inactive Capacity Elevation": 9096.5,
+                "Live Capcity": 13880.0,
+                "Dead Capacity": 120.0,
+                "Dead Capacity Elevation": 9062.0,
+                "Surcharge Capacity": 1900.0,
+                "Maximum Water Surface Elevation": 9169.6,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 306.0
+            }
+        },
+        {
+            "id": 484,
+            "name": "Starvation Reservoir and Dam",
+            "reservoir_storage": 3792.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Starvation Reservoir",
+                "Total Capacity": 164118.0,
+                "Total Capacity Elevation": 5712.0,
+                "Active Capacity": 149460.0,
+                "Inactive Capacity Elevation": 5624.8,
+                "Live Capcity": 162279.0,
+                "Dead Capacity": 1839.0,
+                "Dead Capacity Elevation": 5595.0,
+                "Surcharge Capacity": 20084.0,
+                "Maximum Water Surface Elevation": 5718.3,
+                "Vertical Datum": null,
+                "Vertical Datum Description": "Local Datum",
+                "Total Capacity Surface Area": 3310.0
+            }
+        },
+        {
+            "id": 466,
+            "name": "Scofield Reservoir and Dam",
+            "reservoir_storage": 31784.2,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Scofield Reservoir",
+                "Total Capacity": 73600.0,
+                "Total Capacity Elevation": 7617.5,
+                "Active Capacity": 65800.0,
+                "Inactive Capacity Elevation": 0.0,
+                "Live Capcity": 65800.0,
+                "Dead Capacity": 7800.0,
+                "Dead Capacity Elevation": 7586.0,
+                "Surcharge Capacity": 37700.0,
+                "Maximum Water Surface Elevation": 7630.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 2810.0
+            }
+        },
+        {
+            "id": 453,
+            "name": "Rockport Reservoir and Wanship Dam",
+            "reservoir_storage": 56328.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Rockport Lake",
+                "Total Capacity": 62120.0,
+                "Total Capacity Elevation": 6037.0,
+                "Active Capacity": 55179.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 61274.0,
+                "Dead Capacity": 846.0,
+                "Dead Capacity Elevation": 5930.0,
+                "Surcharge Capacity": 12459.0,
+                "Maximum Water Surface Elevation": 6049.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 1007.0
+            }
+        },
+        {
+            "id": 447,
+            "name": "Red Fleet Reservoir and Dam",
+            "reservoir_storage": 354.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Red Fleet Reservoir",
+                "Total Capacity": 26000.0,
+                "Total Capacity Elevation": 5608.2,
+                "Active Capacity": 22000.0,
+                "Inactive Capacity Elevation": 5528.5,
+                "Live Capcity": 25700.0,
+                "Dead Capacity": 300.0,
+                "Dead Capacity Elevation": 5506.0,
+                "Surcharge Capacity": 7270.0,
+                "Maximum Water Surface Elevation": 5621.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 521.0
+            }
+        },
+        {
+            "id": 437,
+            "name": "Pineview Reservoir Dam and Powerplant",
+            "reservoir_storage": 34299.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Pineview Reservoir",
+                "Total Capacity": 110150.0,
+                "Total Capacity Elevation": 4900.0,
+                "Active Capacity": 110149.0,
+                "Inactive Capacity Elevation": 4818.0,
+                "Live Capcity": 110149.0,
+                "Dead Capacity": 1.0,
+                "Dead Capacity Elevation": 4818.0,
+                "Surcharge Capacity": 6000.0,
+                "Maximum Water Surface Elevation": 4902.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 2874.0
+            }
+        },
+        {
+            "id": 425,
+            "name": "Newton Reservoir and Dam",
+            "reservoir_storage": 4697.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Newton Reservoir",
+                "Total Capacity": 5594.0,
+                "Total Capacity Elevation": 4774.5,
+                "Active Capacity": 5374.0,
+                "Inactive Capacity Elevation": 4725.0,
+                "Live Capcity": 5374.0,
+                "Dead Capacity": 220.0,
+                "Dead Capacity Elevation": 4725.0,
+                "Surcharge Capacity": 3727.0,
+                "Maximum Water Surface Elevation": 4782.5,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 297.0
+            }
+        },
+        {
+            "id": 423,
+            "name": "Navajo Reservoir and Dam",
+            "reservoir_storage": 4200.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Navajo Reservoir",
+                "Total Capacity": 1713900.0,
+                "Total Capacity Elevation": 6085.0,
+                "Active Capacity": 1039500.0,
+                "Inactive Capacity Elevation": 5990.0,
+                "Live Capcity": 1701300.0,
+                "Dead Capacity": 12600.0,
+                "Dead Capacity Elevation": 5775.0,
+                "Surcharge Capacity": 277600.0,
+                "Maximum Water Surface Elevation": 6101.6,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 15610.0
+            }
+        },
+        {
+            "id": 417,
+            "name": "Morrow Point Reservoir Dam and Powerplant",
+            "reservoir_storage": 114656.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Morrow Point Reservoir",
+                "Total Capacity": 117190.0,
+                "Total Capacity Elevation": 7160.0,
+                "Active Capacity": 42120.0,
+                "Inactive Capacity Elevation": 7100.0,
+                "Live Capcity": 117025.0,
+                "Dead Capacity": 165.0,
+                "Dead Capacity Elevation": 6808.0,
+                "Surcharge Capacity": 4130.0,
+                "Maximum Water Surface Elevation": 7165.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 817.0
+            }
+        },
+        {
+            "id": 416,
+            "name": "Moon Lake Reservoir and Dam",
+            "reservoir_storage": 2421.73,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Moon Lake",
+                "Total Capacity": 53633.0,
+                "Total Capacity Elevation": 8137.0,
+                "Active Capacity": 37848.0,
+                "Inactive Capacity Elevation": 8072.0,
+                "Live Capcity": 37848.0,
+                "Dead Capacity": 15785.0,
+                "Dead Capacity Elevation": 8072.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": null,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 622.0
+            }
+        },
+        {
+            "id": 411,
+            "name": "Meeks Cabin Reservoir and Dam",
+            "reservoir_storage": 3200.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Meeks Cabin Reservoir",
+                "Total Capacity": 32470.0,
+                "Total Capacity Elevation": 8685.7,
+                "Active Capacity": 29480.0,
+                "Inactive Capacity Elevation": 8585.0,
+                "Live Capcity": 29870.0,
+                "Dead Capacity": 2600.0,
+                "Dead Capacity Elevation": 8582.0,
+                "Surcharge Capacity": 6250.0,
+                "Maximum Water Surface Elevation": 8698.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 473.0
+            }
+        },
+        {
+            "id": 410,
+            "name": "Mcphee Reservoir and Dam",
+            "reservoir_storage": 1455.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "McPhee Reservoir",
+                "Total Capacity": 381200.0,
+                "Total Capacity Elevation": 6924.0,
+                "Active Capacity": 229200.0,
+                "Inactive Capacity Elevation": 6855.0,
+                "Live Capcity": 381105.0,
+                "Dead Capacity": 95.0,
+                "Dead Capacity Elevation": 6676.0,
+                "Surcharge Capacity": 18200.0,
+                "Maximum Water Surface Elevation": 6928.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 4469.0
+            }
+        },
+        {
+            "id": 400,
+            "name": "Lost Creek Reservoir and Dam",
+            "reservoir_storage": 16853.9,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lost Creek Reservoir",
+                "Total Capacity": 22510.0,
+                "Total Capacity Elevation": 6005.0,
+                "Active Capacity": 20010.0,
+                "Inactive Capacity Elevation": 5912.3,
+                "Live Capcity": 22501.0,
+                "Dead Capacity": 9.0,
+                "Dead Capacity Elevation": 5842.0,
+                "Surcharge Capacity": 4250.0,
+                "Maximum Water Surface Elevation": 6018.9,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 365.0
+            }
+        },
+        {
+            "id": 395,
+            "name": "Lemon Reservoir and Dam",
+            "reservoir_storage": 523.14,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lemon Reservoir",
+                "Total Capacity": 40146.0,
+                "Total Capacity Elevation": 8148.0,
+                "Active Capacity": 39030.0,
+                "Inactive Capacity Elevation": 8023.0,
+                "Live Capcity": 39792.0,
+                "Dead Capacity": 354.0,
+                "Dead Capacity Elevation": 8005.0,
+                "Surcharge Capacity": 8512.0,
+                "Maximum Water Surface Elevation": 8161.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 622.0
+            }
+        },
+        {
+            "id": 393,
+            "name": "Lake Powell Glen Canyon Dam and Powerplant",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Powell",
+                "Total Capacity": 26215000.0,
+                "Total Capacity Elevation": 3700.0,
+                "Active Capacity": 20325000.0,
+                "Inactive Capacity Elevation": 3490.0,
+                "Live Capcity": 24322000.0,
+                "Dead Capacity": 1893000.0,
+                "Dead Capacity Elevation": 3370.0,
+                "Surcharge Capacity": 1819000.0,
+                "Maximum Water Surface Elevation": 3711.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 161390.0
+            }
+        },
+        {
+            "id": 392,
+            "name": "Lake Nighthorse and Ridges Basin Dam",
+            "reservoir_storage": 171.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Lake Nighthorse",
+                "Total Capacity": 123541.0,
+                "Total Capacity Elevation": 6882.0,
+                "Active Capacity": 93541.0,
+                "Inactive Capacity Elevation": 6797.0,
+                "Live Capcity": 115074.0,
+                "Dead Capacity": 8467.0,
+                "Dead Capacity Elevation": 6760.0,
+                "Surcharge Capacity": 12180.0,
+                "Maximum Water Surface Elevation": 6890.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 384,
+            "name": "Jordanelle Reservoir Dam and Powerplant",
+            "reservoir_storage": 1119.99,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Jordanelle Reservoir",
+                "Total Capacity": 361500.0,
+                "Total Capacity Elevation": 8182.0,
+                "Active Capacity": 360500.0,
+                "Inactive Capacity Elevation": 0.0,
+                "Live Capcity": 358474.0,
+                "Dead Capacity": 3026.0,
+                "Dead Capacity Elevation": 5902.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 6182.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 3068.0
+            }
+        },
+        {
+            "id": 383,
+            "name": "Joes Valley Reservoir and Dam",
+            "reservoir_storage": 45111.3,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": null,
+                "Total Capacity": null,
+                "Total Capacity Elevation": null,
+                "Active Capacity": null,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": null,
+                "Dead Capacity": null,
+                "Dead Capacity Elevation": null,
+                "Surcharge Capacity": null,
+                "Maximum Water Surface Elevation": null,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 381,
+            "name": "Jemez Canyon Reservoir",
+            "reservoir_storage": 0.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": null,
+                "Total Capacity": null,
+                "Total Capacity Elevation": null,
+                "Active Capacity": null,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": null,
+                "Dead Capacity": null,
+                "Dead Capacity Elevation": null,
+                "Surcharge Capacity": null,
+                "Maximum Water Surface Elevation": null,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 378,
+            "name": "Jackson Gulch Reservoir and Dam",
+            "reservoir_storage": 1038.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Jackson Gulch Reservoir",
+                "Total Capacity": 9980.0,
+                "Total Capacity Elevation": 7825.0,
+                "Active Capacity": 9950.0,
+                "Inactive Capacity Elevation": 0.0,
+                "Live Capcity": 9951.0,
+                "Dead Capacity": 29.0,
+                "Dead Capacity Elevation": 7708.6,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": 7825.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 217.0
+            }
+        },
+        {
+            "id": 370,
+            "name": "Huntington North Reservoir and Dam",
+            "reservoir_storage": 845.03,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": null,
+                "Total Capacity": null,
+                "Total Capacity Elevation": null,
+                "Active Capacity": null,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": null,
+                "Dead Capacity": null,
+                "Dead Capacity Elevation": null,
+                "Surcharge Capacity": null,
+                "Maximum Water Surface Elevation": null,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": null
+            }
+        },
+        {
+            "id": 323,
+            "name": "Elephant Butte Reservoir Dam and Powerplant",
+            "reservoir_storage": 47515.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Elephant Butte Reservoir",
+                "Total Capacity": 2357104.0,
+                "Total Capacity Elevation": 4416.0,
+                "Active Capacity": 2010900.0,
+                "Inactive Capacity Elevation": null,
+                "Live Capcity": 2357104.0,
+                "Dead Capacity": 0.0,
+                "Dead Capacity Elevation": 4231.5,
+                "Surcharge Capacity": 346204.0,
+                "Maximum Water Surface Elevation": 4416.0,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "Project datum is -43.3 ft lower than NGVD 29",
+                "Total Capacity Surface Area": 41647.0
+            }
+        },
+        {
+            "id": 321,
+            "name": "Eden Reservoir and Dam",
+            "reservoir_storage": 248.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Eden Reservoir",
+                "Total Capacity": 14421.0,
+                "Total Capacity Elevation": 6715.2,
+                "Active Capacity": 13164.0,
+                "Inactive Capacity Elevation": 0.0,
+                "Live Capcity": 13164.0,
+                "Dead Capacity": 1257.0,
+                "Dead Capacity Elevation": 6699.5,
+                "Surcharge Capacity": 2777.0,
+                "Maximum Water Surface Elevation": 6717.5,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 1166.0
+            }
+        },
+        {
+            "id": 320,
+            "name": "Echo Reservoir and Dam",
+            "reservoir_storage": 39269.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Echo Reservoir",
+                "Total Capacity": 73940.0,
+                "Total Capacity Elevation": 5560.0,
+                "Active Capacity": 73940.0,
+                "Inactive Capacity Elevation": 0.0,
+                "Live Capcity": 73940.0,
+                "Dead Capacity": 0.0,
+                "Dead Capacity Elevation": 5450.0,
+                "Surcharge Capacity": 0.0,
+                "Maximum Water Surface Elevation": null,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 1455.0
+            }
+        },
+        {
+            "id": 319,
+            "name": "East Canyon Reservoir and Dam",
+            "reservoir_storage": 39261.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "East Canyon Reservoir",
+                "Total Capacity": 51200.0,
+                "Total Capacity Elevation": 5705.0,
+                "Active Capacity": 48110.0,
+                "Inactive Capacity Elevation": 5577.0,
+                "Live Capcity": 49510.0,
+                "Dead Capacity": 1690.0,
+                "Dead Capacity Elevation": 5564.5,
+                "Surcharge Capacity": 7150.0,
+                "Maximum Water Surface Elevation": 5715.0,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 684.0
+            }
+        },
+        {
+            "id": 314,
+            "name": "Deer Creek Reservoir Dam and Powerplant",
+            "reservoir_storage": 120494.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Deer Creek Reservoir",
+                "Total Capacity": 153445.0,
+                "Total Capacity Elevation": 5417.0,
+                "Active Capacity": 150161.0,
+                "Inactive Capacity Elevation": 0.0,
+                "Live Capcity": 150161.0,
+                "Dead Capacity": 3284.0,
+                "Dead Capacity Elevation": 5305.0,
+                "Surcharge Capacity": 7513.0,
+                "Maximum Water Surface Elevation": 5410.1,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 2683.0
+            }
+        },
+        {
+            "id": 310,
+            "name": "Currant Creek Reservoir and Dam",
+            "reservoir_storage": 237.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Currant Creek Reservoir",
+                "Total Capacity": 15671.0,
+                "Total Capacity Elevation": 7678.0,
+                "Active Capacity": 1118.0,
+                "Inactive Capacity Elevation": 7674.0,
+                "Live Capcity": 15464.0,
+                "Dead Capacity": 207.0,
+                "Dead Capacity Elevation": 7575.0,
+                "Surcharge Capacity": 1536.0,
+                "Maximum Water Surface Elevation": 7683.2,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 300.0
+            }
+        },
+        {
+            "id": 305,
+            "name": "Cochiti Lake",
+            "reservoir_storage": 4406.0,
+            "associated_capacity_data": {}
+        },
+        {
+            "id": 289,
+            "name": "Causey Reservoir and Dam",
+            "reservoir_storage": 1709.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Causey Reservoir",
+                "Total Capacity": 7870.0,
+                "Total Capacity Elevation": 5692.0,
+                "Active Capacity": 6870.0,
+                "Inactive Capacity Elevation": 5607.0,
+                "Live Capcity": 7070.0,
+                "Dead Capacity": 800.0,
+                "Dead Capacity Elevation": 5601.0,
+                "Surcharge Capacity": 860.0,
+                "Maximum Water Surface Elevation": 5698.1,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 136.0
+            }
+        },
+        {
+            "id": 286,
+            "name": "Caballo Reservoir and Dam",
+            "reservoir_storage": 322.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Caballo Reservoir",
+                "Total Capacity": 324509.0,
+                "Total Capacity Elevation": 4186.0,
+                "Active Capacity": 324509.0,
+                "Inactive Capacity Elevation": 4104.0,
+                "Live Capcity": 324509.0,
+                "Dead Capacity": 0.0,
+                "Dead Capacity Elevation": 4104.0,
+                "Surcharge Capacity": 47700.0,
+                "Maximum Water Surface Elevation": 4186.0,
+                "Vertical Datum": "Project Datum",
+                "Vertical Datum Description": "Project datum is 43.3 lower than NGVD 29",
+                "Total Capacity Surface Area": 11532.0
+            }
+        },
+        {
+            "id": 277,
+            "name": "Big Sandy Reservoir and Dam",
+            "reservoir_storage": 17016.0,
+            "associated_capacity_data": {
+                "Asset Name (in tessel)": "Big Sandy Reservoir",
+                "Total Capacity": 38100.0,
+                "Total Capacity Elevation": 6757.5,
+                "Active Capacity": 38300.0,
+                "Inactive Capacity Elevation": 0.0,
+                "Live Capcity": 36700.0,
+                "Dead Capacity": 1400.0,
+                "Dead Capacity Elevation": 6720.0,
+                "Surcharge Capacity": 14700.0,
+                "Maximum Water Surface Elevation": 6762.8,
+                "Vertical Datum": null,
+                "Vertical Datum Description": null,
+                "Total Capacity Surface Area": 2510.0
+            }
+        }
+    ]
+}

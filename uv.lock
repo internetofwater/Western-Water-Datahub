@@ -11,6 +11,7 @@ members = [
     "noaa-rfc",
     "rise",
     "snotel",
+    "storage",
     "usace",
 ]
 
@@ -1778,6 +1779,11 @@ sdist = { url = "https://files.pythonhosted.org/packages/44/b6/fb9a32e3c5d59b1e3
 wheels = [
     { url = "https://files.pythonhosted.org/packages/41/94/8af675a62e3c91c2dee47cf92e602cfac86e8767b1a1ac3caf1b327c2ab0/starlette-0.46.0-py3-none-any.whl", hash = "sha256:913f0798bd90ba90a9156383bcf1350a17d6259451d0d8ee27fc0cf2db609038", size = 71991 },
 ]
+
+[[package]]
+name = "storage"
+version = "0.1.0"
+source = { editable = "packages/storage" }
 
 [[package]]
 name = "tinydb"
