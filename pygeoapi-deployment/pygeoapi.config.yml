@@ -311,7 +311,7 @@ resources:
         options:
           layer: 1
           style: default
-          projection: 4269
+          projection: 4326
         format:
           name: png
           mimetype: image/png
@@ -389,7 +389,7 @@ resources:
         options:
           layer: 0
           style: default
-          projection: 4269
+          projection: 4326
 
   us-drought-monitor:
     type: collection
@@ -405,6 +405,12 @@ resources:
         data: https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
         id_field: OBJECTID
         time_field: ddate
+      - <<: *default-wms
+        data: https://ndmcgeodata.unl.edu/cgi-bin/mapserv.exe?map=/ms4w/apps/usdm/map/usdm_current_wms.map
+        options:
+          layer: usdm_current
+          style: default
+          projection: 4326
 
   usgs-prism:
     type: collection
@@ -434,8 +440,8 @@ resources:
 
   resviz-edr:
     type: collection
-    title: Columbia Pacific Northwest Region
-    description: Columbia Pacific Northwest Region
+    title: Reservoir drought conditions
+    description: USBR Reservoir drought conditions
     keywords:
       - temperature
       - precipitation
