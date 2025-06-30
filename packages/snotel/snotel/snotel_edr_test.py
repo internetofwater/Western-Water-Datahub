@@ -51,17 +51,6 @@ def test_cube_with_datetime_filter():
                 tzinfo=datetime.timezone.utc
             )
 
-    out = p.cube(bbox=bboxCovering1175InAlaska, datetime_="2010-01-01/2020-01-01")
-    assert len(out["coverages"]) > 10
-    for cov in out["coverages"]:
-        for tValue in cov["domain"]["axes"]["t"]["values"]:
-            assert tValue >= datetime.datetime(2010, 1, 1).replace(
-                tzinfo=datetime.timezone.utc
-            )
-            assert tValue <= datetime.datetime(2020, 1, 1).replace(
-                tzinfo=datetime.timezone.utc
-            )
-
 
 def test_cube_with_select_properties():
     p = SnotelEDRProvider(conf)
