@@ -371,8 +371,6 @@ resources:
         id_field: objectid
         time_field: fcst_date
 
-
-
   noaa-6-10-day-precip:
     type: collection
     title: NOAA 6-10 Day Precipitation Forecast
@@ -388,7 +386,6 @@ resources:
         data: https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/1
         id_field: objectid
         time_field: fcst_date
-
 
   us-drought-monitor:
     type: collection
