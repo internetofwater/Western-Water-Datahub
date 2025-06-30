@@ -104,6 +104,7 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                         system=ReferenceSystem(
                             type="TemporalRS",
                             id="http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+                            calendar="Gregorian",
                         ),
                     ),
                 ],
