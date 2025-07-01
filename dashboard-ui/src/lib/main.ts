@@ -50,6 +50,8 @@ export interface MainState {
         [Tools.Controls]: boolean;
     };
     setOpenTools: (tool: Tools, open: boolean) => void;
+    colorScheme: 'dark' | 'light';
+    setColorScheme: (colorScheme: 'dark' | 'light') => void;
 }
 
 const useMainStore = create<MainState>()((set) => ({
@@ -80,6 +82,8 @@ const useMainStore = create<MainState>()((set) => ({
                 [tool]: open,
             },
         })),
+    colorScheme: 'dark',
+    setColorScheme: (colorScheme: 'dark' | 'light') => set({ colorScheme }),
 }));
 
 export default useMainStore;

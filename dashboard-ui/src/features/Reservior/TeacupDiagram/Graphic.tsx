@@ -287,27 +287,7 @@ export const Graphic: React.FC<Props> = (props) => {
         // Now that the diagram is created, call the callback function if exists
         // Used when creating the diagram for the report
         callback?.();
-    }, [svgRef.current]);
-
-    useEffect(() => {
-        const textColor = colorScheme === 'light' ? '#000' : '#FFF';
-        const capacityText = document.getElementById(capacityTextId);
-        const highPercentileLabel = document.getElementById(
-            highPercentileLabelId
-        );
-        const lowPercentileLabel =
-            document.getElementById(lowPercentileLabelId);
-
-        if (capacityText) {
-            capacityText.setAttribute('fill', textColor);
-        }
-        if (highPercentileLabel) {
-            highPercentileLabel.setAttribute('fill', textColor);
-        }
-        if (lowPercentileLabel) {
-            lowPercentileLabel.setAttribute('fill', textColor);
-        }
-    }, [colorScheme]);
+    }, [svgRef.current, colorScheme]);
 
     useEffect(() => {
         if (
