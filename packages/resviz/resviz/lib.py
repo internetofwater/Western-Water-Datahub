@@ -48,15 +48,13 @@ def create_feature(pg_layer, row, parameter):
             p_val = "DataValue"
             p_suffix = "value"
 
-    row["DataDate"] = datetime.strptime(
-        row["DataDate"], "%m/%d/%Y"
-    ).strftime("%Y-%m-%d")
-    row["SiteShortName"] = re.search(
-        r"/([^/]+)\.png$", row["TeacupUrl"]
-    ).group(1) # pyright: ignore
+    row["DataDate"] = datetime.strptime(row["DataDate"], "%m/%d/%Y").strftime(
+        "%Y-%m-%d"
+    )
+    row["SiteShortName"] = re.search(r"/([^/]+)\.png$", row["TeacupUrl"]).group(1)  # pyright: ignore
 
     feature = ogr.Feature(pg_layer.GetLayerDefn())
-    id = f"{row["SiteShortName"]}.{row["DataDate"]}.{p_suffix}"
+    id = f"{row['SiteShortName']}.{row['DataDate']}.{p_suffix}"
     feature.SetField("id", id)
     feature.SetField("monitoring_location_id", row["SiteShortName"])
     feature.SetField("site_name", row["SiteName"])
@@ -78,4 +76,4 @@ def create_feature(pg_layer, row, parameter):
     except RuntimeError:
         pass
     finally:
-        feature = None # Release feature
+        feature = None  # Release feature

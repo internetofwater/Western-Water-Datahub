@@ -37,16 +37,16 @@ def run_subprocess(csv_url: str):
     if csv_ds is None:
         LOGGER.warning(f"Could not open CSV file: {csv_url}")
         return
-    
+
     # Get the source layer.
     layer = csv_ds.GetLayer()
     layer_def = layer.GetLayerDefn()
 
     # Open the PostgreSQL datasource
     pg_driver = ogr.GetDriverByName("PostgreSQL")
-    pg_ds = pg_driver.Open(POSTGRES_URL, 1) # 1 for update mode
+    pg_ds = pg_driver.Open(POSTGRES_URL, 1)  # 1 for update mode
     if pg_ds is None:
-        LOGGER.error(f"Could not open PostgreSQL database")
+        LOGGER.error("Could not open PostgreSQL database")
 
     # Get the target layer.
     pg_layer = pg_ds.GetLayerByName("resviz")
@@ -54,8 +54,7 @@ def run_subprocess(csv_url: str):
     # Process source 'layer'
     for feature in layer:
         row = {
-            layer_def.GetFieldDefn(i).GetName().strip(): 
-            feature.GetField(i).strip()
+            layer_def.GetFieldDefn(i).GetName().strip(): feature.GetField(i).strip()
             for i in range(layer_def.GetFieldCount())
         }
 
