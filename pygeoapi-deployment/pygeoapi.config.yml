@@ -53,8 +53,8 @@ metadata:
 resources:
   rise-edr:
     type: collection
-    title: Reclamation Information Sharing Environment (RISE)
-    description: United States Bureau of Reclamation Information Sharing Environment EDR
+    title: Reclamation Information Sharing Environment
+    description: USBR Information Sharing Environment EDR
     keywords:
       - EDR
       - RISE
@@ -84,8 +84,8 @@ resources:
 
   snotel-edr:
     type: collection
-    title: Snow Telemetry Network (SNOTEL)
-    description: United States Department of Agriculture Snow Telemetry Network EDR
+    title: Snow Telemetry Network
+    description: USDA Snow Telemetry Network (SNOTEL) EDR
     keywords:
       - EDR
       - SNOTEL
@@ -108,8 +108,8 @@ resources:
 
   usgs-sta:
     type: collection
-    title: United States Geologic Survey SensorThings API
-    description: United States Geologic Survey SensorThings API EDR
+    title: United States Geologic Survey Streamgages
+    description: USGS Streamgages SensorThings API EDR
     keywords:
       - EDR
       - SensorThings
@@ -133,8 +133,8 @@ resources:
 
   awdb-forecasts-edr:
     type: collection
-    title: Air and Water Database (AWDB) Forecasts
-    description: United States Department of Agriculture Air and Water Database Forecasts EDR
+    title: Air and Water Database Forecasts
+    description: USDA Air and Water Database Forecasts (AWDB) EDR
     keywords:
       - open data
     extents: *default-extent
@@ -149,8 +149,8 @@ resources:
 
   usace-edr:
     type: collection
-    title: US Army Corps of Engineers (USACE) EDR
-    description: US Army Corps of Engineers EDR
+    title: US Army Corps of Engineers
+    description: USACE Access2Water API
     keywords:
       - open data
     extents: *default-extent
@@ -164,9 +164,9 @@ resources:
         entity: Observation
         title_field: name
 
-  noaa-qpf-24-hour-day-1: &default-qpf
+  noaa-qpf-day-1: &default-qpf
     type: collection
-    title: NOAA QPF 24 Hours Day 1
+    title: Quantitative Precipitation Forecast Day 1
     description: NOAA Quantitative Precipitation Forecast (QPF) 24 Hours Day 1
     keywords: [NOAA, QPF]
     links:
@@ -181,82 +181,82 @@ resources:
         id_field: objectid
         time_field: issue_time
 
-  noaa-qpf-24-hour-day-2:
+  noaa-qpf-day-2:
     <<: *default-qpf
-    title: NOAA QPF 24 Hours Day 2
+    title: Quantitative Precipitation Forecast Day 2
     description: NOAA Quantitative Precipitation Forecast (QPF) 24 Hours Day 2
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/2
 
-  noaa-qpf-24-hour-day-3:
+  noaa-qpf-day-3:
     <<: *default-qpf
-    title: NOAA QPF 24 Hours Day 3
+    title: Quantitative Precipitation Forecast Day 3
     description: NOAA Quantitative Precipitation Forecast (QPF) 24 Hours Day 3
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/3
 
-  noaa-qpf-48-hour-day-4:
+  noaa-qpf-day-4-5:
     <<: *default-qpf
-    title: NOAA QPF 48 Hours Day 4-5
+    title: Quantitative Precipitation Forecast Day 4-5
     description: NOAA Quantitative Precipitation Forecast (QPF) 48 Hours Day 4-5
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/4
 
-  noaa-qpf-48-hour-day-6-7:
+  noaa-qpf-day-6-7:
     <<: *default-qpf
-    title: NOAA QPF 48 Hour Day 6-7
+    title: Quantitative Precipitation Forecast Day 6-7
     description: NOAA Quantitative Precipitation Forecast (QPF) 48 Hour Day 6-7
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/5
 
-  noaa-qpf-cumulative-6-hours-day-1:
+  noaa-cqpf-6-hours:
     <<: *default-qpf
-    title: NOAA QPF Cumulative 6 Hours Day 1
+    title: Cumulative Quantitative Precipitation Forecast 6 Hours
     description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 6 Hours Day 1
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/7
 
-  noaa-qpf-cumulative-48-hours-day-1-2:
+  noaa-cqpf-48-hours:
     <<: *default-qpf
-    title: NOAA QPF Cumulative 48 Hours Day 1-2
+    title: Cumulative Quantitative Precipitation Forecast 48 Hours
     description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 48 Hours Day 1-2
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/8
 
-  noaa-qpf-cumulative-72-hours-day-1-3:
+  noaa-cqpf-72-hours:
     <<: *default-qpf
-    title: NOAA QPF Cumulative 72 Hours Day 1-3
+    title: Cumulative Quantitative Precipitation Forecast 72 Hours
     description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 72 Hours Day 1-3
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/9
 
-  noaa-qpf-cumulative-120-hours-day-1-5:
+  noaa-cqpf-120-hours:
     <<: *default-qpf
-    title: NOAA QPF Cumulative 120 Hours Day 1-5
+    title: Cumulative Quantitative Precipitation Forecast 120 Hours
     description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 120 Hours Day 1-5
     providers:
       - <<: *default-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/10
 
-  noaa-qpf-cumulative-168-hours-day-1-7:
+  noaa-cqpf-168-hours:
     <<: *default-qpf
-    title: NOAA QPF Cumulative 168 Hours Day 1-7
+    title: Cumulative Quantitative Precipitation Forecast 168 Hours
     description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 168 Hours Day 1-7
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/11
 
-  noaa-day-1-prob-at-least-4-inches-snow: &default-wpc
+  noaa-4-inch-snow:
     <<: *default-qpf
-    title: NOAA Day 1 Prob At Least 4 Inches Snow
-    description: NOAA Day 1 Prob At Least 4 Inches Snow
+    title: Probability of >4 inches of snow
+    description: NOAA Probability of at least 4 inches of snow in next 24 hours
     links:
       - <<: *default-link
         href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer
@@ -264,33 +264,33 @@ resources:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/1
 
-  noaa-day-1-prob-at-least-8-inches-snow:
+  noaa-8-inch-snow:
     <<: *default-qpf
-    title: NOAA Day 1 Prob At Least 8 Inches Snow
-    description: NOAA Day 1 Prob At Least 8 Inches Snow
+    title: Probability of >8 inches of snow
+    description: NOAA Probability of at least 8 inches of snow in next 24 hours
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/2
 
-  noaa-day-1-prob-at-least-12-inches-snow:
-    <<: *default-wpc
-    title: NOAA Day 1 Prob At Least 12 Inches Snow
-    description: NOAA Day 1 Prob At Least 12 Inches Snow
+  noaa-12-inch-snow:
+    <<: *default-qpf
+    title: Probability of >12 inches of snow
+    description: NOAA Probability of at least 12 inches of snow in next 24 hours
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/3
 
-  noaa-day-1-prob-icing-at-least-.25-inches:
-    <<: *default-wpc
-    title: NOAA Day 1 Prob Icing At Least .25 Inches
-    description: NOAA Day 1 Prob Icing At Least .25 Inches
+  noaa-0.25-inch-icing: &default-wpc
+    <<: *default-qpf
+    title: Probability of >0.25 inches of icing
+    description: NOAA Probability of at least 0.25 inches of icing in next 24 hours
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/4
 
   nohrsc-swe:
     type: collection
-    title: NOAA NOHRSC Snow Water Forecast
+    title: Snow Water Forecast
     description: NOAA NOHRSC Snow Water Forecast
     keywords:
       - nohrsc
@@ -311,14 +311,14 @@ resources:
         options:
           layer: 1
           style: default
-          projection: 4269
+          projection: 4326
         format:
           name: png
           mimetype: image/png
 
   nohrsc-sd:
     type: collection
-    title: NOAA NOHRSC Snow Depth Forecast
+    title: Snow Depth Forecast
     description: NOAA NOHRSC Snow Depth Forecast
     keywords:
       - nohrsc
@@ -332,9 +332,9 @@ resources:
       - <<: *default-wms
         data: https://mapservices.weather.noaa.gov/raster/services/snow/NOHRSC_Snow_Analysis/MapServer/WMSServer
 
-  NOHRSC-Snow-Analysis-Snow-Water-Boundary:
-    <<: *default-wpc
-    title: NOAA NOHRSC Snow Analysis Snow Water Boundary
+  nohrsd-saswb:
+    <<: *default-qpf
+    title: Snow Analysis Water Boundary
     description: NOAA NOHRSC Snow Analysis Snow Water Boundary
     providers:
       - <<: *default-feature-qpf
@@ -342,7 +342,7 @@ resources:
 
   noaa-rfc:
     type: collection
-    title: NOAA RFC Forecasts
+    title: River Forecast Center Seasonal Forecasts
     description: NOAA River Forecast Center Forecasts
     keywords: [NOAA]
     links:
@@ -355,25 +355,25 @@ resources:
         data: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
         title_field: espname
 
-  noaa-6-10-day-temp:
+  noaa-temp-6-10-day:
     type: collection
-    title: NOAA 6-10 Day Temperature Forecast
+    title: 6-10 Day Temperature Forecast
     description: NOAA 6-10 Day Temperature Forecast
     keywords: [NOAA, temperature]
     links:
       - <<: *default-link
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/0r
+        href: https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/0
     extents: *default-extent
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/0
-        id_field: objectid
         time_field: fcst_date
+      - <<: *default-wms
+        data: https://mapservices.weather.noaa.gov/vector/services/outlooks/cpc_6_10_day_outlk/MapServer/WMSServer
 
-  noaa-6-10-day-precip:
+  noaa-precip-6-10-day:
     type: collection
-    title: NOAA 6-10 Day Precipitation Forecast
+    title: 6-10 Day Precipitation Forecast
     description: NOAA 6-10 Day Precipitation Forecast
     keywords: [NOAA, temperature]
     links:
@@ -381,15 +381,19 @@ resources:
         href: https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/1
     extents: *default-extent
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/1
-        id_field: objectid
         time_field: fcst_date
+      - <<: *default-wms
+        data: https://mapservices.weather.noaa.gov/vector/services/outlooks/cpc_6_10_day_outlk/MapServer/WMSServer
+        options:
+          layer: 0
+          style: default
+          projection: 4326
 
   us-drought-monitor:
     type: collection
-    title: US Drought Monitor
+    title: Drought Monitor
     description: US Drought Monitor current drought intensity
     keywords: ["drought"]
     links:
@@ -397,11 +401,16 @@ resources:
         href: https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
     extents: *default-extent
     providers:
-      - type: feature
-        name: ESRI
+      - <<: *default-feature-qpf
         data: https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
         id_field: OBJECTID
         time_field: ddate
+      - <<: *default-wms
+        data: https://ndmcgeodata.unl.edu/cgi-bin/mapserv.exe?map=/ms4w/apps/usdm/map/usdm_current_wms.map
+        options:
+          layer: usdm_current
+          style: default
+          projection: 4326
 
   usgs-prism:
     type: collection
@@ -431,65 +440,36 @@ resources:
 
   resviz-edr:
     type: collection
-    title: Columbia Pacific Northwest Region
-    description: Columbia Pacific Northwest Region
+    title: Reservoir drought conditions
+    description: USBR Reservoir drought conditions
     keywords:
-      - temperature
-      - precipitation
+      - reservoir
+      - drought
     extents:
       spatial:
-        bbox: [-124.76, 41.13, -109.74, 48.99]
+        bbox: [-123.60518, 28.4667, -95.875, 48.8283]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     links:
       - <<: *default-link
         title: information
-        href: https://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/prism_v2
     providers:
-      - type: feature
-        name: PostgreSQL
+      - type: edr
+        name: pg_edr.edr.PostgresEDRProvider
         data: &postgres-data
           host: ${POSTGRES_HOST:-localhost}
           dbname: ${POSTGRES_DB:-edr}
           user: ${POSTGRES_USER:-postgres}
           password: ${POSTGRES_PASSWORD:-password}
         table: resviz
+        properties: [max_capacity]
+        edr_fields: # Required EDR Fields
+          id_field: ogc_fid
+          geom_field: geom
+          time_field: data_date
+      - type: feature
+        name: PostgreSQL
+        data: *postgres-data
+        table: resviz
         id_field: ogc_fid
         title_field: site_name
         geom_field: geom
-      - type: edr
-        name: pg_edr.edr.PostgresEDRProvider
-        data: *postgres-data
-        table: resviz
-
-        edr_fields: # Required EDR Fields
-          id_field: ogc_fid # Result identifier field
-          geom_field: geom # Result identifier field
-          time_field: data_date # Result time field
-
-
-  # noaa-nwm:
-  #   type: collection
-  #   title: NOAA National Water Model CONUS Retrospective Dataset
-  #   description: NOAA National Water Model CONUS Retrospective Dataset
-  #   keywords:
-  #     - national water model
-  #     - agriculture
-  #   extents:
-  #     spatial:
-  #       bbox: [-125.020836, 24.104166, -66.520836, 49.9375]
-  #       crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-  #   links:
-  #     - <<: *default-link
-  #       href: https://registry.opendata.aws/nwm-archive/
-  #   providers:
-  #     - type: edr
-  #       name: xarray-edr
-  #       data: s3://noaa-nwm-retrospective-3-0-pds/CONUS/zarr/chrtout.zarr
-  #       x_field: longitude
-  #       y_field: latitude
-  #       format:
-  #         name: zarr
-  #         mimetype: application/zip
-  #       options:
-  #         s3:
-  #           anon: true

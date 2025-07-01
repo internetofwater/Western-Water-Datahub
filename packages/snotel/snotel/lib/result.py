@@ -4,6 +4,7 @@
 from typing import Optional
 from com.cache import RedisCache
 from com.datetime import datetime_from_iso
+from com.env import TRACER
 from com.helpers import await_, parse_date
 from awdb_com.types import StationDataDTO
 from datetime import datetime, timezone
@@ -71,6 +72,7 @@ class ResultCollection:
 
         return earliestDate, latestDate
 
+    @TRACER.start_as_current_span("fetch_all_snotel_data")
     def fetch_all_data(
         self,
         station_triplets: list[str],
@@ -85,7 +87,8 @@ class ResultCollection:
         if not station_triplets:
             return {}
 
-        metadata = self._fetch_metadata_for_elements(station_triplets, element_code)
+        with TRACER.start_as_current_span("fetch_all_snotel_metadata"):
+            metadata = self._fetch_metadata_for_elements(station_triplets, element_code)
         urls_for_full_data = []
         for station in metadata:
             if not station.data:
@@ -126,17 +129,19 @@ class ResultCollection:
             full_results_url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/data?beginDate={earliestDate.strftime('%Y-%m-%d %H:%M:%S')}&endDate={latestDate.strftime('%Y-%m-%d %H:%M:%S')}&elements={','.join(elements)}&stationTriplets={station.stationTriplet}"
             urls_for_full_data.append(full_results_url)
 
-        result: dict[str, dict] = await_(
-            self.cache.get_or_fetch_group(urls_for_full_data, force_fetch)
-        )
+        with TRACER.start_as_current_span("fetch_snotel_api"):
+            result: dict[str, dict] = await_(
+                self.cache.get_or_fetch_group(urls_for_full_data, force_fetch)
+            )
         for url, res in result.items():
             assert "error" not in res, (url, res)
 
-        stationToData: dict[str, StationDataDTO] = {}
-        for _url, datastreams in result.items():
-            for item in datastreams:
-                data = StationDataDTO.model_validate(item)
-                assert data.stationTriplet
-                stationToData[data.stationTriplet] = data
+        with TRACER.start_as_current_span("serialization"):
+            stationToData: dict[str, StationDataDTO] = {}
+            for _, datastreams in result.items():
+                for item in datastreams:
+                    data = StationDataDTO.model_validate(item)
+                    assert data.stationTriplet
+                    stationToData[data.stationTriplet] = data
 
         return stationToData
