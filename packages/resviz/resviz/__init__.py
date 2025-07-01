@@ -33,7 +33,7 @@ def run_subprocess(csv_url: str):
 
     # Open the CSV datasource
     csv_driver = ogr.GetDriverByName("CSV")
-    csv_ds = csv_driver.Open(f"/vsicurl/{csv_url}", 0) # 0 for update mode
+    csv_ds = csv_driver.Open(f"/vsicurl/{csv_url}", 0)  # 0 for update mode
     if csv_ds is None:
         LOGGER.warning(f"Could not open CSV file: {csv_url}")
         return
