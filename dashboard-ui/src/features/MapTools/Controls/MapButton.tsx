@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Basemap from '@/icons/Basemap';
+import Controls from '@/icons/Controls';
 import useMainStore, { Tools } from '@/lib/main';
 
 /**
@@ -21,12 +21,12 @@ export const MapButton: React.FC = () => {
     return (
         <button
             type="button"
-            aria-label="Show basemap selector"
+            aria-label="Show Controls"
             aria-disabled="false"
             onClick={onClick}
-            style={{ padding: '5px' }} // Styling must be inline
+            style={{ padding: '1px' }} // Styling must be inline
         >
-            <Basemap />
+            <Controls />
         </button>
     );
 };

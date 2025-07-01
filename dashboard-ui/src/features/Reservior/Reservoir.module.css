@@ -39,6 +39,11 @@
     width: 100%;
 }
 
+.PDFButton {
+    width: 165px;
+    margin: 0 auto;
+}
+
 .loaderGroup {
     height: 70vh;
     width: 100%;
@@ -88,5 +93,19 @@
     .chartContainer {
         min-width: unset;
         max-width: unset;
+    }
+}
+
+@media screen and (max-width: 568px) {
+    .infoPanel {
+        width: 100%;
+    }
+
+    .graphicPanel {
+        width: 100%;
+    }
+
+    .infoChartGroup {
+        flex-direction: column-reverse;
     }
 }

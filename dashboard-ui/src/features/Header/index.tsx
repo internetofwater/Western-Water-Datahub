@@ -57,8 +57,11 @@ const Header: React.FC = () => {
                                     height={50}
                                 />
                             </Box>
-                            <Divider orientation="vertical" />
-                            <Group gap="xl">
+                            <Divider
+                                orientation="vertical"
+                                className={styles.divider}
+                            />
+                            <Group>
                                 <Region />
                                 <Basin />
                                 {/* Group these so they move together when decreasing screen width */}

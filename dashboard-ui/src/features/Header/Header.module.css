@@ -35,5 +35,8 @@
     height: 50px;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (max-width: 934px) {
+    .divider {
+        visibility: hidden;
+    }
 }

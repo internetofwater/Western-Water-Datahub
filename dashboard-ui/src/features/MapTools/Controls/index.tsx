@@ -8,6 +8,7 @@ import {
     CardSection,
     CloseButton,
     Group,
+    Loader,
     Select,
     Stack,
     Switch,
@@ -182,28 +183,34 @@ const Controls: React.FC = () => {
                     />
                 </Group>
             </CardSection>
-            <CardSection inheritPadding py="md">
-                <Stack>
-                    <Switch
-                        label="Show Teacups"
-                        checked={showTeacups}
-                        onClick={() => setShowTeacups(!showTeacups)}
-                    />
-                    <Select
-                        id="basinSelector"
-                        data={RasterBaseLayerIconObj.map((obj) => ({
-                            value: obj.id,
-                            label: obj.friendlyName,
-                        }))}
-                        value={baseLayer}
-                        aria-label="Select a Base Layer"
-                        placeholder="Select a Base Layer"
-                        onChange={(_value) =>
-                            handleChange(_value as RasterBaseLayers)
-                        }
-                    />
-                </Stack>
-            </CardSection>
+            {map ? (
+                <CardSection inheritPadding py="md">
+                    <Stack>
+                        <Switch
+                            label="Show Teacups"
+                            checked={showTeacups}
+                            onClick={() => setShowTeacups(!showTeacups)}
+                        />
+                        <Select
+                            id="basinSelector"
+                            data={RasterBaseLayerIconObj.map((obj) => ({
+                                value: obj.id,
+                                label: obj.friendlyName,
+                            }))}
+                            value={baseLayer}
+                            aria-label="Select a Base Layer"
+                            placeholder="Select a Base Layer"
+                            onChange={(_value) =>
+                                handleChange(_value as RasterBaseLayers)
+                            }
+                        />
+                    </Stack>
+                </CardSection>
+            ) : (
+                <Group w={200} h={100} justify="center" align="center">
+                    <Loader />
+                </Group>
+            )}
         </Card>
     );
 };

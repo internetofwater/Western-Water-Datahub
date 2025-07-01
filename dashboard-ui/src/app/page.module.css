@@ -90,22 +90,29 @@
     }
 }
 
-@media (max-width: 1103px) {
+@media (max-width: 1200px) {
     .main {
-        height: calc(100vh - 113px);
+        height: unset;
+    }
+}
+@media (max-width: 1071px) {
+    .main {
         margin-top: 113px;
     }
 }
-@media (max-width: 966px) {
+@media (max-width: 934px) {
     .main {
-        height: calc(100vh - 164px);
         margin-top: 164px;
     }
 }
-@media (max-width: 776px) {
+@media (max-width: 744px) {
     .main {
-        height: calc(100vh - 232px);
-        margin-top: 232px;
+        margin-top: 215px;
+    }
+}
+@media (max-width: 477px) {
+    .main {
+        margin-top: 268px;
     }
 }
 

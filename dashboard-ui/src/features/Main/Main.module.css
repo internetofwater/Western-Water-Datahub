@@ -6,14 +6,34 @@
 .mapContainer {
     display: grid;
     position: relative;
+    width: 100%;
 }
 
 .mapContainerSmall {
-    width: 100%;
     height: calc(100vh - 433px);
 }
 
 .mapContainerLarge {
-    width: 100%;
     height: calc(100vh - 85px);
+}
+
+@media (max-width: 1071px) {
+    .mapContainerLarge {
+        height: calc(100vh - 121px);
+    }
+}
+@media (max-width: 934px) {
+    .mapContainerLarge {
+        height: calc(100vh - 171px);
+    }
+}
+@media (max-width: 744px) {
+    .mapContainerLarge {
+        height: calc(100vh - 224px);
+    }
+}
+@media (max-width: 477px) {
+    .mapContainerLarge {
+        height: calc(100vh - 276px);
+    }
 }

@@ -65,7 +65,7 @@ export const Info: React.FC<Props> = (props) => {
             gap="xs"
             className={styles.infoPanel}
         >
-            <Stack gap="xs" w="100%">
+            <Stack gap="xs" w="100%" className={styles.infoGroup}>
                 <Box>
                     <Text>Last Updated Date: {lastUpdateDate}</Text>
                     <TextBlock w="100%">

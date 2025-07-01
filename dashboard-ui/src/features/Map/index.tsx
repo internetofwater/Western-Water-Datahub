@@ -157,6 +157,18 @@ const MainMap: React.FC<Props> = (props) => {
             loadImages(map);
         });
 
+        map.resize();
+        map.fitBounds(
+            [
+                [-125, 24], // Southwest corner (approx. California/Baja)
+                [-96.5, 49], // Northeast corner (MN/ND border)
+            ],
+            {
+                padding: 60, // adds buffer around the edges
+                animate: false,
+            }
+        );
+
         return () => {
             map.off('click', SubLayerId.RegionsFill, handleRegionsClick);
             map.off('click', SubLayerId.BasinsFill, handleBasinsClick);
@@ -327,7 +339,7 @@ const MainMap: React.FC<Props> = (props) => {
                     projection: 'mercator',
                     center: INITIAL_CENTER,
                     zoom: INITIAL_ZOOM,
-                    minZoom: 4,
+                    minZoom: 1,
                     maxZoom: 20,
                 }}
                 controls={{

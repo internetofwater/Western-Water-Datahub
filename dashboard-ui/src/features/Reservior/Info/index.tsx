@@ -116,7 +116,11 @@ const InfoWrapper: React.FC<Props> = (props) => {
                     />
                 </Group>
             </Group>
-            <Group align="center" justify="space-between">
+            <Group
+                align="center"
+                justify="space-between"
+                className={styles.infoChartGroup}
+            >
                 <Info
                     reservoirProperties={reservoirProperties}
                     accessToken={accessToken}
