@@ -14,6 +14,7 @@ import {
     ComplexReservoirProperties,
     ReservoirConfigs,
     TeacupStepExpression,
+    ZoomCapacityArray,
 } from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/consts';
 import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
@@ -115,13 +116,7 @@ export const getReservoirIconImageExpression = (
             ['zoom'],
             TeacupStepExpression,
 
-            ...[
-                [0, 2010000],
-                [4, 465000],
-                [5, 320000],
-                [7, 65000],
-                [8, -1],
-            ].flatMap(([zoom, capacity]) => [
+            ...ZoomCapacityArray.flatMap(([zoom, capacity]) => [
                 zoom, // At this zoom
                 [
                     // Evaluate this expression
@@ -134,6 +129,36 @@ export const getReservoirIconImageExpression = (
         ],
     ];
 };
+
+// export const getCapacityStepExpression = (values: number[]) => {
+//     return [
+//         'step',
+//         ['var', 'capacity'],
+//         values[0],
+//         CapacityThresholds[0],
+//         values[1],
+//         CapacityThresholds[1],
+//         values[2],
+//         CapacityThresholds[2],
+//         values[3],
+//     ];
+// };
+
+// export const getZoomCapacityExpression = (zoomValues: number[][]) => {
+//     return [
+//         'let',
+//         'capacity',
+//         ['coalesce', ['get', 'Active Capacity'], 1],
+//         [
+//             'step',
+//             ['zoom'],
+//             ...zoomValues.flatMap(([zoom, ...capacityValues]) => [
+//                 zoom,
+//                 getCapacityStepExpression(capacityValues),
+//             ]),
+//         ],
+//     ];
+// };
 
 /**
  *

@@ -13,11 +13,21 @@ import {
 } from '@mantine/core';
 import { useColorScheme } from '@mantine/hooks';
 import styles from '@/features/Header/Header.module.css';
+import { useEffect } from 'react';
+import useMainStore from '@/lib/main';
 
 const DarkModeToggle: React.FC = () => {
     const preferredColorScheme = useColorScheme();
     const { setColorScheme } = useMantineColorScheme();
+    const setAppColorScheme = useMainStore((state) => state.setColorScheme);
     const computedColorScheme = useComputedColorScheme(preferredColorScheme);
+
+    useEffect(() => {
+        if (!computedColorScheme) {
+            return;
+        }
+        setAppColorScheme(computedColorScheme);
+    }, [computedColorScheme]);
 
     return (
         // Adjust style to handle logo positioning

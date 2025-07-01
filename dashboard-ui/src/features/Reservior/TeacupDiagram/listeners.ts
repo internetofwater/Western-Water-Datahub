@@ -20,7 +20,6 @@ export const handleStorageEnter = () => {
     const storageTextElement = document.getElementById(storageTextId);
 
     if (storageElement && storageTextElement) {
-        storageElement.setAttribute('stroke-width', '2');
         storageTextElement.setAttribute('display', 'inline');
     }
 };
@@ -37,7 +36,6 @@ export const handleStorageLeave = (_showLabels: boolean = false) => {
     const storageTextElement = document.getElementById(storageTextId);
 
     if (storageElement && storageTextElement) {
-        storageElement.setAttribute('stroke-width', '0');
         storageTextElement.setAttribute('display', 'none');
     }
 };
@@ -65,7 +63,6 @@ export const handleCapacityLeave = (_showLabels: boolean = false) => {
     const capacityTextElement = document.getElementById(capacityTextId);
 
     if (capacityElement && capacityTextElement) {
-        capacityElement.setAttribute('stroke-width', '0');
         capacityTextElement.setAttribute('display', 'none');
     }
 };

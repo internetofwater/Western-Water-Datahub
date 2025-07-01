@@ -10,9 +10,8 @@ import { SourceId } from '@/features/Map/consts';
 import { getReservoirConfig } from '@/features/Map/utils';
 import { Chart } from '@/features/Reservior/Chart';
 import { Chart as ChartJS } from 'chart.js';
-import { Info } from '@/features/Reservior/Info';
+import Info from '@/features/Reservior/Info';
 import useMainStore, { Reservoir as ReservoirType } from '@/lib/main';
-import { TeacupDiagram } from '@/features/Reservior/TeacupDiagram';
 
 type Props = {
     reservoir: ReservoirType;
@@ -73,7 +72,7 @@ const Reservoir: React.FC<Props> = (props) => {
         <>
             {reservoirProperties && config && (
                 <>
-                    <GridCol span={{ base: 12, md: 4 }} order={3}>
+                    <GridCol span={{ sm: 12, lg: 7 }} order={3}>
                         <Info
                             reservoirProperties={reservoirProperties}
                             accessToken={accessToken}
@@ -82,13 +81,7 @@ const Reservoir: React.FC<Props> = (props) => {
                             config={config}
                         />
                     </GridCol>
-                    <GridCol span={{ base: 12, md: 4 }} order={4}>
-                        <TeacupDiagram
-                            reservoirProperties={reservoirProperties}
-                            config={config}
-                        />
-                    </GridCol>
-                    <GridCol span={{ base: 12, md: 4 }} order={5}>
+                    <GridCol span={{ sm: 12, lg: 5 }} order={5}>
                         <Chart id={reservoirProperties._id} ref={chartRef} />
                     </GridCol>
                 </>

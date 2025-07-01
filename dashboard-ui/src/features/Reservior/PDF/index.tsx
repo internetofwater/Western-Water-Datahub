@@ -155,6 +155,7 @@ const PDF: React.FC<Props> = (props) => {
                 variant="default"
                 onClick={open}
                 disabled={!mapImage || !chartImage || !diagramImage}
+                className={styles.PDFButton}
             >
                 Download Report
             </Button>

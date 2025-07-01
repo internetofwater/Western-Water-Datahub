@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { TspanData } from './types';
+
 /**
  *
  * @function
@@ -87,6 +89,30 @@ export const addLineConstructor =
         return lineElement;
     };
 
+const appendTspans = (textElement: SVGTextElement, tspanData: TspanData[]) => {
+    for (const data of tspanData) {
+        const tspan = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'tspan'
+        );
+
+        if (data.dx) tspan.setAttribute('dx', data.dx);
+        if (data.dy) tspan.setAttribute('dy', data.dy);
+        if (data['font-size'])
+            tspan.setAttribute('font-size', data['font-size']);
+        if (data['font-weight'])
+            tspan.setAttribute('font-weight', data['font-weight']);
+
+        if (typeof data.content === 'string') {
+            tspan.textContent = data.content;
+        } else if (Array.isArray(data.content)) {
+            appendTspans(tspan as SVGTextElement, data.content);
+        }
+
+        textElement.appendChild(tspan);
+    }
+};
+
 /**
  *
  * @function
@@ -106,6 +132,7 @@ export const addTextConstructor =
         );
         textElement.setAttribute('id', id);
 
+        // TODO: replace this if rendering issues appear
         textElement.innerHTML = text;
 
         textElement.setAttribute('x', '35%'); // (160 / 2) / 230 = ~0.35
@@ -133,7 +160,7 @@ export const addLabelConstructor =
     ) =>
     (
         id: string,
-        text: string,
+        text: TspanData[],
         value: number,
         color: string,
         display: boolean = true,
@@ -145,7 +172,7 @@ export const addLabelConstructor =
         );
         textElement.setAttribute('id', id);
 
-        textElement.innerHTML = text;
+        appendTspans(textElement, text);
 
         const lineStart = calculateXPosition(value);
         const lineEnd = width - lineStart;

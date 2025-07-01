@@ -18,6 +18,7 @@ const mockProps = {
         storageProperty: 'storage',
         capacityProperty: 'capacity',
     } as ReservoirConfig,
+    showLabels: true,
 };
 
 describe('Graphic component', () => {

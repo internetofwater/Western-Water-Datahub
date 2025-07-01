@@ -3,15 +3,23 @@
  * SPDX-License-Identifier: MIT
  */
 
-.mapToolsContainer {
-    position: absolute;
-    top: 138px;
-    right: 62px;
-    z-index: 1;
+.mapToolsContainerRight {
+    grid-area: 1 / 1;
+    z-index: 2;
+    justify-self: flex-end;
+    margin-right: 49px;
+    margin-top: 8px;
+}
+.mapToolsContainerLeft {
+    grid-area: 1 / 1;
+    z-index: 2;
+    justify-self: flex-start;
+    margin-left: 49px;
+    margin-top: 8px;
 }
 
 .basemapSelectorContainer {
-    min-width: 210px;
+    width: 210px;
 }
 
 .mapToolTitle {
@@ -28,4 +36,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.controlsContainer {
+    width: 215px;
 }

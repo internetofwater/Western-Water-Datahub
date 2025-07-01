@@ -34,10 +34,11 @@
 
 .main {
     width: 100vw;
-    height: 100%;
+    /* height: 100%; */
+    height: calc(100vh - 76px);
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    margin-top: 128px;
+    margin-top: 76px;
 }
 
 .main code {
@@ -86,6 +87,32 @@
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
+    }
+}
+
+@media (max-width: 1200px) {
+    .main {
+        height: unset;
+    }
+}
+@media (max-width: 1071px) {
+    .main {
+        margin-top: 113px;
+    }
+}
+@media (max-width: 934px) {
+    .main {
+        margin-top: 164px;
+    }
+}
+@media (max-width: 744px) {
+    .main {
+        margin-top: 215px;
+    }
+}
+@media (max-width: 477px) {
+    .main {
+        margin-top: 268px;
     }
 }
 
