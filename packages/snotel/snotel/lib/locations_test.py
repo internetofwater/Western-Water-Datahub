@@ -2,7 +2,21 @@
 # SPDX-License-Identifier: MIT
 
 
-from snotel.lib.locations import SnotelLocationCollection
+from snotel.lib.locations import (
+    SnotelLocationCollection,
+    get_and_remove_huc_from_properties,
+)
+
+
+def test_get_huc():
+    properties = [
+        ("test", 12),
+        ("huc", "170601050101"),
+    ]
+    assert get_and_remove_huc_from_properties(properties) == "170601050101"
+
+    properties = [("test", 12), ("test2", None)]
+    assert not get_and_remove_huc_from_properties(properties)
 
 
 def test_filter_by_id():
