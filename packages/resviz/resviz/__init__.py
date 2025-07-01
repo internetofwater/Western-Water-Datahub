@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import click
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from dateutil.parser import parse as dateparse
 
 import logging
@@ -57,6 +57,10 @@ def run_subprocess(csv_url: str):
             layer_def.GetFieldDefn(i).GetName().strip(): feature.GetField(i).strip()
             for i in range(layer_def.GetFieldCount())
         }
+
+        row["DataDate"] = datetime.strptime(row["DataDate"], "%m/%d/%Y").strftime(
+            "%Y-%m-%d"
+        )
 
         # Upsert data value
         create_feature(pg_layer, row, 3)

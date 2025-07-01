@@ -1,8 +1,7 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from copy import deepcopy
-from datetime import timedelta, date, datetime
+from datetime import timedelta, date
 from osgeo import ogr, gdal
 import re
 import requests
@@ -28,7 +27,6 @@ def date_range(start_date: date, end_date: date) -> Iterator[date]:
 
 def create_feature(pg_layer, row, parameter):
     """Create postgres feature from a CSV row"""
-    row = deepcopy(row)
     p_name = "Lake/Reservoir Storage"
 
     match parameter:
@@ -48,9 +46,6 @@ def create_feature(pg_layer, row, parameter):
             p_val = "DataValue"
             p_suffix = "value"
 
-    row["DataDate"] = datetime.strptime(row["DataDate"], "%m/%d/%Y").strftime(
-        "%Y-%m-%d"
-    )
     row["SiteShortName"] = re.search(r"/([^/]+)\.png$", row["TeacupUrl"]).group(1)  # pyright: ignore
 
     feature = ogr.Feature(pg_layer.GetLayerDefn())
