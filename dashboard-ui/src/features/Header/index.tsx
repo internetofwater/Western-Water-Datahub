@@ -4,10 +4,8 @@
  */
 'use client';
 
-import { Box, Button, Collapse, Group, Paper } from '@mantine/core';
+import { Box, Divider, Group, Paper } from '@mantine/core';
 import styles from '@/features/Header/Header.module.css';
-import { useDisclosure } from '@mantine/hooks';
-import { Filters } from '@/features/Header/Filters';
 import { Region } from '@/features/Header/Selectors/Region';
 import { Reservoir } from '@/features/Header/Selectors/Reservoir';
 import { Suspense } from 'react';
@@ -25,8 +23,6 @@ const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
  * @component
  */
 const Header: React.FC = () => {
-    const [opened, { toggle }] = useDisclosure(false);
-
     return (
         <>
             <Box component="div" className={styles.topBarContainer}>
@@ -36,47 +32,46 @@ const Header: React.FC = () => {
                     className={`${styles.topBarPaper} ${styles.logoBarPaper}`}
                 >
                     <Group justify="space-between" align="center">
-                        <Box component="span" darkHidden>
-                            <Image
-                                src={'/BofR-logo-dark.png'}
-                                alt="United States Bureau of Reclamation Logo"
-                                width={157}
-                                height={50}
-                            />
-                        </Box>
-                        <Box component="span" lightHidden>
-                            <Image
-                                src={'/BofR-logo-white.png'}
-                                alt="United States Bureau of Reclamation Logo"
-                                width={157}
-                                height={50}
-                            />
-                        </Box>
+                        <Group>
+                            <Box
+                                component="span"
+                                darkHidden
+                                className={styles.logoContainer}
+                            >
+                                <Image
+                                    src={'/BofR-logo-dark.png'}
+                                    alt="United States Bureau of Reclamation Logo"
+                                    width={157}
+                                    height={50}
+                                />
+                            </Box>
+                            <Box
+                                component="span"
+                                lightHidden
+                                className={styles.logoContainer}
+                            >
+                                <Image
+                                    src={'/BofR-logo-white.png'}
+                                    alt="United States Bureau of Reclamation Logo"
+                                    width={157}
+                                    height={50}
+                                />
+                            </Box>
+                            <Divider orientation="vertical" />
+                            <Group gap="xl">
+                                <Region />
+                                <Basin />
+                                {/* Group these so they move together when decreasing screen width */}
+                                <Group>
+                                    <Reservoir />
+                                    <ClearAll />
+                                </Group>
+                            </Group>
+                        </Group>
                         <Suspense>
                             <DarkModeToggle />
                         </Suspense>
                     </Group>
-                </Paper>
-            </Box>
-            <Box component="div" className={styles.topBarContainer}>
-                <Paper radius={0} shadow="xs" className={styles.topBarPaper}>
-                    <Group justify="space-between">
-                        <Group gap="xl">
-                            <Region />
-                            <Basin />
-                            {/* Group these so they move together when decreasing screen width */}
-                            <Group>
-                                <Reservoir />
-                                <ClearAll />
-                            </Group>
-                        </Group>
-                        <Button variant="default" onClick={toggle}>
-                            Show Filters
-                        </Button>
-                    </Group>
-                    <Collapse in={opened}>
-                        <Filters />
-                    </Collapse>
                 </Paper>
             </Box>
         </>

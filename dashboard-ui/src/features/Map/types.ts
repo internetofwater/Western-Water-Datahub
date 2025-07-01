@@ -96,3 +96,10 @@ export type ReservoirConfig = {
     regionConnectorProperty: string;
     connectedLayers: (LayerId | SubLayerId)[];
 };
+
+export enum RasterBaseLayers {
+    Drought = 'drought',
+    Precipitation = 'precipitation',
+    Temperature = 'temperature',
+    None = 'none',
+}

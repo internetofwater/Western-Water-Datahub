@@ -11,6 +11,7 @@ import { create } from 'zustand';
 export enum Tools {
     BasemapSelector = 'basemap-selector',
     Print = 'print',
+    Controls = 'controls',
 }
 
 export type ReservoirStorageData = Array<{ x: string; y: number }>;
@@ -46,6 +47,7 @@ export interface MainState {
     tools: {
         [Tools.BasemapSelector]: boolean;
         [Tools.Print]: boolean;
+        [Tools.Controls]: boolean;
     };
     setOpenTools: (tool: Tools, open: boolean) => void;
 }
@@ -69,6 +71,7 @@ const useMainStore = create<MainState>()((set) => ({
     tools: {
         [Tools.BasemapSelector]: false,
         [Tools.Print]: false,
+        [Tools.Controls]: true,
     },
     setOpenTools: (tool, open) =>
         set((state) => ({

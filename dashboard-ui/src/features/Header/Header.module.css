@@ -16,11 +16,11 @@
 }
 
 .logoBarPaper {
-    height: 67px;
+    min-height: 67px;
 }
 
 .darkModeToggleContainer {
-    padding-bottom: 7px;
+    margin-left: auto;
 }
 
 .filterBackground {
@@ -29,6 +29,10 @@
 
 .filterGroupContainer {
     margin-top: 1rem;
+}
+
+.logoContainer {
+    height: 50px;
 }
 
 @media (prefers-color-scheme: dark) {

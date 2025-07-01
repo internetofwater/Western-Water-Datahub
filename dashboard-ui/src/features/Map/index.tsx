@@ -24,6 +24,7 @@ import {
 } from '@/features/Map/utils';
 import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
+import { MapButton as Controls } from '@/features/MapTools/Controls/MapButton';
 import CustomControl from '@/components/Map/tools/CustomControl';
 import { basemaps } from '@/components/Map/consts';
 import { LngLatLike, MapMouseEvent } from 'mapbox-gl';
@@ -344,6 +345,10 @@ const MainMap: React.FC<Props> = (props) => {
                             )
                         ),
                         position: 'top-right',
+                    },
+                    {
+                        control: new CustomControl(<Controls />),
+                        position: 'top-left',
                     },
                 ]}
             />

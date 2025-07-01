@@ -77,7 +77,7 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'raster',
             tiles: [
-                'https://ndmcgeodata.unl.edu/cgi-bin/mapserv.exe?map=/ms4w/apps/usdm/map/usdm_current_wms.map&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=usdm_current&WIDTH=640&HEIGHT=480&crs=EPSG:3857&styles=default&format=image/png&&bbox={bbox-epsg-3857}',
+                'https://api.wwdh.internetofwater.app/collections/us-drought-monitor/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}',
             ],
             tileSize: 256,
         },
@@ -88,9 +88,7 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'raster',
             tiles: [
-                'https://mapservices.weather.noaa.gov/vector/services/outlooks/cpc_6_10_day_outlk/MapServer/WMSServer?' +
-                    'service=WMS&request=GetMap&version=1.3.0&layers=0&styles=&format=image/png&transparent=true&' +
-                    'height=256&width=256&crs=EPSG:3857&bbox={bbox-epsg-3857}',
+                'https://api.wwdh.internetofwater.app/collections/noaa-precip-6-10-day/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}',
             ],
             tileSize: 256,
         },
@@ -101,9 +99,7 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'raster',
             tiles: [
-                'https://mapservices.weather.noaa.gov/vector/services/outlooks/cpc_6_10_day_outlk/MapServer/WMSServer?' +
-                    'service=WMS&request=GetMap&version=1.3.0&layers=1&styles=&format=image/png&transparent=true&' +
-                    'height=256&width=256&crs=EPSG:3857&bbox={bbox-epsg-3857}',
+                'https://api.wwdh.internetofwater.app/collections/noaa-temp-6-10-day/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}',
             ],
             tileSize: 256,
         },
@@ -607,6 +603,24 @@ export const layerDefinitions: MainLayerDefinition[] = [
     // Use this as the master object to define layer hierarchies. Sublayers are nested layer definitions,
     // meaning they have their own click and hover listeners. The order of layers and sublayers dictates the draw
     // order on the map.
+    {
+        id: LayerId.USDroughtMonitor,
+        config: getLayerConfig(LayerId.USDroughtMonitor),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.NOAAPrecipSixToTen,
+        config: getLayerConfig(LayerId.NOAAPrecipSixToTen),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.NOAATempSixToTen,
+        config: getLayerConfig(LayerId.NOAATempSixToTen),
+        controllable: false,
+        legend: false,
+    },
     {
         id: LayerId.Regions,
         config: getLayerConfig(LayerId.Regions),

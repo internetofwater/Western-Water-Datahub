@@ -3,12 +3,17 @@
  * SPDX-License-Identifier: MIT
  */
 
+.mapContainer {
+    display: grid;
+    position: relative;
+}
+
 .mapContainerSmall {
     width: 100%;
-    height: calc(100vh - 480px);
+    height: calc(100vh - 433px);
 }
 
 .mapContainerLarge {
     width: 100%;
-    height: calc(100vh - 136px);
+    height: calc(100vh - 85px);
 }

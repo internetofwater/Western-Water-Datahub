@@ -22,8 +22,8 @@ export enum SourceId {
     USACEEDRReservoirs = 'usace-edr',
     SnowWater = 'snow-water',
     USDroughtMonitor = 'us-drought-monitor',
-    NOAAPrecipSixToTen = 'noaa-6-10-precipitation',
-    NOAATempSixToTen = 'noaa-6-10-temperature',
+    NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
+    NOAATempSixToTen = 'noaa-temp-6-10-day',
 }
 
 export enum LayerId {
@@ -32,8 +32,8 @@ export enum LayerId {
     RiseEDRReservoirs = 'rise-edr-reservoir-points',
     SnowWater = 'snow-water',
     USDroughtMonitor = 'us-drought-monitor',
-    NOAAPrecipSixToTen = 'noaa-6-10-precipitation',
-    NOAATempSixToTen = 'noaa-6-10-temperature',
+    NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
+    NOAATempSixToTen = 'noaa-temp-6-10-day',
 }
 
 export enum SubLayerId {

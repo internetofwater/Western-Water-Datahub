@@ -65,11 +65,11 @@ const Main: React.FC<Props> = (props) => {
                 order={{ base: 1, md: 2 }}
             >
                 <Box
-                    className={
+                    className={`${styles.mapContainer} ${
                         hasSelectedReservoir
                             ? styles.mapContainerSmall
                             : styles.mapContainerLarge
-                    }
+                    }`}
                 >
                     <Map accessToken={accessToken} />
                     <MapTools />
