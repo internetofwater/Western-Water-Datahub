@@ -25,6 +25,7 @@ services:
 
   database:
     image: postgis/postgis:14-3.2-alpine
+    shm_size: 2g
     env_file:
       - .env.example
     ports:

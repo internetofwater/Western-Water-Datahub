@@ -8,10 +8,18 @@ FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
 # this is since we are not using buildkit and thus cannot cache to a mount dir on the host
 ENV UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=0 UV_NO_CACHE=true
 
+ARG DEB_PACKAGES="\
+    gdal-bin \
+    libgdal-dev \
+    git \
+    build-essential \
+    cron"
+
 WORKDIR /opt/pygeoapi
 
 # System dependencies for GDAL and others
-RUN apt-get update && apt-get install -y --no-install-recommends gdal-bin libgdal-dev git build-essential cron \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ${DEB_PACKAGES} \
     && apt-get clean && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 

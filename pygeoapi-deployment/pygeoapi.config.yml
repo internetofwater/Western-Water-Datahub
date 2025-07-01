@@ -443,62 +443,33 @@ resources:
     title: Reservoir drought conditions
     description: USBR Reservoir drought conditions
     keywords:
-      - temperature
-      - precipitation
+      - reservoir
+      - drought
     extents:
       spatial:
-        bbox: [-124.76, 41.13, -109.74, 48.99]
+        bbox: [-123.60518, 28.4667, -95.875, 48.8283]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     links:
       - <<: *default-link
         title: information
-        href: https://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/prism_v2
     providers:
-      - type: feature
-        name: PostgreSQL
+      - type: edr
+        name: pg_edr.edr.PostgresEDRProvider
         data: &postgres-data
           host: ${POSTGRES_HOST:-localhost}
           dbname: ${POSTGRES_DB:-edr}
           user: ${POSTGRES_USER:-postgres}
           password: ${POSTGRES_PASSWORD:-password}
         table: resviz
+        properties: [max_capacity]
+        edr_fields: # Required EDR Fields
+          id_field: ogc_fid
+          geom_field: geom
+          time_field: data_date
+      - type: feature
+        name: PostgreSQL
+        data: *postgres-data
+        table: resviz
         id_field: ogc_fid
         title_field: site_name
         geom_field: geom
-      - type: edr
-        name: pg_edr.edr.PostgresEDRProvider
-        data: *postgres-data
-        table: resviz
-
-        edr_fields: # Required EDR Fields
-          id_field: ogc_fid # Result identifier field
-          geom_field: geom # Result identifier field
-          time_field: data_date # Result time field
-
-
-  # noaa-nwm:
-  #   type: collection
-  #   title: NOAA National Water Model CONUS Retrospective Dataset
-  #   description: NOAA National Water Model CONUS Retrospective Dataset
-  #   keywords:
-  #     - national water model
-  #     - agriculture
-  #   extents:
-  #     spatial:
-  #       bbox: [-125.020836, 24.104166, -66.520836, 49.9375]
-  #       crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-  #   links:
-  #     - <<: *default-link
-  #       href: https://registry.opendata.aws/nwm-archive/
-  #   providers:
-  #     - type: edr
-  #       name: xarray-edr
-  #       data: s3://noaa-nwm-retrospective-3-0-pds/CONUS/zarr/chrtout.zarr
-  #       x_field: longitude
-  #       y_field: latitude
-  #       format:
-  #         name: zarr
-  #         mimetype: application/zip
-  #       options:
-  #         s3:
-  #           anon: true
