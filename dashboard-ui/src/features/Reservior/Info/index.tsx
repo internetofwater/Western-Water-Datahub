@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { ReservoirConfig } from '@/features/Map/types';
 import { Box, Group, Paper, Switch, Title, Text } from '@mantine/core';
 import { GeoJsonProperties } from 'geojson';
