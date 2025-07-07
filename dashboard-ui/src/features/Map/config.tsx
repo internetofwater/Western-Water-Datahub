@@ -330,7 +330,7 @@ export const getLayerConfig = (
                             .labelProperty,
                     ],
                     'text-anchor': 'bottom',
-                    'text-size': 14,
+                    'text-size': 18,
                     'symbol-sort-key': [
                         'coalesce',
                         [
@@ -427,7 +427,6 @@ export const getLayerConfig = (
                             ]),
                         ],
                     ],
-                    'text-halo-blur': 1,
                     'text-halo-color': '#000000',
                     'text-halo-width': 2,
                 },

@@ -4,7 +4,7 @@
  */
 'use client';
 
-import { Box, Divider, Group, Paper } from '@mantine/core';
+import { Box, Divider, Group, Paper, Select } from '@mantine/core';
 import styles from '@/features/Header/Header.module.css';
 import { Region } from '@/features/Header/Selectors/Region';
 import { Reservoir } from '@/features/Header/Selectors/Reservoir';
@@ -64,6 +64,17 @@ const Header: React.FC = () => {
                             <Group>
                                 <Region />
                                 <Basin />
+                                <Select
+                                    id="stateSelector"
+                                    searchable
+                                    data={[
+                                        { value: 'all', label: 'All States' },
+                                    ]}
+                                    value={'all'}
+                                    aria-label="Select a State"
+                                    placeholder="Select a State"
+                                    onChange={() => {}}
+                                />
                                 {/* Group these so they move together when decreasing screen width */}
                                 <Group>
                                     <Reservoir />
