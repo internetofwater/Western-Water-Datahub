@@ -37,7 +37,7 @@ class ResultCollection:
         url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/data?elements={element_code}&stationTriplets={station_triplets_comma_separated}"
         result = await_(self.cache.get_or_fetch_json(url))
         assert "error" not in result, result
-        return [StationDataDTO.model_validate(res) for res in result]
+        return [StationDataDTO(**res) for res in result]
 
     def _get_earliest_and_latest_date_from_filter(
         self, datetime_filter: str
@@ -140,7 +140,7 @@ class ResultCollection:
             stationToData: dict[str, StationDataDTO] = {}
             for _, datastreams in result.items():
                 for item in datastreams:
-                    data = StationDataDTO.model_validate(item)
+                    data = StationDataDTO(**item)
                     assert data.stationTriplet
                     stationToData[data.stationTriplet] = data
 

@@ -15,6 +15,7 @@ from com.geojson.helpers import (
 from com.helpers import (
     EDRFieldsMapping,
     OAFFieldsMapping,
+    dump_dataclass,
     parse_date,
     parse_z,
 )
@@ -111,7 +112,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         for loc in self.locations:
             feature: GeojsonFeatureDict = {
                 "type": "Feature",
-                "properties": loc.model_dump(exclude={"latitude", "longitude"}),
+                "properties": dump_dataclass(loc, exclude={"latitude", "longitude"}),
                 "geometry": {
                     "type": "Point",
                     "coordinates": [loc.longitude, loc.latitude],

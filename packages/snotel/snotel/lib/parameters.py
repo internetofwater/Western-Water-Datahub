@@ -21,7 +21,7 @@ class ParametersCollection:
                 "https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/reference-data"
             )
         )
-        self.parameters = ReferenceDataDTO.model_validate(result)
+        self.parameters = ReferenceDataDTO(**result)
 
     def get_fields(self) -> EDRFieldsMapping:
         fields: EDRFieldsMapping = {}

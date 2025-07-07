@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import asyncio
+import dataclasses
 import logging
 from typing import Any, Coroutine, Literal, Optional, Tuple, Type, TypedDict
 from annotated_types import T
@@ -163,3 +164,11 @@ def get_oaf_fields_from_pydantic_model(model: Type[BaseModel]) -> OAFFieldsMappi
 
         fields[name] = {"type": dataType}
     return fields
+
+
+# this has to use Any since dataclasses don't actually change any typing info
+def dump_dataclass(dc: Any, exclude: Optional[set[str]] = None):
+    asDict = dataclasses.asdict(dc)
+    for key in exclude or []:
+        asDict.pop(key)
+    return asDict

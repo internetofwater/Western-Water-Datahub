@@ -27,7 +27,7 @@ class SnotelLocationCollection(LocationCollection, LocationCollectionProtocolWit
         if select_properties:
             url += f"&elements={','.join(select_properties)}"
         result = await_(self.cache.get_or_fetch_json(url))
-        self.locations = [StationDTO.model_validate(res) for res in result]
+        self.locations = [StationDTO(**res) for res in result]
 
     def to_covjson(
         self,
