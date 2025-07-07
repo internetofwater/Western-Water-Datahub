@@ -30,21 +30,21 @@ def create_feature(pg_layer, row, parameter):
     p_name = "Lake/Reservoir Storage"
 
     match parameter:
-        case 0:
-            p_name = "Min" + p_name
-            p_val = "DataDateMin"
-            p_suffix = "min"
-        case 1:
-            p_name = "Avg" + p_name
+        case "p10":
+            p_name += " 10th Percentile"
+            p_val = "DataDateP10"
+            p_suffix = "P10"
+        case "avg":
+            p_name += " Average"
             p_val = "DataDateAvg"
             p_suffix = "avg"
-        case 2:
-            p_name = "Max" + p_name
-            p_val = "DataDateMax"
-            p_suffix = "max"
+        case "p90":
+            p_name += " 90th Percentile"
+            p_val = "DataDateP90"
+            p_suffix = "P90"
         case _:
             p_val = "DataValue"
-            p_suffix = "value"
+            p_suffix = "raw"
 
     row["SiteShortName"] = re.search(r"/([^/]+)\.png$", row["TeacupUrl"]).group(1)  # pyright: ignore
 
@@ -57,7 +57,7 @@ def create_feature(pg_layer, row, parameter):
     feature.SetField("doi_region", row["DoiRegion"])
     feature.SetField("value", row[p_val])
     feature.SetField("max_capacity", row["MaxCapacity"])
-    feature.SetField("parameter_unit", row["DataUnits"])
+    feature.SetField("parameter_unit", row["DataUnits"].lower())
     feature.SetField("data_date", row["DataDate"])
     feature.SetField("parameter_name", p_name)
     feature.SetField("parameter_id", parameter)

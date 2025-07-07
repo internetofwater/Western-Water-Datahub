@@ -63,9 +63,13 @@ def run_subprocess(csv_url: str):
         )
 
         # Upsert data value
-        create_feature(pg_layer, row, 3)
+        create_feature(pg_layer, row, "raw")
         # Upsert average value
-        create_feature(pg_layer, row, 1)
+        create_feature(pg_layer, row, "avg")
+        # Upsert 10th percentile value
+        create_feature(pg_layer, row, "p10")
+        # Upsert 90th percentile value
+        create_feature(pg_layer, row, "p90")
 
 
 @click.command()
