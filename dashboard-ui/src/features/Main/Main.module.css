@@ -14,10 +14,6 @@
     height: calc(100vh - 433px);
 }
 
-/* .mapContainerLarge {
-    height: calc(100vh - 85px);
-} */
-
 @media (max-width: 1362px) {
     .mapContainerSmall {
         height: calc(100vh - 463px);
@@ -28,13 +24,3 @@
         height: calc(100vh - 515px);
     }
 }
-/* @media (max-width: 1035px) {
-    .mapContainerSmall {
-        height: calc(100vh - 224px);
-    }
-}
-@media (max-width: 592px) {
-    .mapContainerSmall {
-        height: calc(100vh - 276px);
-    }
-} */

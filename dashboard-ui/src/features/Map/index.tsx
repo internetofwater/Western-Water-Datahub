@@ -143,7 +143,6 @@ const MainMap: React.FC<Props> = (props) => {
                     });
                 }
             }
-            // }
         };
 
         map.on('click', SubLayerId.RegionsFill, handleRegionsClick);
@@ -157,14 +156,15 @@ const MainMap: React.FC<Props> = (props) => {
             loadImages(map);
         });
 
+        // Resize and fit bounds to ensure consistent loading behavior in all screen sizes
         map.resize();
         map.fitBounds(
             [
-                [-125, 24], // Southwest corner (approx. California/Baja)
+                [-125, 24], // Southwest corner (California/Baja)
                 [-96.5, 49], // Northeast corner (MN/ND border)
             ],
             {
-                padding: 60, // adds buffer around the edges
+                padding: 60,
                 animate: false,
             }
         );
