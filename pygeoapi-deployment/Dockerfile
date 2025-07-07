@@ -8,10 +8,18 @@ FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
 # this is since we are not using buildkit and thus cannot cache to a mount dir on the host
 ENV UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=0 UV_NO_CACHE=true
 
+ARG DEB_PACKAGES="\
+    gdal-bin \
+    libgdal-dev \
+    git \
+    build-essential \
+    cron"
+
 WORKDIR /opt/pygeoapi
 
 # System dependencies for GDAL and others
-RUN apt-get update && apt-get install -y --no-install-recommends libgdal-dev git build-essential \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ${DEB_PACKAGES} \
     && apt-get clean && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
@@ -27,6 +35,11 @@ COPY packages /opt/pygeoapi/packages/
 RUN uv sync --all-packages --inexact 
 
 COPY pygeoapi-deployment/ /opt/pygeoapi/pygeoapi-deployment/
+
+RUN cp /opt/pygeoapi/packages/resviz/resviz.crontab /etc/cron.d/resviz-cron && \
+    chmod 0644 /etc/cron.d/resviz-cron && \
+    crontab /etc/cron.d/resviz-cron && \
+    touch /var/log/resviz-cron.log
 
 # Set up environment
 ENV PATH="/opt/pygeoapi/.venv/bin:$PATH"

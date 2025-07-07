@@ -7,7 +7,7 @@ from awdb_forecasts.lib.forecasts import ForecastResultCollection
 from com.helpers import EDRFieldsMapping
 from com.protocols.covjson import CovjsonBuilderProtocol
 from covjson_pydantic.coverage import Coverage, CoverageCollection
-from covjson_pydantic.parameter import Parameter
+from covjson_pydantic.parameter import Parameter, Parameters
 from covjson_pydantic.unit import Unit
 from covjson_pydantic.observed_property import ObservedProperty
 from covjson_pydantic.domain import Domain, Axes, ValuesAxis, DomainType
@@ -143,7 +143,7 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
         covCol = CoverageCollection(
             coverages=coverages,
             domainType=DomainType.point_series,
-            parameters=parameters,
+            parameters=Parameters(root=parameters),
         )
         return cast(
             CoverageCollectionDict, covCol.model_dump(by_alias=True, exclude_none=True)

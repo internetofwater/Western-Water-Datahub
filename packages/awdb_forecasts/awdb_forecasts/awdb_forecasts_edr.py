@@ -36,7 +36,6 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         self.instances = []
 
     @otel_trace()
-    @BaseEDRProvider.register()
     def locations(
         self,
         location_id: Optional[str] = None,
@@ -78,7 +77,6 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         return self._fields
 
     @otel_trace()
-    @BaseEDRProvider.register()
     def cube(
         self,
         bbox: list,
@@ -107,7 +105,6 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
     @otel_trace()
-    @BaseEDRProvider.register()
     def area(
         self,
         # Well known text (WKT) representation of the geometry for the area
@@ -126,7 +123,6 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         return collection.to_covjson(self.get_fields(), datetime_, select_properties)
 
-    @BaseEDRProvider.register()
     def items(self, **kwargs):
         # We have to define this since pygeoapi has a limitation and needs both EDR and OAF for items
         # https://github.com/geopython/pygeoapi/issues/1748

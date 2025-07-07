@@ -23,3 +23,5 @@ node_modules/
 
 *.sql.gz
 *.sql.zip
+
+!schema.sql

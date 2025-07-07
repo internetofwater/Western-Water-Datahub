@@ -10,6 +10,8 @@ services:
       dockerfile: pygeoapi-deployment/Dockerfile
     ports:
       - 5005:80
+    env_file:
+      - .env.example
     environment:
       - REDIS_HOST=redis
       - PYGEOAPI_URL=http://localhost:5005
@@ -17,8 +19,19 @@ services:
       - OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-false}
     depends_on:
       - redis
+      - database
     profiles:
       - production
+
+  database:
+    image: postgis/postgis:14-3.2-alpine
+    shm_size: 2g
+    env_file:
+      - .env.example
+    ports:
+      - 5432:5432
+    volumes:
+      - ./packages/resviz/schema.sql:/docker-entrypoint-initdb.d/schema.sql
 
   redis:
     image: redislabs/redismod

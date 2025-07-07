@@ -1,0 +1,3 @@
+PATH=/opt/pygeoapi/.venv/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+50 0 * * * /opt/pygeoapi/packages/resviz/resviz.sh >> /var/log/resviz-cron.log 2>&1
