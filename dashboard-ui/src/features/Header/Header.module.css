@@ -36,7 +36,7 @@
     height: 50px;
 }
 
-@media (max-width: 934px) {
+@media (max-width: 1225px) {
     .divider {
         visibility: hidden;
     }

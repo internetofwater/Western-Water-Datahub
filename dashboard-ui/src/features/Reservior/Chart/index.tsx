@@ -16,10 +16,12 @@ import { Box, Group, Loader, Paper, Radio, Space, Title } from '@mantine/core';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { Chart as ChartJS, ChartData } from 'chart.js';
 import useMainStore from '@/lib/main';
+import { ReservoirConfig } from '@/features/Map/types';
 
 type Props = {
     id: number;
     ref: RefObject<ChartJS<'line', Array<{ x: string; y: number }>> | null>;
+    config: ReservoirConfig;
 };
 
 /**
@@ -27,7 +29,7 @@ type Props = {
  * @component
  */
 export const Chart: React.FC<Props> = (props) => {
-    const { ref, id } = props;
+    const { ref, id, config } = props;
 
     const [data, setData] = useState<Array<{ x: string; y: number }>>([]);
     const [loading, setLoading] = useState(true);
@@ -65,7 +67,7 @@ export const Chart: React.FC<Props> = (props) => {
 
             const coverageCollection =
                 await edrService.getLocation<CoverageCollection>(
-                    'rise-edr',
+                    config.id,
                     String(id),
                     {
                         signal: controller.current.signal,

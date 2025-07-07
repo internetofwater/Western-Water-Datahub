@@ -82,7 +82,11 @@ const Reservoir: React.FC<Props> = (props) => {
                         />
                     </GridCol>
                     <GridCol span={{ sm: 12, lg: 5 }} order={5}>
-                        <Chart id={reservoirProperties._id} ref={chartRef} />
+                        <Chart
+                            id={reservoirProperties._id}
+                            ref={chartRef}
+                            config={config}
+                        />
                     </GridCol>
                 </>
             )}

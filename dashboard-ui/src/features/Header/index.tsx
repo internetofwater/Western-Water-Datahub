@@ -68,25 +68,28 @@ const Header: React.FC = () => {
                             <Group>
                                 <Region />
                                 <Basin />
-                                <Select
-                                    id="stateSelector"
-                                    searchable
-                                    data={[
-                                        { value: 'all', label: 'All States' },
-                                    ]}
-                                    value={'all'}
-                                    aria-label="Select a State"
-                                    placeholder="Select a State"
-                                    onChange={() => {}}
-                                />
                                 {/* Group these so they move together when decreasing screen width */}
                                 <Group>
+                                    <Select
+                                        id="stateSelector"
+                                        searchable
+                                        data={[
+                                            {
+                                                value: 'all',
+                                                label: 'All States',
+                                            },
+                                        ]}
+                                        value={'all'}
+                                        aria-label="Select a State"
+                                        placeholder="Select a State"
+                                        onChange={() => {}}
+                                    />
                                     <Reservoir />
-                                    {(region !== RegionDefault ||
-                                        reservoir !== ReservoirDefault) && (
-                                        <ClearAll />
-                                    )}
                                 </Group>
+                                {(region !== RegionDefault ||
+                                    reservoir !== ReservoirDefault) && (
+                                    <ClearAll />
+                                )}
                             </Group>
                         </Group>
                         <Suspense>
