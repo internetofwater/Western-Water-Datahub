@@ -11,7 +11,6 @@ import { layerDefinitions, sourceConfigs } from '@/features/Map/config';
 import {
     MAP_ID,
     SubLayerId,
-    LayerId,
     INITIAL_CENTER,
     INITIAL_ZOOM,
     SourceId,
@@ -25,6 +24,7 @@ import {
 } from '@/features/Map/utils';
 import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
+import { MapButton as Controls } from '@/features/MapTools/Controls/MapButton';
 import CustomControl from '@/components/Map/tools/CustomControl';
 import { basemaps } from '@/components/Map/consts';
 import { LngLatLike, MapMouseEvent } from 'mapbox-gl';
@@ -68,6 +68,10 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
+        const reservoirLayers = ReservoirConfigs.flatMap(
+            (config) => config.connectedLayers
+        );
+
         const handleRegionsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [SubLayerId.RegionsFill],
@@ -101,10 +105,6 @@ const MainMap: React.FC<Props> = (props) => {
             //     }
             // }
         };
-
-        const reservoirLayers = ReservoirConfigs.flatMap(
-            (config) => config.connectedLayers
-        );
 
         const handleReservoirsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
@@ -143,7 +143,6 @@ const MainMap: React.FC<Props> = (props) => {
                     });
                 }
             }
-            // }
         };
 
         map.on('click', SubLayerId.RegionsFill, handleRegionsClick);
@@ -156,6 +155,19 @@ const MainMap: React.FC<Props> = (props) => {
         map.on('style.load', () => {
             loadImages(map);
         });
+
+        // Resize and fit bounds to ensure consistent loading behavior in all screen sizes
+        map.resize();
+        map.fitBounds(
+            [
+                [-125, 24], // Southwest corner (California/Baja)
+                [-96.5, 49], // Northeast corner (MN/ND border)
+            ],
+            {
+                padding: 60,
+                animate: false,
+            }
+        );
 
         return () => {
             map.off('click', SubLayerId.RegionsFill, handleRegionsClick);
@@ -200,7 +212,11 @@ const MainMap: React.FC<Props> = (props) => {
             map.setFilter(SubLayerId.RegionsBoundary, null);
             // TODO: basin filter
             if (reservoir === ReservoirDefault) {
-                map.setFilter(LayerId.RiseEDRReservoirs, null);
+                ReservoirConfigs.forEach((config) => {
+                    config.connectedLayers.forEach((layerId) => {
+                        map.setFilter(layerId, null);
+                    });
+                });
             }
         } else {
             map.setFilter(SubLayerId.RegionsFill, [
@@ -214,25 +230,15 @@ const MainMap: React.FC<Props> = (props) => {
                 region,
             ]);
             // TODO: basin filter
-            if (reservoir === ReservoirDefault) {
-                ReservoirConfigs.forEach((config) => {
-                    config.connectedLayers.forEach((layerId) => {
-                        map.setFilter(layerId, [
-                            'any',
-                            [
-                                'in',
-                                region,
-                                ['get', config.regionConnectorProperty],
-                            ],
-                            [
-                                '==',
-                                ['get', config.regionConnectorProperty],
-                                region,
-                            ],
-                        ]);
-                    });
+            ReservoirConfigs.forEach((config) => {
+                config.connectedLayers.forEach((layerId) => {
+                    map.setFilter(layerId, [
+                        'any',
+                        ['in', region, ['get', config.regionConnectorProperty]],
+                        ['==', ['get', config.regionConnectorProperty], region],
+                    ]);
                 });
-            }
+            });
         }
     }, [region]);
 
@@ -240,49 +246,38 @@ const MainMap: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
-        if (reservoir === ReservoirDefault) {
-            // Unset Filter
-            if (region === 'all') {
-                ReservoirConfigs.forEach((config) => {
-                    config.connectedLayers.forEach((layerId) => {
-                        map.setFilter(layerId, null);
-                    });
+        const reservoirLayers = ReservoirConfigs.flatMap(
+            (config) => config.connectedLayers
+        );
+
+        const handleClickOffReservoir = (e: MapMouseEvent) => {
+            if (reservoir !== ReservoirDefault) {
+                const features = map.queryRenderedFeatures(e.point, {
+                    layers: reservoirLayers,
                 });
-            } else {
-                ReservoirConfigs.forEach((config) => {
-                    config.connectedLayers.forEach((layerId) => {
-                        map.setFilter(layerId, [
-                            'any',
-                            [
-                                'in',
-                                region,
-                                ['get', config.regionConnectorProperty],
-                            ],
-                            [
-                                '==',
-                                ['get', config.regionConnectorProperty],
-                                region,
-                            ],
-                        ]);
+                if (!features.length) {
+                    setRegion('all');
+                    setReservoir(ReservoirDefault);
+                    map.once('idle', () => {
+                        requestAnimationFrame(() => {
+                            map.flyTo({
+                                center: INITIAL_CENTER,
+                                zoom: INITIAL_ZOOM,
+                                speed: 2,
+                            });
+                        });
                     });
-                });
+                }
             }
+        };
+
+        if (reservoir === ReservoirDefault) {
+            map.off('click', handleClickOffReservoir);
         } else {
+            map.on('click', handleClickOffReservoir);
             if (reservoirCollections) {
                 ReservoirConfigs.forEach((config) => {
                     if (config.id === (reservoir.source as SourceId)) {
-                        config.connectedLayers.forEach((layerId) => {
-                            map.setFilter(layerId, [
-                                'any',
-                                [
-                                    '==',
-                                    ['get', config.identifierProperty],
-                                    reservoir.identifier,
-                                ],
-                                ['==', ['id'], reservoir.identifier],
-                            ]);
-                        });
-
                         const collection =
                             reservoirCollections[reservoir.source as SourceId];
 
@@ -314,18 +309,14 @@ const MainMap: React.FC<Props> = (props) => {
                                 });
                             }
                         }
-                    } else {
-                        config.connectedLayers.forEach((layerId) => {
-                            map.setFilter(layerId, [
-                                '==',
-                                ['get', 'nonexistent_property'],
-                                '__never__',
-                            ]);
-                        });
                     }
                 });
             }
         }
+
+        return () => {
+            map.off('click', handleClickOffReservoir);
+        };
     }, [reservoir]);
 
     useEffect(() => {
@@ -345,9 +336,10 @@ const MainMap: React.FC<Props> = (props) => {
                 layers={layerDefinitions}
                 options={{
                     style: basemaps[basemap],
+                    projection: 'mercator',
                     center: INITIAL_CENTER,
                     zoom: INITIAL_ZOOM,
-                    minZoom: 4,
+                    minZoom: 3,
                     maxZoom: 20,
                 }}
                 controls={{
@@ -365,6 +357,10 @@ const MainMap: React.FC<Props> = (props) => {
                             )
                         ),
                         position: 'top-right',
+                    },
+                    {
+                        control: new CustomControl(<Controls />),
+                        position: 'top-left',
                     },
                 ]}
             />

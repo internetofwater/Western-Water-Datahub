@@ -9,12 +9,12 @@
     max-height: 328px;
 }
 
+.infoPanel {
+    width: 42%;
+}
+
 .chartContainer {
     width: 100%;
-    min-width: 600px;
-    max-width: calc(
-        33vw - 48px
-    ); /* container - (padding between containers + padding on edges = 48)*/
     height: 88%;
     display: flex;
     justify-content: center;
@@ -25,6 +25,10 @@
     margin: auto;
 }
 
+.graphicPanel {
+    width: 55%;
+}
+
 .PDFViewer {
     width: 100%;
 }
@@ -32,6 +36,11 @@
 .PDFViewer iframe {
     height: 70vh;
     width: 100%;
+}
+
+.PDFButton {
+    width: 165px;
+    margin: 0 auto;
 }
 
 .loaderGroup {
@@ -83,5 +92,19 @@
     .chartContainer {
         min-width: unset;
         max-width: unset;
+    }
+}
+
+@media screen and (max-width: 568px) {
+    .infoPanel {
+        width: 100%;
+    }
+
+    .graphicPanel {
+        width: 100%;
+    }
+
+    .infoChartGroup {
+        flex-direction: column-reverse;
     }
 }

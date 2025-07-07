@@ -11,10 +11,12 @@ import { create } from 'zustand';
 export enum Tools {
     BasemapSelector = 'basemap-selector',
     Print = 'print',
+    Controls = 'controls',
 }
 
 export type ReservoirStorageData = Array<{ x: string; y: number }>;
 
+export const RegionDefault = 'all';
 export const ReservoirDefault = null;
 
 export type ReservoirCollections = {
@@ -46,12 +48,15 @@ export interface MainState {
     tools: {
         [Tools.BasemapSelector]: boolean;
         [Tools.Print]: boolean;
+        [Tools.Controls]: boolean;
     };
     setOpenTools: (tool: Tools, open: boolean) => void;
+    colorScheme: 'dark' | 'light';
+    setColorScheme: (colorScheme: 'dark' | 'light') => void;
 }
 
 const useMainStore = create<MainState>()((set) => ({
-    region: 'all',
+    region: RegionDefault,
     setRegion: (region) => set({ region }),
     basin: 'all',
     setBasin: (basin) => set({ basin }),
@@ -69,6 +74,7 @@ const useMainStore = create<MainState>()((set) => ({
     tools: {
         [Tools.BasemapSelector]: false,
         [Tools.Print]: false,
+        [Tools.Controls]: true,
     },
     setOpenTools: (tool, open) =>
         set((state) => ({
@@ -77,6 +83,8 @@ const useMainStore = create<MainState>()((set) => ({
                 [tool]: open,
             },
         })),
+    colorScheme: 'dark',
+    setColorScheme: (colorScheme: 'dark' | 'light') => set({ colorScheme }),
 }));
 
 export default useMainStore;

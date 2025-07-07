@@ -4,7 +4,7 @@
  */
 
 import { MapSourceDataEvent, Map } from 'mapbox-gl';
-import { LayerId, SourceId } from '@/features/Map/consts';
+import { LayerId, SourceId, SubLayerId } from '@/features/Map/consts';
 
 /**
  *
@@ -94,5 +94,12 @@ export type ReservoirConfig = {
     identifierType: 'string' | 'number';
     labelProperty: string;
     regionConnectorProperty: string;
-    connectedLayers: LayerId[];
+    connectedLayers: (LayerId | SubLayerId)[];
 };
+
+export enum RasterBaseLayers {
+    Drought = 'drought',
+    Precipitation = 'precipitation',
+    Temperature = 'temperature',
+    None = 'none',
+}
