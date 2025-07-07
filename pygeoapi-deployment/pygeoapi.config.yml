@@ -473,3 +473,26 @@ resources:
         id_field: ogc_fid
         title_field: site_name
         geom_field: geom
+
+  doi-regions:
+    type: collection
+    title: Unified Interior Regional Boundaries
+    description: DOI Unified Interior Regional Boundaries
+    keywords:
+      - doi
+      - boundaries
+    extents: *default-extent
+    links:
+      - <<: *default-link
+        title: information
+        href: https://www.doi.gov/employees/reorg/unified-regional-boundaries
+    providers:
+      - type: feature
+        name: OGR
+        data:
+          source_type: ESRI Shapefile
+          source: /vsizip/vsicurl/https://www.doi.gov/sites/doi.gov/files/doi_12_unified_regions_20180801_shapefile.zip
+        layer: DOI_12_Unified_Regions_20180801
+        id_field: REG_NUM
+        title_field: REG_NAME
+        storage_crs: http://www.opengis.net/def/crs/EPSG/0/5070
