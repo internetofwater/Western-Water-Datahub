@@ -5,11 +5,12 @@
 
 import { CoverageCollection } from '@/services/edr.service';
 
+export type DateRange = 1 | 5 | 10 | 30;
 /**
  *
  * @function
  */
-export const getDateRange = (range: 1 | 5) => {
+export const getDateRange = (range: DateRange) => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const endDate = new Date(today);

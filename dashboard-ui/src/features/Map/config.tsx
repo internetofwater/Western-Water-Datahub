@@ -22,6 +22,7 @@ import {
     SourceId,
     RISEEDRReservoirSource,
     RegionsSource,
+    ZoomCapacityArray,
 } from '@/features/Map/consts';
 import {
     getReservoirConfig,
@@ -70,6 +71,45 @@ export const sourceConfigs: SourceConfig[] = [
             bounds: [-179.229468, -14.42442, 179.856484, 71.439451],
         },
     },
+    {
+        id: SourceId.USDroughtMonitor,
+        type: Sources.Raster,
+        definition: {
+            type: 'raster',
+            tiles: [
+                'https://api.wwdh.internetofwater.app/collections/us-drought-monitor/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}',
+            ],
+            tileSize: 256,
+            minzoom: 4,
+            // maxzoom: 10,
+        },
+    },
+    {
+        id: SourceId.NOAAPrecipSixToTen,
+        type: Sources.Raster,
+        definition: {
+            type: 'raster',
+            tiles: [
+                'https://api.wwdh.internetofwater.app/collections/noaa-precip-6-10-day/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}',
+            ],
+            tileSize: 256,
+            minzoom: 3,
+            maxzoom: 6,
+        },
+    },
+    {
+        id: SourceId.NOAATempSixToTen,
+        type: Sources.Raster,
+        definition: {
+            type: 'raster',
+            tiles: [
+                'https://api.wwdh.internetofwater.app/collections/noaa-temp-6-10-day/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}',
+            ],
+            tileSize: 256,
+            minzoom: 3,
+            maxzoom: 6,
+        },
+    },
 ];
 
 /**********************************************************************
@@ -112,7 +152,7 @@ export const getLayerColor = (
 ): DataDrivenPropertyValueSpecification<string> => {
     switch (id) {
         case LayerId.Regions:
-            return '#F00';
+            return '#000';
         case LayerId.Basins:
             return '#0F0';
         case LayerId.RiseEDRReservoirs:
@@ -163,7 +203,7 @@ export const getLayerConfig = (
                 source: SourceId.Regions,
                 paint: {
                     'fill-color': getLayerColor(LayerId.Regions),
-                    'fill-opacity': 0.3,
+                    'fill-opacity': 0,
                 },
             };
         case LayerId.Basins:
@@ -211,23 +251,65 @@ export const getLayerConfig = (
                     'icon-size': [
                         'let',
                         'capacity',
-                        ['coalesce', ['get', 'Active Capacity'], 1],
+                        [
+                            'coalesce',
+                            [
+                                'get',
+                                getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                                    .capacityProperty,
+                            ],
+                            1,
+                        ],
                         [
                             'step',
-                            ['var', 'capacity'],
-                            0.3,
-                            45000,
-                            0.4,
-                            320000,
-                            0.5,
-                            2010000,
-                            0.6,
+                            ['zoom'],
+                            1,
+                            0,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                0.3,
+                                45000,
+                                0.4,
+                                320000,
+                                0.3,
+                                2010000,
+                                0.5,
+                            ],
+                            5,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                0.3,
+                                45000,
+                                0.3,
+                                320000,
+                                0.4,
+                                2010000,
+                                0.5,
+                            ],
+                            8,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                0.3,
+                                45000,
+                                0.4,
+                                320000,
+                                0.5,
+                                2010000,
+                                0.6,
+                            ],
                         ],
                     ],
 
                     'symbol-sort-key': [
                         'coalesce',
-                        ['get', 'Active Capacity'],
+                        [
+                            'get',
+                            getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                                .capacityProperty,
+                        ],
                         1,
                     ],
                     'icon-offset': [
@@ -242,6 +324,154 @@ export const getLayerConfig = (
                     'icon-allow-overlap': true,
                 },
             };
+        case SubLayerId.RiseEDRReservoirLabels:
+            return {
+                id: SubLayerId.RiseEDRReservoirLabels,
+                type: LayerType.Symbol,
+                source: SourceId.RiseEDRReservoirs,
+                layout: {
+                    'text-field': [
+                        'get',
+                        getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                            .labelProperty,
+                    ],
+                    'text-anchor': 'bottom',
+                    'text-size': 18,
+                    'symbol-sort-key': [
+                        'coalesce',
+                        [
+                            'get',
+                            getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                                .capacityProperty,
+                        ],
+                        1,
+                    ],
+                    'text-offset': [
+                        'let',
+                        'capacity',
+                        [
+                            'coalesce',
+                            [
+                                'get',
+                                getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                                    .capacityProperty,
+                            ],
+                            1,
+                        ],
+                        [
+                            'step',
+                            ['zoom'],
+                            [0, 0],
+                            0,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                [0, 0.5],
+                                45000,
+                                [0, 1],
+                                320000,
+                                [0, 2.4],
+                                2010000,
+                                [0, 3.2],
+                            ],
+                            5,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                [0, 0.5],
+                                45000,
+                                [0, 2.1],
+                                320000,
+                                [0, 2.8],
+                                2010000,
+                                [0, 3.2],
+                            ],
+                            8,
+                            [
+                                'step',
+                                ['var', 'capacity'],
+                                [0, 2.4],
+                                45000,
+                                [0, 2.8],
+                                320000,
+                                [0, 3.2],
+                                2010000,
+                                [0, 3.5],
+                            ],
+                        ],
+                    ],
+                },
+                paint: {
+                    'text-color': getLayerColor(
+                        SubLayerId.RiseEDRReservoirLabels
+                    ),
+                    'text-opacity': [
+                        'let',
+                        'capacity',
+                        [
+                            'coalesce',
+                            [
+                                'get',
+                                getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                                    .capacityProperty,
+                            ],
+                            1,
+                        ],
+                        [
+                            'step',
+                            ['zoom'],
+                            0,
+                            ...ZoomCapacityArray.flatMap(([zoom, capacity]) => [
+                                zoom, // At this zoom
+                                [
+                                    // Evaluate this expression
+                                    'case',
+                                    ['>=', ['var', 'capacity'], capacity],
+                                    1, // If GTE capacity, evaluate sub-step expression
+                                    0, // Fallback to basic point symbol
+                                ],
+                            ]),
+                        ],
+                    ],
+                    'text-halo-color': '#000000',
+                    'text-halo-width': 2,
+                },
+            };
+
+        case LayerId.USDroughtMonitor:
+            return {
+                id: LayerId.USDroughtMonitor,
+                type: LayerType.Raster,
+                source: SourceId.USDroughtMonitor,
+                paint: {
+                    'raster-opacity': 0.7,
+                },
+            };
+        case LayerId.NOAAPrecipSixToTen:
+            return {
+                id: LayerId.NOAAPrecipSixToTen,
+                type: LayerType.Raster,
+                source: SourceId.NOAAPrecipSixToTen,
+                paint: {
+                    'raster-opacity': 0.7,
+                },
+                layout: {
+                    visibility: 'none',
+                },
+            };
+        case LayerId.NOAATempSixToTen:
+            return {
+                id: LayerId.NOAATempSixToTen,
+                type: LayerType.Raster,
+                source: SourceId.NOAATempSixToTen,
+                paint: {
+                    'raster-opacity': 0.7,
+                },
+                layout: {
+                    visibility: 'none',
+                },
+            };
+
         default:
             return null;
     }
@@ -379,6 +609,24 @@ export const layerDefinitions: MainLayerDefinition[] = [
     // meaning they have their own click and hover listeners. The order of layers and sublayers dictates the draw
     // order on the map.
     {
+        id: LayerId.USDroughtMonitor,
+        config: getLayerConfig(LayerId.USDroughtMonitor),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.NOAAPrecipSixToTen,
+        config: getLayerConfig(LayerId.NOAAPrecipSixToTen),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.NOAATempSixToTen,
+        config: getLayerConfig(LayerId.NOAATempSixToTen),
+        controllable: false,
+        legend: false,
+    },
+    {
         id: LayerId.Regions,
         config: getLayerConfig(LayerId.Regions),
         controllable: false,
@@ -418,7 +666,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 controllable: false,
                 legend: false,
                 clickFunction: getLayerClickFunction(SubLayerId.BasinsFill),
-                // hoverFunction: getLayerHoverFunction(SubLayerId.BasinsFill),
             },
         ],
     },
@@ -428,6 +675,15 @@ export const layerDefinitions: MainLayerDefinition[] = [
         controllable: false,
         legend: false,
         clickFunction: getLayerClickFunction(LayerId.RiseEDRReservoirs),
+        hoverFunction: getLayerHoverFunction(LayerId.RiseEDRReservoirs),
+        subLayers: [
+            {
+                id: SubLayerId.RiseEDRReservoirLabels,
+                config: getLayerConfig(SubLayerId.RiseEDRReservoirLabels),
+                controllable: false,
+                legend: false,
+            },
+        ],
         // hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
     },
 ];

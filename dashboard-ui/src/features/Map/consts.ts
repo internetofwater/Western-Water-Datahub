@@ -12,8 +12,8 @@ export const MAP_ID = 'main';
 
 export const BASEMAP = basemaps[BasemapId.Dark];
 
-export const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
-export const INITIAL_ZOOM = 4;
+export const INITIAL_CENTER: [number, number] = [-107.85792, 38.1736];
+export const INITIAL_ZOOM = 4.15;
 
 export enum SourceId {
     Regions = 'regions-source',
@@ -21,6 +21,9 @@ export enum SourceId {
     RiseEDRReservoirs = 'rise-edr',
     USACEEDRReservoirs = 'usace-edr',
     SnowWater = 'snow-water',
+    USDroughtMonitor = 'us-drought-monitor',
+    NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
+    NOAATempSixToTen = 'noaa-temp-6-10-day',
 }
 
 export enum LayerId {
@@ -28,6 +31,9 @@ export enum LayerId {
     Basins = 'basins-main',
     RiseEDRReservoirs = 'rise-edr-reservoir-points',
     SnowWater = 'snow-water',
+    USDroughtMonitor = 'us-drought-monitor',
+    NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
+    NOAATempSixToTen = 'noaa-temp-6-10-day',
 }
 
 export enum SubLayerId {
@@ -35,11 +41,20 @@ export enum SubLayerId {
     RegionsFill = 'regions-fill',
     BasinsBoundary = 'basins-boundary',
     BasinsFill = 'basins-fill',
+    RiseEDRReservoirLabels = 'rise-edr-reservoir-labels',
 }
 
 export const allLayerIds = [
     ...Object.values(LayerId),
     ...Object.values(SubLayerId),
+];
+
+export const ZoomCapacityArray = [
+    [0, 2010000],
+    [4, 465000],
+    [5, 320000],
+    [7, 65000],
+    [8, -1],
 ];
 
 export const TeacupStepExpression: ExpressionSpecification = [
@@ -123,8 +138,11 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         capacityProperty: 'Active Capacity',
         identifierProperty: '_id',
         identifierType: 'number',
-        labelProperty: 'name',
+        labelProperty: 'Asset Name (in tessel)',
         regionConnectorProperty: 'locationRegionNames',
-        connectedLayers: [LayerId.RiseEDRReservoirs],
+        connectedLayers: [
+            LayerId.RiseEDRReservoirs,
+            SubLayerId.RiseEDRReservoirLabels,
+        ],
     },
 ];

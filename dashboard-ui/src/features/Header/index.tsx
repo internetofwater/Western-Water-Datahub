@@ -4,10 +4,8 @@
  */
 'use client';
 
-import { Box, Button, Collapse, Group, Paper } from '@mantine/core';
+import { Box, Divider, Group, Paper, Select } from '@mantine/core';
 import styles from '@/features/Header/Header.module.css';
-import { useDisclosure } from '@mantine/hooks';
-import { Filters } from '@/features/Header/Filters';
 import { Region } from '@/features/Header/Selectors/Region';
 import { Reservoir } from '@/features/Header/Selectors/Reservoir';
 import { Suspense } from 'react';
@@ -15,6 +13,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { Basin } from '@/features/Header/Selectors/Basin';
 import { ClearAll } from '@/features/Header/Selectors/ClearAll';
+import useMainStore, { RegionDefault, ReservoirDefault } from '@/lib/main';
 
 const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
     ssr: false,
@@ -25,7 +24,8 @@ const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
  * @component
  */
 const Header: React.FC = () => {
-    const [opened, { toggle }] = useDisclosure(false);
+    const region = useMainStore((state) => state.region);
+    const reservoir = useMainStore((state) => state.reservoir);
 
     return (
         <>
@@ -36,47 +36,66 @@ const Header: React.FC = () => {
                     className={`${styles.topBarPaper} ${styles.logoBarPaper}`}
                 >
                     <Group justify="space-between" align="center">
-                        <Box component="span" darkHidden>
-                            <Image
-                                src={'/BofR-logo-dark.png'}
-                                alt="United States Bureau of Reclamation Logo"
-                                width={157}
-                                height={50}
+                        <Group>
+                            <Box
+                                component="span"
+                                darkHidden
+                                className={styles.logoContainer}
+                            >
+                                <Image
+                                    src={'/BofR-logo-dark.png'}
+                                    alt="United States Bureau of Reclamation Logo"
+                                    width={157}
+                                    height={50}
+                                />
+                            </Box>
+                            <Box
+                                component="span"
+                                lightHidden
+                                className={styles.logoContainer}
+                            >
+                                <Image
+                                    src={'/BofR-logo-white.png'}
+                                    alt="United States Bureau of Reclamation Logo"
+                                    width={157}
+                                    height={50}
+                                />
+                            </Box>
+                            <Divider
+                                orientation="vertical"
+                                className={styles.divider}
                             />
-                        </Box>
-                        <Box component="span" lightHidden>
-                            <Image
-                                src={'/BofR-logo-white.png'}
-                                alt="United States Bureau of Reclamation Logo"
-                                width={157}
-                                height={50}
-                            />
-                        </Box>
+                            <Group>
+                                <Region />
+                                <Basin />
+                                {/* Group these so they move together when decreasing screen width */}
+                                <Group>
+                                    <Select
+                                        id="stateSelector"
+                                        searchable
+                                        data={[
+                                            {
+                                                value: 'all',
+                                                label: 'All States',
+                                            },
+                                        ]}
+                                        value={'all'}
+                                        aria-label="Select a State"
+                                        placeholder="Select a State"
+                                        onChange={() => {}}
+                                    />
+                                    <Reservoir />
+                                </Group>
+                                {(region !== RegionDefault ||
+                                    reservoir !== ReservoirDefault) && (
+                                    <ClearAll />
+                                )}
+                            </Group>
+                        </Group>
                         <Suspense>
                             <DarkModeToggle />
                         </Suspense>
                     </Group>
-                </Paper>
-            </Box>
-            <Box component="div" className={styles.topBarContainer}>
-                <Paper radius={0} shadow="xs" className={styles.topBarPaper}>
-                    <Group justify="space-between">
-                        <Group gap="xl">
-                            <Region />
-                            <Basin />
-                            {/* Group these so they move together when decreasing screen width */}
-                            <Group>
-                                <Reservoir />
-                                <ClearAll />
-                            </Group>
-                        </Group>
-                        <Button variant="default" onClick={toggle}>
-                            Show Filters
-                        </Button>
-                    </Group>
-                    <Collapse in={opened}>
-                        <Filters />
-                    </Collapse>
                 </Paper>
             </Box>
         </>

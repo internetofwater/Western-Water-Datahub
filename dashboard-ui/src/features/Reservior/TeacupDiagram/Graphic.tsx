@@ -6,7 +6,6 @@
 import { MantineColorScheme } from '@mantine/core';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
-import { renderToStaticMarkup } from 'react-dom/server';
 import {
     storagePolygonId,
     storageTextId,
@@ -21,6 +20,9 @@ import {
     averageLabelId,
     lowPercentileId,
     lowPercentileLabelId,
+    getAverageLabel,
+    getHighPercentileLabel,
+    getLowPercentileLabel,
 } from '@/features/Reservior/TeacupDiagram/consts';
 import {
     calculateInnerTrapezoidHeight,
@@ -76,7 +78,9 @@ export const Graphic: React.FC<Props> = (props) => {
             return;
         }
 
-        svgRef.current.innerHTML = '';
+        while (svgRef.current.firstChild) {
+            svgRef.current.removeChild(svgRef.current.firstChild);
+        }
 
         // TODO: remove the division by 2 once we have an actual storage value
         const percentOfFull =
@@ -141,8 +145,6 @@ export const Graphic: React.FC<Props> = (props) => {
             'polygon'
         );
         capacity.setAttribute('id', capacityPolygonId);
-        capacity.setAttribute('stroke', '#00b8f0');
-        capacity.setAttribute('stroke-width', '0');
         capacity.setAttribute('fill', capacityFill);
         capacity.setAttribute('filter', 'url(#shadow)');
         capacity.setAttribute(
@@ -159,8 +161,6 @@ export const Graphic: React.FC<Props> = (props) => {
             'polygon'
         );
         storage.setAttribute('id', storagePolygonId);
-        storage.setAttribute('stroke', '#00b8f0');
-        storage.setAttribute('stroke-width', '0');
         storage.setAttribute('fill', storageFill);
         // storage.setAttribute('class', 'grow');
         storage.setAttribute(
@@ -195,27 +195,11 @@ export const Graphic: React.FC<Props> = (props) => {
         // Add high percentile line and label
         addLine(highPercentileId, highPercentile, '#FFF');
 
-        const highLabelText = renderToStaticMarkup(
-            <>
-                <tspan dx="10" dy="0" fontWeight="bold" fontSize="9">
-                    High
-                </tspan>
-                <tspan dx="-35" dy="9" fontSize="8">
-                    (90
-                    <tspan dy="-5" fontSize="4">
-                        th
-                    </tspan>
-                    &nbsp;
-                    <tspan dy="5" fontSize="8">
-                        Percentile)
-                    </tspan>
-                </tspan>
-            </>
-        );
+        const highLabelTSpanData = getHighPercentileLabel();
 
         const highLabel = addLabel(
             highPercentileLabelId,
-            highLabelText,
+            highLabelTSpanData,
             highPercentile,
             textColor
         );
@@ -235,20 +219,11 @@ export const Graphic: React.FC<Props> = (props) => {
 
         addLine(averageId, average, '#d0a02a');
 
-        const averageLabelText = renderToStaticMarkup(
-            <>
-                <tspan dx="2" dy={averageAdjust}>
-                    30-year
-                </tspan>
-                <tspan dx="-35" dy="8">
-                    Average
-                </tspan>
-            </>
-        );
+        const averageLabelTSpanData = getAverageLabel(averageAdjust);
 
         const averageLabel = addLabel(
             averageLabelId,
-            averageLabelText,
+            averageLabelTSpanData,
             average,
             '#d0a02a'
         );
@@ -268,30 +243,14 @@ export const Graphic: React.FC<Props> = (props) => {
                 averageAdjust;
         }
 
-        const lowLabelText = renderToStaticMarkup(
-            <>
-                <tspan
-                    dx="10"
-                    dy={lowPercentileAdjust}
-                    fontWeight="bold"
-                    fontSize="9"
-                >
-                    Low
-                </tspan>
-                <tspan dx="-35" dy="8" fontSize="8">
-                    (90
-                    <tspan dy="-5" fontSize="4">
-                        th
-                    </tspan>
-                    &nbsp;
-                    <tspan dy="5" fontSize="8">
-                        Percentile)
-                    </tspan>
-                </tspan>
-            </>
-        );
+        const lowLabelTSpanData = getLowPercentileLabel(lowPercentileAdjust);
 
-        addLabel(lowPercentileLabelId, lowLabelText, lowPercentile, textColor);
+        addLabel(
+            lowPercentileLabelId,
+            lowLabelTSpanData,
+            lowPercentile,
+            textColor
+        );
 
         // Total capacity of reservoir
         addText(
@@ -328,7 +287,7 @@ export const Graphic: React.FC<Props> = (props) => {
         // Now that the diagram is created, call the callback function if exists
         // Used when creating the diagram for the report
         callback?.();
-    }, [svgRef, colorScheme]);
+    }, [svgRef.current, colorScheme]);
 
     useEffect(() => {
         if (
@@ -452,7 +411,7 @@ export const Graphic: React.FC<Props> = (props) => {
                     <feDropShadow dx="0.5" dy="0.4" stdDeviation="0.4" />
                 </filter>
             </defs>
-            <g ref={svgRef}></g>
+            <g ref={svgRef} key={colorScheme}></g>
         </svg>
     );
 };
