@@ -122,7 +122,7 @@ CREATE TABLE public.resviz (
     max_capacity integer,
     data_date date,
     parameter_name character varying,
-    parameter_id integer,
+    parameter_id character(3),
     parameter_unit character varying,
     geom public.geometry(Point,4326)
 );
