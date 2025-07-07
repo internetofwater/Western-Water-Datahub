@@ -80,6 +80,8 @@ export const sourceConfigs: SourceConfig[] = [
                 'https://api.wwdh.internetofwater.app/collections/us-drought-monitor/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}',
             ],
             tileSize: 256,
+            minzoom: 4,
+            // maxzoom: 10,
         },
     },
     {
@@ -91,6 +93,8 @@ export const sourceConfigs: SourceConfig[] = [
                 'https://api.wwdh.internetofwater.app/collections/noaa-precip-6-10-day/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}',
             ],
             tileSize: 256,
+            minzoom: 3,
+            maxzoom: 6,
         },
     },
     {
@@ -102,6 +106,8 @@ export const sourceConfigs: SourceConfig[] = [
                 'https://api.wwdh.internetofwater.app/collections/noaa-temp-6-10-day/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}',
             ],
             tileSize: 256,
+            minzoom: 3,
+            maxzoom: 6,
         },
     },
 ];

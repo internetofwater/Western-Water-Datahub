@@ -13,6 +13,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { Basin } from '@/features/Header/Selectors/Basin';
 import { ClearAll } from '@/features/Header/Selectors/ClearAll';
+import useMainStore, { RegionDefault, ReservoirDefault } from '@/lib/main';
 
 const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
     ssr: false,
@@ -23,6 +24,9 @@ const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
  * @component
  */
 const Header: React.FC = () => {
+    const region = useMainStore((state) => state.region);
+    const reservoir = useMainStore((state) => state.reservoir);
+
     return (
         <>
             <Box component="div" className={styles.topBarContainer}>
@@ -78,7 +82,10 @@ const Header: React.FC = () => {
                                 {/* Group these so they move together when decreasing screen width */}
                                 <Group>
                                     <Reservoir />
-                                    <ClearAll />
+                                    {(region !== RegionDefault ||
+                                        reservoir !== ReservoirDefault) && (
+                                        <ClearAll />
+                                    )}
                                 </Group>
                             </Group>
                         </Group>

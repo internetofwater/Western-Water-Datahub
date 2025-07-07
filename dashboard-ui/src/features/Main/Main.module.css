@@ -7,33 +7,34 @@
     display: grid;
     position: relative;
     width: 100%;
+    height: 100%;
 }
 
 .mapContainerSmall {
     height: calc(100vh - 433px);
 }
 
-.mapContainerLarge {
+/* .mapContainerLarge {
     height: calc(100vh - 85px);
-}
+} */
 
-@media (max-width: 1071px) {
-    .mapContainerLarge {
-        height: calc(100vh - 121px);
+@media (max-width: 1362px) {
+    .mapContainerSmall {
+        height: calc(100vh - 463px);
     }
 }
-@media (max-width: 934px) {
-    .mapContainerLarge {
-        height: calc(100vh - 171px);
+@media (max-width: 1225px) {
+    .mapContainerSmall {
+        height: calc(100vh - 515px);
     }
 }
-@media (max-width: 744px) {
-    .mapContainerLarge {
+/* @media (max-width: 1035px) {
+    .mapContainerSmall {
         height: calc(100vh - 224px);
     }
 }
-@media (max-width: 477px) {
-    .mapContainerLarge {
+@media (max-width: 592px) {
+    .mapContainerSmall {
         height: calc(100vh - 276px);
     }
-}
+} */

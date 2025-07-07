@@ -5,9 +5,8 @@
 
 import { useMap } from '@/contexts/MapContexts';
 import { INITIAL_CENTER, INITIAL_ZOOM, MAP_ID } from '@/features/Map/consts';
-import Close from '@/icons/Close';
 import useMainStore, { ReservoirDefault } from '@/lib/main';
-import { ActionIcon } from '@mantine/core';
+import { Button } from '@mantine/core';
 
 /**
 
@@ -40,14 +39,14 @@ export const ClearAll: React.FC = () => {
     };
 
     return (
-        <ActionIcon
+        <Button
             variant="filled"
             aria-label="Clear all"
             title="Clear All"
             disabled={noSelections}
             onClick={handleClick}
         >
-            <Close />
-        </ActionIcon>
+            Clear All
+        </Button>
     );
 };

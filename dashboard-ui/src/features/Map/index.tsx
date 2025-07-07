@@ -339,7 +339,7 @@ const MainMap: React.FC<Props> = (props) => {
                     projection: 'mercator',
                     center: INITIAL_CENTER,
                     zoom: INITIAL_ZOOM,
-                    minZoom: 1,
+                    minZoom: 3,
                     maxZoom: 20,
                 }}
                 controls={{

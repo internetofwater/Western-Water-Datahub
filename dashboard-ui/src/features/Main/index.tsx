@@ -43,7 +43,14 @@ const Main: React.FC<Props> = (props) => {
     }, [reservoir, region, basin]);
 
     return (
-        <Grid>
+        <Grid
+            style={{ height: 'inherit', flex: 1, marginBottom: '-8px' }}
+            styles={{
+                inner: {
+                    height: '100%',
+                },
+            }}
+        >
             {hasSelectedRegionOrBasin && (
                 <GridCol span={{ base: 12, md: 3 }} order={{ base: 2, md: 1 }}>
                     <Grid grow>
@@ -66,9 +73,7 @@ const Main: React.FC<Props> = (props) => {
             >
                 <Box
                     className={`${styles.mapContainer} ${
-                        hasSelectedReservoir
-                            ? styles.mapContainerSmall
-                            : styles.mapContainerLarge
+                        hasSelectedReservoir && styles.mapContainerSmall
                     }`}
                 >
                     <Map accessToken={accessToken} />

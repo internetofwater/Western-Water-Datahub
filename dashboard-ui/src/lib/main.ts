@@ -16,6 +16,7 @@ export enum Tools {
 
 export type ReservoirStorageData = Array<{ x: string; y: number }>;
 
+export const RegionDefault = 'all';
 export const ReservoirDefault = null;
 
 export type ReservoirCollections = {
@@ -55,7 +56,7 @@ export interface MainState {
 }
 
 const useMainStore = create<MainState>()((set) => ({
-    region: 'all',
+    region: RegionDefault,
     setRegion: (region) => set({ region }),
     basin: 'all',
     setBasin: (basin) => set({ basin }),

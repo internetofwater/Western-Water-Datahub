@@ -5,10 +5,11 @@
 
 .topBarContainer {
     width: 100vw;
+    height: fit-content;
 }
 
 .topBarPaper {
-    height: inherit;
+    height: 100%;
     padding: 0.5rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
