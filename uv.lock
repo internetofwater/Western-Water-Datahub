@@ -1487,7 +1487,7 @@ wheels = [
 [[package]]
 name = "pygeoapi"
 version = "0.21.dev0"
-source = { git = "https://github.com/internetofwater/pygeoapi.git?rev=wwdh#0ba15264dd8bb0f6f54c5d6753778c75bee19a34" }
+source = { git = "https://github.com/internetofwater/pygeoapi.git?rev=wwdh#647ba49c09437d90c857cb3bd7352d8b8b614b0a" }
 dependencies = [
     { name = "babel" },
     { name = "click" },
