@@ -49,7 +49,7 @@ The final step to serve the WWDH publicly is then to configure a webserver of yo
 ## Deploy with Cloud Native Components
 
 The second possible way to deploy the WWDH is using cloud native components. We are only using
-services made availible by all major cloud providers.
+services made available by all major cloud providers.
 
 ### 1. Build and Push Docker Images
 
