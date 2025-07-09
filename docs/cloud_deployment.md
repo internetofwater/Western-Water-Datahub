@@ -1,7 +1,7 @@
 # Cloud Deployment Guide
 
 This guide provides general instructions for deploying the Western Water Data Hub (WWDH) to a cloud environment.
-It is entirely possible to deploy the 
+It is entirely possible to deploy the
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@ It is entirely possible to deploy the
 ## Deploy via docker compose
 
 The first possible way to deploy the WWDH is to deploy the stack with Docker Compose inside a
-Virtual Machine (AWS EC2, GCP Compute Engine, etc.). This will not scale the services as traffic increases, but 
+Virtual Machine (AWS EC2, GCP Compute Engine, etc.). This will not scale the services as traffic increases, but
 will allow for the deployment of the WWDH with the provisioning of with minimal cloud resources.
 
 ### 1. Clone the Repository
@@ -43,7 +43,7 @@ This will start the Dashboard at `http://localhost:3000` and the API at `http://
 
 ### 4. Configure Webserver
 
-The final step to serve the WWDH publicaly is then to configure a webserver of your choice 
+The final step to serve the WWDH publicaly is then to configure a webserver of your choice
 (nginx, Caddy, Apache, etc) to provide TLS to the various components.
 
 ## Deploy with Cloud Native Components
@@ -117,11 +117,13 @@ Configure your application to export telemetry data to your chosen monitoring ba
 Deploy your container images using your cloud provider's scalable container service, such as Cloud Run (GCP), Fargate (AWS), or Azure Container Apps.
 
 **Deployment order:**
+
 1. Deploy the API container first.
 2. Deploy the user interface containers after the API is running.
 
 **Environment variables:**  
 When configuring each container, provide all relevant environment variables recorded from previous steps, including:
+
 - Redis cache connection details
 - SQL database host, credentials, and schema
 - Any other required application settings
