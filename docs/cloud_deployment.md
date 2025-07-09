@@ -1,7 +1,6 @@
 # Cloud Deployment Guide
 
 This guide provides general instructions for deploying the Western Water Data Hub (WWDH) to a cloud environment.
-It is entirely possible to deploy the
 
 ## Prerequisites
 
