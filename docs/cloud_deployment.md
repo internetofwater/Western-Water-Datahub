@@ -43,7 +43,7 @@ This will start the Dashboard at `http://localhost:3000` and the API at `http://
 
 ### 4. Configure Webserver
 
-The final step to serve the WWDH publicaly is then to configure a webserver of your choice
+The final step to serve the WWDH publicly is then to configure a webserver of your choice
 (nginx, Caddy, Apache, etc) to provide TLS to the various components.
 
 ## Deploy with Cloud Native Components
