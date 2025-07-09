@@ -57,7 +57,8 @@ deployment = [
 "xarray",
 "zarr<3",
 "s3fs<=2023.6.0",
-"gunicorn"
+"gunicorn",
+"gevent"
 ]
 
 [tool.uv.workspace]
