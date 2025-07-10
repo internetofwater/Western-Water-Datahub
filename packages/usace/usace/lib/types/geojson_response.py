@@ -65,7 +65,7 @@ class GeojsonProperties(BaseModel):
 
     # This field is not returned from the upstream
     # but rather comes from the static metadata file created
-    # from the USACE National Institute of Dams API response
+    # from the USACE National Inventory of Dams API response
     nid_static_metadata: Optional[dict] = None
 
 
