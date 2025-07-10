@@ -22,6 +22,8 @@ flowchart TD
             RedisSource2["Proxy Integration B (Redis Cache → Upstream API)"]
             PostgresSource["Crawl Integration C (PostgreSQL Database)"]
         end
+
+        OpenTelemetry[/"(Optional) OpenTelemetry monitoring from cloud provider"/]
     end
 
     subgraph Data Sources
@@ -44,6 +46,8 @@ flowchart TD
 
     PostgresSource --> Postgres
     Crawler --> Postgres
+
+    Pygeoapi -.-> OpenTelemetry
 ```
 
 ## Prerequisites
