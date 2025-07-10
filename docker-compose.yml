@@ -17,6 +17,7 @@ services:
       - PYGEOAPI_URL=http://localhost:5005
       - COLLECTOR_ENDPOINT=jaeger
       - OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-false}
+      - POSTGRES_HOST=database
     depends_on:
       - redis
       - database
