@@ -73,12 +73,23 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
             feature.properties.name = feature.properties.public_name
 
             nidid = feature.properties.aliases.get("NIDID")
-            if nidid:
-                feature.properties.nid_static_metadata = USACE_STATIC_METADATA.get(
-                    nidid
-                )
-            else:
-                feature.properties.nid_static_metadata = None
+            if not nidid:
+                continue
+
+            static_properties = USACE_STATIC_METADATA.get(nidid)
+            if not static_properties:
+                continue
+
+            for prop in static_properties:
+                # two properties that we know are in both
+                # thus we only use the one from AccessToWater and skip the info on the
+                # NID metadata
+                if prop in {"name", "state"}:
+                    continue
+                # if there is some other type of duplicate we want to explicitly fail
+                if hasattr(feature.properties, prop):
+                    raise RuntimeError(f"Duplicate USACE property: {prop}")
+                setattr(feature.properties, prop, static_properties[prop])
 
         self.locations = fc.features
 

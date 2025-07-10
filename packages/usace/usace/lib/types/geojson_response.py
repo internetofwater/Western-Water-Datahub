@@ -3,7 +3,7 @@
 
 from typing import List, Literal, Optional
 from com.cache import RedisCache
-from pydantic import BaseModel, FiniteFloat
+from pydantic import BaseModel, ConfigDict, FiniteFloat
 from usace.lib.result_collection import ResultCollection
 
 
@@ -63,10 +63,9 @@ class GeojsonProperties(BaseModel):
     timeseries: Optional[list[TimeseriesParameter]] = None
     name: Optional[str] = None
 
-    # This field is not returned from the upstream
-    # but rather comes from the static metadata file created
-    # from the USACE National Inventory of Dams API response
-    nid_static_metadata: Optional[dict] = None
+    # allow setting arbitrary fields to allow
+    # for merging the static metadata
+    model_config = ConfigDict(extra="allow")
 
 
 class PointCoordinates(BaseModel):
