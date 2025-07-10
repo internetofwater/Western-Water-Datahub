@@ -1,3 +1,6 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 # /// script
 # requires-python = ">=3.12"
 # dependencies = []
