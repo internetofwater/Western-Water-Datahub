@@ -3,6 +3,9 @@
 
 import asyncio
 from datetime import datetime, timezone
+import json
+import logging
+import pathlib
 from typing import Optional, Set, Tuple, cast, assert_never
 from com.cache import RedisCache
 from com.env import TRACER
@@ -42,6 +45,13 @@ from covjson_pydantic.reference_system import (
 )
 from covjson_pydantic.coverage import Coverage, CoverageCollection
 
+LOGGER = logging.getLogger(__name__)
+
+metadata_path = pathlib.Path(__file__).parent.parent.parent / "usace_metadata.json"
+with metadata_path.open() as f:
+    LOGGER.info(f"Loading static USACE metadata from {metadata_path}")
+    USACE_STATIC_METADATA = json.load(f)
+
 
 class LocationCollection(LocationCollectionProtocolWithEDR):
     locations: list[Feature]
@@ -61,6 +71,15 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
             assert feature.properties
             feature.id = str(feature.properties.location_code)
             feature.properties.name = feature.properties.public_name
+
+            nidid = feature.properties.aliases.get("NIDID")
+            if nidid:
+                feature.properties.nid_static_metadata = USACE_STATIC_METADATA.get(
+                    nidid
+                )
+            else:
+                feature.properties.nid_static_metadata = None
+
         self.locations = fc.features
 
     def to_geojson(

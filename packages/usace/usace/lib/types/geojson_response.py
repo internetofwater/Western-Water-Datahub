@@ -59,9 +59,14 @@ class GeojsonProperties(BaseModel):
     public_name: str
     location_code: int
     nsid: Optional[str] = None
-    aliases: dict
+    aliases: dict[Literal["NIDID"], str] | dict
     timeseries: Optional[list[TimeseriesParameter]] = None
     name: Optional[str] = None
+
+    # This field is not returned from the upstream
+    # but rather comes from the static metadata file created
+    # from the USACE National Institute of Dams API response
+    nid_static_metadata: Optional[dict] = None
 
 
 class PointCoordinates(BaseModel):
