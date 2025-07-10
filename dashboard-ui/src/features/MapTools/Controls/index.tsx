@@ -10,15 +10,22 @@ import {
     Group,
     Loader,
     Select,
+    Slider,
     Stack,
     Switch,
     Title,
+    Text,
 } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
-import { LayerId, MAP_ID, ReservoirConfigs } from '@/features/Map/consts';
+import {
+    BaseLayerOpacity,
+    LayerId,
+    MAP_ID,
+    ReservoirConfigs,
+} from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { RasterBaseLayers } from '@/features/Map/types';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useMainStore, { Tools } from '@/lib/main';
 import { getReservoirIconImageExpression } from '@/features/Map/utils';
 
@@ -53,116 +60,118 @@ const Controls: React.FC = () => {
     const [baseLayer, setBaseLayer] = useState<RasterBaseLayers>(
         RasterBaseLayers.Drought
     );
+    const [baseLayerOpacity, setBaseLayerOpacity] = useState(BaseLayerOpacity);
     const [showTeacups, setShowTeacups] = useState(true);
+    const [showNOAARFC, setShowNOAARFC] = useState(false);
 
     const setOpenTools = useMainStore((state) => state.setOpenTools);
 
     const { map } = useMap(MAP_ID);
 
-    const handleChange = (value: RasterBaseLayers) => {
+    const handleBaseLayerChange = (baseLayer: RasterBaseLayers) => {
         if (!map) {
             return;
         }
 
-        if (value === RasterBaseLayers.Drought) {
-            map.setLayoutProperty(
-                LayerId.USDroughtMonitor,
-                'visibility',
-                'visible'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAAPrecipSixToTen,
-                'visibility',
-                'none'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAATempSixToTen,
-                'visibility',
-                'none'
-            );
-        } else if (value === RasterBaseLayers.Precipitation) {
-            map.setLayoutProperty(
-                LayerId.USDroughtMonitor,
-                'visibility',
-                'none'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAAPrecipSixToTen,
-                'visibility',
-                'visible'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAATempSixToTen,
-                'visibility',
-                'none'
-            );
-        } else if (value === RasterBaseLayers.Temperature) {
-            map.setLayoutProperty(
-                LayerId.USDroughtMonitor,
-                'visibility',
-                'none'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAAPrecipSixToTen,
-                'visibility',
-                'none'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAATempSixToTen,
-                'visibility',
-                'visible'
-            );
-        } else {
-            map.setLayoutProperty(
-                LayerId.USDroughtMonitor,
-                'visibility',
-                'none'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAAPrecipSixToTen,
-                'visibility',
-                'none'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAATempSixToTen,
-                'visibility',
-                'none'
-            );
-        }
+        const visibilityMap: {
+            [key in RasterBaseLayers]: {
+                [key in LayerId]?: 'visible' | 'none';
+            };
+        } = {
+            [RasterBaseLayers.Drought]: {
+                [LayerId.USDroughtMonitor]: 'visible',
+                [LayerId.NOAAPrecipSixToTen]: 'none',
+                [LayerId.NOAATempSixToTen]: 'none',
+            },
+            [RasterBaseLayers.Precipitation]: {
+                [LayerId.USDroughtMonitor]: 'none',
+                [LayerId.NOAAPrecipSixToTen]: 'visible',
+                [LayerId.NOAATempSixToTen]: 'none',
+            },
+            [RasterBaseLayers.Temperature]: {
+                [LayerId.USDroughtMonitor]: 'none',
+                [LayerId.NOAAPrecipSixToTen]: 'none',
+                [LayerId.NOAATempSixToTen]: 'visible',
+            },
+            [RasterBaseLayers.None]: {
+                [LayerId.USDroughtMonitor]: 'none',
+                [LayerId.NOAAPrecipSixToTen]: 'none',
+                [LayerId.NOAATempSixToTen]: 'none',
+            },
+        };
 
-        setBaseLayer(value);
+        const selectedVisibility = visibilityMap[baseLayer];
+
+        Object.entries(selectedVisibility).forEach(([layerId, visibility]) => {
+            map.setLayoutProperty(layerId, 'visibility', visibility);
+        });
+
+        setBaseLayer(baseLayer);
     };
 
-    useEffect(() => {
+    const handleBaseLayerOpacityChange = (baseLayerOpacity: number) => {
         if (!map) {
             return;
         }
-        if (showTeacups) {
-            ReservoirConfigs.forEach((config) =>
-                config.connectedLayers
-                    .filter((layerId) =>
-                        [LayerId.RiseEDRReservoirs].includes(layerId as LayerId)
-                    )
-                    .forEach((layerId) =>
-                        map.setLayoutProperty(
-                            layerId,
-                            'icon-image',
-                            getReservoirIconImageExpression(config)
-                        )
-                    )
-            );
-        } else {
-            ReservoirConfigs.forEach((config) =>
-                config.connectedLayers
-                    .filter((layerId) =>
-                        [LayerId.RiseEDRReservoirs].includes(layerId as LayerId)
-                    )
-                    .forEach((layerId) =>
-                        map.setLayoutProperty(layerId, 'icon-image', 'default')
-                    )
-            );
+        map.setPaintProperty(
+            LayerId.USDroughtMonitor,
+            'raster-opacity',
+            baseLayerOpacity
+        );
+        map.setPaintProperty(
+            LayerId.NOAAPrecipSixToTen,
+            'raster-opacity',
+            baseLayerOpacity
+        );
+        map.setPaintProperty(
+            LayerId.NOAATempSixToTen,
+            'raster-opacity',
+            baseLayerOpacity
+        );
+
+        setBaseLayerOpacity(baseLayerOpacity);
+    };
+
+    const handleTeacupChange = (showTeacups: boolean) => {
+        if (!map) {
+            return;
         }
-    }, [showTeacups]);
+
+        ReservoirConfigs.forEach((config) =>
+            config.connectedLayers
+                .filter((layerId) =>
+                    [LayerId.RiseEDRReservoirs].includes(layerId as LayerId)
+                )
+                .forEach((layerId) =>
+                    map.setLayoutProperty(
+                        layerId,
+                        'icon-image',
+                        showTeacups
+                            ? getReservoirIconImageExpression(config)
+                            : 'default'
+                    )
+                )
+        );
+
+        setShowTeacups(showTeacups);
+    };
+
+    const handleNOAARFCChange = (showNOAARFC: boolean) => {
+        if (!map) {
+            return;
+        }
+
+        const visibility = showNOAARFC ? 'visible' : 'none';
+
+        console.log('visibility', visibility);
+        map.setLayoutProperty(
+            LayerId.NOAARiverForecast,
+            'visibility',
+            visibility
+        );
+
+        setShowNOAARFC(showNOAARFC);
+    };
 
     return (
         <Card
@@ -189,7 +198,12 @@ const Controls: React.FC = () => {
                         <Switch
                             label="Show Teacups"
                             checked={showTeacups}
-                            onClick={() => setShowTeacups(!showTeacups)}
+                            onClick={() => handleTeacupChange(!showTeacups)}
+                        />
+                        <Switch
+                            label="Show NOAA RFC"
+                            checked={showNOAARFC}
+                            onClick={() => handleNOAARFCChange(!showNOAARFC)}
                         />
                         <Select
                             id="basinSelector"
@@ -201,9 +215,22 @@ const Controls: React.FC = () => {
                             aria-label="Select a Base Layer"
                             placeholder="Select a Base Layer"
                             onChange={(_value) =>
-                                handleChange(_value as RasterBaseLayers)
+                                handleBaseLayerChange(
+                                    _value as RasterBaseLayers
+                                )
                             }
                         />
+                        <Stack gap="xs">
+                            <Text size="sm">Base Layer Opacity</Text>
+                            <Slider
+                                min={0}
+                                max={1}
+                                step={0.1}
+                                value={baseLayerOpacity}
+                                onChange={handleBaseLayerOpacityChange}
+                                label={(value) => value.toFixed(1)}
+                            />
+                        </Stack>
                     </Stack>
                 </CardSection>
             ) : (

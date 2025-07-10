@@ -23,6 +23,7 @@ import {
     RISEEDRReservoirSource,
     RegionsSource,
     ZoomCapacityArray,
+    BaseLayerOpacity,
 } from '@/features/Map/consts';
 import {
     getReservoirConfig,
@@ -44,6 +45,7 @@ export const sourceConfigs: SourceConfig[] = [
         type: Sources.ESRI,
         definition: {
             url: RegionsSource,
+            where: 'REG_NUM IN (5,6,7,8,9,10)',
         },
     },
     {
@@ -51,9 +53,16 @@ export const sourceConfigs: SourceConfig[] = [
         type: Sources.GeoJSON,
         definition: {
             type: 'geojson',
-
             data: RISEEDRReservoirSource,
             filter: ['!=', ['get', '_id'], 3688],
+        },
+    },
+    {
+        id: SourceId.NOAARiverForecast,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: 'https://cache.wwdh.internetofwater.app/collections/noaa-rfc/items?f=json&limit=10000',
         },
     },
     {
@@ -402,9 +411,7 @@ export const getLayerConfig = (
                     ],
                 },
                 paint: {
-                    'text-color': getLayerColor(
-                        SubLayerId.RiseEDRReservoirLabels
-                    ),
+                    'text-color': '#000',
                     'text-opacity': [
                         'let',
                         'capacity',
@@ -433,7 +440,7 @@ export const getLayerConfig = (
                             ]),
                         ],
                     ],
-                    'text-halo-color': '#000000',
+                    'text-halo-color': '#fff',
                     'text-halo-width': 2,
                 },
             };
@@ -444,7 +451,7 @@ export const getLayerConfig = (
                 type: LayerType.Raster,
                 source: SourceId.USDroughtMonitor,
                 paint: {
-                    'raster-opacity': 0.7,
+                    'raster-opacity': BaseLayerOpacity,
                 },
             };
         case LayerId.NOAAPrecipSixToTen:
@@ -453,7 +460,7 @@ export const getLayerConfig = (
                 type: LayerType.Raster,
                 source: SourceId.NOAAPrecipSixToTen,
                 paint: {
-                    'raster-opacity': 0.7,
+                    'raster-opacity': BaseLayerOpacity,
                 },
                 layout: {
                     visibility: 'none',
@@ -465,13 +472,45 @@ export const getLayerConfig = (
                 type: LayerType.Raster,
                 source: SourceId.NOAATempSixToTen,
                 paint: {
-                    'raster-opacity': 0.7,
+                    'raster-opacity': BaseLayerOpacity,
                 },
                 layout: {
                     visibility: 'none',
                 },
             };
-
+        case LayerId.NOAARiverForecast:
+            return {
+                id: LayerId.NOAARiverForecast,
+                type: LayerType.Circle,
+                source: SourceId.NOAARiverForecast,
+                paint: {
+                    'circle-radius': 5,
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#000',
+                    'circle-color': [
+                        'step',
+                        ['get', 'esppavg'],
+                        '#d73027',
+                        25,
+                        '#f46d43',
+                        50,
+                        '#fdae61',
+                        75,
+                        '#fee090',
+                        90,
+                        '#e0f3f8',
+                        110,
+                        '#abd9e9',
+                        125,
+                        '#74add1',
+                        150,
+                        '#4575b4',
+                    ],
+                },
+                layout: {
+                    visibility: 'none',
+                },
+            };
         default:
             return null;
     }
@@ -571,6 +610,15 @@ export const getLayerClickFunction = (
 ): CustomListenerFunction => {
     return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
         switch (id) {
+            case LayerId.NOAARiverForecast:
+                return (e) => {
+                    const features = map.queryRenderedFeatures(e.point, {
+                        layers: [LayerId.NOAARiverForecast],
+                    });
+
+                    console.log('features', features);
+                };
+
             default:
                 return (e) => {
                     console.log('Click Event Triggered: ', e);
@@ -643,7 +691,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 config: getLayerConfig(SubLayerId.RegionsFill),
                 controllable: false,
                 legend: false,
-                clickFunction: getLayerClickFunction(SubLayerId.RegionsFill),
                 // hoverFunction: getLayerHoverFunction(SubLayerId.RegionsFill),
             },
         ],
@@ -668,6 +715,13 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 clickFunction: getLayerClickFunction(SubLayerId.BasinsFill),
             },
         ],
+    },
+    {
+        id: LayerId.NOAARiverForecast,
+        config: getLayerConfig(LayerId.NOAARiverForecast),
+        controllable: false,
+        legend: false,
+        clickFunction: getLayerClickFunction(LayerId.NOAARiverForecast),
     },
     {
         id: LayerId.RiseEDRReservoirs,

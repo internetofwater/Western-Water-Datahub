@@ -73,6 +73,11 @@ const MainMap: React.FC<Props> = (props) => {
         );
 
         const handleRegionsClick = (e: MapMouseEvent) => {
+            const zoom = map.getZoom();
+            if (zoom > 6) {
+                return;
+            }
+
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [SubLayerId.RegionsFill],
             });
@@ -81,7 +86,7 @@ const MainMap: React.FC<Props> = (props) => {
                 const feature = features[0];
                 console.log('Region', feature);
                 if (feature.properties) {
-                    const region = feature.properties.REGION as string;
+                    const region = feature.properties['REG_NAME'] as string;
 
                     setRegion(region);
                 }
@@ -221,12 +226,12 @@ const MainMap: React.FC<Props> = (props) => {
         } else {
             map.setFilter(SubLayerId.RegionsFill, [
                 '==',
-                ['get', 'REGION'],
+                ['get', 'REG_NAME'],
                 region,
             ]);
             map.setFilter(SubLayerId.RegionsBoundary, [
                 '==',
-                ['get', 'REGION'],
+                ['get', 'REG_NAME'],
                 region,
             ]);
             // TODO: basin filter

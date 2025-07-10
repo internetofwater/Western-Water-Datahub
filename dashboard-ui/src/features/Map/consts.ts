@@ -24,6 +24,7 @@ export enum SourceId {
     USDroughtMonitor = 'us-drought-monitor',
     NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
     NOAATempSixToTen = 'noaa-temp-6-10-day',
+    NOAARiverForecast = 'noaa-rfc',
 }
 
 export enum LayerId {
@@ -34,6 +35,7 @@ export enum LayerId {
     USDroughtMonitor = 'us-drought-monitor',
     NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
     NOAATempSixToTen = 'noaa-temp-6-10-day',
+    NOAARiverForecast = 'noaa-rfc',
 }
 
 export enum SubLayerId {
@@ -120,12 +122,15 @@ export const ComplexReservoirProperties = [
  *
  * @constant
  */
-export const ReservoirRegionConnectorField = 'locationRegionNames';
-
 export const RISEEDRReservoirSource =
-    'https://api.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=reservoirStorage';
+    'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=reservoirStorage&limit=10000';
+
+/**
+ *
+ * @constant
+ */
 export const RegionsSource =
-    'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/ReclamationBoundariesFL/FeatureServer/0';
+    'https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0';
 
 /**
  *
@@ -139,10 +144,12 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         identifierProperty: '_id',
         identifierType: 'number',
         labelProperty: 'Asset Name (in tessel)',
-        regionConnectorProperty: 'locationRegionNames',
+        regionConnectorProperty: 'locationUnifiedRegionNames',
         connectedLayers: [
             LayerId.RiseEDRReservoirs,
             SubLayerId.RiseEDRReservoirLabels,
         ],
     },
 ];
+
+export const BaseLayerOpacity = 0.7;

@@ -62,8 +62,8 @@ export const Region: React.FC = () => {
             if (queryFeaturesResult.features.length) {
                 const regionOptions = formatOptions(
                     queryFeaturesResult.features,
-                    (feature) => String(feature?.properties?.['REGION']),
-                    (feature) => String(feature?.properties?.['REGION']),
+                    (feature) => String(feature?.properties?.['REG_NAME']),
+                    (feature) => String(feature?.properties?.['REG_NAME']),
                     'All Regions'
                 );
 
