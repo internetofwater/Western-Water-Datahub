@@ -5,13 +5,9 @@ This guide provides general instructions for deploying the Western Water Data Hu
 ## Infrastructure Diagram
 
 ```mermaid
-flowchart TD
+flowchart LR
     subgraph Frontend
         DashboardUI["Dashboard UI (React)"]
-    end
-
-    subgraph ReverseProxy
-        Caddy["Caddy Reverse Proxy"]
     end
 
     subgraph Backend
@@ -33,14 +29,13 @@ flowchart TD
         Crawler["Crawler (Fetches Remote Data → PostgreSQL)"]
     end
 
-    DashboardUI --> Caddy
-    Caddy --> Pygeoapi
+    DashboardUI --> Pygeoapi
 
     Pygeoapi --> RedisSource1
     Pygeoapi --> RedisSource2
     Pygeoapi --> PostgresSource
 
-    RedisSource1 -- "Geometry, parameters, and other metadata that doesn't change is cached" --> Redis
+    RedisSource1 -- "Geometry, parameters, and other metadata that doesn't cache is cached" --> Redis
     RedisSource1 -- "Timeseries data fetch (generally not cached)" --> UpstreamAPI
     RedisSource2 --> Redis
     Redis --> UpstreamAPI
