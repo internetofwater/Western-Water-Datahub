@@ -488,11 +488,7 @@ resources:
         href: https://www.doi.gov/employees/reorg/unified-regional-boundaries
     providers:
       - type: feature
-        name: OGR
-        data:
-          source_type: ESRI Shapefile
-          source: /vsizip/vsicurl/https://www.doi.gov/sites/doi.gov/files/doi_12_unified_regions_20180801_shapefile.zip
-        layer: DOI_12_Unified_Regions_20180801
-        id_field: REG_NUM
+        name: ESRI
+        data: https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0
+        id_field: OBJECTID
         title_field: REG_NAME
-        storage_crs: http://www.opengis.net/def/crs/EPSG/0/5070
