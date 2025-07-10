@@ -10,24 +10,54 @@ from __future__ import annotations
 from enum import Enum
 from typing import Dict, List, Optional
 
-from dataclasses import dataclass
 from pydantic import BaseModel, Field
 
 
-@dataclass
-class DataValueDTO:
-    date: Optional[str] = None
-    month: Optional[int] = None
-    monthPart: Optional[str] = None
-    year: Optional[int] = None
-    collectionDate: Optional[str] = None
-    value: Optional[float] = None
-    qcFlag: Optional[str] = None
-    qaFlag: Optional[str] = None
-    origValue: Optional[float] = None
-    origQcFlag: Optional[str] = None
-    average: Optional[float] = None
-    median: Optional[float] = None
+class DataValueDTO(BaseModel):
+    date: Optional[str] = Field(
+        None,
+        description="The timestamp of the data. Used only for DAILY and HOURLY durations.",
+        examples=["2022-01-01"],
+    )
+    month: Optional[int] = Field(
+        None,
+        description="The month of the data value (1-12). Used only for MONTHLY and SEMIMONTHLY durations.",
+        examples=[1],
+    )
+    monthPart: Optional[str] = Field(
+        None,
+        description="The half of month of the data value ('1' for first half, '2' for second half). Used only for SEMIMONTHLY durations.",
+        examples=["1"],
+    )
+    year: Optional[int] = Field(
+        None,
+        description="The year of the data value. Used only for WATER_YEAR, CALENDAR_YEAR, MONTHLY, and SEMIMONTHLY durations.",
+        examples=[2022],
+    )
+    collectionDate: Optional[str] = Field(
+        None,
+        description="The date the data value was collected. Used only for SEMIMONTHLY durations.",
+        examples=["2021-12-31"],
+    )
+    value: Optional[float] = Field(None, description="The data value", examples=[1.2])
+    qcFlag: Optional[str] = Field(
+        None, description="The qc flag of the data value", examples=["E"]
+    )
+    qaFlag: Optional[str] = Field(
+        None, description="The qa flag of the data value", examples=["A"]
+    )
+    origValue: Optional[float] = Field(
+        None, description="The original data value", examples=[1.3]
+    )
+    origQcFlag: Optional[str] = Field(
+        None, description="The original qc flag of the data value", examples=["V"]
+    )
+    average: Optional[float] = Field(
+        None, description="The 30-year average", examples=[1.4]
+    )
+    median: Optional[float] = Field(
+        None, description="The 30-year median", examples=[1.0]
+    )
 
 
 class DcoDTO(BaseModel):
@@ -302,11 +332,15 @@ class UnitDTO(BaseModel):
     )
 
 
-@dataclass
 class DataDTO(BaseModel):
     stationElement: Optional[StationElementDTO] = None
     values: Optional[List[DataValueDTO]] = None
-    error: Optional[str] = None
+    error: Optional[str] = Field(
+        None,
+        examples=[
+            "Unsupported operation - the insertOrUpdateBeginDate parameter is not supported for derived data (NOTE: Only included when there is an error)."
+        ],
+    )
 
 
 class ForecastDTO(BaseModel):
