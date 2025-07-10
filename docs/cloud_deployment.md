@@ -40,7 +40,8 @@ flowchart TD
     Pygeoapi --> RedisSource2
     Pygeoapi --> PostgresSource
 
-    RedisSource1 --> Redis
+    RedisSource1 -- "Geometry, parameters, and other metadata that doesn't cache is cached" --> Redis
+    RedisSource1 -- "Timeseries data fetch (generally not cached)" --> UpstreamAPI
     RedisSource2 --> Redis
     Redis --> UpstreamAPI
 
