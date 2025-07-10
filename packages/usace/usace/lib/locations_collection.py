@@ -3,6 +3,9 @@
 
 import asyncio
 from datetime import datetime, timezone
+import json
+import logging
+import pathlib
 from typing import Optional, Set, Tuple, cast, assert_never
 from com.cache import RedisCache
 from com.env import TRACER
@@ -42,6 +45,13 @@ from covjson_pydantic.reference_system import (
 )
 from covjson_pydantic.coverage import Coverage, CoverageCollection
 
+LOGGER = logging.getLogger(__name__)
+
+metadata_path = pathlib.Path(__file__).parent.parent.parent / "usace_metadata.json"
+with metadata_path.open() as f:
+    LOGGER.info(f"Loading static USACE metadata from {metadata_path}")
+    USACE_STATIC_METADATA = json.load(f)
+
 
 class LocationCollection(LocationCollectionProtocolWithEDR):
     locations: list[Feature]
@@ -61,6 +71,26 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
             assert feature.properties
             feature.id = str(feature.properties.location_code)
             feature.properties.name = feature.properties.public_name
+
+            nidid = feature.properties.aliases.get("NIDID")
+            if not nidid:
+                continue
+
+            static_properties = USACE_STATIC_METADATA.get(nidid)
+            if not static_properties:
+                continue
+
+            for prop in static_properties:
+                # two properties that we know are in both
+                # thus we only use the one from AccessToWater and skip the info on the
+                # NID metadata
+                if prop in {"name", "state"}:
+                    continue
+                # if there is some other type of duplicate we want to explicitly fail
+                if hasattr(feature.properties, prop):
+                    raise RuntimeError(f"Duplicate USACE property: {prop}")
+                setattr(feature.properties, prop, static_properties[prop])
+
         self.locations = fc.features
 
     def to_geojson(

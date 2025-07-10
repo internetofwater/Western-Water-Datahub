@@ -3,7 +3,7 @@
 
 from typing import List, Literal, Optional
 from com.cache import RedisCache
-from pydantic import BaseModel, FiniteFloat
+from pydantic import BaseModel, ConfigDict, FiniteFloat
 from usace.lib.result_collection import ResultCollection
 
 
@@ -59,9 +59,13 @@ class GeojsonProperties(BaseModel):
     public_name: str
     location_code: int
     nsid: Optional[str] = None
-    aliases: dict
+    aliases: dict[Literal["NIDID"], str] | dict
     timeseries: Optional[list[TimeseriesParameter]] = None
     name: Optional[str] = None
+
+    # allow setting arbitrary fields to allow
+    # for merging the static metadata
+    model_config = ConfigDict(extra="allow")
 
 
 class PointCoordinates(BaseModel):
