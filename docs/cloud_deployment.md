@@ -2,6 +2,50 @@
 
 This guide provides general instructions for deploying the Western Water Data Hub (WWDH) to a cloud environment.
 
+## Infrastructure Diagram
+
+```mermaid
+flowchart LR
+    subgraph Frontend
+        DashboardUI["Dashboard UI (React)"]
+    end
+
+    subgraph Backend
+        Pygeoapi["pygeoapi OGC API Features / OGC EDR Backend"]
+
+        subgraph "Source Integrations"
+            RedisSource1["Proxy Integration A (Redis Cache → Upstream API)"]
+            RedisSource2["Proxy Integration B (Redis Cache → Upstream API)"]
+            PostgresSource["Crawl Integration C (PostgreSQL Database)"]
+        end
+
+        OpenTelemetry[/"(Optional) OpenTelemetry monitoring from cloud provider"/]
+    end
+
+    subgraph Data Sources
+        Redis["Redis Cache"]
+        UpstreamAPI["Upstream API (External)"]
+        Postgres["PostgreSQL Database"]
+        Crawler["Crawler (Fetches Remote Data → PostgreSQL)"]
+    end
+
+    DashboardUI --> Pygeoapi
+
+    Pygeoapi --> RedisSource1
+    Pygeoapi --> RedisSource2
+    Pygeoapi --> PostgresSource
+
+    RedisSource1 -- "Geometry, parameters, and other metadata that doesn't cache is cached" --> Redis
+    RedisSource1 -- "Timeseries data fetch (generally not cached)" --> UpstreamAPI
+    RedisSource2 --> Redis
+    Redis --> UpstreamAPI
+
+    PostgresSource --> Postgres
+    Crawler --> Postgres
+
+    Pygeoapi -.-> OpenTelemetry
+```
+
 ## Prerequisites
 
 - An account with a major cloud provider (e.g., AWS, Azure, Google Cloud)
