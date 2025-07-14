@@ -58,6 +58,8 @@ def create_feature(pg_layer, row, parameter: str):
     feature.SetField("site_name", row["SiteName"])
     feature.SetField("state", row["State"])
     feature.SetField("doi_region", row["DoiRegion"])
+    feature.SetField("huc08", row["Huc8"])
+    feature.SetField("huc06", row["Huc8"][:6])
     feature.SetField("value", row[p_val])
     feature.SetField("max_capacity", row["MaxCapacity"])
     feature.SetField("parameter_unit", row["DataUnits"].lower())

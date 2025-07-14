@@ -117,6 +117,8 @@ CREATE TABLE public.resviz (
     monitoring_location_id character varying,
     site_name character varying,
     state character varying,
+    huc08 integer,
+    huc06 integer,
     doi_region character varying,
     value double precision,
     max_capacity integer,
