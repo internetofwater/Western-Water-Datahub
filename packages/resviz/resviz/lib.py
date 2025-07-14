@@ -2,12 +2,15 @@
 # SPDX-License-Identifier: MIT
 
 from datetime import timedelta, date
+import logging
 from osgeo import ogr, gdal
 import re
 import requests
 from typing import Iterator
 
 gdal.UseExceptions()
+
+LOGGER = logging.getLogger(__name__)
 
 
 def file_exists(url: str) -> bool:
@@ -25,7 +28,7 @@ def date_range(start_date: date, end_date: date) -> Iterator[date]:
         yield start_date + timedelta(n)
 
 
-def create_feature(pg_layer, row, parameter):
+def create_feature(pg_layer, row, parameter: str):
     """Create postgres feature from a CSV row"""
     p_name = "Lake/Reservoir Storage"
 
@@ -68,7 +71,7 @@ def create_feature(pg_layer, row, parameter):
 
     try:
         pg_layer.CreateFeature(feature)
-    except RuntimeError:
-        pass
+    except RuntimeError as e:
+        LOGGER.error(e)
     finally:
         feature = None  # Release feature
