@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 
-from packages.snotel_means.snotel_means.lib.locations import (
+from snotel_means.lib.locations import (
     WaterTemperatureCollectionWithMetadata,
     get_30_year_water_temp_average,
     get_all_snotel_station_metadata,
