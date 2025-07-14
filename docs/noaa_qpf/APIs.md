@@ -16,7 +16,6 @@
 - West gulf river forecast center: https://www.weather.gov/wgrfc
 - California / Nevada river forecast center https://www.cnrfc.noaa.gov/
 - Colorado Basin River Forecast Center https://www.cbrfc.noaa.gov/lmap/lmap.php
-
   - Seems to fetch differently from other basins: uses https://www.cbrfc.noaa.gov/dbdata/station/flowgraph/flowcond_data.py?otype=js&skey=id&ts=1744119080512
   - https://www.cbrfc.noaa.gov/dbdata/station/ensgraph/map/ensmap.html Doesn't appear to load
 
