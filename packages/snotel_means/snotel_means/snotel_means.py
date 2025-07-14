@@ -85,7 +85,7 @@ class SnotelMeansProvider(BaseProvider, OAFProviderProtocol):
             mergedDict: dict = featureProperties.copy()
             mergedDict.update(
                 {
-                    "snowppack_water_temp_avg_relative_to_thirty_year_avg": hucToAverage[
+                    "snowpack_water_temp_avg_relative_to_thirty_year_avg": hucToAverage[
                         huc6
                     ]
                 }
