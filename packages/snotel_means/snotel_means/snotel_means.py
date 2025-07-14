@@ -4,7 +4,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal, Optional, cast
 
 from com.helpers import get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
@@ -101,11 +101,16 @@ class SnotelMeansProvider(BaseProvider, OAFProviderProtocol):
             if limit and len(relevant_features) >= limit:
                 break
             if itemId:
-                return relevant_features[0].model_dump(by_alias=True)
+                return cast(
+                    GeojsonFeatureDict, relevant_features[0].model_dump(by_alias=True)
+                )
 
-        return geojson_pydantic.FeatureCollection(
-            type="FeatureCollection", features=relevant_features
-        ).model_dump(by_alias=True)
+        return cast(
+            GeojsonFeatureCollectionDict,
+            geojson_pydantic.FeatureCollection(
+                type="FeatureCollection", features=relevant_features
+            ).model_dump(by_alias=True),
+        )
 
     @crs_transform
     def query(self, **kwargs):

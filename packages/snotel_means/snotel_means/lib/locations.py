@@ -52,6 +52,12 @@ class WaterTemperatureCollectionWithMetadata:
         self.stations = self._make_station_dict(averages, daily)
 
     def get_averages_by_huc6(self) -> dict[str, float]:
+        """
+        Get the average water temperate for each huc6
+        by getting the average for each station (Relative to 30 year average) in the huc6
+        and then averaging those together. This essentially gives you a weighted average
+        against the 30 year average
+        """
         huc6ToAvgList: dict[str, list[float]] = {}
 
         for station in self.stations.values():
@@ -84,6 +90,10 @@ class WaterTemperatureCollectionWithMetadata:
         idTo30YearTemp: StationTripleToTemp,
         idToYesterdayTemp: StationTripleToTemp,
     ):
+        """
+        Merge the data from yesterday and 30 year average
+        into one data dict
+        """
         allmetadata = get_all_snotel_station_metadata()
         stations: dict[str, StationData] = {}
         for id, valueToday in idToYesterdayTemp.items():
@@ -116,6 +126,12 @@ def get_yesterdays_month_and_day():
 
 
 def get_30_year_water_temp_average(month_and_date: str) -> dict[str, float]:
+    """
+    Fetch the json file from the awdb api; this file represents the 30 year average
+    for each snotel station; the first item for each station is the year of the start
+    of the data and each subsequent item is the average for that year; i.e. if
+    index 0: 2015 and index 1: 5 then that makes the average of 2016 was 5
+    """
     url = f"https://nwcc-apps.sc.egov.usda.gov/awdb/data/WTEQ/DAILY/AVG/WTEQ_DAILY_AVG_{month_and_date}.json"
     resp = requests.get(url)
     resp.raise_for_status()
@@ -131,6 +147,10 @@ def get_30_year_water_temp_average(month_and_date: str) -> dict[str, float]:
 
 
 def get_water_temp(month_and_date: str) -> dict[str, float]:
+    """
+    Returns the water temperature for each snotel station; data may be missing
+    if you fetch for the current day and the day is not yet complete
+    """
     url = f"https://nwcc-apps.sc.egov.usda.gov/awdb/data/WTEQ/DAILY/OBS/WTEQ_DAILY_OBS_{month_and_date}.json"
     resp = requests.get(url)
     resp.raise_for_status()
