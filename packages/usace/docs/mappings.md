@@ -1,12 +1,9 @@
 There appear to be two publicly available USACE APIs for water data:
 
 1. The [Access To Water API](https://water.sec.usace.army.mil/cda/reporting/#/Reporting/get_cda_reporting_providers)
-
    - Contains no documentation besides for github repo here https://github.com/USACE/water-api which does not have issues/discussions enabled
    - Seems to be able to be proxied to EDR assuming no rate limit / throughput latency issues (ETL requires a few joins however unfortunately)
-
    1. Fetch `https://water.sec.usace.army.mil/cda/reporting/providers/projects?fmt=geojson`
-
       - geojson format is completely undocumented and just happened to work from guessing
       <!-- ```sh
       curl -X 'GET' \
@@ -25,6 +22,7 @@ There appear to be two publicly available USACE APIs for water data:
           "properties":{
               "provider":"SAM",
       ```
+
       - associated timeseries IDs like `RIS.Elev-Forebay.Ave.~1Day.1Day.CBT-REV` that describe the timeseries data and sometimes also the associated units
 
    3. You can then use both the office and the timeseries id to fetch the data (with the start/end specified) like the following
