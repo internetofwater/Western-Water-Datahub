@@ -105,6 +105,13 @@ class SnotelMeansProvider(BaseProvider, OAFProviderProtocol):
                     GeojsonFeatureDict, relevant_features[0].model_dump(by_alias=True)
                 )
 
+        if resulttype == "hits":
+            return {
+                "type": "FeatureCollection",
+                "features": [],
+                "numberMatched": len(relevant_features),
+            }
+
         return cast(
             GeojsonFeatureCollectionDict,
             geojson_pydantic.FeatureCollection(
