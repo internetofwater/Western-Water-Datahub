@@ -1,12 +1,15 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+import json
 import logging
+from pathlib import Path
 from typing import Literal, Optional
 
 from com.helpers import get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
 from com.protocols.providers import OAFProviderProtocol
+import geojson_pydantic
 from pygeoapi.provider.base import BaseProvider
 from pygeoapi.util import crs_transform
 from com.geojson.helpers import (
@@ -17,14 +20,21 @@ from com.geojson.helpers import (
 from com.cache import RedisCache
 from awdb_com.types import StationDTO
 
-from packages.snotel_means.snotel_means.lib.locations import (
-    SnotelMeansLocationCollection,
+from snotel_means.lib.locations import (
+    WaterTemperatureCollectionWithMetadata,
 )
 
 LOGGER = logging.getLogger(__name__)
 
+# Load this one time up front to speed things up
+with open(Path(__file__).parent.parent / "huc06.json") as f:
+    huc06_json = json.load(f)
+    HUC06_TO_FEATURE = {}
+    for feature in huc06_json["features"]:
+        HUC06_TO_FEATURE[feature["id"]] = feature
 
-class SnotelProvider(BaseProvider, OAFProviderProtocol):
+
+class SnotelMeansProvider(BaseProvider, OAFProviderProtocol):
     """Rise Provider for OGC API Features"""
 
     def __init__(self, provider_def):
@@ -57,36 +67,45 @@ class SnotelProvider(BaseProvider, OAFProviderProtocol):
         skip_geometry: Optional[bool] = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        collection = SnotelMeansLocationCollection()
-        if itemId:
-            collection.drop_all_locations_but_id(itemId)
-        if bbox:
-            collection.drop_all_locations_outside_bounding_box(bbox)
+        collection = WaterTemperatureCollectionWithMetadata()
 
-        if datetime_:
-            collection.select_date_range(datetime_)
+        hucToAverage = collection.get_averages_by_huc6()
+        relevant_features: list[geojson_pydantic.Feature] = []
 
-        if offset:
-            collection.drop_before_offset(offset)
+        for huc6 in hucToAverage:
+            if offset:
+                offset -= 1
+                continue
+            huc6_feature = HUC06_TO_FEATURE[huc6]
+            if itemId and huc6 != itemId:
+                continue
+            featureProperties: dict = huc6_feature["properties"] or {}
+            # we have to copy here since we're modifying the dict
+            # and we need our API to be threadsafe
+            mergedDict: dict = featureProperties.copy()
+            mergedDict.update(
+                {
+                    "snowppack_water_temp_avg_relative_to_thirty_year_avg": hucToAverage[
+                        huc6
+                    ]
+                }
+            )
+            relevant_features.append(
+                geojson_pydantic.Feature(
+                    type="Feature",
+                    id=huc6,
+                    geometry=huc6_feature["geometry"] if not skip_geometry else None,
+                    properties=mergedDict,
+                )
+            )
+            if limit and len(relevant_features) >= limit:
+                break
+            if itemId:
+                return relevant_features[0].model_dump(by_alias=True)
 
-        if limit:
-            collection.drop_after_limit(limit)
-
-        if resulttype == "hits":
-            return {
-                "type": "FeatureCollection",
-                "features": [],
-                "numberMatched": len(collection.locations),
-            }
-
-        return collection.to_geojson(
-            itemsIDSingleFeature=itemId is not None,
-            skip_geometry=skip_geometry,
-            select_properties=select_properties,
-            properties=properties,
-            sortby=sortby,
-            fields_mapping=self.get_fields(),
-        )
+        return geojson_pydantic.FeatureCollection(
+            type="FeatureCollection", features=relevant_features
+        ).model_dump(by_alias=True)
 
     @crs_transform
     def query(self, **kwargs):
