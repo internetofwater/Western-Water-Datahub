@@ -529,6 +529,7 @@ export const getLayerConfig = (
                 id: LayerId.Snotel,
                 type: LayerType.Circle,
                 source: SourceId.Snotel,
+                filter: ['has', SnotelHucMeansField.SnowpackTempRelative],
                 paint: {
                     'circle-radius': 5,
                     'circle-stroke-width': 1,
@@ -770,15 +771,6 @@ export const getLayerClickFunction = (
         container: HTMLDivElement
     ) => {
         switch (id) {
-            case LayerId.NOAARiverForecast:
-                return (e) => {
-                    const features = map.queryRenderedFeatures(e.point, {
-                        layers: [LayerId.NOAARiverForecast],
-                    });
-
-                    console.log('features', features);
-                };
-
             default:
                 return (e) => {
                     console.log('Click Event Triggered: ', e);

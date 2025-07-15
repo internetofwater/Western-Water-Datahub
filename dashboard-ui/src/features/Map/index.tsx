@@ -343,6 +343,31 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
+        // Copy over all existing layers and sources when changing basemaps
+        const layers = map.getStyle().layers || [];
+        const sources = map.getStyle().sources || {};
+
+        const customLayers = layers.filter((layer) => {
+            return !layer.id.startsWith('mapbox');
+        });
+
+        const customSources = Object.entries(sources).filter(([id]) => {
+            return !id.startsWith('mapbox');
+        });
+
+        map.once('styledata', () => {
+            for (const [id, source] of customSources) {
+                if (!map.getSource(id)) {
+                    map.addSource(id, source);
+                }
+            }
+
+            for (const layer of customLayers) {
+                if (!map.getLayer(layer.id)) {
+                    map.addLayer(layer);
+                }
+            }
+        });
         map.setStyle(basemaps[basemap]);
     }, [basemap]);
 

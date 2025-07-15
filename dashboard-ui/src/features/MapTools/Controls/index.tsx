@@ -17,17 +17,18 @@ import {
     Text,
 } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
-import {
-    BaseLayerOpacity,
-    LayerId,
-    MAP_ID,
-    ReservoirConfigs,
-} from '@/features/Map/consts';
+import { BaseLayerOpacity, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { RasterBaseLayers } from '@/features/Map/types';
 import { useState } from 'react';
 import useMainStore, { Tools } from '@/lib/main';
-import { getReservoirIconImageExpression } from '@/features/Map/utils';
+import {
+    updateBaseLayer,
+    updateBaseLayerOpacity,
+    updateNOAARFC,
+    updateSnotel,
+    updateTeacups,
+} from '@/features/MapTools/Controls/utils';
 
 const RasterBaseLayerIconObj = [
     {
@@ -74,38 +75,7 @@ const Controls: React.FC = () => {
             return;
         }
 
-        const visibilityMap: {
-            [key in RasterBaseLayers]: {
-                [key in LayerId]?: 'visible' | 'none';
-            };
-        } = {
-            [RasterBaseLayers.Drought]: {
-                [LayerId.USDroughtMonitor]: 'visible',
-                [LayerId.NOAAPrecipSixToTen]: 'none',
-                [LayerId.NOAATempSixToTen]: 'none',
-            },
-            [RasterBaseLayers.Precipitation]: {
-                [LayerId.USDroughtMonitor]: 'none',
-                [LayerId.NOAAPrecipSixToTen]: 'visible',
-                [LayerId.NOAATempSixToTen]: 'none',
-            },
-            [RasterBaseLayers.Temperature]: {
-                [LayerId.USDroughtMonitor]: 'none',
-                [LayerId.NOAAPrecipSixToTen]: 'none',
-                [LayerId.NOAATempSixToTen]: 'visible',
-            },
-            [RasterBaseLayers.None]: {
-                [LayerId.USDroughtMonitor]: 'none',
-                [LayerId.NOAAPrecipSixToTen]: 'none',
-                [LayerId.NOAATempSixToTen]: 'none',
-            },
-        };
-
-        const selectedVisibility = visibilityMap[baseLayer];
-
-        Object.entries(selectedVisibility).forEach(([layerId, visibility]) => {
-            map.setLayoutProperty(layerId, 'visibility', visibility);
-        });
+        updateBaseLayer(baseLayer, map);
 
         setBaseLayer(baseLayer);
     };
@@ -114,21 +84,8 @@ const Controls: React.FC = () => {
         if (!map) {
             return;
         }
-        map.setPaintProperty(
-            LayerId.USDroughtMonitor,
-            'raster-opacity',
-            baseLayerOpacity
-        );
-        map.setPaintProperty(
-            LayerId.NOAAPrecipSixToTen,
-            'raster-opacity',
-            baseLayerOpacity
-        );
-        map.setPaintProperty(
-            LayerId.NOAATempSixToTen,
-            'raster-opacity',
-            baseLayerOpacity
-        );
+
+        updateBaseLayerOpacity(baseLayerOpacity, map);
 
         setBaseLayerOpacity(baseLayerOpacity);
     };
@@ -138,21 +95,7 @@ const Controls: React.FC = () => {
             return;
         }
 
-        ReservoirConfigs.forEach((config) =>
-            config.connectedLayers
-                .filter((layerId) =>
-                    [LayerId.RiseEDRReservoirs].includes(layerId as LayerId)
-                )
-                .forEach((layerId) =>
-                    map.setLayoutProperty(
-                        layerId,
-                        'icon-image',
-                        showTeacups
-                            ? getReservoirIconImageExpression(config)
-                            : 'default'
-                    )
-                )
-        );
+        updateTeacups(showTeacups, map);
 
         setShowTeacups(showTeacups);
     };
@@ -161,14 +104,7 @@ const Controls: React.FC = () => {
         if (!map) {
             return;
         }
-
-        const visibility = showNOAARFC ? 'visible' : 'none';
-
-        map.setLayoutProperty(
-            LayerId.NOAARiverForecast,
-            'visibility',
-            visibility
-        );
+        updateNOAARFC(showNOAARFC, map);
 
         setShowNOAARFC(showNOAARFC);
     };
@@ -178,9 +114,7 @@ const Controls: React.FC = () => {
             return;
         }
 
-        const visibility = showSnotel ? 'visible' : 'none';
-
-        map.setLayoutProperty(LayerId.Snotel, 'visibility', visibility);
+        updateSnotel(showSnotel, map);
 
         setShowSnotel(showSnotel);
     };
