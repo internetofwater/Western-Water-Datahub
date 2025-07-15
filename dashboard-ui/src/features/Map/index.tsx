@@ -21,6 +21,7 @@ import useMainStore, { ReservoirDefault } from '@/lib/main';
 import {
     loadTeacups as loadImages,
     getReservoirConfig,
+    findReservoirIndex,
 } from '@/features/Map/utils';
 import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
@@ -46,7 +47,7 @@ type Props = {
 const MainMap: React.FC<Props> = (props) => {
     const { accessToken } = props;
 
-    const { map } = useMap(MAP_ID);
+    const { map, container } = useMap(MAP_ID);
     const region = useMainStore((state) => state.region);
     const setRegion = useMainStore((state) => state.setRegion);
     const reservoir = useMainStore((state) => state.reservoir);
@@ -117,7 +118,17 @@ const MainMap: React.FC<Props> = (props) => {
             });
 
             if (features && features.length) {
-                const feature = features[0];
+                // If the user has a hover popup open to a particular feature
+                // Find that feature and select it
+                const identifier = container
+                    ? container.getAttribute('data-identifier')
+                    : null;
+
+                const index = identifier
+                    ? findReservoirIndex(features, identifier)
+                    : 0;
+
+                const feature = features[index];
 
                 const config = getReservoirConfig(feature.source as SourceId);
 

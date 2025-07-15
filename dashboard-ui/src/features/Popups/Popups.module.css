@@ -1,0 +1,9 @@
+.reservoirPopup {
+    width: fit-content;
+    margin: -10px -10px -15px;
+}
+
+.reservoirPopup svg {
+    min-width: unset;
+    width: 230px;
+}

@@ -163,7 +163,6 @@ const Controls: React.FC = () => {
 
         const visibility = showNOAARFC ? 'visible' : 'none';
 
-        console.log('visibility', visibility);
         map.setLayoutProperty(
             LayerId.NOAARiverForecast,
             'visibility',

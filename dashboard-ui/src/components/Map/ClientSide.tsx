@@ -23,6 +23,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import FeatureService, {
     FeatureServiceOptions,
 } from '@hansdo/mapbox-gl-arcgis-featureserver';
+import { createRoot } from 'react-dom/client';
 
 FeatureService.prototype._setAttribution = function () {
     // Stub to prevent attribution bug
@@ -61,7 +62,8 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
     } = props;
 
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
-    const { map, hoverPopup, persistentPopup, setMap } = useMap(id);
+    const { map, hoverPopup, persistentPopup, root, container, setMap } =
+        useMap(id);
 
     useEffect(() => {
         if (!map && mapContainerRef.current) {
@@ -79,6 +81,10 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
 
             const persistentPopup = new mapboxgl.Popup();
 
+            const container = document.createElement('div');
+            container.setAttribute('id', 'customPopupContent');
+            const root = createRoot(container);
+
             // newMap.showCollisionBoxes = true;
 
             newMap.once('load', () => {
@@ -88,16 +94,32 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
                     options: FeatureServiceOptions
                 ) => new FeatureService(sourceId, map, options);
 
-                setMap(newMap, hoverPopup, persistentPopup);
+                setMap(newMap, hoverPopup, persistentPopup, root, container);
                 addSources(newMap, sources, createFeatureService);
                 addLayers(newMap, layers);
-                addHoverFunctions(newMap, layers, hoverPopup, persistentPopup);
-                addClickFunctions(newMap, layers, hoverPopup, persistentPopup);
+                addHoverFunctions(
+                    newMap,
+                    layers,
+                    hoverPopup,
+                    persistentPopup,
+                    root,
+                    container
+                );
+                addClickFunctions(
+                    newMap,
+                    layers,
+                    hoverPopup,
+                    persistentPopup,
+                    root,
+                    container
+                );
                 addMouseMoveFunctions(
                     newMap,
                     layers,
                     hoverPopup,
-                    persistentPopup
+                    persistentPopup,
+                    root,
+                    container
                 );
                 addControls(newMap, controls);
                 addCustomControls(newMap, customControls);
@@ -106,11 +128,12 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
 
         return () => {
             if (map) map.remove();
+            if (root) root.unmount();
         };
     }, []);
 
     useEffect(() => {
-        if (!map || !hoverPopup || !persistentPopup) {
+        if (!map || !hoverPopup || !persistentPopup || !root || !container) {
             return;
         }
 
@@ -124,9 +147,30 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
             // Layers reset on style changes
             addSources(map, sources, createFeatureService);
             addLayers(map, layers);
-            addHoverFunctions(map, layers, hoverPopup, persistentPopup);
-            addClickFunctions(map, layers, hoverPopup, persistentPopup);
-            addMouseMoveFunctions(map, layers, hoverPopup, persistentPopup);
+            addHoverFunctions(
+                map,
+                layers,
+                hoverPopup,
+                persistentPopup,
+                root,
+                container
+            );
+            addClickFunctions(
+                map,
+                layers,
+                hoverPopup,
+                persistentPopup,
+                root,
+                container
+            );
+            addMouseMoveFunctions(
+                map,
+                layers,
+                hoverPopup,
+                persistentPopup,
+                root,
+                container
+            );
         });
     }, [map]);
 

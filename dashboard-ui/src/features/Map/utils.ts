@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ExpressionSpecification, Map } from 'mapbox-gl';
+import { ExpressionSpecification, GeoJSONFeature, Map } from 'mapbox-gl';
 import {
     SourceDataEvent,
     ReservoirPropertiesRaw,
@@ -128,6 +128,24 @@ export const getReservoirIconImageExpression = (
             ]),
         ],
     ];
+};
+
+export const findReservoirIndex = (
+    features: GeoJSONFeature[],
+    identifier: string
+) => {
+    const index = features.findIndex((feature) => {
+        const config = getReservoirConfig(feature.source as SourceId);
+        if (feature?.properties && config) {
+            return (
+                String(feature.properties[config.identifierProperty]) ===
+                identifier
+            );
+        }
+        return false;
+    });
+
+    return index !== -1 ? index : 0;
 };
 
 // export const getCapacityStepExpression = (values: number[]) => {

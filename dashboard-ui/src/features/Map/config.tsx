@@ -29,6 +29,10 @@ import {
     getReservoirConfig,
     getReservoirIconImageExpression,
 } from '@/features/Map/utils';
+import { Root } from 'react-dom/client';
+import { ReservoirPopup } from '../Popups/Reservoirs';
+import { Feature, Point } from 'geojson';
+import { MantineProvider } from '@mantine/core';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -520,8 +524,53 @@ export const getLayerConfig = (
 export const getLayerHoverFunction = (
     id: LayerId | SubLayerId
 ): CustomListenerFunction => {
-    return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
+    return (
+        map: Map,
+        hoverPopup: Popup,
+        persistentPopup: Popup,
+        root: Root,
+        container: HTMLDivElement
+    ) => {
         switch (id) {
+            case LayerId.RiseEDRReservoirs:
+                return (e) => {
+                    if (e.features && e.features.length > 0) {
+                        const feature = e.features[0] as Feature<Point>;
+
+                        if (feature.properties) {
+                            const config = getReservoirConfig(
+                                SourceId.RiseEDRReservoirs
+                            )!;
+                            const identifier = String(
+                                feature.properties[config.identifierProperty]
+                            );
+
+                            container.setAttribute(
+                                'data-identifier',
+                                identifier
+                            );
+
+                            root.render(
+                                <MantineProvider>
+                                    <ReservoirPopup
+                                        config={config}
+                                        reservoirProperties={feature.properties}
+                                    />
+                                </MantineProvider>
+                            );
+
+                            const center = feature.geometry.coordinates as [
+                                number,
+                                number
+                            ];
+                            hoverPopup
+                                .setLngLat(center)
+                                .setDOMContent(container)
+                                .setMaxWidth('fit-content')
+                                .addTo(map);
+                        }
+                    }
+                };
             default:
                 return (e) => {
                     console.log('Hover Event Triggered: ', e);
@@ -529,6 +578,8 @@ export const getLayerHoverFunction = (
                     console.log('Available Popups: ');
                     console.log('Hover: ', hoverPopup);
                     console.log('Persistent: ', persistentPopup);
+                    console.log('Content Root: ', root);
+                    console.log('Content Container: ', container);
 
                     map.getCanvas().style.cursor = 'pointer';
                 };
@@ -551,7 +602,13 @@ export const getLayerHoverFunction = (
 export const getLayerCustomHoverExitFunction = (
     id: LayerId | SubLayerId
 ): CustomListenerFunction => {
-    return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
+    return (
+        map: Map,
+        hoverPopup: Popup,
+        persistentPopup: Popup,
+        root: Root,
+        container: HTMLDivElement
+    ) => {
         switch (id) {
             default:
                 return (e) => {
@@ -560,6 +617,8 @@ export const getLayerCustomHoverExitFunction = (
                     console.log('Available Popups: ');
                     console.log('Hover: ', hoverPopup);
                     console.log('Persistent: ', persistentPopup);
+                    console.log('Content Root: ', root);
+                    console.log('Content Container: ', container);
                 };
         }
     };
@@ -580,8 +639,59 @@ export const getLayerCustomHoverExitFunction = (
 export const getLayerMouseMoveFunction = (
     id: LayerId | SubLayerId
 ): CustomListenerFunction => {
-    return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
+    return (
+        map: Map,
+        hoverPopup: Popup,
+        persistentPopup: Popup,
+        root: Root,
+        container: HTMLDivElement
+    ) => {
         switch (id) {
+            case LayerId.RiseEDRReservoirs:
+                return (e) => {
+                    if (e.features && e.features.length > 0) {
+                        const feature = e.features[0] as Feature<Point>;
+
+                        if (feature.properties) {
+                            const config = getReservoirConfig(
+                                SourceId.RiseEDRReservoirs
+                            )!;
+                            const identifier = String(
+                                feature.properties[config.identifierProperty]
+                            );
+                            const currentIdentifier =
+                                container.getAttribute('data-identifier');
+                            // Dont recreate the same popup for the same feature
+                            if (identifier !== currentIdentifier) {
+                                container.setAttribute(
+                                    'data-identifier',
+                                    identifier
+                                );
+
+                                root.render(
+                                    <MantineProvider>
+                                        <ReservoirPopup
+                                            config={config}
+                                            reservoirProperties={
+                                                feature.properties
+                                            }
+                                        />
+                                    </MantineProvider>
+                                );
+
+                                const center = feature.geometry.coordinates as [
+                                    number,
+                                    number
+                                ];
+                                hoverPopup
+                                    .setLngLat(center)
+                                    .setDOMContent(container)
+                                    .setMaxWidth('fit-content')
+                                    .addTo(map);
+                            }
+                        }
+                    }
+                };
             default:
                 return (e) => {
                     console.log('Hover Exit Event Triggered: ', e);
@@ -589,6 +699,8 @@ export const getLayerMouseMoveFunction = (
                     console.log('Available Popups: ');
                     console.log('Hover: ', hoverPopup);
                     console.log('Persistent: ', persistentPopup);
+                    console.log('Content Root: ', root);
+                    console.log('Content Container: ', container);
                 };
         }
     };
@@ -608,7 +720,13 @@ export const getLayerMouseMoveFunction = (
 export const getLayerClickFunction = (
     id: LayerId | SubLayerId
 ): CustomListenerFunction => {
-    return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
+    return (
+        map: Map,
+        hoverPopup: Popup,
+        persistentPopup: Popup,
+        root: Root,
+        container: HTMLDivElement
+    ) => {
         switch (id) {
             case LayerId.NOAARiverForecast:
                 return (e) => {
@@ -626,6 +744,8 @@ export const getLayerClickFunction = (
                     console.log('Available Popups: ');
                     console.log('Hover: ', hoverPopup);
                     console.log('Persistent: ', persistentPopup);
+                    console.log('Content Root: ', root);
+                    console.log('Content Container: ', container);
                 };
         }
     };
@@ -728,8 +848,8 @@ export const layerDefinitions: MainLayerDefinition[] = [
         config: getLayerConfig(LayerId.RiseEDRReservoirs),
         controllable: false,
         legend: false,
-        clickFunction: getLayerClickFunction(LayerId.RiseEDRReservoirs),
         hoverFunction: getLayerHoverFunction(LayerId.RiseEDRReservoirs),
+        mouseMoveFunction: getLayerMouseMoveFunction(LayerId.RiseEDRReservoirs),
         subLayers: [
             {
                 id: SubLayerId.RiseEDRReservoirLabels,
