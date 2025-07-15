@@ -16,6 +16,7 @@ There appear to be two publicly available USACE APIs for water data:
 
    2. Each of the locations has:
       - an associated office like (office is the same as provider in the API ontology, confusingly)
+
       ```
       "type":"Feature",
           "properties":{
@@ -23,6 +24,7 @@ There appear to be two publicly available USACE APIs for water data:
       ```
 
       - associated timeseries IDs like `RIS.Elev-Forebay.Ave.~1Day.1Day.CBT-REV` that describe the timeseries data and sometimes also the associated units
+
    3. You can then use both the office and the timeseries id to fetch the data (with the start/end specified) like the following
       ```sh
       curl -X 'GET' \
