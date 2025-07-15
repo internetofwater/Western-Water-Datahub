@@ -63,6 +63,7 @@ const Controls: React.FC = () => {
     const [baseLayerOpacity, setBaseLayerOpacity] = useState(BaseLayerOpacity);
     const [showTeacups, setShowTeacups] = useState(true);
     const [showNOAARFC, setShowNOAARFC] = useState(false);
+    const [showSnotel, setShowSnotel] = useState(false);
 
     const setOpenTools = useMainStore((state) => state.setOpenTools);
 
@@ -172,6 +173,18 @@ const Controls: React.FC = () => {
         setShowNOAARFC(showNOAARFC);
     };
 
+    const handleSnotelChange = (showSnotel: boolean) => {
+        if (!map) {
+            return;
+        }
+
+        const visibility = showSnotel ? 'visible' : 'none';
+
+        map.setLayoutProperty(LayerId.Snotel, 'visibility', visibility);
+
+        setShowSnotel(showSnotel);
+    };
+
     return (
         <Card
             withBorder
@@ -203,6 +216,11 @@ const Controls: React.FC = () => {
                             label="Show NOAA RFC"
                             checked={showNOAARFC}
                             onClick={() => handleNOAARFCChange(!showNOAARFC)}
+                        />
+                        <Switch
+                            label="Show Snotel"
+                            checked={showSnotel}
+                            onClick={() => handleSnotelChange(!showSnotel)}
                         />
                         <Select
                             id="basinSelector"

@@ -7,6 +7,7 @@ import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
 import { ExpressionSpecification } from 'mapbox-gl';
 import { ReservoirConfig } from '@/features/Map/types';
+import { RiseReservoirField } from './types/reservoir/rise';
 
 export const MAP_ID = 'main';
 
@@ -25,6 +26,8 @@ export enum SourceId {
     NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
     NOAATempSixToTen = 'noaa-temp-6-10-day',
     NOAARiverForecast = 'noaa-rfc',
+    Snotel = 'snotel-edr',
+    SnotelHucSixMeans = 'snotel-huc06-means',
 }
 
 export enum LayerId {
@@ -36,6 +39,8 @@ export enum LayerId {
     NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
     NOAATempSixToTen = 'noaa-temp-6-10-day',
     NOAARiverForecast = 'noaa-rfc',
+    Snotel = 'snotel-edr',
+    SnotelHucSixMeans = 'snotel-huc06-means',
 }
 
 export enum SubLayerId {
@@ -139,12 +144,12 @@ export const RegionsSource =
 export const ReservoirConfigs: ReservoirConfig[] = [
     {
         id: SourceId.RiseEDRReservoirs,
-        storageProperty: 'Live Capcity', // Mock value, stand in for current storage
-        capacityProperty: 'Active Capacity',
-        identifierProperty: '_id',
+        storageProperty: RiseReservoirField.LiveCapacity, // Mock value, stand in for current storage
+        capacityProperty: RiseReservoirField.ActiveCapacity,
+        identifierProperty: RiseReservoirField.Id,
         identifierType: 'number',
-        labelProperty: 'Asset Name (in tessel)',
-        regionConnectorProperty: 'locationUnifiedRegionNames',
+        labelProperty: RiseReservoirField.AssetNameInTessel,
+        regionConnectorProperty: RiseReservoirField.LocationUnifiedRegionNames,
         connectedLayers: [
             LayerId.RiseEDRReservoirs,
             SubLayerId.RiseEDRReservoirLabels,

@@ -5,13 +5,14 @@
 import { useRef } from 'react';
 import { GridCol } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { ReservoirConfig, ReservoirProperties } from '@/features/Map/types';
+import { ReservoirConfig } from '@/features/Map/types';
 import { SourceId } from '@/features/Map/consts';
 import { getReservoirConfig } from '@/features/Map/utils';
 import { Chart } from '@/features/Reservior/Chart';
 import { Chart as ChartJS } from 'chart.js';
 import Info from '@/features/Reservior/Info';
 import useMainStore, { Reservoir as ReservoirType } from '@/lib/main';
+import { RiseReservoirProperties } from '@/features/Map/types/reservoir/rise';
 
 type Props = {
     reservoir: ReservoirType;
@@ -33,7 +34,7 @@ const Reservoir: React.FC<Props> = (props) => {
         useRef<ChartJS<'line', Array<{ x: string; y: number }>>>(null);
 
     const [reservoirProperties, setReservoirProperties] =
-        useState<ReservoirProperties>();
+        useState<RiseReservoirProperties>();
     const [config, setConfig] = useState<ReservoirConfig>();
     const [center, setCenter] = useState<[number, number] | null>(null);
 
@@ -59,7 +60,8 @@ const Reservoir: React.FC<Props> = (props) => {
 
             if (features.length) {
                 const feature = features[0];
-                const properties = feature.properties as ReservoirProperties;
+                const properties =
+                    feature.properties as RiseReservoirProperties;
 
                 setCenter(feature.geometry.coordinates as [number, number]);
 

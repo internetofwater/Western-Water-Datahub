@@ -30,6 +30,7 @@ import CustomControl from '@/components/Map/tools/CustomControl';
 import { basemaps } from '@/components/Map/consts';
 import { LngLatLike, MapMouseEvent } from 'mapbox-gl';
 import { useReservoirData } from '@/app/hooks/useReservoirData';
+import { useSnotelData } from '@/app/hooks/useSnotelData';
 
 type Props = {
     accessToken: string;
@@ -57,6 +58,8 @@ const MainMap: React.FC<Props> = (props) => {
     const isMounted = useRef(true);
 
     const { reservoirCollections } = useReservoirData();
+
+    useSnotelData();
 
     useEffect(() => {
         return () => {

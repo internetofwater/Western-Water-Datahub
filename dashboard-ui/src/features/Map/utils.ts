@@ -4,12 +4,7 @@
  */
 
 import { ExpressionSpecification, GeoJSONFeature, Map } from 'mapbox-gl';
-import {
-    SourceDataEvent,
-    ReservoirPropertiesRaw,
-    ReservoirProperties,
-    ReservoirConfig,
-} from '@/features/Map/types';
+import { SourceDataEvent, ReservoirConfig } from '@/features/Map/types';
 import {
     ComplexReservoirProperties,
     ReservoirConfigs,
@@ -18,6 +13,10 @@ import {
 } from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/consts';
 import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+import {
+    RiseReservoirProperties,
+    RiseReservoirPropertiesRaw,
+} from '@/features/Map/types/reservoir/rise';
 
 /**
  *
@@ -58,15 +57,15 @@ export const loadTeacups = (map: Map) => {
  * @function
  */
 export const parseReservoirProperties = <
-    T extends keyof ReservoirPropertiesRaw
+    T extends keyof RiseReservoirPropertiesRaw
 >(
     key: T,
     value: string | number
-): ReservoirProperties[T] => {
+): RiseReservoirProperties[T] => {
     if (ComplexReservoirProperties.includes(key)) {
-        return JSON.parse(value as string) as ReservoirProperties[T];
+        return JSON.parse(value as string) as RiseReservoirProperties[T];
     }
-    return value as ReservoirProperties[T];
+    return value as RiseReservoirProperties[T];
 };
 
 /**

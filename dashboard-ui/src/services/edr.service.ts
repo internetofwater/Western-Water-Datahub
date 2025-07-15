@@ -42,6 +42,7 @@ export interface IGetCollectionsParams {
      * Format of the response.
      */
     f?: string;
+    skipGeometry?: boolean;
 }
 
 export interface IDataQueryParams {

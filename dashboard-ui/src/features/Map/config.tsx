@@ -33,6 +33,7 @@ import { Root } from 'react-dom/client';
 import { ReservoirPopup } from '../Popups/Reservoirs';
 import { Feature, Point } from 'geojson';
 import { MantineProvider } from '@mantine/core';
+import { SnotelHucMeansField } from './types/snotel';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -121,6 +122,14 @@ export const sourceConfigs: SourceConfig[] = [
             tileSize: 256,
             minzoom: 3,
             maxzoom: 6,
+        },
+    },
+    {
+        id: SourceId.Snotel,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: { type: 'FeatureCollection', features: [] }, // Data set at runtime after combining with means
         },
     },
 ];
@@ -515,6 +524,39 @@ export const getLayerConfig = (
                     visibility: 'none',
                 },
             };
+        case LayerId.Snotel:
+            return {
+                id: LayerId.Snotel,
+                type: LayerType.Circle,
+                source: SourceId.Snotel,
+                paint: {
+                    'circle-radius': 5,
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#000',
+                    'circle-color': [
+                        'step',
+                        [
+                            'coalesce',
+                            ['get', SnotelHucMeansField.SnowpackTempRelative],
+                            -1,
+                        ],
+                        '#fff',
+                        0,
+                        '#7b3294',
+                        25,
+                        '#c2a5cf',
+                        50,
+                        '#f7f7f7',
+                        75,
+                        '#a6dba0',
+                        90,
+                        '#008837',
+                    ],
+                },
+                layout: {
+                    visibility: 'none',
+                },
+            };
         default:
             return null;
     }
@@ -842,6 +884,13 @@ export const layerDefinitions: MainLayerDefinition[] = [
         controllable: false,
         legend: false,
         clickFunction: getLayerClickFunction(LayerId.NOAARiverForecast),
+    },
+    {
+        id: LayerId.Snotel,
+        config: getLayerConfig(LayerId.Snotel),
+        controllable: false,
+        legend: false,
+        clickFunction: getLayerClickFunction(LayerId.Snotel),
     },
     {
         id: LayerId.RiseEDRReservoirs,
