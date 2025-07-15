@@ -147,6 +147,20 @@ resources:
         data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
         title_field: name
 
+  snotel-huc06-means:
+    type: collection
+    title: Snotel HUC06 Water Temp Means from Snowpack Melt
+    description: The average water temperature from snowpack melt; each feature contains one average for each HUC06 watershed; these averages are relative to the 30 year average
+    keywords:
+      - open data
+    extents: *default-extent
+    providers:
+      - type: feature
+        name: snotel_means.snotel_means.SnotelMeansProvider
+        data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
+        entity: Observation
+        title_field: name
+
   usace-edr:
     type: collection
     title: US Army Corps of Engineers
