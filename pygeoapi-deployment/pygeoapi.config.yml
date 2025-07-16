@@ -539,3 +539,11 @@ resources:
     providers:
       - <<: *default-feature-river-stage
         data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/3
+
+  noaa-river-stage-forecast-day-10:
+    <<: *default-river-stage
+    title: River Stage Forecast Day 10
+    description: NOAA River Stage Forecast 240 hours / 10 days from now
+    providers:
+      - <<: *default-feature-river-stage
+        data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/10
