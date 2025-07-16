@@ -540,7 +540,6 @@ resources:
       - <<: *default-feature-river-stage
         data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/3
 
-
   noaa-river-stage-forecast-day-10:
     <<: *default-river-stage
     title: River Stage Forecast Day 10
