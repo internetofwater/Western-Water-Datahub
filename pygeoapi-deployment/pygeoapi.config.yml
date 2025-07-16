@@ -507,7 +507,6 @@ resources:
         id_field: OBJECTID
         title_field: REG_NAME
 
-
   noaa-river-stage-forecast-day-1: &default-river-stage
     type: collection
     title: River Stage Forecast Day 1
