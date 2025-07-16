@@ -3,3 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 
+export enum RegionFields {
+    Test = 'test',
+}
