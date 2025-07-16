@@ -14,6 +14,7 @@ import { MAP_ID, SourceId } from '@/features/Map/consts';
 import { isSourceDataLoaded } from '@/features/Map/utils';
 import { SourceDataEvent } from '@/features/Map/types';
 import { useMap } from '@/contexts/MapContexts';
+import styles from '@/features/Header/Header.module.css';
 
 /**
 
@@ -62,8 +63,8 @@ export const Region: React.FC = () => {
             if (queryFeaturesResult.features.length) {
                 const regionOptions = formatOptions(
                     queryFeaturesResult.features,
-                    (feature) => String(feature?.properties?.['REGION']),
-                    (feature) => String(feature?.properties?.['REGION']),
+                    (feature) => String(feature?.properties?.['REG_NAME']),
+                    (feature) => String(feature?.properties?.['REG_NAME']),
                     'All Regions'
                 );
 
@@ -101,6 +102,7 @@ export const Region: React.FC = () => {
             height={36} // Default dimensions of select
             width={207}
             visible={loading || regionOptions.length === 0}
+            className={styles.skeleton}
         >
             <Select
                 id="regionSelector"

@@ -21,14 +21,17 @@ import useMainStore, { ReservoirDefault } from '@/lib/main';
 import {
     loadTeacups as loadImages,
     getReservoirConfig,
+    findReservoirIndex,
 } from '@/features/Map/utils';
 import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
 import { MapButton as Controls } from '@/features/MapTools/Controls/MapButton';
+import { MapButton as Legend } from '@/features/MapTools/Legend/MapButton';
 import CustomControl from '@/components/Map/tools/CustomControl';
 import { basemaps } from '@/components/Map/consts';
 import { LngLatLike, MapMouseEvent } from 'mapbox-gl';
 import { useReservoirData } from '@/app/hooks/useReservoirData';
+import { useSnotelData } from '@/app/hooks/useSnotelData';
 
 type Props = {
     accessToken: string;
@@ -46,7 +49,7 @@ type Props = {
 const MainMap: React.FC<Props> = (props) => {
     const { accessToken } = props;
 
-    const { map } = useMap(MAP_ID);
+    const { map, container } = useMap(MAP_ID);
     const region = useMainStore((state) => state.region);
     const setRegion = useMainStore((state) => state.setRegion);
     const reservoir = useMainStore((state) => state.reservoir);
@@ -56,6 +59,8 @@ const MainMap: React.FC<Props> = (props) => {
     const isMounted = useRef(true);
 
     const { reservoirCollections } = useReservoirData();
+
+    useSnotelData();
 
     useEffect(() => {
         return () => {
@@ -73,6 +78,11 @@ const MainMap: React.FC<Props> = (props) => {
         );
 
         const handleRegionsClick = (e: MapMouseEvent) => {
+            const zoom = map.getZoom();
+            if (zoom > 6) {
+                return;
+            }
+
             const features = map.queryRenderedFeatures(e.point, {
                 layers: [SubLayerId.RegionsFill],
             });
@@ -81,7 +91,7 @@ const MainMap: React.FC<Props> = (props) => {
                 const feature = features[0];
                 console.log('Region', feature);
                 if (feature.properties) {
-                    const region = feature.properties.REGION as string;
+                    const region = feature.properties['REG_NAME'] as string;
 
                     setRegion(region);
                 }
@@ -112,7 +122,17 @@ const MainMap: React.FC<Props> = (props) => {
             });
 
             if (features && features.length) {
-                const feature = features[0];
+                // If the user has a hover popup open to a particular feature
+                // Find that feature and select it
+                const identifier = container
+                    ? container.getAttribute('data-identifier')
+                    : null;
+
+                const index = identifier
+                    ? findReservoirIndex(features, identifier)
+                    : 0;
+
+                const feature = features[index];
 
                 const config = getReservoirConfig(feature.source as SourceId);
 
@@ -221,12 +241,12 @@ const MainMap: React.FC<Props> = (props) => {
         } else {
             map.setFilter(SubLayerId.RegionsFill, [
                 '==',
-                ['get', 'REGION'],
+                ['get', 'REG_NAME'],
                 region,
             ]);
             map.setFilter(SubLayerId.RegionsBoundary, [
                 '==',
-                ['get', 'REGION'],
+                ['get', 'REG_NAME'],
                 region,
             ]);
             // TODO: basin filter
@@ -324,6 +344,31 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
+        // Copy over all existing layers and sources when changing basemaps
+        const layers = map.getStyle().layers || [];
+        const sources = map.getStyle().sources || {};
+
+        const customLayers = layers.filter((layer) => {
+            return !layer.id.startsWith('mapbox');
+        });
+
+        const customSources = Object.entries(sources).filter(([id]) => {
+            return !id.startsWith('mapbox');
+        });
+
+        map.once('styledata', () => {
+            for (const [id, source] of customSources) {
+                if (!map.getSource(id)) {
+                    map.addSource(id, source);
+                }
+            }
+
+            for (const layer of customLayers) {
+                if (!map.getLayer(layer.id)) {
+                    map.addLayer(layer);
+                }
+            }
+        });
         map.setStyle(basemaps[basemap]);
     }, [basemap]);
 
@@ -359,7 +404,14 @@ const MainMap: React.FC<Props> = (props) => {
                         position: 'top-right',
                     },
                     {
-                        control: new CustomControl(<Controls />),
+                        control: new CustomControl(
+                            (
+                                <>
+                                    <Controls />
+                                    <Legend />
+                                </>
+                            )
+                        ),
                         position: 'top-left',
                     },
                 ]}

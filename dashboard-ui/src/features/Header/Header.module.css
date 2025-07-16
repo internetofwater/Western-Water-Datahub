@@ -41,3 +41,9 @@
         visibility: hidden;
     }
 }
+
+@media (max-width: 478px) {
+    .skeleton {
+        max-width: 47%;
+    }
+}

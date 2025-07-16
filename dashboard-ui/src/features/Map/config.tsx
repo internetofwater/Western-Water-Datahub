@@ -23,11 +23,17 @@ import {
     RISEEDRReservoirSource,
     RegionsSource,
     ZoomCapacityArray,
+    BaseLayerOpacity,
 } from '@/features/Map/consts';
 import {
     getReservoirConfig,
     getReservoirIconImageExpression,
 } from '@/features/Map/utils';
+import { Root } from 'react-dom/client';
+import { ReservoirPopup } from '../Popups/Reservoirs';
+import { Feature, Point } from 'geojson';
+import { MantineProvider } from '@mantine/core';
+import { SnotelHucMeansField } from './types/snotel';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -44,6 +50,7 @@ export const sourceConfigs: SourceConfig[] = [
         type: Sources.ESRI,
         definition: {
             url: RegionsSource,
+            where: 'REG_NUM IN (5,6,7,8,9,10)',
         },
     },
     {
@@ -51,9 +58,16 @@ export const sourceConfigs: SourceConfig[] = [
         type: Sources.GeoJSON,
         definition: {
             type: 'geojson',
-
             data: RISEEDRReservoirSource,
             filter: ['!=', ['get', '_id'], 3688],
+        },
+    },
+    {
+        id: SourceId.NOAARiverForecast,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: 'https://cache.wwdh.internetofwater.app/collections/noaa-rfc/items?f=json&limit=10000',
         },
     },
     {
@@ -110,6 +124,14 @@ export const sourceConfigs: SourceConfig[] = [
             maxzoom: 6,
         },
     },
+    {
+        id: SourceId.Snotel,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: { type: 'FeatureCollection', features: [] }, // Data set at runtime after combining with means
+        },
+    },
 ];
 
 /**********************************************************************
@@ -130,6 +152,16 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
     switch (layerId) {
         case LayerId.Regions:
             return 'Regions';
+        case LayerId.Snotel:
+            return 'SNOTEL';
+        case LayerId.NOAARiverForecast:
+            return 'NOAA RFC';
+        case LayerId.USDroughtMonitor:
+            return 'Drought';
+        case LayerId.NOAAPrecipSixToTen:
+            return 'Precipitation';
+        case LayerId.NOAATempSixToTen:
+            return 'Temperature';
         default:
             return '';
     }
@@ -402,9 +434,7 @@ export const getLayerConfig = (
                     ],
                 },
                 paint: {
-                    'text-color': getLayerColor(
-                        SubLayerId.RiseEDRReservoirLabels
-                    ),
+                    'text-color': '#000',
                     'text-opacity': [
                         'let',
                         'capacity',
@@ -433,7 +463,7 @@ export const getLayerConfig = (
                             ]),
                         ],
                     ],
-                    'text-halo-color': '#000000',
+                    'text-halo-color': '#fff',
                     'text-halo-width': 2,
                 },
             };
@@ -444,7 +474,7 @@ export const getLayerConfig = (
                 type: LayerType.Raster,
                 source: SourceId.USDroughtMonitor,
                 paint: {
-                    'raster-opacity': 0.7,
+                    'raster-opacity': BaseLayerOpacity,
                 },
             };
         case LayerId.NOAAPrecipSixToTen:
@@ -453,7 +483,7 @@ export const getLayerConfig = (
                 type: LayerType.Raster,
                 source: SourceId.NOAAPrecipSixToTen,
                 paint: {
-                    'raster-opacity': 0.7,
+                    'raster-opacity': BaseLayerOpacity,
                 },
                 layout: {
                     visibility: 'none',
@@ -465,13 +495,79 @@ export const getLayerConfig = (
                 type: LayerType.Raster,
                 source: SourceId.NOAATempSixToTen,
                 paint: {
-                    'raster-opacity': 0.7,
+                    'raster-opacity': BaseLayerOpacity,
                 },
                 layout: {
                     visibility: 'none',
                 },
             };
-
+        case LayerId.NOAARiverForecast:
+            return {
+                id: LayerId.NOAARiverForecast,
+                type: LayerType.Circle,
+                source: SourceId.NOAARiverForecast,
+                paint: {
+                    'circle-radius': 5,
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#000',
+                    'circle-color': [
+                        'step',
+                        ['get', 'esppavg'],
+                        '#d73027',
+                        25,
+                        '#f46d43',
+                        50,
+                        '#fdae61',
+                        75,
+                        '#fee090',
+                        90,
+                        '#e0f3f8',
+                        110,
+                        '#abd9e9',
+                        125,
+                        '#74add1',
+                        150,
+                        '#4575b4',
+                    ],
+                },
+                layout: {
+                    visibility: 'none',
+                },
+            };
+        case LayerId.Snotel:
+            return {
+                id: LayerId.Snotel,
+                type: LayerType.Circle,
+                source: SourceId.Snotel,
+                filter: ['has', SnotelHucMeansField.SnowpackTempRelative],
+                paint: {
+                    'circle-radius': 5,
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#000',
+                    'circle-color': [
+                        'step',
+                        [
+                            'coalesce',
+                            ['get', SnotelHucMeansField.SnowpackTempRelative],
+                            -1,
+                        ],
+                        '#fff',
+                        0,
+                        '#7b3294',
+                        25,
+                        '#c2a5cf',
+                        50,
+                        '#f7f7f7',
+                        75,
+                        '#a6dba0',
+                        90,
+                        '#008837',
+                    ],
+                },
+                layout: {
+                    visibility: 'none',
+                },
+            };
         default:
             return null;
     }
@@ -481,8 +577,53 @@ export const getLayerConfig = (
 export const getLayerHoverFunction = (
     id: LayerId | SubLayerId
 ): CustomListenerFunction => {
-    return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
+    return (
+        map: Map,
+        hoverPopup: Popup,
+        persistentPopup: Popup,
+        root: Root,
+        container: HTMLDivElement
+    ) => {
         switch (id) {
+            case LayerId.RiseEDRReservoirs:
+                return (e) => {
+                    if (e.features && e.features.length > 0) {
+                        const feature = e.features[0] as Feature<Point>;
+
+                        if (feature.properties) {
+                            const config = getReservoirConfig(
+                                SourceId.RiseEDRReservoirs
+                            )!;
+                            const identifier = String(
+                                feature.properties[config.identifierProperty]
+                            );
+
+                            container.setAttribute(
+                                'data-identifier',
+                                identifier
+                            );
+
+                            root.render(
+                                <MantineProvider>
+                                    <ReservoirPopup
+                                        config={config}
+                                        reservoirProperties={feature.properties}
+                                    />
+                                </MantineProvider>
+                            );
+
+                            const center = feature.geometry.coordinates as [
+                                number,
+                                number
+                            ];
+                            hoverPopup
+                                .setLngLat(center)
+                                .setDOMContent(container)
+                                .setMaxWidth('fit-content')
+                                .addTo(map);
+                        }
+                    }
+                };
             default:
                 return (e) => {
                     console.log('Hover Event Triggered: ', e);
@@ -490,6 +631,8 @@ export const getLayerHoverFunction = (
                     console.log('Available Popups: ');
                     console.log('Hover: ', hoverPopup);
                     console.log('Persistent: ', persistentPopup);
+                    console.log('Content Root: ', root);
+                    console.log('Content Container: ', container);
 
                     map.getCanvas().style.cursor = 'pointer';
                 };
@@ -512,7 +655,13 @@ export const getLayerHoverFunction = (
 export const getLayerCustomHoverExitFunction = (
     id: LayerId | SubLayerId
 ): CustomListenerFunction => {
-    return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
+    return (
+        map: Map,
+        hoverPopup: Popup,
+        persistentPopup: Popup,
+        root: Root,
+        container: HTMLDivElement
+    ) => {
         switch (id) {
             default:
                 return (e) => {
@@ -521,6 +670,8 @@ export const getLayerCustomHoverExitFunction = (
                     console.log('Available Popups: ');
                     console.log('Hover: ', hoverPopup);
                     console.log('Persistent: ', persistentPopup);
+                    console.log('Content Root: ', root);
+                    console.log('Content Container: ', container);
                 };
         }
     };
@@ -541,8 +692,59 @@ export const getLayerCustomHoverExitFunction = (
 export const getLayerMouseMoveFunction = (
     id: LayerId | SubLayerId
 ): CustomListenerFunction => {
-    return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
+    return (
+        map: Map,
+        hoverPopup: Popup,
+        persistentPopup: Popup,
+        root: Root,
+        container: HTMLDivElement
+    ) => {
         switch (id) {
+            case LayerId.RiseEDRReservoirs:
+                return (e) => {
+                    if (e.features && e.features.length > 0) {
+                        const feature = e.features[0] as Feature<Point>;
+
+                        if (feature.properties) {
+                            const config = getReservoirConfig(
+                                SourceId.RiseEDRReservoirs
+                            )!;
+                            const identifier = String(
+                                feature.properties[config.identifierProperty]
+                            );
+                            const currentIdentifier =
+                                container.getAttribute('data-identifier');
+                            // Dont recreate the same popup for the same feature
+                            if (identifier !== currentIdentifier) {
+                                container.setAttribute(
+                                    'data-identifier',
+                                    identifier
+                                );
+
+                                root.render(
+                                    <MantineProvider>
+                                        <ReservoirPopup
+                                            config={config}
+                                            reservoirProperties={
+                                                feature.properties
+                                            }
+                                        />
+                                    </MantineProvider>
+                                );
+
+                                const center = feature.geometry.coordinates as [
+                                    number,
+                                    number
+                                ];
+                                hoverPopup
+                                    .setLngLat(center)
+                                    .setDOMContent(container)
+                                    .setMaxWidth('fit-content')
+                                    .addTo(map);
+                            }
+                        }
+                    }
+                };
             default:
                 return (e) => {
                     console.log('Hover Exit Event Triggered: ', e);
@@ -550,6 +752,8 @@ export const getLayerMouseMoveFunction = (
                     console.log('Available Popups: ');
                     console.log('Hover: ', hoverPopup);
                     console.log('Persistent: ', persistentPopup);
+                    console.log('Content Root: ', root);
+                    console.log('Content Container: ', container);
                 };
         }
     };
@@ -569,7 +773,13 @@ export const getLayerMouseMoveFunction = (
 export const getLayerClickFunction = (
     id: LayerId | SubLayerId
 ): CustomListenerFunction => {
-    return (map: Map, hoverPopup: Popup, persistentPopup: Popup) => {
+    return (
+        map: Map,
+        hoverPopup: Popup,
+        persistentPopup: Popup,
+        root: Root,
+        container: HTMLDivElement
+    ) => {
         switch (id) {
             default:
                 return (e) => {
@@ -578,6 +788,8 @@ export const getLayerClickFunction = (
                     console.log('Available Popups: ');
                     console.log('Hover: ', hoverPopup);
                     console.log('Persistent: ', persistentPopup);
+                    console.log('Content Root: ', root);
+                    console.log('Content Container: ', container);
                 };
         }
     };
@@ -643,7 +855,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 config: getLayerConfig(SubLayerId.RegionsFill),
                 controllable: false,
                 legend: false,
-                clickFunction: getLayerClickFunction(SubLayerId.RegionsFill),
                 // hoverFunction: getLayerHoverFunction(SubLayerId.RegionsFill),
             },
         ],
@@ -670,12 +881,26 @@ export const layerDefinitions: MainLayerDefinition[] = [
         ],
     },
     {
+        id: LayerId.NOAARiverForecast,
+        config: getLayerConfig(LayerId.NOAARiverForecast),
+        controllable: false,
+        legend: false,
+        clickFunction: getLayerClickFunction(LayerId.NOAARiverForecast),
+    },
+    {
+        id: LayerId.Snotel,
+        config: getLayerConfig(LayerId.Snotel),
+        controllable: false,
+        legend: false,
+        clickFunction: getLayerClickFunction(LayerId.Snotel),
+    },
+    {
         id: LayerId.RiseEDRReservoirs,
         config: getLayerConfig(LayerId.RiseEDRReservoirs),
         controllable: false,
         legend: false,
-        clickFunction: getLayerClickFunction(LayerId.RiseEDRReservoirs),
         hoverFunction: getLayerHoverFunction(LayerId.RiseEDRReservoirs),
+        mouseMoveFunction: getLayerMouseMoveFunction(LayerId.RiseEDRReservoirs),
         subLayers: [
             {
                 id: SubLayerId.RiseEDRReservoirLabels,

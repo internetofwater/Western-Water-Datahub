@@ -10,38 +10,43 @@ import {
     Group,
     Loader,
     Select,
+    Slider,
     Stack,
     Switch,
     Title,
+    Text,
 } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
-import { LayerId, MAP_ID, ReservoirConfigs } from '@/features/Map/consts';
+import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { RasterBaseLayers } from '@/features/Map/types';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useMainStore, { Tools } from '@/lib/main';
-import { getReservoirIconImageExpression } from '@/features/Map/utils';
+import {
+    RasterVisibilityMap,
+    updateBaseLayer,
+    updateBaseLayerOpacity,
+    updateNOAARFC,
+    updateSnotel,
+    updateTeacups,
+} from '@/features/MapTools/Controls/utils';
 
 const RasterBaseLayerIconObj = [
     {
         id: RasterBaseLayers.Drought,
         friendlyName: 'Drought',
-        symbol: <></>,
     },
     {
         id: RasterBaseLayers.Precipitation,
         friendlyName: 'Precipitation',
-        symbol: <></>,
     },
     {
         id: RasterBaseLayers.Temperature,
         friendlyName: 'Temperature',
-        symbol: <></>,
     },
     {
         id: RasterBaseLayers.None,
         friendlyName: 'None',
-        symbol: <></>,
     },
 ];
 
@@ -50,119 +55,84 @@ const RasterBaseLayerIconObj = [
  * @component
  */
 const Controls: React.FC = () => {
-    const [baseLayer, setBaseLayer] = useState<RasterBaseLayers>(
-        RasterBaseLayers.Drought
-    );
+    const [baseLayerOpacity, setBaseLayerOpacity] = useState(BaseLayerOpacity);
     const [showTeacups, setShowTeacups] = useState(true);
 
     const setOpenTools = useMainStore((state) => state.setOpenTools);
+    const toggleableLayers = useMainStore((state) => state.toggleableLayers);
+    const setToggleableLayers = useMainStore(
+        (state) => state.setToggleableLayers
+    );
 
     const { map } = useMap(MAP_ID);
 
-    const handleChange = (value: RasterBaseLayers) => {
+    const handleBaseLayerChange = (baseLayer: RasterBaseLayers) => {
         if (!map) {
             return;
         }
 
-        if (value === RasterBaseLayers.Drought) {
-            map.setLayoutProperty(
-                LayerId.USDroughtMonitor,
-                'visibility',
-                'visible'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAAPrecipSixToTen,
-                'visibility',
-                'none'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAATempSixToTen,
-                'visibility',
-                'none'
-            );
-        } else if (value === RasterBaseLayers.Precipitation) {
-            map.setLayoutProperty(
-                LayerId.USDroughtMonitor,
-                'visibility',
-                'none'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAAPrecipSixToTen,
-                'visibility',
-                'visible'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAATempSixToTen,
-                'visibility',
-                'none'
-            );
-        } else if (value === RasterBaseLayers.Temperature) {
-            map.setLayoutProperty(
-                LayerId.USDroughtMonitor,
-                'visibility',
-                'none'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAAPrecipSixToTen,
-                'visibility',
-                'none'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAATempSixToTen,
-                'visibility',
-                'visible'
-            );
-        } else {
-            map.setLayoutProperty(
-                LayerId.USDroughtMonitor,
-                'visibility',
-                'none'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAAPrecipSixToTen,
-                'visibility',
-                'none'
-            );
-            map.setLayoutProperty(
-                LayerId.NOAATempSixToTen,
-                'visibility',
-                'none'
-            );
-        }
+        updateBaseLayer(baseLayer, map);
 
-        setBaseLayer(value);
+        const selectedVisibility = RasterVisibilityMap[baseLayer];
+
+        Object.entries(selectedVisibility).forEach(([layerId, visibility]) => {
+            setToggleableLayers(layerId as LayerId, visibility);
+        });
     };
 
-    useEffect(() => {
+    const handleBaseLayerOpacityChange = (baseLayerOpacity: number) => {
         if (!map) {
             return;
         }
-        if (showTeacups) {
-            ReservoirConfigs.forEach((config) =>
-                config.connectedLayers
-                    .filter((layerId) =>
-                        [LayerId.RiseEDRReservoirs].includes(layerId as LayerId)
-                    )
-                    .forEach((layerId) =>
-                        map.setLayoutProperty(
-                            layerId,
-                            'icon-image',
-                            getReservoirIconImageExpression(config)
-                        )
-                    )
-            );
-        } else {
-            ReservoirConfigs.forEach((config) =>
-                config.connectedLayers
-                    .filter((layerId) =>
-                        [LayerId.RiseEDRReservoirs].includes(layerId as LayerId)
-                    )
-                    .forEach((layerId) =>
-                        map.setLayoutProperty(layerId, 'icon-image', 'default')
-                    )
-            );
+
+        updateBaseLayerOpacity(baseLayerOpacity, map);
+
+        setBaseLayerOpacity(baseLayerOpacity);
+    };
+
+    const handleTeacupChange = (showTeacups: boolean) => {
+        if (!map) {
+            return;
         }
-    }, [showTeacups]);
+
+        updateTeacups(showTeacups, map);
+
+        setShowTeacups(showTeacups);
+    };
+
+    const handleNOAARFCChange = (showNOAARFC: boolean) => {
+        if (!map) {
+            return;
+        }
+        updateNOAARFC(showNOAARFC, map);
+
+        setToggleableLayers(LayerId.NOAARiverForecast, showNOAARFC);
+        // setShowNOAARFC(showNOAARFC);
+    };
+
+    const handleSnotelChange = (showSnotel: boolean) => {
+        if (!map) {
+            return;
+        }
+
+        updateSnotel(showSnotel, map);
+
+        setToggleableLayers(LayerId.Snotel, showSnotel);
+        // setShowSnotel(showSnotel);
+    };
+
+    const getBaseLayerValue = (): RasterBaseLayers => {
+        if (toggleableLayers[RasterBaseLayers.Drought]) {
+            return RasterBaseLayers.Drought;
+        }
+        if (toggleableLayers[RasterBaseLayers.Precipitation]) {
+            return RasterBaseLayers.Precipitation;
+        }
+        if (toggleableLayers[RasterBaseLayers.Temperature]) {
+            return RasterBaseLayers.Temperature;
+        }
+        return RasterBaseLayers.None;
+    };
 
     return (
         <Card
@@ -184,12 +154,36 @@ const Controls: React.FC = () => {
                 </Group>
             </CardSection>
             {map ? (
-                <CardSection inheritPadding py="md">
+                <CardSection
+                    inheritPadding
+                    py="md"
+                    className={styles.toolContent}
+                >
                     <Stack>
                         <Switch
                             label="Show Teacups"
                             checked={showTeacups}
-                            onClick={() => setShowTeacups(!showTeacups)}
+                            onClick={() => handleTeacupChange(!showTeacups)}
+                        />
+                        <Switch
+                            label="Show NOAA RFC"
+                            checked={
+                                toggleableLayers[LayerId.NOAARiverForecast]
+                            }
+                            onClick={() =>
+                                handleNOAARFCChange(
+                                    !toggleableLayers[LayerId.NOAARiverForecast]
+                                )
+                            }
+                        />
+                        <Switch
+                            label="Show Snotel"
+                            checked={toggleableLayers[LayerId.Snotel]}
+                            onClick={() =>
+                                handleSnotelChange(
+                                    !toggleableLayers[LayerId.Snotel]
+                                )
+                            }
                         />
                         <Select
                             id="basinSelector"
@@ -197,13 +191,26 @@ const Controls: React.FC = () => {
                                 value: obj.id,
                                 label: obj.friendlyName,
                             }))}
-                            value={baseLayer}
+                            value={getBaseLayerValue()}
                             aria-label="Select a Base Layer"
                             placeholder="Select a Base Layer"
                             onChange={(_value) =>
-                                handleChange(_value as RasterBaseLayers)
+                                handleBaseLayerChange(
+                                    _value as RasterBaseLayers
+                                )
                             }
                         />
+                        <Stack gap="xs">
+                            <Text size="sm">Base Layer Opacity</Text>
+                            <Slider
+                                min={0}
+                                max={1}
+                                step={0.1}
+                                value={baseLayerOpacity}
+                                onChange={handleBaseLayerOpacityChange}
+                                label={(value) => value.toFixed(1)}
+                            />
+                        </Stack>
                     </Stack>
                 </CardSection>
             ) : (

@@ -95,9 +95,11 @@ export const Chart: React.FC<Props> = (props) => {
                 console.log('Fetch request canceled');
             } else {
                 if ((error as Error)?.message) {
-                    const _error = error as Error;
-                    setError(_error.message);
-                    setLoading(false);
+                    if (isMounted.current) {
+                        const _error = error as Error;
+                        setError(_error.message);
+                        setLoading(false);
+                    }
                 }
             }
         }

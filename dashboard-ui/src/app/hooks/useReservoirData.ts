@@ -6,9 +6,9 @@
 import { useEffect, useRef, useState } from 'react';
 import edrService from '@/services/init/edr.init';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { ReservoirProperties } from '@/features/Map/types';
 import useMainStore, { ReservoirCollections } from '@/lib/main';
 import { ReservoirConfigs } from '@/features/Map/consts';
+import { RiseReservoirProperties } from '@/features/Map/types/reservoir/rise';
 
 export const useReservoirData = () => {
     const reservoirCollections = useMainStore(
@@ -30,7 +30,7 @@ export const useReservoirData = () => {
 
             for (const config of ReservoirConfigs) {
                 const result = await edrService.getLocations<
-                    FeatureCollection<Point, ReservoirProperties>
+                    FeatureCollection<Point, RiseReservoirProperties>
                 >(config.id, {
                     signal: controller.current.signal,
                     params: {
@@ -54,12 +54,12 @@ export const useReservoirData = () => {
 
     const fetchReservoirItem = async (
         reservoirId: string
-    ): Promise<Feature<Point, ReservoirProperties> | null> => {
+    ): Promise<Feature<Point, RiseReservoirProperties> | null> => {
         try {
             controller.current = new AbortController();
 
             const feature = await edrService.getItem<
-                Feature<Point, ReservoirProperties>
+                Feature<Point, RiseReservoirProperties>
             >('rise-edr', reservoirId, {
                 signal: controller.current.signal,
             });

@@ -7,19 +7,19 @@ import { MantineColorScheme } from '@mantine/core';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import {
-    storagePolygonId,
-    storageTextId,
-    capacityPolygonId,
-    capacityTextId,
-    averageTextId,
+    storagePolygonId as _storagePolygonId,
+    storageTextId as _storageTextId,
+    capacityPolygonId as _capacityPolygonId,
+    capacityTextId as _capacityTextId,
+    averageTextId as _averageTextId,
+    highPercentileId as _highPercentileId,
+    highPercentileLabelId as _highPercentileLabelId,
+    averageId as _averageId,
+    averageLabelId as _averageLabelId,
+    lowPercentileId as _lowPercentileId,
+    lowPercentileLabelId as _lowPercentileLabelId,
     capacityFill,
     storageFill,
-    highPercentileId,
-    highPercentileLabelId,
-    averageId,
-    averageLabelId,
-    lowPercentileId,
-    lowPercentileLabelId,
     getAverageLabel,
     getHighPercentileLabel,
     getLowPercentileLabel,
@@ -48,6 +48,7 @@ type Props = {
     reservoirProperties: GeoJsonProperties;
     config: ReservoirConfig;
     showLabels: boolean;
+    labels?: boolean;
     listeners: boolean;
     colorScheme: MantineColorScheme;
     svgRenderCallback?: () => void;
@@ -60,6 +61,7 @@ export const Graphic: React.FC<Props> = (props) => {
         reservoirProperties,
         config,
         showLabels,
+        labels = true,
         colorScheme,
         listeners,
         svgRenderCallback: callback,
@@ -76,6 +78,31 @@ export const Graphic: React.FC<Props> = (props) => {
     useEffect(() => {
         if (!svgRef.current || !reservoirProperties || !config) {
             return;
+        }
+
+        let storagePolygonId = '',
+            storageTextId = '',
+            capacityPolygonId = '',
+            capacityTextId = '',
+            averageTextId = '',
+            highPercentileId = '',
+            highPercentileLabelId = '',
+            averageId = '',
+            averageLabelId = '',
+            lowPercentileId = '',
+            lowPercentileLabelId = '';
+        if (listeners) {
+            storagePolygonId = _storagePolygonId;
+            storageTextId = _storageTextId;
+            capacityPolygonId = _capacityPolygonId;
+            capacityTextId = _capacityTextId;
+            averageTextId = _averageTextId;
+            highPercentileId = _highPercentileId;
+            highPercentileLabelId = _highPercentileLabelId;
+            averageId = _averageId;
+            averageLabelId = _averageLabelId;
+            lowPercentileId = _lowPercentileId;
+            lowPercentileLabelId = _lowPercentileLabelId;
         }
 
         while (svgRef.current.firstChild) {
@@ -184,139 +211,147 @@ export const Graphic: React.FC<Props> = (props) => {
             calculateXPosition
         );
 
-        const addLabel = addLabelConstructor(
-            upperWidth,
-            svgRef.current,
-            calculateXPosition
-        );
-
-        const addText = addTextConstructor(svgRef.current);
-
-        // Add high percentile line and label
         addLine(highPercentileId, highPercentile, '#FFF');
-
-        const highLabelTSpanData = getHighPercentileLabel();
-
-        const highLabel = addLabel(
-            highPercentileLabelId,
-            highLabelTSpanData,
-            highPercentile,
-            textColor
-        );
-
-        // Add average line and label
-
-        // Adjust the average label position if too close to high percentile label
-        let averageAdjust = 0;
-        if (average - highPercentile < 40) {
-            const height = highLabel.getBBox().height;
-
-            averageAdjust = Math.max(
-                0,
-                height - (average - highPercentile + 1)
-            );
-        }
-
         addLine(averageId, average, '#d0a02a');
-
-        const averageLabelTSpanData = getAverageLabel(averageAdjust);
-
-        const averageLabel = addLabel(
-            averageLabelId,
-            averageLabelTSpanData,
-            average,
-            '#d0a02a'
-        );
-
-        // Add low percentile line and label
-
         addLine(lowPercentileId, lowPercentile, '#FFF');
 
-        // Adjust the low percentile label position if too close to average label
-        // Handle if average is also too close to high percentile
-        let lowPercentileAdjust = 0;
-        if (lowPercentile - average < 40) {
-            const height = averageLabel.getBBox().height;
+        if (labels) {
+            const addLabel = addLabelConstructor(
+                upperWidth,
+                svgRef.current,
+                calculateXPosition
+            );
 
-            lowPercentileAdjust =
-                Math.max(0, height - (lowPercentile - average + 1)) +
-                averageAdjust;
+            const addText = addTextConstructor(svgRef.current);
+
+            // Add high percentile line and label
+
+            const highLabelTSpanData = getHighPercentileLabel();
+
+            const highLabel = addLabel(
+                highPercentileLabelId,
+                highLabelTSpanData,
+                highPercentile,
+                textColor
+            );
+
+            // Add average line and label
+
+            // Adjust the average label position if too close to high percentile label
+            let averageAdjust = 0;
+            if (average - highPercentile < 40) {
+                const height = highLabel.getBBox().height;
+
+                averageAdjust = Math.max(
+                    0,
+                    height - (average - highPercentile + 1)
+                );
+            }
+
+            const averageLabelTSpanData = getAverageLabel(averageAdjust);
+
+            const averageLabel = addLabel(
+                averageLabelId,
+                averageLabelTSpanData,
+                average,
+                '#d0a02a'
+            );
+
+            // Add low percentile line and label
+
+            // Adjust the low percentile label position if too close to average label
+            // Handle if average is also too close to high percentile
+            let lowPercentileAdjust = 0;
+            if (lowPercentile - average < 40) {
+                const height = averageLabel.getBBox().height;
+
+                lowPercentileAdjust =
+                    Math.max(0, height - (lowPercentile - average + 1)) +
+                    averageAdjust;
+            }
+
+            const lowLabelTSpanData =
+                getLowPercentileLabel(lowPercentileAdjust);
+
+            addLabel(
+                lowPercentileLabelId,
+                lowLabelTSpanData,
+                lowPercentile,
+                textColor
+            );
+
+            // Total capacity of reservoir
+            addText(
+                capacityTextId,
+                `${Number(
+                    reservoirProperties[config.capacityProperty]
+                ).toLocaleString('en-us')} acre-feet`,
+                -1,
+                textColor,
+                showLabels
+            );
+            // TODO: replace the two displayed values below, when available
+            // Renders just above the average line
+            addText(
+                averageTextId,
+                `${Math.round(
+                    (Number(reservoirProperties[config.storageProperty]) / 2) *
+                        1.3
+                ).toLocaleString('en-us')} acre-feet`,
+                average - 2,
+                '#d0a02a',
+                showLabels
+            );
+            // Current Storage of reservoir
+            addText(
+                storageTextId,
+                `${(
+                    Number(reservoirProperties[config.storageProperty]) / 2
+                ).toLocaleString('en-us')} acre-feet`,
+                cutHeight - 1,
+                '#FFF',
+                showLabels
+            );
         }
-
-        const lowLabelTSpanData = getLowPercentileLabel(lowPercentileAdjust);
-
-        addLabel(
-            lowPercentileLabelId,
-            lowLabelTSpanData,
-            lowPercentile,
-            textColor
-        );
-
-        // Total capacity of reservoir
-        addText(
-            capacityTextId,
-            `${Number(
-                reservoirProperties[config.capacityProperty]
-            ).toLocaleString('en-us')} acre-feet`,
-            -1,
-            textColor,
-            showLabels
-        );
-        // TODO: replace the two displayed values below, when available
-        // Renders just above the average line
-        addText(
-            averageTextId,
-            `${Math.round(
-                (Number(reservoirProperties[config.storageProperty]) / 2) * 1.3
-            ).toLocaleString('en-us')} acre-feet`,
-            average - 2,
-            '#d0a02a',
-            showLabels
-        );
-        // Current Storage of reservoir
-        addText(
-            storageTextId,
-            `${(
-                Number(reservoirProperties[config.storageProperty]) / 2
-            ).toLocaleString('en-us')} acre-feet`,
-            cutHeight - 1,
-            '#FFF',
-            showLabels
-        );
 
         // Now that the diagram is created, call the callback function if exists
         // Used when creating the diagram for the report
         callback?.();
-    }, [svgRef.current, colorScheme]);
+    }, [
+        svgRef.current,
+        colorScheme,
+        reservoirProperties![config.identifierProperty],
+    ]);
 
     useEffect(() => {
         if (
             !listeners ||
-            !cutHeight ||
-            !highPercentile ||
-            !average ||
-            !lowPercentile
-        )
+            cutHeight === undefined ||
+            highPercentile === undefined ||
+            average === undefined ||
+            lowPercentile === undefined
+        ) {
             return;
+        }
 
         const propagateEventToContainerElem =
             propagateEventToContainerElemConstructor(
-                capacityPolygonId,
-                storagePolygonId,
+                _capacityPolygonId,
+                _storagePolygonId,
                 cutHeight
             );
 
         const cleanups: (() => void)[] = [];
 
         cleanups.push(
-            addListeners(capacityPolygonId, {
+            addListeners(_capacityPolygonId, {
                 mouseenter: handleCapacityEnter,
                 mouseleave: () => handleCapacityLeave(showLabels),
             })!
         );
 
         cleanups.push(
-            addListeners(storagePolygonId, {
+            addListeners(_storagePolygonId, {
                 mouseenter: handleStorageEnter,
                 mouseleave: () => handleStorageLeave(showLabels),
             })!
@@ -327,14 +362,14 @@ export const Graphic: React.FC<Props> = (props) => {
                 propagateEventToContainerElem(type, highPercentile);
 
         cleanups.push(
-            addListeners(highPercentileId, {
+            addListeners(_highPercentileId, {
                 mouseenter: highPercentileHandler('mouseenter'),
                 mouseleave: highPercentileHandler('mouseleave'),
             })!
         );
 
         cleanups.push(
-            addListeners(`${highPercentileId}-ghost`, {
+            addListeners(`${_highPercentileId}-ghost`, {
                 mouseenter: highPercentileHandler('mouseenter'),
                 mouseleave: highPercentileHandler('mouseleave'),
             })!
@@ -348,21 +383,21 @@ export const Graphic: React.FC<Props> = (props) => {
         };
 
         cleanups.push(
-            addListeners(averageId, {
+            addListeners(_averageId, {
                 mouseenter: averageHandler('mouseenter'),
                 mouseleave: averageHandler('mouseleave'),
             })!
         );
 
         cleanups.push(
-            addListeners(`${averageId}-ghost`, {
+            addListeners(`${_averageId}-ghost`, {
                 mouseenter: averageHandler('mouseenter'),
                 mouseleave: averageHandler('mouseleave'),
             })!
         );
 
         cleanups.push(
-            addListeners(averageTextId, {
+            addListeners(_averageTextId, {
                 mouseenter: averageHandler('mouseenter'),
                 mouseleave: averageHandler('mouseleave'),
             })!
@@ -373,14 +408,14 @@ export const Graphic: React.FC<Props> = (props) => {
                 propagateEventToContainerElem(type, lowPercentile);
 
         cleanups.push(
-            addListeners(lowPercentileId, {
+            addListeners(_lowPercentileId, {
                 mouseenter: lowPercentileHandler('mouseenter'),
                 mouseleave: lowPercentileHandler('mouseleave'),
             })!
         );
 
         cleanups.push(
-            addListeners(`${lowPercentileId}-ghost`, {
+            addListeners(`${_lowPercentileId}-ghost`, {
                 mouseenter: lowPercentileHandler('mouseenter'),
                 mouseleave: lowPercentileHandler('mouseleave'),
             })!
@@ -393,16 +428,14 @@ export const Graphic: React.FC<Props> = (props) => {
         listeners,
         colorScheme,
         showLabels,
-        cutHeight,
-        highPercentile,
         average,
-        lowPercentile,
+        reservoirProperties![config.identifierProperty],
     ]);
 
     return (
         <svg
             data-testid="graphic-svg"
-            viewBox="-5 -10 220 127"
+            viewBox={`-5 -10 ${labels ? 220 : 170} 127`}
             className={styles.svg}
             ref={_graphicRef}
         >

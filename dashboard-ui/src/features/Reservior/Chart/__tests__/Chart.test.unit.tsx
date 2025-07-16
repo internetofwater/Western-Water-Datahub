@@ -9,6 +9,8 @@ import { screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
 import edrService from '@/services/init/edr.init';
 import * as utils from '@/features/Reservior/Chart/utils';
 import { Chart } from '@/features/Reservior/Chart';
+import { LayerId, SourceId, SubLayerId } from '@/features/Map/consts';
+import { getReservoirConfig } from '@/features/Map/utils';
 
 jest.mock('@/lib/main', () => ({
     __esModule: true,
@@ -71,7 +73,13 @@ describe('Chart component', () => {
         (edrService.getLocation as jest.Mock).mockResolvedValueOnce(
             mockCoverageCollection
         );
-        render(<Chart id={1} ref={mockRef} />);
+        render(
+            <Chart
+                id={1}
+                ref={mockRef}
+                config={getReservoirConfig(SourceId.RiseEDRReservoirs)!}
+            />
+        );
 
         await waitFor(() => {
             expect(screen.getByTestId('chart-loader-bar')).toBeInTheDocument();
@@ -82,7 +90,13 @@ describe('Chart component', () => {
         (edrService.getLocation as jest.Mock).mockResolvedValueOnce(
             mockCoverageCollection
         );
-        render(<Chart id={1} ref={mockRef} />);
+        render(
+            <Chart
+                id={1}
+                ref={mockRef}
+                config={getReservoirConfig(SourceId.RiseEDRReservoirs)!}
+            />
+        );
 
         await waitFor(() => {
             expect(screen.getByText(/Storage Volume/i)).toBeInTheDocument();
@@ -105,7 +119,13 @@ describe('Chart component', () => {
         (edrService.getLocation as jest.Mock).mockResolvedValue(
             mockCoverageCollection
         );
-        render(<Chart id={1} ref={mockRef} />);
+        render(
+            <Chart
+                id={1}
+                ref={mockRef}
+                config={getReservoirConfig(SourceId.RiseEDRReservoirs)!}
+            />
+        );
 
         await waitFor(() => {
             const fiveYearRadio = screen.getByTestId('5-year-radio');

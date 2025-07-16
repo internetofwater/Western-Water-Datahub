@@ -6,20 +6,22 @@
 'use client';
 
 import { ComboboxData, Select, Skeleton } from '@mantine/core';
-import useMainStore from '@/lib/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID } from '@/features/Map/consts';
 import { useEffect, useState } from 'react';
 import styles from '@/features/Header/Header.module.css';
 
-export const Basin: React.FC = () => {
+export const State: React.FC = () => {
     const { map } = useMap(MAP_ID);
 
-    const basin = useMainStore((state) => state.basin);
-    const setBasin = useMainStore((state) => state.setBasin);
+    // const basin = useMainStore((state) => state.basin);
+    // const setBasin = useMainStore((state) => state.setBasin);
 
-    const [basinOptions] = useState<ComboboxData>([
-        { value: 'all', label: 'All Basins' },
+    const [stateOptions] = useState<ComboboxData>([
+        {
+            value: 'all',
+            label: 'All States',
+        },
     ]);
 
     useEffect(() => {
@@ -32,17 +34,17 @@ export const Basin: React.FC = () => {
         <Skeleton
             height={36} // Default dimensions of select
             width={207}
-            visible={basinOptions.length === 0}
+            visible={false}
             className={styles.skeleton}
         >
             <Select
-                id="basinSelector"
+                id="stateSelector"
                 searchable
-                data={basinOptions}
-                value={basin}
-                aria-label="Select a Basin"
-                placeholder="Select a basin"
-                onChange={(_value) => setBasin(_value as string)}
+                data={stateOptions}
+                value={'all'}
+                aria-label="Select a State"
+                placeholder="Select a State"
+                onChange={() => {}}
             />
         </Skeleton>
     );
