@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { LayerType } from '@/components/Map/types';
 import { LayerId } from '@/features/Map/consts';
 

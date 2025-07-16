@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { LayerId, ReservoirConfigs } from '@/features/Map/consts';
 import { RasterBaseLayers } from '@/features/Map/types';
 import { getReservoirIconImageExpression } from '@/features/Map/utils';

@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 export enum RiseReservoirField {
     Id = '_id',
     CreateDate = 'createDate',
