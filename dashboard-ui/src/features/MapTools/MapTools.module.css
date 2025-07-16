@@ -3,19 +3,36 @@
  * SPDX-License-Identifier: MIT
  */
 
-.mapToolsContainerRight {
+.mapToolsContainer {
     grid-area: 1 / 1;
     z-index: 2;
-    justify-self: flex-end;
-    margin-right: 49px;
     margin-top: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    max-height: 100%;
+    display: flex;
 }
-.mapToolsContainerLeft {
-    grid-area: 1 / 1;
-    z-index: 2;
-    justify-self: flex-start;
+
+.mapToolsContainer > div {
+    height: fit-content;
+}
+
+.left {
     margin-left: 49px;
-    margin-top: 8px;
+    justify-self: flex-start;
+}
+
+.left > *:not(:first-child) {
+    margin-left: 8px;
+}
+
+.right {
+    margin-right: 49px;
+    justify-self: flex-end;
+}
+
+.right > *:not(:first-child) {
+    margin-right: 8px;
 }
 
 .basemapSelectorContainer {
@@ -40,4 +57,9 @@
 
 .controlsContainer {
     width: 215px;
+}
+
+.toolContent {
+    max-height: calc(100vh - 365px);
+    overflow: auto;
 }

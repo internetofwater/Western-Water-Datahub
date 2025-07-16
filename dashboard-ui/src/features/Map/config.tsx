@@ -152,6 +152,16 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
     switch (layerId) {
         case LayerId.Regions:
             return 'Regions';
+        case LayerId.Snotel:
+            return 'SNOTEL';
+        case LayerId.NOAARiverForecast:
+            return 'NOAA RFC';
+        case LayerId.USDroughtMonitor:
+            return 'Drought';
+        case LayerId.NOAAPrecipSixToTen:
+            return 'Precipitation';
+        case LayerId.NOAATempSixToTen:
+            return 'Temperature';
         default:
             return '';
     }

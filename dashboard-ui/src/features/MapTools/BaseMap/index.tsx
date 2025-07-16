@@ -5,8 +5,17 @@
 
 import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
-import useMainStore from '@/lib/main';
-import { Box, Card, CardSection, Checkbox, Stack, Title } from '@mantine/core';
+import useMainStore, { Tools } from '@/lib/main';
+import {
+    Box,
+    Card,
+    CardSection,
+    Checkbox,
+    CloseButton,
+    Group,
+    Stack,
+    Title,
+} from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
 
 /**
@@ -16,6 +25,7 @@ import styles from '@/features/MapTools/MapTools.module.css';
 export const Selector: React.FC = () => {
     const basemap = useMainStore((state) => state.basemap);
     const setBasemap = useMainStore((state) => state.setBasemap);
+    const setOpenTools = useMainStore((state) => state.setOpenTools);
 
     return (
         <Card
@@ -26,11 +36,19 @@ export const Selector: React.FC = () => {
             className={styles.basemapSelectorContainer}
         >
             <CardSection withBorder inheritPadding py="xs">
-                <Title order={3} className={styles.mapToolTitle}>
-                    Basemaps
-                </Title>
+                <Group justify="space-between">
+                    <Title order={3} className={styles.mapToolTitle}>
+                        Basemaps
+                    </Title>
+                    <CloseButton
+                        onClick={() =>
+                            setOpenTools(Tools.BasemapSelector, false)
+                        }
+                        aria-label="Close Basemaps"
+                    />
+                </Group>
             </CardSection>
-            <CardSection inheritPadding py="md">
+            <CardSection inheritPadding py="md" className={styles.toolContent}>
                 <Stack>
                     {Object.keys(basemaps).map((key) => {
                         const basemapId = key as BasemapId;

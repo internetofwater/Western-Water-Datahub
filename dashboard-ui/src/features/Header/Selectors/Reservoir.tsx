@@ -17,6 +17,7 @@ import { useReservoirData } from '@/app/hooks/useReservoirData';
 import { useMap } from '@/contexts/MapContexts';
 import { getReservoirConfig, isSourceDataLoaded } from '@/features/Map/utils';
 import { SourceDataEvent } from '@/features/Map/types';
+import styles from '@/features/Header/Header.module.css';
 
 /**
 
@@ -213,6 +214,7 @@ export const Reservoir: React.FC = () => {
             height={36} // Default dimensions of select
             width={207}
             visible={loading || reservoirOptions.length === 0}
+            className={styles.skeleton}
         >
             <Select
                 id="reservoirSelector"

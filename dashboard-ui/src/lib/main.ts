@@ -4,7 +4,7 @@
  */
 
 import { BasemapId } from '@/components/Map/types';
-import { SourceId } from '@/features/Map/consts';
+import { LayerId, SourceId } from '@/features/Map/consts';
 import { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
 import { create } from 'zustand';
 
@@ -12,6 +12,7 @@ export enum Tools {
     BasemapSelector = 'basemap-selector',
     Print = 'print',
     Controls = 'controls',
+    Legend = 'legend',
 }
 
 export type ReservoirStorageData = Array<{ x: string; y: number }>;
@@ -45,10 +46,19 @@ export interface MainState {
     setBasemap: (basemap: BasemapId) => void;
     chartUpdate: number;
     setChartUpdate: (chartUpdate: number) => void;
+    toggleableLayers: {
+        [LayerId.Snotel]: boolean;
+        [LayerId.NOAARiverForecast]: boolean;
+        [LayerId.USDroughtMonitor]: boolean;
+        [LayerId.NOAAPrecipSixToTen]: boolean;
+        [LayerId.NOAATempSixToTen]: boolean;
+    };
+    setToggleableLayers: (layer: LayerId, visible: boolean) => void;
     tools: {
         [Tools.BasemapSelector]: boolean;
         [Tools.Print]: boolean;
         [Tools.Controls]: boolean;
+        [Tools.Legend]: boolean;
     };
     setOpenTools: (tool: Tools, open: boolean) => void;
     colorScheme: 'dark' | 'light';
@@ -71,10 +81,25 @@ const useMainStore = create<MainState>()((set) => ({
     setBasemap: (basemap) => set({ basemap }),
     chartUpdate: 0,
     setChartUpdate: (chartUpdate) => set({ chartUpdate }),
+    toggleableLayers: {
+        [LayerId.Snotel]: false,
+        [LayerId.NOAARiverForecast]: false,
+        [LayerId.USDroughtMonitor]: true,
+        [LayerId.NOAAPrecipSixToTen]: false,
+        [LayerId.NOAATempSixToTen]: false,
+    },
+    setToggleableLayers: (layer, visible) =>
+        set((state) => ({
+            toggleableLayers: {
+                ...state.toggleableLayers,
+                [layer]: visible,
+            },
+        })),
     tools: {
         [Tools.BasemapSelector]: false,
         [Tools.Print]: false,
         [Tools.Controls]: true,
+        [Tools.Legend]: false,
     },
     setOpenTools: (tool, open) =>
         set((state) => ({

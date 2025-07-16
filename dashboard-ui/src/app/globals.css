@@ -21,6 +21,7 @@ body {
     grid-area: 1 / 1;
     width: 100%;
     height: 100%; /* Top Bar + card height*/
+    max-height: inherit;
     z-index: 1;
 }
 

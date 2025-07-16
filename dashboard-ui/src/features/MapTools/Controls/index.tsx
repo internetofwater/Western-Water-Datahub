@@ -17,12 +17,13 @@ import {
     Text,
 } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
-import { BaseLayerOpacity, MAP_ID } from '@/features/Map/consts';
+import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { RasterBaseLayers } from '@/features/Map/types';
 import { useState } from 'react';
 import useMainStore, { Tools } from '@/lib/main';
 import {
+    RasterVisibilityMap,
     updateBaseLayer,
     updateBaseLayerOpacity,
     updateNOAARFC,
@@ -34,22 +35,18 @@ const RasterBaseLayerIconObj = [
     {
         id: RasterBaseLayers.Drought,
         friendlyName: 'Drought',
-        symbol: <></>,
     },
     {
         id: RasterBaseLayers.Precipitation,
         friendlyName: 'Precipitation',
-        symbol: <></>,
     },
     {
         id: RasterBaseLayers.Temperature,
         friendlyName: 'Temperature',
-        symbol: <></>,
     },
     {
         id: RasterBaseLayers.None,
         friendlyName: 'None',
-        symbol: <></>,
     },
 ];
 
@@ -58,15 +55,14 @@ const RasterBaseLayerIconObj = [
  * @component
  */
 const Controls: React.FC = () => {
-    const [baseLayer, setBaseLayer] = useState<RasterBaseLayers>(
-        RasterBaseLayers.Drought
-    );
     const [baseLayerOpacity, setBaseLayerOpacity] = useState(BaseLayerOpacity);
     const [showTeacups, setShowTeacups] = useState(true);
-    const [showNOAARFC, setShowNOAARFC] = useState(false);
-    const [showSnotel, setShowSnotel] = useState(false);
 
     const setOpenTools = useMainStore((state) => state.setOpenTools);
+    const toggleableLayers = useMainStore((state) => state.toggleableLayers);
+    const setToggleableLayers = useMainStore(
+        (state) => state.setToggleableLayers
+    );
 
     const { map } = useMap(MAP_ID);
 
@@ -77,7 +73,11 @@ const Controls: React.FC = () => {
 
         updateBaseLayer(baseLayer, map);
 
-        setBaseLayer(baseLayer);
+        const selectedVisibility = RasterVisibilityMap[baseLayer];
+
+        Object.entries(selectedVisibility).forEach(([layerId, visibility]) => {
+            setToggleableLayers(layerId as LayerId, visibility);
+        });
     };
 
     const handleBaseLayerOpacityChange = (baseLayerOpacity: number) => {
@@ -106,7 +106,8 @@ const Controls: React.FC = () => {
         }
         updateNOAARFC(showNOAARFC, map);
 
-        setShowNOAARFC(showNOAARFC);
+        setToggleableLayers(LayerId.NOAARiverForecast, showNOAARFC);
+        // setShowNOAARFC(showNOAARFC);
     };
 
     const handleSnotelChange = (showSnotel: boolean) => {
@@ -116,7 +117,21 @@ const Controls: React.FC = () => {
 
         updateSnotel(showSnotel, map);
 
-        setShowSnotel(showSnotel);
+        setToggleableLayers(LayerId.Snotel, showSnotel);
+        // setShowSnotel(showSnotel);
+    };
+
+    const getBaseLayerValue = (): RasterBaseLayers => {
+        if (toggleableLayers[RasterBaseLayers.Drought]) {
+            return RasterBaseLayers.Drought;
+        }
+        if (toggleableLayers[RasterBaseLayers.Precipitation]) {
+            return RasterBaseLayers.Precipitation;
+        }
+        if (toggleableLayers[RasterBaseLayers.Temperature]) {
+            return RasterBaseLayers.Temperature;
+        }
+        return RasterBaseLayers.None;
     };
 
     return (
@@ -139,7 +154,11 @@ const Controls: React.FC = () => {
                 </Group>
             </CardSection>
             {map ? (
-                <CardSection inheritPadding py="md">
+                <CardSection
+                    inheritPadding
+                    py="md"
+                    className={styles.toolContent}
+                >
                     <Stack>
                         <Switch
                             label="Show Teacups"
@@ -148,13 +167,23 @@ const Controls: React.FC = () => {
                         />
                         <Switch
                             label="Show NOAA RFC"
-                            checked={showNOAARFC}
-                            onClick={() => handleNOAARFCChange(!showNOAARFC)}
+                            checked={
+                                toggleableLayers[LayerId.NOAARiverForecast]
+                            }
+                            onClick={() =>
+                                handleNOAARFCChange(
+                                    !toggleableLayers[LayerId.NOAARiverForecast]
+                                )
+                            }
                         />
                         <Switch
                             label="Show Snotel"
-                            checked={showSnotel}
-                            onClick={() => handleSnotelChange(!showSnotel)}
+                            checked={toggleableLayers[LayerId.Snotel]}
+                            onClick={() =>
+                                handleSnotelChange(
+                                    !toggleableLayers[LayerId.Snotel]
+                                )
+                            }
                         />
                         <Select
                             id="basinSelector"
@@ -162,7 +191,7 @@ const Controls: React.FC = () => {
                                 value: obj.id,
                                 label: obj.friendlyName,
                             }))}
-                            value={baseLayer}
+                            value={getBaseLayerValue()}
                             aria-label="Select a Base Layer"
                             placeholder="Select a Base Layer"
                             onChange={(_value) =>

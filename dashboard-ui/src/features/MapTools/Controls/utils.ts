@@ -3,38 +3,42 @@ import { RasterBaseLayers } from '@/features/Map/types';
 import { getReservoirIconImageExpression } from '@/features/Map/utils';
 import { Map } from 'mapbox-gl';
 
-export const updateBaseLayer = (baseLayer: RasterBaseLayers, map: Map) => {
-    const visibilityMap: {
-        [key in RasterBaseLayers]: {
-            [key in LayerId]?: 'visible' | 'none';
-        };
-    } = {
-        [RasterBaseLayers.Drought]: {
-            [LayerId.USDroughtMonitor]: 'visible',
-            [LayerId.NOAAPrecipSixToTen]: 'none',
-            [LayerId.NOAATempSixToTen]: 'none',
-        },
-        [RasterBaseLayers.Precipitation]: {
-            [LayerId.USDroughtMonitor]: 'none',
-            [LayerId.NOAAPrecipSixToTen]: 'visible',
-            [LayerId.NOAATempSixToTen]: 'none',
-        },
-        [RasterBaseLayers.Temperature]: {
-            [LayerId.USDroughtMonitor]: 'none',
-            [LayerId.NOAAPrecipSixToTen]: 'none',
-            [LayerId.NOAATempSixToTen]: 'visible',
-        },
-        [RasterBaseLayers.None]: {
-            [LayerId.USDroughtMonitor]: 'none',
-            [LayerId.NOAAPrecipSixToTen]: 'none',
-            [LayerId.NOAATempSixToTen]: 'none',
-        },
+export const RasterVisibilityMap: {
+    [key in RasterBaseLayers]: {
+        [key in LayerId]?: boolean;
     };
+} = {
+    [RasterBaseLayers.Drought]: {
+        [LayerId.USDroughtMonitor]: true,
+        [LayerId.NOAAPrecipSixToTen]: false,
+        [LayerId.NOAATempSixToTen]: false,
+    },
+    [RasterBaseLayers.Precipitation]: {
+        [LayerId.USDroughtMonitor]: false,
+        [LayerId.NOAAPrecipSixToTen]: true,
+        [LayerId.NOAATempSixToTen]: false,
+    },
+    [RasterBaseLayers.Temperature]: {
+        [LayerId.USDroughtMonitor]: false,
+        [LayerId.NOAAPrecipSixToTen]: false,
+        [LayerId.NOAATempSixToTen]: true,
+    },
+    [RasterBaseLayers.None]: {
+        [LayerId.USDroughtMonitor]: false,
+        [LayerId.NOAAPrecipSixToTen]: false,
+        [LayerId.NOAATempSixToTen]: false,
+    },
+};
 
-    const selectedVisibility = visibilityMap[baseLayer];
+export const updateBaseLayer = (baseLayer: RasterBaseLayers, map: Map) => {
+    const selectedVisibility = RasterVisibilityMap[baseLayer];
 
     Object.entries(selectedVisibility).forEach(([layerId, visibility]) => {
-        map.setLayoutProperty(layerId, 'visibility', visibility);
+        map.setLayoutProperty(
+            layerId,
+            'visibility',
+            visibility ? 'visible' : 'none'
+        );
     });
 };
 

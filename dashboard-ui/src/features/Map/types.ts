@@ -31,8 +31,8 @@ export type ReservoirConfig = {
 };
 
 export enum RasterBaseLayers {
-    Drought = 'drought',
-    Precipitation = 'precipitation',
-    Temperature = 'temperature',
+    Drought = LayerId.USDroughtMonitor,
+    Precipitation = LayerId.NOAAPrecipSixToTen,
+    Temperature = LayerId.NOAATempSixToTen,
     None = 'none',
 }
