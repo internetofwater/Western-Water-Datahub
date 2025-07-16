@@ -1,0 +1,2 @@
+types:
+	datamodel-codegen --url https://wswcwaterdataexchange.github.io/WaDE-API-Docs/swagger.json --output-model-type  dataclasses.dataclass --input-file-type openapi --target-python-version 3.12 --output src/wade/types.py

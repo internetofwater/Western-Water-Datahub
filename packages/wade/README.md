@@ -1,0 +1,1 @@
+Mappings to the Wade API

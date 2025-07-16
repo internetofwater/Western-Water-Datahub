@@ -25,3 +25,5 @@ node_modules/
 *.sql.zip
 
 !schema.sql
+
+.env
