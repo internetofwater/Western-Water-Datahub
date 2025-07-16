@@ -506,3 +506,37 @@ resources:
         data: https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0
         id_field: OBJECTID
         title_field: REG_NAME
+
+
+  noaa-river-stage-forecast-day-1: &default-river-stage
+    type: collection
+    title: River Stage Forecast Day 1
+    description: NOAA River Stage Forecast 24 Hours / 1 day from now
+    keywords: [NOAA, riv_gauges]
+    links:
+      - <<: *default-link
+        href: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer
+    extents: *default-extent
+    providers:
+      - &default-feature-river-stage
+        type: feature
+        name: ESRI
+        data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/1
+        id_field: objectid
+        time_field: fcsttime
+
+  noaa-river-stage-forecast-day-2:
+    <<: *default-river-stage
+    title: River Stage Forecast Day 2
+    description: NOAA River Stage Forecast 48 hours / 2 days from now
+    providers:
+      - <<: *default-feature-river-stage
+        data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/2
+
+  noaa-river-stage-forecast-day-3:
+    <<: *default-river-stage
+    title: River Stage Forecast Day 3
+    description: NOAA River Stage Forecast 72 hours / 3 days from now
+    providers:
+      - <<: *default-feature-river-stage
+        data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/3
