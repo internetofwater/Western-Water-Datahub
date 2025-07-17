@@ -24,6 +24,7 @@ import {
     RegionsSource,
     ZoomCapacityArray,
     BaseLayerOpacity,
+    ValidStates,
 } from '@/features/Map/consts';
 import {
     getReservoirConfig,
@@ -34,6 +35,7 @@ import { ReservoirPopup } from '../Popups/Reservoirs';
 import { Feature, Point } from 'geojson';
 import { MantineProvider } from '@mantine/core';
 import { SnotelHucMeansField } from './types/snotel';
+import { StateField } from './types/state';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -71,21 +73,6 @@ export const sourceConfigs: SourceConfig[] = [
         },
     },
     {
-        id: SourceId.Basins,
-        type: Sources.VectorTile,
-        definition: {
-            type: 'vector',
-            tiles: [
-                `https://reference.geoconnex.dev/collections/hu04/tiles/WebMercatorQuad/{z}/{x}/{y}?f=mvt`,
-            ],
-            minzoom: 0,
-
-            maxzoom: 10,
-            tileSize: 512,
-            bounds: [-179.229468, -14.42442, 179.856484, 71.439451],
-        },
-    },
-    {
         id: SourceId.USDroughtMonitor,
         type: Sources.Raster,
         definition: {
@@ -95,7 +82,6 @@ export const sourceConfigs: SourceConfig[] = [
             ],
             tileSize: 256,
             minzoom: 4,
-            // maxzoom: 10,
         },
     },
     {
@@ -130,6 +116,33 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'geojson',
             data: { type: 'FeatureCollection', features: [] }, // Data set at runtime after combining with means
+        },
+    },
+    {
+        id: SourceId.Basins,
+        type: Sources.VectorTile,
+        definition: {
+            type: 'vector',
+            tiles: [
+                `https://reference.geoconnex.us/collections/hu06/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`,
+            ],
+            minzoom: 0,
+            maxzoom: 10,
+            tileSize: 512,
+            bounds: [-124.707777, 25.190876, -67.05824, 49.376613],
+        },
+    },
+    {
+        id: SourceId.States,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: 'https://reference.geoconnex.us/collections/states/items?f=json',
+            filter: [
+                'in',
+                ['get', StateField.Acronym],
+                ['literal', ValidStates],
+            ],
         },
     },
 ];
@@ -186,9 +199,11 @@ export const getLayerColor = (
         case LayerId.Regions:
             return '#000';
         case LayerId.Basins:
-            return '#0F0';
+            return '#000';
         case LayerId.RiseEDRReservoirs:
             return '#00F';
+        case LayerId.States:
+            return '#0F0';
         default:
             return '#FFF';
     }
@@ -245,7 +260,7 @@ export const getLayerConfig = (
                 id: SubLayerId.BasinsBoundary,
                 type: LayerType.Line,
                 source: SourceId.Basins,
-                'source-layer': 'hu04',
+                'source-layer': 'hu06',
                 layout: {
                     visibility: 'none',
                     'line-cap': 'round',
@@ -262,13 +277,44 @@ export const getLayerConfig = (
                 id: SubLayerId.BasinsFill,
                 type: LayerType.Fill,
                 source: SourceId.Basins,
-                'source-layer': 'hu04',
+                'source-layer': 'hu06',
                 layout: {
                     visibility: 'none',
                 },
                 paint: {
                     'fill-color': getLayerColor(LayerId.Basins),
-                    'fill-opacity': 0.3,
+                    'fill-opacity': 0,
+                },
+            };
+        case LayerId.States:
+            return null;
+        case SubLayerId.StatesBoundary:
+            return {
+                id: SubLayerId.StatesBoundary,
+                type: LayerType.Line,
+                source: SourceId.States,
+                layout: {
+                    // visibility: 'none',
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                },
+                paint: {
+                    'line-opacity': 1,
+                    'line-color': getLayerColor(LayerId.States),
+                    'line-width': 3,
+                },
+            };
+        case SubLayerId.StatesFill:
+            return {
+                id: SubLayerId.StatesFill,
+                type: LayerType.Fill,
+                source: SourceId.States,
+                layout: {
+                    // visibility: 'none',
+                },
+                paint: {
+                    'fill-color': getLayerColor(LayerId.States),
+                    'fill-opacity': 0,
                 },
             };
         case LayerId.RiseEDRReservoirs:
@@ -877,6 +923,27 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 controllable: false,
                 legend: false,
                 clickFunction: getLayerClickFunction(SubLayerId.BasinsFill),
+            },
+        ],
+    },
+    {
+        id: LayerId.States,
+        config: getLayerConfig(LayerId.States),
+        controllable: false,
+        legend: false,
+        subLayers: [
+            {
+                id: SubLayerId.StatesBoundary,
+                config: getLayerConfig(SubLayerId.StatesBoundary),
+                controllable: false,
+                legend: false,
+            },
+            {
+                id: SubLayerId.StatesFill,
+                config: getLayerConfig(SubLayerId.StatesFill),
+                controllable: false,
+                legend: false,
+                clickFunction: getLayerClickFunction(SubLayerId.StatesFill),
             },
         ],
     },

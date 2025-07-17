@@ -18,7 +18,8 @@ export const INITIAL_ZOOM = 4.15;
 
 export enum SourceId {
     Regions = 'regions-source',
-    Basins = 'hu04',
+    Basins = 'hu06',
+    States = 'states',
     RiseEDRReservoirs = 'rise-edr',
     USACEEDRReservoirs = 'usace-edr',
     SnowWater = 'snow-water',
@@ -33,6 +34,7 @@ export enum SourceId {
 export enum LayerId {
     Regions = 'regions-main',
     Basins = 'basins-main',
+    States = 'states-main',
     RiseEDRReservoirs = 'rise-edr-reservoir-points',
     SnowWater = 'snow-water',
     USDroughtMonitor = 'us-drought-monitor',
@@ -48,6 +50,8 @@ export enum SubLayerId {
     RegionsFill = 'regions-fill',
     BasinsBoundary = 'basins-boundary',
     BasinsFill = 'basins-fill',
+    StatesBoundary = 'states-boundary',
+    StatesFill = 'states-fill',
     RiseEDRReservoirLabels = 'rise-edr-reservoir-labels',
 }
 
@@ -158,3 +162,22 @@ export const ReservoirConfigs: ReservoirConfig[] = [
 ];
 
 export const BaseLayerOpacity = 0.7;
+
+export const ValidStates = [
+    'ND',
+    'SD',
+    'KS',
+    'OK',
+    'TX',
+    'NM',
+    'NE',
+    'CO',
+    'ID',
+    'UT',
+    'NV',
+    'AZ',
+    'MT',
+    'CA',
+    'OR',
+    'WA',
+];

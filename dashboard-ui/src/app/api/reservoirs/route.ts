@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import edrService from '@/services/init/edr.init';
+import wwdhService from '@/services/init/wwdh.init';
 import { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
-    const result = await edrService.getLocations('rise-edr', {
+    const result = await wwdhService.getLocations('rise-edr', {
         params: {
             'parameter-name': searchParams.get('parameter-name') ?? '',
         },

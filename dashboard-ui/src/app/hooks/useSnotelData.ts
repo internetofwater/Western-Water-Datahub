@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useRef, useCallback } from 'react';
-import edrService from '@/services/init/edr.init';
+import wwdhService from '@/services/init/wwdh.init';
 import { FeatureCollection, Point } from 'geojson';
 import { MAP_ID, SourceId } from '@/features/Map/consts';
 import {
@@ -29,13 +29,13 @@ export const useSnotelData = () => {
             controller.current = new AbortController();
 
             const [snotelHucMeans, snotelLocation] = await Promise.all([
-                edrService.getItems<
+                wwdhService.getItems<
                     FeatureCollection<Point, SnotelHucMeansProperties>
                 >(SourceId.SnotelHucSixMeans, {
                     signal: controller.current.signal,
                     params: { skipGeometry: true },
                 }),
-                edrService.getLocations<
+                wwdhService.getLocations<
                     FeatureCollection<Point, SnotelProperties>
                 >(SourceId.Snotel, { signal: controller.current.signal }),
             ]);

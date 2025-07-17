@@ -4,7 +4,7 @@
  */
 
 import { LineChart } from '@/components/LineChart';
-import edrService from '@/services/init/edr.init';
+import wwdhService from '@/services/init/wwdh.init';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import {
     DateRange,
@@ -66,7 +66,7 @@ export const Chart: React.FC<Props> = (props) => {
             const dateRange = getDateRange(range);
 
             const coverageCollection =
-                await edrService.getLocation<CoverageCollection>(
+                await wwdhService.getLocation<CoverageCollection>(
                     config.id,
                     String(id),
                     {

@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import edrService from '@/services/init/edr.init';
+import wwdhService from '@/services/init/wwdh.init';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import useMainStore, { ReservoirCollections } from '@/lib/main';
 import { ReservoirConfigs } from '@/features/Map/consts';
@@ -29,7 +29,7 @@ export const useReservoirData = () => {
             const reservoirCollections: ReservoirCollections = {};
 
             for (const config of ReservoirConfigs) {
-                const result = await edrService.getLocations<
+                const result = await wwdhService.getLocations<
                     FeatureCollection<Point, RiseReservoirProperties>
                 >(config.id, {
                     signal: controller.current.signal,
@@ -58,7 +58,7 @@ export const useReservoirData = () => {
         try {
             controller.current = new AbortController();
 
-            const feature = await edrService.getItem<
+            const feature = await wwdhService.getItem<
                 Feature<Point, RiseReservoirProperties>
             >('rise-edr', reservoirId, {
                 signal: controller.current.signal,

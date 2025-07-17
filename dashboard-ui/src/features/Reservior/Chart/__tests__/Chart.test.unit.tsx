@@ -6,7 +6,7 @@
 import React, { act } from 'react';
 import { render } from '@/utils/test-utils';
 import { screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
-import edrService from '@/services/init/edr.init';
+import wwdhService from '@/services/init/wwdh.init';
 import * as utils from '@/features/Reservior/Chart/utils';
 import { Chart } from '@/features/Reservior/Chart';
 import { LayerId, SourceId, SubLayerId } from '@/features/Map/consts';
@@ -70,7 +70,7 @@ describe('Chart component', () => {
     });
 
     test('renders loading state initially', async () => {
-        (edrService.getLocation as jest.Mock).mockResolvedValueOnce(
+        (wwdhService.getLocation as jest.Mock).mockResolvedValueOnce(
             mockCoverageCollection
         );
         render(
@@ -87,7 +87,7 @@ describe('Chart component', () => {
     });
 
     test('renders chart after data loads', async () => {
-        (edrService.getLocation as jest.Mock).mockResolvedValueOnce(
+        (wwdhService.getLocation as jest.Mock).mockResolvedValueOnce(
             mockCoverageCollection
         );
         render(
@@ -116,7 +116,7 @@ describe('Chart component', () => {
     // });
 
     test('toggles range with radio buttons', async () => {
-        (edrService.getLocation as jest.Mock).mockResolvedValue(
+        (wwdhService.getLocation as jest.Mock).mockResolvedValue(
             mockCoverageCollection
         );
         render(

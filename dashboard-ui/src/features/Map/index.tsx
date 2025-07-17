@@ -32,6 +32,7 @@ import { basemaps } from '@/components/Map/consts';
 import { LngLatLike, MapMouseEvent } from 'mapbox-gl';
 import { useReservoirData } from '@/app/hooks/useReservoirData';
 import { useSnotelData } from '@/app/hooks/useSnotelData';
+import { RegionField } from './types/region';
 
 type Props = {
     accessToken: string;
@@ -91,7 +92,9 @@ const MainMap: React.FC<Props> = (props) => {
                 const feature = features[0];
                 console.log('Region', feature);
                 if (feature.properties) {
-                    const region = feature.properties['REG_NAME'] as string;
+                    const region = feature.properties[
+                        RegionField.Name
+                    ] as string;
 
                     setRegion(region);
                 }
@@ -241,12 +244,12 @@ const MainMap: React.FC<Props> = (props) => {
         } else {
             map.setFilter(SubLayerId.RegionsFill, [
                 '==',
-                ['get', 'REG_NAME'],
+                ['get', RegionField.Name],
                 region,
             ]);
             map.setFilter(SubLayerId.RegionsBoundary, [
                 '==',
-                ['get', 'REG_NAME'],
+                ['get', RegionField.Name],
                 region,
             ]);
             // TODO: basin filter
