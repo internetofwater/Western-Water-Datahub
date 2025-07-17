@@ -503,7 +503,10 @@ resources:
     providers:
       - type: feature
         name: ESRI
-        data: https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0
+        # data: https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0
+        
+        # Very similar as the one above, yet it contains additional info like the regions' official abbreviation
+        data: https://services1.arcgis.com/ixD30sld6F8MQ7V5/ArcGIS/rest/services/DOI_12_Unified_Regions_20180801/FeatureServer/0
         id_field: OBJECTID
         title_field: REG_NAME
 
