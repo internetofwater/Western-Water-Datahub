@@ -203,7 +203,7 @@ export const getLayerColor = (
         case LayerId.RiseEDRReservoirs:
             return '#00F';
         case LayerId.States:
-            return '#0F0';
+            return '#000';
         default:
             return '#FFF';
     }
@@ -294,7 +294,7 @@ export const getLayerConfig = (
                 type: LayerType.Line,
                 source: SourceId.States,
                 layout: {
-                    // visibility: 'none',
+                    visibility: 'none',
                     'line-cap': 'round',
                     'line-join': 'round',
                 },
@@ -310,7 +310,7 @@ export const getLayerConfig = (
                 type: LayerType.Fill,
                 source: SourceId.States,
                 layout: {
-                    // visibility: 'none',
+                    visibility: 'none',
                 },
                 paint: {
                     'fill-color': getLayerColor(LayerId.States),
