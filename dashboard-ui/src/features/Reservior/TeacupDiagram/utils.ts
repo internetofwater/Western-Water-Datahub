@@ -249,3 +249,7 @@ export const addListeners = (
         }
     };
 };
+
+export const getHeight = (element: SVGGraphicsElement) => {
+    return element.getBBox().height;
+};

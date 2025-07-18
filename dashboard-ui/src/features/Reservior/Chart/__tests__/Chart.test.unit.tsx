@@ -17,7 +17,7 @@ jest.mock('@/lib/main', () => ({
     default: jest.fn((selector) => selector({ setChartUpdate: jest.fn() })),
 }));
 
-jest.mock('@/services/init/edr.init');
+jest.mock('@/services/init/wwdh.init');
 
 jest.mock('@/features/Reservior/Chart/utils', () => ({
     getDateRange: jest.fn(() => ({

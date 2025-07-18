@@ -25,14 +25,12 @@ test.describe('Line Chart', () => {
         await test.step('Select updates after selection', async () => {
             await select.click();
             const lakeMeadOption = page.getByRole('option', {
-                name: 'Lake Mead Hoover Dam and Powerplant',
+                name: 'Lake Mead',
             });
 
             await lakeMeadOption.click();
 
-            await expect(select).toHaveValue(
-                'Lake Mead Hoover Dam and Powerplant'
-            );
+            await expect(select).toHaveValue('Lake Mead');
         });
 
         await test.step('Chart renders', () => {

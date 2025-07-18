@@ -32,6 +32,7 @@ import {
     addTextConstructor,
     propagateEventToContainerElemConstructor,
     addListeners,
+    getHeight,
 } from '@/features/Reservior/TeacupDiagram/utils';
 import { GeoJsonProperties } from 'geojson';
 import { ReservoirConfig } from '@/features/Map/types';
@@ -240,7 +241,7 @@ export const Graphic: React.FC<Props> = (props) => {
             // Adjust the average label position if too close to high percentile label
             let averageAdjust = 0;
             if (average - highPercentile < 40) {
-                const height = highLabel.getBBox().height;
+                const height = getHeight(highLabel);
 
                 averageAdjust = Math.max(
                     0,
@@ -263,7 +264,7 @@ export const Graphic: React.FC<Props> = (props) => {
             // Handle if average is also too close to high percentile
             let lowPercentileAdjust = 0;
             if (lowPercentile - average < 40) {
-                const height = averageLabel.getBBox().height;
+                const height = getHeight(averageLabel);
 
                 lowPercentileAdjust =
                     Math.max(0, height - (lowPercentile - average + 1)) +
