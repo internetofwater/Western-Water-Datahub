@@ -1,6 +1,7 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+# Mappings from resviz CSV to unified regions
 DOI_REGIONS = {
     "CGB": {
         "reg_num": 10,
@@ -28,6 +29,7 @@ DOI_REGIONS = {
     },
 }
 
+# Mappings from resviz CSV to RISE stations
 LOCATION_IDS = {
     "AndersonRanch": 3249,
     "BighornLake": 275,
