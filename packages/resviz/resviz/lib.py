@@ -8,6 +8,9 @@ import re
 import requests
 from typing import Iterator
 
+from resviz.mappings import DOI_REGIONS, LOCATION_IDS
+
+
 gdal.UseExceptions()
 
 LOGGER = logging.getLogger(__name__)
@@ -50,13 +53,18 @@ def create_feature(pg_layer, row, parameter: str):
             p_suffix = "raw"
 
     row["SiteShortName"] = re.search(r"/([^/]+)\.png$", row["TeacupUrl"]).group(1)  # pyright: ignore
+    row["SiteId"] = LOCATION_IDS.get(row["SiteShortName"], 0)
+    region = DOI_REGIONS[row["DoiRegion"]]
 
     feature = ogr.Feature(pg_layer.GetLayerDefn())
-    id = f"{row['SiteShortName']}.{row['DataDate']}.{p_suffix}"
+    id = f"{row['SiteId']}.{row['DataDate']}.{p_suffix}"
     feature.SetField("id", id)
-    feature.SetField("monitoring_location_id", row["SiteShortName"])
+    feature.SetField("monitoring_location_id", row["SiteId"])
+    feature.SetField("monitoring_location_name", row["SiteShortName"])
     feature.SetField("site_name", row["SiteName"])
     feature.SetField("state", row["State"])
+    feature.SetField("doi_region_num", region["reg_num"])
+    feature.SetField("doi_region_name", region["reg_name"])
     feature.SetField("doi_region", row["DoiRegion"])
     feature.SetField("huc08", row["Huc8"])
     feature.SetField("huc06", row["Huc8"][:6])

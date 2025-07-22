@@ -475,7 +475,16 @@ resources:
           user: ${POSTGRES_USER:-postgres}
           password: ${POSTGRES_PASSWORD:-password}
         table: resviz
-        properties: [max_capacity]
+        properties:
+          - max_capacity
+          - monitoring_location_id
+          - monitoring_location_name
+          - site_name
+          - doi_region_num
+          - doi_region_name
+          - huc06
+          - huc08
+          - state
         edr_fields: # Required EDR Fields
           id_field: ogc_fid
           geom_field: geom
