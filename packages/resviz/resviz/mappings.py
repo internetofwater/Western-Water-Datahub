@@ -1,27 +1,30 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 DOI_REGIONS = {
     "CGB": {
-        "reg_num" : 10, 
-        "reg_name" : "California - Great Basin", 
+        "reg_num": 10,
+        "reg_name": "California - Great Basin",
     },
     "CPN": {
-        "reg_num" : 9, 
-        "reg_name" : "Columbia - Pacific Northwest",
+        "reg_num": 9,
+        "reg_name": "Columbia - Pacific Northwest",
     },
     "LCB": {
-        "reg_num" : 8, 
-        "reg_name" : "Lower Colorado Basin",
+        "reg_num": 8,
+        "reg_name": "Lower Colorado Basin",
     },
     "UCB": {
-        "reg_num" : 7, 
-        "reg_name" : "Upper Colorado Basin",
+        "reg_num": 7,
+        "reg_name": "Upper Colorado Basin",
     },
     "ART": {
-        "reg_num" : 6,
-        "reg_name" : "Arkansas - Rio Grande - Texas Gulf",
+        "reg_num": 6,
+        "reg_name": "Arkansas - Rio Grande - Texas Gulf",
     },
     "MB": {
-        "reg_num" : 5, 
-        "reg_name" : "Missouri Basin",
+        "reg_num": 5,
+        "reg_name": "Missouri Basin",
     },
 }
 
