@@ -23,7 +23,5 @@ packages = ["usace"]
 allow-direct-references = true
 
 
-[tool.hatch.build]
-include = [
-  "usace_metadata.json"
-]
+[tool.hatch.build.targets.wheel.force-include]
+"usace_metadata.json" = "usace_metadata.json"
