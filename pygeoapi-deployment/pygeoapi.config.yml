@@ -479,6 +479,7 @@ resources:
           - max_capacity
           - monitoring_location_id
           - monitoring_location_name
+          - site_name
           - doi_region_num
           - doi_region_name
           - huc06
