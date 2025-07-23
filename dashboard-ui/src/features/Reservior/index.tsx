@@ -7,7 +7,11 @@ import { GridCol } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { ReservoirConfig } from '@/features/Map/types';
 import { SourceId } from '@/features/Map/consts';
-import { getReservoirConfig } from '@/features/Map/utils';
+import {
+    getReservoirConfig,
+    getReservoirIdentifier,
+    isReservoirIdentifier,
+} from '@/features/Map/utils';
 import { Chart } from '@/features/Reservior/Chart';
 import { Chart as ChartJS } from 'chart.js';
 import Info from '@/features/Reservior/Info';
@@ -35,6 +39,7 @@ const Reservoir: React.FC<Props> = (props) => {
 
     const [reservoirProperties, setReservoirProperties] =
         useState<RiseReservoirProperties>();
+    const [reservoirId, setReservoirId] = useState<string | number>();
     const [config, setConfig] = useState<ReservoirConfig>();
     const [center, setCenter] = useState<[number, number] | null>(null);
 
@@ -50,19 +55,26 @@ const Reservoir: React.FC<Props> = (props) => {
         if (collection && config) {
             setConfig(config);
 
-            const features = collection.features.filter(
-                (feature) =>
-                    (feature.properties &&
-                        feature.properties[config.identifierProperty] ===
-                            reservoir.identifier) ||
-                    feature.id === reservoir.identifier
+            const features = collection.features.filter((feature) =>
+                isReservoirIdentifier(
+                    config,
+                    feature.properties,
+                    feature.id!,
+                    reservoir.identifier
+                )
             );
 
             if (features.length) {
                 const feature = features[0];
                 const properties =
                     feature.properties as RiseReservoirProperties;
+                const id = getReservoirIdentifier(
+                    config,
+                    feature.properties,
+                    feature.id!
+                );
 
+                setReservoirId(id);
                 setCenter(feature.geometry.coordinates as [number, number]);
 
                 setReservoirProperties(properties);
@@ -84,11 +96,13 @@ const Reservoir: React.FC<Props> = (props) => {
                         />
                     </GridCol>
                     <GridCol span={{ sm: 12, lg: 5 }} order={5}>
-                        <Chart
-                            id={reservoirProperties._id}
-                            ref={chartRef}
-                            config={config}
-                        />
+                        {reservoirId && (
+                            <Chart
+                                id={reservoirId}
+                                ref={chartRef}
+                                config={config}
+                            />
+                        )}
                     </GridCol>
                 </>
             )}

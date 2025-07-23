@@ -54,6 +54,8 @@ export interface MainState {
         [LayerId.NOAATempSixToTen]: boolean;
     };
     setToggleableLayers: (layer: LayerId, visible: boolean) => void;
+    reservoirDate: string | null;
+    setReservoirDate: (reservoirDate: string | null) => void;
     tools: {
         [Tools.BasemapSelector]: boolean;
         [Tools.Print]: boolean;
@@ -95,6 +97,8 @@ const useMainStore = create<MainState>()((set) => ({
                 [layer]: visible,
             },
         })),
+    reservoirDate: null,
+    setReservoirDate: (reservoirDate) => set({ reservoirDate }),
     tools: {
         [Tools.BasemapSelector]: false,
         [Tools.Print]: false,

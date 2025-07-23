@@ -22,20 +22,20 @@ import {
     SourceId,
     RISEEDRReservoirSource,
     RegionsSource,
-    ZoomCapacityArray,
     BaseLayerOpacity,
     ValidStates,
+    ResVizEDRReservoirSource,
 } from '@/features/Map/consts';
 import {
     getReservoirConfig,
-    getReservoirIconImageExpression,
+    getReservoirLabelLayout,
+    getReservoirLabelPaint,
+    getReservoirSymbolLayout,
 } from '@/features/Map/utils';
 import { Root } from 'react-dom/client';
-import { ReservoirPopup } from '../Popups/Reservoirs';
-import { Feature, Point } from 'geojson';
-import { MantineProvider } from '@mantine/core';
 import { SnotelHucMeansField } from './types/snotel';
 import { StateField } from './types/state';
+import { showReservoirPopup } from '../Popups/utils';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -62,6 +62,14 @@ export const sourceConfigs: SourceConfig[] = [
             type: 'geojson',
             data: RISEEDRReservoirSource,
             filter: ['!=', ['get', '_id'], 3688],
+        },
+    },
+    {
+        id: SourceId.ResvizEDRReservoirs,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: ResVizEDRReservoirSource,
         },
     },
     {
@@ -322,196 +330,42 @@ export const getLayerConfig = (
                 id: LayerId.RiseEDRReservoirs,
                 type: LayerType.Symbol,
                 source: SourceId.RiseEDRReservoirs,
-                layout: {
-                    'icon-image': getReservoirIconImageExpression(
-                        getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                    ),
-                    'icon-size': [
-                        'let',
-                        'capacity',
-                        [
-                            'coalesce',
-                            [
-                                'get',
-                                getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                                    .capacityProperty,
-                            ],
-                            1,
-                        ],
-                        [
-                            'step',
-                            ['zoom'],
-                            1,
-                            0,
-                            [
-                                'step',
-                                ['var', 'capacity'],
-                                0.3,
-                                45000,
-                                0.4,
-                                320000,
-                                0.3,
-                                2010000,
-                                0.5,
-                            ],
-                            5,
-                            [
-                                'step',
-                                ['var', 'capacity'],
-                                0.3,
-                                45000,
-                                0.3,
-                                320000,
-                                0.4,
-                                2010000,
-                                0.5,
-                            ],
-                            8,
-                            [
-                                'step',
-                                ['var', 'capacity'],
-                                0.3,
-                                45000,
-                                0.4,
-                                320000,
-                                0.5,
-                                2010000,
-                                0.6,
-                            ],
-                        ],
-                    ],
-
-                    'symbol-sort-key': [
-                        'coalesce',
-                        [
-                            'get',
-                            getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                                .capacityProperty,
-                        ],
-                        1,
-                    ],
-                    'icon-offset': [
-                        'step',
-                        ['zoom'],
-                        [0, 0],
-                        0,
-                        ['coalesce', ['get', 'offset'], [0, 0]],
-                        5,
-                        [0, 0],
-                    ],
-                    'icon-allow-overlap': true,
-                },
+                layout: getReservoirSymbolLayout(
+                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                ),
             };
         case SubLayerId.RiseEDRReservoirLabels:
             return {
                 id: SubLayerId.RiseEDRReservoirLabels,
                 type: LayerType.Symbol,
                 source: SourceId.RiseEDRReservoirs,
-                layout: {
-                    'text-field': [
-                        'get',
-                        getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                            .labelProperty,
-                    ],
-                    'text-anchor': 'bottom',
-                    'text-size': 18,
-                    'symbol-sort-key': [
-                        'coalesce',
-                        [
-                            'get',
-                            getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                                .capacityProperty,
-                        ],
-                        1,
-                    ],
-                    'text-offset': [
-                        'let',
-                        'capacity',
-                        [
-                            'coalesce',
-                            [
-                                'get',
-                                getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                                    .capacityProperty,
-                            ],
-                            1,
-                        ],
-                        [
-                            'step',
-                            ['zoom'],
-                            [0, 0],
-                            0,
-                            [
-                                'step',
-                                ['var', 'capacity'],
-                                [0, 0.5],
-                                45000,
-                                [0, 1],
-                                320000,
-                                [0, 2.4],
-                                2010000,
-                                [0, 3.2],
-                            ],
-                            5,
-                            [
-                                'step',
-                                ['var', 'capacity'],
-                                [0, 0.5],
-                                45000,
-                                [0, 2.1],
-                                320000,
-                                [0, 2.8],
-                                2010000,
-                                [0, 3.2],
-                            ],
-                            8,
-                            [
-                                'step',
-                                ['var', 'capacity'],
-                                [0, 2.4],
-                                45000,
-                                [0, 2.8],
-                                320000,
-                                [0, 3.2],
-                                2010000,
-                                [0, 3.5],
-                            ],
-                        ],
-                    ],
-                },
-                paint: {
-                    'text-color': '#000',
-                    'text-opacity': [
-                        'let',
-                        'capacity',
-                        [
-                            'coalesce',
-                            [
-                                'get',
-                                getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                                    .capacityProperty,
-                            ],
-                            1,
-                        ],
-                        [
-                            'step',
-                            ['zoom'],
-                            0,
-                            ...ZoomCapacityArray.flatMap(([zoom, capacity]) => [
-                                zoom, // At this zoom
-                                [
-                                    // Evaluate this expression
-                                    'case',
-                                    ['>=', ['var', 'capacity'], capacity],
-                                    1, // If GTE capacity, evaluate sub-step expression
-                                    0, // Fallback to basic point symbol
-                                ],
-                            ]),
-                        ],
-                    ],
-                    'text-halo-color': '#fff',
-                    'text-halo-width': 2,
-                },
+                layout: getReservoirLabelLayout(
+                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                ),
+                paint: getReservoirLabelPaint(
+                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                ),
+            };
+        case LayerId.ResvizEDRReservoirs:
+            return {
+                id: LayerId.ResvizEDRReservoirs,
+                type: LayerType.Symbol,
+                source: SourceId.ResvizEDRReservoirs,
+                layout: getReservoirSymbolLayout(
+                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                ),
+            };
+        case SubLayerId.ResvizEDRReservoirLabels:
+            return {
+                id: SubLayerId.ResvizEDRReservoirLabels,
+                type: LayerType.Symbol,
+                source: SourceId.ResvizEDRReservoirs,
+                layout: getReservoirLabelLayout(
+                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                ),
+                paint: getReservoirLabelPaint(
+                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                ),
             };
 
         case LayerId.USDroughtMonitor:
@@ -633,42 +487,27 @@ export const getLayerHoverFunction = (
         switch (id) {
             case LayerId.RiseEDRReservoirs:
                 return (e) => {
-                    if (e.features && e.features.length > 0) {
-                        const feature = e.features[0] as Feature<Point>;
-
-                        if (feature.properties) {
-                            const config = getReservoirConfig(
-                                SourceId.RiseEDRReservoirs
-                            )!;
-                            const identifier = String(
-                                feature.properties[config.identifierProperty]
-                            );
-
-                            container.setAttribute(
-                                'data-identifier',
-                                identifier
-                            );
-
-                            root.render(
-                                <MantineProvider>
-                                    <ReservoirPopup
-                                        config={config}
-                                        reservoirProperties={feature.properties}
-                                    />
-                                </MantineProvider>
-                            );
-
-                            const center = feature.geometry.coordinates as [
-                                number,
-                                number
-                            ];
-                            hoverPopup
-                                .setLngLat(center)
-                                .setDOMContent(container)
-                                .setMaxWidth('fit-content')
-                                .addTo(map);
-                        }
-                    }
+                    showReservoirPopup(
+                        getReservoirConfig(SourceId.RiseEDRReservoirs)!,
+                        map,
+                        e,
+                        root,
+                        container,
+                        hoverPopup,
+                        false
+                    );
+                };
+            case LayerId.ResvizEDRReservoirs:
+                return (e) => {
+                    showReservoirPopup(
+                        getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
+                        map,
+                        e,
+                        root,
+                        container,
+                        hoverPopup,
+                        false
+                    );
                 };
             default:
                 return (e) => {
@@ -748,48 +587,27 @@ export const getLayerMouseMoveFunction = (
         switch (id) {
             case LayerId.RiseEDRReservoirs:
                 return (e) => {
-                    if (e.features && e.features.length > 0) {
-                        const feature = e.features[0] as Feature<Point>;
-
-                        if (feature.properties) {
-                            const config = getReservoirConfig(
-                                SourceId.RiseEDRReservoirs
-                            )!;
-                            const identifier = String(
-                                feature.properties[config.identifierProperty]
-                            );
-                            const currentIdentifier =
-                                container.getAttribute('data-identifier');
-                            // Dont recreate the same popup for the same feature
-                            if (identifier !== currentIdentifier) {
-                                container.setAttribute(
-                                    'data-identifier',
-                                    identifier
-                                );
-
-                                root.render(
-                                    <MantineProvider>
-                                        <ReservoirPopup
-                                            config={config}
-                                            reservoirProperties={
-                                                feature.properties
-                                            }
-                                        />
-                                    </MantineProvider>
-                                );
-
-                                const center = feature.geometry.coordinates as [
-                                    number,
-                                    number
-                                ];
-                                hoverPopup
-                                    .setLngLat(center)
-                                    .setDOMContent(container)
-                                    .setMaxWidth('fit-content')
-                                    .addTo(map);
-                            }
-                        }
-                    }
+                    showReservoirPopup(
+                        getReservoirConfig(SourceId.RiseEDRReservoirs)!,
+                        map,
+                        e,
+                        root,
+                        container,
+                        hoverPopup,
+                        true
+                    );
+                };
+            case LayerId.ResvizEDRReservoirs:
+                return (e) => {
+                    showReservoirPopup(
+                        getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
+                        map,
+                        e,
+                        root,
+                        container,
+                        hoverPopup,
+                        true
+                    );
                 };
             default:
                 return (e) => {
@@ -961,17 +779,36 @@ export const layerDefinitions: MainLayerDefinition[] = [
         legend: false,
         clickFunction: getLayerClickFunction(LayerId.Snotel),
     },
+    // {
+    //     id: LayerId.RiseEDRReservoirs,
+    //     config: getLayerConfig(LayerId.RiseEDRReservoirs),
+    //     controllable: false,
+    //     legend: false,
+    //     hoverFunction: getLayerHoverFunction(LayerId.RiseEDRReservoirs),
+    //     mouseMoveFunction: getLayerMouseMoveFunction(LayerId.RiseEDRReservoirs),
+    //     subLayers: [
+    //         {
+    //             id: SubLayerId.RiseEDRReservoirLabels,
+    //             config: getLayerConfig(SubLayerId.RiseEDRReservoirLabels),
+    //             controllable: false,
+    //             legend: false,
+    //         },
+    //     ],
+    //     // hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
+    // },
     {
-        id: LayerId.RiseEDRReservoirs,
-        config: getLayerConfig(LayerId.RiseEDRReservoirs),
+        id: LayerId.ResvizEDRReservoirs,
+        config: getLayerConfig(LayerId.ResvizEDRReservoirs),
         controllable: false,
         legend: false,
-        hoverFunction: getLayerHoverFunction(LayerId.RiseEDRReservoirs),
-        mouseMoveFunction: getLayerMouseMoveFunction(LayerId.RiseEDRReservoirs),
+        hoverFunction: getLayerHoverFunction(LayerId.ResvizEDRReservoirs),
+        mouseMoveFunction: getLayerMouseMoveFunction(
+            LayerId.ResvizEDRReservoirs
+        ),
         subLayers: [
             {
-                id: SubLayerId.RiseEDRReservoirLabels,
-                config: getLayerConfig(SubLayerId.RiseEDRReservoirLabels),
+                id: SubLayerId.ResvizEDRReservoirLabels,
+                config: getLayerConfig(SubLayerId.ResvizEDRReservoirLabels),
                 controllable: false,
                 legend: false,
             },

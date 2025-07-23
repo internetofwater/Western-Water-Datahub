@@ -19,7 +19,7 @@ import useMainStore from '@/lib/main';
 import { ReservoirConfig } from '@/features/Map/types';
 
 type Props = {
-    id: number;
+    id: string | number;
     ref: RefObject<ChartJS<'line', Array<{ x: string; y: number }>> | null>;
     config: ReservoirConfig;
 };
@@ -72,8 +72,8 @@ export const Chart: React.FC<Props> = (props) => {
                     {
                         signal: controller.current.signal,
                         params: {
-                            'parameter-name': 'reservoirStorage',
-                            datetime: dateRange.startDate + '/',
+                            ...config.params,
+                            datetime: dateRange.startDate + '/' + '..',
                         },
                     }
                 );

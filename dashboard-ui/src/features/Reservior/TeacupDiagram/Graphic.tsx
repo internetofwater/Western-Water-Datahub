@@ -110,23 +110,31 @@ export const Graphic: React.FC<Props> = (props) => {
             svgRef.current.removeChild(svgRef.current.firstChild);
         }
 
-        // TODO: remove the division by 2 once we have an actual storage value
-        const percentOfFull =
+        const storagePercentage =
             Number(reservoirProperties[config.storageProperty]) /
-            2 /
+            Number(reservoirProperties[config.capacityProperty]);
+
+        const nintiethPercentage =
+            Number(reservoirProperties[config.ninetiethPercentileProperty]) /
+            Number(reservoirProperties[config.capacityProperty]);
+        const averagePercentage =
+            Number(reservoirProperties[config.thirtyYearAverageProperty]) /
+            Number(reservoirProperties[config.capacityProperty]);
+        const tenthPercentage =
+            Number(reservoirProperties[config.tenthPercentileProperty]) /
             Number(reservoirProperties[config.capacityProperty]);
 
         // Determine basic dimensions of teacup trapezoid
-        const size = 1 - Number(percentOfFull.toFixed(2));
+        const size = 1 - Number(storagePercentage.toFixed(2));
         const upperWidth = 160;
         const lowerWidth = 64;
         const height = 107;
         const scale = 1;
 
         // TODO: replace these with the actual percentages
-        const highPercentile = height - height * 0.95;
-        const average = height - height * 0.81;
-        const lowPercentile = height - height * 0.4;
+        const highPercentile = height - height * nintiethPercentage;
+        const average = height - height * averagePercentage;
+        const lowPercentile = height - height * tenthPercentage;
 
         setHighPercentile(highPercentile);
         setAverage(average);
@@ -296,8 +304,9 @@ export const Graphic: React.FC<Props> = (props) => {
             addText(
                 averageTextId,
                 `${Math.round(
-                    (Number(reservoirProperties[config.storageProperty]) / 2) *
-                        1.3
+                    Number(
+                        reservoirProperties[config.thirtyYearAverageProperty]
+                    )
                 ).toLocaleString('en-us')} acre-feet`,
                 average - 2,
                 '#d0a02a',
@@ -306,8 +315,8 @@ export const Graphic: React.FC<Props> = (props) => {
             // Current Storage of reservoir
             addText(
                 storageTextId,
-                `${(
-                    Number(reservoirProperties[config.storageProperty]) / 2
+                `${Number(
+                    reservoirProperties[config.storageProperty]
                 ).toLocaleString('en-us')} acre-feet`,
                 cutHeight - 1,
                 '#FFF',

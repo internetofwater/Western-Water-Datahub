@@ -15,6 +15,7 @@ import {
     Switch,
     Title,
     Text,
+    Divider,
 } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
 import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
@@ -30,6 +31,7 @@ import {
     updateSnotel,
     updateTeacups,
 } from '@/features/MapTools/Controls/utils';
+import { ReservoirDateSelector } from '@/features/MapTools/Controls/ReservoirDateSelector';
 
 const RasterBaseLayerIconObj = [
     {
@@ -160,6 +162,10 @@ const Controls: React.FC = () => {
                     className={styles.toolContent}
                 >
                     <Stack>
+                        <Stack>
+                            <ReservoirDateSelector />
+                        </Stack>
+                        <Divider />
                         <Switch
                             label="Show Teacups"
                             checked={showTeacups}

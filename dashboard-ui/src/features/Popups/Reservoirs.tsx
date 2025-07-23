@@ -25,11 +25,12 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
         return null;
     }
 
-    // TODO: replace the division by 2 when possible
-    const storage = Number(reservoirProperties[config.storageProperty]) / 2;
+    const storage = Number(reservoirProperties[config.storageProperty]);
     const capacity = Number(reservoirProperties[config.capacityProperty]);
     // TODO: replace the average when available
-    const average = Math.round(storage * 1.3);
+    const average = Number(
+        reservoirProperties[config.thirtyYearAverageProperty]
+    );
     const percentFull = ((storage / capacity) * 100).toFixed(1);
     const percentOfAverage = ((storage / average) * 100).toFixed(1);
 

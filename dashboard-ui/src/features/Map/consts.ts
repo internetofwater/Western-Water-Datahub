@@ -7,7 +7,7 @@ import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
 import { ExpressionSpecification } from 'mapbox-gl';
 import { ReservoirConfig } from '@/features/Map/types';
-import { RiseReservoirField } from './types/reservoir/rise';
+import { ResvizReservoirField } from './types/reservoir/resviz';
 
 export const MAP_ID = 'main';
 
@@ -21,6 +21,7 @@ export enum SourceId {
     Basins = 'hu06',
     States = 'states',
     RiseEDRReservoirs = 'rise-edr',
+    ResvizEDRReservoirs = 'resviz-edr',
     USACEEDRReservoirs = 'usace-edr',
     SnowWater = 'snow-water',
     USDroughtMonitor = 'us-drought-monitor',
@@ -36,6 +37,7 @@ export enum LayerId {
     Basins = 'basins-main',
     States = 'states-main',
     RiseEDRReservoirs = 'rise-edr-reservoir-points',
+    ResvizEDRReservoirs = 'resviz-edr-reservoir-points',
     SnowWater = 'snow-water',
     USDroughtMonitor = 'us-drought-monitor',
     NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
@@ -53,6 +55,7 @@ export enum SubLayerId {
     StatesBoundary = 'states-boundary',
     StatesFill = 'states-fill',
     RiseEDRReservoirLabels = 'rise-edr-reservoir-labels',
+    ResvizEDRReservoirLabels = 'resviz-edr-reservoir-labels',
 }
 
 export const allLayerIds = [
@@ -72,6 +75,10 @@ export const TeacupStepExpression: ExpressionSpecification = [
     'step',
     ['var', 'storage'],
     'default', // Below first step value
+    -1,
+    'no-data',
+    0,
+    'teacup-0',
     0.05,
     'teacup-5',
     0.1,
@@ -138,6 +145,13 @@ export const RISEEDRReservoirSource =
  *
  * @constant
  */
+export const ResVizEDRReservoirSource =
+    'https://cache.wwdh.internetofwater.app/collections/resviz-edr/locations?f=json';
+
+/**
+ *
+ * @constant
+ */
 export const RegionsSource =
     'https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0';
 
@@ -146,18 +160,44 @@ export const RegionsSource =
  * @constant
  */
 export const ReservoirConfigs: ReservoirConfig[] = [
+    // {
+    //     id: SourceId.RiseEDRReservoirs,
+    //     storageProperty: RiseReservoirField.LiveCapacity, // Mock value, stand in for current storage
+    //     capacityProperty: RiseReservoirField.ActiveCapacity,
+    //     tenthPercentileProperty: RiseReservoirField.ActiveCapacity,
+    //     ninetiethPercentileProperty: RiseReservoirField.ActiveCapacity,
+    //     thirtyYearAverageProperty: RiseReservoirField.ActiveCapacity,
+    //     identifierProperty: RiseReservoirField.Id,
+    //     identifierType: 'number',
+    //     labelProperty: RiseReservoirField.AssetNameInTessel,
+    //     regionConnectorProperty: RiseReservoirField.LocationUnifiedRegionNames,
+    //     connectedLayers: [
+    //         LayerId.RiseEDRReservoirs,
+    //         SubLayerId.RiseEDRReservoirLabels,
+    //     ],
+    //     params: {
+    //         'parameter-name': 'reservoirStorage',
+    //     },
+    // },
     {
-        id: SourceId.RiseEDRReservoirs,
-        storageProperty: RiseReservoirField.LiveCapacity, // Mock value, stand in for current storage
-        capacityProperty: RiseReservoirField.ActiveCapacity,
-        identifierProperty: RiseReservoirField.Id,
+        id: SourceId.ResvizEDRReservoirs,
+        storageProperty: ResvizReservoirField.Storage,
+        capacityProperty: ResvizReservoirField.MaxCapacity,
+        tenthPercentileProperty: ResvizReservoirField.TenthPercentile,
+        ninetiethPercentileProperty: ResvizReservoirField.NinetiethPercentile,
+        thirtyYearAverageProperty: ResvizReservoirField.StorageAverage,
+        identifierProperty: ResvizReservoirField.MonitoringLocationId,
         identifierType: 'number',
-        labelProperty: RiseReservoirField.AssetNameInTessel,
-        regionConnectorProperty: RiseReservoirField.LocationUnifiedRegionNames,
+        labelProperty: ResvizReservoirField.SiteName,
+        regionConnectorProperty: ResvizReservoirField.DoiRegionName,
         connectedLayers: [
-            LayerId.RiseEDRReservoirs,
-            SubLayerId.RiseEDRReservoirLabels,
+            LayerId.ResvizEDRReservoirs,
+            SubLayerId.ResvizEDRReservoirLabels,
         ],
+
+        params: {
+            'parameter-name': 'raw', // TODO: replace once ontology gets made for resviz
+        },
     },
 ];
 

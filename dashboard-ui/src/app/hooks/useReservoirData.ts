@@ -5,10 +5,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import wwdhService from '@/services/init/wwdh.init';
-import { Feature, FeatureCollection, Point } from 'geojson';
+import { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
 import useMainStore, { ReservoirCollections } from '@/lib/main';
-import { ReservoirConfigs } from '@/features/Map/consts';
-import { RiseReservoirProperties } from '@/features/Map/types/reservoir/rise';
+import { ReservoirConfigs, SourceId } from '@/features/Map/consts';
+import { appendResvizDataProperties } from '@/features/Map/utils';
 
 export const useReservoirData = () => {
     const reservoirCollections = useMainStore(
@@ -17,6 +17,7 @@ export const useReservoirData = () => {
     const setReservoirCollections = useMainStore(
         (state) => state.setReservoirCollections
     );
+    // const reservoirDate = useMainStore((state) => state.reservoirDate);
 
     const [loading, setLoading] = useState(false);
     const controller = useRef<AbortController | null>(null);
@@ -30,14 +31,17 @@ export const useReservoirData = () => {
 
             for (const config of ReservoirConfigs) {
                 const result = await wwdhService.getLocations<
-                    FeatureCollection<Point, RiseReservoirProperties>
+                    FeatureCollection<Point, GeoJsonProperties>
                 >(config.id, {
                     signal: controller.current.signal,
-                    params: {
-                        'parameter-name': 'reservoirStorage',
-                    },
+                    params: config.params,
                 });
-                reservoirCollections[config.id] = result;
+                if (config.id === SourceId.ResvizEDRReservoirs) {
+                    const processedResult = await appendResvizDataProperties(
+                        result
+                    );
+                    reservoirCollections[config.id] = processedResult;
+                }
             }
 
             if (isMounted.current) {
@@ -49,27 +53,6 @@ export const useReservoirData = () => {
                 console.error(error);
                 setLoading(false);
             }
-        }
-    };
-
-    const fetchReservoirItem = async (
-        reservoirId: string
-    ): Promise<Feature<Point, RiseReservoirProperties> | null> => {
-        try {
-            controller.current = new AbortController();
-
-            const feature = await wwdhService.getItem<
-                Feature<Point, RiseReservoirProperties>
-            >('rise-edr', reservoirId, {
-                signal: controller.current.signal,
-            });
-
-            return feature;
-        } catch (error) {
-            if ((error as Error)?.name !== 'AbortError') {
-                console.error(error);
-            }
-            return null;
         }
     };
 
@@ -88,6 +71,5 @@ export const useReservoirData = () => {
     return {
         reservoirCollections,
         loading,
-        fetchReservoirItem,
     };
 };

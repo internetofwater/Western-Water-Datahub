@@ -15,7 +15,12 @@ import {
 } from '@/features/Header/Selectors/utils';
 import { useReservoirData } from '@/app/hooks/useReservoirData';
 import { useMap } from '@/contexts/MapContexts';
-import { getReservoirConfig, isSourceDataLoaded } from '@/features/Map/utils';
+import {
+    getReservoirConfig,
+    getReservoirIdentifier,
+    isReservoirIdentifier,
+    isSourceDataLoaded,
+} from '@/features/Map/utils';
 import { SourceDataEvent } from '@/features/Map/types';
 import styles from '@/features/Header/Header.module.css';
 
@@ -142,10 +147,11 @@ export const Reservoir: React.FC = () => {
                             features,
                             (feature) =>
                                 String(
-                                    feature?.id ??
-                                        feature?.properties?.[
-                                            config.identifierProperty
-                                        ]
+                                    getReservoirIdentifier(
+                                        config,
+                                        feature.properties,
+                                        feature.id!
+                                    )
                                 ),
                             (feature) =>
                                 String(
@@ -181,10 +187,13 @@ export const Reservoir: React.FC = () => {
             if (collection) {
                 const features = collection.features.filter(
                     (feature) =>
-                        (feature.properties &&
-                            feature.properties[config.identifierProperty] ===
-                                identifier) ||
-                        feature.id === identifier
+                        feature.properties &&
+                        isReservoirIdentifier(
+                            config,
+                            feature.properties,
+                            feature.id!,
+                            identifier
+                        )
                 );
 
                 if (features.length) {

@@ -22,6 +22,8 @@ import {
     loadTeacups as loadImages,
     getReservoirConfig,
     findReservoirIndex,
+    getReservoirIdentifier,
+    isReservoirIdentifier,
 } from '@/features/Map/utils';
 import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
@@ -29,7 +31,7 @@ import { MapButton as Controls } from '@/features/MapTools/Controls/MapButton';
 import { MapButton as Legend } from '@/features/MapTools/Legend/MapButton';
 import CustomControl from '@/components/Map/tools/CustomControl';
 import { basemaps } from '@/components/Map/consts';
-import { LngLatLike, MapMouseEvent } from 'mapbox-gl';
+import { GeoJSONSource, LngLatLike, MapMouseEvent } from 'mapbox-gl';
 import { useReservoirData } from '@/app/hooks/useReservoirData';
 import { useSnotelData } from '@/app/hooks/useSnotelData';
 import { RegionField } from './types/region';
@@ -56,10 +58,13 @@ const MainMap: React.FC<Props> = (props) => {
     const reservoir = useMainStore((state) => state.reservoir);
     const setReservoir = useMainStore((state) => state.setReservoir);
     const basemap = useMainStore((state) => state.basemap);
+    const reservoirCollections = useMainStore(
+        (state) => state.reservoirCollections
+    );
 
     const isMounted = useRef(true);
 
-    const { reservoirCollections } = useReservoirData();
+    useReservoirData();
 
     useSnotelData();
 
@@ -68,6 +73,30 @@ const MainMap: React.FC<Props> = (props) => {
             isMounted.current = false;
         };
     }, []);
+
+    useEffect(() => {
+        const resvizData = reservoirCollections?.[SourceId.ResvizEDRReservoirs];
+
+        const isValidFeatureCollection =
+            resvizData?.type === 'FeatureCollection' &&
+            Array.isArray(resvizData.features);
+
+        if (!map || !isValidFeatureCollection) {
+            return;
+        }
+
+        const resVizSource = map.getSource<GeoJSONSource>(
+            SourceId.ResvizEDRReservoirs
+        );
+
+        if (!resVizSource) {
+            return;
+        }
+
+        resVizSource.setData(
+            reservoirCollections![SourceId.ResvizEDRReservoirs]!
+        );
+    }, [map, reservoirCollections?.[SourceId.ResvizEDRReservoirs]]);
 
     useEffect(() => {
         if (!map) {
@@ -142,20 +171,26 @@ const MainMap: React.FC<Props> = (props) => {
                 console.log('feature', feature);
 
                 if (config && feature.properties) {
-                    const identifier = (feature.properties[
-                        config.identifierProperty
-                    ] ?? feature.id) as string | number;
-                    const regionProperty = JSON.parse(
-                        feature.properties[
-                            config.regionConnectorProperty
-                        ] as string
-                    ) as string | string[];
-
-                    setRegion(
-                        Array.isArray(regionProperty)
-                            ? regionProperty[0]
-                            : regionProperty
+                    const identifier = getReservoirIdentifier(
+                        config,
+                        feature.properties,
+                        feature.id!
                     );
+
+                    if (feature.properties[config.regionConnectorProperty]) {
+                        const rawRegionProperty = String(
+                            feature.properties[config.regionConnectorProperty]
+                        );
+                        const regionProperty = rawRegionProperty.startsWith('[')
+                            ? (JSON.parse(rawRegionProperty) as string[])
+                            : rawRegionProperty;
+
+                        setRegion(
+                            Array.isArray(regionProperty)
+                                ? regionProperty[0]
+                                : regionProperty
+                        );
+                    }
 
                     setReservoir({
                         identifier:
@@ -199,32 +234,6 @@ const MainMap: React.FC<Props> = (props) => {
         };
     }, [map]);
 
-    // useEffect(() => {
-    //     if (!map) {
-    //         return;
-    //     }
-
-    //     const now = new Date();
-    //     const today = new Date(
-    //         now.getFullYear(),
-    //         now.getMonth(),
-    //         now.getDate()
-    //     );
-    //     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    //     (async () => {
-    //         controller.current = new AbortController();
-    //         const data = await edrService.getCube('rise-edr', {
-    //             signal: controller.current.signal,
-    //             params: {
-    //                 'parameter-name': '3',
-    //                 bbox: [-130.516667, 24.1, -62.25273100000001, 58.240301],
-    //                 datetime: today.toISOString().split('T')[0] + '/',
-    //             },
-    //         });
-    //         console.log('data', data);
-    //     })();
-    // }, [map]);
-
     useEffect(() => {
         if (!map) {
             return;
@@ -233,7 +242,7 @@ const MainMap: React.FC<Props> = (props) => {
             // Unset Filter
             map.setFilter(SubLayerId.RegionsFill, null);
             map.setFilter(SubLayerId.RegionsBoundary, null);
-            // TODO: basin filter
+
             if (reservoir === ReservoirDefault) {
                 ReservoirConfigs.forEach((config) => {
                     config.connectedLayers.forEach((layerId) => {
@@ -252,7 +261,7 @@ const MainMap: React.FC<Props> = (props) => {
                 ['get', RegionField.Name],
                 region,
             ]);
-            // TODO: basin filter
+
             ReservoirConfigs.forEach((config) => {
                 config.connectedLayers.forEach((layerId) => {
                     map.setFilter(layerId, [
@@ -307,11 +316,12 @@ const MainMap: React.FC<Props> = (props) => {
                         if (collection) {
                             const features = collection.features.filter(
                                 (feature) =>
-                                    (feature.properties &&
-                                        feature.properties[
-                                            config.identifierProperty
-                                        ] === reservoir.identifier) ||
-                                    feature.id === reservoir.identifier
+                                    isReservoirIdentifier(
+                                        config,
+                                        feature.properties,
+                                        feature.id!,
+                                        reservoir.identifier
+                                    )
                             );
 
                             if (features.length) {
