@@ -18,10 +18,13 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["usace"]
+force-include = { "usace_metadata.json" = "usace/usace_metadata.json" }
+
+artifacts = [
+    "*.json"
+]
 
 [tool.hatch.metadata]
 allow-direct-references = true
 
 
-[tool.hatch.build.targets.wheel.force-include]
-"usace_metadata.json" = "usace_metadata.json"
