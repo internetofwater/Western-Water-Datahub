@@ -47,7 +47,7 @@ from covjson_pydantic.coverage import Coverage, CoverageCollection
 
 LOGGER = logging.getLogger(__name__)
 
-metadata_path = pathlib.Path(__file__).parent.parent.parent / "usace_metadata.json"
+metadata_path = pathlib.Path(__file__).parent.parent / "usace_metadata.json"
 with metadata_path.open() as f:
     LOGGER.info(f"Loading static USACE metadata from {metadata_path}")
     USACE_STATIC_METADATA = json.load(f)
