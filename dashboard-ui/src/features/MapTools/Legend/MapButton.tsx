@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import useMainStore, { Tools } from '@/lib/main';
+import useMainStore from '@/lib/main';
 import Legend from '@/icons/Legend';
+import { Tools } from '@/lib/types';
 
 /**
  *

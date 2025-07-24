@@ -6,7 +6,7 @@
 'use client';
 
 import { Select, Skeleton } from '@mantine/core';
-import useMainStore, { ReservoirDefault } from '@/lib/main';
+import useMainStore from '@/lib/main';
 import { MAP_ID, SourceId, ReservoirConfigs } from '@/features/Map/consts';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -23,6 +23,7 @@ import {
 } from '@/features/Map/utils';
 import { SourceDataEvent } from '@/features/Map/types';
 import styles from '@/features/Header/Header.module.css';
+import { ReservoirDefault } from '@/lib/consts';
 
 /**
 

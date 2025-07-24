@@ -11,7 +11,7 @@ import {
     calculateXPositionConstructor,
     propagateEventToContainerElemConstructor,
 } from '@/features/Reservior/TeacupDiagram/utils';
-import { getHighPercentileLabel } from '../consts';
+import { getHighPercentileLabel } from '@/features/Reservior/TeacupDiagram/consts';
 
 describe('Reservoir Graphic Utils', () => {
     describe('calculateInnerTrapezoidHeight', () => {

@@ -17,7 +17,7 @@ import {
     ReservoirConfigs,
 } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
-import useMainStore, { ReservoirDefault } from '@/lib/main';
+import useMainStore from '@/lib/main';
 import {
     loadTeacups as loadImages,
     getReservoirConfig,
@@ -34,7 +34,8 @@ import { basemaps } from '@/components/Map/consts';
 import { GeoJSONSource, LngLatLike, MapMouseEvent } from 'mapbox-gl';
 import { useReservoirData } from '@/app/hooks/useReservoirData';
 import { useSnotelData } from '@/app/hooks/useSnotelData';
-import { RegionField } from './types/region';
+import { RegionField } from '@/features/Map/types/region';
+import { ReservoirDefault } from '@/lib/consts';
 
 type Props = {
     accessToken: string;

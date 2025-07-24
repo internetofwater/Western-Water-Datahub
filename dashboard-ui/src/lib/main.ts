@@ -4,40 +4,34 @@
  */
 
 import { BasemapId } from '@/components/Map/types';
-import { LayerId, SourceId } from '@/features/Map/consts';
-import { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
+import { LayerId } from '@/features/Map/consts';
 import { create } from 'zustand';
-
-export enum Tools {
-    BasemapSelector = 'basemap-selector',
-    Print = 'print',
-    Controls = 'controls',
-    Legend = 'legend',
-}
-
-export type ReservoirStorageData = Array<{ x: string; y: number }>;
-
-export const RegionDefault = 'all';
-export const ReservoirDefault = null;
-
-export type ReservoirCollections = {
-    [key in SourceId]?: FeatureCollection<Point, GeoJsonProperties>;
-};
-
-export type Reservoir = {
-    identifier: string | number;
-    source: string;
-};
+import {
+    BoundingGeographyLevel,
+    Reservoir,
+    ReservoirCollections,
+    Tools,
+} from '@/lib/types';
+import {
+    BasinDefault,
+    RegionDefault,
+    ReservoirDefault,
+    StateDefault,
+} from '@/lib/consts';
 
 export interface MainState {
     region: string;
     setRegion: (region: string) => void;
     basin: string;
     setBasin: (basin: string) => void;
-    system: string;
-    setSystem: (system: string) => void;
+    state: string;
+    setState: (state: string) => void;
     reservoir: Reservoir | null;
     setReservoir: (reservoir: Reservoir | null) => void;
+    boundingGeographyLevel: BoundingGeographyLevel;
+    setBoundingGeographyLevel: (
+        boundingGeographyLevel: BoundingGeographyLevel
+    ) => void;
     reservoirCollections: ReservoirCollections | null;
     setReservoirCollections: (
         reservoirCollection: ReservoirCollections
@@ -70,12 +64,16 @@ export interface MainState {
 const useMainStore = create<MainState>()((set) => ({
     region: RegionDefault,
     setRegion: (region) => set({ region }),
-    basin: 'all',
+    basin: BasinDefault,
     setBasin: (basin) => set({ basin }),
-    system: 'all',
-    setSystem: (system) => set({ system }),
+    state: StateDefault,
+    setState: (state) => set({ state }),
     reservoir: ReservoirDefault,
     setReservoir: (reservoir) => set({ reservoir }),
+    boundingGeographyLevel: 'region',
+    setBoundingGeographyLevel: (
+        boundingGeographyLevel: BoundingGeographyLevel
+    ) => set({ boundingGeographyLevel }),
     reservoirCollections: null,
     setReservoirCollections: (reservoirCollection) =>
         set({ reservoirCollections: reservoirCollection }),

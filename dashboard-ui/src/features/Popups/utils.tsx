@@ -1,10 +1,10 @@
 import { Feature, Point } from 'geojson';
-import { ReservoirConfig } from '../Map/types';
+import { ReservoirConfig } from '@/features/Map/types';
 import { MantineProvider } from '@mantine/core';
-import { ReservoirPopup } from './Reservoirs';
+import { ReservoirPopup } from '@/features/Popups/Reservoirs';
 import { Map, MapMouseEvent, Popup } from 'mapbox-gl';
 import { Root } from 'react-dom/client';
-import { getReservoirIdentifier } from '../Map/utils';
+import { getReservoirIdentifier } from '@/features/Map/utils';
 
 export const showReservoirPopup = (
     config: ReservoirConfig,

@@ -33,9 +33,9 @@ import {
     getReservoirSymbolLayout,
 } from '@/features/Map/utils';
 import { Root } from 'react-dom/client';
-import { SnotelHucMeansField } from './types/snotel';
-import { StateField } from './types/state';
-import { showReservoirPopup } from '../Popups/utils';
+import { SnotelHucMeansField } from '@/features/Map/types/snotel';
+import { StateField } from '@/features/Map/types/state';
+import { showReservoirPopup } from '@/features/Popups/utils';
 
 /**********************************************************************
  * Define the various datasources this map will use

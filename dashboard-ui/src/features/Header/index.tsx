@@ -13,8 +13,9 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { Basin } from '@/features/Header/Selectors/Basin';
 import { ClearAll } from '@/features/Header/Selectors/ClearAll';
-import useMainStore, { RegionDefault, ReservoirDefault } from '@/lib/main';
+import useMainStore from '@/lib/main';
 import { State } from '@/features/Header/Selectors/State';
+import { RegionDefault, ReservoirDefault } from '@/lib/consts';
 
 const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
     ssr: false,

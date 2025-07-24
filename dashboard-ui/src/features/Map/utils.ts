@@ -25,7 +25,7 @@ import {
 } from '@/features/Map/types/reservoir/rise';
 import wwdhService from '@/services/init/wwdh.init';
 import { CoverageJSON } from '@/services/edr.service';
-import { ResvizReservoirField } from './types/reservoir/resviz';
+import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
 
 /**
  *

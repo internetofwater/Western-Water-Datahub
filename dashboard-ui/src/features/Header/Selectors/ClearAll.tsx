@@ -5,7 +5,8 @@
 
 import { useMap } from '@/contexts/MapContexts';
 import { INITIAL_CENTER, INITIAL_ZOOM, MAP_ID } from '@/features/Map/consts';
-import useMainStore, { ReservoirDefault } from '@/lib/main';
+import { RegionDefault, ReservoirDefault } from '@/lib/consts';
+import useMainStore from '@/lib/main';
 import { Button } from '@mantine/core';
 
 /**
@@ -18,7 +19,8 @@ export const ClearAll: React.FC = () => {
     const reservoir = useMainStore((state) => state.reservoir);
     const setReservoir = useMainStore((state) => state.setReservoir);
 
-    const noSelections = region === 'all' && reservoir === ReservoirDefault;
+    const noSelections =
+        region === RegionDefault && reservoir === ReservoirDefault;
 
     const { map } = useMap(MAP_ID);
 

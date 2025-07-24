@@ -22,7 +22,7 @@ import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { RasterBaseLayers } from '@/features/Map/types';
 import { useState } from 'react';
-import useMainStore, { Tools } from '@/lib/main';
+import useMainStore from '@/lib/main';
 import {
     RasterVisibilityMap,
     updateBaseLayer,
@@ -32,6 +32,7 @@ import {
     updateTeacups,
 } from '@/features/MapTools/Controls/utils';
 import { ReservoirDateSelector } from '@/features/MapTools/Controls/ReservoirDateSelector';
+import { Tools } from '@/lib/types';
 
 const RasterBaseLayerIconObj = [
     {

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { TspanData } from './types';
+import { TspanData } from '@/features/Reservior/TeacupDiagram/types';
 
 /**
  *

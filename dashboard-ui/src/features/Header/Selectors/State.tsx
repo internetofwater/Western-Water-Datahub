@@ -14,7 +14,7 @@ import { SourceDataEvent } from '@/features/Map/types';
 import { isSourceDataLoaded } from '@/features/Map/utils';
 import geoconnexService from '@/services/init/geoconnex.init';
 import { FeatureCollection, Polygon } from 'geojson';
-import { formatOptions } from './utils';
+import { formatOptions } from '@/features/Header/Selectors/utils';
 import { StateField, StateProperties } from '@/features/Map/types/state';
 
 export const State: React.FC = () => {

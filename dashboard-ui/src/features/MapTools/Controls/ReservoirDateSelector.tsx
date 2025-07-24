@@ -3,9 +3,9 @@ import { Checkbox } from '@mantine/core';
 import { DateInput, DateValue } from '@mantine/dates';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
-import { SourceId } from '../../Map/consts';
+import { SourceId } from '@/features/Map/consts';
 import { FeatureCollection, Point, GeoJsonProperties } from 'geojson';
-import { appendResvizDataProperties } from '../../Map/utils';
+import { appendResvizDataProperties } from '@/features/Map/utils';
 
 export const ReservoirDateSelector: React.FC = () => {
     const reservoirDate = useMainStore((state) => state.reservoirDate);

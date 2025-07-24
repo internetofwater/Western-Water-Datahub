@@ -7,7 +7,7 @@ import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
 import { ExpressionSpecification } from 'mapbox-gl';
 import { ReservoirConfig } from '@/features/Map/types';
-import { ResvizReservoirField } from './types/reservoir/resviz';
+import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
 
 export const MAP_ID = 'main';
 

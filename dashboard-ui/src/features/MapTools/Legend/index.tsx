@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import useMainStore, { Tools } from '@/lib/main';
+import useMainStore from '@/lib/main';
 import { Card, CardSection, CloseButton, Group, Title } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
 import Legend from '@/features/Legend';
+import { Tools } from '@/lib/types';
 
 /**
  *

@@ -9,9 +9,9 @@ import { LayerType } from '@/components/Map/types';
 import Line from '@/icons/Line';
 import Circle from '@/icons/Circle';
 import Square from '@/icons/Square';
-import { Gradient } from './Gradient';
+import { Gradient } from '@/features/Legend/Gradient';
 import styles from '@/features/Legend/Legend.module.css';
-import { getLayerName } from '../Map/config';
+import { getLayerName } from '@/features/Map/config';
 
 const entries: Entry[] = [
     {
