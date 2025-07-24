@@ -11,6 +11,7 @@ import { RefObject } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { GeoJsonProperties } from 'geojson';
 import { TextBlock } from '@/components/TextBlock';
+import dayjs from 'dayjs';
 
 type Props = {
     accessToken: string;
@@ -37,7 +38,6 @@ export const Info: React.FC<Props> = (props) => {
 
     const storage = Number(reservoirProperties[config.storageProperty]);
     const capacity = Number(reservoirProperties[config.capacityProperty]);
-    // TODO: replace the average when available
     const average = Number(
         reservoirProperties[config.thirtyYearAverageProperty]
     );
@@ -53,12 +53,6 @@ export const Info: React.FC<Props> = (props) => {
             : reservoirProperties[config.regionConnectorProperty]
     );
 
-    const today = new Date();
-    const lastUpdateDate = `${String(today.getMonth() + 1).padStart(
-        2,
-        '0'
-    )}/${String(today.getDate()).padStart(2, '0')}/${today.getFullYear()}`;
-
     return (
         <Stack
             justify="space-between"
@@ -68,7 +62,14 @@ export const Info: React.FC<Props> = (props) => {
         >
             <Stack gap="xs" w="100%" className={styles.infoGroup}>
                 <Box>
-                    <Text>Last Updated: {lastUpdateDate}</Text>
+                    <Text>
+                        Last Updated:{' '}
+                        {dayjs(
+                            reservoirProperties[
+                                config.storageDateProperty
+                            ] as string
+                        ).format('MM/DD/YYYY')}
+                    </Text>
                     <TextBlock w="100%">
                         <Group gap="xs" justify="flex-start">
                             <Text fw={700}>Storage:</Text>

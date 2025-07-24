@@ -13,6 +13,7 @@ export enum ResvizReservoirField {
     TenthPercentile = 'p10',
     NinetiethPercentile = 'p90',
     StorageAverage = 'avg',
+    StorageDate = 'storage_date',
 }
 
 export type ResvizReservoirProperties = {
@@ -29,4 +30,5 @@ export type ResvizReservoirProperties = {
     [ResvizReservoirField.TenthPercentile]?: number;
     [ResvizReservoirField.NinetiethPercentile]?: number;
     [ResvizReservoirField.StorageAverage]?: number;
+    [ResvizReservoirField.StorageDate]?: string;
 };

@@ -408,6 +408,8 @@ export const appendResvizDataProperties = async (
                 coverage.ranges[
                     ResvizReservoirField.StorageAverage
                 ]?.values?.[0];
+            updatedProps[ResvizReservoirField.StorageDate] =
+                coverage.domain.axes.t.values?.[0];
         } else {
             console.warn(
                 `Failed to fetch data for ID ${feature.id}:`,

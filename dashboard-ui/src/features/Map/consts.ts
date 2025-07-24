@@ -186,6 +186,7 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         tenthPercentileProperty: ResvizReservoirField.TenthPercentile,
         ninetiethPercentileProperty: ResvizReservoirField.NinetiethPercentile,
         thirtyYearAverageProperty: ResvizReservoirField.StorageAverage,
+        storageDateProperty: ResvizReservoirField.StorageDate,
         identifierProperty: ResvizReservoirField.MonitoringLocationId,
         identifierType: 'number',
         labelProperty: ResvizReservoirField.SiteName,

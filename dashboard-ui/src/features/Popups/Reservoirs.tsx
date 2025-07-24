@@ -10,6 +10,7 @@ import styles from '@/features/Popups/Popups.module.css';
 import { TextBlock } from '@/components/TextBlock';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
 import useMainStore from '@/lib/main';
+import dayjs from 'dayjs';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
@@ -27,18 +28,11 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
 
     const storage = Number(reservoirProperties[config.storageProperty]);
     const capacity = Number(reservoirProperties[config.capacityProperty]);
-    // TODO: replace the average when available
     const average = Number(
         reservoirProperties[config.thirtyYearAverageProperty]
     );
     const percentFull = ((storage / capacity) * 100).toFixed(1);
     const percentOfAverage = ((storage / average) * 100).toFixed(1);
-
-    const today = new Date();
-    const lastUpdateDate = `${String(today.getMonth() + 1).padStart(
-        2,
-        '0'
-    )}/${String(today.getDate()).padStart(2, '0')}/${today.getFullYear()}`;
 
     return (
         <Card
@@ -53,7 +47,12 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
                     {reservoirProperties[config.labelProperty]}
                 </Title>
                 <Text size="xs" ml="auto">
-                    Last Updated: {lastUpdateDate}
+                    Last Updated:{' '}
+                    {dayjs(
+                        reservoirProperties[
+                            config.storageDateProperty
+                        ] as string
+                    ).format('MM/DD/YYYY')}
                 </Text>
             </Group>
 

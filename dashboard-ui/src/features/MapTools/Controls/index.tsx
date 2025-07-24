@@ -200,6 +200,7 @@ const Controls: React.FC = () => {
                             value={getBaseLayerValue()}
                             aria-label="Select a Base Layer"
                             placeholder="Select a Base Layer"
+                            label="Base Layer"
                             onChange={(_value) =>
                                 handleBaseLayerChange(
                                     _value as RasterBaseLayers

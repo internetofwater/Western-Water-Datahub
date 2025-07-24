@@ -27,6 +27,7 @@ export type ReservoirConfig = {
     tenthPercentileProperty: string;
     ninetiethPercentileProperty: string;
     thirtyYearAverageProperty: string;
+    storageDateProperty: string;
     identifierProperty: string;
     identifierType: 'string' | 'number';
     labelProperty: string;
