@@ -14,7 +14,7 @@ import { SourceDataEvent, ReservoirConfig } from '@/features/Map/types';
 import {
     ComplexReservoirProperties,
     ReservoirConfigs,
-    TeacupStepExpression,
+    TeacupPercentageOfCapacityExpression,
     ZoomCapacityArray,
 } from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/consts';
@@ -37,6 +37,8 @@ export const loadTeacups = (map: Map) => {
         10, 5, 0,
     ];
 
+    const teacupVariants = ['low', 'medium', 'high'];
+
     if (!map.hasImage('default')) {
         map.loadImage('/map-icons/default.png', (error, image) => {
             if (error) throw error;
@@ -56,18 +58,22 @@ export const loadTeacups = (map: Map) => {
         });
     }
 
-    teacupLevels.forEach((level) => {
-        const id = `teacup-${level}`;
-        if (!map.hasImage(id)) {
-            map.loadImage(`/map-icons/${id}.png`, (error, image) => {
-                if (error) throw error;
-                if (!image) {
-                    throw new Error(`Image not found: ${id}.png`);
-                }
-                map.addImage(id, image);
-            });
-        }
+    teacupVariants.forEach((variant) => {
+        teacupLevels.forEach((level) => {
+            const id = `${variant}-teacup-${level}`;
+            if (!map.hasImage(id)) {
+                map.loadImage(`/map-icons/${id}.png`, (error, image) => {
+                    if (error) throw error;
+                    if (!image) {
+                        throw new Error(`Image not found: ${id}.png`);
+                    }
+                    map.addImage(id, image);
+                });
+            }
+        });
     });
+
+    map.triggerRepaint();
 };
 
 /**
@@ -118,34 +124,45 @@ export const getReservoirConfig = (id: SourceId): ReservoirConfig | null => {
 export const getReservoirIconImageExpression = (
     config: ReservoirConfig
 ): ExpressionSpecification => {
+    const zoomSteps = ZoomCapacityArray.flatMap(([zoom, capacity]) => [
+        zoom, // for this zoom level
+        [
+            'case',
+            ['<', ['var', 'storage'], 0],
+            'no-data',
+            ['>=', ['var', 'capacity'], capacity],
+            TeacupPercentageOfCapacityExpression,
+            'default',
+        ], // evaluate this expression
+    ]);
+
     return [
+        // Define variables for reuse in sub-expressions
         'let',
-        'capacity', // Variable name
-        ['coalesce', ['get', config.capacityProperty], 1], // Variable value
-        'storage', // Variable name
+        'capacity', // var name
+        ['coalesce', ['get', config.capacityProperty], 1], // capacity variable value
+        'storage', // var name
         [
             '/',
             ['coalesce', ['get', config.storageProperty], -1],
             ['coalesce', ['get', config.capacityProperty], 1],
-        ], // Variable value
+        ], // storage variable value
+        'average', // var name
         [
             'step',
-            ['zoom'],
-            TeacupStepExpression,
-
-            ...ZoomCapacityArray.flatMap(([zoom, capacity]) => [
-                zoom, // At this zoom
-                [
-                    // Evaluate this expression
-                    'case',
-                    ['>', 0, ['var', 'storage']],
-                    'no-data',
-                    ['>=', ['var', 'capacity'], capacity],
-                    TeacupStepExpression, // If GTE capacity, evaluate sub-step expression
-                    'default', // Fallback to basic point symbol
-                ],
-            ]),
-        ],
+            [
+                '/',
+                ['coalesce', ['get', config.storageProperty], -1],
+                ['coalesce', ['get', config.thirtyYearAverageProperty], 1],
+            ],
+            'low',
+            0.4,
+            'medium',
+            0.6,
+            'high',
+        ], // average variable value
+        // Primary expression
+        ['step', ['zoom'], TeacupPercentageOfCapacityExpression, ...zoomSteps],
     ];
 };
 

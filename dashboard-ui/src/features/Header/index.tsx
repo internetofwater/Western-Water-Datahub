@@ -15,7 +15,6 @@ import { Basin } from '@/features/Header/Selectors/Basin';
 import { ClearAll } from '@/features/Header/Selectors/ClearAll';
 import useMainStore, { RegionDefault, ReservoirDefault } from '@/lib/main';
 import { State } from '@/features/Header/Selectors/State';
-import { ReservoirDateSelector } from './ReservoirDateSelector';
 
 const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
     ssr: false,

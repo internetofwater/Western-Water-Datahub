@@ -44,7 +44,7 @@ describe('Chart component', () => {
                     },
                 },
                 ranges: {
-                    'Lake/Reservoir Storage': {
+                    raw: {
                         values: [100, 200],
                     },
                 },
@@ -77,7 +77,7 @@ describe('Chart component', () => {
             <Chart
                 id={1}
                 ref={mockRef}
-                config={getReservoirConfig(SourceId.RiseEDRReservoirs)!}
+                config={getReservoirConfig(SourceId.ResvizEDRReservoirs)!}
             />
         );
 
@@ -94,7 +94,7 @@ describe('Chart component', () => {
             <Chart
                 id={1}
                 ref={mockRef}
-                config={getReservoirConfig(SourceId.RiseEDRReservoirs)!}
+                config={getReservoirConfig(SourceId.ResvizEDRReservoirs)!}
             />
         );
 
@@ -123,7 +123,7 @@ describe('Chart component', () => {
             <Chart
                 id={1}
                 ref={mockRef}
-                config={getReservoirConfig(SourceId.RiseEDRReservoirs)!}
+                config={getReservoirConfig(SourceId.ResvizEDRReservoirs)!}
             />
         );
 
