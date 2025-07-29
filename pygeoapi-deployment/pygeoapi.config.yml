@@ -476,19 +476,30 @@ resources:
           password: ${POSTGRES_PASSWORD:-password}
         table: resviz
         properties:
-          - max_capacity
-          - monitoring_location_id
-          - monitoring_location_name
-          - site_name
-          - doi_region_num
-          - doi_region_name
-          - huc06
-          - huc08
-          - state
-        edr_fields: # Required EDR Fields
+          - resviz_stations.monitoring_location_id
+          - resviz_stations.max_capacity
+          - resviz_stations.monitoring_location_name
+          - resviz_stations.site_name
+          - resviz_stations.doi_region_num
+          - resviz_stations.doi_region_name
+          - resviz_stations.huc06
+          - resviz_stations.huc08
+          - resviz_stations.state
+        edr_fields:
           id_field: ogc_fid
-          geom_field: geom
           time_field: data_date
+          location_field: monitoring_location_id
+          geom_field: resviz_stations.geom
+          parameter_id: parameter_id
+          parameter_name: resviz_parameters.parameter_name
+          parameter_unit: resviz_parameters.parameter_unit
+        external_tables:
+          resviz_stations:
+            foreign: monitoring_location_id
+            remote: monitoring_location_id
+          resviz_parameters:
+            foreign: parameter_id
+            remote: parameter_id
       - type: feature
         name: PostgreSQL
         data: *postgres-data
