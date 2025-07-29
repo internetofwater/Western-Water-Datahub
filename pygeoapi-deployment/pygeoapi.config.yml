@@ -505,7 +505,6 @@ resources:
         data: *postgres-data
         table: resviz
         id_field: ogc_fid
-        title_field: site_name
         geom_field: geom
 
   doi-regions:
