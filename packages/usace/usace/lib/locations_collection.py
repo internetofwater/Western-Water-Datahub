@@ -50,11 +50,11 @@ LOGGER = logging.getLogger(__name__)
 metadata_path = pathlib.Path(__file__).parent.parent.parent / "usace_metadata.json"
 with metadata_path.open() as f:
     LOGGER.info(f"Loading static USACE metadata from {metadata_path}")
-    USACE_STATIC_METADATA = json.load(f)
+    USACE_STATIC_METADATA: dict = json.load(f)
 
 
 thirty_year_averages_path = (
-    pathlib.Path(__file__).parent.parent.parent / "30_year_averages.json"
+    pathlib.Path(__file__).parent.parent.parent / "30_year_averages_by_nid_id.json"
 )
 
 
@@ -71,11 +71,6 @@ with thirty_year_averages_path.open() as f:
     USACE_THIRTY_YEAR_AVERAGES: dict[str, dict[str, ReservoirStorageMetadata]] = (
         json.load(f)
     )
-
-id_mapper_path = pathlib.Path(__file__).parent.parent.parent / "dam_id_mapper.json"
-with id_mapper_path.open() as f:
-    LOGGER.info(f"Loading USACE id mapper from {id_mapper_path}")
-    USACE_ID_MAPPER: dict = json.load(f)
 
 
 class LocationCollection(LocationCollectionProtocolWithEDR):
@@ -97,26 +92,19 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
             feature.id = str(feature.properties.location_code)
             feature.properties.name = feature.properties.public_name
 
-            todays_date = datetime.now(timezone.utc).strftime("%m-%d")
-
-            nameToUse: Optional[str] = (
-                feature.properties.name
-                if feature.properties.name in USACE_THIRTY_YEAR_AVERAGES
-                else USACE_ID_MAPPER.get(feature.properties.name)
-            )
-
-            if not nameToUse:
-                print(f"{feature.properties.name}")
-                continue
-
-            associatedAverages = USACE_THIRTY_YEAR_AVERAGES[nameToUse][todays_date]
-
-            for prop in associatedAverages:
-                setattr(feature.properties, prop, associatedAverages[prop])
-
             nidid = feature.properties.aliases.get("NIDID")
             if not nidid:
                 continue
+
+            todays_date = datetime.now(timezone.utc).strftime("%m-%d")
+
+            associatedAverages = USACE_THIRTY_YEAR_AVERAGES.get(nidid)
+            if not associatedAverages:
+                continue
+
+            averagesForToday = associatedAverages[todays_date]
+            for prop, value in averagesForToday.items():
+                setattr(feature.properties, prop, value)
 
             static_properties = USACE_STATIC_METADATA.get(nidid)
             if not static_properties:
