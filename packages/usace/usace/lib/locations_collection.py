@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 import json
 import logging
 import pathlib
-from typing import Optional, Set, Tuple, cast, assert_never
+from typing import Optional, Set, Tuple, TypedDict, cast, assert_never
 from com.cache import RedisCache
 from com.env import TRACER
 from com.geojson.helpers import (
@@ -53,6 +53,31 @@ with metadata_path.open() as f:
     USACE_STATIC_METADATA = json.load(f)
 
 
+thirty_year_averages_path = (
+    pathlib.Path(__file__).parent.parent.parent / "30_year_averages.json"
+)
+
+
+class ReservoirStorageMetadata(TypedDict):
+    thirtyYearAverage: float
+    tenthPercentile: float
+    ninetyPercentile: float
+
+
+with thirty_year_averages_path.open() as f:
+    LOGGER.info(
+        f"Loading 30 year average USACE metadata from {thirty_year_averages_path}"
+    )
+    USACE_THIRTY_YEAR_AVERAGES: dict[str, dict[str, ReservoirStorageMetadata]] = (
+        json.load(f)
+    )
+
+id_mapper_path = pathlib.Path(__file__).parent.parent.parent / "dam_id_mapper.json"
+with id_mapper_path.open() as f:
+    LOGGER.info(f"Loading USACE id mapper from {id_mapper_path}")
+    USACE_ID_MAPPER: dict = json.load(f)
+
+
 class LocationCollection(LocationCollectionProtocolWithEDR):
     locations: list[Feature]
 
@@ -71,6 +96,23 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
             assert feature.properties
             feature.id = str(feature.properties.location_code)
             feature.properties.name = feature.properties.public_name
+
+            todays_date = datetime.now(timezone.utc).strftime("%m-%d")
+
+            nameToUse: Optional[str] = (
+                feature.properties.name
+                if feature.properties.name in USACE_THIRTY_YEAR_AVERAGES
+                else USACE_ID_MAPPER.get(feature.properties.name)
+            )
+
+            if not nameToUse:
+                print(f"{feature.properties.name}")
+                continue
+
+            associatedAverages = USACE_THIRTY_YEAR_AVERAGES[nameToUse][todays_date]
+
+            for prop in associatedAverages:
+                setattr(feature.properties, prop, associatedAverages[prop])
 
             nidid = feature.properties.aliases.get("NIDID")
             if not nidid:
