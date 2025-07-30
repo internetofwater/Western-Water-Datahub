@@ -1,3 +1,6 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 # pyright: reportAttributeAccessIssue=false
 # pyright: reportArgumentType=false
 # type ignores needed to disable pyright errors for dynamic pandas operations
