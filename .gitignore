@@ -25,3 +25,9 @@ node_modules/
 *.sql.zip
 
 !schema.sql
+
+# directories from the resops zip
+ResOpsUS/
+__MACOSX
+
+*.gpkg
