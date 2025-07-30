@@ -53,25 +53,6 @@ with metadata_path.open() as f:
     USACE_STATIC_METADATA: dict = json.load(f)
 
 
-thirty_year_averages_path = (
-    pathlib.Path(__file__).parent.parent.parent / "30_year_averages_by_nid_id.json"
-)
-
-
-class ReservoirStorageMetadata(TypedDict):
-    thirtyYearAverage: float
-    tenthPercentile: float
-    ninetyPercentile: float
-
-
-with thirty_year_averages_path.open() as f:
-    LOGGER.info(
-        f"Loading 30 year average USACE metadata from {thirty_year_averages_path}"
-    )
-    USACE_THIRTY_YEAR_AVERAGES: dict[str, dict[str, ReservoirStorageMetadata]] = (
-        json.load(f)
-    )
-
 
 class LocationCollection(LocationCollectionProtocolWithEDR):
     locations: list[Feature]
@@ -95,16 +76,6 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
             nidid = feature.properties.aliases.get("NIDID")
             if not nidid:
                 continue
-
-            todays_date = datetime.now(timezone.utc).strftime("%m-%d")
-
-            associatedAverages = USACE_THIRTY_YEAR_AVERAGES.get(nidid)
-            if not associatedAverages:
-                continue
-
-            averagesForToday = associatedAverages[todays_date]
-            for prop, value in averagesForToday.items():
-                setattr(feature.properties, prop, value)
 
             static_properties = USACE_STATIC_METADATA.get(nidid)
             if not static_properties:

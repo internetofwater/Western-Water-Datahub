@@ -12,6 +12,7 @@ members = [
     "awdb-forecasts",
     "com",
     "iodh-integrations",
+    "nid",
     "noaa-rfc",
     "resviz",
     "rise",
@@ -1055,6 +1056,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/8e/92/27989ecca97e542c0d01d05a98a5ae12198a243a9ee12563a0313291511f/multidict-6.4.4-cp313-cp313t-win_amd64.whl", hash = "sha256:ba852168d814b2c73333073e1c7116d9395bea69575a01b0b3c89d2d5a87c8fb", size = 46112 },
     { url = "https://files.pythonhosted.org/packages/84/5d/e17845bb0fa76334477d5de38654d27946d5b5d3695443987a094a71b440/multidict-6.4.4-py3-none-any.whl", hash = "sha256:bd4557071b561a8b3b6075c3ce93cf9bfb6182cb241805c3d66ced3b75eff4ac", size = 10481 },
 ]
+
+[[package]]
+name = "nid"
+version = "0.1.0"
+source = { virtual = "packages/nid" }
 
 [[package]]
 name = "noaa-rfc"
