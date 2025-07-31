@@ -113,6 +113,8 @@ class LocationCollection:
             if datetime_:
                 averages = filter_averages(datetime_, averages)
 
+            # since our averages are sorted by days after today
+            # limit will get the most recent averages
             if limit:
                 averages = dict(list(averages.items())[:limit])
 
@@ -126,6 +128,9 @@ class LocationCollection:
 
             keysWithCurrentYear = []
             for k in averages.keys():
+                # we have to use 2020 here since EDR requires a full datetime and
+                # 2020 is the final year in the 30 year period in both the ResOpsUS dataset
+                # as well as the usbr 30 year averages
                 date = f"2020-{k}"
                 date = datetime.datetime.strptime(date, "%Y-%m-%d")
                 date = date.astimezone(datetime.timezone.utc)

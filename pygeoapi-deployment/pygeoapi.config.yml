@@ -571,10 +571,10 @@ resources:
         data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/10
 
 
-  nid-edr:
+  resops-edr:
     type: collection
-    title: National Inventory of Dams (NID) EDR
-    description: All USACE dams contained in the ResOpsUs dataset 
+    title: ResOpsUS 30 Year Reservoir Storage Info
+    description: Aggregated storage data of USACE dams in the ResOpsUS reservoir dataset identified according to the national inventory of dams (NID) ID.
     keywords:
       - EDR
       - ResOpsUS
