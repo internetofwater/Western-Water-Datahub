@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 import json
 import logging
 import pathlib
-from typing import Optional, Set, Tuple, TypedDict, cast, assert_never
+from typing import Optional, Set, Tuple, cast, assert_never
 from com.cache import RedisCache
 from com.env import TRACER
 from com.geojson.helpers import (
@@ -51,7 +51,6 @@ metadata_path = pathlib.Path(__file__).parent.parent.parent / "usace_metadata.js
 with metadata_path.open() as f:
     LOGGER.info(f"Loading static USACE metadata from {metadata_path}")
     USACE_STATIC_METADATA: dict = json.load(f)
-
 
 
 class LocationCollection(LocationCollectionProtocolWithEDR):
