@@ -13,6 +13,7 @@ members = [
     "com",
     "iodh-integrations",
     "noaa-rfc",
+    "resops",
     "resviz",
     "rise",
     "snotel",
@@ -1909,6 +1910,11 @@ sdist = { url = "https://files.pythonhosted.org/packages/e1/0a/929373653770d8a0d
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7c/e4/56027c4a6b4ae70ca9de302488c5ca95ad4a39e190093d6c1a8ace08341b/requests-2.32.4-py3-none-any.whl", hash = "sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c", size = 64847 },
 ]
+
+[[package]]
+name = "resops"
+version = "0.1.0"
+source = { editable = "packages/resops" }
 
 [[package]]
 name = "resviz"
