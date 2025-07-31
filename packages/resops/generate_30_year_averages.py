@@ -147,12 +147,20 @@ for _, station in usace_stations.iterrows():
 
         assert isinstance(date_group, str)
 
-        values = group["storage"]
+        values = group["storage"].dropna()
         assert isinstance(values, pd.Series)
 
         if not reservoirToDayOfMonthAndValues[associatedNidId].get("averages"):
             reservoirToDayOfMonthAndValues[associatedNidId]["averages"] = {}
             reservoirToDayOfMonthAndValues[associatedNidId]["averages"][date_group] = {}
+
+        if len(values) == 0:
+            reservoirToDayOfMonthAndValues[associatedNidId]["averages"][date_group] = {
+                "thirtyYearAverage": None,
+                "tenthPercentile": None,
+                "ninetiethPercentile": None,
+            }
+            continue
 
         reservoirToDayOfMonthAndValues[associatedNidId]["averages"][date_group] = {
             "thirtyYearAverage": round(values.mean(), 4),

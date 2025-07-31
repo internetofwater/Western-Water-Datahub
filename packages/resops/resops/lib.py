@@ -2,6 +2,7 @@ from collections import OrderedDict
 import datetime
 from typing import TypedDict
 
+from com.covjson import CoverageCollectionDict
 from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
 
 
@@ -56,7 +57,7 @@ class LocationCollection:
         }
         self.data = filtered_data
 
-    def to_covjson(self): ...
+    def to_covjson(self) -> CoverageCollectionDict: ...
 
     def to_geojson(
         self, returnOneFeature=False
@@ -68,6 +69,8 @@ class LocationCollection:
         for key in self.data.keys():
             values = self.data[key]
             features: list = fc["features"]
+            averages: OrderedDict = values["averages"]
+
             featureToAdd: GeojsonFeatureDict = {
                 "type": "Feature",
                 "geometry": {
@@ -79,6 +82,8 @@ class LocationCollection:
                     "grandID": values["grandID"],
                     "name": values["name"],
                     "agencyCode": values["agencyCode"],
+                    "nidId": key,
+                    "averages": dict(averages),
                 },
             }
             if returnOneFeature:

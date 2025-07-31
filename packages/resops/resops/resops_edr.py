@@ -39,6 +39,7 @@ class ResOpsUSProviderEDR(BaseEDRProvider, EDRProviderProtocol):
         select_properties: Optional[list[str]] = None,
         crs: Optional[str] = None,
         format_: Optional[str] = None,
+        limit: Optional[int] = None,
         **kwargs,
     ) -> CoverageCollectionDict | GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
@@ -69,7 +70,10 @@ class ResOpsUSProviderEDR(BaseEDRProvider, EDRProviderProtocol):
 
                 collection.filter_by_month_and_day(start, end)
 
-        return collection.to_geojson(returnOneFeature=location_id is not None)
+        if not location_id:
+            return collection.to_geojson(returnOneFeature=location_id is not None)
+        else:
+            return collection.to_covjson()
 
     def get_fields(self) -> EDRFieldsMapping:
         """Get the list of all parameters (i.e. fields) that the user can filter by"""

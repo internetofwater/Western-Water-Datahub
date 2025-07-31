@@ -66,7 +66,10 @@ class ResOpsUSProvider(BaseProvider, OAFProviderProtocol):
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         locations = LocationCollection(USACE_THIRTY_YEAR_AVERAGES)
 
-        return locations.to_geojson()
+        if itemId:
+            locations.drop_all_locations_but_id(itemId)
+
+        return locations.to_geojson(returnOneFeature=itemId is not None)
 
     @crs_transform
     def query(self, **kwargs):
