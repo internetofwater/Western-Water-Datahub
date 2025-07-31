@@ -570,7 +570,6 @@ resources:
       - <<: *default-feature-river-stage
         data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/10
 
-
   resops-edr:
     type: collection
     title: ResOpsUS 30 Year Reservoir Storage Info

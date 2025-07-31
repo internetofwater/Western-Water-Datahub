@@ -1,3 +1,6 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 from collections import OrderedDict
 import datetime
 from typing import Optional, TypedDict, cast
