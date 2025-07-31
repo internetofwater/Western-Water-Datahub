@@ -569,3 +569,26 @@ resources:
     providers:
       - <<: *default-feature-river-stage
         data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/10
+
+
+  nid-edr:
+    type: collection
+    title: National Inventory of Dams (NID) EDR
+    description: All USACE dams contained in the ResOpsUs dataset 
+    keywords:
+      - EDR
+      - ResOpsUS
+      - USACE
+    links:
+      - <<: *default-link
+    extents:
+      spatial:
+        bbox: [-164.92472, 32.92342, -103.78758, 70.28062]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    providers:
+      - <<: *default-feature
+        name: resops.resops.ResOpsUSProvider
+        data: https://zenodo.org/records/5893641
+      - <<: *default-edr
+        data: https://zenodo.org/records/5893641
+        name: resops.resops_edr.ResOpsUSProviderEDR
