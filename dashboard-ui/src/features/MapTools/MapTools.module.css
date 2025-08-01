@@ -60,6 +60,6 @@
 }
 
 .toolContent {
-    max-height: calc(100vh - 365px);
+    max-height: calc(100vh - 490px);
     overflow: auto;
 }

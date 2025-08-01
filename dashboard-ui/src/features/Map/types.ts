@@ -5,6 +5,7 @@
 
 import { MapSourceDataEvent, Map } from 'mapbox-gl';
 import { LayerId, SourceId, SubLayerId } from '@/features/Map/consts';
+import { IGetLocationParams } from '@/services/edr.service';
 
 /**
 
@@ -23,11 +24,19 @@ export type ReservoirConfig = {
     id: SourceId;
     storageProperty: string;
     capacityProperty: string;
+    tenthPercentileProperty: string;
+    ninetiethPercentileProperty: string;
+    thirtyYearAverageProperty: string;
+    storageDateProperty: string;
     identifierProperty: string;
     identifierType: 'string' | 'number';
     labelProperty: string;
+    chartLabel: string;
     regionConnectorProperty: string;
+    basinConnectorProperty: string;
+    stateConnectorProperty: string;
     connectedLayers: (LayerId | SubLayerId)[];
+    params?: IGetLocationParams;
 };
 
 export enum RasterBaseLayers {

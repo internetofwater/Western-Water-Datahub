@@ -23,7 +23,8 @@ import { useMap } from '@/contexts/MapContexts';
 import { Map } from 'mapbox-gl';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Image from 'next/image';
-import useMainStore, { Tools } from '@/lib/main';
+import useMainStore from '@/lib/main';
+import { Tools } from '@/lib/types';
 
 /**
  *

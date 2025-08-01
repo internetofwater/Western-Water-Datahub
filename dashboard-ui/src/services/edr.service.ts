@@ -66,6 +66,7 @@ export interface IDataQueryParams {
      * Format of the response.
      */
     f?: string;
+    limit?: number;
 }
 
 export interface IGetPositionParams extends IDataQueryParams {
@@ -497,7 +498,12 @@ export class EDRService extends Service {
      * - `f`: Format of the response.
      */
     async getLocation<
-        T extends JSON | GeoJSON | CoverageCollection | string = GeoJSON
+        T extends
+            | JSON
+            | GeoJSON
+            | CoverageJSON
+            | CoverageCollection
+            | string = GeoJSON
     >(
         collectionId: string,
         locId: string,
@@ -511,6 +517,7 @@ export class EDRService extends Service {
             signal: options.signal,
             headers: options.headers,
         });
+
         return result;
     }
 

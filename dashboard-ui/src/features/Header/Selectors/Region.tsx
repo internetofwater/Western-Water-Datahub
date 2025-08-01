@@ -15,6 +15,7 @@ import { isSourceDataLoaded } from '@/features/Map/utils';
 import { SourceDataEvent } from '@/features/Map/types';
 import { useMap } from '@/contexts/MapContexts';
 import styles from '@/features/Header/Header.module.css';
+import { RegionField } from '@/features/Map/types/region';
 
 /**
 
@@ -56,15 +57,17 @@ export const Region: React.FC = () => {
         try {
             controller.current = new AbortController();
 
-            const queryFeaturesResult = await esriService.getFeatures(
+            const regionFeatureCollection = await esriService.getFeatures(
                 controller.current.signal
             );
 
-            if (queryFeaturesResult.features.length) {
+            if (regionFeatureCollection.features.length) {
                 const regionOptions = formatOptions(
-                    queryFeaturesResult.features,
-                    (feature) => String(feature?.properties?.['REG_NAME']),
-                    (feature) => String(feature?.properties?.['REG_NAME']),
+                    regionFeatureCollection.features,
+                    (feature) =>
+                        String(feature?.properties?.[RegionField.Name]),
+                    (feature) =>
+                        String(feature?.properties?.[RegionField.Name]),
                     'All Regions'
                 );
 
@@ -86,9 +89,10 @@ export const Region: React.FC = () => {
             }
         }
     };
+
     useEffect(() => {
-        void getRegionOptions();
         isMounted.current = true;
+        void getRegionOptions();
         return () => {
             isMounted.current = false;
             if (controller.current) {

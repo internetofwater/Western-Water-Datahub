@@ -4,7 +4,8 @@
  */
 
 import Basemap from '@/icons/Basemap';
-import useMainStore, { Tools } from '@/lib/main';
+import useMainStore from '@/lib/main';
+import { Tools } from '@/lib/types';
 
 /**
  *

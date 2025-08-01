@@ -5,8 +5,8 @@
 
 import { EDRService } from '@/services/edr.service';
 
-const edrService = new EDRService({
+const wwdhService = new EDRService({
     baseUrl: 'https://cache.wwdh.internetofwater.app/',
 });
 
-export default edrService;
+export default wwdhService;

@@ -32,6 +32,8 @@ import {
     addTextConstructor,
     propagateEventToContainerElemConstructor,
     addListeners,
+    getHeight,
+    getY,
 } from '@/features/Reservior/TeacupDiagram/utils';
 import { GeoJsonProperties } from 'geojson';
 import { ReservoirConfig } from '@/features/Map/types';
@@ -109,23 +111,31 @@ export const Graphic: React.FC<Props> = (props) => {
             svgRef.current.removeChild(svgRef.current.firstChild);
         }
 
-        // TODO: remove the division by 2 once we have an actual storage value
-        const percentOfFull =
+        const storagePercentage =
             Number(reservoirProperties[config.storageProperty]) /
-            2 /
+            Number(reservoirProperties[config.capacityProperty]);
+
+        const nintiethPercentage =
+            Number(reservoirProperties[config.ninetiethPercentileProperty]) /
+            Number(reservoirProperties[config.capacityProperty]);
+        const averagePercentage =
+            Number(reservoirProperties[config.thirtyYearAverageProperty]) /
+            Number(reservoirProperties[config.capacityProperty]);
+        const tenthPercentage =
+            Number(reservoirProperties[config.tenthPercentileProperty]) /
             Number(reservoirProperties[config.capacityProperty]);
 
         // Determine basic dimensions of teacup trapezoid
-        const size = 1 - Number(percentOfFull.toFixed(2));
+        const size = 1 - Number(storagePercentage.toFixed(2));
         const upperWidth = 160;
         const lowerWidth = 64;
         const height = 107;
         const scale = 1;
 
         // TODO: replace these with the actual percentages
-        const highPercentile = height - height * 0.95;
-        const average = height - height * 0.81;
-        const lowPercentile = height - height * 0.4;
+        const highPercentile = height - height * nintiethPercentage;
+        const average = height - height * averagePercentage;
+        const lowPercentile = height - height * tenthPercentage;
 
         setHighPercentile(highPercentile);
         setAverage(average);
@@ -211,9 +221,17 @@ export const Graphic: React.FC<Props> = (props) => {
             calculateXPosition
         );
 
-        addLine(highPercentileId, highPercentile, '#FFF');
-        addLine(averageId, average, '#d0a02a');
-        addLine(lowPercentileId, lowPercentile, '#FFF');
+        const highPercentileLine = addLine(
+            highPercentileId,
+            highPercentile,
+            '#FFF'
+        );
+        const averageLine = addLine(averageId, average, '#d0a02a');
+        const lowPercentileLine = addLine(
+            lowPercentileId,
+            lowPercentile,
+            '#FFF'
+        );
 
         if (labels) {
             const addLabel = addLabelConstructor(
@@ -240,7 +258,7 @@ export const Graphic: React.FC<Props> = (props) => {
             // Adjust the average label position if too close to high percentile label
             let averageAdjust = 0;
             if (average - highPercentile < 40) {
-                const height = highLabel.getBBox().height;
+                const height = getHeight(highLabel);
 
                 averageAdjust = Math.max(
                     0,
@@ -263,7 +281,7 @@ export const Graphic: React.FC<Props> = (props) => {
             // Handle if average is also too close to high percentile
             let lowPercentileAdjust = 0;
             if (lowPercentile - average < 40) {
-                const height = averageLabel.getBBox().height;
+                const height = getHeight(averageLabel);
 
                 lowPercentileAdjust =
                     Math.max(0, height - (lowPercentile - average + 1)) +
@@ -290,26 +308,52 @@ export const Graphic: React.FC<Props> = (props) => {
                 textColor,
                 showLabels
             );
-            // TODO: replace the two displayed values below, when available
-            // Renders just above the average line
+
+            const highPercentileY = getY(highPercentileLine);
+            const averageY = getY(averageLine);
+            const lowPercentileY = getY(lowPercentileLine);
+
+            const minSpacing = 9;
+            averageAdjust = 0;
+
+            // Check overlap with high percentile line
+            if (Math.abs(highPercentileY - averageY) < minSpacing) {
+                averageAdjust +=
+                    (highPercentileY <= averageY ? 1 : -1) *
+                    (minSpacing + 9 - Math.abs(highPercentileY - averageY));
+            }
+
+            // Check overlap with low percentile line
+            if (
+                Math.abs(lowPercentileY - averageY + averageAdjust) < minSpacing
+            ) {
+                averageAdjust +=
+                    (lowPercentileY <= averageY ? 1 : -1) *
+                    (minSpacing +
+                        9 -
+                        Math.abs(lowPercentileY - averageY + averageAdjust));
+            }
+
             addText(
                 averageTextId,
                 `${Math.round(
-                    (Number(reservoirProperties[config.storageProperty]) / 2) *
-                        1.3
+                    Number(
+                        reservoirProperties[config.thirtyYearAverageProperty]
+                    )
                 ).toLocaleString('en-us')} acre-feet`,
-                average - 2,
+                average - 2 + averageAdjust,
                 '#d0a02a',
                 showLabels
             );
+
             // Current Storage of reservoir
             addText(
                 storageTextId,
-                `${(
-                    Number(reservoirProperties[config.storageProperty]) / 2
+                `${Number(
+                    reservoirProperties[config.storageProperty]
                 ).toLocaleString('en-us')} acre-feet`,
-                cutHeight - 1,
-                '#FFF',
+                height + 6,
+                textColor,
                 showLabels
             );
         }

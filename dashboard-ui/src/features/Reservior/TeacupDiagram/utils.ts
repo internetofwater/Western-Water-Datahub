@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { TspanData } from './types';
+import { TspanData } from '@/features/Reservior/TeacupDiagram/types';
 
 /**
  *
@@ -248,4 +248,12 @@ export const addListeners = (
             element.removeEventListener('mouseleave', handlers.mouseleave);
         }
     };
+};
+
+export const getHeight = (element: SVGGraphicsElement) => {
+    return element.getBBox().height;
+};
+
+export const getY = (element: SVGGraphicsElement) => {
+    return element.getBBox().y;
 };

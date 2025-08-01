@@ -6,6 +6,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import '@/app/globals.css';
 import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
 import { Providers } from '@/providers';

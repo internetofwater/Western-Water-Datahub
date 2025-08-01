@@ -9,9 +9,9 @@ import { LayerType } from '@/components/Map/types';
 import Line from '@/icons/Line';
 import Circle from '@/icons/Circle';
 import Square from '@/icons/Square';
-import { Gradient } from './Gradient';
+import { Gradient } from '@/features/Legend/Gradient';
 import styles from '@/features/Legend/Legend.module.css';
-import { getLayerName } from '../Map/config';
+import { getLayerName } from '@/features/Map/config';
 
 const entries: Entry[] = [
     {
@@ -82,39 +82,54 @@ const entries: Entry[] = [
         id: LayerId.USDroughtMonitor,
         type: LayerType.Raster,
         colors: ['#fefe00', '#fed27e', '#fea900', '#e50000', '#720000'],
-        from: 'less',
-        to: 'more',
+        from: 'Dry',
+        to: 'Exceptional',
     },
     {
         id: LayerId.NOAAPrecipSixToTen,
         type: LayerType.Raster,
         colors: [
-            '#d7a64f',
-            '#efd392',
-            '#9f9f9f',
-            '#b2d8aa',
-            '#94cd7e',
-            '#48b330',
+            '#4F2F2F',
+            '#804000',
+            '#934639',
+            '#9B5031',
+            '#BB6D33',
+            '#D8A74F',
+            '#F0D493',
+            '#A0A0A0',
+            '#B3D9AB',
+            '#95CE7F',
+            '#48B430',
+            '#009620',
+            '#007814',
+            '#28600A',
+            '#285300',
         ],
-        from: 'less',
-        to: 'more',
+        from: 'Below, 90%',
+        to: 'Above, 90%',
     },
     {
         id: LayerId.NOAATempSixToTen,
         type: LayerType.Raster,
         colors: [
-            '#76b4e1',
-            '#9fbfde',
-            '#becae3',
-            '#9f9f9f',
-            '#e6b067',
-            '#e28a4b',
-            '#d95631',
-            '#c83b1a',
-            '#b22e00',
+            '#221852',
+            '#2E216F',
+            '#005DA1',
+            '#389FDC',
+            '#77B5E2',
+            '#A0C0DF',
+            '#BFCBE4',
+            '#A0A0A0',
+            '#E7B168',
+            '#E38B4B',
+            '#DA5731',
+            '#C93B1A',
+            '#B32E05',
+            '#912600',
+            '#702100',
         ],
-        from: 'less',
-        to: 'more',
+        from: 'Below, 90%',
+        to: 'Above, 90%',
     },
 ];
 

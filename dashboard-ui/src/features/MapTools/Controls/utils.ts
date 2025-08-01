@@ -69,7 +69,10 @@ export const updateTeacups = (showTeacups: boolean, map: Map) => {
     ReservoirConfigs.forEach((config) =>
         config.connectedLayers
             .filter((layerId) =>
-                [LayerId.RiseEDRReservoirs].includes(layerId as LayerId)
+                [
+                    LayerId.RiseEDRReservoirs,
+                    LayerId.ResvizEDRReservoirs,
+                ].includes(layerId as LayerId)
             )
             .forEach((layerId) =>
                 map.setLayoutProperty(

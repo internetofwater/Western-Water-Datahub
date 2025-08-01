@@ -4,11 +4,12 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import edrService from '@/services/init/edr.init';
-import { Feature, FeatureCollection, Point } from 'geojson';
-import useMainStore, { ReservoirCollections } from '@/lib/main';
-import { ReservoirConfigs } from '@/features/Map/consts';
-import { RiseReservoirProperties } from '@/features/Map/types/reservoir/rise';
+import wwdhService from '@/services/init/wwdh.init';
+import { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
+import useMainStore from '@/lib/main';
+import { ReservoirConfigs, SourceId } from '@/features/Map/consts';
+import { appendResvizDataProperties } from '@/features/Map/utils';
+import { ReservoirCollections } from '@/lib/types';
 
 export const useReservoirData = () => {
     const reservoirCollections = useMainStore(
@@ -17,6 +18,7 @@ export const useReservoirData = () => {
     const setReservoirCollections = useMainStore(
         (state) => state.setReservoirCollections
     );
+    // const reservoirDate = useMainStore((state) => state.reservoirDate);
 
     const [loading, setLoading] = useState(false);
     const controller = useRef<AbortController | null>(null);
@@ -29,15 +31,39 @@ export const useReservoirData = () => {
             const reservoirCollections: ReservoirCollections = {};
 
             for (const config of ReservoirConfigs) {
-                const result = await edrService.getLocations<
-                    FeatureCollection<Point, RiseReservoirProperties>
+                const result = await wwdhService.getLocations<
+                    FeatureCollection<Point, GeoJsonProperties>
                 >(config.id, {
                     signal: controller.current.signal,
-                    params: {
-                        'parameter-name': 'reservoirStorage',
-                    },
+                    params: config.params,
                 });
-                reservoirCollections[config.id] = result;
+                if (config.id === SourceId.ResvizEDRReservoirs) {
+                    const processedResult = await appendResvizDataProperties(
+                        result
+                    );
+                    const test = {
+                        ...processedResult,
+                        features: processedResult.features.map((feature) => {
+                            const newProperties: GeoJsonProperties = {};
+                            for (const key in feature.properties) {
+                                const newKey = key.replace(
+                                    /resviz_stations./g,
+                                    ''
+                                );
+                                newProperties[newKey] = feature.properties[
+                                    key
+                                ] as string | number;
+                            }
+
+                            return {
+                                ...feature,
+                                properties: newProperties,
+                            };
+                        }),
+                    };
+
+                    reservoirCollections[config.id] = test;
+                }
             }
 
             if (isMounted.current) {
@@ -49,27 +75,6 @@ export const useReservoirData = () => {
                 console.error(error);
                 setLoading(false);
             }
-        }
-    };
-
-    const fetchReservoirItem = async (
-        reservoirId: string
-    ): Promise<Feature<Point, RiseReservoirProperties> | null> => {
-        try {
-            controller.current = new AbortController();
-
-            const feature = await edrService.getItem<
-                Feature<Point, RiseReservoirProperties>
-            >('rise-edr', reservoirId, {
-                signal: controller.current.signal,
-            });
-
-            return feature;
-        } catch (error) {
-            if ((error as Error)?.name !== 'AbortError') {
-                console.error(error);
-            }
-            return null;
         }
     };
 
@@ -88,6 +93,5 @@ export const useReservoirData = () => {
     return {
         reservoirCollections,
         loading,
-        fetchReservoirItem,
     };
 };

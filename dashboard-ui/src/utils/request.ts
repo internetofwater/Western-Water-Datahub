@@ -17,8 +17,8 @@ export async function request<T>(options: IRequestOptions): Promise<T> {
     }
 
     // no content
-
     const json = res.json();
+
     return json as Promise<T>;
 }
 
