@@ -24,6 +24,8 @@ import {
     findReservoirIndex,
     getReservoirIdentifier,
     isReservoirIdentifier,
+    getReservoirFilter,
+    getBoundingGeographyFilter,
 } from '@/features/Map/utils';
 import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
@@ -35,7 +37,15 @@ import { GeoJSONSource, LngLatLike, MapMouseEvent } from 'mapbox-gl';
 import { useReservoirData } from '@/app/hooks/useReservoirData';
 import { useSnotelData } from '@/app/hooks/useSnotelData';
 import { RegionField } from '@/features/Map/types/region';
-import { ReservoirDefault } from '@/lib/consts';
+import {
+    BasinDefault,
+    RegionDefault,
+    ReservoirDefault,
+    StateDefault,
+} from '@/lib/consts';
+import { StateField } from './types/state';
+import { Huc06BasinField } from './types/basin';
+import { BoundingGeographyLevel } from '@/lib/types';
 
 type Props = {
     accessToken: string;
@@ -54,8 +64,15 @@ const MainMap: React.FC<Props> = (props) => {
     const { accessToken } = props;
 
     const { map, container } = useMap(MAP_ID);
+    const boundingGeographyLevel = useMainStore(
+        (state) => state.boundingGeographyLevel
+    );
     const region = useMainStore((state) => state.region);
     const setRegion = useMainStore((state) => state.setRegion);
+    const basin = useMainStore((state) => state.basin);
+    const setBasin = useMainStore((state) => state.setBasin);
+    const state = useMainStore((state) => state.state);
+    const setState = useMainStore((state) => state.setState);
     const reservoir = useMainStore((state) => state.reservoir);
     const setReservoir = useMainStore((state) => state.setReservoir);
     const basemap = useMainStore((state) => state.basemap);
@@ -97,6 +114,12 @@ const MainMap: React.FC<Props> = (props) => {
         resVizSource.setData(
             reservoirCollections![SourceId.ResvizEDRReservoirs]!
         );
+
+        console.log(
+            'querySourceFeatures',
+            map.querySourceFeatures(SourceId.USACEEDRReservoirs),
+            reservoirCollections![SourceId.ResvizEDRReservoirs]!
+        );
     }, [map, reservoirCollections?.[SourceId.ResvizEDRReservoirs]]);
 
     useEffect(() => {
@@ -126,7 +149,9 @@ const MainMap: React.FC<Props> = (props) => {
                         RegionField.Name
                     ] as string;
 
-                    setRegion(region);
+                    if (region) {
+                        setRegion(region);
+                    }
                 }
             }
         };
@@ -136,17 +161,39 @@ const MainMap: React.FC<Props> = (props) => {
                 layers: [SubLayerId.BasinsFill],
             });
 
-            console.log('BASINS', features);
+            if (features && features.length) {
+                const feature = features[0];
+                console.log('Basin', feature);
+                if (feature.properties) {
+                    const basin = feature.properties[
+                        Huc06BasinField.Id
+                    ] as string;
 
-            // if (features && features.length) {
-            //     const feature = features[0];
+                    if (basin) {
+                        setBasin(basin);
+                    }
+                }
+            }
+        };
 
-            //     if (feature.properties) {
-            //         const region = feature.properties.REGION as string;
+        const handleStatesClick = (e: MapMouseEvent) => {
+            const features = map.queryRenderedFeatures(e.point, {
+                layers: [SubLayerId.StatesFill],
+            });
 
-            //         setRegion(region);
-            //     }
-            // }
+            if (features && features.length) {
+                const feature = features[0];
+                console.log('State', feature);
+                if (feature.properties) {
+                    const state = feature.properties[
+                        StateField.Acronym
+                    ] as string;
+
+                    if (state) {
+                        setState(state);
+                    }
+                }
+            }
         };
 
         const handleReservoirsClick = (e: MapMouseEvent) => {
@@ -192,6 +239,34 @@ const MainMap: React.FC<Props> = (props) => {
                                 : regionProperty
                         );
                     }
+                    if (feature.properties[config.basinConnectorProperty]) {
+                        const rawBasinProperty = String(
+                            feature.properties[config.basinConnectorProperty]
+                        );
+                        const basinProperty = rawBasinProperty.startsWith('[')
+                            ? (JSON.parse(rawBasinProperty) as string[])
+                            : rawBasinProperty;
+
+                        setBasin(
+                            Array.isArray(basinProperty)
+                                ? basinProperty[0]
+                                : basinProperty
+                        );
+                    }
+                    if (feature.properties[config.stateConnectorProperty]) {
+                        const rawStateProperty = String(
+                            feature.properties[config.stateConnectorProperty]
+                        );
+                        const stateProperty = rawStateProperty.startsWith('[')
+                            ? (JSON.parse(rawStateProperty) as string[])
+                            : rawStateProperty;
+
+                        setState(
+                            Array.isArray(stateProperty)
+                                ? stateProperty[0]
+                                : stateProperty
+                        );
+                    }
 
                     setReservoir({
                         identifier:
@@ -205,8 +280,8 @@ const MainMap: React.FC<Props> = (props) => {
         };
 
         map.on('click', SubLayerId.RegionsFill, handleRegionsClick);
-
         map.on('click', SubLayerId.BasinsFill, handleBasinsClick);
+        map.on('click', SubLayerId.StatesFill, handleStatesClick);
 
         map.on('click', reservoirLayers, handleReservoirsClick);
 
@@ -231,6 +306,7 @@ const MainMap: React.FC<Props> = (props) => {
         return () => {
             map.off('click', SubLayerId.RegionsFill, handleRegionsClick);
             map.off('click', SubLayerId.BasinsFill, handleBasinsClick);
+            map.off('click', SubLayerId.StatesFill, handleStatesClick);
             map.off('click', reservoirLayers, handleReservoirsClick);
         };
     }, [map]);
@@ -239,7 +315,7 @@ const MainMap: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
-        if (region === 'all') {
+        if (region === RegionDefault) {
             // Unset Filter
             map.setFilter(SubLayerId.RegionsFill, null);
             map.setFilter(SubLayerId.RegionsBoundary, null);
@@ -247,7 +323,7 @@ const MainMap: React.FC<Props> = (props) => {
             if (reservoir === ReservoirDefault) {
                 ReservoirConfigs.forEach((config) => {
                     config.connectedLayers.forEach((layerId) => {
-                        map.setFilter(layerId, null);
+                        map.setFilter(layerId, getReservoirFilter(config));
                     });
                 });
             }
@@ -263,17 +339,120 @@ const MainMap: React.FC<Props> = (props) => {
                 region,
             ]);
 
-            ReservoirConfigs.forEach((config) => {
-                config.connectedLayers.forEach((layerId) => {
-                    map.setFilter(layerId, [
-                        'any',
-                        ['in', region, ['get', config.regionConnectorProperty]],
-                        ['==', ['get', config.regionConnectorProperty], region],
-                    ]);
+            if (boundingGeographyLevel === BoundingGeographyLevel.Region) {
+                ReservoirConfigs.forEach((config) => {
+                    config.connectedLayers.forEach((layerId) => {
+                        map.setFilter(
+                            layerId,
+                            getBoundingGeographyFilter(
+                                config,
+                                'regionConnectorProperty',
+                                region
+                            )
+                        );
+                    });
                 });
-            });
+            }
         }
     }, [region]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+        if (basin === BasinDefault) {
+            // Unset Filter
+            map.setFilter(SubLayerId.BasinsFill, null);
+            map.setFilter(SubLayerId.BasinsBoundary, null);
+
+            if (reservoir === ReservoirDefault) {
+                ReservoirConfigs.forEach((config) => {
+                    config.connectedLayers.forEach((layerId) => {
+                        map.setFilter(layerId, getReservoirFilter(config));
+                    });
+                });
+            }
+        } else {
+            map.setFilter(SubLayerId.BasinsFill, [
+                '==',
+                ['get', Huc06BasinField.Id],
+                basin,
+            ]);
+            map.setFilter(SubLayerId.BasinsBoundary, [
+                '==',
+                ['get', Huc06BasinField.Id],
+                basin,
+            ]);
+
+            if (boundingGeographyLevel === BoundingGeographyLevel.Basin) {
+                console.log('basin', basin);
+                ReservoirConfigs.forEach((config) => {
+                    config.connectedLayers.forEach((layerId) => {
+                        console.log(
+                            getBoundingGeographyFilter(
+                                config,
+                                'basinConnectorProperty',
+                                Number(basin)
+                            )
+                        );
+                        map.setFilter(
+                            layerId,
+                            getBoundingGeographyFilter(
+                                config,
+                                'basinConnectorProperty',
+                                Number(basin)
+                            )
+                        );
+                    });
+                });
+            }
+        }
+    }, [basin]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+        if (state === StateDefault) {
+            // Unset Filter
+            map.setFilter(SubLayerId.StatesFill, null);
+            map.setFilter(SubLayerId.StatesBoundary, null);
+
+            if (reservoir === ReservoirDefault) {
+                ReservoirConfigs.forEach((config) => {
+                    config.connectedLayers.forEach((layerId) => {
+                        map.setFilter(layerId, getReservoirFilter(config));
+                    });
+                });
+            }
+        } else {
+            map.setFilter(SubLayerId.StatesFill, [
+                '==',
+                ['get', StateField.Acronym],
+                state,
+            ]);
+            map.setFilter(SubLayerId.StatesBoundary, [
+                '==',
+                ['get', StateField.Acronym],
+                state,
+            ]);
+
+            if (boundingGeographyLevel === BoundingGeographyLevel.State) {
+                ReservoirConfigs.forEach((config) => {
+                    config.connectedLayers.forEach((layerId) => {
+                        map.setFilter(
+                            layerId,
+                            getBoundingGeographyFilter(
+                                config,
+                                'stateConnectorProperty',
+                                state
+                            )
+                        );
+                    });
+                });
+            }
+        }
+    }, [state]);
 
     useEffect(() => {
         if (!map) {
@@ -289,7 +468,9 @@ const MainMap: React.FC<Props> = (props) => {
                     layers: reservoirLayers,
                 });
                 if (!features.length) {
-                    setRegion('all');
+                    setRegion(RegionDefault);
+                    setBasin(BasinDefault);
+                    setState(StateDefault);
                     setReservoir(ReservoirDefault);
                     map.once('idle', () => {
                         requestAnimationFrame(() => {

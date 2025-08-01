@@ -28,6 +28,7 @@ import {
 } from '@/features/Map/consts';
 import {
     getReservoirConfig,
+    getReservoirFilter,
     getReservoirLabelLayout,
     getReservoirLabelPaint,
     getReservoirSymbolLayout,
@@ -277,7 +278,7 @@ export const getLayerConfig = (
                 paint: {
                     'line-opacity': 1,
                     'line-color': getLayerColor(LayerId.Basins),
-                    'line-width': 3,
+                    'line-width': 2,
                 },
             };
         case SubLayerId.BasinsFill:
@@ -330,6 +331,9 @@ export const getLayerConfig = (
                 id: LayerId.RiseEDRReservoirs,
                 type: LayerType.Symbol,
                 source: SourceId.RiseEDRReservoirs,
+                filter: getReservoirFilter(
+                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                ),
                 layout: getReservoirSymbolLayout(
                     getReservoirConfig(SourceId.RiseEDRReservoirs)!
                 ),
@@ -339,6 +343,9 @@ export const getLayerConfig = (
                 id: SubLayerId.RiseEDRReservoirLabels,
                 type: LayerType.Symbol,
                 source: SourceId.RiseEDRReservoirs,
+                filter: getReservoirFilter(
+                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
+                ),
                 layout: getReservoirLabelLayout(
                     getReservoirConfig(SourceId.RiseEDRReservoirs)!
                 ),
@@ -351,6 +358,9 @@ export const getLayerConfig = (
                 id: LayerId.ResvizEDRReservoirs,
                 type: LayerType.Symbol,
                 source: SourceId.ResvizEDRReservoirs,
+                filter: getReservoirFilter(
+                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                ),
                 layout: getReservoirSymbolLayout(
                     getReservoirConfig(SourceId.ResvizEDRReservoirs)!
                 ),
@@ -360,6 +370,9 @@ export const getLayerConfig = (
                 id: SubLayerId.ResvizEDRReservoirLabels,
                 type: LayerType.Symbol,
                 source: SourceId.ResvizEDRReservoirs,
+                filter: getReservoirFilter(
+                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                ),
                 layout: getReservoirLabelLayout(
                     getReservoirConfig(SourceId.ResvizEDRReservoirs)!
                 ),

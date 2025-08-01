@@ -67,9 +67,21 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
                 />
                 <TextBlock>
                     <Group gap="xs" justify="flex-start">
+                        <Text fw={700}>Capacity:</Text>
+                        <Text>
+                            {capacity.toLocaleString('en-US')}&nbsp;acre-feet
+                        </Text>
+                    </Group>
+                    <Group gap="xs" justify="flex-start">
                         <Text fw={700}>Storage:</Text>
                         <Text>
                             {storage.toLocaleString('en-US')}&nbsp;acre-feet
+                        </Text>
+                    </Group>
+                    <Group gap="xs" justify="flex-start">
+                        <Text fw={700}>Average:</Text>
+                        <Text>
+                            {average.toLocaleString('en-US')}&nbsp;acre-feet
                         </Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">

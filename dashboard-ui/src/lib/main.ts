@@ -70,7 +70,7 @@ const useMainStore = create<MainState>()((set) => ({
     setState: (state) => set({ state }),
     reservoir: ReservoirDefault,
     setReservoir: (reservoir) => set({ reservoir }),
-    boundingGeographyLevel: 'region',
+    boundingGeographyLevel: BoundingGeographyLevel.Region,
     setBoundingGeographyLevel: (
         boundingGeographyLevel: BoundingGeographyLevel
     ) => set({ boundingGeographyLevel }),

@@ -170,6 +170,7 @@ export const ReservoirConfigs: ReservoirConfig[] = [
     //     identifierProperty: RiseReservoirField.Id,
     //     identifierType: 'number',
     //     labelProperty: RiseReservoirField.AssetNameInTessel,
+    //     chartLabel: 'Lake/Reservoir Storage',
     //     regionConnectorProperty: RiseReservoirField.LocationUnifiedRegionNames,
     //     connectedLayers: [
     //         LayerId.RiseEDRReservoirs,
@@ -190,15 +191,18 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         identifierProperty: ResvizReservoirField.MonitoringLocationId,
         identifierType: 'number',
         labelProperty: ResvizReservoirField.SiteName,
+        chartLabel: ResvizReservoirField.Storage,
         regionConnectorProperty: ResvizReservoirField.DoiRegionName,
+        basinConnectorProperty: ResvizReservoirField.Huc06,
+        stateConnectorProperty: ResvizReservoirField.State,
         connectedLayers: [
             LayerId.ResvizEDRReservoirs,
             SubLayerId.ResvizEDRReservoirLabels,
         ],
 
-        // params: {
-        //     'parameter-name': 'raw', // TODO: replace once ontology gets made for resviz
-        // },
+        params: {
+            'parameter-name': ResvizReservoirField.Storage, // TODO: replace once ontology gets made for resviz
+        },
     },
 ];
 

@@ -80,7 +80,7 @@ export const Chart: React.FC<Props> = (props) => {
 
             const data = getLabelsAndValues(
                 coverageCollection,
-                'Lake/Reservoir Storage'
+                config.chartLabel
             );
 
             if (isMounted.current) {
@@ -109,7 +109,7 @@ export const Chart: React.FC<Props> = (props) => {
         setError('');
         chartDidUpdate.current = false;
         void getReservoirStorage(range);
-    }, [id, range]);
+    }, [range]);
 
     const chartData: ChartData<'line', Array<{ x: string; y: number }>> = {
         datasets: [

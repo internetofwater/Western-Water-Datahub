@@ -16,17 +16,16 @@ import geoconnexService from '@/services/init/geoconnex.init';
 import { FeatureCollection, Polygon } from 'geojson';
 import { formatOptions } from '@/features/Header/Selectors/utils';
 import { StateField, StateProperties } from '@/features/Map/types/state';
+import useMainStore from '@/lib/main';
 
 export const State: React.FC = () => {
+    const state = useMainStore((state) => state.state);
+    const setState = useMainStore((state) => state.setState);
+
     const { map } = useMap(MAP_ID);
 
     const [loading, setLoading] = useState(true);
-    const [stateOptions, setStateOptions] = useState<ComboboxData>([
-        {
-            value: 'all',
-            label: 'All States',
-        },
-    ]);
+    const [stateOptions, setStateOptions] = useState<ComboboxData>([]);
 
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
@@ -37,7 +36,7 @@ export const State: React.FC = () => {
         }
         // Ensure both map and populating fetch are finished
         const sourceCallback = (e: SourceDataEvent) => {
-            if (isSourceDataLoaded(map, SourceId.Regions, e)) {
+            if (isSourceDataLoaded(map, SourceId.States, e)) {
                 setLoading(false);
                 map.off('sourcedata', sourceCallback); //remove event listener
             }
@@ -54,7 +53,7 @@ export const State: React.FC = () => {
         try {
             controller.current = new AbortController();
 
-            const basinFeatureCollection = await geoconnexService.getItems<
+            const stateFeatureCollection = await geoconnexService.getItems<
                 FeatureCollection<Polygon, StateProperties>
             >(SourceId.States, {
                 params: {
@@ -63,9 +62,9 @@ export const State: React.FC = () => {
                 },
             });
 
-            if (basinFeatureCollection.features.length) {
+            if (stateFeatureCollection.features.length) {
                 const basinOptions = formatOptions(
-                    basinFeatureCollection.features.filter((feature) =>
+                    stateFeatureCollection.features.filter((feature) =>
                         ValidStates.includes(
                             feature.properties[StateField.Acronym]
                         )
@@ -117,10 +116,10 @@ export const State: React.FC = () => {
                 id="stateSelector"
                 searchable
                 data={stateOptions}
-                value={'all'}
+                value={state}
                 aria-label="Select a State"
                 placeholder="Select a State"
-                onChange={() => {}}
+                onChange={(_value) => setState(_value as string)}
             />
         </Skeleton>
     );

@@ -517,6 +517,7 @@ export class EDRService extends Service {
             signal: options.signal,
             headers: options.headers,
         });
+
         return result;
     }
 

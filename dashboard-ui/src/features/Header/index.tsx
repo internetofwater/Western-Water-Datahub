@@ -15,7 +15,14 @@ import { Basin } from '@/features/Header/Selectors/Basin';
 import { ClearAll } from '@/features/Header/Selectors/ClearAll';
 import useMainStore from '@/lib/main';
 import { State } from '@/features/Header/Selectors/State';
-import { RegionDefault, ReservoirDefault } from '@/lib/consts';
+import {
+    BasinDefault,
+    RegionDefault,
+    ReservoirDefault,
+    StateDefault,
+} from '@/lib/consts';
+import { BoundingGeographyLevel } from '@/lib/types';
+import { BoundingGeography } from '@/features/Header/Selectors/BoundingGeography';
 
 const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
     ssr: false,
@@ -28,6 +35,11 @@ const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
 const Header: React.FC = () => {
     const region = useMainStore((state) => state.region);
     const reservoir = useMainStore((state) => state.reservoir);
+    const basin = useMainStore((state) => state.basin);
+    const state = useMainStore((state) => state.state);
+    const boundingGeographyLevel = useMainStore(
+        (state) => state.boundingGeographyLevel
+    );
 
     return (
         <>
@@ -68,17 +80,45 @@ const Header: React.FC = () => {
                                 className={styles.divider}
                             />
                             <Group>
-                                <Region />
-                                <Basin />
-                                {/* Group these so they move together when decreasing screen width */}
-                                <Group>
+                                <BoundingGeography />
+                                <Box
+                                    style={{
+                                        display:
+                                            boundingGeographyLevel ===
+                                            BoundingGeographyLevel.Region
+                                                ? 'block'
+                                                : 'none',
+                                    }}
+                                >
+                                    <Region />
+                                </Box>
+                                <Box
+                                    style={{
+                                        display:
+                                            boundingGeographyLevel ===
+                                            BoundingGeographyLevel.Basin
+                                                ? 'block'
+                                                : 'none',
+                                    }}
+                                >
+                                    <Basin />
+                                </Box>
+                                <Box
+                                    style={{
+                                        display:
+                                            boundingGeographyLevel ===
+                                            BoundingGeographyLevel.State
+                                                ? 'block'
+                                                : 'none',
+                                    }}
+                                >
                                     <State />
-                                    <Reservoir />
-                                </Group>
+                                </Box>
+                                <Reservoir />
                                 {(region !== RegionDefault ||
-                                    reservoir !== ReservoirDefault) && (
-                                    <ClearAll />
-                                )}
+                                    reservoir !== ReservoirDefault ||
+                                    basin !== BasinDefault ||
+                                    state !== StateDefault) && <ClearAll />}
                             </Group>
                         </Group>
                         <Suspense>

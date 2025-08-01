@@ -39,8 +39,7 @@ export const Basin: React.FC = () => {
         }
         // Ensure both map and populating fetch are finished
         const sourceCallback = (e: SourceDataEvent) => {
-            if (isSourceDataLoaded(map, SourceId.Regions, e)) {
-                setLoading(false);
+            if (isSourceDataLoaded(map, SourceId.Basins, e)) {
                 map.off('sourcedata', sourceCallback); //remove event listener
             }
         };
@@ -75,6 +74,7 @@ export const Basin: React.FC = () => {
                 );
 
                 if (isMounted.current) {
+                    setLoading(false);
                     setBasinOptions(basinOptions);
                 }
             }

@@ -17,4 +17,8 @@ export type Reservoir = {
     source: string;
 };
 
-export type BoundingGeographyLevel = 'region' | 'basin' | 'state';
+export enum BoundingGeographyLevel {
+    Region = 'region',
+    Basin = 'basin',
+    State = 'state',
+}

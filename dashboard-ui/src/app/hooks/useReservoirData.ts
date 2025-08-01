@@ -41,7 +41,28 @@ export const useReservoirData = () => {
                     const processedResult = await appendResvizDataProperties(
                         result
                     );
-                    reservoirCollections[config.id] = processedResult;
+                    const test = {
+                        ...processedResult,
+                        features: processedResult.features.map((feature) => {
+                            const newProperties: GeoJsonProperties = {};
+                            for (const key in feature.properties) {
+                                const newKey = key.replace(
+                                    /resviz_stations./g,
+                                    ''
+                                );
+                                newProperties[newKey] = feature.properties[
+                                    key
+                                ] as string | number;
+                            }
+
+                            return {
+                                ...feature,
+                                properties: newProperties,
+                            };
+                        }),
+                    };
+
+                    reservoirCollections[config.id] = test;
                 }
             }
 

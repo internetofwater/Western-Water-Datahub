@@ -31,7 +31,10 @@ export type ReservoirConfig = {
     identifierProperty: string;
     identifierType: 'string' | 'number';
     labelProperty: string;
+    chartLabel: string;
     regionConnectorProperty: string;
+    basinConnectorProperty: string;
+    stateConnectorProperty: string;
     connectedLayers: (LayerId | SubLayerId)[];
     params?: IGetLocationParams;
 };

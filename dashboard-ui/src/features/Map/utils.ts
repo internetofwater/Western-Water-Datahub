@@ -5,6 +5,7 @@
 
 import {
     ExpressionSpecification,
+    FilterSpecification,
     GeoJSONFeature,
     LayoutSpecification,
     Map,
@@ -259,7 +260,7 @@ export const getReservoirLabelLayout = (
     return {
         'text-field': ['get', config.labelProperty],
         'text-anchor': 'bottom',
-        'text-size': 18,
+        'text-size': 16,
         'symbol-sort-key': ['coalesce', ['get', config.capacityProperty], 1],
         'text-offset': [
             'let',
@@ -338,6 +339,26 @@ export const getReservoirLabelPaint = (
         'text-halo-color': '#fff',
         'text-halo-width': 2,
     };
+};
+
+export const getReservoirFilter = (
+    config: ReservoirConfig
+): FilterSpecification => {
+    const dataProperties = [
+        config.capacityProperty,
+        config.storageProperty,
+        config.tenthPercentileProperty,
+        config.ninetiethPercentileProperty,
+        config.thirtyYearAverageProperty,
+    ];
+    return [
+        'all',
+        ...dataProperties.map((property) => [
+            'all',
+            ['has', property],
+            ['==', ['typeof', ['get', property]], 'number'],
+        ]),
+    ];
 };
 
 /**
@@ -444,4 +465,21 @@ export const appendResvizDataProperties = async (
         type: 'FeatureCollection',
         features: updatedFeatures,
     };
+};
+
+export const getBoundingGeographyFilter = (
+    config: ReservoirConfig,
+    property: keyof ReservoirConfig,
+    value: string | number | string[] | number[]
+): FilterSpecification => {
+    return [
+        'case',
+        [
+            'any',
+            ['==', ['typeof', ['get', config[property]]], 'literal'],
+            ['==', ['typeof', ['get', config[property]]], 'array'],
+        ],
+        ['in', value, ['get', config[property]]],
+        ['==', ['get', config[property]], value],
+    ];
 };
