@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import useMainStore from '@/lib/main';
 import { Checkbox } from '@mantine/core';
 import { DateInput, DateValue } from '@mantine/dates';

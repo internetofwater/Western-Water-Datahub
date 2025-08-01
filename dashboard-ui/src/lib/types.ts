@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { SourceId } from '@/features/Map/consts';
 import { FeatureCollection, Point, GeoJsonProperties } from 'geojson';
 
