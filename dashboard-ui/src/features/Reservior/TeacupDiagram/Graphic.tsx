@@ -33,6 +33,7 @@ import {
     propagateEventToContainerElemConstructor,
     addListeners,
     getHeight,
+    getY,
 } from '@/features/Reservior/TeacupDiagram/utils';
 import { GeoJsonProperties } from 'geojson';
 import { ReservoirConfig } from '@/features/Map/types';
@@ -220,9 +221,17 @@ export const Graphic: React.FC<Props> = (props) => {
             calculateXPosition
         );
 
-        addLine(highPercentileId, highPercentile, '#FFF');
-        addLine(averageId, average, '#d0a02a');
-        addLine(lowPercentileId, lowPercentile, '#FFF');
+        const highPercentileLine = addLine(
+            highPercentileId,
+            highPercentile,
+            '#FFF'
+        );
+        const averageLine = addLine(averageId, average, '#d0a02a');
+        const lowPercentileLine = addLine(
+            lowPercentileId,
+            lowPercentile,
+            '#FFF'
+        );
 
         if (labels) {
             const addLabel = addLabelConstructor(
@@ -299,8 +308,32 @@ export const Graphic: React.FC<Props> = (props) => {
                 textColor,
                 showLabels
             );
-            // TODO: replace the two displayed values below, when available
-            // Renders just above the average line
+
+            const highPercentileY = getY(highPercentileLine);
+            const averageY = getY(averageLine);
+            const lowPercentileY = getY(lowPercentileLine);
+
+            const minSpacing = 9;
+            averageAdjust = 0;
+
+            // Check overlap with high percentile line
+            if (Math.abs(highPercentileY - averageY) < minSpacing) {
+                averageAdjust +=
+                    (highPercentileY <= averageY ? 1 : -1) *
+                    (minSpacing + 9 - Math.abs(highPercentileY - averageY));
+            }
+
+            // Check overlap with low percentile line
+            if (
+                Math.abs(lowPercentileY - averageY + averageAdjust) < minSpacing
+            ) {
+                averageAdjust +=
+                    (lowPercentileY <= averageY ? 1 : -1) *
+                    (minSpacing +
+                        9 -
+                        Math.abs(lowPercentileY - averageY + averageAdjust));
+            }
+
             addText(
                 averageTextId,
                 `${Math.round(
@@ -308,18 +341,19 @@ export const Graphic: React.FC<Props> = (props) => {
                         reservoirProperties[config.thirtyYearAverageProperty]
                     )
                 ).toLocaleString('en-us')} acre-feet`,
-                average - 2,
+                average - 2 + averageAdjust,
                 '#d0a02a',
                 showLabels
             );
+
             // Current Storage of reservoir
             addText(
                 storageTextId,
                 `${Number(
                     reservoirProperties[config.storageProperty]
                 ).toLocaleString('en-us')} acre-feet`,
-                cutHeight - 1,
-                '#FFF',
+                height + 6,
+                textColor,
                 showLabels
             );
         }

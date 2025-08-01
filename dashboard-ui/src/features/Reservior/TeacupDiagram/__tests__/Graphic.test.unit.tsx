@@ -8,15 +8,17 @@ import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { render } from '@/utils/test-utils';
 import { ReservoirConfig } from '@/features/Map/types';
 import { TeacupDiagram } from '@/features/Reservior/TeacupDiagram';
-import { getHeight } from '@/features/Reservior/TeacupDiagram/utils';
+import { getHeight, getY } from '@/features/Reservior/TeacupDiagram/utils';
 
 const mockProps = {
     reservoirProperties: {
         storage: 5000,
+        average: 7500,
         capacity: 10000,
     },
     config: {
         storageProperty: 'storage',
+        thirtyYearAverageProperty: 'average',
         capacityProperty: 'capacity',
     } as ReservoirConfig,
     showLabels: true,
@@ -29,12 +31,14 @@ jest.mock('@/features/Reservior/TeacupDiagram/utils', () => {
     return {
         ...actual,
         getHeight: jest.fn(() => 20),
+        getY: jest.fn(() => 20),
     };
 });
 
 describe('Graphic component', () => {
     beforeAll(() => {
         (getHeight as jest.Mock).mockReturnValue(20);
+        (getY as jest.Mock).mockReturnValue(20);
     });
 
     test('renders SVG container', () => {
@@ -56,7 +60,7 @@ describe('Graphic component', () => {
     test('renders correct labels', () => {
         render(<TeacupDiagram {...mockProps} />);
         expect(screen.getByText(/10,000 acre-feet/i)).toBeInTheDocument();
-        expect(screen.getByText(/3,250 acre-feet/i)).toBeInTheDocument();
-        expect(screen.getByText(/2,500 acre-feet/i)).toBeInTheDocument();
+        expect(screen.getByText(/7,500 acre-feet/i)).toBeInTheDocument();
+        expect(screen.getByText(/5,000 acre-feet/i)).toBeInTheDocument();
     });
 });

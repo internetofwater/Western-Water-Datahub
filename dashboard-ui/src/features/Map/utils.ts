@@ -473,13 +473,17 @@ export const getBoundingGeographyFilter = (
     value: string | number | string[] | number[]
 ): FilterSpecification => {
     return [
-        'case',
+        'all',
+        getReservoirFilter(config),
         [
-            'any',
-            ['==', ['typeof', ['get', config[property]]], 'literal'],
-            ['==', ['typeof', ['get', config[property]]], 'array'],
+            'case',
+            [
+                'any',
+                ['==', ['typeof', ['get', config[property]]], 'literal'],
+                ['==', ['typeof', ['get', config[property]]], 'array'],
+            ],
+            ['in', value, ['get', config[property]]],
+            ['==', ['get', config[property]], value],
         ],
-        ['in', value, ['get', config[property]]],
-        ['==', ['get', config[property]], value],
     ];
 };

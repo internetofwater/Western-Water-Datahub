@@ -41,17 +41,9 @@ export const Info: React.FC<Props> = (props) => {
     const average = Number(
         reservoirProperties[config.thirtyYearAverageProperty]
     );
+
     const percentFull = ((storage / capacity) * 100).toFixed(1);
     const percentOfAverage = ((storage / average) * 100).toFixed(1);
-    const region = String(
-        Array.isArray(reservoirProperties[config.regionConnectorProperty])
-            ? (
-                  reservoirProperties[config.regionConnectorProperty] as
-                      | string[]
-                      | number[]
-              )?.[0]
-            : reservoirProperties[config.regionConnectorProperty]
-    );
 
     return (
         <Stack
@@ -72,38 +64,37 @@ export const Info: React.FC<Props> = (props) => {
                     </Text>
                     <TextBlock w="100%">
                         <Group gap="xs" justify="flex-start">
+                            <Text fw={700}>Capacity:</Text>
+                            <Text>
+                                {capacity.toLocaleString('en-US')}
+                                &nbsp;acre-feet
+                            </Text>
+                        </Group>
+                        <Group gap="xs" justify="flex-start">
                             <Text fw={700}>Storage:</Text>
                             <Text>
                                 {storage.toLocaleString('en-US')}&nbsp;acre-feet
                             </Text>
                         </Group>
                         <Group gap="xs" justify="flex-start">
-                            <Text fw={700}>Percent Full:</Text>
-                            <Text>{percentFull}%</Text>
-                        </Group>
-                        <Group gap="xs" justify="flex-start">
-                            <Text fw={700}>Percent of Average:</Text>
-                            <Text>{percentOfAverage}%</Text>
+                            <Text fw={700}>Average:</Text>
+                            <Text>
+                                {average.toLocaleString('en-US')}&nbsp;acre-feet
+                            </Text>
                         </Group>
                     </TextBlock>
                 </Box>
-                <TextBlock>
+                <TextBlock w="100%">
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Capacity:</Text>
-                        <Text>
-                            {capacity.toLocaleString('en-US')}
-                            &nbsp;acre-feet
-                        </Text>
+                        <Text fw={700}>Percent Full:</Text>
+                        <Text>{percentFull}%</Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Region:</Text>
-                        <Text>{region}</Text>
-                    </Group>
-                    <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Basin:</Text>
-                        <Text>Unknown Basin</Text>
+                        <Text fw={700}>Percent of Average:</Text>
+                        <Text>{percentOfAverage}%</Text>
                     </Group>
                 </TextBlock>
+
                 <PDF
                     reservoirProperties={reservoirProperties}
                     accessToken={accessToken}
