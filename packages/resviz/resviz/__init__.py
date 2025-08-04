@@ -65,7 +65,7 @@ def run_subprocess(csv_url: str):
 
         if isnan(float(row["DataValue"])):
             LOGGER.error(
-                f"NaN detected on {row['DataDate']} from {row['SiteShortName']}"
+                f"Skipping NaN on {row['DataDate']} from {row['SiteName']}"
             )
 
         # Upsert data value
