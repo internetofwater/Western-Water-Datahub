@@ -64,7 +64,9 @@ def run_subprocess(csv_url: str):
         )
 
         if isnan(float(row["DataValue"])):
-            LOGGER.error(f"NaN detected on {row['DataDate']} from {row['SiteShortName']}")
+            LOGGER.error(
+                f"NaN detected on {row['DataDate']} from {row['SiteShortName']}"
+            )
 
         # Upsert data value
         create_feature(pg_layer, row, "raw")
