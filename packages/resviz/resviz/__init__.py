@@ -64,9 +64,7 @@ def run_subprocess(csv_url: str):
         )
 
         if isnan(float(row["DataValue"])):
-            LOGGER.error(
-                f"Skipping NaN on {row['DataDate']} from {row['SiteName']}"
-            )
+            LOGGER.error(f"Skipping NaN on {row['DataDate']} from {row['SiteName']}")
 
         # Upsert data value
         create_feature(pg_layer, row, "raw")
