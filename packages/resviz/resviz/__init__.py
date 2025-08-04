@@ -5,6 +5,7 @@
 import click
 from datetime import date, timedelta, datetime
 from dateutil.parser import parse as dateparse
+from numpy import isnan
 
 import logging
 import multiprocessing as mp
@@ -61,6 +62,9 @@ def run_subprocess(csv_url: str):
         row["DataDate"] = datetime.strptime(row["DataDate"], "%m/%d/%Y").strftime(
             "%Y-%m-%d"
         )
+
+        if isnan(float(row["DataValue"])):
+            LOGGER.error(f"NaN detected on {row['DataDate']} from {row['SiteShortName']}")
 
         # Upsert data value
         create_feature(pg_layer, row, "raw")
