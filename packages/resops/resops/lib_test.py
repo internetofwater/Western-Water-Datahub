@@ -3,7 +3,7 @@
 
 import json
 from pathlib import Path
-from resops.lib import LocationCollection
+from resops.lib import LocationCollection, load_thirty_year_averages
 
 
 def test_construct_location_collection():
@@ -19,3 +19,8 @@ def test_construct_location_collection():
 
     for k in location_collection.data:
         assert location_collection.data[k]["averages"]
+
+
+def test_data():
+    averages = load_thirty_year_averages()
+    assert isinstance(averages, dict)

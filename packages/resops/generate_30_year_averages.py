@@ -150,19 +150,25 @@ for _, station in usace_stations.iterrows():
         values = group["storage"].dropna()
         assert isinstance(values, pd.Series)
 
+        date_with_year = "2020-" + date_group
+
         if not reservoirToDayOfMonthAndValues[associatedNidId].get("averages"):
             reservoirToDayOfMonthAndValues[associatedNidId]["averages"] = {}
-            reservoirToDayOfMonthAndValues[associatedNidId]["averages"][date_group] = {}
+            reservoirToDayOfMonthAndValues[associatedNidId]["averages"][
+                date_with_year
+            ] = {}
 
         if len(values) == 0:
-            reservoirToDayOfMonthAndValues[associatedNidId]["averages"][date_group] = {
+            reservoirToDayOfMonthAndValues[associatedNidId]["averages"][
+                date_with_year
+            ] = {
                 "thirtyYearAverage": None,
                 "tenthPercentile": None,
                 "ninetiethPercentile": None,
             }
             continue
 
-        reservoirToDayOfMonthAndValues[associatedNidId]["averages"][date_group] = {
+        reservoirToDayOfMonthAndValues[associatedNidId]["averages"][date_with_year] = {
             "thirtyYearAverage": round(values.mean(), 4),
             "tenthPercentile": round(values.quantile(0.1), 4),
             "ninetiethPercentile": round(values.quantile(0.9), 4),

@@ -3,6 +3,9 @@
 
 from collections import OrderedDict
 import datetime
+import json
+import logging
+import pathlib
 from typing import Optional, TypedDict, cast
 
 from com.covjson import CoverageCollectionDict
@@ -23,6 +26,8 @@ from covjson_pydantic.parameter import Parameter, Parameters
 from covjson_pydantic.unit import Unit
 from covjson_pydantic.observed_property import ObservedProperty
 
+LOGGER = logging.getLogger(__name__)
+
 
 class ReservoirStorageMetadata(TypedDict):
     thirtyYearAverage: float
@@ -31,7 +36,7 @@ class ReservoirStorageMetadata(TypedDict):
 
 
 def days_after_today(md_str):
-    month, day = map(int, md_str.split("-"))
+    _year, month, day = map(int, md_str.split("-"))
     base_year = 2000  # Leap year
     target_date = datetime.datetime(base_year, month, day)
 
@@ -51,7 +56,6 @@ def filter_averages(time: str, averages: dict) -> dict:
 
         filteredAverages = {}
         for k, v in averages.items():
-            k = f"2020-{k}"
             if (
                 start
                 <= datetime.datetime.strptime(k, "%Y-%m-%d").replace(
@@ -64,7 +68,6 @@ def filter_averages(time: str, averages: dict) -> dict:
         return filteredAverages
     else:
         for k, v in averages.items():
-            k = f"2020-{k}"
             if result == datetime.datetime.strptime(k, "%Y-%m-%d").replace(
                 tzinfo=datetime.timezone.utc
             ):
@@ -91,6 +94,9 @@ class LocationCollection:
                     v["averages"].items(), key=lambda item: days_after_today(item[0])
                 )
             )
+            # in resopsus there is no associated year; however for EDR
+            # everything needs to be an iso timestamp so as a result, we
+            # add 2020 to each date, associated it with the end of the 30 year period
             self.data[k] = v
             self.data[k]["averages"] = sortedAverages
 
@@ -145,7 +151,7 @@ class LocationCollection:
                 # 2020 is the final year in the 30 year period in both the ResOpsUS dataset
                 # as well as the usbr 30 year averages
                 date = datetime.datetime.strptime(k, "%Y-%m-%d")
-                date = date.astimezone(datetime.timezone.utc)
+                date = date.replace(tzinfo=datetime.timezone.utc)
                 keysWithCurrentYear.append(date)
 
             for key, value in {
@@ -246,3 +252,19 @@ class LocationCollection:
             else:
                 features.append(featureToAdd)
         return fc
+
+
+def load_thirty_year_averages() -> dict:
+    thirty_year_averages_path = (
+        pathlib.Path(__file__).parent.parent / "30_year_averages_by_nid_id.json"
+    )
+
+    with thirty_year_averages_path.open() as f:
+        LOGGER.info(
+            f"Loading 30 year average USACE metadata from {thirty_year_averages_path}"
+        )
+        USACE_THIRTY_YEAR_AVERAGES: dict = json.load(f)
+
+        assert USACE_THIRTY_YEAR_AVERAGES
+
+    return USACE_THIRTY_YEAR_AVERAGES

@@ -48,6 +48,11 @@ class ResOpsUSProviderEDR(BaseEDRProvider, EDRProviderProtocol):
                 "Datetime parameter is not supported without location_id"
             )
 
+        if datetime_ and "2020" not in datetime_:
+            raise ProviderQueryError(
+                "Datetime parameter must include 2020, since our dataset only includes one year for the end of the 30 year period"
+            )
+
         collection = LocationCollection(USACE_THIRTY_YEAR_AVERAGES)
 
         if location_id:
@@ -68,6 +73,16 @@ class ResOpsUSProviderEDR(BaseEDRProvider, EDRProviderProtocol):
         bbox: list,
         datetime_: Optional[str] = None,
         select_properties: Optional[list[str]] = None,
+        z: Optional[str] = None,
+        **kwargs,
+    ) -> CoverageCollectionDict:
+        raise NotImplementedError
+
+    def area(
+        self,
+        wkt: str,
+        select_properties: list[str] = [],
+        datetime_: Optional[str] = None,
         z: Optional[str] = None,
         **kwargs,
     ) -> CoverageCollectionDict:

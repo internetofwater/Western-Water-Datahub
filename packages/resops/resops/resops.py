@@ -1,9 +1,7 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-import json
 import logging
-import pathlib
 from typing import Literal, Optional
 
 from com.otel import otel_trace
@@ -16,20 +14,12 @@ from com.geojson.helpers import (
     SortDict,
 )
 
-from resops.lib import LocationCollection
+from resops.lib import LocationCollection, load_thirty_year_averages
 
 
 LOGGER = logging.getLogger(__name__)
 
-thirty_year_averages_path = (
-    pathlib.Path(__file__).parent.parent / "30_year_averages_by_nid_id.json"
-)
-
-with thirty_year_averages_path.open() as f:
-    LOGGER.info(
-        f"Loading 30 year average USACE metadata from {thirty_year_averages_path}"
-    )
-    USACE_THIRTY_YEAR_AVERAGES = json.load(f)
+USACE_THIRTY_YEAR_AVERAGES = load_thirty_year_averages()
 
 
 class ResOpsUSProvider(BaseProvider, OAFProviderProtocol):
