@@ -1,3 +1,6 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 from datetime import datetime
 from typing import cast
 from com.covjson import CoverageCollectionDict
