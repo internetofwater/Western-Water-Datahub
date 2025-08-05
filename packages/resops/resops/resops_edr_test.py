@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import timezone
 from typing import cast
 from com.covjson import CoverageCollectionDict
 from com.geojson.helpers import GeojsonFeatureCollectionDict
@@ -53,6 +54,12 @@ def test_location_datetime_filter():
     assert locresp["type"] == "CoverageCollection"
     locresp = cast(CoverageCollectionDict, locresp)
     for coverage in locresp["coverages"]:
+        associatedTime = coverage["domain"]["axes"]["t"]["values"][0]
+        assert isinstance(associatedTime, datetime), (
+            "The coverage should have a datetime"
+        )
+        assert associatedTime.year == 2020
+        assert associatedTime.tzinfo == timezone.utc
         assert coverage["domain"]["axes"]["t"]["values"][0] == datetime.fromisoformat(
             "2020-01-01T00:00:00+00:00"
         ), "The coverage should match the same time as the datetime filter"
