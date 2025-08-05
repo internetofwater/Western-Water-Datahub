@@ -51,13 +51,23 @@ def filter_averages(time: str, averages: dict) -> dict:
 
         filteredAverages = {}
         for k, v in averages.items():
-            if start <= datetime.datetime.strptime(k, "%m-%d") <= end:
+            k = f"2020-{k}"
+            if (
+                start
+                <= datetime.datetime.strptime(k, "%Y-%m-%d").replace(
+                    tzinfo=datetime.timezone.utc
+                )
+                <= end
+            ):
                 filteredAverages[k] = v
 
         return filteredAverages
     else:
         for k, v in averages.items():
-            if result == datetime.datetime.strptime(k, "%m-%d"):
+            k = f"2020-{k}"
+            if result == datetime.datetime.strptime(k, "%Y-%m-%d").replace(
+                tzinfo=datetime.timezone.utc
+            ):
                 return {k: v}
         return {}
 
@@ -134,8 +144,7 @@ class LocationCollection:
                 # we have to use 2020 here since EDR requires a full datetime and
                 # 2020 is the final year in the 30 year period in both the ResOpsUS dataset
                 # as well as the usbr 30 year averages
-                date = f"2020-{k}"
-                date = datetime.datetime.strptime(date, "%Y-%m-%d")
+                date = datetime.datetime.strptime(k, "%Y-%m-%d")
                 date = date.astimezone(datetime.timezone.utc)
                 keysWithCurrentYear.append(date)
 
