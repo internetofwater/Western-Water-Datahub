@@ -426,7 +426,6 @@ resources:
           style: default
           projection: 4326
 
-
   us-historical-drought-monitor:
     type: collection
     title: Drought Monitor
