@@ -405,10 +405,10 @@ resources:
           style: default
           projection: 4326
 
-  us-drought-monitor:
+  us-current-drought-monitor:
     type: collection
     title: Drought Monitor
-    description: US Drought Monitor current drought intensity
+    description: US Drought Monitor current drought intensity from the National Drought Mitigation Center
     keywords: ["drought"]
     links:
       - <<: *default-link
@@ -417,6 +417,28 @@ resources:
     providers:
       - <<: *default-feature-qpf
         data: https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
+        id_field: OBJECTID
+        time_field: ddate
+      - <<: *default-wms
+        data: https://ndmcgeodata.unl.edu/cgi-bin/mapserv.exe?map=/ms4w/apps/usdm/map/usdm_current_wms.map
+        options:
+          layer: usdm_current
+          style: default
+          projection: 4326
+
+
+  us-historical-drought-monitor:
+    type: collection
+    title: Drought Monitor
+    description: US Drought Monitor drought intensity from the National Drought Mitigation Center
+    keywords: ["drought"]
+    links:
+      - <<: *default-link
+        href: https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/US_Drought_Intensity_v1/FeatureServer/2
+    extents: *default-extent
+    providers:
+      - <<: *default-feature-qpf
+        data: https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/US_Drought_Intensity_v1/FeatureServer/2
         id_field: OBJECTID
         time_field: ddate
       - <<: *default-wms
