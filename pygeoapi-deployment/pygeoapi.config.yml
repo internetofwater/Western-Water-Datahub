@@ -488,9 +488,9 @@ resources:
         edr_fields:
           id_field: ogc_fid
           time_field: data_date
-          location_field: monitoring_location_id
+          location_field: resviz_stations.monitoring_location_id
           geom_field: resviz_stations.geom
-          parameter_id: parameter_id
+          parameter_id: resviz_parameters.parameter_id
           parameter_name: resviz_parameters.parameter_name
           parameter_unit: resviz_parameters.parameter_unit
         external_tables:
