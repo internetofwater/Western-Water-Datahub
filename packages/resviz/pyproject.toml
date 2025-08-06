@@ -10,7 +10,7 @@ requires-python = ">=3.12"
 dependencies = [
     "GDAL==3.6.4",
     "geoalchemy2>=0.17.1",
-    "pg-edr @ git+https://github.com/internetofwater/pgedr.git@main",
+    "pgedr",
     "psycopg2>=2.9.10",
 ]
 
