@@ -1,1 +1,1 @@
-EDR mappings for the Acccess to Water API for the US army corps of engineers
+This directory contains all code for USACE as well as the the associated scripts for generating static metadata. To generate the [usace_metadata.json](./usace_metadata.json) file you must run the [script](./generate_metadata_dump.py)

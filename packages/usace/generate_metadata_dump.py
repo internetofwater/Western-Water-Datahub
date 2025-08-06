@@ -1,11 +1,6 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-# /// script
-# requires-python = ">=3.12"
-# dependencies = []
-# ///
-
 # this is a script for genering the static data dump of all USACE dams
 
 import os
