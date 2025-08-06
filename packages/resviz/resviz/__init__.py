@@ -5,7 +5,7 @@
 import click
 from datetime import date, timedelta, datetime
 from dateutil.parser import parse as dateparse
-from numpy import isnan
+from math import isnan
 
 import logging
 import multiprocessing as mp
