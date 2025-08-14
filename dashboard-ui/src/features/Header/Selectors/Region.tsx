@@ -116,7 +116,7 @@ export const Region: React.FC = () => {
                 data-testid="region-select"
                 aria-label="Select a region"
                 placeholder="Select a region"
-                label="Select a Region"
+                label="Filter by Geography"
                 onChange={(_value) => setRegion(_value as string)}
             />
         </Skeleton>
