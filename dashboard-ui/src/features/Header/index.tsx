@@ -42,92 +42,96 @@ const Header: React.FC = () => {
     );
 
     return (
-        <>
-            <Box component="div" className={styles.topBarContainer}>
-                <Paper
-                    radius={0}
-                    shadow="xs"
-                    className={`${styles.topBarPaper} ${styles.logoBarPaper}`}
-                >
-                    <Group justify="space-between" align="center">
+        <Box component="div" className={styles.topBarContainer}>
+            <Paper
+                radius={0}
+                shadow="xs"
+                className={`${styles.topBarPaper} ${styles.logoBarPaper}`}
+            >
+                <Group justify="space-between" align="center">
+                    <Group>
+                        <Box
+                            component="span"
+                            darkHidden
+                            className={styles.logoContainer}
+                        >
+                            <Image
+                                src={'/BofR-logo-dark.png'}
+                                alt="United States Bureau of Reclamation Logo"
+                                width={157}
+                                height={50}
+                            />
+                        </Box>
+                        <Box
+                            component="span"
+                            lightHidden
+                            className={styles.logoContainer}
+                        >
+                            <Image
+                                src={'/BofR-logo-white.png'}
+                                alt="United States Bureau of Reclamation Logo"
+                                width={157}
+                                height={50}
+                            />
+                        </Box>
+
+                        <Divider
+                            orientation="vertical"
+                            className={styles.headerDivider}
+                        />
                         <Group>
+                            <BoundingGeography />
                             <Box
-                                component="span"
-                                darkHidden
-                                className={styles.logoContainer}
+                                style={{
+                                    display:
+                                        boundingGeographyLevel ===
+                                        BoundingGeographyLevel.Region
+                                            ? 'block'
+                                            : 'none',
+                                }}
                             >
-                                <Image
-                                    src={'/BofR-logo-dark.png'}
-                                    alt="United States Bureau of Reclamation Logo"
-                                    width={157}
-                                    height={50}
-                                />
+                                <Region />
                             </Box>
                             <Box
-                                component="span"
-                                lightHidden
-                                className={styles.logoContainer}
+                                style={{
+                                    display:
+                                        boundingGeographyLevel ===
+                                        BoundingGeographyLevel.Basin
+                                            ? 'block'
+                                            : 'none',
+                                }}
                             >
-                                <Image
-                                    src={'/BofR-logo-white.png'}
-                                    alt="United States Bureau of Reclamation Logo"
-                                    width={157}
-                                    height={50}
-                                />
+                                <Basin />
+                            </Box>
+                            <Box
+                                style={{
+                                    display:
+                                        boundingGeographyLevel ===
+                                        BoundingGeographyLevel.State
+                                            ? 'block'
+                                            : 'none',
+                                }}
+                            >
+                                <State />
                             </Box>
                             <Divider
                                 orientation="vertical"
-                                className={styles.divider}
+                                className={styles.selectorDivider}
                             />
-                            <Group>
-                                <BoundingGeography />
-                                <Box
-                                    style={{
-                                        display:
-                                            boundingGeographyLevel ===
-                                            BoundingGeographyLevel.Region
-                                                ? 'block'
-                                                : 'none',
-                                    }}
-                                >
-                                    <Region />
-                                </Box>
-                                <Box
-                                    style={{
-                                        display:
-                                            boundingGeographyLevel ===
-                                            BoundingGeographyLevel.Basin
-                                                ? 'block'
-                                                : 'none',
-                                    }}
-                                >
-                                    <Basin />
-                                </Box>
-                                <Box
-                                    style={{
-                                        display:
-                                            boundingGeographyLevel ===
-                                            BoundingGeographyLevel.State
-                                                ? 'block'
-                                                : 'none',
-                                    }}
-                                >
-                                    <State />
-                                </Box>
-                                <Reservoir />
-                                {(region !== RegionDefault ||
-                                    reservoir !== ReservoirDefault ||
-                                    basin !== BasinDefault ||
-                                    state !== StateDefault) && <ClearAll />}
-                            </Group>
+                            <Reservoir />
+
+                            {(region !== RegionDefault ||
+                                reservoir !== ReservoirDefault ||
+                                basin !== BasinDefault ||
+                                state !== StateDefault) && <ClearAll />}
                         </Group>
-                        <Suspense>
-                            <DarkModeToggle />
-                        </Suspense>
                     </Group>
-                </Paper>
-            </Box>
-        </>
+                    <Suspense>
+                        <DarkModeToggle />
+                    </Suspense>
+                </Group>
+            </Paper>
+        </Box>
     );
 };
 

@@ -106,7 +106,7 @@ export const Basin: React.FC = () => {
 
     return (
         <Skeleton
-            height={36} // Default dimensions of select
+            height={60} // Default dimensions of select
             width={207}
             visible={loading || basinOptions.length === 0}
             className={styles.skeleton}

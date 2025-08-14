@@ -201,7 +201,7 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         ],
 
         params: {
-            'parameter-name': ResvizReservoirField.Storage, // TODO: replace once ontology gets made for resviz
+            'parameter-name': 'reservoirStorage', // TODO: replace once ontology gets made for resviz
         },
     },
 ];

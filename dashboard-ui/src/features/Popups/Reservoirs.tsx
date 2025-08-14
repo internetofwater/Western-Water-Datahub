@@ -5,7 +5,7 @@
 
 import { GeoJsonProperties } from 'geojson';
 import { ReservoirConfig } from '@/features/Map/types';
-import { Card, Title, Text, Group } from '@mantine/core';
+import { Card, Title, Text, Group, Stack } from '@mantine/core';
 import styles from '@/features/Popups/Popups.module.css';
 import { TextBlock } from '@/components/TextBlock';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
@@ -42,11 +42,11 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
             withBorder
             className={styles.reservoirPopup}
         >
-            <Group>
-                <Title order={4}>
+            <Stack align="center" gap="xs">
+                <Title order={4} size="h5">
                     {reservoirProperties[config.labelProperty]}
                 </Title>
-                <Text size="xs" ml="auto">
+                <Text size="xs">
                     Last Updated:{' '}
                     {dayjs(
                         reservoirProperties[
@@ -54,9 +54,18 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
                         ] as string
                     ).format('MM/DD/YYYY')}
                 </Text>
-            </Group>
+                <Graphic
+                    reservoirProperties={reservoirProperties}
+                    config={config}
+                    showLabels={false}
+                    labels={false}
+                    listeners={false}
+                    colorScheme={colorScheme}
+                />
+                <Text size="sm">Click to Learn More</Text>
+            </Stack>
 
-            <Group justify="space-between" wrap="nowrap">
+            {/* <Group justify="space-between" wrap="nowrap">
                 <Graphic
                     reservoirProperties={reservoirProperties}
                     config={config}
@@ -67,34 +76,46 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
                 />
                 <TextBlock>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Capacity:</Text>
-                        <Text>
+                        <Text size="sm" fw={700}>
+                            Capacity:
+                        </Text>
+                        <Text size="sm">
                             {capacity.toLocaleString('en-US')}&nbsp;acre-feet
                         </Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Storage:</Text>
-                        <Text>
+                        <Text size="sm" fw={700}>
+                            Storage:
+                        </Text>
+                        <Text size="sm">
                             {storage.toLocaleString('en-US')}&nbsp;acre-feet
                         </Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Average:</Text>
-                        <Text>
+                        <Text size="sm" fw={700}>
+                            Average:
+                        </Text>
+                        <Text size="sm">
                             {average.toLocaleString('en-US')}&nbsp;acre-feet
                         </Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Percent Full:</Text>
-                        <Text>{percentFull}%</Text>
+                        <Text size="sm" fw={700}>
+                            Percent Full:
+                        </Text>
+                        <Text size="sm">{percentFull}%</Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Percent of Average:</Text>
-                        <Text>{percentOfAverage}%</Text>
+                        <Text size="sm" fw={700}>
+                            Percent of Average:
+                        </Text>
+                        <Text size="sm">{percentOfAverage}%</Text>
                     </Group>
                 </TextBlock>
-            </Group>
-            <Text mx="auto">Click to Learn More</Text>
+            </Group> 
+            <Text size="sm" mx="auto">
+                Click to Learn More
+            </Text>*/}
         </Card>
     );
 };

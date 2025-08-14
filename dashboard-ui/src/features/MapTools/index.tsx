@@ -8,8 +8,6 @@ import { Selector } from '@/features/MapTools/BaseMap';
 import { Box } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
 import { lazy } from 'react';
-import Controls from '@/features/MapTools/Controls';
-import Legend from '@/features/MapTools/Legend';
 import { Tools } from '@/lib/types';
 
 const Screenshot = lazy(() => import('./Screenshot'));
@@ -23,10 +21,6 @@ export const MapTools: React.FC = () => {
 
     return (
         <>
-            <Box className={`${styles.mapToolsContainer} ${styles.left}`}>
-                {tools[Tools.Controls] && <Controls />}
-                {tools[Tools.Legend] && <Legend />}
-            </Box>
             <Box className={`${styles.mapToolsContainer} ${styles.right}`}>
                 {tools[Tools.BasemapSelector] && <Selector />}
                 {tools[Tools.Print] && <Screenshot />}
