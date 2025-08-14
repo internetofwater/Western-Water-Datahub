@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 export enum Huc06BasinField {
     Id = 'id', // Id field is appended in vector tile layer, not items
     GnisUrl = 'gnis_url',

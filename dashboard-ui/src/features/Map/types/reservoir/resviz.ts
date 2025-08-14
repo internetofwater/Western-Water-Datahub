@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 export enum ResvizReservoirField {
     MaxCapacity = 'max_capacity',
     MonitoringLocationId = 'monitoring_location_id',

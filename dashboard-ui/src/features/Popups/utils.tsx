@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { Feature, Point } from 'geojson';
 import { ReservoirConfig } from '@/features/Map/types';
 import { MantineProvider } from '@mantine/core';
