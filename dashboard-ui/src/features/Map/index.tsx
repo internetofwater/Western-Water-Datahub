@@ -112,12 +112,6 @@ const MainMap: React.FC<Props> = (props) => {
         resVizSource.setData(
             reservoirCollections![SourceId.ResvizEDRReservoirs]!
         );
-
-        console.log(
-            'querySourceFeatures',
-            map.querySourceFeatures(SourceId.USACEEDRReservoirs),
-            reservoirCollections![SourceId.ResvizEDRReservoirs]!
-        );
     }, [map, reservoirCollections?.[SourceId.ResvizEDRReservoirs]]);
 
     useEffect(() => {
@@ -213,8 +207,6 @@ const MainMap: React.FC<Props> = (props) => {
                 const feature = features[index];
 
                 const config = getReservoirConfig(feature.source as SourceId);
-
-                console.log('feature', feature);
 
                 if (config && feature.properties) {
                     const identifier = getReservoirIdentifier(
