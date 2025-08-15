@@ -230,7 +230,6 @@ export const findReservoirIndex = (
 export const getReservoirSymbolLayout = (
     config: ReservoirConfig
 ): LayoutSpecification => {
-    console.log(getReservoirIconImageExpression(config));
     return {
         'icon-image': getReservoirIconImageExpression(config),
         'icon-size': [
