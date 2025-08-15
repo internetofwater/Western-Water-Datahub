@@ -38,8 +38,6 @@ export const loadTeacups = (map: Map) => {
         10, 5, 0,
     ];
 
-    const teacupVariants = ['low', 'medium', 'high'];
-
     if (!map.hasImage('default')) {
         map.loadImage('/map-icons/default.png', (error, image) => {
             if (error) throw error;
@@ -59,9 +57,9 @@ export const loadTeacups = (map: Map) => {
         });
     }
 
-    teacupVariants.forEach((variant) => {
-        teacupLevels.forEach((level) => {
-            const id = `${variant}-teacup-${level}`;
+    teacupLevels.forEach((average) => {
+        teacupLevels.forEach((storage) => {
+            const id = `teacup-${storage}-${average}`;
             if (!map.hasImage(id)) {
                 map.loadImage(`/map-icons/${id}.png`, (error, image) => {
                     if (error) throw error;
@@ -153,15 +151,56 @@ export const getReservoirIconImageExpression = (
             'step',
             [
                 '/',
-                ['coalesce', ['get', config.storageProperty], -1],
-                ['coalesce', ['get', config.thirtyYearAverageProperty], 1],
+                ['coalesce', ['get', config.thirtyYearAverageProperty], -1],
+                ['coalesce', ['get', config.capacityProperty], 1],
             ],
-            'low',
+            'default', // Below first step value
+            -1,
+            'no-data',
+            0,
+            '0',
+            0.05,
+            '5',
+            0.1,
+            '10',
+            0.15,
+            '15',
+            0.2,
+            '20',
+            0.25,
+            '25',
+            0.3,
+            '30',
+            0.35,
+            '35',
             0.4,
-            'medium',
+            '40',
+            0.45,
+            '45',
+            0.5,
+            '50',
+            0.55,
+            '55',
             0.6,
-            'high',
-        ], // average variable value
+            '60',
+            0.65,
+            '65',
+            0.7,
+            '70',
+            0.75,
+            '75',
+            0.8,
+            '80',
+            0.85,
+            '85',
+            0.9,
+            '90',
+            0.95,
+            '95',
+            1.0,
+            '100,',
+        ], // averag
+        // e variable value
         // Primary expression
         ['step', ['zoom'], TeacupPercentageOfCapacityExpression, ...zoomSteps],
     ];
@@ -191,6 +230,7 @@ export const findReservoirIndex = (
 export const getReservoirSymbolLayout = (
     config: ReservoirConfig
 ): LayoutSpecification => {
+    console.log(getReservoirIconImageExpression(config));
     return {
         'icon-image': getReservoirIconImageExpression(config),
         'icon-size': [
