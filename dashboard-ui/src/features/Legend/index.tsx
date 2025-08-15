@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Entry, Id } from '@/features/Legend/types';
+import { Entry } from '@/features/Legend/types';
 import { LayerId } from '@/features/Map/consts';
 import { LayerType } from '@/components/Map/types';
 import Line from '@/icons/Line';
@@ -12,6 +12,8 @@ import Square from '@/icons/Square';
 import { Gradient } from '@/features/Legend/Gradient';
 import styles from '@/features/Legend/Legend.module.css';
 import { getLayerName } from '@/features/Map/config';
+import useMainStore from '@/lib/main';
+import { Group } from '@mantine/core';
 
 const entries: Entry[] = [
     {
@@ -133,21 +135,22 @@ const entries: Entry[] = [
     },
 ];
 
-type Props = {
-    toggleableLayers: { [key in Id]: boolean };
-};
-
-const Legend: React.FC<Props> = (props) => {
-    const { toggleableLayers } = props;
+const Legend: React.FC = () => {
+    const toggleableLayers = useMainStore((state) => state.toggleableLayers);
 
     return (
-        <ul>
+        <Group align="flex-start">
             {entries
                 .filter((entry) => Boolean(toggleableLayers[entry.id]))
                 .map((entry) => (
                     <li
                         className={styles.listItem}
                         key={`legend-entry-${entry.id}`}
+                        style={{
+                            ...(entry.type === LayerType.Raster
+                                ? { flexGrow: 1 }
+                                : {}),
+                        }}
                     >
                         <h4>{getLayerName(entry.id)}</h4>
                         {[
@@ -165,7 +168,7 @@ const Legend: React.FC<Props> = (props) => {
                                         >
                                             <div
                                                 className={
-                                                    styles.legendEntryContainer
+                                                    styles.entryContainer
                                                 }
                                             >
                                                 <Line color={item.color} />
@@ -182,7 +185,7 @@ const Legend: React.FC<Props> = (props) => {
                                         >
                                             <div
                                                 className={
-                                                    styles.legendEntryContainer
+                                                    styles.entryContainer
                                                 }
                                             >
                                                 <Circle color={item.color} />
@@ -199,7 +202,7 @@ const Legend: React.FC<Props> = (props) => {
                                         >
                                             <div
                                                 className={
-                                                    styles.legendEntryContainer
+                                                    styles.entryContainer
                                                 }
                                             >
                                                 <Square fill={item.color} />
@@ -222,7 +225,7 @@ const Legend: React.FC<Props> = (props) => {
                         )}
                     </li>
                 ))}
-        </ul>
+        </Group>
     );
 };
 

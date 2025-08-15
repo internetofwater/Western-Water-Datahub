@@ -4,7 +4,6 @@
  */
 
 import { Stack, Text, Group, Box } from '@mantine/core';
-import PDF from '@/features/Reservior/PDF';
 import { ReservoirConfig } from '@/features/Map/types';
 import { Chart as ChartJS } from 'chart.js';
 import { RefObject } from 'react';
@@ -29,8 +28,7 @@ type Props = {
  * @component
  */
 export const Info: React.FC<Props> = (props) => {
-    const { accessToken, reservoirProperties, center, chartRef, config } =
-        props;
+    const { reservoirProperties, config } = props;
 
     if (!reservoirProperties) {
         return null;
@@ -94,14 +92,6 @@ export const Info: React.FC<Props> = (props) => {
                         <Text>{percentOfAverage}%</Text>
                     </Group>
                 </TextBlock>
-
-                <PDF
-                    reservoirProperties={reservoirProperties}
-                    accessToken={accessToken}
-                    center={center}
-                    chartRef={chartRef}
-                    config={config}
-                />
             </Stack>
         </Stack>
     );

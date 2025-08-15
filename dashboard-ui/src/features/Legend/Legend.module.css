@@ -4,7 +4,8 @@
  */
 
 .gradientContainer {
-    width: 200px;
+    min-width: 200px;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -19,7 +20,7 @@
     justify-content: space-between;
 }
 
-.legendEntryContainer {
+.entryContainer {
     display: flex;
     align-items: center;
 }
@@ -30,4 +31,8 @@
 
 .list {
     margin-bottom: 8px;
+}
+
+.title {
+    text-align: center;
 }

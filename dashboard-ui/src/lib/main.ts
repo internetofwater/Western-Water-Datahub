@@ -53,8 +53,6 @@ export interface MainState {
     tools: {
         [Tools.BasemapSelector]: boolean;
         [Tools.Print]: boolean;
-        [Tools.Controls]: boolean;
-        [Tools.Legend]: boolean;
     };
     setOpenTools: (tool: Tools, open: boolean) => void;
     colorScheme: 'dark' | 'light';
@@ -100,8 +98,6 @@ const useMainStore = create<MainState>()((set) => ({
     tools: {
         [Tools.BasemapSelector]: false,
         [Tools.Print]: false,
-        [Tools.Controls]: true,
-        [Tools.Legend]: false,
     },
     setOpenTools: (tool, open) =>
         set((state) => ({

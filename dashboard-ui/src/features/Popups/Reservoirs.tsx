@@ -5,9 +5,8 @@
 
 import { GeoJsonProperties } from 'geojson';
 import { ReservoirConfig } from '@/features/Map/types';
-import { Card, Title, Text, Group } from '@mantine/core';
+import { Card, Title, Text, Stack } from '@mantine/core';
 import styles from '@/features/Popups/Popups.module.css';
-import { TextBlock } from '@/components/TextBlock';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
 import useMainStore from '@/lib/main';
 import dayjs from 'dayjs';
@@ -26,14 +25,6 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
         return null;
     }
 
-    const storage = Number(reservoirProperties[config.storageProperty]);
-    const capacity = Number(reservoirProperties[config.capacityProperty]);
-    const average = Number(
-        reservoirProperties[config.thirtyYearAverageProperty]
-    );
-    const percentFull = ((storage / capacity) * 100).toFixed(1);
-    const percentOfAverage = ((storage / average) * 100).toFixed(1);
-
     return (
         <Card
             shadow="sm"
@@ -42,11 +33,11 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
             withBorder
             className={styles.reservoirPopup}
         >
-            <Group>
-                <Title order={4}>
+            <Stack align="center" gap="xs">
+                <Title order={4} size="h5">
                     {reservoirProperties[config.labelProperty]}
                 </Title>
-                <Text size="xs" ml="auto">
+                <Text size="xs">
                     Last Updated:{' '}
                     {dayjs(
                         reservoirProperties[
@@ -54,9 +45,6 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
                         ] as string
                     ).format('MM/DD/YYYY')}
                 </Text>
-            </Group>
-
-            <Group justify="space-between" wrap="nowrap">
                 <Graphic
                     reservoirProperties={reservoirProperties}
                     config={config}
@@ -65,36 +53,8 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
                     listeners={false}
                     colorScheme={colorScheme}
                 />
-                <TextBlock>
-                    <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Capacity:</Text>
-                        <Text>
-                            {capacity.toLocaleString('en-US')}&nbsp;acre-feet
-                        </Text>
-                    </Group>
-                    <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Storage:</Text>
-                        <Text>
-                            {storage.toLocaleString('en-US')}&nbsp;acre-feet
-                        </Text>
-                    </Group>
-                    <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Average:</Text>
-                        <Text>
-                            {average.toLocaleString('en-US')}&nbsp;acre-feet
-                        </Text>
-                    </Group>
-                    <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Percent Full:</Text>
-                        <Text>{percentFull}%</Text>
-                    </Group>
-                    <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Percent of Average:</Text>
-                        <Text>{percentOfAverage}%</Text>
-                    </Group>
-                </TextBlock>
-            </Group>
-            <Text mx="auto">Click to Learn More</Text>
+                <Text size="sm">Click to Learn More</Text>
+            </Stack>
         </Card>
     );
 };

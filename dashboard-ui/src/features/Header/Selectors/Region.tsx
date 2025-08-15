@@ -103,7 +103,7 @@ export const Region: React.FC = () => {
 
     return (
         <Skeleton
-            height={36} // Default dimensions of select
+            height={60} // Default dimensions of select
             width={207}
             visible={loading || regionOptions.length === 0}
             className={styles.skeleton}
@@ -116,6 +116,7 @@ export const Region: React.FC = () => {
                 data-testid="region-select"
                 aria-label="Select a region"
                 placeholder="Select a region"
+                label="Filter by Geography"
                 onChange={(_value) => setRegion(_value as string)}
             />
         </Skeleton>

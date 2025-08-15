@@ -38,13 +38,19 @@ div.mantine-Switch-root:hover {
 }
 
 :where([data-mantine-color-scheme='dark'])
-    div.mapboxgl-popup-anchor-bottom
-    div.mapboxgl-popup-tip {
+    div.mapboxgl-popup-anchor-top
+    div.mapboxgl-popup-tip,
+div.mapboxgl-popup-anchor-bottom div.mapboxgl-popup-tip,
+div.mapboxgl-popup-anchor-left div.mapboxgl-popup-tip,
+div.mapboxgl-popup-anchor-right div.mapboxgl-popup-tip {
     border-top-color: #2e2e2e;
 }
 :where([data-mantine-color-scheme='light'])
-    div.mapboxgl-popup-anchor-bottom
-    div.mapboxgl-popup-tip {
+    div.mapboxgl-popup-anchor-top
+    div.mapboxgl-popup-tip,
+div.mapboxgl-popup-anchor-bottom div.mapboxgl-popup-tip,
+div.mapboxgl-popup-anchor-left div.mapboxgl-popup-tip,
+div.mapboxgl-popup-anchor-right div.mapboxgl-popup-tip {
     border-top-color: #fff;
 }
 

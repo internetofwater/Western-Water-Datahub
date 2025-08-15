@@ -13,6 +13,7 @@ import {
 } from '@/lib/consts';
 import useMainStore from '@/lib/main';
 import { Button } from '@mantine/core';
+import styles from '@/features/Header/Header.module.css';
 
 /**
 
@@ -61,6 +62,7 @@ export const ClearAll: React.FC = () => {
             title="Clear All"
             disabled={noSelections}
             onClick={handleClick}
+            className={styles.clearAllButton}
         >
             Clear All
         </Button>
