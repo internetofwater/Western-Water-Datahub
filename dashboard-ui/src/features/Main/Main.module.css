@@ -17,8 +17,8 @@
 
 .sideContainerSmall,
 .mapContainerSmall {
-    height: calc(100vh - 440px);
-    max-height: calc(100vh - 440px);
+    height: calc(100vh - 442px);
+    max-height: calc(100vh - 442px);
 }
 
 .sideContainer,
