@@ -78,7 +78,7 @@ export const sourceConfigs: SourceConfig[] = [
         type: Sources.GeoJSON,
         definition: {
             type: 'geojson',
-            data: 'https://cache.wwdh.internetofwater.app/collections/noaa-rfc/items?f=json&limit=10000',
+            data: 'https://cache.wwdh.internetofwater.app/collections/noaa-rfc/items',
         },
     },
     {
@@ -146,7 +146,7 @@ export const sourceConfigs: SourceConfig[] = [
         type: Sources.GeoJSON,
         definition: {
             type: 'geojson',
-            data: 'https://reference.geoconnex.us/collections/states/items?f=json',
+            data: 'https://reference.geoconnex.us/collections/states/items',
             filter: [
                 'in',
                 ['get', StateField.Acronym],

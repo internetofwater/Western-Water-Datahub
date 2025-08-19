@@ -139,14 +139,14 @@ export const ComplexReservoirProperties = [
  * @constant
  */
 export const RISEEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=reservoirStorage&limit=10000';
+    'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?parameter-name=reservoirStorage&limit=10000';
 
 /**
  *
  * @constant
  */
 export const ResVizEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/resviz-edr/locations?f=json';
+    'https://cache.wwdh.internetofwater.app/collections/resviz-edr/locations';
 
 /**
  *
