@@ -1368,8 +1368,8 @@ wheels = [
 
 [[package]]
 name = "pgedr"
-version = "0.1.0"
-source = { registry = "https://pypi.org/simple" }
+version = "0.2.dev0"
+source = { git = "https://github.com/internetofwater/pg_edr.git#53bc45badefc723234e161aae5ba86927f4e1e95" }
 dependencies = [
     { name = "cryptography" },
     { name = "geoalchemy2" },
@@ -1379,10 +1379,6 @@ dependencies = [
     { name = "pymysql" },
     { name = "pytest" },
     { name = "pytest-cov" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/d4/90/249c1d1a2291148cacdb32694344ef977cba25de5b4cc9317f31530deac7/pgedr-0.1.0.tar.gz", hash = "sha256:90d86767c3835f486bf24c98aeaaa453d26be5950a2c0b6a58aa1db05217a20e", size = 13699, upload-time = "2025-08-06T17:42:24.068Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/5f/a7/553692a3731483a99f7c4b397390e0c4c29d439bdf11cff070d66a1df1d1/pgedr-0.1.0-py3-none-any.whl", hash = "sha256:eea5119727fd167fb0e129b3194113bfb0b64d576887a124014e5e6c829f82c4", size = 10772, upload-time = "2025-08-06T17:42:22.782Z" },
 ]
 
 [[package]]
@@ -1935,7 +1931,7 @@ dependencies = [
 requires-dist = [
     { name = "gdal", specifier = "==3.6.4" },
     { name = "geoalchemy2", specifier = ">=0.17.1" },
-    { name = "pgedr" },
+    { name = "pgedr", git = "https://github.com/internetofwater/pg_edr.git" },
     { name = "psycopg2", specifier = ">=2.9.10" },
 ]
 
