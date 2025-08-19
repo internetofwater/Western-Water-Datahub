@@ -139,7 +139,7 @@ export const ComplexReservoirProperties = [
  * @constant
  */
 export const RISEEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?parameter-name=reservoirStorage&limit=10000';
+    'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?parameter-name=reservoirStorage';
 
 /**
  *
@@ -202,6 +202,9 @@ export const ReservoirConfigs: ReservoirConfig[] = [
 
         params: {
             'parameter-name': 'reservoirStorage', // TODO: replace once ontology gets made for resviz
+        },
+        headers: {
+            Accept: 'application/json',
         },
     },
 ];

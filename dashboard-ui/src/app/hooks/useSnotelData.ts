@@ -34,6 +34,9 @@ export const useSnotelData = () => {
                 >(SourceId.SnotelHucSixMeans, {
                     signal: controller.current.signal,
                     params: { skipGeometry: true },
+                    headers: {
+                        Accept: 'application/json',
+                    },
                 }),
                 wwdhService.getLocations<
                     FeatureCollection<Point, SnotelProperties>
