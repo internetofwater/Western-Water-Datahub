@@ -170,7 +170,7 @@ export type IGetLocationParams = Omit<IDataQueryParams, 'z'>;
 /**
  * Default options for the service requests.
  */
-const DEFAULT_OPTIONS = { params: { f: 'json' } };
+const DEFAULT_OPTIONS = { headers: { Accept: 'application/json' } };
 
 export class EDRService extends Service {
     /**
