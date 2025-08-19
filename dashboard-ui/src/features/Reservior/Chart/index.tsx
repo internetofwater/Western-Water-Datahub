@@ -75,6 +75,9 @@ export const Chart: React.FC<Props> = (props) => {
                             ...config.params,
                             datetime: dateRange.startDate + '/' + '..',
                         },
+                        headers: {
+                            Accept: 'application/json',
+                        },
                     }
                 );
 

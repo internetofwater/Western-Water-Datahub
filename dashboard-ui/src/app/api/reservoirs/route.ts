@@ -12,6 +12,9 @@ export async function GET(request: NextRequest) {
         params: {
             'parameter-name': searchParams.get('parameter-name') ?? '',
         },
+        headers: {
+            Accept: 'application/json',
+        },
     });
 
     return new Response(JSON.stringify(result), {

@@ -139,7 +139,7 @@ export const ComplexReservoirProperties = [
  * @constant
  */
 export const RISEEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?parameter-name=reservoirStorage&limit=10000';
+    'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?parameter-name=reservoirStorage';
 
 /**
  *
