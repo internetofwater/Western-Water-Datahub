@@ -311,7 +311,7 @@ export class EDRService extends Service {
      */
     async getArea<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
         collectionId: string,
-        options: IServiceRequestOptions<IGetAreaParams> = {}
+        options: IServiceRequestOptions<IGetAreaParams> = DEFAULT_OPTIONS
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/area`;
         const params = Object.assign({}, options.params);
@@ -424,7 +424,7 @@ export class EDRService extends Service {
      */
     async getItems<T extends JSON | GeoJSON | string = GeoJSON>(
         collectionId: string,
-        options: IServiceRequestOptions<IGetCollectionsParams> = {}
+        options: IServiceRequestOptions<IGetCollectionsParams> = DEFAULT_OPTIONS
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/items`;
         const params = Object.assign({}, options.params);
@@ -447,7 +447,7 @@ export class EDRService extends Service {
     async getItem<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
         collectionId: string,
         itemId: string,
-        options: IServiceRequestOptions = {}
+        options: IServiceRequestOptions<IGetCollectionsParams> = DEFAULT_OPTIONS
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/items/${itemId}`;
         const params = Object.assign({}, options.params);
@@ -472,7 +472,7 @@ export class EDRService extends Service {
      */
     async getLocations<T extends JSON | GeoJSON | string = GeoJSON>(
         collectionId: string,
-        options: IServiceRequestOptions<IGetLocationParams> = {}
+        options: IServiceRequestOptions<IGetLocationParams> = DEFAULT_OPTIONS
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/locations`;
         const params = Object.assign({}, options.params);
@@ -507,7 +507,7 @@ export class EDRService extends Service {
     >(
         collectionId: string,
         locId: string,
-        options: IServiceRequestOptions<IGetLocationParams> = {}
+        options: IServiceRequestOptions<IGetLocationParams> = DEFAULT_OPTIONS
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/locations/${locId}`;
         const params = Object.assign({}, options.params);
@@ -605,7 +605,7 @@ export class EDRService extends Service {
     >(
         collectionId: string,
         instanceId: string,
-        options: IServiceRequestOptions<IGetAreaParams> = {}
+        options: IServiceRequestOptions<IGetAreaParams> = DEFAULT_OPTIONS
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/instances/${instanceId}/area`;
         const params = Object.assign({}, options.params);
