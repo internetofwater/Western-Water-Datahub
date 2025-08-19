@@ -455,9 +455,6 @@ export const appendResvizDataProperties = async (
                     limit: 1,
                     ...(reservoirDate ? { datetime: reservoirDate } : {}),
                 },
-                headers: {
-                    Accept: 'application/json',
-                },
             }
         )
     );

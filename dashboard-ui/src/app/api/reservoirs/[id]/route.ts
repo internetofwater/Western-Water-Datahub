@@ -16,9 +16,6 @@ export async function GET(
         params: {
             'parameter-name': searchParams.get('parameter-name') ?? '',
         },
-        headers: {
-            Accept: 'application/json',
-        },
     });
 
     // e.g. Query a database for user with ID `id`
