@@ -117,7 +117,11 @@ export const Region: React.FC = () => {
                 aria-label="Select a region"
                 placeholder="Select a region"
                 label="Filter by Geography"
-                onChange={(_value) => setRegion(_value as string)}
+                onChange={(value) => {
+                    if (value) {
+                        setRegion(value);
+                    }
+                }}
             />
         </Skeleton>
     );
