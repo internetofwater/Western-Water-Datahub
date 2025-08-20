@@ -15,9 +15,12 @@
     max-height: 100%;
 }
 
-.sideContainerSmall,
 .mapContainerSmall {
     height: calc(100vh - 442px);
+}
+
+.sideContainerSmall,
+.mapContainerSmall {
     max-height: calc(100vh - 442px);
 }
 

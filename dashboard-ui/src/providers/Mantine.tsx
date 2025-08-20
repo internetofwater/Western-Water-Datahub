@@ -31,10 +31,8 @@ const theme = createTheme({
  */
 export const Mantine: React.FC<PropsWithChildren> = ({ children }) => {
     return (
-        <>
-            <MantineProvider defaultColorScheme="auto" theme={theme}>
-                {children}
-            </MantineProvider>
-        </>
+        <MantineProvider defaultColorScheme="auto" theme={theme}>
+            {children}
+        </MantineProvider>
     );
 };

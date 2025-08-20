@@ -33,7 +33,7 @@ export const showReservoirPopup = (
                 container.setAttribute('data-identifier', identifier);
 
                 root.render(
-                    <MantineProvider>
+                    <MantineProvider defaultColorScheme="auto">
                         <ReservoirPopup
                             config={config}
                             reservoirProperties={feature.properties}
