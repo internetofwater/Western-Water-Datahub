@@ -60,9 +60,6 @@ export const State: React.FC = () => {
                     bbox: [-125, 24, -96.5, 49],
                     skipGeometry: true,
                 },
-                headers: {
-                    Accept: 'application/json',
-                },
             });
 
             if (stateFeatureCollection.features.length) {
