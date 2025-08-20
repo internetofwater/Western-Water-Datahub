@@ -146,6 +146,9 @@ resources:
         name: awdb_forecasts.awdb_forecasts.AwdbForecastsProvider
         data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
         title_field: name
+    links:
+      - <<: *default-link
+        href: https://www.nrcs.usda.gov/wps/portal/wcc/home/aboutUs/monitoringPrograms/automatedSnowMonitoring
 
   snotel-huc06-means:
     type: collection
@@ -177,6 +180,9 @@ resources:
         data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
         entity: Observation
         title_field: name
+    links:
+      - <<: *default-link
+        href: https://water.sec.usace.army.mil/cda/reporting/providers/projects?fmt=geojson
 
   noaa-qpf-day-1: &default-qpf
     type: collection
@@ -405,10 +411,10 @@ resources:
           style: default
           projection: 4326
 
-  us-drought-monitor:
+  us-current-drought-monitor:
     type: collection
     title: Drought Monitor
-    description: US Drought Monitor current drought intensity
+    description: US Drought Monitor current drought intensity from the National Drought Mitigation Center
     keywords: ["drought"]
     links:
       - <<: *default-link
@@ -417,6 +423,27 @@ resources:
     providers:
       - <<: *default-feature-qpf
         data: https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
+        id_field: OBJECTID
+        time_field: ddate
+      - <<: *default-wms
+        data: https://ndmcgeodata.unl.edu/cgi-bin/mapserv.exe?map=/ms4w/apps/usdm/map/usdm_current_wms.map
+        options:
+          layer: usdm_current
+          style: default
+          projection: 4326
+
+  us-historical-drought-monitor:
+    type: collection
+    title: Drought Monitor
+    description: US Drought Monitor drought intensity from the National Drought Mitigation Center
+    keywords: ["drought"]
+    links:
+      - <<: *default-link
+        href: https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/US_Drought_Intensity_v1/FeatureServer/2
+    extents: *default-extent
+    providers:
+      - <<: *default-feature-qpf
+        data: https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/US_Drought_Intensity_v1/FeatureServer/2
         id_field: OBJECTID
         time_field: ddate
       - <<: *default-wms
@@ -465,7 +492,7 @@ resources:
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     links:
       - <<: *default-link
-        title: information
+        href: https://data.usbr.gov/rise/rise-resviz/data
     providers:
       - type: edr
         name: pg_edr.edr.PostgresEDRProvider
@@ -475,17 +502,36 @@ resources:
           user: ${POSTGRES_USER:-postgres}
           password: ${POSTGRES_PASSWORD:-password}
         table: resviz
-        properties: [max_capacity]
-        edr_fields: # Required EDR Fields
+        properties:
+          - resviz_stations.monitoring_location_id
+          - resviz_stations.max_capacity
+          - resviz_stations.monitoring_location_name
+          - resviz_stations.site_name
+          - resviz_stations.doi_region_num
+          - resviz_stations.doi_region_name
+          - resviz_stations.huc06
+          - resviz_stations.huc08
+          - resviz_stations.state
+        edr_fields:
           id_field: ogc_fid
-          geom_field: geom
           time_field: data_date
+          location_field: resviz_stations.monitoring_location_id
+          geom_field: resviz_stations.geom
+          parameter_id: resviz_parameters.parameter_id
+          parameter_name: resviz_parameters.parameter_name
+          parameter_unit: resviz_parameters.parameter_unit
+        external_tables:
+          resviz_stations:
+            foreign: monitoring_location_id
+            remote: monitoring_location_id
+          resviz_parameters:
+            foreign: parameter_id
+            remote: parameter_id
       - type: feature
         name: PostgreSQL
         data: *postgres-data
         table: resviz
         id_field: ogc_fid
-        title_field: site_name
         geom_field: geom
 
   doi-regions:
@@ -503,7 +549,10 @@ resources:
     providers:
       - type: feature
         name: ESRI
-        data: https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0
+        # data: https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0
+
+        # Very similar as the one above, yet it contains additional info like the regions' official abbreviation
+        data: https://services1.arcgis.com/ixD30sld6F8MQ7V5/ArcGIS/rest/services/DOI_12_Unified_Regions_20180801/FeatureServer/0
         id_field: OBJECTID
         title_field: REG_NAME
 
@@ -547,3 +596,25 @@ resources:
     providers:
       - <<: *default-feature-river-stage
         data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/10
+
+  resops-edr:
+    type: collection
+    title: ResOpsUS 30 Year Reservoir Storage Info
+    description: Aggregated storage data of USACE dams in the ResOpsUS reservoir dataset identified according to the national inventory of dams (NID) ID.
+    keywords:
+      - EDR
+      - ResOpsUS
+      - USACE
+    links:
+      - <<: *default-link
+    extents:
+      spatial:
+        bbox: [-164.92472, 32.92342, -103.78758, 70.28062]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    providers:
+      - <<: *default-feature
+        name: resops.resops.ResOpsUSProvider
+        data: https://zenodo.org/records/5893641
+      - <<: *default-edr
+        data: https://zenodo.org/records/5893641
+        name: resops.resops_edr.ResOpsUSProviderEDR

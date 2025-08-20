@@ -1,0 +1,270 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
+from collections import OrderedDict
+import datetime
+import json
+import logging
+import pathlib
+from typing import Optional, TypedDict, cast
+
+from com.covjson import CoverageCollectionDict
+from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
+
+from com.helpers import parse_date
+from covjson_pydantic.coverage import CoverageCollection, Coverage
+from covjson_pydantic.domain import Domain, DomainType
+from covjson_pydantic.domain import Axes
+
+from covjson_pydantic.domain import ValuesAxis
+from covjson_pydantic.reference_system import (
+    ReferenceSystemConnectionObject,
+    ReferenceSystem,
+)
+from covjson_pydantic.ndarray import NdArrayFloat
+from covjson_pydantic.parameter import Parameter, Parameters
+from covjson_pydantic.unit import Unit
+from covjson_pydantic.observed_property import ObservedProperty
+
+LOGGER = logging.getLogger(__name__)
+
+
+class ReservoirStorageMetadata(TypedDict):
+    thirtyYearAverage: float
+    tenthPercentile: float
+    ninetyPercentile: float
+
+
+def days_after_today(md_str):
+    _year, month, day = map(int, md_str.split("-"))
+    base_year = 2000  # Leap year
+    target_date = datetime.datetime(base_year, month, day)
+
+    today = datetime.datetime.today()
+    today_md = datetime.datetime(base_year, today.month, today.day)
+
+    delta = (target_date - today_md).days
+    if delta < 0:
+        delta += 366  # Account for wrap-around, use 366 to support leap years
+    return delta
+
+
+def filter_averages(time: str, averages: dict) -> dict:
+    result = parse_date(time)
+    if isinstance(result, tuple):
+        start, end = result
+
+        filteredAverages = {}
+        for k, v in averages.items():
+            if (
+                start
+                <= datetime.datetime.strptime(k, "%Y-%m-%d").replace(
+                    tzinfo=datetime.timezone.utc
+                )
+                <= end
+            ):
+                filteredAverages[k] = v
+
+        return filteredAverages
+    else:
+        for k, v in averages.items():
+            if result == datetime.datetime.strptime(k, "%Y-%m-%d").replace(
+                tzinfo=datetime.timezone.utc
+            ):
+                return {k: v}
+        return {}
+
+
+def get_all_values_for_one_key(data: dict, key: str) -> list:
+    vals = []
+    for k in data.keys():
+        vals.append(data[k][key])
+    return vals
+
+
+class LocationCollection:
+    data: dict
+
+    def __init__(self, data: dict):
+        self.data: dict = {}
+
+        for k, v in data.items():
+            sortedAverages = OrderedDict(
+                sorted(
+                    v["averages"].items(), key=lambda item: days_after_today(item[0])
+                )
+            )
+            # in resopsus there is no associated year; however for EDR
+            # everything needs to be an iso timestamp so as a result, we
+            # add 2020 to each date, associated it with the end of the 30 year period
+            self.data[k] = v
+            self.data[k]["averages"] = sortedAverages
+
+    def drop_all_locations_but_id(self, location_id: str):
+        filtered_data = {k: v for k, v in self.data.items() if k == location_id}
+        self.data = filtered_data
+
+    def filter_by_month_and_day(self, start: datetime.datetime, end: datetime.datetime):
+        assert start <= end
+        assert start.year == end.year
+
+        filtered_data = {
+            k: v
+            for k, v in self.data.items()
+            # we set the year to be the start year so we can compare just the month and day
+            if start <= datetime.datetime.strptime(k, f"{start.year}-%m-%d") <= end
+        }
+        self.data = filtered_data
+
+    def to_covjson(
+        self,
+        datetime_: Optional[str],
+        limit: Optional[int] = None,
+    ) -> CoverageCollectionDict:
+        coverages: list[Coverage] = []
+
+        params: dict[str, Parameter] = {}
+
+        for key in self.data.keys():
+            values = self.data[key]
+            longitude, latitude = values["longitude"], values["latitude"]
+            averages = values["averages"]
+            if datetime_:
+                averages = filter_averages(datetime_, averages)
+
+            # since our averages are sorted by days after today
+            # limit will get the most recent averages
+            if limit:
+                averages = dict(list(averages.items())[:limit])
+
+            thirtyYearAverages = get_all_values_for_one_key(
+                averages, "thirtyYearAverage"
+            )
+            tenthPercentile = get_all_values_for_one_key(averages, "tenthPercentile")
+            ninetiethPercentile = get_all_values_for_one_key(
+                averages, "ninetiethPercentile"
+            )
+
+            keysWithCurrentYear = []
+            for k in averages.keys():
+                # we have to use 2020 here since EDR requires a full datetime and
+                # 2020 is the final year in the 30 year period in both the ResOpsUS dataset
+                # as well as the usbr 30 year averages
+                date = datetime.datetime.strptime(k, "%Y-%m-%d")
+                date = date.replace(tzinfo=datetime.timezone.utc)
+                keysWithCurrentYear.append(date)
+
+            for key, value in {
+                "avg": thirtyYearAverages,
+                "p10": tenthPercentile,
+                "p90": ninetiethPercentile,
+            }.items():
+                param = Parameter(
+                    type="Parameter",
+                    unit=Unit(symbol="Million Cubic Meters"),
+                    id="Million Cubic Meters",
+                    observedProperty=ObservedProperty(
+                        label={"en": "Million Cubic Meters"},
+                        id="Million Cubic Meters",
+                        description={"en": "Million Cubic Meters"},
+                    ),
+                )
+
+                params[key] = param
+
+                cov = Coverage(
+                    type="Coverage",
+                    domain=Domain(
+                        type="Domain",
+                        domainType=DomainType.point_series,
+                        axes=Axes(
+                            x=ValuesAxis(values=[longitude]),
+                            y=ValuesAxis(values=[latitude]),
+                            t=ValuesAxis(values=keysWithCurrentYear),
+                        ),
+                        referencing=[
+                            ReferenceSystemConnectionObject(
+                                coordinates=["x", "y"],
+                                system=ReferenceSystem(
+                                    type="GeographicCRS",
+                                    id="http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+                                ),
+                            ),
+                            ReferenceSystemConnectionObject(
+                                coordinates=["t"],
+                                system=ReferenceSystem(
+                                    type="TemporalRS",
+                                    id="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian",
+                                    calendar="Gregorian",
+                                ),
+                            ),
+                        ],
+                    ),
+                    ranges={
+                        key: NdArrayFloat(
+                            shape=[len(value)],
+                            values=list(value),
+                            axisNames=["t"],
+                        ),
+                    },
+                )
+                coverages.append(cov)
+
+        cc = CoverageCollection(
+            coverages=coverages,
+            domainType=DomainType.point_series,
+            parameters=Parameters(root=params),
+        )
+
+        return cast(
+            CoverageCollectionDict, cc.model_dump(by_alias=True, exclude_none=True)
+        )
+
+    def to_geojson(
+        self, returnOneFeature=False
+    ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
+        fc: GeojsonFeatureCollectionDict = {
+            "type": "FeatureCollection",
+            "features": [],
+        }
+        for key in self.data.keys():
+            values = self.data[key]
+            features: list = fc["features"]
+            averages: OrderedDict = values["averages"]
+
+            featureToAdd: GeojsonFeatureDict = {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [values["longitude"], values["latitude"]],
+                },
+                "id": key,
+                "properties": {
+                    "grandID": values["grandID"],
+                    "name": values["name"],
+                    "agencyCode": values["agencyCode"],
+                    "nidId": key,
+                    "averages": dict(averages),
+                },
+            }
+            if returnOneFeature:
+                return featureToAdd
+            else:
+                features.append(featureToAdd)
+        return fc
+
+
+def load_thirty_year_averages() -> dict:
+    thirty_year_averages_path = (
+        pathlib.Path(__file__).parent.parent / "30_year_averages_by_nid_id.json"
+    )
+
+    with thirty_year_averages_path.open() as f:
+        LOGGER.info(
+            f"Loading 30 year average USACE metadata from {thirty_year_averages_path}"
+        )
+        USACE_THIRTY_YEAR_AVERAGES: dict = json.load(f)
+
+        assert USACE_THIRTY_YEAR_AVERAGES
+
+    return USACE_THIRTY_YEAR_AVERAGES
