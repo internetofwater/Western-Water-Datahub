@@ -119,7 +119,11 @@ export const Basin: React.FC = () => {
                 aria-label="Select a Basin"
                 placeholder="Select a basin"
                 label="Filter by Geography"
-                onChange={(_value) => setBasin(_value as string)}
+                onChange={(value) => {
+                    if (value) {
+                        setBasin(value);
+                    }
+                }}
             />
         </Skeleton>
     );

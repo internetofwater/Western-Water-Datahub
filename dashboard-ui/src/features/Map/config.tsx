@@ -87,7 +87,7 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'raster',
             tiles: [
-                'https://api.wwdh.internetofwater.app/collections/us-drought-monitor/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}',
+                'https://api.wwdh.internetofwater.app/collections/us-current-drought-monitor/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}',
             ],
             tileSize: 256,
             minzoom: 4,

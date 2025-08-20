@@ -120,7 +120,11 @@ export const State: React.FC = () => {
                 aria-label="Select a State"
                 placeholder="Select a State"
                 label="Filter by Geography"
-                onChange={(_value) => setState(_value as string)}
+                onChange={(_value) => {
+                    if (_value) {
+                        setState(_value);
+                    }
+                }}
             />
         </Skeleton>
     );
