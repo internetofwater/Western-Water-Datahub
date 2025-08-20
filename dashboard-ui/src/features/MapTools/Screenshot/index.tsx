@@ -10,6 +10,8 @@ import {
     Button,
     Card,
     CardSection,
+    CloseButton,
+    Group,
     Loader,
     Stack,
     TextInput,
@@ -21,6 +23,8 @@ import { useMap } from '@/contexts/MapContexts';
 import { Map } from 'mapbox-gl';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Image from 'next/image';
+import useMainStore from '@/lib/main';
+import { Tools } from '@/lib/types';
 
 /**
  *
@@ -30,6 +34,8 @@ const Screenshot: React.FC = () => {
     const [src, setSrc] = useState<string>('');
     const [name, setName] = useState<string>('WWDH-Map');
     const [loading, setLoading] = useState<boolean>(false);
+
+    const setOpenTools = useMainStore((state) => state.setOpenTools);
 
     const { map } = useMap(MAP_ID);
 
@@ -95,11 +101,17 @@ const Screenshot: React.FC = () => {
     return (
         <Card withBorder shadow="sm" radius="md" padding="md">
             <CardSection withBorder inheritPadding py="xs">
-                <Title order={3} className={styles.mapToolTitle}>
-                    Screenshot
-                </Title>
+                <Group justify="space-between">
+                    <Title order={3} className={styles.mapToolTitle}>
+                        Screenshot
+                    </Title>
+                    <CloseButton
+                        onClick={() => setOpenTools(Tools.Print, false)}
+                        aria-label="Close Screenshot"
+                    />
+                </Group>
             </CardSection>
-            <CardSection inheritPadding py="md">
+            <CardSection inheritPadding py="md" className={styles.toolContent}>
                 {src.length > 0 ? (
                     <Stack>
                         {loading ? (

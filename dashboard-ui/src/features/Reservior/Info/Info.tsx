@@ -4,13 +4,13 @@
  */
 
 import { Stack, Text, Group, Box } from '@mantine/core';
-import PDF from '@/features/Reservior/PDF';
 import { ReservoirConfig } from '@/features/Map/types';
 import { Chart as ChartJS } from 'chart.js';
 import { RefObject } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { GeoJsonProperties } from 'geojson';
 import { TextBlock } from '@/components/TextBlock';
+import dayjs from 'dayjs';
 
 type Props = {
     accessToken: string;
@@ -28,35 +28,20 @@ type Props = {
  * @component
  */
 export const Info: React.FC<Props> = (props) => {
-    const { accessToken, reservoirProperties, center, chartRef, config } =
-        props;
+    const { reservoirProperties, config } = props;
 
     if (!reservoirProperties) {
         return null;
     }
 
-    // TODO: replace the division by 2 when data is available
-    const storage = Number(reservoirProperties[config.storageProperty]) / 2;
+    const storage = Number(reservoirProperties[config.storageProperty]);
     const capacity = Number(reservoirProperties[config.capacityProperty]);
-    // TODO: replace the average when available
-    const average = Math.round(storage * 1.3);
-    const percentFull = ((storage / capacity) * 100).toFixed(1);
-    const percentOfAverage = ((storage / average) * 100).toFixed(1);
-    const region = String(
-        Array.isArray(reservoirProperties[config.regionConnectorProperty])
-            ? (
-                  reservoirProperties[config.regionConnectorProperty] as
-                      | string[]
-                      | number[]
-              )?.[0]
-            : reservoirProperties[config.regionConnectorProperty]
+    const average = Number(
+        reservoirProperties[config.thirtyYearAverageProperty]
     );
 
-    const today = new Date();
-    const lastUpdateDate = `${String(today.getMonth() + 1).padStart(
-        2,
-        '0'
-    )}/${String(today.getDate()).padStart(2, '0')}/${today.getFullYear()}`;
+    const percentFull = ((storage / capacity) * 100).toFixed(1);
+    const percentOfAverage = ((storage / average) * 100).toFixed(1);
 
     return (
         <Stack
@@ -67,8 +52,22 @@ export const Info: React.FC<Props> = (props) => {
         >
             <Stack gap="xs" w="100%" className={styles.infoGroup}>
                 <Box>
-                    <Text>Last Updated Date: {lastUpdateDate}</Text>
+                    <Text>
+                        Last Updated:{' '}
+                        {dayjs(
+                            reservoirProperties[
+                                config.storageDateProperty
+                            ] as string
+                        ).format('MM/DD/YYYY')}
+                    </Text>
                     <TextBlock w="100%">
+                        <Group gap="xs" justify="flex-start">
+                            <Text fw={700}>Capacity:</Text>
+                            <Text>
+                                {capacity.toLocaleString('en-US')}
+                                &nbsp;acre-feet
+                            </Text>
+                        </Group>
                         <Group gap="xs" justify="flex-start">
                             <Text fw={700}>Storage:</Text>
                             <Text>
@@ -76,39 +75,23 @@ export const Info: React.FC<Props> = (props) => {
                             </Text>
                         </Group>
                         <Group gap="xs" justify="flex-start">
-                            <Text fw={700}>Percent Full:</Text>
-                            <Text>{percentFull}%</Text>
-                        </Group>
-                        <Group gap="xs" justify="flex-start">
-                            <Text fw={700}>Percent of Average:</Text>
-                            <Text>{percentOfAverage}%</Text>
+                            <Text fw={700}>Average:</Text>
+                            <Text>
+                                {average.toLocaleString('en-US')}&nbsp;acre-feet
+                            </Text>
                         </Group>
                     </TextBlock>
                 </Box>
-                <TextBlock>
+                <TextBlock w="100%">
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Capacity:</Text>
-                        <Text>
-                            {capacity.toLocaleString('en-US')}
-                            &nbsp;acre-feet
-                        </Text>
+                        <Text fw={700}>Percent Full:</Text>
+                        <Text>{percentFull}%</Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Region:</Text>
-                        <Text>{region}</Text>
-                    </Group>
-                    <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Basin:</Text>
-                        <Text>Unknown Basin</Text>
+                        <Text fw={700}>Percent of Average:</Text>
+                        <Text>{percentOfAverage}%</Text>
                     </Group>
                 </TextBlock>
-                <PDF
-                    reservoirProperties={reservoirProperties}
-                    accessToken={accessToken}
-                    center={center}
-                    chartRef={chartRef}
-                    config={config}
-                />
             </Stack>
         </Stack>
     );

@@ -10,8 +10,11 @@ import { RefObject, useState } from 'react';
 import { Chart as ChartJS } from 'chart.js';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { Info } from '@/features/Reservior/Info/Info';
-import { TeacupDiagram } from '../TeacupDiagram';
-import { capacityFill, storageFill } from '../TeacupDiagram/consts';
+import { TeacupDiagram } from '@/features/Reservior/TeacupDiagram';
+import {
+    capacityFill,
+    storageFill,
+} from '@/features/Reservior/TeacupDiagram/consts';
 import {
     handleStorageEnter,
     handleCapacityEnter,
@@ -19,7 +22,7 @@ import {
     handleStorageLeave,
     handleCapacityLeave,
     handleAverageLineLeave,
-} from '../TeacupDiagram/listeners';
+} from '@/features/Reservior/TeacupDiagram/listeners';
 
 type Props = {
     accessToken: string;

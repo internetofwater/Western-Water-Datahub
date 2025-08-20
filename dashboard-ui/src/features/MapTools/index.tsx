@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import useMainStore, { Tools } from '@/lib/main';
+import useMainStore from '@/lib/main';
 import { Selector } from '@/features/MapTools/BaseMap';
 import { Box } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
 import { lazy } from 'react';
-import Controls from '@/features/MapTools/Controls';
+import { Tools } from '@/lib/types';
 
 const Screenshot = lazy(() => import('./Screenshot'));
 
@@ -21,10 +21,7 @@ export const MapTools: React.FC = () => {
 
     return (
         <>
-            <Box className={styles.mapToolsContainerLeft}>
-                {tools[Tools.Controls] && <Controls />}
-            </Box>
-            <Box className={styles.mapToolsContainerRight}>
+            <Box className={`${styles.mapToolsContainer} ${styles.right}`}>
                 {tools[Tools.BasemapSelector] && <Selector />}
                 {tools[Tools.Print] && <Screenshot />}
             </Box>

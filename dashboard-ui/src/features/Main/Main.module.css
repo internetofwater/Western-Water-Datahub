@@ -3,24 +3,58 @@
  * SPDX-License-Identifier: MIT
  */
 
-.mapContainer {
+.mapContainer,
+.mapContainerSmall {
     display: grid;
     position: relative;
     width: 100%;
+}
+
+.mapContainer {
     height: 100%;
+    max-height: 100%;
 }
 
 .mapContainerSmall {
-    height: calc(100vh - 433px);
+    height: calc(100vh - 442px);
 }
 
-@media (max-width: 1362px) {
+.sideContainerSmall,
+.mapContainerSmall {
+    max-height: calc(100vh - 442px);
+}
+
+.sideContainer,
+.sideContainerSmall {
+    overflow-y: auto;
+}
+
+.sideContainer {
+    max-height: calc(100vh - 102px);
+}
+
+@media (max-width: 992px) {
+    .mapContainer,
     .mapContainerSmall {
-        height: calc(100vh - 463px);
+        min-height: 400px;
     }
 }
-@media (max-width: 1225px) {
+
+@media screen and (max-width: 1044px) {
+    .sideContainer {
+        max-height: calc(100vh - 138px);
+    }
+
+    .sideContainerSmall,
     .mapContainerSmall {
-        height: calc(100vh - 515px);
+        height: calc(100vh - 298px);
+        max-height: calc(100vh - 298px);
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .sideContainer,
+    .sideContainerSmall {
+        max-height: unset;
     }
 }

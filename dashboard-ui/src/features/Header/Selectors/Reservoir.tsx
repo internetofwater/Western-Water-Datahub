@@ -6,7 +6,7 @@
 'use client';
 
 import { Select, Skeleton } from '@mantine/core';
-import useMainStore, { ReservoirDefault } from '@/lib/main';
+import useMainStore from '@/lib/main';
 import { MAP_ID, SourceId, ReservoirConfigs } from '@/features/Map/consts';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -15,8 +15,15 @@ import {
 } from '@/features/Header/Selectors/utils';
 import { useReservoirData } from '@/app/hooks/useReservoirData';
 import { useMap } from '@/contexts/MapContexts';
-import { getReservoirConfig, isSourceDataLoaded } from '@/features/Map/utils';
+import {
+    getReservoirConfig,
+    getReservoirIdentifier,
+    isReservoirIdentifier,
+    isSourceDataLoaded,
+} from '@/features/Map/utils';
 import { SourceDataEvent } from '@/features/Map/types';
+import styles from '@/features/Header/Header.module.css';
+import { ReservoirDefault } from '@/lib/consts';
 
 /**
 
@@ -141,10 +148,11 @@ export const Reservoir: React.FC = () => {
                             features,
                             (feature) =>
                                 String(
-                                    feature?.id ??
-                                        feature?.properties?.[
-                                            config.identifierProperty
-                                        ]
+                                    getReservoirIdentifier(
+                                        config,
+                                        feature.properties,
+                                        feature.id!
+                                    )
                                 ),
                             (feature) =>
                                 String(
@@ -166,53 +174,61 @@ export const Reservoir: React.FC = () => {
     }, [region]);
 
     const handleChange = (option: ItemWithSource) => {
-        if (!reservoirCollections || !option.value || !option.source) {
+        if (!reservoirCollections || !option) {
             return;
         }
 
-        const config = getReservoirConfig(option.source as SourceId);
-        const identifier =
-            config && config.identifierType === 'number'
-                ? Number(option.value)
-                : option.value;
-        if (config) {
-            const collection = reservoirCollections[config.id];
-            if (collection) {
-                const features = collection.features.filter(
-                    (feature) =>
-                        (feature.properties &&
-                            feature.properties[config.identifierProperty] ===
-                                identifier) ||
-                        feature.id === identifier
-                );
+        if (option.value === String(ReservoirDefault)) {
+            setReservoir(null);
+        } else if (option.source) {
+            const config = getReservoirConfig(option.source as SourceId);
+            const identifier =
+                config && config.identifierType === 'number'
+                    ? Number(option.value)
+                    : option.value;
+            if (config) {
+                const collection = reservoirCollections[config.id];
+                if (collection) {
+                    const features = collection.features.filter(
+                        (feature) =>
+                            feature.properties &&
+                            isReservoirIdentifier(
+                                config,
+                                feature.properties,
+                                feature.id!,
+                                identifier
+                            )
+                    );
 
-                if (features.length) {
-                    const feature = features[0];
-                    if (feature.properties) {
-                        const region = feature.properties[
-                            config.regionConnectorProperty
-                        ] as string[] | string;
-                        if (isMounted.current) {
-                            setRegion(
-                                Array.isArray(region) ? region[0] : region
-                            );
+                    if (features.length) {
+                        const feature = features[0];
+                        if (feature.properties) {
+                            const region = feature.properties[
+                                config.regionConnectorProperty
+                            ] as string[] | string;
+                            if (isMounted.current) {
+                                setRegion(
+                                    Array.isArray(region) ? region[0] : region
+                                );
+                            }
                         }
                     }
                 }
             }
-        }
 
-        setReservoir({
-            identifier,
-            source: option.source,
-        });
+            setReservoir({
+                identifier,
+                source: option.source,
+            });
+        }
     };
 
     return (
         <Skeleton
-            height={36} // Default dimensions of select
+            height={60} // Default dimensions of select
             width={207}
             visible={loading || reservoirOptions.length === 0}
+            className={styles.skeleton}
         >
             <Select
                 id="reservoirSelector"
@@ -222,6 +238,7 @@ export const Reservoir: React.FC = () => {
                 data-testid="reservoir-select"
                 aria-label="Select a Reservior"
                 placeholder="Select a Reservior"
+                label="Find a Reservoir"
                 onChange={(_, option) => handleChange(option)}
             />
         </Skeleton>

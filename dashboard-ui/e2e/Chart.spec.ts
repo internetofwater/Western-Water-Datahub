@@ -25,14 +25,12 @@ test.describe('Line Chart', () => {
         await test.step('Select updates after selection', async () => {
             await select.click();
             const lakeMeadOption = page.getByRole('option', {
-                name: 'Lake Mead Hoover Dam and Powerplant',
+                name: 'Lake Mead',
             });
 
             await lakeMeadOption.click();
 
-            await expect(select).toHaveValue(
-                'Lake Mead Hoover Dam and Powerplant'
-            );
+            await expect(select).toHaveValue('Lake Mead');
         });
 
         await test.step('Chart renders', () => {
@@ -42,7 +40,7 @@ test.describe('Line Chart', () => {
 
         await test.step('Load chart at 1 year range', async () => {
             const dateRange = getDateRange(1);
-            const url = `https://api.wwdh.internetofwater.app/collections/rise-edr/locations/3514?f=json&parameter-name=reservoirStorage&datetime=${dateRange.startDate}%2F`;
+            const url = `https://cache.wwdh.internetofwater.app/collections/rise-edr/locations/3514?parameter-name=reservoirStorage&datetime=${dateRange.startDate}/..`;
 
             const response = await page.waitForResponse(
                 (response) =>
@@ -61,7 +59,7 @@ test.describe('Line Chart', () => {
             await expect(fiveYearRadio).toBeChecked();
 
             const dateRange = getDateRange(5);
-            const url = `https://api.wwdh.internetofwater.app/collections/rise-edr/locations/3514?f=json&parameter-name=reservoirStorage&datetime=${dateRange.startDate}%2F`;
+            const url = `https://cache.wwdh.internetofwater.app/collections/rise-edr/locations/3514?parameter-name=reservoirStorage&datetime=${dateRange.startDate}%2F`;
 
             const response = await page.waitForResponse(
                 (response) =>

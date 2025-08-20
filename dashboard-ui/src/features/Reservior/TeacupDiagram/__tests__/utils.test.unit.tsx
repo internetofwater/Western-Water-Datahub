@@ -11,6 +11,7 @@ import {
     calculateXPositionConstructor,
     propagateEventToContainerElemConstructor,
 } from '@/features/Reservior/TeacupDiagram/utils';
+import { getHighPercentileLabel } from '@/features/Reservior/TeacupDiagram/consts';
 
 describe('Reservoir Graphic Utils', () => {
     describe('calculateInnerTrapezoidHeight', () => {
@@ -76,7 +77,12 @@ describe('Reservoir Graphic Utils', () => {
             );
             const calcX = () => 10;
             const addLabel = addLabelConstructor(160, svg, calcX);
-            const label = addLabel('label-id', 'Label', 40, '#000');
+            const label = addLabel(
+                'label-id',
+                getHighPercentileLabel(),
+                40,
+                '#000'
+            );
 
             expect(label.tagName).toBe('text');
             expect(label.getAttribute('x')).toBe(`${160 - 10 + 18}`);

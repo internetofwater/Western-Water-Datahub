@@ -84,7 +84,7 @@ test.describe('Reservoir', () => {
                     request
                         .url()
                         .includes(
-                            'https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/ReclamationBoundariesFL/FeatureServer/0/query?f=pbf'
+                            'https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0/query?f=geojson&where=1%3D1&outFields=*'
                         )
                 ),
                 // Load Reservoirs
@@ -97,7 +97,7 @@ test.describe('Reservoir', () => {
             await select.click();
 
             const lakeMeadOption = page.getByRole('option', {
-                name: 'Lake Mead Hoover Dam and Powerplant',
+                name: 'Lake Mead',
             });
 
             expect(lakeMeadOption).toBeDefined();
@@ -105,14 +105,12 @@ test.describe('Reservoir', () => {
 
         await test.step('Select updates after selection', async () => {
             const lakeMeadOption = page.getByRole('option', {
-                name: 'Lake Mead Hoover Dam and Powerplant',
+                name: 'Lake Mead',
             });
 
             await lakeMeadOption.click();
 
-            await expect(select).toHaveValue(
-                'Lake Mead Hoover Dam and Powerplant'
-            );
+            await expect(select).toHaveValue('Lake Mead');
         });
 
         await test.step('Info box renders after selection', async () => {

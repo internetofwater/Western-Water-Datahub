@@ -12,7 +12,7 @@ server:
   templates:
     path: /opt/pygeoapi/pygeoapi-deployment/templates
   limits:
-    default_items: 500
+    default_items: 1000
     max_items: 10000
   map:
     url: https://tile.openstreetmap.org/{z}/{x}/{y}.png

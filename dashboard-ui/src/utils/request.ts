@@ -17,8 +17,8 @@ export async function request<T>(options: IRequestOptions): Promise<T> {
     }
 
     // no content
-
     const json = res.json();
+
     return json as Promise<T>;
 }
 
@@ -70,7 +70,7 @@ const getRequestArgsMap: Record<TRequestMethods, TRequestArgsGetter> = {
     GET: ({
         url: baseUrl,
         signal,
-        headers = {},
+        headers = {Accept: 'application/json'},
         params = {},
     }: IRequestOptions): TRequestArgs => {
         const url = `${baseUrl}?${toSearchParams(params).toString()}`;

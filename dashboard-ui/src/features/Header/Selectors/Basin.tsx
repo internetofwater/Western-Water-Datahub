@@ -8,8 +8,18 @@
 import { ComboboxData, Select, Skeleton } from '@mantine/core';
 import useMainStore from '@/lib/main';
 import { useMap } from '@/contexts/MapContexts';
-import { MAP_ID } from '@/features/Map/consts';
-import { useEffect, useState } from 'react';
+import { MAP_ID, SourceId } from '@/features/Map/consts';
+import { useEffect, useRef, useState } from 'react';
+import styles from '@/features/Header/Header.module.css';
+import geoconnexService from '@/services/init/geoconnex.init';
+import { formatOptions } from '@/features/Header/Selectors/utils';
+import { FeatureCollection, Polygon } from 'geojson';
+import {
+    Huc06BasinField,
+    Huc06BasinProperties,
+} from '@/features/Map/types/basin';
+import { SourceDataEvent } from '@/features/Map/types';
+import { isSourceDataLoaded } from '@/features/Map/utils';
 
 export const Basin: React.FC = () => {
     const { map } = useMap(MAP_ID);
@@ -17,21 +27,89 @@ export const Basin: React.FC = () => {
     const basin = useMainStore((state) => state.basin);
     const setBasin = useMainStore((state) => state.setBasin);
 
-    const [basinOptions] = useState<ComboboxData>([
-        { value: 'all', label: 'All Basins' },
-    ]);
+    const [loading, setLoading] = useState(true);
+    const [basinOptions, setBasinOptions] = useState<ComboboxData>([]);
+
+    const controller = useRef<AbortController>(null);
+    const isMounted = useRef(true);
 
     useEffect(() => {
         if (!map) {
             return;
         }
+        // Ensure both map and populating fetch are finished
+        const sourceCallback = (e: SourceDataEvent) => {
+            if (isSourceDataLoaded(map, SourceId.Basins, e)) {
+                map.off('sourcedata', sourceCallback); //remove event listener
+            }
+        };
+
+        map.on('sourcedata', sourceCallback);
+
+        return () => {
+            map.off('sourcedata', sourceCallback);
+        };
     }, [map]);
+
+    const getBasinOptions = async () => {
+        try {
+            controller.current = new AbortController();
+
+            const basinFeatureCollection = await geoconnexService.getItems<
+                FeatureCollection<Polygon, Huc06BasinProperties>
+            >(SourceId.Basins, {
+                params: {
+                    bbox: [-125, 24, -96.5, 49],
+                    skipGeometry: true,
+                },
+            });
+
+            if (basinFeatureCollection.features.length) {
+                const basinOptions = formatOptions(
+                    basinFeatureCollection.features,
+                    (feature) => String(feature.id),
+                    (feature) =>
+                        String(feature?.properties?.[Huc06BasinField.Name]),
+                    'All Basins'
+                );
+
+                if (isMounted.current) {
+                    setLoading(false);
+                    setBasinOptions(basinOptions);
+                }
+            }
+        } catch (error) {
+            if (
+                (error as Error)?.name === 'AbortError' ||
+                (typeof error === 'string' && error === 'Component unmount')
+            ) {
+                console.log('Fetch request canceled');
+            } else {
+                if ((error as Error)?.message) {
+                    const _error = error as Error;
+                    console.error(_error);
+                }
+            }
+        }
+    };
+
+    useEffect(() => {
+        isMounted.current = true;
+        void getBasinOptions();
+        return () => {
+            isMounted.current = false;
+            if (controller.current) {
+                controller.current.abort('Component unmount');
+            }
+        };
+    }, []);
 
     return (
         <Skeleton
-            height={36} // Default dimensions of select
+            height={60} // Default dimensions of select
             width={207}
-            visible={basinOptions.length === 0}
+            visible={loading || basinOptions.length === 0}
+            className={styles.skeleton}
         >
             <Select
                 id="basinSelector"
@@ -40,7 +118,12 @@ export const Basin: React.FC = () => {
                 value={basin}
                 aria-label="Select a Basin"
                 placeholder="Select a basin"
-                onChange={(_value) => setBasin(_value as string)}
+                label="Filter by Geography"
+                onChange={(value) => {
+                    if (value) {
+                        setBasin(value);
+                    }
+                }}
             />
         </Skeleton>
     );

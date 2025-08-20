@@ -42,6 +42,8 @@ export interface IGetCollectionsParams {
      * Format of the response.
      */
     f?: string;
+    skipGeometry?: boolean;
+    limit?: number;
 }
 
 export interface IDataQueryParams {
@@ -65,6 +67,7 @@ export interface IDataQueryParams {
      * Format of the response.
      */
     f?: string;
+    limit?: number;
 }
 
 export interface IGetPositionParams extends IDataQueryParams {
@@ -168,7 +171,7 @@ export type IGetLocationParams = Omit<IDataQueryParams, 'z'>;
 /**
  * Default options for the service requests.
  */
-const DEFAULT_OPTIONS = { params: { f: 'json' } };
+const DEFAULT_OPTIONS = { headers: { Accept: 'application/json' } };
 
 export class EDRService extends Service {
     /**
@@ -309,7 +312,7 @@ export class EDRService extends Service {
      */
     async getArea<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
         collectionId: string,
-        options: IServiceRequestOptions<IGetAreaParams> = {}
+        options: IServiceRequestOptions<IGetAreaParams> = DEFAULT_OPTIONS
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/area`;
         const params = Object.assign({}, options.params);
@@ -422,7 +425,7 @@ export class EDRService extends Service {
      */
     async getItems<T extends JSON | GeoJSON | string = GeoJSON>(
         collectionId: string,
-        options: IServiceRequestOptions<IGetCollectionsParams> = {}
+        options: IServiceRequestOptions<IGetCollectionsParams> = DEFAULT_OPTIONS
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/items`;
         const params = Object.assign({}, options.params);
@@ -445,7 +448,7 @@ export class EDRService extends Service {
     async getItem<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
         collectionId: string,
         itemId: string,
-        options: IServiceRequestOptions = {}
+        options: IServiceRequestOptions<IGetCollectionsParams> = DEFAULT_OPTIONS
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/items/${itemId}`;
         const params = Object.assign({}, options.params);
@@ -470,7 +473,7 @@ export class EDRService extends Service {
      */
     async getLocations<T extends JSON | GeoJSON | string = GeoJSON>(
         collectionId: string,
-        options: IServiceRequestOptions<IGetLocationParams> = {}
+        options: IServiceRequestOptions<IGetLocationParams> = DEFAULT_OPTIONS
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/locations`;
         const params = Object.assign({}, options.params);
@@ -496,11 +499,16 @@ export class EDRService extends Service {
      * - `f`: Format of the response.
      */
     async getLocation<
-        T extends JSON | GeoJSON | CoverageCollection | string = GeoJSON
+        T extends
+            | JSON
+            | GeoJSON
+            | CoverageJSON
+            | CoverageCollection
+            | string = GeoJSON
     >(
         collectionId: string,
         locId: string,
-        options: IServiceRequestOptions<IGetLocationParams> = {}
+        options: IServiceRequestOptions<IGetLocationParams> = DEFAULT_OPTIONS
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/locations/${locId}`;
         const params = Object.assign({}, options.params);
@@ -510,6 +518,7 @@ export class EDRService extends Service {
             signal: options.signal,
             headers: options.headers,
         });
+
         return result;
     }
 
@@ -597,7 +606,7 @@ export class EDRService extends Service {
     >(
         collectionId: string,
         instanceId: string,
-        options: IServiceRequestOptions<IGetAreaParams> = {}
+        options: IServiceRequestOptions<IGetAreaParams> = DEFAULT_OPTIONS
     ): Promise<T> {
         const url: string = `${this.baseUrl}/collections/${collectionId}/instances/${instanceId}/area`;
         const params = Object.assign({}, options.params);

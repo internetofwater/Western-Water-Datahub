@@ -14,6 +14,8 @@ import { MAP_ID, SourceId } from '@/features/Map/consts';
 import { isSourceDataLoaded } from '@/features/Map/utils';
 import { SourceDataEvent } from '@/features/Map/types';
 import { useMap } from '@/contexts/MapContexts';
+import styles from '@/features/Header/Header.module.css';
+import { RegionField } from '@/features/Map/types/region';
 
 /**
 
@@ -55,15 +57,17 @@ export const Region: React.FC = () => {
         try {
             controller.current = new AbortController();
 
-            const queryFeaturesResult = await esriService.getFeatures(
+            const regionFeatureCollection = await esriService.getFeatures(
                 controller.current.signal
             );
 
-            if (queryFeaturesResult.features.length) {
+            if (regionFeatureCollection.features.length) {
                 const regionOptions = formatOptions(
-                    queryFeaturesResult.features,
-                    (feature) => String(feature?.properties?.['REGION']),
-                    (feature) => String(feature?.properties?.['REGION']),
+                    regionFeatureCollection.features,
+                    (feature) =>
+                        String(feature?.properties?.[RegionField.Name]),
+                    (feature) =>
+                        String(feature?.properties?.[RegionField.Name]),
                     'All Regions'
                 );
 
@@ -85,9 +89,10 @@ export const Region: React.FC = () => {
             }
         }
     };
+
     useEffect(() => {
-        void getRegionOptions();
         isMounted.current = true;
+        void getRegionOptions();
         return () => {
             isMounted.current = false;
             if (controller.current) {
@@ -98,9 +103,10 @@ export const Region: React.FC = () => {
 
     return (
         <Skeleton
-            height={36} // Default dimensions of select
+            height={60} // Default dimensions of select
             width={207}
             visible={loading || regionOptions.length === 0}
+            className={styles.skeleton}
         >
             <Select
                 id="regionSelector"
@@ -110,7 +116,12 @@ export const Region: React.FC = () => {
                 data-testid="region-select"
                 aria-label="Select a region"
                 placeholder="Select a region"
-                onChange={(_value) => setRegion(_value as string)}
+                label="Filter by Geography"
+                onChange={(value) => {
+                    if (value) {
+                        setRegion(value);
+                    }
+                }}
             />
         </Skeleton>
     );
