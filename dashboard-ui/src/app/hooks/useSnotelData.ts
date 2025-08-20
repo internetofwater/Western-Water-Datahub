@@ -33,11 +33,14 @@ export const useSnotelData = () => {
                     FeatureCollection<Point, SnotelHucMeansProperties>
                 >(SourceId.SnotelHucSixMeans, {
                     signal: controller.current.signal,
-                    params: { skipGeometry: true },
+                    params: { skipGeometry: true, limit: 10000 },
                 }),
                 wwdhService.getLocations<
                     FeatureCollection<Point, SnotelProperties>
-                >(SourceId.Snotel, { signal: controller.current.signal }),
+                >(SourceId.Snotel, {
+                    signal: controller.current.signal,
+                    params: { limit: 10000 },
+                }),
             ]);
 
             snotelHucMeans.features.forEach((mean) => {

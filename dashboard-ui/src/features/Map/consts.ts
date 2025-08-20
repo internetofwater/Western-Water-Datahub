@@ -201,10 +201,7 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         ],
 
         params: {
-            'parameter-name': 'reservoirStorage', // TODO: replace once ontology gets made for resviz
-        },
-        headers: {
-            Accept: 'application/json',
+            'parameter-name': 'reservoirStorage',
         },
     },
 ];

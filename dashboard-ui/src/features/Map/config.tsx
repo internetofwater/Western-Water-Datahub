@@ -78,7 +78,7 @@ export const sourceConfigs: SourceConfig[] = [
         type: Sources.GeoJSON,
         definition: {
             type: 'geojson',
-            data: 'https://cache.wwdh.internetofwater.app/collections/noaa-rfc/items',
+            data: 'https://cache.wwdh.internetofwater.app/collections/noaa-rfc/items?limit=10000',
         },
     },
     {
@@ -124,7 +124,7 @@ export const sourceConfigs: SourceConfig[] = [
         type: Sources.GeoJSON,
         definition: {
             type: 'geojson',
-            data: { type: 'FeatureCollection', features: [] }, // Data set at runtime after combining with means
+            data: { type: 'FeatureCollection', features: [] }, // Data set at runtime after combining with mean values
         },
     },
     {

@@ -43,6 +43,7 @@ export interface IGetCollectionsParams {
      */
     f?: string;
     skipGeometry?: boolean;
+    limit?: number;
 }
 
 export interface IDataQueryParams {
