@@ -91,7 +91,9 @@ export const BoundingGeography: React.FC = () => {
             placeholder="Select Geography Level"
             label="Select Geography Level"
             onChange={(value) => {
-                setBoundingGeographyLevel(value as BoundingGeographyLevel);
+                if (value) {
+                    setBoundingGeographyLevel(value as BoundingGeographyLevel);
+                }
             }}
         />
     );

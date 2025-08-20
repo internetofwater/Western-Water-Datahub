@@ -78,47 +78,47 @@ export const TeacupPercentageOfCapacityExpression: ExpressionSpecification = [
     -1,
     'no-data',
     0,
-    ['concat', ['var', 'average'], '-teacup-0'],
+    ['concat', 'teacup-0-', ['var', 'average']],
     0.05,
-    ['concat', ['var', 'average'], '-teacup-5'],
+    ['concat', 'teacup-5-', ['var', 'average']],
     0.1,
-    ['concat', ['var', 'average'], '-teacup-10'],
+    ['concat', 'teacup-10-', ['var', 'average']],
     0.15,
-    ['concat', ['var', 'average'], '-teacup-15'],
+    ['concat', 'teacup-15-', ['var', 'average']],
     0.2,
-    ['concat', ['var', 'average'], '-teacup-20'],
+    ['concat', 'teacup-20-', ['var', 'average']],
     0.25,
-    ['concat', ['var', 'average'], '-teacup-25'],
+    ['concat', 'teacup-25-', ['var', 'average']],
     0.3,
-    ['concat', ['var', 'average'], '-teacup-30'],
+    ['concat', 'teacup-30-', ['var', 'average']],
     0.35,
-    ['concat', ['var', 'average'], '-teacup-35'],
+    ['concat', 'teacup-35-', ['var', 'average']],
     0.4,
-    ['concat', ['var', 'average'], '-teacup-40'],
+    ['concat', 'teacup-40-', ['var', 'average']],
     0.45,
-    ['concat', ['var', 'average'], '-teacup-45'],
+    ['concat', 'teacup-45-', ['var', 'average']],
     0.5,
-    ['concat', ['var', 'average'], '-teacup-50'],
+    ['concat', 'teacup-50-', ['var', 'average']],
     0.55,
-    ['concat', ['var', 'average'], '-teacup-55'],
+    ['concat', 'teacup-55-', ['var', 'average']],
     0.6,
-    ['concat', ['var', 'average'], '-teacup-60'],
+    ['concat', 'teacup-60-', ['var', 'average']],
     0.65,
-    ['concat', ['var', 'average'], '-teacup-65'],
+    ['concat', 'teacup-65-', ['var', 'average']],
     0.7,
-    ['concat', ['var', 'average'], '-teacup-70'],
+    ['concat', 'teacup-70-', ['var', 'average']],
     0.75,
-    ['concat', ['var', 'average'], '-teacup-75'],
+    ['concat', 'teacup-75-', ['var', 'average']],
     0.8,
-    ['concat', ['var', 'average'], '-teacup-80'],
+    ['concat', 'teacup-80-', ['var', 'average']],
     0.85,
-    ['concat', ['var', 'average'], '-teacup-85'],
+    ['concat', 'teacup-85-', ['var', 'average']],
     0.9,
-    ['concat', ['var', 'average'], '-teacup-90'],
+    ['concat', 'teacup-90-', ['var', 'average']],
     0.95,
-    ['concat', ['var', 'average'], '-teacup-95'],
+    ['concat', 'teacup-95-', ['var', 'average']],
     1.0,
-    ['concat', ['var', 'average'], '-teacup-100'],
+    ['concat', 'teacup-100-', ['var', 'average']],
 ];
 
 /**
@@ -139,14 +139,14 @@ export const ComplexReservoirProperties = [
  * @constant
  */
 export const RISEEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?f=json&parameter-name=reservoirStorage&limit=10000';
+    'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?parameter-name=reservoirStorage&limit=10000';
 
 /**
  *
  * @constant
  */
 export const ResVizEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/resviz-edr/locations?f=json';
+    'https://cache.wwdh.internetofwater.app/collections/resviz-edr/locations';
 
 /**
  *
@@ -201,7 +201,7 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         ],
 
         params: {
-            'parameter-name': 'reservoirStorage', // TODO: replace once ontology gets made for resviz
+            'parameter-name': 'reservoirStorage',
         },
     },
 ];

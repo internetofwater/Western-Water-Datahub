@@ -70,7 +70,7 @@ const getRequestArgsMap: Record<TRequestMethods, TRequestArgsGetter> = {
     GET: ({
         url: baseUrl,
         signal,
-        headers = {},
+        headers = {Accept: 'application/json'},
         params = {},
     }: IRequestOptions): TRequestArgs => {
         const url = `${baseUrl}?${toSearchParams(params).toString()}`;
