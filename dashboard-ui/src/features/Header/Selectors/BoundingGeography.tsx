@@ -57,8 +57,6 @@ export const BoundingGeography: React.FC = () => {
             return;
         }
 
-        console.log(boundingGeographyLevel);
-
         const selectedVisibility =
             BoundingGeometryVisibilityMap[boundingGeographyLevel];
 
