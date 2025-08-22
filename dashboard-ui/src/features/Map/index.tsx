@@ -288,7 +288,7 @@ const MainMap: React.FC<Props> = (props) => {
                 [-96.5, 49], // Northeast corner (MN/ND border)
             ],
             {
-                padding: 60,
+                padding: 20,
                 animate: false,
             }
         );

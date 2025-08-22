@@ -11,6 +11,7 @@ import {
     AccordionItem,
     AccordionPanel,
     Box,
+    Button,
     Grid,
     GridCol,
     Paper,
@@ -18,14 +19,20 @@ import {
 import Map from '@/features/Map';
 import useMainStore from '@/lib/main';
 import styles from '@/features/Main/Main.module.css';
-import { MAP_ID } from '@/features/Map/consts';
+import { MAP_ID, ReservoirConfigs } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MapTools } from '@/features/MapTools';
 import Reservoir from '@/features/Reservior';
 import { ReservoirDefault } from '@/lib/consts';
 import Controls from '../Controls';
 import Legend from '../Legend';
+import { ReportService } from '@/services/report/report.service';
+import {
+    getClosestPoints,
+    getClosestPointsForConfig,
+    getHighestCapacityReservoirs,
+} from '@/services/report/utils';
 
 type Props = {
     accessToken: string;
@@ -42,6 +49,8 @@ const Main: React.FC<Props> = (props) => {
     const basin = useMainStore((state) => state.basin);
     const reservoir = useMainStore((state) => state.reservoir);
 
+    const [blob, setBlob] = useState<Blob | null>(null);
+
     const { map } = useMap(MAP_ID);
 
     const hasSelectedReservoir = reservoir !== ReservoirDefault;
@@ -52,6 +61,45 @@ const Main: React.FC<Props> = (props) => {
         }
         map.resize();
     }, [reservoir, region, basin]);
+
+    // useEffect(() => {
+    //     if (!map) {
+    //         return;
+    //     }
+
+    //     void (async () => {
+    //         if (blob) {
+    //             setBlob(blob);
+    //         }
+    //     })();
+    // }, [map]);
+
+    const handleClick = () => {
+        if (!map) {
+            return;
+        }
+        const features = ReservoirConfigs.flatMap((config) =>
+            getHighestCapacityReservoirs(map, config)
+        );
+
+        const center = map.getCenter();
+
+        const service = new ReportService(accessToken);
+        service.report(map, features);
+
+        // let canDownloadReport = service.canDownloadReport();
+        // let tries = 0;
+        // while (!canDownloadReport && tries < 10000) {
+        //     setTimeout(() => {
+        //         canDownloadReport = service.canDownloadReport();
+        //         tries += 1;
+        //         console.log('Can download Report?', canDownloadReport, tries);
+        //         if (canDownloadReport) {
+        //             service.downloadReport();
+        //         }
+        //     }, 1000);
+        // }
+    };
 
     return (
         <Grid
@@ -72,6 +120,9 @@ const Main: React.FC<Props> = (props) => {
                         }
                         p="sm"
                     >
+                        <Button onClick={() => void handleClick()}>
+                            Click Me!
+                        </Button>
                         <Accordion
                             multiple
                             defaultValue={['controls', 'legend']}

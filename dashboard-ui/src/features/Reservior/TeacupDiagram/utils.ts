@@ -48,7 +48,8 @@ export const addLineConstructor =
     (
         width: number,
         svg: SVGElement,
-        calculateXPosition: (value: number) => number
+        calculateXPosition: (value: number) => number,
+        scale: number = 1
     ) =>
     (id: string, value: number, color: string): SVGPathElement => {
         const lineElement = document.createElementNS(
@@ -58,7 +59,7 @@ export const addLineConstructor =
         lineElement.setAttribute('id', id);
 
         const lineStart = calculateXPosition(value);
-        const lineEnd = width - lineStart;
+        const lineEnd = (width - lineStart) * scale;
 
         lineElement.setAttribute(
             'd',
