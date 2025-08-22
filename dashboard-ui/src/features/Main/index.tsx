@@ -28,11 +28,7 @@ import { ReservoirDefault } from '@/lib/consts';
 import Controls from '../Controls';
 import Legend from '../Legend';
 import { ReportService } from '@/services/report/report.service';
-import {
-    getClosestPoints,
-    getClosestPointsForConfig,
-    getHighestCapacityReservoirs,
-} from '@/services/report/utils';
+import { getHighestCapacityReservoirs } from '@/services/report/utils';
 
 type Props = {
     accessToken: string;
@@ -62,18 +58,6 @@ const Main: React.FC<Props> = (props) => {
         map.resize();
     }, [reservoir, region, basin]);
 
-    // useEffect(() => {
-    //     if (!map) {
-    //         return;
-    //     }
-
-    //     void (async () => {
-    //         if (blob) {
-    //             setBlob(blob);
-    //         }
-    //     })();
-    // }, [map]);
-
     const handleClick = () => {
         if (!map) {
             return;
@@ -82,23 +66,8 @@ const Main: React.FC<Props> = (props) => {
             getHighestCapacityReservoirs(map, config)
         );
 
-        const center = map.getCenter();
-
         const service = new ReportService(accessToken);
         service.report(map, features);
-
-        // let canDownloadReport = service.canDownloadReport();
-        // let tries = 0;
-        // while (!canDownloadReport && tries < 10000) {
-        //     setTimeout(() => {
-        //         canDownloadReport = service.canDownloadReport();
-        //         tries += 1;
-        //         console.log('Can download Report?', canDownloadReport, tries);
-        //         if (canDownloadReport) {
-        //             service.downloadReport();
-        //         }
-        //     }, 1000);
-        // }
     };
 
     return (
