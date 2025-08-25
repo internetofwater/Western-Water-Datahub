@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Select } from '@mantine/core';
+import { Select } from "@mantine/core";
 
 export const Dataset: React.FC = () => {
   return (
@@ -11,7 +11,7 @@ export const Dataset: React.FC = () => {
       size="xs"
       label="Dataset"
       placeholder="Select..."
-      data={['React', 'Angular', 'Vue', 'Svelte']}
+      data={["React", "Angular", "Vue", "Svelte"]}
       searchable
     />
   );

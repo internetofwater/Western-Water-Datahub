@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import CopyInput from '@/components/CopyInput';
+import CopyInput from "@/components/CopyInput";
 
 export default {
-  title: 'CopyInput',
+  title: "CopyInput",
 };
 
 export const Usage = () => (

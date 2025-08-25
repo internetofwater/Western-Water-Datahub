@@ -22,9 +22,9 @@ export async function request<T>(options: IRequestOptions): Promise<T> {
   return json as Promise<T>;
 }
 
-const CONTENT_TYPE_HEADER = 'content-type';
-const APPLICATION_X_WWW_FORM_URLENCODED = 'application/x-www-form-urlencoded';
-const APPLICATION_JSON = 'application/json';
+const CONTENT_TYPE_HEADER = "content-type";
+const APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
+const APPLICATION_JSON = "application/json";
 
 function toBody(params: IRequestParams, headers: IRequestHeaders) {
   const contentType = getContentType(headers).toLowerCase();
@@ -45,13 +45,15 @@ function getContentType(headers: IRequestHeaders): string {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     .map((header) => headers[header])[0];
 
-  return typeof contentType === 'string' ? contentType : APPLICATION_X_WWW_FORM_URLENCODED;
+  return typeof contentType === "string"
+    ? contentType
+    : APPLICATION_X_WWW_FORM_URLENCODED;
 }
 
 function toSearchParams(params: IRequestParams) {
   const searchParams = new URLSearchParams();
-  if (!('f' in params)) {
-    searchParams.append('f', 'json');
+  if (!("f" in params)) {
+    searchParams.append("f", "json");
   }
   for (const key in params) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -68,39 +70,49 @@ const getRequestArgsMap: Record<TRequestMethods, TRequestArgsGetter> = {
   GET: ({
     url: baseUrl,
     signal,
-    headers = { Accept: 'application/json' },
+    headers = { Accept: "application/json" },
     params = {},
   }: IRequestOptions): TRequestArgs => {
     const url = `${baseUrl}?${toSearchParams(params).toString()}`;
     const init = {
       signal,
       headers,
-      method: 'GET',
+      method: "GET",
     };
     return { url, init };
   },
-  POST: ({ url, signal, params = {}, headers = {} }: IRequestOptions): TRequestArgs => {
+  POST: ({
+    url,
+    signal,
+    params = {},
+    headers = {},
+  }: IRequestOptions): TRequestArgs => {
     const init = {
       signal,
       headers,
-      method: 'POST',
+      method: "POST",
       body: toBody(params, headers),
     };
     return { url, init };
   },
-  DELETE: ({ url: baseUrl, signal, params = {}, headers = {} }: IRequestOptions): TRequestArgs => {
+  DELETE: ({
+    url: baseUrl,
+    signal,
+    params = {},
+    headers = {},
+  }: IRequestOptions): TRequestArgs => {
     const url = `${baseUrl}?${toSearchParams(params).toString()}`;
     const init = {
       signal,
       headers,
-      method: 'DELETE',
+      method: "DELETE",
     };
     return { url, init };
   },
 };
 
 const toRequestArgs = (params: IRequestOptions): TRequestArgs => {
-  const getRequestArgs = getRequestArgsMap[params.method ?? 'GET'];
+  const getRequestArgs = getRequestArgsMap[params.method ?? "GET"];
   if (!getRequestArgs) {
     throw new Error(`Unsupported HTTP method "${params.method}"`);
   }
@@ -122,7 +134,7 @@ export interface IRequestHeaders {
   [key: string]: any;
 }
 
-export type TRequestMethods = 'GET' | 'POST' | 'DELETE';
+export type TRequestMethods = "GET" | "POST" | "DELETE";
 
 export interface IRequestOptions {
   url: string;

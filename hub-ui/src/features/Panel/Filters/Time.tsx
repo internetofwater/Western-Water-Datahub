@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Select, Stack, Title } from '@mantine/core';
+import { Select, Stack, Title } from "@mantine/core";
 
 const Time: React.FC = () => {
   return (
@@ -15,7 +15,7 @@ const Time: React.FC = () => {
         size="xs"
         label="Sites with Data in the Last:"
         placeholder="Select..."
-        data={['React', 'Angular', 'Vue', 'Svelte']}
+        data={["React", "Angular", "Vue", "Svelte"]}
         searchable
       />
     </Stack>

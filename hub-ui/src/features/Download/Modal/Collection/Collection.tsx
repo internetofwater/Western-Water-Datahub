@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -14,23 +14,26 @@ import {
   MultiSelect,
   Stack,
   Title,
-} from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
-import { useDisclosure } from '@mantine/hooks';
-import CopyInput from '@/components/CopyInput';
-import styles from '@/features/Download/Download.module.css';
-import { Chart } from '@/features/Download/Modal/Collection/Chart';
-import { CSV } from '@/features/Download/Modal/Collection/CSV';
-import { buildUrl, getParameterNameOptions } from '@/features/Download/Modal/utils';
-import loadingManager from '@/managers/Loading.init';
-import notificationManager from '@/managers/Notification.init';
-import { ICollection } from '@/services/edr.service';
-import wwdhService from '@/services/init/wwdh.init';
-import { Collection as CollectionType } from '@/stores/main/types';
-import { NotificationType } from '@/stores/session/types';
+} from "@mantine/core";
+import { DatePickerInput } from "@mantine/dates";
+import { useDisclosure } from "@mantine/hooks";
+import CopyInput from "@/components/CopyInput";
+import styles from "@/features/Download/Download.module.css";
+import { Chart } from "@/features/Download/Modal/Collection/Chart";
+import { CSV } from "@/features/Download/Modal/Collection/CSV";
+import {
+  buildUrl,
+  getParameterNameOptions,
+} from "@/features/Download/Modal/utils";
+import loadingManager from "@/managers/Loading.init";
+import notificationManager from "@/managers/Notification.init";
+import { ICollection } from "@/services/edr.service";
+import wwdhService from "@/services/init/wwdh.init";
+import { Collection as CollectionType } from "@/stores/main/types";
+import { NotificationType } from "@/stores/session/types";
 
 type Props = {
-  collectionId: CollectionType['id'];
+  collectionId: CollectionType["id"];
   locationIds: (string | number)[];
   open?: boolean;
 };
@@ -43,7 +46,8 @@ const Collection: React.FC<Props> = (props) => {
   const [opened, { toggle }] = useDisclosure(open);
 
   const [collection, setCollection] = useState<ICollection>();
-  const [parameterNameOptions, setParameterNameOptions] = useState<ComboboxData>();
+  const [parameterNameOptions, setParameterNameOptions] =
+    useState<ComboboxData>();
   const [selectedParameters, setSelectedParameters] = useState<string[]>([]);
   const [from, setFrom] = useState<string | null>(null);
   const [to, setTo] = useState<string | null>(null);
@@ -54,7 +58,9 @@ const Collection: React.FC<Props> = (props) => {
   const loadingInstance = useRef<string>(null);
 
   const getBasinOptions = async () => {
-    loadingInstance.current = loadingManager.add(`Fetching data for collection: ${collectionId}`);
+    loadingInstance.current = loadingManager.add(
+      `Fetching data for collection: ${collectionId}`,
+    );
     try {
       controller.current = new AbortController();
 
@@ -68,12 +74,15 @@ const Collection: React.FC<Props> = (props) => {
       }
     } catch (error) {
       if (
-        (error as Error)?.name === 'AbortError' ||
-        (typeof error === 'string' && error === 'Component unmount')
+        (error as Error)?.name === "AbortError" ||
+        (typeof error === "string" && error === "Component unmount")
       ) {
-        console.log('Fetch request canceled');
+        console.log("Fetch request canceled");
       } else if ((error as Error)?.message) {
-        notificationManager.show(`Error: ${(error as Error)?.message}`, NotificationType.Error);
+        notificationManager.show(
+          `Error: ${(error as Error)?.message}`,
+          NotificationType.Error,
+        );
       }
       loadingManager.remove(loadingInstance.current);
     }
@@ -85,7 +94,7 @@ const Collection: React.FC<Props> = (props) => {
     return () => {
       isMounted.current = false;
       if (controller.current) {
-        controller.current.abort('Component unmount');
+        controller.current.abort("Component unmount");
       }
     };
   }, []);
@@ -95,7 +104,9 @@ const Collection: React.FC<Props> = (props) => {
       return;
     }
 
-    const parameterNameOptions = getParameterNameOptions(collection.parameter_names);
+    const parameterNameOptions = getParameterNameOptions(
+      collection.parameter_names,
+    );
 
     setParameterNameOptions(parameterNameOptions);
   }, [collection]);
@@ -106,7 +117,7 @@ const Collection: React.FC<Props> = (props) => {
         <Box p="lg">
           <Group justify="space-between" mb="sm">
             <Title order={3}>{collection.title}</Title>
-            <Button onClick={toggle}>{opened ? 'Hide' : 'Show'}</Button>
+            <Button onClick={toggle}>{opened ? "Hide" : "Show"}</Button>
           </Group>
           <Divider />
           <Collapse in={opened}>
@@ -126,7 +137,7 @@ const Collection: React.FC<Props> = (props) => {
                     clearable
                     error={
                       selectedParameters.length > PARAMETER_LIMIT
-                        ? 'Please select only 10 parameters'
+                        ? "Please select only 10 parameters"
                         : false
                     }
                   />
@@ -151,7 +162,8 @@ const Collection: React.FC<Props> = (props) => {
                 </Group>
                 <Button
                   disabled={
-                    selectedParameters.length > PARAMETER_LIMIT || selectedParameters.length === 0
+                    selectedParameters.length > PARAMETER_LIMIT ||
+                    selectedParameters.length === 0
                   }
                   className={styles.goButton}
                   onClick={() => setStartDownload(Date.now())}
@@ -162,9 +174,17 @@ const Collection: React.FC<Props> = (props) => {
 
               {startDownload &&
                 locationIds.map((locationId) => {
-                  const url = buildUrl(collectionId, locationId, selectedParameters, from, to);
+                  const url = buildUrl(
+                    collectionId,
+                    locationId,
+                    selectedParameters,
+                    from,
+                    to,
+                  );
                   return (
-                    <Fragment key={`collection-download-${collectionId}-${locationId}`}>
+                    <Fragment
+                      key={`collection-download-${collectionId}-${locationId}`}
+                    >
                       <Chart
                         instanceId={startDownload}
                         collectionId={collectionId}
