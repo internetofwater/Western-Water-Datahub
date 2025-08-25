@@ -1,8 +1,13 @@
-import { Location } from '@/stores/main/types';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import { Location } from "@/stores/main/types";
 
 export const groupLocationIdsByCollection = (
-  locations: Location[]
-): Record<Location['collectionId'], Array<Location['id']>> => {
+  locations: Location[],
+): Record<Location["collectionId"], Array<Location["id"]>> => {
   return locations.reduce(
     (acc, location) => {
       const { collectionId, id } = location;
@@ -12,6 +17,6 @@ export const groupLocationIdsByCollection = (
       acc[collectionId].push(id);
       return acc;
     },
-    {} as Record<Location['collectionId'], Array<Location['id']>>
+    {} as Record<Location["collectionId"], Array<Location["id"]>>,
   );
 };

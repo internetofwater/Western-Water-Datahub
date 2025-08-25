@@ -1,4 +1,9 @@
-import { PropsWithChildren } from 'react';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import { PropsWithChildren } from "react";
 import {
   Box,
   HoverCard,
@@ -8,7 +13,7 @@ import {
   ListItem,
   Text,
   Title,
-} from '@mantine/core';
+} from "@mantine/core";
 
 type Props = {
   loadingTexts: string[];

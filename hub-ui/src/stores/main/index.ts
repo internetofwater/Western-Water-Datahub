@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { create } from 'zustand';
-import { immer } from 'zustand/middleware/immer';
-import { MainState } from '@/stores/main/types';
-import { createCollectionSlice } from './slices/collections';
-import { createLocationSlice } from './slices/locations';
+import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
+import { MainState } from "@/stores/main/types";
+import { createCollectionSlice } from "./slices/collections";
+import { createLocationSlice } from "./slices/locations";
 
 const useMainStore = create<MainState>()(
   immer((set, get, store) => ({
@@ -35,7 +35,7 @@ const useMainStore = create<MainState>()(
 
     ...createCollectionSlice(set, get, store),
     ...createLocationSlice(set, get, store),
-  }))
+  })),
 );
 
 export default useMainStore;

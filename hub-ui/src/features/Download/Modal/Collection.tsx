@@ -1,4 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -8,19 +13,19 @@ import {
   Group,
   MultiSelect,
   Title,
-} from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
-import { useDisclosure } from '@mantine/hooks';
-import loadingManager from '@/managers/Loading.init';
-import notificationManager from '@/managers/Notification.init';
-import { ICollection } from '@/services/edr.service';
-import wwdhService from '@/services/init/wwdh.init';
-import { Collection as CollectionType } from '@/stores/main/types';
-import { NotificationType } from '@/stores/session/types';
-import { getParameterNameOptions } from './utils';
+} from "@mantine/core";
+import { DatePickerInput } from "@mantine/dates";
+import { useDisclosure } from "@mantine/hooks";
+import loadingManager from "@/managers/Loading.init";
+import notificationManager from "@/managers/Notification.init";
+import { ICollection } from "@/services/edr.service";
+import wwdhService from "@/services/init/wwdh.init";
+import { Collection as CollectionType } from "@/stores/main/types";
+import { NotificationType } from "@/stores/session/types";
+import { getParameterNameOptions } from "./utils";
 
 type Props = {
-  collectionId: CollectionType['id'];
+  collectionId: CollectionType["id"];
   locationIds: (string | number)[];
   open?: boolean;
 };
@@ -31,7 +36,8 @@ export const Collection: React.FC<Props> = (props) => {
   const [opened, { toggle }] = useDisclosure(open);
 
   const [collection, setCollection] = useState<ICollection>();
-  const [parameterNameOptions, setParameterNameOptions] = useState<ComboboxData>();
+  const [parameterNameOptions, setParameterNameOptions] =
+    useState<ComboboxData>();
   const [selectedParameters, setSelectedParameters] = useState<string[]>([]);
   const [from, setFrom] = useState<string | null>(null);
   const [to, setTo] = useState<string | null>(null);
@@ -42,7 +48,9 @@ export const Collection: React.FC<Props> = (props) => {
 
   const getBasinOptions = async () => {
     try {
-      loadingInstance.current = loadingManager.add(`Fetching data for collection: ${collectionId}`);
+      loadingInstance.current = loadingManager.add(
+        `Fetching data for collection: ${collectionId}`,
+      );
       controller.current = new AbortController();
 
       const collection = await wwdhService.getCollection(collectionId, {
@@ -55,12 +63,15 @@ export const Collection: React.FC<Props> = (props) => {
       }
     } catch (error) {
       if (
-        (error as Error)?.name === 'AbortError' ||
-        (typeof error === 'string' && error === 'Component unmount')
+        (error as Error)?.name === "AbortError" ||
+        (typeof error === "string" && error === "Component unmount")
       ) {
-        console.log('Fetch request canceled');
+        console.log("Fetch request canceled");
       } else if ((error as Error)?.message) {
-        notificationManager.show(`Error: ${(error as Error)?.message}`, NotificationType.Error);
+        notificationManager.show(
+          `Error: ${(error as Error)?.message}`,
+          NotificationType.Error,
+        );
       }
     }
   };
@@ -71,7 +82,7 @@ export const Collection: React.FC<Props> = (props) => {
     return () => {
       isMounted.current = false;
       if (controller.current) {
-        controller.current.abort('Component unmount');
+        controller.current.abort("Component unmount");
       }
     };
   }, []);
@@ -81,7 +92,9 @@ export const Collection: React.FC<Props> = (props) => {
       return;
     }
 
-    const parameterNameOptions = getParameterNameOptions(collection.parameter_names);
+    const parameterNameOptions = getParameterNameOptions(
+      collection.parameter_names,
+    );
 
     setParameterNameOptions(parameterNameOptions);
   }, [collection]);
@@ -92,7 +105,7 @@ export const Collection: React.FC<Props> = (props) => {
         <Box p="lg">
           <Group justify="space-between" mb="sm">
             <Title order={3}>{collection.title}</Title>
-            <Button onClick={toggle}>{opened ? 'Hide' : 'Show'}</Button>
+            <Button onClick={toggle}>{opened ? "Hide" : "Show"}</Button>
           </Group>
           <Collapse in={opened}>
             <Group justify="space-between">
