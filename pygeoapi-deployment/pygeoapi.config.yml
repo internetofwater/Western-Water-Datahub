@@ -495,7 +495,7 @@ resources:
         href: https://data.usbr.gov/rise/rise-resviz/data
     providers:
       - type: edr
-        name: pg_edr.edr.PostgresEDRProvider
+        name: pgedr.PostgresEDRProvider
         data: &postgres-data
           host: ${POSTGRES_HOST:-localhost}
           dbname: ${POSTGRES_DB:-edr}
