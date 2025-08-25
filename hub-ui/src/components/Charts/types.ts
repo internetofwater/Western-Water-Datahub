@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 
 export type Series<T extends GeoJsonProperties> = {
   name: string;

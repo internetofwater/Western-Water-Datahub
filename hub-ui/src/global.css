@@ -7,10 +7,10 @@
   --default-spacing: 8px;
 }
 
-:where([data-mantine-color-scheme='dark']) {
+:where([data-mantine-color-scheme="dark"]) {
 }
 
-:where([data-mantine-color-scheme='light']) {
+:where([data-mantine-color-scheme="light"]) {
 }
 
 #map-container-main-map {

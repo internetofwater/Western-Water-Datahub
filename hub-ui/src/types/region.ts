@@ -4,13 +4,13 @@
  */
 
 export enum RegionField {
-  ObjectId = 'OBJECTID',
-  RegNum = 'REG_NUM',
-  Name = 'REG_NAME',
-  AreaSqMi = 'AREA_SQMI',
-  AreaAcres = 'AREA_ACRES',
-  ShapeArea = 'Shape__Area',
-  ShapeLength = 'Shape__Length',
+  ObjectId = "OBJECTID",
+  RegNum = "REG_NUM",
+  Name = "REG_NAME",
+  AreaSqMi = "AREA_SQMI",
+  AreaAcres = "AREA_ACRES",
+  ShapeArea = "Shape__Area",
+  ShapeLength = "Shape__Length",
 }
 
 export type RegionProperties = {

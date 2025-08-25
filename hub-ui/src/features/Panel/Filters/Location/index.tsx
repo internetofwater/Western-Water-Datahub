@@ -1,7 +1,12 @@
-import { Stack, Title } from '@mantine/core';
-import { Basin } from './Basin';
-import { Region } from './Region';
-import { State } from './State';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import { Stack, Title } from "@mantine/core";
+import { Basin } from "./Basin";
+import { Region } from "./Region";
+import { State } from "./State";
 
 const Location: React.FC = () => {
   return (
