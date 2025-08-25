@@ -1,6 +1,6 @@
 server:
   bind:
-    host: localhost #change to your hostname if running your own instance
+    host: localhost # change to your hostname if running your own instance
     port: 5005
   url: ${PYGEOAPI_URL:-http://localhost:5005} #change to host URL  if running your own instance
   mimetype: application/json; charset=UTF-8
@@ -55,6 +55,9 @@ resources:
     type: collection
     title: Reclamation Information Sharing Environment
     description: USBR Information Sharing Environment EDR
+    provider-name:
+      - BOR
+      - USBR
     keywords:
       - EDR
       - RISE
@@ -86,6 +89,10 @@ resources:
     type: collection
     title: Snow Telemetry Network
     description: USDA Snow Telemetry Network (SNOTEL) EDR
+    provider-name:
+      - DOA
+      - USDA
+      - NRCS
     keywords:
       - EDR
       - SNOTEL
@@ -110,6 +117,10 @@ resources:
     type: collection
     title: United States Geologic Survey Streamgages
     description: USGS Streamgages SensorThings API EDR
+    provider-name:
+      - GS
+      - USGS
+      - WMA
     keywords:
       - EDR
       - SensorThings
@@ -135,6 +146,10 @@ resources:
     type: collection
     title: Air and Water Database Forecasts
     description: USDA Air and Water Database Forecasts (AWDB) EDR
+    provider-name:
+      - DOA
+      - USDA
+      - NRCS
     keywords:
       - open data
     extents: *default-extent
@@ -154,6 +169,10 @@ resources:
     type: collection
     title: Snotel HUC06 Water Temp Means from Snowpack Melt
     description: The average water temperature from snowpack melt; each feature contains one average for each HUC06 watershed; these averages are relative to the 30 year average
+    provider-name:
+      - DOA
+      - USDA
+      - NRCS
     keywords:
       - open data
     extents: *default-extent
@@ -168,6 +187,10 @@ resources:
     type: collection
     title: US Army Corps of Engineers
     description: USACE Access2Water API
+    provider-name:
+      - DOA
+      - USACE
+      - NRCS
     keywords:
       - open data
     extents: *default-extent
@@ -188,6 +211,9 @@ resources:
     type: collection
     title: Quantitative Precipitation Forecast Day 1
     description: NOAA Quantitative Precipitation Forecast (QPF) 24 Hours Day 1
+    provider-name:
+      - WPC
+      - NOAA
     keywords: [NOAA, QPF]
     links:
       - <<: *default-link
@@ -312,6 +338,9 @@ resources:
     type: collection
     title: Snow Water Forecast
     description: NOAA NOHRSC Snow Water Forecast
+    provider-name:
+      - NOHRSC
+      - NOAA
     keywords:
       - nohrsc
       - snow water equivalent
@@ -340,6 +369,9 @@ resources:
     type: collection
     title: Snow Depth Forecast
     description: NOAA NOHRSC Snow Depth Forecast
+    provider-name:
+      - NOHRSC
+      - NOAA
     keywords:
       - nohrsc
       - snow depth
@@ -364,6 +396,9 @@ resources:
     type: collection
     title: River Forecast Center Seasonal Forecasts
     description: NOAA River Forecast Center Forecasts
+    provider-name:
+      - RFC
+      - NOAA
     keywords: [NOAA]
     links:
       - <<: *default-link
@@ -379,6 +414,9 @@ resources:
     type: collection
     title: 6-10 Day Temperature Forecast
     description: NOAA 6-10 Day Temperature Forecast
+    provider-name:
+      - CPC
+      - NOAA
     keywords: [NOAA, temperature]
     links:
       - <<: *default-link
@@ -395,6 +433,9 @@ resources:
     type: collection
     title: 6-10 Day Precipitation Forecast
     description: NOAA 6-10 Day Precipitation Forecast
+    provider-name:
+      - CPC
+      - NOAA
     keywords: [NOAA, temperature]
     links:
       - <<: *default-link
@@ -413,8 +454,13 @@ resources:
 
   us-current-drought-monitor:
     type: collection
-    title: Drought Monitor
+    title: Current Drought Monitor
     description: US Drought Monitor current drought intensity from the National Drought Mitigation Center
+    provider-name:
+      - NDMC
+      - NOAA
+      - DOA
+      - USDA
     keywords: ["drought"]
     links:
       - <<: *default-link
@@ -434,8 +480,13 @@ resources:
 
   us-historical-drought-monitor:
     type: collection
-    title: Drought Monitor
+    title: Historical Drought Monitor
     description: US Drought Monitor drought intensity from the National Drought Mitigation Center
+    provider-name:
+      - NDMC
+      - NOAA
+      - DOA
+      - USDA
     keywords: ["drought"]
     links:
       - <<: *default-link
@@ -457,6 +508,10 @@ resources:
     type: collection
     title: Parameter-elevation Regressions on Independent Slopes Model (PRISM)
     description: PRISM Monthly Climate Data for the Continental United States
+    provider-name:
+      - GS
+      - USGS
+      - OSU
     keywords:
       - temperature
       - precipitation
@@ -483,6 +538,9 @@ resources:
     type: collection
     title: Reservoir drought conditions
     description: USBR Reservoir drought conditions
+    provider-name:
+      - BOR
+      - USBR
     keywords:
       - reservoir
       - drought
@@ -495,7 +553,7 @@ resources:
         href: https://data.usbr.gov/rise/rise-resviz/data
     providers:
       - type: edr
-        name: pg_edr.edr.PostgresEDRProvider
+        name: pgedr.PostgresEDRProvider
         data: &postgres-data
           host: ${POSTGRES_HOST:-localhost}
           dbname: ${POSTGRES_DB:-edr}
@@ -538,6 +596,9 @@ resources:
     type: collection
     title: Unified Interior Regional Boundaries
     description: DOI Unified Interior Regional Boundaries
+    provider-name:
+      - BOR
+      - USBR
     keywords:
       - doi
       - boundaries
@@ -560,6 +621,9 @@ resources:
     type: collection
     title: River Stage Forecast Day 1
     description: NOAA River Stage Forecast 24 Hours / 1 day from now
+    provider-name:
+      - NOAA
+      - RFC
     keywords: [NOAA, riv_gauges]
     links:
       - <<: *default-link
@@ -601,6 +665,10 @@ resources:
     type: collection
     title: ResOpsUS 30 Year Reservoir Storage Info
     description: Aggregated storage data of USACE dams in the ResOpsUS reservoir dataset identified according to the national inventory of dams (NID) ID.
+    provider-name:
+      - DOA
+      - USACE
+      - NRCS
     keywords:
       - EDR
       - ResOpsUS
