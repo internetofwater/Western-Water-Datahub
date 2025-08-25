@@ -54,7 +54,7 @@ resources:
   rise-edr:
     type: collection
     title: Reclamation Information Sharing Environment
-    description: USBR Information Sharing Environment (RISE) EDR
+    description: USBR Information Sharing Environment EDR
     provider-name:
       - BOR
       - USBR
