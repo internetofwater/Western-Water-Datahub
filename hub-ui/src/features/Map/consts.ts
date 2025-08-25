@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { SourceId } from "./sources";
+
 /**
  *
  * @constant
@@ -31,4 +33,10 @@ export const ValidStates = [
   "CA",
   "OR",
   "WA",
+];
+
+export const GeographyFilterSources = [
+  SourceId.DoiRegions,
+  SourceId.Huc02,
+  SourceId.States,
 ];
