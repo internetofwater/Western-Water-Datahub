@@ -17,6 +17,10 @@ type FakeCollection = {
   [key: string]: string;
 };
 
+/**
+ *
+ * @class
+ */
 class MainManager {
   private store: UseBoundStore<StoreApi<MainState>>;
   private map: Map | null = null;
@@ -25,34 +29,68 @@ class MainManager {
     this.store = store;
   }
 
+  /**
+   *
+   * @function
+   */
   private hasMap(): boolean {
     return Boolean(this.map);
   }
 
+  /**
+   *
+   * @function
+   */
   public setMap(map: Map): void {
     if (!this.hasMap()) {
       this.map = map;
     }
   }
 
+  /**
+   *
+   * @function
+   */
   private createUUID(): string {
     return v6();
   }
 
+  /**
+   *
+   * @function
+   */
   private createHexColor(): ColorValueHex {
     return '#fake';
   }
 
+  /**
+   *
+   * @function
+   */
   public hasGeographyFilter(): boolean {
     return this.store.getState().hasGeographyFilter();
   }
+
+  /**
+   *
+   * @function
+   */
   public hasCollection(collectionId: Collection['id']): boolean {
     return this.store.getState().hasCollection(collectionId);
   }
+
+  /**
+   *
+   * @function
+   */
   public hasLocation(locationId: Location['id']): boolean {
     return this.store.getState().hasLocation(locationId);
   }
 
+  /**
+   *
+   * @function
+   */
   public async getData(collectionId: Collection['id']): Promise<FeatureCollection<Point>> {
     const geographyFilter = this.store.getState().geographyFilter;
     if (geographyFilter) {
@@ -62,10 +100,18 @@ class MainManager {
     return this.getLocation(collectionId);
   }
 
+  /**
+   *
+   * @function
+   */
   private async getLocation(collectionId: Collection['id']): Promise<FeatureCollection<Point>> {
     return wwdhService.getLocations<FeatureCollection<Point>>(collectionId);
   }
 
+  /**
+   *
+   * @function
+   */
   private async getArea(
     collectionId: Collection['id'],
     geographyFilter: GeoJSONFeature
@@ -80,14 +126,26 @@ class MainManager {
     });
   }
 
+  /**
+   *
+   * @function
+   */
   public getSourceId(collectionId: Collection['id']): string {
     return `${collectionId}-source`;
   }
 
+  /**
+   *
+   * @function
+   */
   public getLayerId(collectionId: Collection['id']): string {
     return `${collectionId}-locations`;
   }
 
+  /**
+   *
+   * @function
+   */
   private async addMapSource(collectionId: Collection['id']): Promise<string> {
     const sourceId = this.getSourceId(collectionId);
     if (this.map && !this.map.getSource(sourceId)) {
@@ -101,6 +159,10 @@ class MainManager {
     return sourceId;
   }
 
+  /**
+   *
+   * @function
+   */
   private async addMapLayer(collectionId: Collection['id'], sourceId: string): Promise<void> {
     const layerId = this.getLayerId(collectionId);
     if (this.map && !this.map.getLayer(layerId)) {
@@ -137,6 +199,10 @@ class MainManager {
     }
   }
 
+  /**
+   *
+   * @function
+   */
   public async updateCollections(): Promise<void> {
     const collections = this.store.getState().collections;
 
@@ -147,6 +213,10 @@ class MainManager {
     }
   }
 
+  /**
+   *
+   * @function
+   */
   public addCollection(collection: FakeCollection): void {
     const _collection: Collection = {
       id: collection.id,
