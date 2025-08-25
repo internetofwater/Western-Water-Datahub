@@ -3,12 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { FeatureCollection, Point } from "geojson";
-import { Map } from "mapbox-gl";
+import * as turf from "@turf/turf";
+import { Feature, FeatureCollection, Point, Polygon } from "geojson";
+import { GeoJSONSource, LngLatBoundsLike, Map } from "mapbox-gl";
 import { v6 } from "uuid";
 import { GeoJSONFeature, stringify } from "wellknown";
 import { StoreApi, UseBoundStore } from "zustand";
-import { getPointLayerDefinition } from "@/features/Map/utils";
+import { GeographyFilterSources } from "@/features/Map/consts";
+import { SourceId } from "@/features/Map/sources";
+import {
+  getPointLayerDefinition,
+  getPolygonLayerDefinition,
+} from "@/features/Map/utils";
+import geoconnexService from "@/services/init/geoconnex.init";
 import wwdhService from "@/services/init/wwdh.init";
 import {
   Collection,
@@ -101,17 +108,17 @@ class MainManager {
   ): Promise<FeatureCollection<Point>> {
     const geographyFilter = this.store.getState().geographyFilter;
     if (geographyFilter) {
-      const feature = geographyFilter as unknown as GeoJSONFeature;
+      const feature = geographyFilter.feature as unknown as GeoJSONFeature;
       return this.getArea(collectionId, feature);
     }
-    return this.getLocation(collectionId);
+    return this.getLocations(collectionId);
   }
 
   /**
    *
    * @function
    */
-  private async getLocation(
+  private async getLocations(
     collectionId: Collection["id"],
   ): Promise<FeatureCollection<Point>> {
     return wwdhService.getLocations<FeatureCollection<Point>>(collectionId);
@@ -123,9 +130,9 @@ class MainManager {
    */
   private async getArea(
     collectionId: Collection["id"],
-    geographyFilter: GeoJSONFeature,
+    feature: GeoJSONFeature,
   ): Promise<FeatureCollection<Point>> {
-    const wkt = stringify(geographyFilter);
+    const wkt = stringify(feature);
 
     return wwdhService.getArea<FeatureCollection<Point>>(collectionId, {
       method: "POST",
@@ -238,6 +245,124 @@ class MainManager {
     };
 
     this.store.getState().addCollection(_collection);
+  }
+
+  /**
+   *
+   * @function
+   */
+  private async getFilterGeometry(
+    collectionId: Collection["id"],
+    itemId: string,
+  ): Promise<Feature<Polygon>> {
+    const service =
+      collectionId === SourceId.DoiRegions ? wwdhService : geoconnexService;
+    return service.getItem<Feature<Polygon>>(collectionId, itemId);
+  }
+
+  private addGeographyFilterSource(
+    collectionId: Collection["id"],
+    feature: Feature<Polygon>,
+  ): string {
+    const sourceId = this.getSourceId(collectionId);
+    if (this.map) {
+      const source = this.map.getSource(sourceId) as GeoJSONSource;
+      if (!source) {
+        this.map.addSource(sourceId, {
+          type: "geojson",
+          data: turf.featureCollection([feature]),
+        });
+      } else {
+        source.setData(turf.featureCollection([feature]));
+      }
+    }
+
+    return sourceId;
+  }
+
+  /**
+   *
+   * @function
+   */
+  private addGeographyFilterLayer(
+    collectionId: Collection["id"],
+    sourceId: string,
+  ): void {
+    const layerId = this.getLayerId(collectionId);
+    if (this.map) {
+      if (!this.map.getLayer(layerId)) {
+        this.map.addLayer(getPolygonLayerDefinition(layerId, sourceId));
+      } else {
+        this.map.setLayoutProperty(layerId, "visibility", "visible");
+      }
+    }
+  }
+
+  /**
+   *
+   * @function
+   */
+  private hideIrrelevantGeographyFilterLayers(sourceIds: string[]): void {
+    if (this.map) {
+      sourceIds.forEach((sourceId) => {
+        const layerId = this.getLayerId(sourceId);
+        if (this.map!.getLayer(layerId)) {
+          this.map!.setLayoutProperty(layerId, "visibility", "none");
+        }
+      });
+    }
+  }
+
+  /**
+   *
+   * @function
+   */
+  public async updateGeographyFilter(
+    collectionId: Collection["id"],
+    itemId: string,
+  ): Promise<void> {
+    const feature = await this.getFilterGeometry(collectionId, itemId);
+
+    const sourceId = this.addGeographyFilterSource(collectionId, feature);
+    this.addGeographyFilterLayer(collectionId, sourceId);
+
+    const otherGeographyFilterSources = GeographyFilterSources.filter(
+      (source) => source !== collectionId,
+    );
+
+    this.hideIrrelevantGeographyFilterLayers(otherGeographyFilterSources);
+
+    const bounds = turf.bbox(feature) as LngLatBoundsLike;
+    this.map!.fitBounds(bounds, {
+      padding: 40,
+      speed: 1.2,
+    });
+
+    this.store.getState().setGeographyFilter({
+      itemId,
+      collectionId,
+      feature,
+    });
+  }
+
+  /**
+   *
+   * @function
+   */
+  public removeGeographyFilter(): void {
+    this.hideIrrelevantGeographyFilterLayers(GeographyFilterSources);
+
+    this.map!.fitBounds(
+      [
+        [-125, 24], // Southwest corner (California/Baja)
+        [-96.5, 49], // Northeast corner (MN/ND border)
+      ],
+      {
+        padding: 50,
+      },
+    );
+
+    this.store.getState().setGeographyFilter(null);
   }
 }
 
