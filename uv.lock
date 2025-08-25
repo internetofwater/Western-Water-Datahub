@@ -1369,7 +1369,7 @@ wheels = [
 [[package]]
 name = "pgedr"
 version = "0.2.dev0"
-source = { git = "https://github.com/internetofwater/pg_edr.git#3371dde1b4061a631837a514c478985fcaf23f46" }
+source = { git = "https://github.com/internetofwater/pg_edr.git#9607e6bfd1e2d4784c73df5777b42155db2d55b7" }
 dependencies = [
     { name = "cryptography" },
     { name = "geoalchemy2" },
