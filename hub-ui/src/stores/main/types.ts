@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Feature, FeatureCollection, Polygon } from "geojson";
-import { Properties } from "@/components/Map/types";
+import { Feature, FeatureCollection, Polygon } from 'geojson';
+import { Properties } from '@/components/Map/types';
 
 export type ColorValueHex = `#${string}`;
 
 enum SpatialSelectionType {
-  Drawn = "custom-drawn-polygon",
-  Selected = "select-existing-polygons",
-  Upload = "custom-upload-shape",
+  Drawn = 'custom-drawn-polygon',
+  Selected = 'select-existing-polygons',
+  Upload = 'custom-upload-shape',
 }
 
 interface SpatialSelectionBase {
@@ -40,10 +40,10 @@ export type SpatialSelection =
   | SpatialSelectionSelected;
 
 export enum DatasourceType {
-  Point = "point",
-  Line = "line",
-  Polygon = "polygon",
-  Raster = "raster",
+  Point = 'point',
+  Line = 'line',
+  Polygon = 'polygon',
+  Raster = 'raster',
 }
 
 export type Collection = {
@@ -56,31 +56,37 @@ export type Collection = {
 
 export type Layer = {
   id: string; // uuid
-  collectionId: Collection["id"];
+  collectionId: Collection['id'];
 };
 
 export type Location = {
   id: string | number; // location/{this}
-  collectionId: Collection["id"];
+  collectionId: Collection['id'];
+};
+
+export type GeographyFilter = {
+  itemId: string;
+  collectionId: Collection['id'];
+  feature: Feature<Polygon>;
 };
 
 export interface MainState {
   provider: string | null;
-  setProvider: (provider: MainState["provider"]) => void;
+  setProvider: (provider: MainState['provider']) => void;
   category: string | null;
-  setCategory: (category: MainState["category"]) => void;
+  setCategory: (category: MainState['category']) => void;
   dataset: string | null;
-  setDataset: (dataset: MainState["dataset"]) => void;
-  geographyFilter: Feature<Polygon> | null;
-  setGeographyFilter: (geographyFilter: MainState["geographyFilter"]) => void;
+  setDataset: (dataset: MainState['dataset']) => void;
+  geographyFilter: GeographyFilter | null;
+  setGeographyFilter: (geographyFilter: MainState['geographyFilter']) => void;
   hasGeographyFilter: () => boolean;
   collections: Collection[];
-  setCollections: (collections: MainState["collections"]) => void;
+  setCollections: (collections: MainState['collections']) => void;
   addCollection: (collection: Collection) => void;
-  hasCollection: (collectionId: Collection["id"]) => boolean;
+  hasCollection: (collectionId: Collection['id']) => boolean;
   locations: Location[];
-  setLocations: (locations: MainState["locations"]) => void;
+  setLocations: (locations: MainState['locations']) => void;
   addLocation: (location: Location) => void;
-  hasLocation: (locationId: Location["id"]) => boolean;
-  removeLocation: (locationId: Location["id"]) => void;
+  hasLocation: (locationId: Location['id']) => boolean;
+  removeLocation: (locationId: Location['id']) => void;
 }

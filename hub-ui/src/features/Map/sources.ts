@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { SourceConfig } from "@/components/Map/types";
+import { SourceConfig } from '@/components/Map/types';
 
 export enum SourceId {
-  Huc02 = "hu02",
-  States = "states",
+  Huc02 = 'hu02',
+  States = 'states',
+  DoiRegions = 'doi-regions',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
