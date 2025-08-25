@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { EDRService } from '@/services/edr.service';
+import { EDRService } from "@/services/edr.service";
 
 const geoconnexService = new EDRService({
-    baseUrl: 'https://reference.geoconnex.us/',
+  baseUrl: "https://reference.geoconnex.us/",
 });
 
 export default geoconnexService;

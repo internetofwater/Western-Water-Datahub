@@ -1,11 +1,16 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 export enum Huc02Field {
-  Id = 'id', // Id field is appended in vector tile layer, not items
-  Fid = 'fid',
-  Uri = 'uri',
-  Name = 'name',
-  GnisUrl = 'gnis_url',
-  GnisId = 'gnis_id',
-  LoadDate = 'loaddate',
+  Id = "id", // Id field is appended in vector tile layer, not items
+  Fid = "fid",
+  Uri = "uri",
+  Name = "name",
+  GnisUrl = "gnis_url",
+  GnisId = "gnis_id",
+  LoadDate = "loaddate",
 }
 
 export type Huc02BasinProperties = {

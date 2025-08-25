@@ -1,6 +1,11 @@
-import React from 'react';
-import { Divider, Image, Stack, Title } from '@mantine/core';
-import styles from '@/features/Panel/Panel.module.css';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import React from "react";
+import { Divider, Image, Stack, Title } from "@mantine/core";
+import styles from "@/features/Panel/Panel.module.css";
 
 export const Header: React.FC = () => {
   return (
@@ -10,9 +15,9 @@ export const Header: React.FC = () => {
         alt="United States Bureau of Reclamation Logo"
         h={60}
         style={{
-          maxHeight: '60px',
-          height: 'auto',
-          width: 'auto',
+          maxHeight: "60px",
+          height: "auto",
+          width: "auto",
         }}
         fit="contain"
       />

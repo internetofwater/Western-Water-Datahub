@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import NotificationManager from '@/managers/Notification.manager';
-import useSessionStore from '@/stores/session';
+import NotificationManager from "@/managers/Notification.manager";
+import useSessionStore from "@/stores/session";
 
 const notificationManager = new NotificationManager(useSessionStore);
 

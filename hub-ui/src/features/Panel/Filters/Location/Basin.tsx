@@ -1,10 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
-import { FeatureCollection, Polygon } from 'geojson';
-import { ComboboxData, Select, Skeleton } from '@mantine/core';
-import { SourceId } from '@/features/Map/sources';
-import geoconnexService from '@/services/init/geoconnex.init';
-import { Huc02BasinProperties, Huc02Field } from '@/types/huc02';
-import { formatOptions } from '../utils';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import { useEffect, useRef, useState } from "react";
+import { FeatureCollection, Polygon } from "geojson";
+import { ComboboxData, Select, Skeleton } from "@mantine/core";
+import { SourceId } from "@/features/Map/sources";
+import geoconnexService from "@/services/init/geoconnex.init";
+import { Huc02BasinProperties, Huc02Field } from "@/types/huc02";
+import { formatOptions } from "../utils";
 
 export const Basin: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -30,7 +35,7 @@ export const Basin: React.FC = () => {
         const basinOptions = formatOptions(
           basinFeatureCollection.features,
           (feature) => String(feature.id),
-          (feature) => String(feature?.properties?.[Huc02Field.Name])
+          (feature) => String(feature?.properties?.[Huc02Field.Name]),
         );
 
         if (isMounted.current) {
@@ -40,10 +45,10 @@ export const Basin: React.FC = () => {
       }
     } catch (error) {
       if (
-        (error as Error)?.name === 'AbortError' ||
-        (typeof error === 'string' && error === 'Component unmount')
+        (error as Error)?.name === "AbortError" ||
+        (typeof error === "string" && error === "Component unmount")
       ) {
-        console.log('Fetch request canceled');
+        console.log("Fetch request canceled");
       } else if ((error as Error)?.message) {
         const _error = error as Error;
         console.error(_error);
@@ -57,7 +62,7 @@ export const Basin: React.FC = () => {
     return () => {
       isMounted.current = false;
       if (controller.current) {
-        controller.current.abort('Component unmount');
+        controller.current.abort("Component unmount");
       }
     };
   }, []);
@@ -67,7 +72,13 @@ export const Basin: React.FC = () => {
       height={55} // Default dimensions of select
       visible={loading || basinOptions.length === 0}
     >
-      <Select size="xs" label="Basin" placeholder="Select..." data={basinOptions} searchable />
+      <Select
+        size="xs"
+        label="Basin"
+        placeholder="Select..."
+        data={basinOptions}
+        searchable
+      />
     </Skeleton>
   );
 };

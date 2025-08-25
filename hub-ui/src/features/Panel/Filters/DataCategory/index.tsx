@@ -1,6 +1,11 @@
-import { Stack, Title } from '@mantine/core';
-import { Category } from './Category';
-import { Dataset } from './Dataset';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import { Stack, Title } from "@mantine/core";
+import { Category } from "./Category";
+import { Dataset } from "./Dataset";
 
 const DataCategory: React.FC = () => {
   return (

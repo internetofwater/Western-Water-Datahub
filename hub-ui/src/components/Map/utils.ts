@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { FeatureServiceOptions } from '@hansdo/mapbox-gl-arcgis-featureserver';
+import { FeatureServiceOptions } from "@hansdo/mapbox-gl-arcgis-featureserver";
 import {
   FullscreenControl,
   Map,
@@ -11,14 +11,14 @@ import {
   Popup,
   ScaleControl,
   SourceSpecification,
-} from 'mapbox-gl';
-import { Root } from 'react-dom/client';
+} from "mapbox-gl";
+import { Root } from "react-dom/client";
 import {
   MainLayerDefinition,
   MapComponentProps,
   SourceConfig,
   Sources,
-} from '@/components/Map/types';
+} from "@/components/Map/types";
 
 /**
  * Adds sources to the map based on the provided source configurations.
@@ -30,25 +30,39 @@ import {
 export const addSources = (
   map: Map,
   sourceConfigs: SourceConfig[],
-  featureService: (sourceId: string, map: Map, options: FeatureServiceOptions) => void
+  featureService: (
+    sourceId: string,
+    map: Map,
+    options: FeatureServiceOptions,
+  ) => void,
 ) => {
   sourceConfigs.forEach((sourceConfig) => {
     switch (sourceConfig.type) {
       case Sources.ESRI:
         if (!map.getSource(sourceConfig.id)) {
-          featureService(sourceConfig.id, map, sourceConfig.definition as FeatureServiceOptions);
+          featureService(
+            sourceConfig.id,
+            map,
+            sourceConfig.definition as FeatureServiceOptions,
+          );
         }
         break;
 
       case Sources.VectorTile:
         if (!map.getSource(sourceConfig.id)) {
-          map.addSource(sourceConfig.id, sourceConfig.definition as SourceSpecification);
+          map.addSource(
+            sourceConfig.id,
+            sourceConfig.definition as SourceSpecification,
+          );
         }
         break;
       case Sources.GeoJSON:
       default:
         if (!map.getSource(sourceConfig.id)) {
-          map.addSource(sourceConfig.id, sourceConfig.definition as SourceSpecification);
+          map.addSource(
+            sourceConfig.id,
+            sourceConfig.definition as SourceSpecification,
+          );
         }
         break;
     }
@@ -61,7 +75,10 @@ export const addSources = (
  * @param {Map} map - The Mapbox map instance.
  * @param {MainLayerDefinition[]} layerDefinitions - Array of layer definitions.
  */
-export const addLayers = (map: Map, layerDefinitions: MainLayerDefinition[]) => {
+export const addLayers = (
+  map: Map,
+  layerDefinitions: MainLayerDefinition[],
+) => {
   layerDefinitions.forEach((layer) => {
     if (layer.config && !map.getLayer(layer.id)) {
       map.addLayer(layer.config);
@@ -90,24 +107,30 @@ export const addHoverFunctions = (
   hoverPopup: Popup,
   persistentPopup: Popup,
   root: Root,
-  container: HTMLDivElement
+  container: HTMLDivElement,
 ) => {
   layerDefinitions.forEach((layer) => {
     if (layer.hoverFunction) {
       map.on(
-        'mouseenter',
+        "mouseenter",
         layer.id,
-        layer.hoverFunction(map, hoverPopup, persistentPopup, root, container)
+        layer.hoverFunction(map, hoverPopup, persistentPopup, root, container),
       );
       if (layer.customHoverExitFunction) {
         map.on(
-          'mouseleave',
+          "mouseleave",
           layer.id,
-          layer.customHoverExitFunction(map, hoverPopup, persistentPopup, root, container)
+          layer.customHoverExitFunction(
+            map,
+            hoverPopup,
+            persistentPopup,
+            root,
+            container,
+          ),
         );
       } else {
-        map.on('mouseleave', layer.id, () => {
-          map.getCanvas().style.cursor = '';
+        map.on("mouseleave", layer.id, () => {
+          map.getCanvas().style.cursor = "";
           hoverPopup.remove();
         });
       }
@@ -116,19 +139,31 @@ export const addHoverFunctions = (
       layer.subLayers!.forEach((subLayer) => {
         if (subLayer.hoverFunction) {
           map.on(
-            'mouseenter',
+            "mouseenter",
             subLayer.id,
-            subLayer.hoverFunction(map, hoverPopup, persistentPopup, root, container)
+            subLayer.hoverFunction(
+              map,
+              hoverPopup,
+              persistentPopup,
+              root,
+              container,
+            ),
           );
           if (subLayer.customHoverExitFunction) {
             map.on(
-              'mouseleave',
+              "mouseleave",
               subLayer.id,
-              subLayer.customHoverExitFunction(map, hoverPopup, persistentPopup, root, container)
+              subLayer.customHoverExitFunction(
+                map,
+                hoverPopup,
+                persistentPopup,
+                root,
+                container,
+              ),
             );
           } else {
-            map.on('mouseleave', subLayer.id, () => {
-              map.getCanvas().style.cursor = '';
+            map.on("mouseleave", subLayer.id, () => {
+              map.getCanvas().style.cursor = "";
               hoverPopup.remove();
             });
           }
@@ -152,23 +187,35 @@ export const addMouseMoveFunctions = (
   hoverPopup: Popup,
   persistentPopup: Popup,
   root: Root,
-  container: HTMLDivElement
+  container: HTMLDivElement,
 ) => {
   layerDefinitions.forEach((layer) => {
     if (layer.mouseMoveFunction) {
       map.on(
-        'mousemove',
+        "mousemove",
         layer.id,
-        layer.mouseMoveFunction(map, hoverPopup, persistentPopup, root, container)
+        layer.mouseMoveFunction(
+          map,
+          hoverPopup,
+          persistentPopup,
+          root,
+          container,
+        ),
       );
     }
     if ((layer?.subLayers ?? []).length > 0) {
       layer.subLayers!.forEach((subLayer) => {
         if (subLayer.mouseMoveFunction) {
           map.on(
-            'mousemove',
+            "mousemove",
             subLayer.id,
-            subLayer.mouseMoveFunction(map, hoverPopup, persistentPopup, root, container)
+            subLayer.mouseMoveFunction(
+              map,
+              hoverPopup,
+              persistentPopup,
+              root,
+              container,
+            ),
           );
         }
       });
@@ -190,23 +237,29 @@ export const addClickFunctions = (
   hoverPopup: Popup,
   persistentPopup: Popup,
   root: Root,
-  container: HTMLDivElement
+  container: HTMLDivElement,
 ) => {
   layerDefinitions.forEach((layer) => {
     if (layer.clickFunction) {
       map.on(
-        'click',
+        "click",
         layer.id,
-        layer.clickFunction(map, hoverPopup, persistentPopup, root, container)
+        layer.clickFunction(map, hoverPopup, persistentPopup, root, container),
       );
     }
     if ((layer?.subLayers ?? []).length > 0) {
       layer.subLayers!.forEach((subLayer) => {
         if (subLayer.clickFunction) {
           map.on(
-            'click',
+            "click",
             subLayer.id,
-            subLayer.clickFunction(map, hoverPopup, persistentPopup, root, container)
+            subLayer.clickFunction(
+              map,
+              hoverPopup,
+              persistentPopup,
+              root,
+              container,
+            ),
           );
         }
       });
@@ -220,24 +273,28 @@ export const addClickFunctions = (
  * @param {Map} map - The Mapbox map instance.
  * @param {MapComponentProps['controls']} controls - Object representing the control configurations.
  */
-export const addControls = (map: Map, controls: MapComponentProps['controls']) => {
+export const addControls = (
+  map: Map,
+  controls: MapComponentProps["controls"],
+) => {
   if (controls) {
     const { scaleControl, navigationControl, fullscreenControl } = controls;
     if (scaleControl) {
-      const scaleControlOptions = typeof scaleControl === 'boolean' ? {} : scaleControl;
+      const scaleControlOptions =
+        typeof scaleControl === "boolean" ? {} : scaleControl;
       map.addControl(new ScaleControl(scaleControlOptions));
     }
     if (navigationControl) {
       const navigationControlOptions =
-        typeof navigationControl === 'boolean' ? {} : navigationControl;
+        typeof navigationControl === "boolean" ? {} : navigationControl;
       map.addControl(
         new NavigationControl(navigationControlOptions),
-        'bottom-right' // TODO: add ability to position
+        "bottom-right", // TODO: add ability to position
       );
     }
     if (fullscreenControl) {
       const fullscreenControlOptions =
-        typeof fullscreenControl === 'boolean' ? {} : fullscreenControl;
+        typeof fullscreenControl === "boolean" ? {} : fullscreenControl;
       map.addControl(new FullscreenControl(fullscreenControlOptions));
     }
   }
@@ -245,11 +302,11 @@ export const addControls = (map: Map, controls: MapComponentProps['controls']) =
 
 export const addCustomControls = (
   map: Map,
-  customControls: MapComponentProps['customControls']
+  customControls: MapComponentProps["customControls"],
 ) => {
   if (customControls) {
     customControls.forEach((customControl) =>
-      map.addControl(customControl.control, customControl.position)
+      map.addControl(customControl.control, customControl.position),
     );
   }
 };

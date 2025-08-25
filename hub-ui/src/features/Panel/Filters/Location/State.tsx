@@ -1,11 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
-import { FeatureCollection, Polygon } from 'geojson';
-import { ComboboxData, Select, Skeleton } from '@mantine/core';
-import { ValidStates } from '@/features/Map/consts';
-import { SourceId } from '@/features/Map/sources';
-import geoconnexService from '@/services/init/geoconnex.init';
-import { StateField, StateProperties } from '@/types/state';
-import { formatOptions } from '../utils';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import { useEffect, useRef, useState } from "react";
+import { FeatureCollection, Polygon } from "geojson";
+import { ComboboxData, Select, Skeleton } from "@mantine/core";
+import { ValidStates } from "@/features/Map/consts";
+import { SourceId } from "@/features/Map/sources";
+import geoconnexService from "@/services/init/geoconnex.init";
+import { StateField, StateProperties } from "@/types/state";
+import { formatOptions } from "../utils";
 
 export const State: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -30,11 +35,11 @@ export const State: React.FC = () => {
       if (stateFeatureCollection.features.length) {
         const basinOptions = formatOptions(
           stateFeatureCollection.features.filter((feature) =>
-            ValidStates.includes(feature.properties[StateField.Acronym])
+            ValidStates.includes(feature.properties[StateField.Acronym]),
           ),
           (feature) => String(feature?.properties?.[StateField.Acronym]),
           (feature) => String(feature?.properties?.[StateField.Name]),
-          'All States'
+          "All States",
         );
 
         if (isMounted.current) {
@@ -44,10 +49,10 @@ export const State: React.FC = () => {
       }
     } catch (error) {
       if (
-        (error as Error)?.name === 'AbortError' ||
-        (typeof error === 'string' && error === 'Component unmount')
+        (error as Error)?.name === "AbortError" ||
+        (typeof error === "string" && error === "Component unmount")
       ) {
-        console.log('Fetch request canceled');
+        console.log("Fetch request canceled");
       } else if ((error as Error)?.message) {
         const _error = error as Error;
         console.error(_error);
@@ -61,7 +66,7 @@ export const State: React.FC = () => {
     return () => {
       isMounted.current = false;
       if (controller.current) {
-        controller.current.abort('Component unmount');
+        controller.current.abort("Component unmount");
       }
     };
   }, []);
@@ -71,7 +76,13 @@ export const State: React.FC = () => {
       height={55} // Default dimensions of select
       visible={loading || stateOptions.length === 0}
     >
-      <Select size="xs" label="State" placeholder="Select..." data={stateOptions} searchable />
+      <Select
+        size="xs"
+        label="State"
+        placeholder="Select..."
+        data={stateOptions}
+        searchable
+      />
     </Skeleton>
   );
 };

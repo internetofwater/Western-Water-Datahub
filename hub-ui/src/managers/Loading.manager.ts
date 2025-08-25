@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { v6 } from 'uuid';
-import { StoreApi, UseBoundStore } from 'zustand';
-import { Loading, SessionState } from '@/stores/session/types';
+import { v6 } from "uuid";
+import { StoreApi, UseBoundStore } from "zustand";
+import { Loading, SessionState } from "@/stores/session/types";
 
 class LoadingManager {
   private store: UseBoundStore<StoreApi<SessionState>>;
@@ -14,11 +14,11 @@ class LoadingManager {
     this.store = store;
   }
 
-  private createUUID(): Loading['id'] {
+  private createUUID(): Loading["id"] {
     return v6();
   }
 
-  add(message: Loading['message']): Loading['id'] {
+  add(message: Loading["message"]): Loading["id"] {
     const loadingInstance: Loading = {
       id: this.createUUID(),
       message,
@@ -29,7 +29,7 @@ class LoadingManager {
     return loadingInstance.id;
   }
 
-  remove(id: Loading['id']) {
+  remove(id: Loading["id"]) {
     this.store.getState().removeLoadingInstance(id);
   }
 }
