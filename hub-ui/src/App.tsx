@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import "@mantine/core/styles.css";
-import "@mantine/dates/styles.css";
-import "@/global.css";
+import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
+import '@/global.css';
 
-import { Providers } from "@/providers";
-import { LayoutPage } from "./pages/Layout.page";
+import { LayoutPage } from '@/pages/Layout.page';
+import { Providers } from '@/providers';
 
 /**
  * This component renderes the router and wraps it in the map and mantine providers.

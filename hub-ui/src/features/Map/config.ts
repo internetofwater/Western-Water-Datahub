@@ -3,19 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  DataDrivenPropertyValueSpecification,
-  LayerSpecification,
-  Map,
-  Popup,
-} from "mapbox-gl";
-import { Root } from "react-dom/client";
-import {
-  CustomListenerFunction,
-  MainLayerDefinition,
-} from "@/components/Map/types";
+import { DataDrivenPropertyValueSpecification, LayerSpecification, Map, Popup } from 'mapbox-gl';
+import { Root } from 'react-dom/client';
+import { CustomListenerFunction, MainLayerDefinition } from '@/components/Map/types';
 
-export const MAP_ID = "main-map";
+export const MAP_ID = 'main-map';
 
 export enum LayerId {}
 
@@ -44,7 +36,7 @@ export const allLayerIds = [];
 export const getLayerName = (layerId: LayerId | SubLayerId): string => {
   switch (layerId) {
     default:
-      return "";
+      return '';
   }
 };
 
@@ -61,11 +53,11 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
  * @function
  */
 export const getLayerColor = (
-  id: LayerId | SubLayerId,
+  id: LayerId | SubLayerId
 ): DataDrivenPropertyValueSpecification<string> => {
   switch (id) {
     default:
-      return "#FFF";
+      return '#FFF';
   }
 };
 
@@ -81,9 +73,7 @@ export const getLayerColor = (
  *
  * @function
  */
-export const getLayerConfig = (
-  id: LayerId | SubLayerId,
-): null | LayerSpecification => {
+export const getLayerConfig = (id: LayerId | SubLayerId): null | LayerSpecification => {
   switch (id) {
     default:
       return null;
@@ -91,28 +81,26 @@ export const getLayerConfig = (
 };
 
 // Define and hover functions with curry-ed map and popup objects
-export const getLayerHoverFunction = (
-  id: LayerId | SubLayerId,
-): CustomListenerFunction => {
+export const getLayerHoverFunction = (id: LayerId | SubLayerId): CustomListenerFunction => {
   return (
     map: Map,
     hoverPopup: Popup,
     persistentPopup: Popup,
     root: Root,
-    container: HTMLDivElement,
+    container: HTMLDivElement
   ) => {
     switch (id) {
       default:
         return (e) => {
-          console.log("Hover Event Triggered: ", e);
-          console.log("The map: ", map);
-          console.log("Available Popups: ");
-          console.log("Hover: ", hoverPopup);
-          console.log("Persistent: ", persistentPopup);
-          console.log("Content Root: ", root);
-          console.log("Content Container: ", container);
+          console.log('Hover Event Triggered: ', e);
+          console.log('The map: ', map);
+          console.log('Available Popups: ');
+          console.log('Hover: ', hoverPopup);
+          console.log('Persistent: ', persistentPopup);
+          console.log('Content Root: ', root);
+          console.log('Content Container: ', container);
 
-          map.getCanvas().style.cursor = "pointer";
+          map.getCanvas().style.cursor = 'pointer';
         };
     }
   };
@@ -131,25 +119,25 @@ export const getLayerHoverFunction = (
  * @function
  */
 export const getLayerCustomHoverExitFunction = (
-  id: LayerId | SubLayerId,
+  id: LayerId | SubLayerId
 ): CustomListenerFunction => {
   return (
     map: Map,
     hoverPopup: Popup,
     persistentPopup: Popup,
     root: Root,
-    container: HTMLDivElement,
+    container: HTMLDivElement
   ) => {
     switch (id) {
       default:
         return (e) => {
-          console.log("Hover Exit Event Triggered: ", e);
-          console.log("The map: ", map);
-          console.log("Available Popups: ");
-          console.log("Hover: ", hoverPopup);
-          console.log("Persistent: ", persistentPopup);
-          console.log("Content Root: ", root);
-          console.log("Content Container: ", container);
+          console.log('Hover Exit Event Triggered: ', e);
+          console.log('The map: ', map);
+          console.log('Available Popups: ');
+          console.log('Hover: ', hoverPopup);
+          console.log('Persistent: ', persistentPopup);
+          console.log('Content Root: ', root);
+          console.log('Content Container: ', container);
         };
     }
   };
@@ -167,26 +155,24 @@ export const getLayerCustomHoverExitFunction = (
  *
  * @function
  */
-export const getLayerMouseMoveFunction = (
-  id: LayerId | SubLayerId,
-): CustomListenerFunction => {
+export const getLayerMouseMoveFunction = (id: LayerId | SubLayerId): CustomListenerFunction => {
   return (
     map: Map,
     hoverPopup: Popup,
     persistentPopup: Popup,
     root: Root,
-    container: HTMLDivElement,
+    container: HTMLDivElement
   ) => {
     switch (id) {
       default:
         return (e) => {
-          console.log("Hover Exit Event Triggered: ", e);
-          console.log("The map: ", map);
-          console.log("Available Popups: ");
-          console.log("Hover: ", hoverPopup);
-          console.log("Persistent: ", persistentPopup);
-          console.log("Content Root: ", root);
-          console.log("Content Container: ", container);
+          console.log('Hover Exit Event Triggered: ', e);
+          console.log('The map: ', map);
+          console.log('Available Popups: ');
+          console.log('Hover: ', hoverPopup);
+          console.log('Persistent: ', persistentPopup);
+          console.log('Content Root: ', root);
+          console.log('Content Container: ', container);
         };
     }
   };
@@ -203,26 +189,24 @@ export const getLayerMouseMoveFunction = (
  *
  * @function
  */
-export const getLayerClickFunction = (
-  id: LayerId | SubLayerId,
-): CustomListenerFunction => {
+export const getLayerClickFunction = (id: LayerId | SubLayerId): CustomListenerFunction => {
   return (
     map: Map,
     hoverPopup: Popup,
     persistentPopup: Popup,
     root: Root,
-    container: HTMLDivElement,
+    container: HTMLDivElement
   ) => {
     switch (id) {
       default:
         return (e) => {
-          console.log("Click Event Triggered: ", e);
-          console.log("The map: ", map);
-          console.log("Available Popups: ");
-          console.log("Hover: ", hoverPopup);
-          console.log("Persistent: ", persistentPopup);
-          console.log("Content Root: ", root);
-          console.log("Content Container: ", container);
+          console.log('Click Event Triggered: ', e);
+          console.log('The map: ', map);
+          console.log('Available Popups: ');
+          console.log('Hover: ', hoverPopup);
+          console.log('Persistent: ', persistentPopup);
+          console.log('Content Root: ', root);
+          console.log('Content Container: ', container);
         };
     }
   };

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Select, Stack, Title } from "@mantine/core";
+import { Select, Stack, Title } from '@mantine/core';
 
 const Provider: React.FC = () => {
   return (
@@ -15,7 +15,7 @@ const Provider: React.FC = () => {
         size="xs"
         label="Provider"
         placeholder="Select..."
-        data={["React", "Angular", "Vue", "Svelte"]}
+        data={['React', 'Angular', 'Vue', 'Svelte']}
         searchable
       />
     </Stack>

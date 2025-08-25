@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { PropsWithChildren } from "react";
-import { MantineProvider } from "@mantine/core";
-import { theme } from "@/theme";
+import { PropsWithChildren } from 'react';
+import { MantineProvider } from '@mantine/core';
+import { theme } from '@/theme';
 
 /**
  * Provides Mantine theme

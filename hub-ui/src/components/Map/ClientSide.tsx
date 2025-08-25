@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useRef } from "react";
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import mapboxgl from "mapbox-gl";
-import { MapComponentProps } from "@/components/Map/types";
+import React, { useEffect, useRef } from 'react';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import mapboxgl from 'mapbox-gl';
+import { MapComponentProps } from '@/components/Map/types';
 import {
   addClickFunctions,
   addControls,
@@ -15,16 +15,14 @@ import {
   addLayers,
   addMouseMoveFunctions,
   addSources,
-} from "@/components/Map/utils";
-import { useMap } from "@/contexts/MapContexts";
+} from '@/components/Map/utils';
+import { useMap } from '@/contexts/MapContexts';
 
-import "mapbox-gl/dist/mapbox-gl.css";
-import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import 'mapbox-gl/dist/mapbox-gl.css';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
-import FeatureService, {
-  FeatureServiceOptions,
-} from "@hansdo/mapbox-gl-arcgis-featureserver";
-import { createRoot } from "react-dom/client";
+import FeatureService, { FeatureServiceOptions } from '@hansdo/mapbox-gl-arcgis-featureserver';
+import { createRoot } from 'react-dom/client';
 
 FeatureService.prototype._setAttribution = function () {
   // Stub to prevent attribution bug
@@ -66,8 +64,7 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
   } = props;
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const { map, hoverPopup, persistentPopup, root, container, setMap } =
-    useMap(id);
+  const { map, hoverPopup, persistentPopup, root, container, setMap } = useMap(id);
 
   useEffect(() => {
     if (!map && mapContainerRef.current) {
@@ -95,44 +92,23 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
         }
       }
 
-      const container = document.createElement("div");
-      container.setAttribute("id", "customPopupContent");
+      const container = document.createElement('div');
+      container.setAttribute('id', 'customPopupContent');
       const root = createRoot(container);
 
-      newMap.once("load", () => {
+      newMap.once('load', () => {
         const createFeatureService = (
           sourceId: string,
           map: mapboxgl.Map,
-          options: FeatureServiceOptions,
+          options: FeatureServiceOptions
         ) => new FeatureService(sourceId, map, options);
 
         setMap(newMap, hoverPopup, persistentPopup, _geocoder, root, container);
         addSources(newMap, sources, createFeatureService);
         addLayers(newMap, layers);
-        addHoverFunctions(
-          newMap,
-          layers,
-          hoverPopup,
-          persistentPopup,
-          root,
-          container,
-        );
-        addClickFunctions(
-          newMap,
-          layers,
-          hoverPopup,
-          persistentPopup,
-          root,
-          container,
-        );
-        addMouseMoveFunctions(
-          newMap,
-          layers,
-          hoverPopup,
-          persistentPopup,
-          root,
-          container,
-        );
+        addHoverFunctions(newMap, layers, hoverPopup, persistentPopup, root, container);
+        addClickFunctions(newMap, layers, hoverPopup, persistentPopup, root, container);
+        addMouseMoveFunctions(newMap, layers, hoverPopup, persistentPopup, root, container);
         addControls(newMap, controls);
         addCustomControls(newMap, customControls);
       });
@@ -169,50 +145,25 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
       return;
     }
 
-    map.on("style.load", () => {
+    map.on('style.load', () => {
       const createFeatureService = (
         sourceId: string,
         map: mapboxgl.Map,
-        options: FeatureServiceOptions,
+        options: FeatureServiceOptions
       ) => new FeatureService(sourceId, map, options);
 
       // Layers reset on style changes
       addSources(map, sources, createFeatureService);
       addLayers(map, layers);
-      addHoverFunctions(
-        map,
-        layers,
-        hoverPopup,
-        persistentPopup,
-        root,
-        container,
-      );
-      addClickFunctions(
-        map,
-        layers,
-        hoverPopup,
-        persistentPopup,
-        root,
-        container,
-      );
-      addMouseMoveFunctions(
-        map,
-        layers,
-        hoverPopup,
-        persistentPopup,
-        root,
-        container,
-      );
+      addHoverFunctions(map, layers, hoverPopup, persistentPopup, root, container);
+      addClickFunctions(map, layers, hoverPopup, persistentPopup, root, container);
+      addMouseMoveFunctions(map, layers, hoverPopup, persistentPopup, root, container);
     });
   }, [map]);
 
   // Style the container using #map-container-${id} in a global css file
   return (
-    <div
-      data-testid={`map-container-${id}`}
-      id={`map-container-${id}`}
-      ref={mapContainerRef}
-    />
+    <div data-testid={`map-container-${id}`} id={`map-container-${id}`} ref={mapContainerRef} />
   );
 };
 

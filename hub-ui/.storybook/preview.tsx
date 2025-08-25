@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import "@mantine/core/styles.css";
-import "@mantine/dates/styles.css";
+import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 
-import React, { useEffect } from "react";
-import { addons } from "@storybook/preview-api";
-import { DARK_MODE_EVENT_NAME } from "storybook-dark-mode";
-import { MantineProvider, useMantineColorScheme } from "@mantine/core";
-import { theme } from "../src/theme";
+import React, { useEffect } from 'react';
+import { addons } from '@storybook/preview-api';
+import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
+import { MantineProvider, useMantineColorScheme } from '@mantine/core';
+import { theme } from '../src/theme';
 
-import "../src/global.css";
+import '../src/global.css';
 
 const channel = addons.getChannel();
 
 export const parameters = {
-  layout: "fullscreen",
+  layout: 'fullscreen',
   options: {
     showPanel: false,
     storySort: (a, b) => {
@@ -28,8 +28,7 @@ export const parameters = {
 
 function ColorSchemeWrapper({ children }: { children: React.ReactNode }) {
   const { setColorScheme } = useMantineColorScheme();
-  const handleColorScheme = (value: boolean) =>
-    setColorScheme(value ? "dark" : "light");
+  const handleColorScheme = (value: boolean) => setColorScheme(value ? 'dark' : 'light');
 
   useEffect(() => {
     channel.on(DARK_MODE_EVENT_NAME, handleColorScheme);
@@ -40,10 +39,6 @@ function ColorSchemeWrapper({ children }: { children: React.ReactNode }) {
 }
 
 export const decorators = [
-  (renderStory: any) => (
-    <ColorSchemeWrapper>{renderStory()}</ColorSchemeWrapper>
-  ),
-  (renderStory: any) => (
-    <MantineProvider theme={theme}>{renderStory()}</MantineProvider>
-  ),
+  (renderStory: any) => <ColorSchemeWrapper>{renderStory()}</ColorSchemeWrapper>,
+  (renderStory: any) => <MantineProvider theme={theme}>{renderStory()}</MantineProvider>,
 ];

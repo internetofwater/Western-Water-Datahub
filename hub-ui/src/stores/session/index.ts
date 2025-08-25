@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { create } from "zustand";
-import { SessionState } from "@/stores/session/types";
+import { create } from 'zustand';
+import { SessionState } from '@/stores/session/types';
 
 const useSessionStore = create<SessionState>((set) => ({
   downloadModalOpen: false,
@@ -17,7 +17,7 @@ const useSessionStore = create<SessionState>((set) => ({
   removeLoadingInstance: (id) =>
     set((state) => ({
       loadingInstances: state.loadingInstances.filter(
-        (loadingInstance) => loadingInstance.id !== id,
+        (loadingInstance) => loadingInstance.id !== id
       ),
     })),
   notifications: [],
@@ -27,9 +27,7 @@ const useSessionStore = create<SessionState>((set) => ({
     })),
   removeNotification: (id) =>
     set((state) => ({
-      notifications: state.notifications.filter(
-        (notification) => notification.id !== id,
-      ),
+      notifications: state.notifications.filter((notification) => notification.id !== id),
     })),
 }));
 

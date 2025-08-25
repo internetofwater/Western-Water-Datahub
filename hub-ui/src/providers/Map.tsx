@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { PropsWithChildren } from "react";
-import { MapProvider } from "@/contexts/MapContexts";
-import { MAP_ID } from "@/features/Map/config";
+import { PropsWithChildren } from 'react';
+import { MapProvider } from '@/contexts/MapContexts';
+import { MAP_ID } from '@/features/Map/config';
 
 // import { MAP_ID } from '@/features/Map/consts';
 

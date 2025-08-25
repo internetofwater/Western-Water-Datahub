@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { createTheme } from "@mantine/core";
+import { createTheme } from '@mantine/core';
 
 export const theme = createTheme({
-  fontFamily: "Arial, Helvetica, sans-serif",
+  fontFamily: 'Arial, Helvetica, sans-serif',
   headings: {
-    fontFamily: "Arial, Helvetica, sans-serif",
+    fontFamily: 'Arial, Helvetica, sans-serif',
   },
 });

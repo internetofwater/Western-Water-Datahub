@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useCallback, useMemo } from "react";
-import ReactEChartsCore from "echarts-for-react/lib/core";
-import { BarChart as _BarChart } from "echarts/charts";
+import { useCallback, useMemo } from 'react';
+import ReactEChartsCore from 'echarts-for-react/lib/core';
+import { BarChart as _BarChart } from 'echarts/charts';
 import {
   DatasetComponent,
   GridComponent,
@@ -13,12 +13,12 @@ import {
   TitleComponent,
   ToolboxComponent,
   TooltipComponent,
-} from "echarts/components";
-import * as echarts from "echarts/core";
-import { ECElementEvent } from "echarts/core";
-import { CanvasRenderer } from "echarts/renderers";
-import { GeoJsonProperties } from "geojson";
-import { Series } from "@/components/Charts/types";
+} from 'echarts/components';
+import * as echarts from 'echarts/core';
+import { ECElementEvent } from 'echarts/core';
+import { CanvasRenderer } from 'echarts/renderers';
+import { GeoJsonProperties } from 'geojson';
+import { Series } from '@/components/Charts/types';
 
 echarts.use([
   TitleComponent,
@@ -57,15 +57,15 @@ const BarChart = <T extends GeoJsonProperties>(props: Props<T>) => {
           }
         : undefined,
       tooltip: {
-        trigger: "axis",
+        trigger: 'axis',
         axisPointer: {
-          type: "shadow",
+          type: 'shadow',
         },
       },
       grid: {
-        left: "1%",
-        right: "0%",
-        bottom: "3%",
+        left: '1%',
+        right: '0%',
+        bottom: '3%',
         containLabel: true,
       },
       legend: legend
@@ -79,19 +79,19 @@ const BarChart = <T extends GeoJsonProperties>(props: Props<T>) => {
         },
       },
       yAxis: {
-        type: "category",
+        type: 'category',
 
         data: series.flatMap(({ data, labelProperty, cleanLabel }) =>
           data.features.map((feature) =>
             cleanLabel
               ? cleanLabel(feature.properties![labelProperty])
-              : feature.properties![labelProperty],
-          ),
+              : feature.properties![labelProperty]
+          )
         ),
         axisLabel: {
           hideOverlap: false,
           width: 100,
-          overflow: "truncate",
+          overflow: 'truncate',
           margin: 8,
           textStyle: {
             fontSize: 11,
@@ -99,44 +99,39 @@ const BarChart = <T extends GeoJsonProperties>(props: Props<T>) => {
         },
       },
       xAxis: {
-        type: "value",
+        type: 'value',
         axisLabel: { interval: 0, rotate: -30 },
       },
-      series: series.map(
-        ({ data, name, color, valueProperty, idProperty }) => ({
-          name,
-          type: "bar",
-          stack: "total",
+      series: series.map(({ data, name, color, valueProperty, idProperty }) => ({
+        name,
+        type: 'bar',
+        stack: 'total',
 
-          itemStyle: {
-            color,
-          },
-          emphasis: {
-            focus: "series",
-          },
-          data: data.features.map((feature) => ({
-            value: Number(feature.properties![valueProperty]),
-            id: feature.properties![idProperty],
-          })),
-        }),
-      ),
+        itemStyle: {
+          color,
+        },
+        emphasis: {
+          focus: 'series',
+        },
+        data: data.features.map((feature) => ({
+          value: Number(feature.properties![valueProperty]),
+          id: feature.properties![idProperty],
+        })),
+      })),
     }),
-    [series],
+    [series]
   );
 
   // TODO: this is a hack to allow click events without removing animations
   // if function changes even in metadata then chart full rerenders
-  const _onChartClick = useCallback(
-    onChartClick ? onChartClick : () => null,
-    [],
-  );
+  const _onChartClick = useCallback(onChartClick ? onChartClick : () => null, []);
 
   return (
     <ReactEChartsCore
       style={{
-        height: "100%",
-        width: "98%",
-        marginLeft: "8px",
+        height: '100%',
+        width: '98%',
+        marginLeft: '8px',
       }}
       echarts={echarts}
       option={option}

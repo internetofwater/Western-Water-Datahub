@@ -3,45 +3,45 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GeoJSONFeature, LngLat, Map, MapMouseEvent, Point } from "mapbox-gl";
-import { vi } from "vitest";
+import { GeoJSONFeature, LngLat, Map, MapMouseEvent, Point } from 'mapbox-gl';
+import { vi } from 'vitest';
 
-console.log("mapbox-gl mock loaded");
+console.log('mapbox-gl mock loaded');
 
 let zoom = 0;
 
 const mapEvents = [
-  "load",
-  "idle",
-  "render",
-  "resize",
-  "remove",
-  "mousedown",
-  "mouseup",
-  "click",
-  "dblclick",
-  "mousemove",
-  "mouseover",
-  "mouseout",
-  "mouseenter",
-  "mouseleave",
-  "touchstart",
-  "touchend",
-  "touchmove",
-  "contextmenu",
-  "wheel",
-  "boxzoomstart",
-  "boxzoomend",
-  "boxzoomcancel",
-  "dragstart",
-  "dragend",
-  "drag",
-  "zoomstart",
-  "zoomend",
-  "rotatestart",
-  "rotateend",
-  "pitchstart",
-  "pitchend",
+  'load',
+  'idle',
+  'render',
+  'resize',
+  'remove',
+  'mousedown',
+  'mouseup',
+  'click',
+  'dblclick',
+  'mousemove',
+  'mouseover',
+  'mouseout',
+  'mouseenter',
+  'mouseleave',
+  'touchstart',
+  'touchend',
+  'touchmove',
+  'contextmenu',
+  'wheel',
+  'boxzoomstart',
+  'boxzoomend',
+  'boxzoomcancel',
+  'dragstart',
+  'dragend',
+  'drag',
+  'zoomstart',
+  'zoomend',
+  'rotatestart',
+  'rotateend',
+  'pitchstart',
+  'pitchend',
 ];
 
 const mapMock = {
@@ -79,7 +79,7 @@ const mapMock = {
   emit: vi.fn(),
   getCanvas: vi.fn(() => ({
     style: {
-      cursor: "",
+      cursor: '',
     },
   })),
 };
@@ -111,7 +111,7 @@ export const createFakeMapMouseEvent = (
   type: string,
   map: Map,
   originalEvent: MouseEvent,
-  features: GeoJSONFeature[] = [],
+  features: GeoJSONFeature[] = []
 ): MapMouseEvent => {
   return {
     type,

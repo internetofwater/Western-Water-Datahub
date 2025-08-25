@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { StateCreator } from "zustand";
-import { Collection, MainState } from "../types";
+import { StateCreator } from 'zustand';
+import { Collection, MainState } from '@/stores/main/types';
 
 interface CollectionSlice {
   collections: Collection[];
@@ -15,7 +15,7 @@ interface CollectionSlice {
 
 export const createCollectionSlice: StateCreator<
   MainState,
-  [["zustand/immer", never]],
+  [['zustand/immer', never]],
   [],
   CollectionSlice
 > = (set, get) => ({
@@ -28,6 +28,5 @@ export const createCollectionSlice: StateCreator<
     set((state) => {
       state.collections.push(collection);
     }),
-  hasCollection: (collectionId) =>
-    get().collections.some((c) => c.id === collectionId),
+  hasCollection: (collectionId) => get().collections.some((c) => c.id === collectionId),
 });

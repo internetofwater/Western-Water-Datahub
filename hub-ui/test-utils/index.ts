@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import userEvent from "@testing-library/user-event";
+import userEvent from '@testing-library/user-event';
 
-export * from "@testing-library/react";
-export { render } from "./render";
+export * from '@testing-library/react';
+export { render } from './render';
 export { userEvent };

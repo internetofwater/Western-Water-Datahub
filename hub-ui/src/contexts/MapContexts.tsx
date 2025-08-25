@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { createContext, ReactNode, useContext, useState } from "react";
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import { Map, Popup } from "mapbox-gl";
-import { Root } from "react-dom/client";
+import React, { createContext, ReactNode, useContext, useState } from 'react';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import { Map, Popup } from 'mapbox-gl';
+import { Root } from 'react-dom/client';
 
 /**
  * Defines the structure for a single map context, including the map instance, hover popup, persistent popup, and a function to set the map context.
@@ -31,7 +31,7 @@ interface MapContextType {
     persistentPopup: Popup,
     geocoder: MapboxGeocoder | null,
     root: Root,
-    container: HTMLDivElement,
+    container: HTMLDivElement
   ) => void;
 }
 
@@ -80,7 +80,7 @@ export const MapProvider: React.FC<{
     persistentPopup: Popup,
     geocoder: MapboxGeocoder | null,
     root: Root,
-    container: HTMLDivElement,
+    container: HTMLDivElement
   ) => {
     setMaps((prevMaps) => ({
       ...prevMaps,
@@ -97,7 +97,7 @@ export const MapProvider: React.FC<{
           p: Popup,
           g: MapboxGeocoder | null,
           r: Root,
-          c: HTMLDivElement,
+          c: HTMLDivElement
         ) => setMap(id, m, h, p, g, r, c),
       },
     }));
@@ -119,17 +119,8 @@ export const MapProvider: React.FC<{
         persistentPopup: Popup,
         geocoder: MapboxGeocoder | null,
         root: Root,
-        container: HTMLDivElement,
-      ) =>
-        setMap(
-          mapId,
-          map,
-          hoverPopup,
-          persistentPopup,
-          geocoder,
-          root,
-          container,
-        ),
+        container: HTMLDivElement
+      ) => setMap(mapId, map, hoverPopup, persistentPopup, geocoder, root, container),
     };
   });
 
@@ -200,7 +191,7 @@ export const MapProvider: React.FC<{
 export const useMap = (id: string): MapContextType => {
   const context = useContext(MapContexts);
   if (!context) {
-    throw new Error("useMap must be used within a MapProvider");
+    throw new Error('useMap must be used within a MapProvider');
   }
   return context[id];
 };

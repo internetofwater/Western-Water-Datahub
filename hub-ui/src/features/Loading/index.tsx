@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Progress } from "@mantine/core";
-import useSessionStore from "@/stores/session";
-import { Info } from "./Info";
+import { Progress } from '@mantine/core';
+import { Info } from '@/features/Loading/Info';
+import useSessionStore from '@/stores/session';
 
 const Loading: React.FC = () => {
   const loadingInstances = useSessionStore((state) => state.loadingInstances);
@@ -15,10 +15,8 @@ const Loading: React.FC = () => {
   return (
     <>
       {hasLoadingInstances && (
-        <Info
-          loadingTexts={loadingInstances.map((instance) => instance.message)}
-        >
-          <Progress value={100} size="lg" radius="sm" animated />
+        <Info loadingTexts={loadingInstances.map((instance) => instance.message)}>
+          <Progress value={100} size="lg" radius={0} animated />
         </Info>
       )}
     </>

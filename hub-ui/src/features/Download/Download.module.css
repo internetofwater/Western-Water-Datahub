@@ -9,3 +9,25 @@
   left: 8px;
   z-index: 1;
 }
+
+.parameterNameSelect {
+  width: 45%;
+}
+
+.chartWrapper {
+  height: 300px;
+}
+
+.goButton {
+  margin-top: 1.65em;
+  max-width: 5em;
+}
+
+.csvButton {
+  max-width: 10em;
+  margin-left: auto;
+}
+
+.copyInputWrapper {
+  width: 84%;
+}

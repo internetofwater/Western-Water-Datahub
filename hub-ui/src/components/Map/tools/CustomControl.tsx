@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from "react";
-import { Map } from "mapbox-gl";
-import { createRoot, Root } from "react-dom/client";
+import React from 'react';
+import { Map } from 'mapbox-gl';
+import { createRoot, Root } from 'react-dom/client';
 
 class CustomControl {
   _component: React.ReactNode;
@@ -19,8 +19,8 @@ class CustomControl {
 
   onAdd(map: Map) {
     this._map = map;
-    this._container = document.createElement("div");
-    this._container.className = "mapboxgl-ctrl mapboxgl-ctrl-group";
+    this._container = document.createElement('div');
+    this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
     this._root = createRoot(this._container);
     this._root.render(this._component);
     return this._container;

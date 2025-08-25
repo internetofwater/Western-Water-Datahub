@@ -4,15 +4,15 @@
  */
 
 export enum StateField {
-  Statens = "statens",
-  Fid = "fid",
-  Lsad = "lsad",
-  CensusProfile = "census_profile",
-  AffGeoid = "affgeoid",
-  StateFp = "statefp",
-  Uri = "uri",
-  Acronym = "stusps",
-  Name = "name",
+  Statens = 'statens',
+  Fid = 'fid',
+  Lsad = 'lsad',
+  CensusProfile = 'census_profile',
+  AffGeoid = 'affgeoid',
+  StateFp = 'statefp',
+  Uri = 'uri',
+  Acronym = 'stusps',
+  Name = 'name',
 }
 
 export type StateProperties = {

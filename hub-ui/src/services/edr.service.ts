@@ -3,14 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import {
-  ILink,
-  IRequestParams,
-  Service,
-  TRequestMethods,
-} from "@ogcapi-js/shared";
-import { BBox, GeoJSON } from "geojson";
-import { request } from "@/utils/request";
+import { ILink, IRequestParams, Service, TRequestMethods } from '@ogcapi-js/shared';
+import { BBox, GeoJSON } from 'geojson';
+import { request } from '@/utils/request';
 
 /**
  * configuration for a OGC EDR API service
@@ -64,7 +59,7 @@ export interface IDataQueryParams {
   /**
    * Comma delimited list of parameters to retrieve data for. Valid parameters are listed in the collections metadata
    */
-  ["parameter-name"]?: string;
+  ['parameter-name']?: string;
   /**
    * Identifier (id) of the coordinate system to return data in list of valid crs identifiers for the chosen collection are defined in the metadata responses. If not supplied the coordinate reference system will default to WGS84.
    */
@@ -95,7 +90,7 @@ export interface IGetRadiusParams extends IDataQueryParams {
   /**
    * Distance units for the within parameter
    */
-  ["within-units"]: string;
+  ['within-units']: string;
 }
 
 export interface IGetAreaParams extends IDataQueryParams {
@@ -106,11 +101,11 @@ export interface IGetAreaParams extends IDataQueryParams {
   /**
    * Resolution in the x direction.
    */
-  ["resolution-x"]?: string[];
+  ['resolution-x']?: string[];
   /**
    * Resolution in the y direction.
    */
-  ["resolution-y"]?: string[];
+  ['resolution-y']?: string[];
 }
 
 export interface IGetCubeParams extends IDataQueryParams {
@@ -135,26 +130,26 @@ export interface IGetCorridorParams extends IDataQueryParams {
   /**
    * Resolution in the x direction.
    */
-  ["resolution-x"]?: string[];
+  ['resolution-x']?: string[];
   /**
    * Resolution in the y direction.
    */
-  ["resolution-y"]?: string[];
+  ['resolution-y']?: string[];
   /**
    * Units for the width of the corridor.
    */
-  ["width-units"]: string;
+  ['width-units']: string;
   /**
    * Height of the corridor.
    */
-  ["corridor-height"]: string;
+  ['corridor-height']: string;
   /**
    * Units for the height of the corridor.
    */
-  ["height-units"]: string;
+  ['height-units']: string;
 }
 
-export type IGetLocationParams = Omit<IDataQueryParams, "z">;
+export type IGetLocationParams = Omit<IDataQueryParams, 'z'>;
 
 /**
  * Determines the return type based on the format.
@@ -177,7 +172,7 @@ export type IGetLocationParams = Omit<IDataQueryParams, "z">;
 /**
  * Default options for the service requests.
  */
-const DEFAULT_OPTIONS = { headers: { Accept: "application/json" } };
+const DEFAULT_OPTIONS = { headers: { Accept: 'application/json' } };
 
 export class EDRService extends Service {
   /**
@@ -189,7 +184,7 @@ export class EDRService extends Service {
    * - `f`: Format of the response.
    */
   async getCollections(
-    options: IServiceRequestOptions<IGetCollectionsParams> = DEFAULT_OPTIONS,
+    options: IServiceRequestOptions<IGetCollectionsParams> = DEFAULT_OPTIONS
   ): Promise<IGetCollectionsResponse> {
     const url: string = `${this.baseUrl}/collections`;
     const params: IGetCollectionsParams = { ...options.params };
@@ -212,7 +207,7 @@ export class EDRService extends Service {
    */
   async getCollection(
     collectionId: string,
-    options: IServiceRequestOptions<{ f?: string }> = DEFAULT_OPTIONS,
+    options: IServiceRequestOptions<{ f?: string }> = DEFAULT_OPTIONS
   ): Promise<ICollection> {
     const url: string = `${this.baseUrl}/collections/${collectionId}`;
     const params = { ...options.params };
@@ -235,7 +230,7 @@ export class EDRService extends Service {
    */
   async getInstances(
     collectionId: string,
-    options: IServiceRequestOptions<{ f?: string }> = DEFAULT_OPTIONS,
+    options: IServiceRequestOptions<{ f?: string }> = DEFAULT_OPTIONS
   ): Promise<IInstance> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/instances`;
     const params = { ...options.params };
@@ -263,7 +258,7 @@ export class EDRService extends Service {
    */
   async getPosition<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
-    options: IServiceRequestOptions<IGetPositionParams> = {},
+    options: IServiceRequestOptions<IGetPositionParams> = {}
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/position`;
     const params = { ...options.params };
@@ -293,7 +288,7 @@ export class EDRService extends Service {
    */
   async getRadius<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
-    options: IServiceRequestOptions<IGetRadiusParams> = {},
+    options: IServiceRequestOptions<IGetRadiusParams> = {}
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/radius`;
     const params = { ...options.params };
@@ -323,7 +318,7 @@ export class EDRService extends Service {
    */
   async getArea<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
-    options: IServiceRequestOptions<IGetAreaParams> = DEFAULT_OPTIONS,
+    options: IServiceRequestOptions<IGetAreaParams> = DEFAULT_OPTIONS
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/area`;
     const params = { ...options.params };
@@ -351,7 +346,7 @@ export class EDRService extends Service {
    */
   async getCube<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
-    options: IServiceRequestOptions<IGetCubeParams> = {},
+    options: IServiceRequestOptions<IGetCubeParams> = {}
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/cube`;
     const params = { ...options.params };
@@ -379,7 +374,7 @@ export class EDRService extends Service {
    */
   async getTrajectory<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
-    options: IServiceRequestOptions<IGetTrajectoryParams> = {},
+    options: IServiceRequestOptions<IGetTrajectoryParams> = {}
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/trajectory`;
     const params = { ...options.params };
@@ -412,7 +407,7 @@ export class EDRService extends Service {
    */
   async getCorridor<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
-    options: IServiceRequestOptions<IGetCorridorParams> = {},
+    options: IServiceRequestOptions<IGetCorridorParams> = {}
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/corridor`;
     const params = { ...options.params };
@@ -438,7 +433,7 @@ export class EDRService extends Service {
    */
   async getItems<T extends JSON | GeoJSON | string = GeoJSON>(
     collectionId: string,
-    options: IServiceRequestOptions<IGetCollectionsParams> = DEFAULT_OPTIONS,
+    options: IServiceRequestOptions<IGetCollectionsParams> = DEFAULT_OPTIONS
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/items`;
     const params = { ...options.params };
@@ -462,7 +457,7 @@ export class EDRService extends Service {
   async getItem<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
     itemId: string,
-    options: IServiceRequestOptions<IGetCollectionsParams> = DEFAULT_OPTIONS,
+    options: IServiceRequestOptions<IGetCollectionsParams> = DEFAULT_OPTIONS
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/items/${itemId}`;
     const params = { ...options.params };
@@ -488,7 +483,7 @@ export class EDRService extends Service {
    */
   async getLocations<T extends JSON | GeoJSON | string = GeoJSON>(
     collectionId: string,
-    options: IServiceRequestOptions<IGetLocationParams> = DEFAULT_OPTIONS,
+    options: IServiceRequestOptions<IGetLocationParams> = DEFAULT_OPTIONS
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/locations`;
     const params = { ...options.params };
@@ -515,16 +510,11 @@ export class EDRService extends Service {
    * - `f`: Format of the response.
    */
   async getLocation<
-    T extends
-      | JSON
-      | GeoJSON
-      | CoverageJSON
-      | CoverageCollection
-      | string = GeoJSON,
+    T extends JSON | GeoJSON | CoverageJSON | CoverageCollection | string = GeoJSON,
   >(
     collectionId: string,
     locId: string,
-    options: IServiceRequestOptions<IGetLocationParams> = DEFAULT_OPTIONS,
+    options: IServiceRequestOptions<IGetLocationParams> = DEFAULT_OPTIONS
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/locations/${locId}`;
     const params = { ...options.params };
@@ -552,12 +542,10 @@ export class EDRService extends Service {
    * - `crs`: Identifier (id) of the coordinate system to return data in list of valid crs identifiers for the chosen collection are defined in the metadata responses. If not supplied the coordinate reference system will default to WGS84.
    * - `f`: Format of the response.
    */
-  async getInstancePosition<
-    T extends CoverageJSON | GeoJSON | string = CoverageJSON,
-  >(
+  async getInstancePosition<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
     instanceId: string,
-    options: IServiceRequestOptions<IGetPositionParams> = {},
+    options: IServiceRequestOptions<IGetPositionParams> = {}
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/instances/${instanceId}/position`;
     const params = { ...options.params };
@@ -586,12 +574,10 @@ export class EDRService extends Service {
    * - `crs`: Identifier (id) of the coordinate system to return data in list of valid crs identifiers for the chosen collection are defined in the metadata responses. If not supplied the coordinate reference system will default to WGS84.
    * - `f`: Format of the response.
    */
-  async getInstanceRadius<
-    T extends CoverageJSON | GeoJSON | string = CoverageJSON,
-  >(
+  async getInstanceRadius<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
     instanceId: string,
-    options: IServiceRequestOptions<IGetRadiusParams> = {},
+    options: IServiceRequestOptions<IGetRadiusParams> = {}
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/instances/${instanceId}/radius`;
     const params = { ...options.params };
@@ -620,12 +606,10 @@ export class EDRService extends Service {
    * - `crs`: Identifier (id) of the coordinate system to return data in list of valid crs identifiers for the chosen collection are defined in the metadata responses. If not supplied the coordinate reference system will default to WGS84.
    * - `f`: Format of the response.
    */
-  async getInstanceArea<
-    T extends CoverageJSON | GeoJSON | string = CoverageJSON,
-  >(
+  async getInstanceArea<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
     instanceId: string,
-    options: IServiceRequestOptions<IGetAreaParams> = DEFAULT_OPTIONS,
+    options: IServiceRequestOptions<IGetAreaParams> = DEFAULT_OPTIONS
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/instances/${instanceId}/area`;
     const params = { ...options.params };
@@ -652,12 +636,10 @@ export class EDRService extends Service {
    * - `crs`: Identifier (id) of the coordinate system to return data in list of valid crs identifiers for the chosen collection are defined in the metadata responses. If not supplied the coordinate reference system will default to WGS84.
    * - `f`: Format of the response.
    */
-  async getInstanceCube<
-    T extends CoverageJSON | GeoJSON | string = CoverageJSON,
-  >(
+  async getInstanceCube<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
     instanceId: string,
-    options: IServiceRequestOptions<IGetCubeParams> = {},
+    options: IServiceRequestOptions<IGetCubeParams> = {}
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/instances/${instanceId}/cube`;
     const params = { ...options.params };
@@ -684,12 +666,10 @@ export class EDRService extends Service {
    * - `crs`: Identifier (id) of the coordinate system to return data in list of valid crs identifiers for the chosen collection are defined in the metadata responses. If not supplied the coordinate reference system will default to WGS84.
    * - `f`: Format of the response.
    */
-  async getInstanceTrajectory<
-    T extends CoverageJSON | GeoJSON | string = CoverageJSON,
-  >(
+  async getInstanceTrajectory<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
     instanceId: string,
-    options: IServiceRequestOptions<IGetTrajectoryParams> = {},
+    options: IServiceRequestOptions<IGetTrajectoryParams> = {}
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/instances/${instanceId}/trajectory`;
     const params = { ...options.params };
@@ -721,12 +701,10 @@ export class EDRService extends Service {
    * - `crs`: Identifier (id) of the coordinate system to return data in list of valid crs identifiers for the chosen collection are defined in the metadata responses. If not supplied the coordinate reference system will default to WGS84.
    * - `f`: Format of the response.
    */
-  async getInstanceCorridor<
-    T extends CoverageJSON | GeoJSON | string = CoverageJSON,
-  >(
+  async getInstanceCorridor<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
     collectionId: string,
     instanceId: string,
-    options: IServiceRequestOptions<IGetCorridorParams> = {},
+    options: IServiceRequestOptions<IGetCorridorParams> = {}
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/instances/${instanceId}/corridor`;
     const params = { ...options.params };
@@ -754,7 +732,7 @@ export class EDRService extends Service {
   async getInstanceLocations<T extends JSON | GeoJSON | string = GeoJSON>(
     collectionId: string,
     instanceId: string,
-    options: IServiceRequestOptions<IGetCollectionsParams> = {},
+    options: IServiceRequestOptions<IGetCollectionsParams> = {}
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/instances/${instanceId}/locations`;
     const params = { ...options.params };
@@ -785,7 +763,7 @@ export class EDRService extends Service {
     collectionId: string,
     instanceId: string,
     locId: string,
-    options: IServiceRequestOptions<IGetLocationParams> = {},
+    options: IServiceRequestOptions<IGetLocationParams> = {}
   ): Promise<T> {
     const url: string = `${this.baseUrl}/collections/${collectionId}/instances/${instanceId}/locations/${locId}`;
     const params = { ...options.params };
@@ -951,7 +929,7 @@ export interface IInstance {
 
 export interface ParameterName {
   id: string;
-  type: "Parameter";
+  type: 'Parameter';
   name: string;
   observedProperty: {
     label: {
@@ -1047,10 +1025,10 @@ export interface IGetCollectionsResponse {
 }
 
 export type CoverageCollection = {
-  type: "CoverageCollection";
+  type: 'CoverageCollection';
   parameters: {
     [key: string]: {
-      type: "Parameter";
+      type: 'Parameter';
       description: {
         en: string;
       };
@@ -1151,7 +1129,7 @@ export interface IObservedProperty {
 
 export interface IGeojsonParameters {
   id?: string;
-  type: "Parameter";
+  type: 'Parameter';
   description?: { [key: string]: string };
   unit?: IUnit;
   categoryEncoding?: { [key: string]: number | number[] };

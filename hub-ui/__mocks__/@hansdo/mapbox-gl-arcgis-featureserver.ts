@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { vi } from "vitest";
+import { vi } from 'vitest';
 
-console.log("mapbox-gl-arcgis-featureserver mock loaded");
+console.log('mapbox-gl-arcgis-featureserver mock loaded');
 
 const FeatureService = vi.fn().mockImplementation((sourceId, map, options) => ({
   sourceId,

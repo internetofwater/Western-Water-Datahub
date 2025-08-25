@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { FeatureServiceOptions } from "@hansdo/mapbox-gl-arcgis-featureserver";
-import { GeocoderOptions } from "@mapbox/mapbox-gl-geocoder";
+import { FeatureServiceOptions } from '@hansdo/mapbox-gl-arcgis-featureserver';
+import { GeocoderOptions } from '@mapbox/mapbox-gl-geocoder';
 import {
   ControlPosition,
   FullscreenControlOptions,
@@ -22,8 +22,8 @@ import {
   SourceSpecification,
   VectorTileSource as VectorSource,
   VideoSource,
-} from "mapbox-gl";
-import { Root } from "react-dom/client";
+} from 'mapbox-gl';
+import { Root } from 'react-dom/client';
 
 /**
  * Defines the possible types of sources that can be used in the map.
@@ -39,7 +39,7 @@ import { Root } from "react-dom/client";
 export type SourceDefinition =
   | GeoJSONSource
   | VectorSource
-  | RasterSource<"raster">
+  | RasterSource<'raster'>
   | ImageSource
   | VideoSource;
 
@@ -54,10 +54,10 @@ export type SourceDefinition =
  * @enum
  */
 export enum Sources {
-  GeoJSON = "geojson",
-  VectorTile = "vector-tile",
-  ESRI = "esri",
-  Raster = "raster",
+  GeoJSON = 'geojson',
+  VectorTile = 'vector-tile',
+  ESRI = 'esri',
+  Raster = 'raster',
 }
 
 /**
@@ -96,7 +96,7 @@ export type CustomListenerFunction = (
   hoverPopup: Popup,
   persistentPopup: Popup,
   root: Root,
-  container: HTMLDivElement,
+  container: HTMLDivElement
 ) => (e: MapMouseEvent) => void;
 
 /**
@@ -175,7 +175,7 @@ export interface MapComponentProps {
   id: string;
   sources: SourceConfig[];
   layers: MainLayerDefinition[];
-  options: Omit<MapOptions, "container">;
+  options: Omit<MapOptions, 'container'>;
   controls?: {
     navigationControl?: NavigationControlOptions | boolean;
     scaleControl?: ScaleControlOptions | boolean;
@@ -183,7 +183,7 @@ export interface MapComponentProps {
   };
   customControls?: ICustomControl[];
   persist?: boolean;
-  geocoder?: Omit<GeocoderOptions, "accessToken"> & {
+  geocoder?: Omit<GeocoderOptions, 'accessToken'> & {
     position?: ControlPosition;
   };
 }
@@ -206,16 +206,16 @@ export interface MapComponentProps {
  * @enum
  */
 export enum BasemapId {
-  Standard = "standard",
-  StandardSatellite = "standard-satellite",
-  Streets = "streets",
-  Outdoors = "outdoors",
-  Light = "light",
-  Dark = "dark",
-  Satellite = "satellite",
-  SatelliteStreets = "satellite-streets",
-  NavigationDay = "navigation-day",
-  NavigationNight = "navigation-night",
+  Standard = 'standard',
+  StandardSatellite = 'standard-satellite',
+  Streets = 'streets',
+  Outdoors = 'outdoors',
+  Light = 'light',
+  Dark = 'dark',
+  Satellite = 'satellite',
+  SatelliteStreets = 'satellite-streets',
+  NavigationDay = 'navigation-day',
+  NavigationNight = 'navigation-night',
 }
 
 /**
@@ -236,16 +236,16 @@ export enum BasemapId {
  * @type
  */
 export type BasemapStyles =
-  | "mapbox://styles/mapbox/standard"
-  | "mapbox://styles/mapbox/standard-satellite"
-  | "mapbox://styles/mapbox/streets-v12"
-  | "mapbox://styles/mapbox/outdoors-v12"
-  | "mapbox://styles/mapbox/light-v11"
-  | "mapbox://styles/mapbox/dark-v11"
-  | "mapbox://styles/mapbox/satellite-v9"
-  | "mapbox://styles/mapbox/satellite-streets-v12"
-  | "mapbox://styles/mapbox/navigation-day-v1"
-  | "mapbox://styles/mapbox/navigation-night-v1";
+  | 'mapbox://styles/mapbox/standard'
+  | 'mapbox://styles/mapbox/standard-satellite'
+  | 'mapbox://styles/mapbox/streets-v12'
+  | 'mapbox://styles/mapbox/outdoors-v12'
+  | 'mapbox://styles/mapbox/light-v11'
+  | 'mapbox://styles/mapbox/dark-v11'
+  | 'mapbox://styles/mapbox/satellite-v9'
+  | 'mapbox://styles/mapbox/satellite-streets-v12'
+  | 'mapbox://styles/mapbox/navigation-day-v1'
+  | 'mapbox://styles/mapbox/navigation-night-v1';
 
 /**
  * Defines the mapping of basemap identifiers to their corresponding styles.
@@ -271,11 +271,11 @@ export type Basemaps = {
  * @enum
  */
 export enum LayerType {
-  Line = "line",
-  Symbol = "symbol",
-  Circle = "circle",
-  Fill = "fill",
-  FillExtrusion = "fill-extrusion",
+  Line = 'line',
+  Symbol = 'symbol',
+  Circle = 'circle',
+  Fill = 'fill',
+  FillExtrusion = 'fill-extrusion',
 }
 
 export type Properties = Record<string, string | number | string[] | number[]>;

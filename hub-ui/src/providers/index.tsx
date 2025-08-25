@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { PropsWithChildren } from "react";
-import { Mantine as MantineProvider } from "@/providers/Mantine";
-import { Map as MapProvider } from "@/providers/Map";
+import { PropsWithChildren } from 'react';
+import { Mantine as MantineProvider } from '@/providers/Mantine';
+import { Map as MapProvider } from '@/providers/Map';
 
 /**
  * Wrapping component for grouping all providers
