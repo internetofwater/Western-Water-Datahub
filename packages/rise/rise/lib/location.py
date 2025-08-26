@@ -139,19 +139,20 @@ class LocationCollection(LocationCollectionProtocol):
             start, end = parsed_date
 
             for i, location in enumerate(self.locations):
+                if not location.attributes.updateDate:
+                    location_indices_to_remove.add(i)
+                    continue
                 updateDate = datetime.fromisoformat(location.attributes.updateDate)
                 if updateDate < start or updateDate > end:
                     location_indices_to_remove.add(i)
 
         elif isinstance(parsed_date, datetime) == 1:
             parsed_date_str = str(parsed_date)
-            self.locations = [
-                location
-                for location in self.locations
-                if location.attributes.updateDate.startswith(parsed_date_str)
-            ]
+
             for i, location in enumerate(self.locations):
-                if not location.attributes.updateDate.startswith(parsed_date_str):
+                if not location.attributes.updateDate:
+                    location_indices_to_remove.add(i)
+                elif not location.attributes.updateDate.startswith(parsed_date_str):
                     location_indices_to_remove.add(i)
 
         else:
