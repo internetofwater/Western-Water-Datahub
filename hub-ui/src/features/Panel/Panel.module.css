@@ -25,5 +25,6 @@
   .panelWrapper {
     height: unset;
     max-height: unset;
+    min-width: 100%;
   }
 }
