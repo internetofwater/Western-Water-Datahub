@@ -20,3 +20,10 @@
 .title {
   text-align: center;
 }
+
+@media screen and (max-width: 899px) {
+  .panelWrapper {
+    height: unset;
+    max-height: unset;
+  }
+}
