@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Stack, Title } from '@mantine/core';
-import { Category } from '@/features/Panel/Filters/DataCategory/Category';
-import { Dataset } from '@/features/Panel/Filters/DataCategory/Dataset';
+import { Stack, Title } from "@mantine/core";
+import { Category } from "@/features/Panel/Filters/DataCategory/Category";
+import { Dataset } from "@/features/Panel/Filters/DataCategory/Dataset";
 
 const DataCategory: React.FC = () => {
   return (

@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useRef } from 'react';
-import Map from '@/components/Map';
-import { basemaps } from '@/components/Map/consts';
-import { BasemapId } from '@/components/Map/types';
-import { useMap } from '@/contexts/MapContexts';
-import { layerDefinitions, MAP_ID } from '@/features/Map/config';
-import { sourceConfigs } from '@/features/Map/sources';
-import { getCircleStrokeColor } from '@/features/Map/utils';
-import mainManager from '@/managers/Main.init';
-import useMainStore from '@/stores/main';
-import { groupLocationIdsByCollection } from '@/utils/groupLocationsByCollection';
+import { useEffect, useRef } from "react";
+import Map from "@/components/Map";
+import { basemaps } from "@/components/Map/consts";
+import { BasemapId } from "@/components/Map/types";
+import { useMap } from "@/contexts/MapContexts";
+import { layerDefinitions, MAP_ID } from "@/features/Map/config";
+import { sourceConfigs } from "@/features/Map/sources";
+import { getCircleStrokeColor } from "@/features/Map/utils";
+import mainManager from "@/managers/Main.init";
+import useMainStore from "@/stores/main";
+import { groupLocationIdsByCollection } from "@/utils/groupLocationsByCollection";
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;
@@ -65,7 +65,7 @@ const MainMap: React.FC<Props> = (props) => {
         {
           padding: 50,
           animate: false,
-        }
+        },
       );
       initialMapLoad.current = false;
     }
@@ -83,7 +83,11 @@ const MainMap: React.FC<Props> = (props) => {
 
       const locationIds = locationsByCollection[collection.id] ?? [];
 
-      map.setPaintProperty(layerId, 'circle-stroke-color', getCircleStrokeColor(locationIds));
+      map.setPaintProperty(
+        layerId,
+        "circle-stroke-color",
+        getCircleStrokeColor(locationIds),
+      );
     });
   }, [locations]);
 
@@ -130,7 +134,7 @@ const MainMap: React.FC<Props> = (props) => {
         layers={layerDefinitions}
         options={{
           style: basemaps[BasemapId.Streets],
-          projection: 'mercator',
+          projection: "mercator",
           center: INITIAL_CENTER,
           zoom: INITIAL_ZOOM,
           maxZoom: 20,

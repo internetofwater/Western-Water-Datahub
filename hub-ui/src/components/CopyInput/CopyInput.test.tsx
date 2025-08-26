@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { render, screen } from '@test-utils';
-import { fireEvent, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-import CopyInput from '@/components/CopyInput';
+import { render, screen } from "@test-utils";
+import { fireEvent, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import CopyInput from "@/components/CopyInput";
 
-describe('CopyInput', () => {
+describe("CopyInput", () => {
   beforeAll(() => {
     Object.assign(navigator, {
       clipboard: {
@@ -17,22 +17,22 @@ describe('CopyInput', () => {
     });
   });
 
-  const testUrl = 'https://example.com';
+  const testUrl = "https://example.com";
 
-  it('renders the URL and copy button', () => {
+  it("renders the URL and copy button", () => {
     render(<CopyInput url={testUrl} />);
     expect(screen.getByText(testUrl)).toBeInTheDocument();
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.getByRole("button")).toBeInTheDocument();
   });
 
-  it('copies the URL and shows check icon', async () => {
+  it("copies the URL and shows check icon", async () => {
     render(<CopyInput url={testUrl} />);
 
-    const button = screen.getByRole('button');
+    const button = screen.getByRole("button");
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(screen.getByTestId('check')).toBeInTheDocument();
+      expect(screen.getByTestId("check")).toBeInTheDocument();
     });
   });
 });

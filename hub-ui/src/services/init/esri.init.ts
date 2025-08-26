@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { RegionsSource } from '@/features/Map/consts';
-import { EsriService } from '@/services/esri.service';
+import { RegionsSource } from "@/features/Map/consts";
+import { EsriService } from "@/services/esri.service";
 
 const esriService = new EsriService(RegionsSource);
 
