@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { FeatureCollection, Polygon } from "geojson";
 import { ComboboxData, Select, Skeleton } from "@mantine/core";
 import { SourceId } from "@/features/Map/sources";
+import { formatOptions } from "@/features/Panel/Filters/utils";
 import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
@@ -14,7 +15,6 @@ import geoconnexService from "@/services/init/geoconnex.init";
 import useMainStore from "@/stores/main";
 import { NotificationType } from "@/stores/session/types";
 import { Huc02BasinProperties, Huc02Field } from "@/types/huc02";
-import { formatOptions } from "../utils";
 
 export const Basin: React.FC = () => {
   const geographyFilterCollectionId = useMainStore(

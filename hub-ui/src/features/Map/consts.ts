@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { SourceId } from "./sources";
+import { SourceId } from "@/features/Map/sources";
 
 /**
  *

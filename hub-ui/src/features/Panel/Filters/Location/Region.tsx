@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { FeatureCollection, Polygon } from "geojson";
 import { ComboboxData, Select, Skeleton } from "@mantine/core";
 import { SourceId } from "@/features/Map/sources";
+import { formatOptions } from "@/features/Panel/Filters/utils";
 import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
@@ -14,7 +15,6 @@ import wwdhService from "@/services/init/wwdh.init";
 import useMainStore from "@/stores/main";
 import { NotificationType } from "@/stores/session/types";
 import { RegionField, RegionProperties } from "@/types/region";
-import { formatOptions } from "../utils";
 
 export const Region: React.FC = () => {
   const geographyFilterCollectionId = useMainStore(

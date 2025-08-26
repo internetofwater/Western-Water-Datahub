@@ -6,7 +6,6 @@
 import * as turf from "@turf/turf";
 import { Feature, FeatureCollection, Point, Polygon } from "geojson";
 import { GeoJSONSource, LngLatBoundsLike, Map } from "mapbox-gl";
-import { v6 } from "uuid";
 import { GeoJSONFeature, stringify } from "wellknown";
 import { StoreApi, UseBoundStore } from "zustand";
 import { GeographyFilterSources } from "@/features/Map/consts";
@@ -17,12 +16,7 @@ import {
 } from "@/features/Map/utils";
 import geoconnexService from "@/services/init/geoconnex.init";
 import wwdhService from "@/services/init/wwdh.init";
-import {
-  Collection,
-  ColorValueHex,
-  Location,
-  MainState,
-} from "@/stores/main/types";
+import { Collection, Location, MainState } from "@/stores/main/types";
 
 type FakeCollection = {
   id: string;
@@ -57,22 +51,6 @@ class MainManager {
     if (!this.hasMap()) {
       this.map = map;
     }
-  }
-
-  /**
-   *
-   * @function
-   */
-  private createUUID(): string {
-    return v6();
-  }
-
-  /**
-   *
-   * @function
-   */
-  private createHexColor(): ColorValueHex {
-    return "#fake";
   }
 
   /**

@@ -4,9 +4,9 @@
  */
 
 import { Stack, Title } from "@mantine/core";
-import { Basin } from "./Basin";
-import { Region } from "./Region";
-import { State } from "./State";
+import { Basin } from "@/features/Panel/Filters/Location/Basin";
+import { Region } from "@/features/Panel/Filters/Location/Region";
+import { State } from "@/features/Panel/Filters/Location/State";
 
 const Location: React.FC = () => {
   return (

@@ -16,6 +16,9 @@ export const UpdateCollectionsButton: React.FC = () => {
     mainManager.addCollection({
       id: "rise-edr",
     });
+    // mainManager.addCollection({
+    //   id: 'resviz-edr',
+    // });
 
     mainManager.updateCollections();
     loadingManager.remove(instance);

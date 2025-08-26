@@ -4,7 +4,7 @@
  */
 
 import { StateCreator } from "zustand";
-import { Collection, MainState } from "../types";
+import { Collection, MainState } from "@/stores/main/types";
 
 interface CollectionSlice {
   collections: Collection[];

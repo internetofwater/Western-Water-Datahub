@@ -6,6 +6,7 @@
 import { ExpressionSpecification, LayerSpecification } from "mapbox-gl";
 import { LayerType } from "@/components/Map/types";
 import { Location } from "@/stores/main/types";
+import { getRandomHexColor } from "@/utils/hexColor";
 
 export const getPointLayerDefinition = (
   layerId: string,
@@ -17,7 +18,7 @@ export const getPointLayerDefinition = (
     type: LayerType.Circle,
     paint: {
       "circle-radius": 6,
-      "circle-color": "#B42222",
+      "circle-color": getRandomHexColor(),
       "circle-stroke-width": 2,
       "circle-stroke-color": getCircleStrokeColor([]),
     },
