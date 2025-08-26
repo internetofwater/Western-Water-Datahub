@@ -15,6 +15,7 @@
 
   flex: 1;
   height: 100%;
+  min-width: 500px;
 }
 
 .primaryWrapper {
@@ -23,4 +24,14 @@
 
 .contentWrapper {
   height: 100%;
+}
+
+@media screen and (max-width: 899px) {
+  .root {
+    overflow-y: scroll;
+  }
+
+  .right {
+    height: 90%;
+  }
 }

@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import dayjs from 'dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -14,26 +16,25 @@ import {
   MultiSelect,
   Stack,
   Title,
-} from "@mantine/core";
-import { DatePickerInput } from "@mantine/dates";
-import { useDisclosure } from "@mantine/hooks";
-import CopyInput from "@/components/CopyInput";
-import styles from "@/features/Download/Download.module.css";
-import { Chart } from "@/features/Download/Modal/Collection/Chart";
-import { CSV } from "@/features/Download/Modal/Collection/CSV";
-import {
-  buildUrl,
-  getParameterNameOptions,
-} from "@/features/Download/Modal/utils";
-import loadingManager from "@/managers/Loading.init";
-import notificationManager from "@/managers/Notification.init";
-import { ICollection } from "@/services/edr.service";
-import wwdhService from "@/services/init/wwdh.init";
-import { Collection as CollectionType } from "@/stores/main/types";
-import { NotificationType } from "@/stores/session/types";
+} from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
+import { useDisclosure } from '@mantine/hooks';
+import CopyInput from '@/components/CopyInput';
+import styles from '@/features/Download/Download.module.css';
+import { Chart } from '@/features/Download/Modal/Collection/Chart';
+import { CSV } from '@/features/Download/Modal/Collection/CSV';
+import { buildUrl, getParameterNameOptions } from '@/features/Download/Modal/utils';
+import loadingManager from '@/managers/Loading.init';
+import notificationManager from '@/managers/Notification.init';
+import { ICollection } from '@/services/edr.service';
+import wwdhService from '@/services/init/wwdh.init';
+import { Collection as CollectionType } from '@/stores/main/types';
+import { NotificationType } from '@/stores/session/types';
+
+dayjs.extend(isSameOrBefore);
 
 type Props = {
-  collectionId: CollectionType["id"];
+  collectionId: CollectionType['id'];
   locationIds: (string | number)[];
   open?: boolean;
 };
@@ -46,11 +47,10 @@ const Collection: React.FC<Props> = (props) => {
   const [opened, { toggle }] = useDisclosure(open);
 
   const [collection, setCollection] = useState<ICollection>();
-  const [parameterNameOptions, setParameterNameOptions] =
-    useState<ComboboxData>();
+  const [parameterNameOptions, setParameterNameOptions] = useState<ComboboxData>();
   const [selectedParameters, setSelectedParameters] = useState<string[]>([]);
-  const [from, setFrom] = useState<string | null>(null);
-  const [to, setTo] = useState<string | null>(null);
+  const [from, setFrom] = useState<string | null>(dayjs().subtract(1, 'week').format('YYYY-MM-DD'));
+  const [to, setTo] = useState<string | null>(dayjs().format('YYYY-MM-DD'));
   const [startDownload, setStartDownload] = useState<number>();
 
   const controller = useRef<AbortController>(null);
@@ -58,9 +58,7 @@ const Collection: React.FC<Props> = (props) => {
   const loadingInstance = useRef<string>(null);
 
   const getBasinOptions = async () => {
-    loadingInstance.current = loadingManager.add(
-      `Fetching data for collection: ${collectionId}`,
-    );
+    loadingInstance.current = loadingManager.add(`Fetching data for collection: ${collectionId}`);
     try {
       controller.current = new AbortController();
 
@@ -74,15 +72,12 @@ const Collection: React.FC<Props> = (props) => {
       }
     } catch (error) {
       if (
-        (error as Error)?.name === "AbortError" ||
-        (typeof error === "string" && error === "Component unmount")
+        (error as Error)?.name === 'AbortError' ||
+        (typeof error === 'string' && error === 'Component unmount')
       ) {
-        console.log("Fetch request canceled");
+        console.log('Fetch request canceled');
       } else if ((error as Error)?.message) {
-        notificationManager.show(
-          `Error: ${(error as Error)?.message}`,
-          NotificationType.Error,
-        );
+        notificationManager.show(`Error: ${(error as Error)?.message}`, NotificationType.Error);
       }
       loadingManager.remove(loadingInstance.current);
     }
@@ -94,7 +89,7 @@ const Collection: React.FC<Props> = (props) => {
     return () => {
       isMounted.current = false;
       if (controller.current) {
-        controller.current.abort("Component unmount");
+        controller.current.abort('Component unmount');
       }
     };
   }, []);
@@ -104,20 +99,21 @@ const Collection: React.FC<Props> = (props) => {
       return;
     }
 
-    const parameterNameOptions = getParameterNameOptions(
-      collection.parameter_names,
-    );
+    const parameterNameOptions = getParameterNameOptions(collection.parameter_names);
 
     setParameterNameOptions(parameterNameOptions);
   }, [collection]);
 
+  const isValidRange = from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
+  const isParameterSelectionUnderLimit = selectedParameters.length <= PARAMETER_LIMIT;
+  const areParametersSelected = selectedParameters.length > 0;
   return (
     <Box>
       {collection && (
         <Box p="lg">
           <Group justify="space-between" mb="sm">
             <Title order={3}>{collection.title}</Title>
-            <Button onClick={toggle}>{opened ? "Hide" : "Show"}</Button>
+            <Button onClick={toggle}>{opened ? 'Hide' : 'Show'}</Button>
           </Group>
           <Divider />
           <Collapse in={opened}>
@@ -129,6 +125,7 @@ const Collection: React.FC<Props> = (props) => {
                     withAsterisk
                     className={styles.parameterNameSelect}
                     label="Parameters"
+                    description="Select at least one parameter"
                     placeholder="Select..."
                     data={parameterNameOptions}
                     value={selectedParameters}
@@ -136,20 +133,22 @@ const Collection: React.FC<Props> = (props) => {
                     searchable
                     clearable
                     error={
-                      selectedParameters.length > PARAMETER_LIMIT
-                        ? "Please select only 10 parameters"
-                        : false
+                      isParameterSelectionUnderLimit
+                        ? false
+                        : `Please remove ${selectedParameters.length - PARAMETER_LIMIT} parameter(s)`
                     }
                   />
                 )}
-                <Group grow>
+                <Stack gap="xs" p={0}>
                   <DatePickerInput
                     label="From"
+                    description="Provide an optional date range"
                     className={styles.datePicker}
                     placeholder="Pick start date"
                     value={from}
                     onChange={setFrom}
                     clearable
+                    error={isValidRange ? false : 'Invalid date range'}
                   />
                   <DatePickerInput
                     label="To"
@@ -158,12 +157,12 @@ const Collection: React.FC<Props> = (props) => {
                     value={to}
                     onChange={setTo}
                     clearable
+                    error={isValidRange ? false : 'Invalid date range'}
                   />
-                </Group>
+                </Stack>
                 <Button
                   disabled={
-                    selectedParameters.length > PARAMETER_LIMIT ||
-                    selectedParameters.length === 0
+                    !isValidRange || !isParameterSelectionUnderLimit || !areParametersSelected
                   }
                   className={styles.goButton}
                   onClick={() => setStartDownload(Date.now())}
@@ -174,17 +173,9 @@ const Collection: React.FC<Props> = (props) => {
 
               {startDownload &&
                 locationIds.map((locationId) => {
-                  const url = buildUrl(
-                    collectionId,
-                    locationId,
-                    selectedParameters,
-                    from,
-                    to,
-                  );
+                  const url = buildUrl(collectionId, locationId, selectedParameters, from, to);
                   return (
-                    <Fragment
-                      key={`collection-download-${collectionId}-${locationId}`}
-                    >
+                    <Fragment key={`collection-download-${collectionId}-${locationId}`}>
                       <Chart
                         instanceId={startDownload}
                         collectionId={collectionId}
@@ -193,7 +184,7 @@ const Collection: React.FC<Props> = (props) => {
                         from={from}
                         to={to}
                       />
-                      <Group gap="sm">
+                      <Group grow gap="sm">
                         <CSV
                           instanceId={startDownload}
                           collectionId={collectionId}

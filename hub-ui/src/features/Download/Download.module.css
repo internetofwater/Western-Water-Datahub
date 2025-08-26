@@ -11,7 +11,7 @@
 }
 
 .parameterNameSelect {
-  width: 45%;
+  min-width: 24em;
 }
 
 .chartWrapper {
@@ -19,7 +19,7 @@
 }
 
 .goButton {
-  margin-top: 1.65em;
+  margin-top: 3.15em;
   max-width: 5em;
 }
 
@@ -30,4 +30,31 @@
 
 .copyInputWrapper {
   width: 84%;
+  max-width: 100%;
+}
+
+.datePicker {
+  min-width: 11em;
+}
+
+@media screen and (max-width: 816px) {
+  .copyInputWrapper {
+    width: unset;
+  }
+
+  .csvButton {
+    max-width: unset;
+    margin-left: unset;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .parameterNameSelect {
+    min-width: 100%;
+  }
+
+  /* .goButton {
+    max-width: 10em;
+    margin-left: 8px;
+  } */
 }
