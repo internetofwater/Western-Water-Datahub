@@ -13,7 +13,7 @@ server:
     path: /opt/pygeoapi/pygeoapi-deployment/templates
   limits:
     default_items: 1000
-    max_items: 10000
+    max_items: 10950 # 30 Years
   map:
     url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
     attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
@@ -588,8 +588,8 @@ resources:
       - type: feature
         name: PostgreSQL
         data: *postgres-data
-        table: resviz
-        id_field: ogc_fid
+        table: resviz_stations
+        id_field: monitoring_location_id
         geom_field: geom
 
   doi-regions:
