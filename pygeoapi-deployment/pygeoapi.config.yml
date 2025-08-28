@@ -12,7 +12,7 @@ server:
   templates:
     path: /opt/pygeoapi/pygeoapi-deployment/templates
   limits:
-    default_items: 1000
+    default_items: 1825 # 5 Years
     max_items: 10950 # 30 Years
   map:
     url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
@@ -54,7 +54,7 @@ resources:
   rise-edr:
     type: collection
     title: Reclamation Information Sharing Environment
-    description: USBR Information Sharing Environment EDR
+    description: USBR Information Sharing Environment (RISE) EDR
     provider-name:
       - BOR
       - USBR
