@@ -5,6 +5,7 @@
 
 import { Feature, FeatureCollection, Polygon } from "geojson";
 import { Properties } from "@/components/Map/types";
+import { ICollection } from "@/services/edr.service";
 
 export type ColorValueHex = `#${string}`;
 
@@ -46,44 +47,41 @@ export enum DatasourceType {
   Raster = "raster",
 }
 
-export type Collection = {
-  id: string;
-  provider: string;
-  category: string;
-  dataset: string;
-  time?: string;
-};
-
 export type Layer = {
   id: string; // uuid
-  collectionId: Collection["id"];
+  collectionId: ICollection["id"];
 };
 
 export type Location = {
   id: string | number; // location/{this}
-  collectionId: Collection["id"];
+  collectionId: ICollection["id"];
 };
 
 export type GeographyFilter = {
   itemId: string;
-  collectionId: Collection["id"];
+  collectionId: ICollection["id"];
   feature: Feature<Polygon>;
+};
+
+export type Category = {
+  value: string;
+  label: string;
 };
 
 export interface MainState {
   provider: string | null;
   setProvider: (provider: MainState["provider"]) => void;
-  category: string | null;
+  category: Category | null;
   setCategory: (category: MainState["category"]) => void;
-  dataset: string | null;
-  setDataset: (dataset: MainState["dataset"]) => void;
+  collection: string | null;
+  setCollection: (collection: MainState["collection"]) => void;
   geographyFilter: GeographyFilter | null;
   setGeographyFilter: (geographyFilter: MainState["geographyFilter"]) => void;
   hasGeographyFilter: () => boolean;
-  collections: Collection[];
+  collections: ICollection[];
   setCollections: (collections: MainState["collections"]) => void;
-  addCollection: (collection: Collection) => void;
-  hasCollection: (collectionId: Collection["id"]) => boolean;
+  addCollection: (collection: ICollection) => void;
+  hasCollection: (collectionId: ICollection["id"]) => boolean;
   locations: Location[];
   setLocations: (locations: MainState["locations"]) => void;
   addLocation: (location: Location) => void;

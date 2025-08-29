@@ -21,10 +21,10 @@ const useMainStore = create<MainState>()(
       set((state) => {
         state.category = category;
       }),
-    dataset: null,
-    setDataset: (dataset) =>
+    collection: null,
+    setCollection: (collection) =>
       set((state) => {
-        state.dataset = dataset;
+        state.collection = collection;
       }),
     geographyFilter: null,
     setGeographyFilter: (filter) =>

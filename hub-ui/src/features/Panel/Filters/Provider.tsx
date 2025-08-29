@@ -4,22 +4,26 @@
  */
 
 import { Select, Stack, Title } from "@mantine/core";
+import useMainStore from "@/stores/main";
 
-const Provider: React.FC = () => {
+export const Provider: React.FC = () => {
+  const provider = useMainStore((state) => state.provider);
+  const setProvider = useMainStore((state) => state.setProvider);
+
   return (
     <Stack gap={0}>
       <Title order={2} size="h3">
         Filter by Provider
       </Title>
       <Select
-        size="xs"
+        size="sm"
         label="Provider"
         placeholder="Select..."
-        data={["React", "Angular", "Vue", "Svelte"]}
+        data={["NOAA", "USBR", "USGS", "USACE", "USDA"]}
+        value={provider}
+        onChange={setProvider}
         searchable
       />
     </Stack>
   );
 };
-
-export default Provider;

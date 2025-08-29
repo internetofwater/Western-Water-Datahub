@@ -6,11 +6,12 @@
 import { Button } from "@mantine/core";
 import styles from "@/features/Download/Download.module.css";
 import { buildUrl } from "@/features/Download/Modal/utils";
-import { Collection, Location } from "@/stores/main/types";
+import { ICollection } from "@/services/edr.service";
+import { Location } from "@/stores/main/types";
 
 type Props = {
   instanceId: number;
-  collectionId: Collection["id"];
+  collectionId: ICollection["id"];
   locationId: Location["id"];
   parameters: string[];
   from: string | null;

@@ -3,27 +3,37 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Button } from "@mantine/core";
+import { Box, Button, Tooltip } from "@mantine/core";
+import styles from "@/features/Panel/Panel.module.css";
 import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
+import useMainStore from "@/stores/main";
 import { NotificationType } from "@/stores/session/types";
 
-export const UpdateCollectionsButton: React.FC = () => {
+export const UpdateLocationsButton: React.FC = () => {
+  const provider = useMainStore((state) => state.provider);
+  const collection = useMainStore((state) => state.collection);
+
   const addData = async () => {
     const instance = loadingManager.add("Fetching Collections");
-    // TODO: remove this, temporary for development
-    mainManager.addCollection({
-      id: "rise-edr",
-    });
-    // mainManager.addCollection({
-    //   id: 'resviz-edr',
-    // });
 
-    mainManager.updateCollections();
+    mainManager.getLocations();
     loadingManager.remove(instance);
     notificationManager.show("Done fetching data", NotificationType.Success);
   };
 
-  return <Button onClick={() => void addData()}>Update Data</Button>;
+  return (
+    <Box className={styles.updateLocationsWrapper}>
+      {provider || collection ? (
+        <Button onClick={() => void addData()}>Update Locations</Button>
+      ) : (
+        <Tooltip label="Please select a provider or collection">
+          <Button data-disabled onClick={(event) => event.preventDefault()}>
+            Update Locations
+          </Button>
+        </Tooltip>
+      )}
+    </Box>
+  );
 };

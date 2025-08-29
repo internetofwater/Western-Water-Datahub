@@ -31,6 +31,8 @@ class LoadingManager {
 
   remove(id: Loading["id"]) {
     this.store.getState().removeLoadingInstance(id);
+
+    return null;
   }
 }
 

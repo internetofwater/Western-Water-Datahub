@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FeatureCollection, Polygon } from "geojson";
 import { ComboboxData, Select, Skeleton } from "@mantine/core";
+import { ValidStates } from "@/features/Map/consts";
 import { SourceId } from "@/features/Map/sources";
 import { formatOptions } from "@/features/Panel/Filters/utils";
 import loadingManager from "@/managers/Loading.init";
@@ -14,9 +15,9 @@ import notificationManager from "@/managers/Notification.init";
 import geoconnexService from "@/services/init/geoconnex.init";
 import useMainStore from "@/stores/main";
 import { NotificationType } from "@/stores/session/types";
-import { Huc02BasinProperties, Huc02Field } from "@/types/huc02";
+import { StateField, StateProperties } from "@/types/state";
 
-export const Basin: React.FC = () => {
+export const State: React.FC = () => {
   const geographyFilterCollectionId = useMainStore(
     (state) => state.geographyFilter?.collectionId,
   );
@@ -24,38 +25,40 @@ export const Basin: React.FC = () => {
     (state) => state.geographyFilter?.itemId,
   );
 
-  const [basinOptions, setBasinOptions] = useState<ComboboxData>([]);
+  const [stateOptions, setStateOptions] = useState<ComboboxData>([]);
 
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
 
-  const getBasinOptions = async () => {
+  const getStateOptions = async () => {
     const loadingInstance = loadingManager.add(
-      "Fetching basin dropdown options",
+      "Fetching state dropdown options",
     );
-
     try {
       controller.current = new AbortController();
 
-      const basinFeatureCollection = await geoconnexService.getItems<
-        FeatureCollection<Polygon, Huc02BasinProperties>
-      >(SourceId.Huc02, {
+      const stateFeatureCollection = await geoconnexService.getItems<
+        FeatureCollection<Polygon, StateProperties>
+      >(SourceId.States, {
         params: {
           bbox: [-125, 24, -96.5, 49],
           skipGeometry: true,
         },
       });
 
-      if (basinFeatureCollection.features.length) {
+      if (stateFeatureCollection.features.length) {
         const basinOptions = formatOptions(
-          basinFeatureCollection.features,
-          (feature) => String(feature.id),
-          (feature) => String(feature?.properties?.[Huc02Field.Name]),
+          stateFeatureCollection.features.filter((feature) =>
+            ValidStates.includes(feature.properties[StateField.Acronym]),
+          ),
+          (feature) => String(feature?.id),
+          (feature) => String(feature?.properties?.[StateField.Name]),
+          "All States",
         );
 
         if (isMounted.current) {
           loadingManager.remove(loadingInstance);
-          setBasinOptions(basinOptions);
+          setStateOptions(basinOptions);
         }
       }
     } catch (error) {
@@ -77,7 +80,7 @@ export const Basin: React.FC = () => {
 
   useEffect(() => {
     isMounted.current = true;
-    void getBasinOptions();
+    void getStateOptions();
     return () => {
       isMounted.current = false;
       if (controller.current) {
@@ -89,9 +92,9 @@ export const Basin: React.FC = () => {
   const handleChange = async (itemId: string | null) => {
     if (itemId) {
       const loadingInstance = loadingManager.add(
-        "Adding basin geography filter",
+        "Adding state geography filter",
       );
-      await mainManager.updateGeographyFilter(SourceId.Huc02, itemId);
+      await mainManager.updateGeographyFilter(SourceId.States, itemId);
       loadingManager.remove(loadingInstance);
       notificationManager.show(
         "Updated geography filter",
@@ -107,16 +110,16 @@ export const Basin: React.FC = () => {
   return (
     <Skeleton
       height={55} // Default dimensions of select
-      visible={basinOptions.length === 0}
+      visible={stateOptions.length === 0}
     >
       <Select
-        key={`basin-select-${geographyFilterCollectionId}`}
-        size="xs"
-        label="Basin"
+        key={`state-select-${geographyFilterCollectionId}`}
+        size="sm"
+        label="State"
         placeholder="Select..."
-        data={basinOptions}
+        data={stateOptions}
         value={
-          geographyFilterCollectionId === SourceId.Huc02 &&
+          geographyFilterCollectionId === SourceId.States &&
           geographyFilterItemId
             ? geographyFilterItemId
             : undefined

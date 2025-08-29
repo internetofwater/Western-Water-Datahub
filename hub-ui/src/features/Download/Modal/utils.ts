@@ -5,7 +5,7 @@
 
 import { ComboboxData } from "@mantine/core";
 import { ICollection } from "@/services/edr.service";
-import { Collection, Location } from "@/stores/main/types";
+import { Location } from "@/stores/main/types";
 
 export const getParameterNameOptions = (
   parameterNames: ICollection["parameter_names"],
@@ -37,7 +37,7 @@ export const getDatetime = (
 };
 
 export const buildUrl = (
-  collectionId: Collection["id"],
+  collectionId: ICollection["id"],
   locationId: Location["id"],
   parameters: string[],
   from: string | null,

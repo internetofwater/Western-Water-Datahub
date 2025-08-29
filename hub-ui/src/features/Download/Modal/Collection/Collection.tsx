@@ -31,13 +31,12 @@ import loadingManager from "@/managers/Loading.init";
 import notificationManager from "@/managers/Notification.init";
 import { ICollection } from "@/services/edr.service";
 import wwdhService from "@/services/init/wwdh.init";
-import { Collection as CollectionType } from "@/stores/main/types";
 import { NotificationType } from "@/stores/session/types";
 
 dayjs.extend(isSameOrBefore);
 
 type Props = {
-  collectionId: CollectionType["id"];
+  collectionId: ICollection["id"];
   locationIds: (string | number)[];
   open?: boolean;
 };
@@ -130,8 +129,8 @@ const Collection: React.FC<Props> = (props) => {
             <Title order={3}>{collection.title}</Title>
             <Button onClick={toggle}>{opened ? "Hide" : "Show"}</Button>
           </Group>
-          <Divider />
           <Collapse in={opened}>
+            <Divider />
             <Stack mt="sm">
               <Group justify="space-between" align="flex-start" grow mb="lg">
                 {parameterNameOptions && (

@@ -14,14 +14,10 @@ import {
   getPointLayerDefinition,
   getPolygonLayerDefinition,
 } from "@/features/Map/utils";
+import { ICollection } from "@/services/edr.service";
 import geoconnexService from "@/services/init/geoconnex.init";
 import wwdhService from "@/services/init/wwdh.init";
-import { Collection, Location, MainState } from "@/stores/main/types";
-
-type FakeCollection = {
-  id: string;
-  [key: string]: string;
-};
+import { Location, MainState } from "@/stores/main/types";
 
 /**
  *
@@ -65,7 +61,7 @@ class MainManager {
    *
    * @function
    */
-  public hasCollection(collectionId: Collection["id"]): boolean {
+  public hasCollection(collectionId: ICollection["id"]): boolean {
     return this.store.getState().hasCollection(collectionId);
   }
 
@@ -82,22 +78,22 @@ class MainManager {
    * @function
    */
   public async getData(
-    collectionId: Collection["id"],
+    collectionId: ICollection["id"],
   ): Promise<FeatureCollection<Point>> {
     const geographyFilter = this.store.getState().geographyFilter;
     if (geographyFilter) {
       const feature = geographyFilter.feature as unknown as GeoJSONFeature;
       return this.getArea(collectionId, feature);
     }
-    return this.getLocations(collectionId);
+    return this.fetchLocations(collectionId);
   }
 
   /**
    *
    * @function
    */
-  private async getLocations(
-    collectionId: Collection["id"],
+  private async fetchLocations(
+    collectionId: ICollection["id"],
   ): Promise<FeatureCollection<Point>> {
     return wwdhService.getLocations<FeatureCollection<Point>>(collectionId);
   }
@@ -107,7 +103,7 @@ class MainManager {
    * @function
    */
   private async getArea(
-    collectionId: Collection["id"],
+    collectionId: ICollection["id"],
     feature: GeoJSONFeature,
   ): Promise<FeatureCollection<Point>> {
     const wkt = stringify(feature);
@@ -124,7 +120,7 @@ class MainManager {
    *
    * @function
    */
-  public getSourceId(collectionId: Collection["id"]): string {
+  public getSourceId(collectionId: ICollection["id"]): string {
     return `${collectionId}-source`;
   }
 
@@ -132,7 +128,7 @@ class MainManager {
    *
    * @function
    */
-  public getLayerId(collectionId: Collection["id"]): string {
+  public getLayerId(collectionId: ICollection["id"]): string {
     return `${collectionId}-locations`;
   }
 
@@ -140,7 +136,7 @@ class MainManager {
    *
    * @function
    */
-  private async addMapSource(collectionId: Collection["id"]): Promise<string> {
+  private async addMapSource(collectionId: ICollection["id"]): Promise<string> {
     const sourceId = this.getSourceId(collectionId);
     if (this.map && !this.map.getSource(sourceId)) {
       const data = await this.getData(collectionId);
@@ -158,7 +154,7 @@ class MainManager {
    * @function
    */
   private async addMapLayer(
-    collectionId: Collection["id"],
+    collectionId: ICollection["id"],
     sourceId: string,
   ): Promise<void> {
     const layerId = this.getLayerId(collectionId);
@@ -200,13 +196,21 @@ class MainManager {
    *
    * @function
    */
-  public async updateCollections(): Promise<void> {
+  public async getLocations(): Promise<void> {
+    // Specific user collection choice
+    const collection = this.store.getState().collection;
+    // All collections for selected filters
     const collections = this.store.getState().collections;
 
-    for (const collection of collections) {
-      const collectionId = collection.id;
-      const sourceId = await this.addMapSource(collectionId);
-      this.addMapLayer(collectionId, sourceId);
+    if (collection) {
+      const sourceId = await this.addMapSource(collection);
+      this.addMapLayer(collection, sourceId);
+    } else {
+      for (const collection of collections) {
+        const collectionId = collection.id;
+        const sourceId = await this.addMapSource(collectionId);
+        this.addMapLayer(collectionId, sourceId);
+      }
     }
   }
 
@@ -214,15 +218,18 @@ class MainManager {
    *
    * @function
    */
-  public addCollection(collection: FakeCollection): void {
-    const _collection: Collection = {
-      id: collection.id,
-      provider: "fake",
-      category: "fake",
-      dataset: "fake",
-    };
+  public async getCollections(): Promise<void> {
+    const provider = this.store.getState().provider;
+    const category = this.store.getState().category;
 
-    this.store.getState().addCollection(_collection);
+    const response = await wwdhService.getCollections({
+      params: {
+        ...(provider ? { "provider-name": provider } : {}),
+        "parameter-name": category ? category.value : "*",
+      },
+    });
+
+    this.store.getState().setCollections(response.collections);
   }
 
   /**
@@ -230,7 +237,7 @@ class MainManager {
    * @function
    */
   private async getFilterGeometry(
-    collectionId: Collection["id"],
+    collectionId: ICollection["id"],
     itemId: string,
   ): Promise<Feature<Polygon>> {
     const service =
@@ -239,7 +246,7 @@ class MainManager {
   }
 
   private addGeographyFilterSource(
-    collectionId: Collection["id"],
+    collectionId: ICollection["id"],
     feature: Feature<Polygon>,
   ): string {
     const sourceId = this.getSourceId(collectionId);
@@ -263,7 +270,7 @@ class MainManager {
    * @function
    */
   private addGeographyFilterLayer(
-    collectionId: Collection["id"],
+    collectionId: ICollection["id"],
     sourceId: string,
   ): void {
     const layerId = this.getLayerId(collectionId);
@@ -296,7 +303,7 @@ class MainManager {
    * @function
    */
   public async updateGeographyFilter(
-    collectionId: Collection["id"],
+    collectionId: ICollection["id"],
     itemId: string,
   ): Promise<void> {
     const feature = await this.getFilterGeometry(collectionId, itemId);

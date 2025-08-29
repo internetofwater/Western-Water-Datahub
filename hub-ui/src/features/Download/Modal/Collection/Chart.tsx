@@ -10,14 +10,18 @@ import styles from "@/features/Download/Download.module.css";
 import { getDatetime } from "@/features/Download/Modal/utils";
 import loadingManager from "@/managers/Loading.init";
 import notificationManager from "@/managers/Notification.init";
-import { CoverageCollection, CoverageJSON } from "@/services/edr.service";
+import {
+  CoverageCollection,
+  CoverageJSON,
+  ICollection,
+} from "@/services/edr.service";
 import wwdhService from "@/services/init/wwdh.init";
-import { Collection, Location } from "@/stores/main/types";
+import { Location } from "@/stores/main/types";
 import { NotificationType } from "@/stores/session/types";
 
 type Props = {
   instanceId: number;
-  collectionId: Collection["id"];
+  collectionId: ICollection["id"];
   locationId: Location["id"];
   parameters: string[];
   from: string | null;

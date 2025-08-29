@@ -110,7 +110,7 @@ export const Region: React.FC = () => {
     >
       <Select
         key={`region-select-${geographyFilterCollectionId}`}
-        size="xs"
+        size="sm"
         label="Region"
         placeholder="Select..."
         data={regionOptions}

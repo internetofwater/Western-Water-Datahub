@@ -4,12 +4,13 @@
  */
 
 import { StateCreator } from "zustand";
-import { Collection, MainState } from "@/stores/main/types";
+import { ICollection } from "@/services/edr.service";
+import { MainState } from "@/stores/main/types";
 
 interface CollectionSlice {
-  collections: Collection[];
-  setCollections: (collections: Collection[]) => void;
-  addCollection: (collection: Collection) => void;
+  collections: ICollection[];
+  setCollections: (collections: ICollection[]) => void;
+  addCollection: (collection: ICollection) => void;
   hasCollection: (collectionId: string) => boolean;
 }
 
