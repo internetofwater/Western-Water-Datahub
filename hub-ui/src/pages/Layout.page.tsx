@@ -8,6 +8,7 @@ import Download from "@/features/Download";
 import DownloadModal from "@/features/Download/Modal";
 import Loading from "@/features/Loading";
 import Map from "@/features/Map";
+import MapTools from "@/features/Map/Tools";
 import Notifications from "@/features/Notifications";
 import Panel from "@/features/Panel";
 import styles from "@/pages/pages.module.css";
@@ -26,6 +27,7 @@ export const LayoutPage: React.FC = () => {
         </Group>
         <Loading desktop />
       </Stack>
+      <MapTools />
       <DownloadModal />
     </Box>
   );

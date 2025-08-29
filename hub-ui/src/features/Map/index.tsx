@@ -6,10 +6,12 @@
 import { useEffect, useRef } from "react";
 import Map from "@/components/Map";
 import { basemaps } from "@/components/Map/consts";
+import CustomControl from "@/components/Map/tools/CustomControl";
 import { BasemapId } from "@/components/Map/types";
 import { useMap } from "@/contexts/MapContexts";
 import { layerDefinitions, MAP_ID } from "@/features/Map/config";
 import { sourceConfigs } from "@/features/Map/sources";
+import { MapButton as Legend } from "@/features/Map/Tools/Legend/Button";
 import { getCircleStrokeColor } from "@/features/Map/utils";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
@@ -79,7 +81,7 @@ const MainMap: React.FC<Props> = (props) => {
 
     const locationsByCollection = groupLocationIdsByCollection(locations);
     collections.forEach((collection) => {
-      const layerId = mainManager.getLayerId(collection.id);
+      const layerId = mainManager.getLocationsLayerId(collection.id);
 
       const locationIds = locationsByCollection[collection.id] ?? [];
 
@@ -143,7 +145,12 @@ const MainMap: React.FC<Props> = (props) => {
           scaleControl: true,
           navigationControl: true,
         }}
-        persist
+        customControls={[
+          {
+            control: new CustomControl(<Legend />),
+            position: "top-right",
+          },
+        ]}
       />
     </>
   );

@@ -4,9 +4,13 @@
  */
 
 export enum NotificationType {
-  Success = 'success',
-  Error = 'error',
-  Info = 'info',
+  Success = "success",
+  Error = "error",
+  Info = "info",
+}
+
+export enum Tools {
+  Legend = "legend",
 }
 
 export type Notification = {
@@ -21,9 +25,23 @@ export type Loading = {
   message: string;
 };
 
+export type LegendEntry = {
+  layerId: string;
+  color: string;
+  visible: boolean;
+};
+
 export type SessionState = {
+  legendEntries: LegendEntry[];
+  setLegendEntries: (legendEntries: SessionState["legendEntries"]) => void;
   downloadModalOpen: boolean;
-  setDownloadModalOpen: (downloadModalOpen: boolean) => void;
+  setDownloadModalOpen: (
+    downloadModalOpen: SessionState["downloadModalOpen"],
+  ) => void;
+  tools: {
+    [Tools.Legend]: boolean;
+  };
+  setOpenTools: (tool: Tools, open: boolean) => void;
   loadingInstances: Loading[];
   addLoadingInstance: (loadingInstance: Loading) => void;
   removeLoadingInstance: (id: string) => void;
