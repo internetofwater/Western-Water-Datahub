@@ -139,7 +139,7 @@ export const ComplexReservoirProperties = [
  * @constant
  */
 export const RISEEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?parameter-name=reservoirStorage&limit=10000';
+    'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?parameter-name=Storage&limit=10000';
 
 /**
  *
@@ -177,7 +177,7 @@ export const ReservoirConfigs: ReservoirConfig[] = [
     //         SubLayerId.RiseEDRReservoirLabels,
     //     ],
     //     params: {
-    //         'parameter-name': 'reservoirStorage',
+    //         'parameter-name': 'Storage',
     //     },
     // },
     {
@@ -201,7 +201,7 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         ],
 
         params: {
-            'parameter-name': 'reservoirStorage',
+            'parameter-name': 'Storage',
         },
     },
 ];
