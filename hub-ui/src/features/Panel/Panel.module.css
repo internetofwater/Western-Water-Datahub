@@ -17,8 +17,20 @@
   overflow-y: auto;
 }
 
+.panelWrapper > div {
+  height: inherit;
+}
+
 .title {
   text-align: center;
+}
+
+.updateLocationsWrapper {
+  margin-top: auto;
+}
+
+.updateLocationsWrapper > button {
+  width: 100%;
 }
 
 @media screen and (max-width: 899px) {

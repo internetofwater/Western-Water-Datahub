@@ -207,7 +207,7 @@ class MainManager {
     const response = await wwdhService.getCollections({
       params: {
         ...(provider ? { 'provider-name': provider } : {}),
-        'parameter-name': category ? category : '*',
+        'parameter-name': category ? category.value : '*',
       },
     });
 

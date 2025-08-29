@@ -3,22 +3,22 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useRef, useState } from "react";
-import { Skeleton, useComputedColorScheme } from "@mantine/core";
-import LineChart from "@/components/Charts/LineChart";
-import styles from "@/features/Download/Download.module.css";
-import { getDatetime } from "@/features/Download/Modal/utils";
-import loadingManager from "@/managers/Loading.init";
-import notificationManager from "@/managers/Notification.init";
-import { CoverageCollection, CoverageJSON } from "@/services/edr.service";
-import wwdhService from "@/services/init/wwdh.init";
-import { Collection, Location } from "@/stores/main/types";
-import { NotificationType } from "@/stores/session/types";
+import { useEffect, useRef, useState } from 'react';
+import { Skeleton, useComputedColorScheme } from '@mantine/core';
+import LineChart from '@/components/Charts/LineChart';
+import styles from '@/features/Download/Download.module.css';
+import { getDatetime } from '@/features/Download/Modal/utils';
+import loadingManager from '@/managers/Loading.init';
+import notificationManager from '@/managers/Notification.init';
+import { CoverageCollection, CoverageJSON, ICollection } from '@/services/edr.service';
+import wwdhService from '@/services/init/wwdh.init';
+import { Location } from '@/stores/main/types';
+import { NotificationType } from '@/stores/session/types';
 
 type Props = {
   instanceId: number;
-  collectionId: Collection["id"];
-  locationId: Location["id"];
+  collectionId: ICollection['id'];
+  locationId: Location['id'];
   parameters: string[];
   from: string | null;
   to: string | null;
@@ -32,28 +32,28 @@ export const Chart: React.FC<Props> = (props) => {
 
   const computedColorScheme = useComputedColorScheme();
 
-  const [data, setData] = useState<CoverageCollection | CoverageJSON | null>(
-    null,
-  );
+  const [data, setData] = useState<CoverageCollection | CoverageJSON | null>(null);
 
   const fetchData = async () => {
     const loadingInstance = loadingManager.add(
-      `Fetching chart data for location: ${locationId}, of collection: ${collectionId}`,
+      `Fetching chart data for location: ${locationId}, of collection: ${collectionId}`
     );
     try {
       controller.current = new AbortController();
 
       const datetime = getDatetime(from, to);
 
-      const coverageCollection = await wwdhService.getLocation<
-        CoverageCollection | CoverageJSON
-      >(collectionId, String(locationId), {
-        signal: controller.current.signal,
-        params: {
-          "parameter-name": parameters.join(","),
-          ...(datetime ? { datetime } : {}),
-        },
-      });
+      const coverageCollection = await wwdhService.getLocation<CoverageCollection | CoverageJSON>(
+        collectionId,
+        String(locationId),
+        {
+          signal: controller.current.signal,
+          params: {
+            'parameter-name': parameters.join(','),
+            ...(datetime ? { datetime } : {}),
+          },
+        }
+      );
 
       if (isMounted.current) {
         loadingManager.remove(loadingInstance);
@@ -61,16 +61,13 @@ export const Chart: React.FC<Props> = (props) => {
       }
     } catch (error) {
       if (
-        (error as Error)?.name === "AbortError" ||
-        (typeof error === "string" && error === "Component unmount")
+        (error as Error)?.name === 'AbortError' ||
+        (typeof error === 'string' && error === 'Component unmount')
       ) {
-        console.log("Fetch request canceled");
+        console.log('Fetch request canceled');
       } else if ((error as Error)?.message) {
         const _error = error as Error;
-        notificationManager.show(
-          `Error: ${_error.message}`,
-          NotificationType.Error,
-        );
+        notificationManager.show(`Error: ${_error.message}`, NotificationType.Error);
       }
       loadingManager.remove(loadingInstance);
     }
@@ -83,7 +80,7 @@ export const Chart: React.FC<Props> = (props) => {
     return () => {
       isMounted.current = false;
       if (controller.current) {
-        controller.current.abort("Component unmount");
+        controller.current.abort('Component unmount');
       }
     };
   }, [instanceId]);
@@ -101,7 +98,7 @@ export const Chart: React.FC<Props> = (props) => {
           legend
           legendEntries={parameters}
           theme={computedColorScheme}
-          filename={`line-chart-${locationId}-${parameters.join("-")}`}
+          filename={`line-chart-${locationId}-${parameters.join('-')}`}
         />
       )}
     </Skeleton>

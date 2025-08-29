@@ -5,13 +5,13 @@
 
 import { useEffect } from 'react';
 import { Paper, Stack } from '@mantine/core';
+import Loading from '@/features/Loading';
 import { UpdateCollectionsButton } from '@/features/Panel/Button';
 import Filters from '@/features/Panel/Filters';
 import { Header } from '@/features/Panel/Header';
 import styles from '@/features/Panel/Panel.module.css';
 import mainManager from '@/managers/Main.init';
 import useMainStore from '@/stores/main';
-import Loading from '../Loading';
 
 const Panel: React.FC = () => {
   const provider = useMainStore((state) => state.provider);

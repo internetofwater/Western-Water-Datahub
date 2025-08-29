@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Button, Tooltip } from '@mantine/core';
+import { Box, Button, Tooltip } from '@mantine/core';
+import styles from '@/features/Panel/Panel.module.css';
 import loadingManager from '@/managers/Loading.init';
 import mainManager from '@/managers/Main.init';
 import notificationManager from '@/managers/Notification.init';
@@ -21,13 +22,17 @@ export const UpdateCollectionsButton: React.FC = () => {
     notificationManager.show('Done fetching data', NotificationType.Success);
   };
 
-  return provider ? (
-    <Button onClick={() => void addData()}>Update Data</Button>
-  ) : (
-    <Tooltip label="Please select a provider">
-      <Button data-disabled onClick={(event) => event.preventDefault()}>
-        Update Data
-      </Button>
-    </Tooltip>
+  return (
+    <Box className={styles.updateLocationsWrapper}>
+      {provider ? (
+        <Button onClick={() => void addData()}>Update Locations</Button>
+      ) : (
+        <Tooltip label="Please select a provider">
+          <Button data-disabled onClick={(event) => event.preventDefault()}>
+            Update Locations
+          </Button>
+        </Tooltip>
+      )}
+    </Box>
   );
 };

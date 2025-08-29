@@ -16,7 +16,7 @@ export const Provider: React.FC = () => {
         Filter by Provider
       </Title>
       <Select
-        size="xs"
+        size="sm"
         label="Provider"
         placeholder="Select..."
         data={['NOAA', 'USBR', 'USGS', 'USACE', 'USDA']}
