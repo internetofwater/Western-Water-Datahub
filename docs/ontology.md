@@ -21,7 +21,7 @@ flowchart LR
     P{pygeoapi}
     A[Ontology OGC API - Collection]
 
-    I -- GET<br>/collections?parameter-name=reservoirStorage --> P -- Request ODM2 Collections<br>document --> A -- Return Collections<br>document --> I
+    I -- GET<br>/collections?parameter-name=Storage --> P -- Request ODM2 Collections<br>document --> A -- Return Collections<br>document --> I
 ```
 
 2. **OGC API - EDR** endpoint interceptor that maps ODM2 parameters
@@ -38,7 +38,7 @@ flowchart LR
     P{pygeoapi}
     E@{ shape: procs, label: "OGC API - EDR Collection"}
 
-    I -- GET<br>/collection/{cid}/locations?parameter-name=reservoirStorage --> P -- Map ODM2 Vocab to<br>EDR Parameter --> E  -- Replace EDR Parameter<br>with ODM2 Vocab --> I
+    I -- GET<br>/collection/{cid}/locations?parameter-name=Storage --> P -- Map ODM2 Vocab to<br>EDR Parameter --> E  -- Replace EDR Parameter<br>with ODM2 Vocab --> I
 ```
 
 ### Dashboard
@@ -59,22 +59,22 @@ sequenceDiagram
     participant SourceEDR2
 
     %% Initial discovery via process execution
-    Dashboard->>pygeoapi: GET /?parameter-name=reservoirStorage
-    Dashboard->>pygeoapi: GET /collections?parameter-name=reservoirStorage
+    Dashboard->>pygeoapi: GET /?parameter-name=Storage
+    Dashboard->>pygeoapi: GET /collections?parameter-name=Storage
     pygeoapi->>OntologyProcess: Fetch filtered view of Collections document
 
     %% Loop over URLs to GeoJSON of Reservoirs
     par Task A
-        Dashboard->>pygeoapi: GET /collections/{SourceEDR1}/locations?parameter-name=reservoirStorage
+        Dashboard->>pygeoapi: GET /collections/{SourceEDR1}/locations?parameter-name=Storage
         pygeoapi->>SourceEDR1: Fetch Reservoir locations from Source1
     and Task B
-        Dashboard->>pygeoapi: GET /collections/{SourceEDR2}/locations?parameter-name=reservoirStorage
+        Dashboard->>pygeoapi: GET /collections/{SourceEDR2}/locations?parameter-name=Storage
         pygeoapi->>SourceEDR2: Fetch Reservoir locations from Source2
 
     end
 
     User->>Dashboard: Select Reservoir of interest
-    Dashboard->>pygeoapi: GET /collections/{SourceEDR1}/locations/{LocationId}?parameter-name=reservoirStorage
+    Dashboard->>pygeoapi: GET /collections/{SourceEDR1}/locations/{LocationId}?parameter-name=Storage
     pygeoapi->>SourceEDR1: Fetch Reservoir timeseries
 ```
 
