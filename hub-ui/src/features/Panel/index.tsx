@@ -11,6 +11,7 @@ import { Header } from '@/features/Panel/Header';
 import styles from '@/features/Panel/Panel.module.css';
 import mainManager from '@/managers/Main.init';
 import useMainStore from '@/stores/main';
+import Loading from '../Loading';
 
 const Panel: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
@@ -21,13 +22,16 @@ const Panel: React.FC = () => {
   }, [provider, category]);
 
   return (
-    <Paper className={styles.panelWrapper}>
-      <Stack gap="lg" px="xl" pb="xl">
-        <Header />
-        <Filters />
-        <UpdateCollectionsButton />
-      </Stack>
-    </Paper>
+    <>
+      <Paper className={styles.panelWrapper}>
+        <Stack gap="lg" px="xl" pb="xl" justify="center">
+          <Header />
+          <Filters />
+          <UpdateCollectionsButton />
+        </Stack>
+        <Loading desktop={false} />
+      </Paper>
+    </>
   );
 };
 

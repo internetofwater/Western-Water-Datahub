@@ -10,10 +10,10 @@ import { BasemapId } from "@/components/Map/types";
 import { useMap } from "@/contexts/MapContexts";
 import { layerDefinitions, MAP_ID } from "@/features/Map/config";
 import { sourceConfigs } from "@/features/Map/sources";
+import { getCircleStrokeColor } from "@/features/Map/utils";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import { groupLocationIdsByCollection } from "@/utils/groupLocationsByCollection";
-import { getCircleStrokeColor } from "./utils";
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;

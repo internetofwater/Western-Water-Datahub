@@ -9,3 +9,47 @@
   left: 8px;
   z-index: 1;
 }
+
+.parameterNameSelect {
+  min-width: 24em;
+}
+
+.chartWrapper {
+  height: 300px;
+}
+
+.goButton {
+  margin-top: 3.15em;
+  max-width: 5em;
+}
+
+.csvButton {
+  max-width: 10em;
+  margin-left: auto;
+}
+
+.copyInputWrapper {
+  width: 84%;
+  max-width: 100%;
+}
+
+.datePicker {
+  min-width: 11em;
+}
+
+@media screen and (max-width: 816px) {
+  .copyInputWrapper {
+    width: unset;
+  }
+
+  .csvButton {
+    max-width: unset;
+    margin-left: unset;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .parameterNameSelect {
+    min-width: 100%;
+  }
+}

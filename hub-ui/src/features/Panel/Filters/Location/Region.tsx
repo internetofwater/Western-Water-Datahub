@@ -4,35 +4,58 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import { FeatureCollection, Polygon } from "geojson";
 import { ComboboxData, Select, Skeleton } from "@mantine/core";
-import esriService from "@/services/init/esri.init";
-import { RegionField } from "@/types/region";
-import { formatOptions } from "../utils";
+import { SourceId } from "@/features/Map/sources";
+import { formatOptions } from "@/features/Panel/Filters/utils";
+import loadingManager from "@/managers/Loading.init";
+import mainManager from "@/managers/Main.init";
+import notificationManager from "@/managers/Notification.init";
+import wwdhService from "@/services/init/wwdh.init";
+import useMainStore from "@/stores/main";
+import { NotificationType } from "@/stores/session/types";
+import { RegionField, RegionProperties } from "@/types/region";
 
 export const Region: React.FC = () => {
+  const geographyFilterCollectionId = useMainStore(
+    (state) => state.geographyFilter?.collectionId,
+  );
+  const geographyFilterItemId = useMainStore(
+    (state) => state.geographyFilter?.itemId,
+  );
+
   const [regionOptions, setRegionOptions] = useState<ComboboxData>([]);
-  const [loading, setLoading] = useState(true);
 
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
+
   const getRegionOptions = async () => {
+    const loadingInstance = loadingManager.add(
+      "Fetching region dropdown options",
+    );
+
     try {
       controller.current = new AbortController();
 
-      const regionFeatureCollection = await esriService.getFeatures(
-        controller.current.signal,
-      );
+      const regionFeatureCollection = await wwdhService.getItems<
+        FeatureCollection<Polygon, RegionProperties>
+      >(SourceId.DoiRegions, {
+        params: {
+          bbox: [-125, 24, -96.5, 49],
+          skipGeometry: true,
+        },
+      });
 
       if (regionFeatureCollection.features.length) {
-        const regionOptions = formatOptions(
+        const basinOptions = formatOptions(
           regionFeatureCollection.features,
-          (feature) => String(feature?.properties?.[RegionField.Name]),
+          (feature) => String(feature.id),
           (feature) => String(feature?.properties?.[RegionField.Name]),
         );
 
         if (isMounted.current) {
-          setLoading(false);
-          setRegionOptions(regionOptions);
+          loadingManager.remove(loadingInstance);
+          setRegionOptions(basinOptions);
         }
       }
     } catch (error) {
@@ -43,11 +66,14 @@ export const Region: React.FC = () => {
         console.log("Fetch request canceled");
       } else if ((error as Error)?.message) {
         const _error = error as Error;
-        console.error(_error);
+        notificationManager.show(
+          `Error: ${_error.message}`,
+          NotificationType.Error,
+        );
       }
+      loadingManager.remove(loadingInstance);
     }
   };
-
   useEffect(() => {
     isMounted.current = true;
     void getRegionOptions();
@@ -59,17 +85,45 @@ export const Region: React.FC = () => {
     };
   }, []);
 
+  const handleChange = async (itemId: string | null) => {
+    if (itemId) {
+      const loadingInstance = loadingManager.add(
+        "Adding region geography filter",
+      );
+      await mainManager.updateGeographyFilter(SourceId.DoiRegions, itemId);
+      loadingManager.remove(loadingInstance);
+      notificationManager.show(
+        "Updated geography filter",
+        NotificationType.Success,
+      );
+    }
+  };
+
+  const handleClear = () => {
+    mainManager.removeGeographyFilter();
+  };
+
   return (
     <Skeleton
       height={55} // Default dimensions of select
-      visible={loading || regionOptions.length === 0}
+      visible={regionOptions.length === 0}
     >
       <Select
+        key={`region-select-${geographyFilterCollectionId}`}
         size="xs"
         label="Region"
         placeholder="Select..."
         data={regionOptions}
+        value={
+          geographyFilterCollectionId === SourceId.DoiRegions &&
+          geographyFilterItemId
+            ? geographyFilterItemId
+            : undefined
+        }
+        onChange={(value) => handleChange(value)}
+        onClear={() => handleClear()}
         searchable
+        clearable
       />
     </Skeleton>
   );

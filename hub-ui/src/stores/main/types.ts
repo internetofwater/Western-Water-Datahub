@@ -65,6 +65,12 @@ export type Location = {
   collectionId: ICollection['id'];
 };
 
+export type GeographyFilter = {
+  itemId: string;
+  collectionId: Collection['id'];
+  feature: Feature<Polygon>;
+};
+
 export interface MainState {
   provider: string | null;
   setProvider: (provider: MainState['provider']) => void;
@@ -72,7 +78,7 @@ export interface MainState {
   setCategory: (category: MainState['category']) => void;
   dataset: string | null;
   setDataset: (dataset: MainState['dataset']) => void;
-  geographyFilter: Feature<Polygon> | null;
+  geographyFilter: GeographyFilter | null;
   setGeographyFilter: (geographyFilter: MainState['geographyFilter']) => void;
   hasGeographyFilter: () => boolean;
   collections: ICollection[];

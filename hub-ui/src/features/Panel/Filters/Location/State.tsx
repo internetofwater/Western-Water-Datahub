@@ -8,18 +8,32 @@ import { FeatureCollection, Polygon } from "geojson";
 import { ComboboxData, Select, Skeleton } from "@mantine/core";
 import { ValidStates } from "@/features/Map/consts";
 import { SourceId } from "@/features/Map/sources";
+import { formatOptions } from "@/features/Panel/Filters/utils";
+import loadingManager from "@/managers/Loading.init";
+import mainManager from "@/managers/Main.init";
+import notificationManager from "@/managers/Notification.init";
 import geoconnexService from "@/services/init/geoconnex.init";
+import useMainStore from "@/stores/main";
+import { NotificationType } from "@/stores/session/types";
 import { StateField, StateProperties } from "@/types/state";
-import { formatOptions } from "../utils";
 
 export const State: React.FC = () => {
-  const [loading, setLoading] = useState(true);
+  const geographyFilterCollectionId = useMainStore(
+    (state) => state.geographyFilter?.collectionId,
+  );
+  const geographyFilterItemId = useMainStore(
+    (state) => state.geographyFilter?.itemId,
+  );
+
   const [stateOptions, setStateOptions] = useState<ComboboxData>([]);
 
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
 
-  const getBasinOptions = async () => {
+  const getStateOptions = async () => {
+    const loadingInstance = loadingManager.add(
+      "Fetching state dropdown options",
+    );
     try {
       controller.current = new AbortController();
 
@@ -37,13 +51,13 @@ export const State: React.FC = () => {
           stateFeatureCollection.features.filter((feature) =>
             ValidStates.includes(feature.properties[StateField.Acronym]),
           ),
-          (feature) => String(feature?.properties?.[StateField.Acronym]),
+          (feature) => String(feature?.id),
           (feature) => String(feature?.properties?.[StateField.Name]),
           "All States",
         );
 
         if (isMounted.current) {
-          setLoading(false);
+          loadingManager.remove(loadingInstance);
           setStateOptions(basinOptions);
         }
       }
@@ -55,14 +69,18 @@ export const State: React.FC = () => {
         console.log("Fetch request canceled");
       } else if ((error as Error)?.message) {
         const _error = error as Error;
-        console.error(_error);
+        notificationManager.show(
+          `Error: ${_error.message}`,
+          NotificationType.Error,
+        );
       }
+      loadingManager.remove(loadingInstance);
     }
   };
 
   useEffect(() => {
     isMounted.current = true;
-    void getBasinOptions();
+    void getStateOptions();
     return () => {
       isMounted.current = false;
       if (controller.current) {
@@ -71,17 +89,45 @@ export const State: React.FC = () => {
     };
   }, []);
 
+  const handleChange = async (itemId: string | null) => {
+    if (itemId) {
+      const loadingInstance = loadingManager.add(
+        "Adding state geography filter",
+      );
+      await mainManager.updateGeographyFilter(SourceId.States, itemId);
+      loadingManager.remove(loadingInstance);
+      notificationManager.show(
+        "Updated geography filter",
+        NotificationType.Success,
+      );
+    }
+  };
+
+  const handleClear = () => {
+    mainManager.removeGeographyFilter();
+  };
+
   return (
     <Skeleton
       height={55} // Default dimensions of select
-      visible={loading || stateOptions.length === 0}
+      visible={stateOptions.length === 0}
     >
       <Select
+        key={`state-select-${geographyFilterCollectionId}`}
         size="xs"
         label="State"
         placeholder="Select..."
         data={stateOptions}
+        value={
+          geographyFilterCollectionId === SourceId.States &&
+          geographyFilterItemId
+            ? geographyFilterItemId
+            : undefined
+        }
+        onChange={(value) => handleChange(value)}
+        onClear={() => handleClear()}
         searchable
+        clearable
       />
     </Skeleton>
   );
