@@ -4,9 +4,9 @@
  */
 
 export enum NotificationType {
-  Success = "success",
-  Error = "error",
-  Info = "info",
+  Success = 'success',
+  Error = 'error',
+  Info = 'info',
 }
 
 export type Notification = {
@@ -27,6 +27,7 @@ export type SessionState = {
   loadingInstances: Loading[];
   addLoadingInstance: (loadingInstance: Loading) => void;
   removeLoadingInstance: (id: string) => void;
+  hasLoadingInstance: (text: string) => boolean;
   notifications: Notification[];
   addNotification: (notification: Notification) => void;
   removeNotification: (id: string) => void;
