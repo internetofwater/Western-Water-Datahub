@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { PropsWithChildren } from "react";
+import { PropsWithChildren } from 'react';
 import {
   Box,
   HoverCard,
@@ -13,8 +13,8 @@ import {
   ListItem,
   Text,
   Title,
-} from "@mantine/core";
-import styles from "@/features/Loading/Loading.module.css";
+} from '@mantine/core';
+import styles from '@/features/Loading/Loading.module.css';
 
 type Props = {
   loadingTexts: string[];
@@ -25,7 +25,7 @@ export const Info: React.FC<PropsWithChildren<Props>> = (props) => {
   const { loadingTexts, desktop, children } = props;
 
   return (
-    <HoverCard width={260} shadow="md" position="top" withArrow>
+    <HoverCard width={300} shadow="md" position="top" withArrow>
       <HoverCardTarget>
         <Box
           w="100%"
