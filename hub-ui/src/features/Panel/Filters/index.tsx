@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: MIT
  */
 
-import DataCategory from "./DataCategory";
-import Location from "./Location";
-import Provider from "./Provider";
-import Time from "./Time";
+import { Category } from './Category';
+import { Dataset } from './Dataset';
+import Location from './Location';
+import { Provider } from './Provider';
 
 const Filters: React.FC = () => {
   return (
     <>
-      <DataCategory />
       <Provider />
+      <Category />
+      <Dataset />
       <Location />
-      <Time />
     </>
   );
 };

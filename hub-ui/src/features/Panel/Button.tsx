@@ -3,24 +3,31 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Button } from "@mantine/core";
-import loadingManager from "@/managers/Loading.init";
-import mainManager from "@/managers/Main.init";
-import notificationManager from "@/managers/Notification.init";
-import { NotificationType } from "@/stores/session/types";
+import { Button, Tooltip } from '@mantine/core';
+import loadingManager from '@/managers/Loading.init';
+import mainManager from '@/managers/Main.init';
+import notificationManager from '@/managers/Notification.init';
+import useMainStore from '@/stores/main';
+import { NotificationType } from '@/stores/session/types';
 
 export const UpdateCollectionsButton: React.FC = () => {
-  const addData = async () => {
-    const instance = loadingManager.add("Fetching Collections");
-    // TODO: remove this, temporary for development
-    mainManager.addCollection({
-      id: "rise-edr",
-    });
+  const provider = useMainStore((state) => state.provider);
 
-    mainManager.updateCollections();
+  const addData = async () => {
+    const instance = loadingManager.add('Fetching Collections');
+
+    mainManager.getLocations();
     loadingManager.remove(instance);
-    notificationManager.show("Done fetching data", NotificationType.Success);
+    notificationManager.show('Done fetching data', NotificationType.Success);
   };
 
-  return <Button onClick={() => void addData()}>Update Data</Button>;
+  return provider ? (
+    <Button onClick={() => void addData()}>Update Data</Button>
+  ) : (
+    <Tooltip label="Please select a provider">
+      <Button data-disabled onClick={(event) => event.preventDefault()}>
+        Update Data
+      </Button>
+    </Tooltip>
+  );
 };

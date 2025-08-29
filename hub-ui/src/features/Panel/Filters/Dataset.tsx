@@ -6,24 +6,23 @@
 import { Select, Stack, Title } from '@mantine/core';
 import useMainStore from '@/stores/main';
 
-export const Provider: React.FC = () => {
-  const provider = useMainStore((state) => state.provider);
-  const setProvider = useMainStore((state) => state.setProvider);
+export const Dataset: React.FC = () => {
+  const dataset = useMainStore((state) => state.dataset);
+  const setDataset = useMainStore((state) => state.setDataset);
 
   return (
     <Stack gap={0}>
       <Title order={2} size="h3">
-        Filter by Provider
+        Filter by Dataset
       </Title>
       <Select
         size="xs"
-        label="Provider"
+        label="Dataset"
         placeholder="Select..."
-        data={['NOAA', 'USBR', 'USGS', 'USACE', 'USDA']}
-        value={provider}
-        onChange={setProvider}
+        data={['React', 'Angular', 'Vue', 'Svelte']}
+        value={dataset}
+        onChange={setDataset}
         searchable
-        withAsterisk
       />
     </Stack>
   );

@@ -6,24 +6,24 @@
 import { Select, Stack, Title } from '@mantine/core';
 import useMainStore from '@/stores/main';
 
-export const Provider: React.FC = () => {
-  const provider = useMainStore((state) => state.provider);
-  const setProvider = useMainStore((state) => state.setProvider);
+export const Category: React.FC = () => {
+  const category = useMainStore((state) => state.category);
+  const setCategory = useMainStore((state) => state.setCategory);
 
   return (
     <Stack gap={0}>
       <Title order={2} size="h3">
-        Filter by Provider
+        Filter by Data Category
       </Title>
       <Select
         size="xs"
-        label="Provider"
+        label="Category"
         placeholder="Select..."
-        data={['NOAA', 'USBR', 'USGS', 'USACE', 'USDA']}
-        value={provider}
-        onChange={setProvider}
+        data={['React', 'Angular', 'Vue', 'Svelte']}
+        value={category}
+        onChange={setCategory}
         searchable
-        withAsterisk
+        clearable
       />
     </Stack>
   );
