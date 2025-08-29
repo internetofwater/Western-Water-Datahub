@@ -1,0 +1,9 @@
+.mapToolsContainer {
+  position: absolute;
+  top: 8px;
+  right: 49px;
+}
+
+.legendContainer {
+  width: 300px;
+}

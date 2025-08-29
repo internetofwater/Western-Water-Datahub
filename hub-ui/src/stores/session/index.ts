@@ -4,11 +4,23 @@
  */
 
 import { create } from 'zustand';
-import { SessionState } from '@/stores/session/types';
+import { SessionState, Tools } from '@/stores/session/types';
 
 const useSessionStore = create<SessionState>((set, get) => ({
+  legendEntries: [],
+  setLegendEntries: (legendEntries) => set({ legendEntries }),
   downloadModalOpen: false,
   setDownloadModalOpen: (downloadModalOpen) => set({ downloadModalOpen }),
+  tools: {
+    [Tools.Legend]: false,
+  },
+  setOpenTools: (tool, open) =>
+    set((state) => ({
+      tools: {
+        ...state.tools,
+        [tool]: open,
+      },
+    })),
   loadingInstances: [],
   addLoadingInstance: (loadingInstance) =>
     set((state) => ({

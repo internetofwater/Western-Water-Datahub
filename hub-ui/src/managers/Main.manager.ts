@@ -108,8 +108,12 @@ class MainManager {
    *
    * @function
    */
-  public getLayerId(collectionId: ICollection['id']): string {
+  public getLocationsLayerId(collectionId: ICollection['id']): string {
     return `${collectionId}-locations`;
+  }
+
+  public getFilterLayerId(collectionId: ICollection['id']): string {
+    return `${collectionId}-filter`;
   }
 
   private filterLocations(featureCollection: FeatureCollection<Point>) {
@@ -153,7 +157,7 @@ class MainManager {
   private async addMapLayer(collectionId: ICollection['id'], sourceId: string): Promise<void> {
     const geographyFilter = this.store.getState().geographyFilter;
 
-    const layerId = this.getLayerId(collectionId);
+    const layerId = this.getLocationsLayerId(collectionId);
     if (this.map) {
       if (!this.map.getLayer(layerId)) {
         this.map.addLayer(getPointLayerDefinition(layerId, sourceId));
@@ -188,7 +192,7 @@ class MainManager {
         });
       }
       if (geographyFilter) {
-        const geoFilterLayerId = this.getLayerId(geographyFilter.collectionId);
+        const geoFilterLayerId = this.getLocationsLayerId(geographyFilter.collectionId);
         this.map.moveLayer(layerId, geoFilterLayerId);
       }
     }
@@ -279,7 +283,7 @@ class MainManager {
    * @function
    */
   private addGeographyFilterLayer(collectionId: ICollection['id'], sourceId: string): void {
-    const layerId = this.getLayerId(collectionId);
+    const layerId = this.getFilterLayerId(collectionId);
     if (this.map) {
       if (!this.map.getLayer(layerId)) {
         this.map.addLayer(getPolygonLayerDefinition(layerId, sourceId));
@@ -296,7 +300,7 @@ class MainManager {
   private hideIrrelevantGeographyFilterLayers(sourceIds: string[]): void {
     if (this.map) {
       sourceIds.forEach((sourceId) => {
-        const layerId = this.getLayerId(sourceId);
+        const layerId = this.getFilterLayerId(sourceId);
         if (this.map!.getLayer(layerId)) {
           this.map!.setLayoutProperty(layerId, 'visibility', 'none');
         }
