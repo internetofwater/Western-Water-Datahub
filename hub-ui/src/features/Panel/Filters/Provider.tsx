@@ -23,7 +23,6 @@ export const Provider: React.FC = () => {
         value={provider}
         onChange={setProvider}
         searchable
-        withAsterisk
       />
     </Stack>
   );

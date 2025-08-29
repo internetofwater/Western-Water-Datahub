@@ -187,12 +187,20 @@ class MainManager {
    * @function
    */
   public async getLocations(): Promise<void> {
+    // Specific user collection choice
+    const collection = this.store.getState().collection;
+    // All collections for selected filters
     const collections = this.store.getState().collections;
 
-    for (const collection of collections) {
-      const collectionId = collection.id;
-      const sourceId = await this.addMapSource(collectionId);
-      this.addMapLayer(collectionId, sourceId);
+    if (collection) {
+      const sourceId = await this.addMapSource(collection);
+      this.addMapLayer(collection, sourceId);
+    } else {
+      for (const collection of collections) {
+        const collectionId = collection.id;
+        const sourceId = await this.addMapSource(collectionId);
+        this.addMapLayer(collectionId, sourceId);
+      }
     }
   }
 

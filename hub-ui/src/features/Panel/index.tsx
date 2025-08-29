@@ -6,7 +6,7 @@
 import { useEffect } from 'react';
 import { Paper, Stack } from '@mantine/core';
 import Loading from '@/features/Loading';
-import { UpdateCollectionsButton } from '@/features/Panel/Button';
+import { UpdateLocationsButton } from '@/features/Panel/Button';
 import Filters from '@/features/Panel/Filters';
 import { Header } from '@/features/Panel/Header';
 import styles from '@/features/Panel/Panel.module.css';
@@ -27,7 +27,7 @@ const Panel: React.FC = () => {
         <Stack gap="lg" px="xl" pb="xl" justify="center">
           <Header />
           <Filters />
-          <UpdateCollectionsButton />
+          <UpdateLocationsButton />
         </Stack>
         <Loading desktop={false} />
       </Paper>
