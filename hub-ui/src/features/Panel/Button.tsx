@@ -3,24 +3,24 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Box, Button, Tooltip } from '@mantine/core';
-import styles from '@/features/Panel/Panel.module.css';
-import loadingManager from '@/managers/Loading.init';
-import mainManager from '@/managers/Main.init';
-import notificationManager from '@/managers/Notification.init';
-import useMainStore from '@/stores/main';
-import { NotificationType } from '@/stores/session/types';
+import { Box, Button, Tooltip } from "@mantine/core";
+import styles from "@/features/Panel/Panel.module.css";
+import loadingManager from "@/managers/Loading.init";
+import mainManager from "@/managers/Main.init";
+import notificationManager from "@/managers/Notification.init";
+import useMainStore from "@/stores/main";
+import { NotificationType } from "@/stores/session/types";
 
 export const UpdateLocationsButton: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
   const collection = useMainStore((state) => state.collection);
 
   const addData = async () => {
-    const instance = loadingManager.add('Fetching Collections');
+    const instance = loadingManager.add("Fetching Collections");
 
     mainManager.getLocations();
     loadingManager.remove(instance);
-    notificationManager.show('Done fetching data', NotificationType.Success);
+    notificationManager.show("Done fetching data", NotificationType.Success);
   };
 
   return (

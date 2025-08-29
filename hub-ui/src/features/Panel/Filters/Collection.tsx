@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from 'react';
-import { ComboboxData, Select, Stack, Title } from '@mantine/core';
-import useMainStore from '@/stores/main';
-import { MainState } from '@/stores/main/types';
+import { useEffect, useState } from "react";
+import { ComboboxData, Select, Stack, Title } from "@mantine/core";
+import useMainStore from "@/stores/main";
+import { MainState } from "@/stores/main/types";
 
 export const Collection: React.FC = () => {
   const collection = useMainStore((state) => state.collection);
@@ -27,7 +27,10 @@ export const Collection: React.FC = () => {
     setCollectionOptions(collectionOptions);
   }, [collections]);
 
-  const getDescription = (provider: MainState['provider'], category: MainState['category']) => {
+  const getDescription = (
+    provider: MainState["provider"],
+    category: MainState["category"],
+  ) => {
     if (provider && category) {
       return `Showing collections available for provider: ${provider}, in category: ${category.label}`;
     } else if (provider) {

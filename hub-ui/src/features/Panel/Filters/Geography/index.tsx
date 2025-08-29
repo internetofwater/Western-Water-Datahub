@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Stack, Title } from '@mantine/core';
-import { Basin } from '@/features/Panel/Filters/Geography/Basin';
-import { Region } from '@/features/Panel/Filters/Geography/Region';
-import { State } from '@/features/Panel/Filters/Geography/State';
+import { Stack, Title } from "@mantine/core";
+import { Basin } from "@/features/Panel/Filters/Geography/Basin";
+import { Region } from "@/features/Panel/Filters/Geography/Region";
+import { State } from "@/features/Panel/Filters/Geography/State";
 
 const Geography: React.FC = () => {
   return (

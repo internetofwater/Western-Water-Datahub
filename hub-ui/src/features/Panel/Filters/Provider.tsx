@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Select, Stack, Title } from '@mantine/core';
-import useMainStore from '@/stores/main';
+import { Select, Stack, Title } from "@mantine/core";
+import useMainStore from "@/stores/main";
 
 export const Provider: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
@@ -19,7 +19,7 @@ export const Provider: React.FC = () => {
         size="sm"
         label="Provider"
         placeholder="Select..."
-        data={['NOAA', 'USBR', 'USGS', 'USACE', 'USDA']}
+        data={["NOAA", "USBR", "USGS", "USACE", "USDA"]}
         value={provider}
         onChange={setProvider}
         searchable
