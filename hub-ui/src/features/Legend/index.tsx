@@ -91,28 +91,30 @@ const Legend: React.FC = () => {
 
   return (
     <Stack>
-      {legendEntries.map((entry, index) => (
-        <Fragment key={`legend-entry-${entry.layerId}`}>
-          <Stack>
-            <Text>{getCollectionTitle(entry.layerId)}</Text>
-            <Group justify="space-between">
-              <ColorInput
-                value={entry.color}
-                onChange={(color) => handleColorChange(color, entry.layerId)}
-                className={styles.colorPicker}
-              />
-              <Switch
-                size="lg"
-                onLabel="ON"
-                offLabel="OFF"
-                checked={entry.visible}
-                onChange={(event) => handleVisibilityChange(event.target.checked, entry.layerId)}
-              />
-            </Group>
-          </Stack>
-          {index < legendEntries.length - 1 && <Divider />}
-        </Fragment>
-      ))}
+      {legendEntries
+        .sort((a, b) => a.layerId.localeCompare(b.layerId))
+        .map((entry, index) => (
+          <Fragment key={`legend-entry-${entry.layerId}`}>
+            <Stack>
+              <Text>{getCollectionTitle(entry.layerId)}</Text>
+              <Group justify="space-between">
+                <ColorInput
+                  value={entry.color}
+                  onChange={(color) => handleColorChange(color, entry.layerId)}
+                  className={styles.colorPicker}
+                />
+                <Switch
+                  size="lg"
+                  onLabel="ON"
+                  offLabel="OFF"
+                  checked={entry.visible}
+                  onChange={(event) => handleVisibilityChange(event.target.checked, entry.layerId)}
+                />
+              </Group>
+            </Stack>
+            {index < legendEntries.length - 1 && <Divider />}
+          </Fragment>
+        ))}
     </Stack>
   );
 };
