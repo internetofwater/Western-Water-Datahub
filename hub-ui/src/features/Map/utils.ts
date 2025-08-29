@@ -12,7 +12,6 @@ export const getPointLayerDefinition = (layerId: string, sourceId: string): Laye
   return {
     id: layerId,
     type: LayerType.Circle,
-    slot: 'top',
     source: sourceId,
     paint: {
       'circle-radius': 6,
@@ -30,7 +29,6 @@ export const getPolygonLayerDefinition = (
   return {
     id: layerId,
     type: LayerType.Line,
-    slot: 'bottom',
     source: sourceId,
     layout: {
       'line-cap': 'round',
