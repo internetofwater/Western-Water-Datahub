@@ -9,8 +9,6 @@ server:
   language: en-US
   cors: true
   pretty_print: true
-  templates:
-    path: /opt/pygeoapi/pygeoapi-deployment/templates
   limits:
     default_items: 1825 # 5 Years
     max_items: 10950 # 30 Years
