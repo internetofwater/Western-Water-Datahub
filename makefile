@@ -5,12 +5,12 @@ deps:
 
 # serve the api (requires redis to be running)
 dev: 
-	OTEL_SDK_DISABLED=false uv run pygeoapi openapi generate pygeoapi-deployment/pygeoapi.config.yml --output-file local.openapi.yml
-	OTEL_SDK_DISABLED=false PYGEOAPI_CONFIG=pygeoapi-deployment/pygeoapi.config.yml PYGEOAPI_OPENAPI=local.openapi.yml uv run pygeoapi serve --starlette
+	OTEL_SDK_DISABLED=false uv run pygeoapi openapi generate pygeoapi.config.yml --output-file local.openapi.yml
+	OTEL_SDK_DISABLED=false PYGEOAPI_CONFIG=pygeoapi.config.yml PYGEOAPI_OPENAPI=local.openapi.yml uv run pygeoapi serve --starlette
 
 devNoOTEL:
-	OTEL_SDK_DISABLED=true uv run pygeoapi openapi generate pygeoapi-deployment/pygeoapi.config.yml --output-file local.openapi.yml
-	OTEL_SDK_DISABLED=true PYGEOAPI_CONFIG=pygeoapi-deployment/pygeoapi.config.yml PYGEOAPI_OPENAPI=local.openapi.yml uv run pygeoapi serve --starlette
+	OTEL_SDK_DISABLED=true uv run pygeoapi openapi generate pygeoapi.config.yml --output-file local.openapi.yml
+	OTEL_SDK_DISABLED=true PYGEOAPI_CONFIG=pygeoapi.config.yml PYGEOAPI_OPENAPI=local.openapi.yml uv run pygeoapi serve --starlette
 
 test:
 	# run tests in parallel with pytest-xdist and stop after first failure; run in verbose mode and show durations of the 5 slowest tests

@@ -1,0 +1,27 @@
+{
+    "@context": [
+        {
+            "schema": "https://schema.org/",
+            "gsp": "http://www.opengis.net/ont/geosparql#",
+            "type": "@type",
+            "hyf": "https://www.opengis.net/def/schema/hy_features/hyf/"
+        }
+    ],
+    "type": ["schema:Place",      
+            "hyf:HY_HydroLocation"
+            ],
+    "@id": "{{ data["@id"] | safe }}",
+    "schema:identifier": {{ data["id"] | safe }},
+    "schema:name": "{{ data["name" ] }}",
+    {% if data["description"] %}
+    "schema:description": {{ data["description"] }},
+    {% endif %}
+    "schema:AdministrativeArea": "{{ data["locationUnifiedRegionNames" ][0] | safe }}",
+    "schema:elevation": {{ data["elevation" ] | safe }},
+    "schema:dateCreated": "{{ data["createDate" ] | safe }}",
+    "schema:dateModified": "{{ data["updateDate" ] | safe }}",
+
+    "hyf:HY_HydroLocationType": "{% if data['locationTypeName'] == 'Lake/Reservoir' %}HY_Reservoir{% elif data['locationTypeName'] == 'River/Stream' %}HY_River{% elif data['locationTypeName'] == "Canal" %}HY_Canal{% else %}Unknown{% endif %}",
+    "gsp:hasGeometry": {{ data["gsp:hasGeometry" ] | to_json }}, 
+    "schema:geo": {{ data["schema:geo" ] | to_json }}
+}
