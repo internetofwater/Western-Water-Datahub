@@ -13,11 +13,11 @@ export const Provider: React.FC = () => {
   return (
     <Stack gap={0}>
       <Title order={2} size="h3">
-        Filter by Provider
+        Filter by Data Provider
       </Title>
       <Select
         size="sm"
-        label="Provider"
+        label="Data Provider"
         placeholder="Select..."
         data={["NOAA", "USBR", "USGS", "USACE", "USDA"]}
         value={provider}

@@ -50,7 +50,7 @@ export const UpdateLocationsButton: React.FC = () => {
   return (
     <Box className={styles.updateLocationsWrapper}>
       {(provider || collection) && !isLoadingGeography ? (
-        <Button onClick={() => void addData()}>Update Locations</Button>
+        <Button onClick={() => void addData()}>Search Locations</Button>
       ) : (
         <Tooltip
           label={
@@ -60,7 +60,7 @@ export const UpdateLocationsButton: React.FC = () => {
           }
         >
           <Button data-disabled onClick={(event) => event.preventDefault()}>
-            Update Locations
+            Search Locations
           </Button>
         </Tooltip>
       )}
