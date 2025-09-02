@@ -61,7 +61,7 @@ resources:
       - RISE
       - USBR
     templates:
-      path: pygeoapi-deployment/templates/jsonld/rise-edr
+      path: templates/jsonld/rise-edr
     links:
       - &default-link
         type: application/html
