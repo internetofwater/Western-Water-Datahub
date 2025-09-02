@@ -53,9 +53,9 @@ export const useSnotelData = () => {
                     .forEach((loc) => {
                         loc.properties = {
                             ...loc.properties,
-                            [SnotelHucMeansField.SnowpackTempRelative]:
+                            [SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent]:
                                 mean.properties[
-                                    SnotelHucMeansField.SnowpackTempRelative
+                                    SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent
                                 ],
                         };
                     });
