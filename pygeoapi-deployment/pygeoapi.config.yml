@@ -183,7 +183,7 @@ resources:
 
   usace-edr:
     type: collection
-    title: US Army Corps of Engineers
+    title: Access2Water
     description: USACE Access2Water API
     provider-name:
       - DOA
