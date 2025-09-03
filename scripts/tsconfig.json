@@ -36,7 +36,6 @@
     "strict": true,
     "jsx": "react-jsx",
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   }
 }
-

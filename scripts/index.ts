@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 type CsvRowOutput = {
   url: string;
   id: string;
@@ -25,7 +30,7 @@ function toCsvRow(row: CsvRowOutput): string {
 
   // First dataset
   const riseItems = await fetch(
-    "https://api.wwdh.internetofwater.app/collections/rise-edr/items?limit=10000"
+    "https://api.wwdh.internetofwater.app/collections/rise-edr/items?limit=10000",
   ).then((res) => res.json());
 
   riseItems.features.forEach((item: any) => {
@@ -41,7 +46,7 @@ function toCsvRow(row: CsvRowOutput): string {
 
   // Second dataset
   const usaceItems = await fetch(
-    "https://api.wwdh.internetofwater.app/collections/usace-edr/items?limit=10000"
+    "https://api.wwdh.internetofwater.app/collections/usace-edr/items?limit=10000",
   ).then((res) => res.json());
 
   usaceItems.features.forEach((item: any) => {
