@@ -19,11 +19,16 @@ class ForecastLocationCollection(LocationCollection, LocationCollectionProtocolW
         self,
         select_properties: Optional[list[str]] = None,
         only_stations_with_forecasts=True,
+        itemId: Optional[str] = None,
     ):
         self.cache = RedisCache()
-        url = "https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?returnForecastPointMetadata=true&returnReservoirMetadata=false&returnStationElements=false&activeOnly=true"
+        # don't include station elements if we are fetching all stations since this causes an error upstream
+        # saying we tried to request too much metadata; we only need it on the individual stations for the item jsonld template
+        url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?returnForecastPointMetadata=true&returnReservoirMetadata=false&returnStationElements={'true' if itemId else 'false'}&activeOnly=true"
         if select_properties:
             url += f"&elements={','.join(select_properties)}"
+        if itemId:
+            url += f"&stationTriplets={itemId}"
         result = await_(self.cache.get_or_fetch_json(url))
         locations: list[StationDTO] = []
 
