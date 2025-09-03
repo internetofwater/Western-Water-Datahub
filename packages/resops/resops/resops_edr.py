@@ -65,7 +65,23 @@ class ResOpsUSProviderEDR(BaseEDRProvider, EDRProviderProtocol):
 
     def get_fields(self) -> EDRFieldsMapping:
         """Get the list of all parameters (i.e. fields) that the user can filter by"""
-        return {}
+        return {
+            "avg": {
+                "title": "Average Lake/Reservoir Storage",
+                "description": "Average Lake/Reservoir Storage",
+                "x-ogc-unit": "Million Cubic Meters",
+            },
+            "p10": {
+                "title": "10th Percentile Lake/Reservoir Storage",
+                "description": "10th Percentile Lake/Reservoir Storage",
+                "x-ogc-unit": "Million Cubic Meters",
+            },
+            "p90": {
+                "title": "90th Percentile Lake/Reservoir Storage",
+                "description": "90th Percentile Lake/Reservoir Storage",
+                "x-ogc-unit": "Million Cubic Meters",
+            },
+        }
 
     @otel_trace()
     def cube(
