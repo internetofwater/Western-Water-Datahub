@@ -75,7 +75,8 @@ class LocationResponse(BaseModel):
     ) -> "LocationCollectionWithIncluded":
         """Create a location response from multiple paged API responses by first merging them together"""
         no_duplicates_in_pages(pages)
-        if len(pages) > 1:
+        fetched_single_location = len(pages) == 1
+        if not fetched_single_location:
             merged = merge_pages(pages)
         else:
             onlyKey = list(pages.keys())[0]
