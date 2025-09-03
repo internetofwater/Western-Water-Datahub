@@ -21,6 +21,10 @@
 .chartWrapper {
   height: 300px;
 }
+.chartNoData {
+  width: 100%;
+  height: 95%;
+}
 
 .goButton {
   margin-top: 3.15em;

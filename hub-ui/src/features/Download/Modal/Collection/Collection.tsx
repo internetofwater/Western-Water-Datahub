@@ -54,6 +54,7 @@ const Collection: React.FC<Props> = (props) => {
   const [selectedParameters, setSelectedParameters] = useState<string[]>([]);
   const [from, setFrom] = useState<string | null>(dayjs().subtract(1, 'week').format('YYYY-MM-DD'));
   const [to, setTo] = useState<string | null>(dayjs().format('YYYY-MM-DD'));
+  const [renderedCount, setRenderedCount] = useState(0);
   const [startDownload, setStartDownload] = useState<number>();
 
   const controller = useRef<AbortController>(null);
@@ -200,8 +201,9 @@ const Collection: React.FC<Props> = (props) => {
               </Group>
 
               {startDownload &&
-                locationIds.map((locationId) => {
+                locationIds.slice(0, renderedCount + 1).map((locationId) => {
                   const url = buildUrl(collectionId, locationId, selectedParameters, from, to);
+
                   return (
                     <Fragment key={`collection-download-${collectionId}-${locationId}`}>
                       <Chart
@@ -211,6 +213,7 @@ const Collection: React.FC<Props> = (props) => {
                         parameters={selectedParameters}
                         from={from}
                         to={to}
+                        onData={() => setRenderedCount((count) => count + 1)}
                       />
                       <Group grow gap="sm">
                         <CSV

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { EDRService } from "@/services/edr.service";
+import { EDRService } from '@/services/edr.service';
 
 const wwdhService = new EDRService({
-  baseUrl: "https://cache.wwdh.internetofwater.app/",
+  baseUrl: import.meta.env.VITE_WWDH_SOURCE,
 });
 
 export default wwdhService;
