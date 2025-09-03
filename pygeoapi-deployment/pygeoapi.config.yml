@@ -49,7 +49,6 @@ metadata:
     name: Benjamin Webb
 
 resources:
-
   sitemap-generator:
     type: process
     processor:
