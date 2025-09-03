@@ -4,13 +4,29 @@
  */
 
 export enum NotificationType {
-  Success = "success",
-  Error = "error",
-  Info = "info",
+  Success = 'success',
+  Error = 'error',
+  Info = 'info',
+}
+
+/**
+ * Defines the types of loading instances
+ *
+ * Values:
+ * - Collections: Critical path of the application, should block locations requests
+ * - Geography: When requesting new filter boundaries, should block locations requests
+ * - Data: When requesting items like non-required select options or chart data, should not block locations requests
+ *
+ * @enum
+ */
+export enum LoadingType {
+  Collections = 'collections',
+  Geography = 'geography',
+  Data = 'data',
 }
 
 export enum Tools {
-  Legend = "legend",
+  Legend = 'legend',
 }
 
 export type Notification = {
@@ -22,6 +38,7 @@ export type Notification = {
 
 export type Loading = {
   id: string;
+  type: LoadingType;
   message: string;
 };
 
@@ -33,11 +50,9 @@ export type LegendEntry = {
 
 export type SessionState = {
   legendEntries: LegendEntry[];
-  setLegendEntries: (legendEntries: SessionState["legendEntries"]) => void;
+  setLegendEntries: (legendEntries: SessionState['legendEntries']) => void;
   downloadModalOpen: boolean;
-  setDownloadModalOpen: (
-    downloadModalOpen: SessionState["downloadModalOpen"],
-  ) => void;
+  setDownloadModalOpen: (downloadModalOpen: SessionState['downloadModalOpen']) => void;
   tools: {
     [Tools.Legend]: boolean;
   };

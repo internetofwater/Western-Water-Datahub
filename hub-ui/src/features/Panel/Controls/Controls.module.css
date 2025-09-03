@@ -1,0 +1,7 @@
+.controlsWrapper {
+  margin-top: auto;
+}
+
+.controlsWrapper > button {
+  width: 100%;
+}

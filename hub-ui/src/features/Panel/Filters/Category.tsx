@@ -9,7 +9,7 @@ import loadingManager from "@/managers/Loading.init";
 import notificationManager from "@/managers/Notification.init";
 import wwdhService from "@/services/init/wwdh.init";
 import useMainStore from "@/stores/main";
-import { NotificationType } from "@/stores/session/types";
+import { LoadingType, NotificationType } from "@/stores/session/types";
 
 export const Category: React.FC = () => {
   const category = useMainStore((state) => state.category);
@@ -26,6 +26,7 @@ export const Category: React.FC = () => {
   const getCategoryOptions = async () => {
     loadingInstance.current = loadingManager.add(
       "Fetching category dropdown options",
+      LoadingType.Collections
     );
 
     try {
