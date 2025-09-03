@@ -1,6 +1,7 @@
-# Variables
-PYGEOAPI_CONFIG = pygeoapi-deployment/pygeoapi.config.yml
-PYGEOAPI_OPENAPI = local.openapi.yml
+# Must export these so that subprocesses can use them
+# i.e. the sitemap generator needs to access the config
+export PYGEOAPI_CONFIG=pygeoapi-deployment/pygeoapi.config.yml
+export PYGEOAPI_OPENAPI=local.openapi.yml
 
 # install dependencies
 # this project uses uv to manage dependencies

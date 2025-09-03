@@ -49,6 +49,12 @@ metadata:
     name: Benjamin Webb
 
 resources:
+
+  sitemap-generator:
+    type: process
+    processor:
+      name: pygeoapi_plugins.process.sitemap.SitemapProcessor
+
   rise-edr:
     type: collection
     title: Reclamation Information Sharing Environment
