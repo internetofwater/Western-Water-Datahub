@@ -3,23 +3,23 @@
 
 
 from snotel_means.lib.locations import (
-    WaterTemperatureCollectionWithMetadata,
-    get_30_year_water_temp_average,
+    SnowWaterEquivalentCollectionWithMetadata,
+    get_30_year_snow_water_equivalent_average,
     get_all_snotel_station_metadata,
-    get_water_temp,
+    get_daily_snow_water_equivalent,
     get_yesterdays_month_and_day,
 )
 
 
 def test_get_30_year_water_temp_avg():
     yesterday = get_yesterdays_month_and_day()
-    mapper = get_30_year_water_temp_average(yesterday)
+    mapper = get_30_year_snow_water_equivalent_average(yesterday)
     assert len(mapper) > 0
 
 
 def test_get_water_temp():
     yesterday = get_yesterdays_month_and_day()
-    mapper = get_30_year_water_temp_average(yesterday)
+    mapper = get_30_year_snow_water_equivalent_average(yesterday)
     assert len(mapper) > 0
 
 
@@ -30,13 +30,13 @@ def test_get_geometry():
 
 def test_construct_collection():
     yesterday = get_yesterdays_month_and_day()
-    averages = get_30_year_water_temp_average(yesterday)
+    averages = get_30_year_snow_water_equivalent_average(yesterday)
     assert len(averages) > 0
 
-    daily = get_water_temp(yesterday)
+    daily = get_daily_snow_water_equivalent(yesterday)
     assert len(daily) > 0
 
-    collection = WaterTemperatureCollectionWithMetadata._make_station_dict(
+    collection = SnowWaterEquivalentCollectionWithMetadata._make_station_dict(
         averages, daily
     )
     assert len(collection) > 0
