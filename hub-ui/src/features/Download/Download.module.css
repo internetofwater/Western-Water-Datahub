@@ -5,9 +5,13 @@
 
 .downloadButtonWrapper {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: var(--default-spacing);
+  left: var(--default-spacing);
   z-index: 1;
+}
+
+.downloadButtonWrapper > button:first-of-type {
+  margin-right: var(--default-spacing);
 }
 
 .parameterNameSelect {

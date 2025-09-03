@@ -13,7 +13,7 @@ import useMainStore from '@/stores/main';
 import useSessionStore from '@/stores/session';
 import { LoadingType } from '@/stores/session/types';
 
-export const ClearAllData: React.FC = () => {
+export const Reset: React.FC = () => {
   const hasGeographyFilter = useMainStore((state) => state.hasGeographyFilter);
 
   const loadingInstances = useSessionStore((state) => state.loadingInstances);
@@ -67,12 +67,12 @@ export const ClearAllData: React.FC = () => {
       !isLoadingGeography &&
       (hasLocationsLoaded || hasGeographyFilter()) ? (
         <Button onClick={() => mainManager.clearAllData()} color="red">
-          Clear
+          Reset
         </Button>
       ) : (
         <Tooltip label={getLabel()}>
           <Button data-disabled onClick={(event) => event.preventDefault()} color="red">
-            Clear
+            Reset
           </Button>
         </Tooltip>
       )}
