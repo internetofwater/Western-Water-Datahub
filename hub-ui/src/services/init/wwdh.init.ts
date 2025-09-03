@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { EDRService } from '@/services/edr.service';
+import { EDRService } from "@/services/edr.service";
 
 const wwdhService = new EDRService({
   baseUrl: import.meta.env.VITE_WWDH_SOURCE,

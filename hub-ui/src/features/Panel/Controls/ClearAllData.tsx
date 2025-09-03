@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from 'react';
-import { Button, Tooltip } from '@mantine/core';
-import { useMap } from '@/contexts/MapContexts';
-import { MAP_ID } from '@/features/Map/config';
-import loadingManager from '@/managers/Loading.init';
-import mainManager from '@/managers/Main.init';
-import useMainStore from '@/stores/main';
-import useSessionStore from '@/stores/session';
-import { LoadingType } from '@/stores/session/types';
+import { useEffect, useState } from "react";
+import { Button, Tooltip } from "@mantine/core";
+import { useMap } from "@/contexts/MapContexts";
+import { MAP_ID } from "@/features/Map/config";
+import loadingManager from "@/managers/Loading.init";
+import mainManager from "@/managers/Main.init";
+import useMainStore from "@/stores/main";
+import useSessionStore from "@/stores/session";
+import { LoadingType } from "@/stores/session/types";
 
 export const Reset: React.FC = () => {
   const hasGeographyFilter = useMainStore((state) => state.hasGeographyFilter);
@@ -25,7 +25,9 @@ export const Reset: React.FC = () => {
   const { map } = useMap(MAP_ID);
 
   useEffect(() => {
-    setIsFetchingCollections(loadingManager.has({ type: LoadingType.Collections }));
+    setIsFetchingCollections(
+      loadingManager.has({ type: LoadingType.Collections }),
+    );
     setIsLoadingGeography(loadingManager.has({ type: LoadingType.Geography }));
   }, [loadingInstances]);
 
@@ -34,30 +36,31 @@ export const Reset: React.FC = () => {
       return;
     }
 
-    map.on('styledata', () => {
+    map.on("styledata", () => {
       const collections = useMainStore.getState().collections;
       const layers = map.getStyle().layers;
       setHasLocationsLoaded(
         layers.some((layer) =>
           collections.some(
-            (collection) => mainManager.getLocationsLayerId(collection.id) === layer.id
-          )
-        )
+            (collection) =>
+              mainManager.getLocationsLayerId(collection.id) === layer.id,
+          ),
+        ),
       );
     });
   }, [map]);
 
   const getLabel = () => {
     if (isLoadingGeography) {
-      return 'Please wait for geography filter to load';
+      return "Please wait for geography filter to load";
     }
 
     if (isFetchingCollections) {
-      return 'Please wait for collections request to complete';
+      return "Please wait for collections request to complete";
     }
 
     if (!hasLocationsLoaded && !hasGeographyFilter()) {
-      return 'No locations or geography to clear';
+      return "No locations or geography to clear";
     }
   };
 
@@ -71,7 +74,11 @@ export const Reset: React.FC = () => {
         </Button>
       ) : (
         <Tooltip label={getLabel()}>
-          <Button data-disabled onClick={(event) => event.preventDefault()} color="red">
+          <Button
+            data-disabled
+            onClick={(event) => event.preventDefault()}
+            color="red"
+          >
             Reset
           </Button>
         </Tooltip>
