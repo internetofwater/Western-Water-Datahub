@@ -32,6 +32,14 @@
   margin-left: auto;
 }
 
+.parameterLabelWrapper > svg {
+  width: 14px;
+  height: auto;
+}
+.parameterLabelWrapper > label > span {
+  color: red;
+}
+
 .copyInputWrapper {
   width: 84%;
   max-width: 100%;

@@ -3,10 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from "react";
-import { ComboboxData, Select, Stack, Title } from "@mantine/core";
-import useMainStore from "@/stores/main";
-import { MainState } from "@/stores/main/types";
+import { useEffect, useState } from 'react';
+import { ComboboxData, Group, Select, Stack, Title, Tooltip, VisuallyHidden } from '@mantine/core';
+import Info from '@/assets/Info';
+import styles from '@/features/Panel/Panel.module.css';
+import useMainStore from '@/stores/main';
+import { MainState } from '@/stores/main/types';
 
 export const Collection: React.FC = () => {
   const collection = useMainStore((state) => state.collection);
@@ -27,10 +29,7 @@ export const Collection: React.FC = () => {
     setCollectionOptions(collectionOptions);
   }, [collections]);
 
-  const getDescription = (
-    provider: MainState["provider"],
-    category: MainState["category"],
-  ) => {
+  const getDescription = (provider: MainState['provider'], category: MainState['category']) => {
     if (provider && category) {
       return `Showing collections available for provider: ${provider}, in category: ${category.label}`;
     } else if (provider) {
@@ -42,11 +41,24 @@ export const Collection: React.FC = () => {
     return null;
   };
 
+  const helpText = 'Collection tooltip placeholder';
+
   return (
     <Stack gap={0}>
-      <Title order={2} size="h3">
-        Filter by Collection
-      </Title>
+      {/* TODO */}
+      <Tooltip
+        label={helpText}
+        transitionProps={{ transition: 'fade-right', duration: 300 }}
+        position="top-start"
+      >
+        <Group className={styles.filterTitleWrapper} gap="xs">
+          <Title order={2} size="h3">
+            Filter by Collection
+          </Title>
+          <Info />
+        </Group>
+      </Tooltip>
+      <VisuallyHidden>{helpText}</VisuallyHidden>
       <Select
         size="sm"
         label="Collection"

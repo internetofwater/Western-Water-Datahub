@@ -25,6 +25,11 @@
   text-align: center;
 }
 
+.filterTitleWrapper > svg {
+  width: 18px;
+  height: auto;
+}
+
 @media screen and (max-width: 899px) {
   .panelWrapper {
     height: unset;

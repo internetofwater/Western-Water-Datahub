@@ -243,8 +243,6 @@ class MainManager {
       },
     });
 
-    console.log('collections', response.collections);
-
     this.store.getState().setCollections(response.collections);
   }
 
