@@ -154,19 +154,18 @@ class LocationCollection:
                 date = date.replace(tzinfo=datetime.timezone.utc)
                 keysWithCurrentYear.append(date)
 
-            for key, value in {
-                "avg": thirtyYearAverages,
-                "p10": tenthPercentile,
-                "p90": ninetiethPercentile,
-            }.items():
+            for key, title, value in (
+                ("avg", "Average Lake/Reservoir Storage", thirtyYearAverages),
+                ("p10", "10th Percentile Lake/Reservoir Storage", tenthPercentile),
+                ("p90", "10th Percentile Lake/Reservoir Storage", ninetiethPercentile),
+            ):
                 param = Parameter(
                     type="Parameter",
                     unit=Unit(symbol="Million Cubic Meters"),
-                    id="Million Cubic Meters",
+                    id=title,
                     observedProperty=ObservedProperty(
-                        label={"en": "Million Cubic Meters"},
+                        label={"en": title},
                         id="Million Cubic Meters",
-                        description={"en": "Million Cubic Meters"},
                     ),
                 )
 
