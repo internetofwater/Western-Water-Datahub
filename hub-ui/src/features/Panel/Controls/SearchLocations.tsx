@@ -4,16 +4,15 @@
  */
 
 import { useEffect, useState } from "react";
-import { Box, Button, Tooltip } from "@mantine/core";
-import styles from "@/features/Panel/Panel.module.css";
+import { Button, Tooltip } from "@mantine/core";
 import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import useMainStore from "@/stores/main";
 import useSessionStore from "@/stores/session";
-import { NotificationType } from "@/stores/session/types";
+import { LoadingType, NotificationType } from "@/stores/session/types";
 
-export const UpdateLocationsButton: React.FC = () => {
+export const SearchLocations: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
   const collection = useMainStore((state) => state.collection);
 
@@ -25,7 +24,10 @@ export const UpdateLocationsButton: React.FC = () => {
   const loadingInstances = useSessionStore((state) => state.loadingInstances);
 
   const addData = async () => {
-    const loadingInstance = loadingManager.add("Fetching Locations");
+    const loadingInstance = loadingManager.add(
+      "Fetching Locations",
+      LoadingType.Collections,
+    );
     try {
       await mainManager.getLocations();
       loadingManager.remove(loadingInstance);
@@ -48,7 +50,7 @@ export const UpdateLocationsButton: React.FC = () => {
   }, [loadingInstances]);
 
   return (
-    <Box className={styles.updateLocationsWrapper}>
+    <>
       {(provider || collection) && !isLoadingGeography ? (
         <Button onClick={() => void addData()}>Search Locations</Button>
       ) : (
@@ -64,6 +66,6 @@ export const UpdateLocationsButton: React.FC = () => {
           </Button>
         </Tooltip>
       )}
-    </Box>
+    </>
   );
 };

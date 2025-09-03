@@ -4,12 +4,22 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { ComboboxData, Select, Stack, Title } from "@mantine/core";
+import {
+  ComboboxData,
+  Group,
+  Select,
+  Stack,
+  Title,
+  Tooltip,
+  VisuallyHidden,
+} from "@mantine/core";
+import Info from "@/assets/Info";
+import styles from "@/features/Panel/Panel.module.css";
 import loadingManager from "@/managers/Loading.init";
 import notificationManager from "@/managers/Notification.init";
 import wwdhService from "@/services/init/wwdh.init";
 import useMainStore from "@/stores/main";
-import { NotificationType } from "@/stores/session/types";
+import { LoadingType, NotificationType } from "@/stores/session/types";
 
 export const Category: React.FC = () => {
   const category = useMainStore((state) => state.category);
@@ -26,6 +36,7 @@ export const Category: React.FC = () => {
   const getCategoryOptions = async () => {
     loadingInstance.current = loadingManager.add(
       "Fetching category dropdown options",
+      LoadingType.Collections,
     );
 
     try {
@@ -91,13 +102,24 @@ export const Category: React.FC = () => {
     };
   }, []);
 
-  useEffect(() => {}, [provider]);
+  const helpText = "Data Category tooltip placeholder";
 
   return (
     <Stack gap={0}>
-      <Title order={2} size="h3">
-        Filter by Data Category
-      </Title>
+      {/* TODO */}
+      <Tooltip
+        label={helpText}
+        transitionProps={{ transition: "fade-right", duration: 300 }}
+        position="top-start"
+      >
+        <Group className={styles.filterTitleWrapper} gap="xs">
+          <Title order={2} size="h3">
+            Filter by Data Category
+          </Title>
+          <Info />
+        </Group>
+      </Tooltip>
+      <VisuallyHidden>{helpText}</VisuallyHidden>
       <Select
         size="sm"
         label="Category"

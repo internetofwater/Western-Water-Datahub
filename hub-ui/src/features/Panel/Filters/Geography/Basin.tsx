@@ -13,7 +13,7 @@ import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import geoconnexService from "@/services/init/geoconnex.init";
 import useMainStore from "@/stores/main";
-import { NotificationType } from "@/stores/session/types";
+import { LoadingType, NotificationType } from "@/stores/session/types";
 import { Huc02BasinProperties, Huc02Field } from "@/types/huc02";
 
 export const Basin: React.FC = () => {
@@ -32,6 +32,7 @@ export const Basin: React.FC = () => {
   const getBasinOptions = async () => {
     const loadingInstance = loadingManager.add(
       "Fetching basin dropdown options",
+      LoadingType.Data,
     );
 
     try {
@@ -90,6 +91,7 @@ export const Basin: React.FC = () => {
     if (itemId) {
       const loadingInstance = loadingManager.add(
         "Adding basin geography filter",
+        LoadingType.Geography,
       );
       try {
         await mainManager.updateGeographyFilter(SourceId.Huc02, itemId);

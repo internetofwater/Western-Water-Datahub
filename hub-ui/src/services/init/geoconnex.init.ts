@@ -6,7 +6,7 @@
 import { EDRService } from "@/services/edr.service";
 
 const geoconnexService = new EDRService({
-  baseUrl: "https://reference.geoconnex.us/",
+  baseUrl: import.meta.env.VITE_GEOCONNEX_SOURCE,
 });
 
 export default geoconnexService;

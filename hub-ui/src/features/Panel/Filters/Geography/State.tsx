@@ -14,7 +14,7 @@ import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import geoconnexService from "@/services/init/geoconnex.init";
 import useMainStore from "@/stores/main";
-import { NotificationType } from "@/stores/session/types";
+import { LoadingType, NotificationType } from "@/stores/session/types";
 import { StateField, StateProperties } from "@/types/state";
 
 export const State: React.FC = () => {
@@ -33,6 +33,7 @@ export const State: React.FC = () => {
   const getStateOptions = async () => {
     const loadingInstance = loadingManager.add(
       "Fetching state dropdown options",
+      LoadingType.Data,
     );
     try {
       controller.current = new AbortController();
@@ -94,6 +95,7 @@ export const State: React.FC = () => {
     if (itemId) {
       const loadingInstance = loadingManager.add(
         "Adding state geography filter",
+        LoadingType.Geography,
       );
       try {
         await mainManager.updateGeographyFilter(SourceId.States, itemId);

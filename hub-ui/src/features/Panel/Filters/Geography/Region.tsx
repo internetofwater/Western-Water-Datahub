@@ -13,7 +13,7 @@ import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import wwdhService from "@/services/init/wwdh.init";
 import useMainStore from "@/stores/main";
-import { NotificationType } from "@/stores/session/types";
+import { LoadingType, NotificationType } from "@/stores/session/types";
 import { RegionField, RegionProperties } from "@/types/region";
 
 export const Region: React.FC = () => {
@@ -32,6 +32,7 @@ export const Region: React.FC = () => {
   const getRegionOptions = async () => {
     const loadingInstance = loadingManager.add(
       "Fetching region dropdown options",
+      LoadingType.Data,
     );
 
     try {
@@ -90,6 +91,7 @@ export const Region: React.FC = () => {
     if (itemId) {
       const loadingInstance = loadingManager.add(
         "Adding region geography filter",
+        LoadingType.Geography,
       );
       try {
         await mainManager.updateGeographyFilter(SourceId.DoiRegions, itemId);

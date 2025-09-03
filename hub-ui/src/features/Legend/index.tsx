@@ -26,18 +26,18 @@ const Legend: React.FC = () => {
       return;
     }
 
+    const collections = useMainStore.getState().collections;
     map.on("styledata", () => {
-      const legendEntries = useSessionStore.getState().legendEntries;
       const layers = map.getStyle().layers;
-      const newLegendEntries: SessionState["legendEntries"] = [
-        ...legendEntries,
-      ];
+      const newLegendEntries: SessionState["legendEntries"] = [];
       layers.forEach((layer) => {
         if (
           layer.type === "circle" &&
-          layer.id.includes("-locations") &&
-          layer.paint &&
-          !legendEntries.some((entry) => entry.layerId === layer.id)
+          collections.some(
+            (collection) =>
+              mainManager.getLocationsLayerId(collection.id) === layer.id,
+          ) &&
+          layer.paint
         ) {
           const color = layer.paint["circle-color"];
           if (typeof color === "string") {

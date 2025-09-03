@@ -10,6 +10,7 @@ import useSessionStore from "@/stores/session";
 
 const Download: React.FC = () => {
   const locations = useMainStore((state) => state.locations);
+  const setLocations = useMainStore((state) => state.setLocations);
   const setDownloadModalOpen = useSessionStore(
     (state) => state.setDownloadModalOpen,
   );
@@ -18,13 +19,16 @@ const Download: React.FC = () => {
 
   return (
     <Box className={styles.downloadButtonWrapper}>
-      <>
-        {hasLocations && (
+      {hasLocations && (
+        <>
           <Button onClick={() => setDownloadModalOpen(true)}>
             Download {locations.length} Location(s)
           </Button>
-        )}
-      </>
+          <Button onClick={() => setLocations([])} color="red">
+            Clear selection
+          </Button>
+        </>
+      )}
     </Box>
   );
 };

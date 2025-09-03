@@ -5,7 +5,7 @@
 
 import * as turf from "@turf/turf";
 import { Feature, FeatureCollection, Point, Polygon } from "geojson";
-import { GeoJSONSource, LngLatBoundsLike, Map } from "mapbox-gl";
+import { GeoJSONSource, LngLatBoundsLike, Map, Popup } from "mapbox-gl";
 import { GeoJSONFeature, stringify } from "wellknown";
 import { StoreApi, UseBoundStore } from "zustand";
 import { GeographyFilterSources } from "@/features/Map/consts";
@@ -26,6 +26,7 @@ import { Location, MainState } from "@/stores/main/types";
 class MainManager {
   private store: UseBoundStore<StoreApi<MainState>>;
   private map: Map | null = null;
+  private hoverPopup: Popup | null = null;
 
   constructor(store: UseBoundStore<StoreApi<MainState>>) {
     this.store = store;
@@ -35,17 +36,19 @@ class MainManager {
    *
    * @function
    */
-  private hasMap(): boolean {
-    return Boolean(this.map);
+  public setMap(map: Map): void {
+    if (!this.map) {
+      this.map = map;
+    }
   }
 
   /**
    *
    * @function
    */
-  public setMap(map: Map): void {
-    if (!this.hasMap()) {
-      this.map = map;
+  public setPopup(popup: Popup): void {
+    if (!this.hoverPopup) {
+      this.hoverPopup = popup;
     }
   }
 
@@ -138,7 +141,9 @@ class MainManager {
    *
    * @function
    */
-  private async addMapSource(collectionId: ICollection["id"]): Promise<string> {
+  private async addLocationSource(
+    collectionId: ICollection["id"],
+  ): Promise<string> {
     const sourceId = this.getSourceId(collectionId);
     if (this.map) {
       const data = await this.fetchLocations(collectionId);
@@ -162,11 +167,13 @@ class MainManager {
    *
    * @function
    */
-  private async addMapLayer(
+  private async addLocationLayer(
     collectionId: ICollection["id"],
     sourceId: string,
   ): Promise<void> {
     const geographyFilter = this.store.getState().geographyFilter;
+
+    const collections = this.store.getState().collections;
 
     const layerId = this.getLocationsLayerId(collectionId);
     if (this.map) {
@@ -174,36 +181,75 @@ class MainManager {
         this.map.addLayer(getPointLayerDefinition(layerId, sourceId));
 
         this.map.on("click", layerId, (e) => {
-          const feature = this.map!.queryRenderedFeatures(e.point, {
+          const features = this.map!.queryRenderedFeatures(e.point, {
             layers: [layerId],
-          })?.[0];
-          if (feature) {
-            const locationId = feature.id;
-            if (locationId) {
-              if (this.hasLocation(locationId)) {
-                this.store.getState().removeLocation(locationId);
-              } else {
-                this.store.getState().addLocation({
-                  id: locationId,
-                  collectionId,
-                });
+          });
+          if (features.length > 0) {
+            features.forEach((feature) => {
+              const locationId = feature.id;
+              if (locationId) {
+                if (this.hasLocation(locationId)) {
+                  this.store.getState().removeLocation(locationId);
+                } else {
+                  this.store.getState().addLocation({
+                    id: locationId,
+                    collectionId,
+                  });
+                }
               }
-            }
+            });
           }
         });
 
-        this.map.on("mouseenter", layerId, () => {
+        this.map.on("mouseenter", layerId, (e) => {
           this.map!.getCanvas().style.cursor = "pointer";
+          const { features } = e;
+          if (features && features.length > 0) {
+            const collection = collections.find(
+              (collection) => collection.id === collectionId,
+            );
+
+            if (collection) {
+              const html = `
+              <span style="color:black;">
+                <strong>${collection.title}</strong><br/>
+                ${features.map((feature) => `<strong>Location Id: </strong>${feature.id}<br/>`)}
+              </span>
+              `;
+              this.hoverPopup!.setLngLat(e.lngLat)
+                .setHTML(html)
+                .addTo(this.map!);
+            }
+          }
         });
-        this.map.on("mousemove", layerId, () => {
+        this.map.on("mousemove", layerId, (e) => {
           this.map!.getCanvas().style.cursor = "pointer";
+          const { features } = e;
+          if (features && features.length > 0) {
+            const collection = collections.find(
+              (collection) => collection.id === collectionId,
+            );
+
+            if (collection) {
+              const html = `
+              <span style="color:black;">
+                <strong>${collection.title}</strong><br/>
+                ${features.map((feature) => `<strong>Location Id: </strong>${feature.id}`).join("<br/>")}
+              </span>
+              `;
+              this.hoverPopup!.setLngLat(e.lngLat)
+                .setHTML(html)
+                .addTo(this.map!);
+            }
+          }
         });
         this.map.on("mouseleave", layerId, () => {
           this.map!.getCanvas().style.cursor = "";
+          this.hoverPopup!.remove();
         });
       }
       if (geographyFilter) {
-        const geoFilterLayerId = this.getLocationsLayerId(
+        const geoFilterLayerId = this.getFilterLayerId(
           geographyFilter.collectionId,
         );
         this.map.moveLayer(layerId, geoFilterLayerId);
@@ -222,8 +268,8 @@ class MainManager {
     const collections = this.store.getState().collections;
 
     if (collection) {
-      const sourceId = await this.addMapSource(collection);
-      this.addMapLayer(collection, sourceId);
+      const sourceId = await this.addLocationSource(collection);
+      this.addLocationLayer(collection, sourceId);
     } else {
       const chunkSize = 5;
 
@@ -233,8 +279,8 @@ class MainManager {
         await Promise.all(
           chunk.map(async (collection) => {
             const collectionId = collection.id;
-            const sourceId = await this.addMapSource(collectionId);
-            this.addMapLayer(collectionId, sourceId);
+            const sourceId = await this.addLocationSource(collectionId);
+            this.addLocationLayer(collectionId, sourceId);
           }),
         );
       }
@@ -314,7 +360,7 @@ class MainManager {
    *
    * @function
    */
-  private hideIrrelevantGeographyFilterLayers(sourceIds: string[]): void {
+  private hideGeographyFilterLayers(sourceIds: string[]): void {
     if (this.map) {
       sourceIds.forEach((sourceId) => {
         const layerId = this.getFilterLayerId(sourceId);
@@ -342,7 +388,7 @@ class MainManager {
       (source) => source !== collectionId,
     );
 
-    this.hideIrrelevantGeographyFilterLayers(otherGeographyFilterSources);
+    this.hideGeographyFilterLayers(otherGeographyFilterSources);
 
     const bounds = turf.bbox(feature) as LngLatBoundsLike;
     this.map!.fitBounds(bounds, {
@@ -361,20 +407,65 @@ class MainManager {
    *
    * @function
    */
-  public removeGeographyFilter(): void {
-    this.hideIrrelevantGeographyFilterLayers(GeographyFilterSources);
+  public removeGeographyFilter(fit: boolean = true): void {
+    this.hideGeographyFilterLayers(GeographyFilterSources);
 
-    this.map!.fitBounds(
-      [
-        [-125, 24], // Southwest corner (California/Baja)
-        [-96.5, 49], // Northeast corner (MN/ND border)
-      ],
-      {
-        padding: 50,
-      },
-    );
+    if (this.map && fit) {
+      this.map.fitBounds(
+        [
+          [-125, 24], // Southwest corner (California/Baja)
+          [-96.5, 49], // Northeast corner (MN/ND border)
+        ],
+        {
+          padding: 50,
+        },
+      );
+    }
 
     this.store.getState().setGeographyFilter(null);
+  }
+
+  private clearLocationLayers(): void {
+    if (!this.map) {
+      return;
+    }
+
+    const collections = this.store.getState().collections;
+
+    for (const collection of collections) {
+      const layerId = this.getLocationsLayerId(collection.id);
+      if (this.map.getLayer(layerId)) {
+        this.map.removeLayer(layerId);
+      }
+    }
+  }
+
+  private clearLocationSources(): void {
+    if (!this.map) {
+      return;
+    }
+
+    const collections = this.store.getState().collections;
+
+    for (const collection of collections) {
+      const sourceId = this.getSourceId(collection.id);
+      if (this.map.getSource(sourceId)) {
+        this.map.removeSource(sourceId);
+      }
+    }
+  }
+
+  public clearAllData(): void {
+    this.store.getState().setLocations([]);
+
+    this.clearLocationLayers();
+    this.clearLocationSources();
+
+    this.removeGeographyFilter();
+
+    this.store.getState().setProvider(null);
+    this.store.getState().setCategory(null);
+    this.store.getState().setCollection(null);
   }
 }
 

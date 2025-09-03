@@ -25,12 +25,9 @@
   text-align: center;
 }
 
-.updateLocationsWrapper {
-  margin-top: auto;
-}
-
-.updateLocationsWrapper > button {
-  width: 100%;
+.filterTitleWrapper > svg {
+  width: 18px;
+  height: auto;
 }
 
 @media screen and (max-width: 899px) {

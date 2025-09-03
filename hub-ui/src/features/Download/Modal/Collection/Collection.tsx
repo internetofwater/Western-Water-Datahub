@@ -15,10 +15,14 @@ import {
   Group,
   MultiSelect,
   Stack,
+  Text,
   Title,
+  Tooltip,
+  VisuallyHidden,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
+import Info from "@/assets/Info";
 import CopyInput from "@/components/CopyInput";
 import styles from "@/features/Download/Download.module.css";
 import { Chart } from "@/features/Download/Modal/Collection/Chart";
@@ -31,7 +35,7 @@ import loadingManager from "@/managers/Loading.init";
 import notificationManager from "@/managers/Notification.init";
 import { ICollection } from "@/services/edr.service";
 import wwdhService from "@/services/init/wwdh.init";
-import { NotificationType } from "@/stores/session/types";
+import { LoadingType, NotificationType } from "@/stores/session/types";
 
 dayjs.extend(isSameOrBefore);
 
@@ -56,6 +60,7 @@ const Collection: React.FC<Props> = (props) => {
     dayjs().subtract(1, "week").format("YYYY-MM-DD"),
   );
   const [to, setTo] = useState<string | null>(dayjs().format("YYYY-MM-DD"));
+  const [renderedCount, setRenderedCount] = useState(0);
   const [startDownload, setStartDownload] = useState<number>();
 
   const controller = useRef<AbortController>(null);
@@ -65,6 +70,7 @@ const Collection: React.FC<Props> = (props) => {
   const getBasinOptions = async () => {
     loadingInstance.current = loadingManager.add(
       `Fetching data for collection: ${collectionId}`,
+      LoadingType.Collections,
     );
     try {
       controller.current = new AbortController();
@@ -122,6 +128,10 @@ const Collection: React.FC<Props> = (props) => {
   const isParameterSelectionUnderLimit =
     selectedParameters.length <= PARAMETER_LIMIT;
   const areParametersSelected = selectedParameters.length > 0;
+
+  const parameterHelpText =
+    "Parameters are scientific measurements that may exist at a location";
+
   return (
     <Box>
       {collection && (
@@ -135,24 +145,45 @@ const Collection: React.FC<Props> = (props) => {
             <Stack mt="sm">
               <Group justify="space-between" align="flex-start" grow mb="lg">
                 {parameterNameOptions && (
-                  <MultiSelect
-                    size="sm"
-                    withAsterisk
-                    className={styles.parameterNameSelect}
-                    label="Parameters"
-                    description="Select at least one parameter"
-                    placeholder="Select..."
-                    data={parameterNameOptions}
-                    value={selectedParameters}
-                    onChange={setSelectedParameters}
-                    searchable
-                    clearable
-                    error={
-                      isParameterSelectionUnderLimit
-                        ? false
-                        : `Please remove ${selectedParameters.length - PARAMETER_LIMIT} parameter(s)`
-                    }
-                  />
+                  <>
+                    <MultiSelect
+                      size="sm"
+                      className={styles.parameterNameSelect}
+                      label={
+                        <Tooltip
+                          label={parameterHelpText}
+                          transitionProps={{
+                            transition: "fade-right",
+                            duration: 300,
+                          }}
+                          position="top-start"
+                        >
+                          <Group
+                            className={styles.parameterLabelWrapper}
+                            gap="xs"
+                          >
+                            <Text component="label" size="sm">
+                              Parameters&nbsp;<span>*</span>
+                            </Text>
+                            <Info />
+                          </Group>
+                        </Tooltip>
+                      }
+                      description="Select at least one parameter"
+                      placeholder="Select..."
+                      data={parameterNameOptions}
+                      value={selectedParameters}
+                      onChange={setSelectedParameters}
+                      searchable
+                      clearable
+                      error={
+                        isParameterSelectionUnderLimit
+                          ? false
+                          : `Please remove ${selectedParameters.length - PARAMETER_LIMIT} parameter(s)`
+                      }
+                    />
+                    <VisuallyHidden>{parameterHelpText}</VisuallyHidden>
+                  </>
                 )}
                 <Stack gap="xs" p={0}>
                   <DatePickerInput
@@ -189,7 +220,7 @@ const Collection: React.FC<Props> = (props) => {
               </Group>
 
               {startDownload &&
-                locationIds.map((locationId) => {
+                locationIds.slice(0, renderedCount + 1).map((locationId) => {
                   const url = buildUrl(
                     collectionId,
                     locationId,
@@ -197,6 +228,7 @@ const Collection: React.FC<Props> = (props) => {
                     from,
                     to,
                   );
+
                   return (
                     <Fragment
                       key={`collection-download-${collectionId}-${locationId}`}
@@ -208,6 +240,7 @@ const Collection: React.FC<Props> = (props) => {
                         parameters={selectedParameters}
                         from={from}
                         to={to}
+                        onData={() => setRenderedCount((count) => count + 1)}
                       />
                       <Group grow gap="sm">
                         <CSV

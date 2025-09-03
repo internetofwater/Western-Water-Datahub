@@ -5,7 +5,7 @@
 
 .mapToolsContainer {
   position: absolute;
-  top: 8px;
+  top: var(--default-spacing);
   right: 49px;
 }
 

@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { Skeleton, useComputedColorScheme } from "@mantine/core";
+import { Group, Skeleton, Text, useComputedColorScheme } from "@mantine/core";
 import LineChart from "@/components/Charts/LineChart";
 import styles from "@/features/Download/Download.module.css";
 import { getDatetime } from "@/features/Download/Modal/utils";
@@ -17,7 +17,7 @@ import {
 } from "@/services/edr.service";
 import wwdhService from "@/services/init/wwdh.init";
 import { Location } from "@/stores/main/types";
-import { NotificationType } from "@/stores/session/types";
+import { LoadingType, NotificationType } from "@/stores/session/types";
 
 type Props = {
   instanceId: number;
@@ -26,23 +26,28 @@ type Props = {
   parameters: string[];
   from: string | null;
   to: string | null;
+  onData: () => void;
 };
 
 export const Chart: React.FC<Props> = (props) => {
-  const { instanceId, collectionId, locationId, parameters, from, to } = props;
+  const { instanceId, collectionId, locationId, parameters, from, to, onData } =
+    props;
 
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
+  const loadingInstance = useRef<string>(null);
 
   const computedColorScheme = useComputedColorScheme();
 
   const [data, setData] = useState<CoverageCollection | CoverageJSON | null>(
     null,
   );
+  const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
-    const loadingInstance = loadingManager.add(
+    loadingInstance.current = loadingManager.add(
       `Fetching chart data for location: ${locationId}, of collection: ${collectionId}`,
+      LoadingType.Data,
     );
     try {
       controller.current = new AbortController();
@@ -60,8 +65,11 @@ export const Chart: React.FC<Props> = (props) => {
       });
 
       if (isMounted.current) {
-        loadingManager.remove(loadingInstance);
+        loadingInstance.current = loadingManager.remove(
+          loadingInstance.current,
+        );
         setData(coverageCollection);
+        onData();
       }
     } catch (error) {
       if (
@@ -76,8 +84,15 @@ export const Chart: React.FC<Props> = (props) => {
           NotificationType.Error,
           10000,
         );
+        setError(_error.message);
       }
-      loadingManager.remove(loadingInstance);
+
+      if (loadingInstance.current) {
+        loadingInstance.current = loadingManager.remove(
+          loadingInstance.current,
+        );
+      }
+      onData();
     }
   };
 
@@ -95,11 +110,11 @@ export const Chart: React.FC<Props> = (props) => {
 
   return (
     <Skeleton
-      height={55} // Default dimensions of select
-      visible={!data}
+      height={55} // Default dimensions of chart
+      visible={Boolean(loadingInstance.current)}
       className={styles.chartWrapper}
     >
-      {data && (
+      {data ? (
         <LineChart
           data={data}
           title={String(locationId)}
@@ -108,6 +123,16 @@ export const Chart: React.FC<Props> = (props) => {
           theme={computedColorScheme}
           filename={`line-chart-${locationId}-${parameters.join("-")}`}
         />
+      ) : (
+        <Group justify="center" align="center" className={styles.chartNoData}>
+          <Text>No Data</Text>
+        </Group>
+      )}
+      {error && (
+        <Text c="red">
+          <strong>Error: </strong>
+          {error}
+        </Text>
       )}
     </Skeleton>
   );
