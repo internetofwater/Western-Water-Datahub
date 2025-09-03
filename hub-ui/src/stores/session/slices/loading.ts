@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { StateCreator } from 'zustand';
-import { Loading, SessionState } from '@/stores/session/types';
+import { StateCreator } from "zustand";
+import { Loading, SessionState } from "@/stores/session/types";
 
 interface LoadingSlice {
   loadingInstances: Loading[];
@@ -15,7 +15,7 @@ interface LoadingSlice {
 
 export const createLoadingSlice: StateCreator<
   SessionState,
-  [['zustand/immer', never]],
+  [["zustand/immer", never]],
   [],
   LoadingSlice
 > = (set, get) => ({
@@ -27,7 +27,7 @@ export const createLoadingSlice: StateCreator<
   removeLoadingInstance: (id) =>
     set((state) => ({
       loadingInstances: state.loadingInstances.filter(
-        (loadingInstance) => loadingInstance.id !== id
+        (loadingInstance) => loadingInstance.id !== id,
       ),
     })),
   hasLoadingInstance: (text) =>
