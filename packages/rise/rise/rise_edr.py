@@ -76,9 +76,6 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
                 )
             response.drop_all_locations_but_id(str(location_id_as_int))
 
-        # If a location exists but has no CatalogItems, it should not appear in locations
-        response.drop_locations_without_catalogitems()
-
         if len(response.locations) == 0:
             raise ProviderNoDataError()
 
@@ -88,6 +85,9 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
                 itemsIDSingleFeature=location_id is not None,
                 fields_mapping=self.get_fields(),
             )
+
+        # If a location exists but has no CatalogItems, it should not appear in locations
+        response.drop_locations_without_catalogitems()
 
         # if we are returning covjson we need to fetch the results and fill in the json
         builder = LocationResultBuilder(cache=self.cache, base_response=response)
