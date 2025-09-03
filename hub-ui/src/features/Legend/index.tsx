@@ -26,8 +26,8 @@ const Legend: React.FC = () => {
       return;
     }
 
+    const collections = useMainStore.getState().collections;
     map.on('styledata', () => {
-      const collections = useMainStore.getState().collections;
       const layers = map.getStyle().layers;
       const newLegendEntries: SessionState['legendEntries'] = [];
       layers.forEach((layer) => {

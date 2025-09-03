@@ -39,7 +39,7 @@ const MainMap: React.FC<Props> = (props) => {
   const locations = useMainStore((state) => state.locations);
   const collections = useMainStore((state) => state.collections);
 
-  const { map } = useMap(MAP_ID);
+  const { map, hoverPopup } = useMap(MAP_ID);
 
   const isMounted = useRef(true);
   const initialMapLoad = useRef(true);
@@ -71,8 +71,15 @@ const MainMap: React.FC<Props> = (props) => {
       );
       initialMapLoad.current = false;
     }
-    return () => {};
   }, [map]);
+
+  useEffect(() => {
+    if (!hoverPopup) {
+      return;
+    }
+
+    mainManager.setPopup(hoverPopup);
+  }, [hoverPopup]);
 
   useEffect(() => {
     if (!map) {
@@ -84,7 +91,7 @@ const MainMap: React.FC<Props> = (props) => {
       const layerId = mainManager.getLocationsLayerId(collection.id);
 
       const locationIds = locationsByCollection[collection.id] ?? [];
-      if (locationIds.length > 0 && map.getLayer(layerId)) {
+      if (map.getLayer(layerId)) {
         map.setPaintProperty(layerId, 'circle-stroke-color', getCircleStrokeColor(locationIds));
       }
     });

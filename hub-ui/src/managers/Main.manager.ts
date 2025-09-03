@@ -5,7 +5,7 @@
 
 import * as turf from '@turf/turf';
 import { Feature, FeatureCollection, Point, Polygon } from 'geojson';
-import { GeoJSONSource, LngLatBoundsLike, Map } from 'mapbox-gl';
+import { GeoJSONSource, LngLatBoundsLike, Map, Popup } from 'mapbox-gl';
 import { GeoJSONFeature, stringify } from 'wellknown';
 import { StoreApi, UseBoundStore } from 'zustand';
 import { GeographyFilterSources } from '@/features/Map/consts';
@@ -23,6 +23,7 @@ import { Location, MainState } from '@/stores/main/types';
 class MainManager {
   private store: UseBoundStore<StoreApi<MainState>>;
   private map: Map | null = null;
+  private hoverPopup: Popup | null = null;
 
   constructor(store: UseBoundStore<StoreApi<MainState>>) {
     this.store = store;
@@ -32,17 +33,19 @@ class MainManager {
    *
    * @function
    */
-  private hasMap(): boolean {
-    return Boolean(this.map);
+  public setMap(map: Map): void {
+    if (!this.map) {
+      this.map = map;
+    }
   }
 
   /**
    *
    * @function
    */
-  public setMap(map: Map): void {
-    if (!this.hasMap()) {
-      this.map = map;
+  public setPopup(popup: Popup): void {
+    if (!this.hoverPopup) {
+      this.hoverPopup = popup;
     }
   }
 
@@ -157,38 +160,71 @@ class MainManager {
   private async addLocationLayer(collectionId: ICollection['id'], sourceId: string): Promise<void> {
     const geographyFilter = this.store.getState().geographyFilter;
 
+    const collections = this.store.getState().collections;
+
     const layerId = this.getLocationsLayerId(collectionId);
     if (this.map) {
       if (!this.map.getLayer(layerId)) {
         this.map.addLayer(getPointLayerDefinition(layerId, sourceId));
 
         this.map.on('click', layerId, (e) => {
-          const feature = this.map!.queryRenderedFeatures(e.point, {
+          const features = this.map!.queryRenderedFeatures(e.point, {
             layers: [layerId],
-          })?.[0];
-          if (feature) {
-            const locationId = feature.id;
-            if (locationId) {
-              if (this.hasLocation(locationId)) {
-                this.store.getState().removeLocation(locationId);
-              } else {
-                this.store.getState().addLocation({
-                  id: locationId,
-                  collectionId,
-                });
+          });
+          if (features.length > 0) {
+            features.forEach((feature) => {
+              const locationId = feature.id;
+              if (locationId) {
+                if (this.hasLocation(locationId)) {
+                  this.store.getState().removeLocation(locationId);
+                } else {
+                  this.store.getState().addLocation({
+                    id: locationId,
+                    collectionId,
+                  });
+                }
               }
-            }
+            });
           }
         });
 
-        this.map.on('mouseenter', layerId, () => {
+        this.map.on('mouseenter', layerId, (e) => {
           this.map!.getCanvas().style.cursor = 'pointer';
+          const { features } = e;
+          if (features && features.length > 0) {
+            const collection = collections.find((collection) => collection.id === collectionId);
+
+            if (collection) {
+              const html = `
+              <span style="color:black;">
+                <strong>${collection.title}</strong><br/>
+                ${features.map((feature) => `<strong>Location Id: </strong>${feature.id}<br/>`)}
+              </span>
+              `;
+              this.hoverPopup!.setLngLat(e.lngLat).setHTML(html).addTo(this.map!);
+            }
+          }
         });
-        this.map.on('mousemove', layerId, () => {
+        this.map.on('mousemove', layerId, (e) => {
           this.map!.getCanvas().style.cursor = 'pointer';
+          const { features } = e;
+          if (features && features.length > 0) {
+            const collection = collections.find((collection) => collection.id === collectionId);
+
+            if (collection) {
+              const html = `
+              <span style="color:black;">
+                <strong>${collection.title}</strong><br/>
+                ${features.map((feature) => `<strong>Location Id: </strong>${feature.id}`).join('<br/>')}
+              </span>
+              `;
+              this.hoverPopup!.setLngLat(e.lngLat).setHTML(html).addTo(this.map!);
+            }
+          }
         });
         this.map.on('mouseleave', layerId, () => {
           this.map!.getCanvas().style.cursor = '';
+          this.hoverPopup!.remove();
         });
       }
       if (geographyFilter) {
