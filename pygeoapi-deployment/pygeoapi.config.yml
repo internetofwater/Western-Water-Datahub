@@ -183,10 +183,10 @@ resources:
         entity: Observation
         title_field: name
 
-  usace-edr:
+  usace-access2water-edr:
     type: collection
-    title: US Army Corps of Engineers
-    description: USACE Access2Water API
+    title: US Army Corps of Engineers Access2Water
+    description: USACE Access2Water (A2W) API EDR
     provider-name:
       - DOA
       - USACE
