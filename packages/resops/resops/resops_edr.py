@@ -70,16 +70,19 @@ class ResOpsUSProviderEDR(BaseEDRProvider, EDRProviderProtocol):
                 "title": "Average Lake/Reservoir Storage",
                 "description": "Average Lake/Reservoir Storage",
                 "x-ogc-unit": "Million Cubic Meters",
+                "type": "number",
             },
             "p10": {
                 "title": "10th Percentile Lake/Reservoir Storage",
                 "description": "10th Percentile Lake/Reservoir Storage",
                 "x-ogc-unit": "Million Cubic Meters",
+                "type": "number",
             },
             "p90": {
                 "title": "90th Percentile Lake/Reservoir Storage",
                 "description": "90th Percentile Lake/Reservoir Storage",
                 "x-ogc-unit": "Million Cubic Meters",
+                "type": "number",
             },
         }
 
