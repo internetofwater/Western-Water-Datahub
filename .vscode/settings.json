@@ -22,5 +22,8 @@
   },
   "editor.codeActionsOnSave": {
     "source.fixAll.ruff": "always"
+  },
+  "files.associations": {
+    "*.jsonld": "jinja"
   }
 }
