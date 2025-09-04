@@ -75,7 +75,12 @@ class LocationResponse(BaseModel):
     ) -> "LocationCollectionWithIncluded":
         """Create a location response from multiple paged API responses by first merging them together"""
         no_duplicates_in_pages(pages)
-        merged = merge_pages(pages)
+        fetched_single_location = len(pages) == 1
+        if not fetched_single_location:
+            merged = merge_pages(pages)
+        else:
+            onlyKey = list(pages.keys())[0]
+            merged = pages[onlyKey]
         with TRACER.start_span("pydantic_validation"):
             model = cls.model_validate(merged)
             assert model.included
@@ -268,12 +273,20 @@ class LocationCollection(LocationCollectionProtocol):
         geojson_features: list[geojson_pydantic.Feature] = []
 
         for location_feature in self.locations:
+            propsToAdd: dict = location_feature.attributes.model_dump(
+                by_alias=True, exclude={"locationCoordinates", "locationGeometry"}
+            )
+
+            if itemsIDSingleFeature and isinstance(
+                self, LocationCollectionWithIncluded
+            ):
+                assert self.included
+                propsToAdd["catalogItems"] = self.included
+
             feature_as_geojson = {
                 "type": "Feature",
                 "id": location_feature.attributes.id,
-                "properties": location_feature.attributes.model_dump(
-                    by_alias=True, exclude={"locationCoordinates", "locationGeometry"}
-                ),
+                "properties": propsToAdd,
                 "geometry": (
                     location_feature.attributes.locationCoordinates.model_dump()
                     if not skip_geometry
