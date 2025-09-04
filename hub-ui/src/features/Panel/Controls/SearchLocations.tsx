@@ -15,7 +15,7 @@ export const SearchLocations: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
   const collection = useMainStore((state) => state.collection);
 
-  const { isLoadingGeography, isFetchingCollections } = useLoading();
+  const { isLoadingGeography, isFetchingCollections, isFetchingLocations } = useLoading();
 
   const addData = async () => {
     const loadingInstance = loadingManager.add('Fetching Locations', LoadingType.Locations);
@@ -41,6 +41,10 @@ export const SearchLocations: React.FC = () => {
       return 'Please wait for collections request to complete';
     }
 
+    if (isFetchingLocations) {
+      return 'Please wait for locations request to complete';
+    }
+
     if (!(provider || collection)) {
       return 'Please select a provider or collection';
     }
@@ -48,7 +52,10 @@ export const SearchLocations: React.FC = () => {
 
   return (
     <>
-      {!isFetchingCollections && !isLoadingGeography && (provider || collection) ? (
+      {!isFetchingLocations &&
+      !isFetchingCollections &&
+      !isLoadingGeography &&
+      (provider || collection) ? (
         <Button onClick={() => void addData()}>Search Locations</Button>
       ) : (
         <Tooltip label={getLabel()}>
