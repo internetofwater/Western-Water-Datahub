@@ -3,20 +3,23 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   ComboboxData,
   Group,
+  Loader,
   Select,
   Stack,
+  Text,
   Title,
   Tooltip,
   VisuallyHidden,
-} from "@mantine/core";
-import Info from "@/assets/Info";
-import styles from "@/features/Panel/Panel.module.css";
-import useMainStore from "@/stores/main";
-import { MainState } from "@/stores/main/types";
+} from '@mantine/core';
+import Info from '@/assets/Info';
+import styles from '@/features/Panel/Panel.module.css';
+import { useLoading } from '@/hooks/useLoading';
+import useMainStore from '@/stores/main';
+import { MainState } from '@/stores/main/types';
 
 export const Collection: React.FC = () => {
   const collection = useMainStore((state) => state.collection);
@@ -28,19 +31,22 @@ export const Collection: React.FC = () => {
 
   const [collectionOptions, setCollectionOptions] = useState<ComboboxData>([]);
 
+  const { isFetchingCollections } = useLoading();
+
   useEffect(() => {
     const collectionOptions: ComboboxData = collections.map((collection) => ({
       value: collection.id,
       label: collection.title ?? collection.id,
     }));
 
+    if (!collections.some((_collection) => _collection.id === collection)) {
+      setCollection(null);
+    }
+
     setCollectionOptions(collectionOptions);
   }, [collections]);
 
-  const getDescription = (
-    provider: MainState["provider"],
-    category: MainState["category"],
-  ) => {
+  const getDescription = (provider: MainState['provider'], category: MainState['category']) => {
     if (provider && category) {
       return `Showing collections available for provider: ${provider}, in category: ${category.label}`;
     } else if (provider) {
@@ -52,14 +58,14 @@ export const Collection: React.FC = () => {
     return null;
   };
 
-  const helpText = "Collection tooltip placeholder";
+  const helpText = 'Collection tooltip placeholder';
 
   return (
     <Stack gap={0}>
       {/* TODO */}
       <Tooltip
         label={helpText}
-        transitionProps={{ transition: "fade-right", duration: 300 }}
+        transitionProps={{ transition: 'fade-right', duration: 300 }}
         position="top-start"
       >
         <Group className={styles.filterTitleWrapper} gap="xs">
@@ -78,9 +84,16 @@ export const Collection: React.FC = () => {
         data={collectionOptions}
         value={collection}
         onChange={setCollection}
+        disabled={isFetchingCollections}
         searchable
         clearable
       />
+      {isFetchingCollections && (
+        <Group>
+          <Loader color="blue" type="dots" />
+          <Text size="sm">Updating Collections</Text>
+        </Group>
+      )}
     </Stack>
   );
 };
