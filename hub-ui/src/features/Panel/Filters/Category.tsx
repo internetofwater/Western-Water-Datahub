@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 import {
   ComboboxData,
   Group,
@@ -14,14 +14,14 @@ import {
   Title,
   Tooltip,
   VisuallyHidden,
-} from '@mantine/core';
-import Info from '@/assets/Info';
-import styles from '@/features/Panel/Panel.module.css';
-import loadingManager from '@/managers/Loading.init';
-import notificationManager from '@/managers/Notification.init';
-import wwdhService from '@/services/init/wwdh.init';
-import useMainStore from '@/stores/main';
-import { LoadingType, NotificationType } from '@/stores/session/types';
+} from "@mantine/core";
+import Info from "@/assets/Info";
+import styles from "@/features/Panel/Panel.module.css";
+import loadingManager from "@/managers/Loading.init";
+import notificationManager from "@/managers/Notification.init";
+import wwdhService from "@/services/init/wwdh.init";
+import useMainStore from "@/stores/main";
+import { LoadingType, NotificationType } from "@/stores/session/types";
 
 export const Category: React.FC = () => {
   const category = useMainStore((state) => state.category);
@@ -37,8 +37,8 @@ export const Category: React.FC = () => {
 
   const getCategoryOptions = async () => {
     const loadingInstance = loadingManager.add(
-      'Fetching category dropdown options',
-      LoadingType.Data
+      "Fetching category dropdown options",
+      LoadingType.Data,
     );
 
     try {
@@ -47,8 +47,8 @@ export const Category: React.FC = () => {
 
       const { collections } = await wwdhService.getCollections({
         params: {
-          'parameter-name': '*',
-          ...(provider ? { 'provider-name': provider } : {}),
+          "parameter-name": "*",
+          ...(provider ? { "provider-name": provider } : {}),
         },
       });
 
@@ -57,19 +57,21 @@ export const Category: React.FC = () => {
           Object.values(collection.parameter_names).map((parameterName) => ({
             value: parameterName.id,
             label: parameterName.name,
-          }))
+          })),
         )
         .filter(
           (parameterName, index, categoryOptions) =>
-            categoryOptions.map(({ value }) => value).indexOf(parameterName.value) === index
+            categoryOptions
+              .map(({ value }) => value)
+              .indexOf(parameterName.value) === index,
         );
 
       if (isMounted.current) {
         if (
           !collections.some((collection) =>
             Object.values(collection.parameter_names).some(
-              (parameterName) => parameterName.id === category?.value
-            )
+              (parameterName) => parameterName.id === category?.value,
+            ),
           )
         ) {
           setCategory(null);
@@ -81,13 +83,17 @@ export const Category: React.FC = () => {
       }
     } catch (error) {
       if (
-        (error as Error)?.name === 'AbortError' ||
-        (typeof error === 'string' && error === 'Component unmount')
+        (error as Error)?.name === "AbortError" ||
+        (typeof error === "string" && error === "Component unmount")
       ) {
-        console.log('Fetch request canceled');
+        console.log("Fetch request canceled");
       } else if ((error as Error)?.message) {
         const _error = error as Error;
-        notificationManager.show(`Error: ${_error.message}`, NotificationType.Error, 10000);
+        notificationManager.show(
+          `Error: ${_error.message}`,
+          NotificationType.Error,
+          10000,
+        );
       }
       if (loadingInstance) {
         loadingManager.remove(loadingInstance);
@@ -104,7 +110,7 @@ export const Category: React.FC = () => {
     return () => {
       isMounted.current = false;
       if (controller.current) {
-        controller.current.abort('Component unmount');
+        controller.current.abort("Component unmount");
       }
     };
   }, []);
@@ -113,14 +119,14 @@ export const Category: React.FC = () => {
     void getCategoryOptions();
   }, [provider]);
 
-  const helpText = 'Data Category tooltip placeholder';
+  const helpText = "Data Category tooltip placeholder";
 
   return (
     <Stack gap={0}>
       {/* TODO */}
       <Tooltip
         label={helpText}
-        transitionProps={{ transition: 'fade-right', duration: 300 }}
+        transitionProps={{ transition: "fade-right", duration: 300 }}
         position="top-start"
       >
         <Group className={styles.filterTitleWrapper} gap="xs">
@@ -134,7 +140,11 @@ export const Category: React.FC = () => {
       <Select
         size="sm"
         label="Category"
-        description={provider ? `Showing categories available for provider: ${provider}` : null}
+        description={
+          provider
+            ? `Showing categories available for provider: ${provider}`
+            : null
+        }
         placeholder="Select..."
         data={categoryOptions}
         value={category?.value}
