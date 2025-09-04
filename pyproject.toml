@@ -21,7 +21,7 @@ dependencies = [
     "orjson>=3.10.15",
     "pygeoapi @ git+https://github.com/internetofwater/pygeoapi.git@wwdh",
     "msgspec>=0.19.0",
-    "pygeoapi-plugins>=0.3.0",
+    "pygeoapi-plugins @ git+https://github.com/cgs-earth/pygeoapi-plugins.git",
 ]
 
 classifiers = [
