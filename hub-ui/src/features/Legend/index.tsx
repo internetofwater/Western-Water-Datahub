@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Fragment, useEffect } from "react";
-import { ColorInput, Divider, Group, Stack, Switch, Text } from "@mantine/core";
-import { useMap } from "@/contexts/MapContexts";
-import styles from "@/features/Legend/Legend.module.css";
-import { MAP_ID } from "@/features/Map/config";
-import mainManager from "@/managers/Main.init";
-import useMainStore from "@/stores/main";
-import useSessionStore from "@/stores/session";
-import { SessionState } from "@/stores/session/types";
+import { Fragment, useEffect } from 'react';
+import { ColorInput, Divider, Group, Stack, Switch, Text } from '@mantine/core';
+import { useMap } from '@/contexts/MapContexts';
+import styles from '@/features/Legend/Legend.module.css';
+import { MAP_ID } from '@/features/Map/config';
+import mainManager from '@/managers/Main.init';
+import useMainStore from '@/stores/main';
+import useSessionStore from '@/stores/session';
+import { SessionState } from '@/stores/session/types';
 
 const Legend: React.FC = () => {
   const { map } = useMap(MAP_ID);
@@ -19,31 +19,30 @@ const Legend: React.FC = () => {
   const legendEntries = useSessionStore((state) => state.legendEntries);
   const setLegendEntries = useSessionStore((state) => state.setLegendEntries);
 
-  const collections = useMainStore((state) => state.collections);
+  const originalCollections = useMainStore((state) => state.originalCollections);
 
   useEffect(() => {
     if (!map) {
       return;
     }
 
-    const collections = useMainStore.getState().collections;
-    map.on("styledata", () => {
+    map.on('styledata', () => {
+      const originalCollections = useMainStore.getState().originalCollections;
       const layers = map.getStyle().layers;
-      const newLegendEntries: SessionState["legendEntries"] = [];
+      const newLegendEntries: SessionState['legendEntries'] = [];
       layers.forEach((layer) => {
         if (
-          layer.type === "circle" &&
-          collections.some(
-            (collection) =>
-              mainManager.getLocationsLayerId(collection.id) === layer.id,
+          layer.type === 'circle' &&
+          originalCollections.some(
+            (collection) => mainManager.getLocationsLayerId(collection.id) === layer.id
           ) &&
           layer.paint
         ) {
-          const color = layer.paint["circle-color"];
-          if (typeof color === "string") {
+          const color = layer.paint['circle-color'];
+          if (typeof color === 'string') {
             newLegendEntries.push({
               layerId: layer.id,
-              color: color ?? "#000",
+              color: color ?? '#000',
               visible: true,
             });
           }
@@ -54,24 +53,19 @@ const Legend: React.FC = () => {
   }, [map]);
 
   const getCollectionTitle = (layerId: string) => {
-    const collection = collections.find(
-      (collection) =>
-        mainManager.getLocationsLayerId(collection.id) === layerId,
+    const collection = originalCollections.find(
+      (collection) => mainManager.getLocationsLayerId(collection.id) === layerId
     );
 
     return collection?.title ?? layerId;
   };
   const handleColorChange = (color: string, layerId: string) => {
     if (map) {
-      map.setPaintProperty(layerId, "circle-color", color);
+      map.setPaintProperty(layerId, 'circle-color', color);
     }
 
-    const oldEntry = legendEntries.filter(
-      (entry) => entry.layerId === layerId,
-    )[0];
-    const newLegendEntries = legendEntries.filter(
-      (entry) => entry.layerId !== layerId,
-    );
+    const oldEntry = legendEntries.filter((entry) => entry.layerId === layerId)[0];
+    const newLegendEntries = legendEntries.filter((entry) => entry.layerId !== layerId);
 
     setLegendEntries([
       ...newLegendEntries,
@@ -85,19 +79,11 @@ const Legend: React.FC = () => {
 
   const handleVisibilityChange = (visible: boolean, layerId: string) => {
     if (map) {
-      map.setLayoutProperty(
-        layerId,
-        "visibility",
-        visible ? "visible" : "none",
-      );
+      map.setLayoutProperty(layerId, 'visibility', visible ? 'visible' : 'none');
     }
 
-    const oldEntry = legendEntries.filter(
-      (entry) => entry.layerId === layerId,
-    )[0];
-    const newLegendEntries = legendEntries.filter(
-      (entry) => entry.layerId !== layerId,
-    );
+    const oldEntry = legendEntries.filter((entry) => entry.layerId === layerId)[0];
+    const newLegendEntries = legendEntries.filter((entry) => entry.layerId !== layerId);
 
     setLegendEntries([
       ...newLegendEntries,
@@ -128,9 +114,7 @@ const Legend: React.FC = () => {
                   onLabel="ON"
                   offLabel="OFF"
                   checked={entry.visible}
-                  onChange={(event) =>
-                    handleVisibilityChange(event.target.checked, entry.layerId)
-                  }
+                  onChange={(event) => handleVisibilityChange(event.target.checked, entry.layerId)}
                 />
               </Group>
             </Stack>
