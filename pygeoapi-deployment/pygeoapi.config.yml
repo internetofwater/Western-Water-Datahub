@@ -60,6 +60,8 @@ resources:
       - EDR
       - RISE
       - USBR
+    templates:
+      path: templates/jsonld/rise-edr
     links:
       - &default-link
         type: application/html
@@ -183,8 +185,8 @@ resources:
 
   usace-edr:
     type: collection
-    title: US Army Corps of Engineers
-    description: USACE Access2Water API
+    title: US Army Corps of Engineers Access2Water
+    description: USACE Access2Water (A2W) API EDR
     provider-name:
       - DOA
       - USACE
