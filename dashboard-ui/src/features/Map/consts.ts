@@ -22,7 +22,7 @@ export enum SourceId {
     States = 'states',
     RiseEDRReservoirs = 'rise-edr',
     ResvizEDRReservoirs = 'resviz-edr',
-    USACEEDRReservoirs = 'usace-access2water-edr',
+    USACEEDRReservoirs = 'usace-edr',
     SnowWater = 'snow-water',
     USDroughtMonitor = 'us-drought-monitor',
     NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
