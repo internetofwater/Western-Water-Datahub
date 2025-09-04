@@ -7,8 +7,10 @@ import { useEffect, useRef, useState } from "react";
 import {
   ComboboxData,
   Group,
+  Loader,
   Select,
   Stack,
+  Text,
   Title,
   Tooltip,
   VisuallyHidden,
@@ -28,24 +30,25 @@ export const Category: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
 
   const [categoryOptions, setCategoryOptions] = useState<ComboboxData>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
-  const loadingInstance = useRef<string>(null);
 
   const getCategoryOptions = async () => {
-    loadingInstance.current = loadingManager.add(
+    const loadingInstance = loadingManager.add(
       "Fetching category dropdown options",
-      LoadingType.Collections,
+      LoadingType.Data,
     );
 
     try {
+      setIsLoading(true);
       controller.current = new AbortController();
 
       const { collections } = await wwdhService.getCollections({
         params: {
+          "parameter-name": "*",
           ...(provider ? { "provider-name": provider } : {}),
-          "parameter-name": category ? category.value : "*",
         },
       });
 
@@ -64,10 +67,19 @@ export const Category: React.FC = () => {
         );
 
       if (isMounted.current) {
-        loadingInstance.current = loadingManager.remove(
-          loadingInstance.current,
-        );
+        if (
+          !collections.some((collection) =>
+            Object.values(collection.parameter_names).some(
+              (parameterName) => parameterName.id === category?.value,
+            ),
+          )
+        ) {
+          setCategory(null);
+        }
+
+        loadingManager.remove(loadingInstance);
         setCategoryOptions(categoryOptions);
+        setIsLoading(false);
       }
     } catch (error) {
       if (
@@ -83,17 +95,18 @@ export const Category: React.FC = () => {
           10000,
         );
       }
-      if (loadingInstance.current) {
-        loadingInstance.current = loadingManager.remove(
-          loadingInstance.current,
-        );
+      if (loadingInstance) {
+        loadingManager.remove(loadingInstance);
+      }
+      if (isMounted.current) {
+        setIsLoading(false);
       }
     }
   };
 
   useEffect(() => {
     isMounted.current = true;
-    void getCategoryOptions();
+
     return () => {
       isMounted.current = false;
       if (controller.current) {
@@ -101,6 +114,10 @@ export const Category: React.FC = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    void getCategoryOptions();
+  }, [provider]);
 
   const helpText = "Data Category tooltip placeholder";
 
@@ -132,12 +149,16 @@ export const Category: React.FC = () => {
         data={categoryOptions}
         value={category?.value}
         onChange={(_value, option) => setCategory(option)}
-        disabled={
-          categoryOptions.length === 0 || Boolean(loadingInstance.current)
-        }
+        disabled={categoryOptions.length === 0 || isLoading}
         searchable
         clearable
       />
+      {isLoading && (
+        <Group>
+          <Loader color="blue" type="dots" />
+          <Text size="sm">Updating Categories</Text>
+        </Group>
+      )}
     </Stack>
   );
 };

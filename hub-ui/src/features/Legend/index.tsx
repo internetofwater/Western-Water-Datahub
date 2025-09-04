@@ -19,21 +19,23 @@ const Legend: React.FC = () => {
   const legendEntries = useSessionStore((state) => state.legendEntries);
   const setLegendEntries = useSessionStore((state) => state.setLegendEntries);
 
-  const collections = useMainStore((state) => state.collections);
+  const originalCollections = useMainStore(
+    (state) => state.originalCollections,
+  );
 
   useEffect(() => {
     if (!map) {
       return;
     }
 
-    const collections = useMainStore.getState().collections;
     map.on("styledata", () => {
+      const originalCollections = useMainStore.getState().originalCollections;
       const layers = map.getStyle().layers;
       const newLegendEntries: SessionState["legendEntries"] = [];
       layers.forEach((layer) => {
         if (
           layer.type === "circle" &&
-          collections.some(
+          originalCollections.some(
             (collection) =>
               mainManager.getLocationsLayerId(collection.id) === layer.id,
           ) &&
@@ -54,7 +56,7 @@ const Legend: React.FC = () => {
   }, [map]);
 
   const getCollectionTitle = (layerId: string) => {
-    const collection = collections.find(
+    const collection = originalCollections.find(
       (collection) =>
         mainManager.getLocationsLayerId(collection.id) === layerId,
     );

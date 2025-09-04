@@ -3,30 +3,25 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from "react";
 import { Button, Tooltip } from "@mantine/core";
+import { useLoading } from "@/hooks/useLoading";
 import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import useMainStore from "@/stores/main";
-import useSessionStore from "@/stores/session";
 import { LoadingType, NotificationType } from "@/stores/session/types";
 
 export const SearchLocations: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
   const collection = useMainStore((state) => state.collection);
 
-  const [isLoadingGeography, setIsLoadingGeography] = useState(false);
-
-  const hasLoadingInstance = useSessionStore(
-    (state) => state.hasLoadingInstance,
-  );
-  const loadingInstances = useSessionStore((state) => state.loadingInstances);
+  const { isLoadingGeography, isFetchingCollections, isFetchingLocations } =
+    useLoading();
 
   const addData = async () => {
     const loadingInstance = loadingManager.add(
       "Fetching Locations",
-      LoadingType.Collections,
+      LoadingType.Locations,
     );
     try {
       await mainManager.getLocations();
@@ -45,22 +40,33 @@ export const SearchLocations: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    setIsLoadingGeography(hasLoadingInstance("geography filter"));
-  }, [loadingInstances]);
+  const getLabel = () => {
+    if (isLoadingGeography) {
+      return "Please wait for geography filter to load";
+    }
+
+    if (isFetchingCollections) {
+      return "Please wait for collections request to complete";
+    }
+
+    if (isFetchingLocations) {
+      return "Please wait for locations request to complete";
+    }
+
+    if (!(provider || collection)) {
+      return "Please select a provider or collection";
+    }
+  };
 
   return (
     <>
-      {(provider || collection) && !isLoadingGeography ? (
+      {!isFetchingLocations &&
+      !isFetchingCollections &&
+      !isLoadingGeography &&
+      (provider || collection) ? (
         <Button onClick={() => void addData()}>Search Locations</Button>
       ) : (
-        <Tooltip
-          label={
-            !(provider || collection)
-              ? "Please select a provider or collection"
-              : "Please wait for geography filter to load"
-          }
-        >
+        <Tooltip label={getLabel()}>
           <Button data-disabled onClick={(event) => event.preventDefault()}>
             Search Locations
           </Button>

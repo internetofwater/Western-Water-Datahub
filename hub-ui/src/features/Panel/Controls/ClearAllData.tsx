@@ -7,29 +7,19 @@ import { useEffect, useState } from "react";
 import { Button, Tooltip } from "@mantine/core";
 import { useMap } from "@/contexts/MapContexts";
 import { MAP_ID } from "@/features/Map/config";
-import loadingManager from "@/managers/Loading.init";
+import { useLoading } from "@/hooks/useLoading";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
-import useSessionStore from "@/stores/session";
-import { LoadingType } from "@/stores/session/types";
 
 export const Reset: React.FC = () => {
   const hasGeographyFilter = useMainStore((state) => state.hasGeographyFilter);
 
-  const loadingInstances = useSessionStore((state) => state.loadingInstances);
-
-  const [isLoadingGeography, setIsLoadingGeography] = useState(false);
-  const [isFetchingCollections, setIsFetchingCollections] = useState(false);
   const [hasLocationsLoaded, setHasLocationsLoaded] = useState(false);
 
-  const { map } = useMap(MAP_ID);
+  const { isLoadingGeography, isFetchingCollections, isFetchingLocations } =
+    useLoading();
 
-  useEffect(() => {
-    setIsFetchingCollections(
-      loadingManager.has({ type: LoadingType.Collections }),
-    );
-    setIsLoadingGeography(loadingManager.has({ type: LoadingType.Geography }));
-  }, [loadingInstances]);
+  const { map } = useMap(MAP_ID);
 
   useEffect(() => {
     if (!map) {
@@ -59,6 +49,10 @@ export const Reset: React.FC = () => {
       return "Please wait for collections request to complete";
     }
 
+    if (isFetchingLocations) {
+      return "Please wait for locations request to complete";
+    }
+
     if (!hasLocationsLoaded && !hasGeographyFilter()) {
       return "No locations or geography to clear";
     }
@@ -67,6 +61,7 @@ export const Reset: React.FC = () => {
   return (
     <>
       {!isFetchingCollections &&
+      !isFetchingLocations &&
       !isLoadingGeography &&
       (hasLocationsLoaded || hasGeographyFilter()) ? (
         <Button onClick={() => mainManager.clearAllData()} color="red">

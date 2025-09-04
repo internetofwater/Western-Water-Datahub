@@ -10,6 +10,8 @@ import { MainState } from "@/stores/main/types";
 interface CollectionSlice {
   collections: ICollection[];
   setCollections: (collections: ICollection[]) => void;
+  originalCollections: ICollection[];
+  setOriginalCollections: (originalCollections: ICollection[]) => void;
   addCollection: (collection: ICollection) => void;
   hasCollection: (collectionId: string) => boolean;
 }
@@ -24,6 +26,11 @@ export const createCollectionSlice: StateCreator<
   setCollections: (collections) =>
     set((state) => {
       state.collections = collections;
+    }),
+  originalCollections: [],
+  setOriginalCollections: (originalCollections) =>
+    set((state) => {
+      state.originalCollections = originalCollections;
     }),
   addCollection: (collection) =>
     set((state) => {

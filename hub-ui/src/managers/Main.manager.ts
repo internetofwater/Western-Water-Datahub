@@ -117,7 +117,7 @@ class MainManager {
    * @function
    */
   public getLocationsLayerId(collectionId: ICollection["id"]): string {
-    return `${collectionId}-locations`;
+    return `${collectionId}-edr-locations`;
   }
 
   public getFilterLayerId(collectionId: ICollection["id"]): string {
@@ -301,6 +301,10 @@ class MainManager {
         "parameter-name": category ? category.value : "*",
       },
     });
+    const originalCollections = this.store.getState().originalCollections;
+    if (originalCollections.length === 0) {
+      this.store.getState().setOriginalCollections(response.collections);
+    }
 
     this.store.getState().setCollections(response.collections);
   }
@@ -430,9 +434,9 @@ class MainManager {
       return;
     }
 
-    const collections = this.store.getState().collections;
+    const originalCollections = this.store.getState().originalCollections;
 
-    for (const collection of collections) {
+    for (const collection of originalCollections) {
       const layerId = this.getLocationsLayerId(collection.id);
       if (this.map.getLayer(layerId)) {
         this.map.removeLayer(layerId);
@@ -445,9 +449,9 @@ class MainManager {
       return;
     }
 
-    const collections = this.store.getState().collections;
+    const originalCollections = this.store.getState().originalCollections;
 
-    for (const collection of collections) {
+    for (const collection of originalCollections) {
       const sourceId = this.getSourceId(collection.id);
       if (this.map.getSource(sourceId)) {
         this.map.removeSource(sourceId);

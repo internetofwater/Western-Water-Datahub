@@ -80,6 +80,8 @@ export interface MainState {
   hasGeographyFilter: () => boolean;
   collections: ICollection[];
   setCollections: (collections: MainState["collections"]) => void;
+  originalCollections: ICollection[];
+  setOriginalCollections: (collections: MainState["collections"]) => void;
   addCollection: (collection: ICollection) => void;
   hasCollection: (collectionId: ICollection["id"]) => boolean;
   locations: Location[];

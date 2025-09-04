@@ -20,6 +20,7 @@ export enum NotificationType {
  * @enum
  */
 export enum LoadingType {
+  Locations = "locations",
   Collections = "collections",
   Geography = "geography",
   Data = "data",

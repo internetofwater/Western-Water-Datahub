@@ -70,7 +70,7 @@ const Collection: React.FC<Props> = (props) => {
   const getBasinOptions = async () => {
     loadingInstance.current = loadingManager.add(
       `Fetching data for collection: ${collectionId}`,
-      LoadingType.Collections,
+      LoadingType.Data,
     );
     try {
       controller.current = new AbortController();
