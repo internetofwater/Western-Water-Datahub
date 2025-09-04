@@ -21,7 +21,6 @@
   "hyf:HY_HydroLocationType": "{% if data['locationTypeName'] == 'Lake/Reservoir' %}HY_Reservoir{% elif data['locationTypeName'] == 'River/Stream' %}HY_River{% elif data['locationTypeName'] == 'Canal' %}HY_Canal{% else %}Unknown{% endif %}",
   "gsp:hasGeometry": {{ data["gsp:hasGeometry"] | to_json }}, 
   "schema:geo": {{ data["schema:geo"] | to_json }},
-  
   "schema:subjectOf": [
     {% for element in data["stationElements"] %}
     {
@@ -30,7 +29,17 @@
       "schema:duration": "{{ element["durationName"] }}",
       "schema:unitCode": "{{ element["storedUnitCode"] }}",
       "schema:dateCreated": "{{ element['beginDate'] | safe }}",
-      "schema:dateModified": "{{ element['endDate'] | safe }}"
+      "schema:dateModified": "{{ element['endDate'] | safe }}",
+      "schema:provider": {
+        "@type": "schema:GovernmentOrganization",
+        "schema:url": "https://wcc.sc.egov.usda.gov/awdbRestApi/",
+        "name": "United States Department of Agriculture's (USDA) Natural Resources Conservation Service (NRCS)"
+      },
+      "schema:variableMeasured": {
+        "@type": "schema:PropertyValue",
+        "schema:description": "{{ element['durationName'] }} {{ element['elementCode'] }} as {{ element['storedUnitCode'] }}",
+        "schema:unitText": "{{ element['storedUnitCode'] }}"
+      }
     }{% if not loop.last %},{% endif %}
     {% endfor %}
   ]
