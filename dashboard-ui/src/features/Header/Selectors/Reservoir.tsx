@@ -174,11 +174,11 @@ export const Reservoir: React.FC = () => {
     }, [region]);
 
     const handleChange = (option: ItemWithSource) => {
-        if (!reservoirCollections || !option) {
+        if (!reservoirCollections) {
             return;
         }
 
-        if (option.value === String(ReservoirDefault)) {
+        if (!option || option.value === String(ReservoirDefault)) {
             setReservoir(null);
         } else if (option.source) {
             const config = getReservoirConfig(option.source as SourceId);
@@ -240,6 +240,7 @@ export const Reservoir: React.FC = () => {
                 placeholder="Select a Reservior"
                 label="Find a Reservoir"
                 onChange={(_, option) => handleChange(option)}
+                clearable
             />
         </Skeleton>
     );

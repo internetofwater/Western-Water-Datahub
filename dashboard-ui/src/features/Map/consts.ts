@@ -206,7 +206,7 @@ export const ReservoirConfigs: ReservoirConfig[] = [
     },
 ];
 
-export const BaseLayerOpacity = 0.7;
+export const BaseLayerOpacity = 0.5;
 
 export const ValidStates = [
     'ND',

@@ -125,6 +125,7 @@ export const State: React.FC = () => {
                         setState(_value);
                     }
                 }}
+                clearable
             />
         </Skeleton>
     );

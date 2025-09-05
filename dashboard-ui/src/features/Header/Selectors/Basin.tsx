@@ -124,6 +124,7 @@ export const Basin: React.FC = () => {
                         setBasin(value);
                     }
                 }}
+                clearable
             />
         </Skeleton>
     );

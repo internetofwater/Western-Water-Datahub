@@ -24,7 +24,6 @@ import {
     updateBaseLayerOpacity,
     updateNOAARFC,
     updateSnotel,
-    updateTeacups,
 } from '@/features/Controls/utils';
 import { ReservoirDateSelector } from '@/features/Controls/ReservoirDateSelector';
 
@@ -53,7 +52,6 @@ const RasterBaseLayerIconObj = [
  */
 const Controls: React.FC = () => {
     const [baseLayerOpacity, setBaseLayerOpacity] = useState(BaseLayerOpacity);
-    const [showTeacups, setShowTeacups] = useState(true);
 
     const toggleableLayers = useMainStore((state) => state.toggleableLayers);
     const setToggleableLayers = useMainStore(
@@ -84,16 +82,6 @@ const Controls: React.FC = () => {
         updateBaseLayerOpacity(baseLayerOpacity, map);
 
         setBaseLayerOpacity(baseLayerOpacity);
-    };
-
-    const handleTeacupChange = (showTeacups: boolean) => {
-        if (!map) {
-            return;
-        }
-
-        updateTeacups(showTeacups, map);
-
-        setShowTeacups(showTeacups);
     };
 
     const handleNOAARFCChange = (showNOAARFC: boolean) => {
@@ -139,11 +127,6 @@ const Controls: React.FC = () => {
                     </Stack>
                     <Divider mx="xl" />
                     <Switch
-                        label="Show Teacups"
-                        checked={showTeacups}
-                        onClick={() => handleTeacupChange(!showTeacups)}
-                    />
-                    <Switch
                         label="Show NOAA RFC"
                         checked={toggleableLayers[LayerId.NOAARiverForecast]}
                         onClick={() =>
@@ -162,7 +145,7 @@ const Controls: React.FC = () => {
                         }
                     />
                     <Select
-                        id="basinSelector"
+                        id="baseLayerSelector"
                         data={RasterBaseLayerIconObj.map((obj) => ({
                             value: obj.id,
                             label: obj.friendlyName,
@@ -180,10 +163,10 @@ const Controls: React.FC = () => {
                         <Slider
                             min={0}
                             max={1}
-                            step={0.1}
+                            step={0.05}
                             value={baseLayerOpacity}
                             onChange={handleBaseLayerOpacityChange}
-                            label={(value) => value.toFixed(1)}
+                            label={(value) => `${Math.round(value * 100)}%`}
                         />
                     </Stack>
                 </>

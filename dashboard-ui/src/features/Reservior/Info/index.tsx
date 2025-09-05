@@ -43,7 +43,7 @@ const InfoWrapper: React.FC<Props> = (props) => {
         return null;
     }
 
-    const [showLabels, setShowLabels] = useState(false);
+    const [showLabels, setShowLabels] = useState(true);
 
     const handleShowLabels = (showLabels: boolean) => {
         if (showLabels) {

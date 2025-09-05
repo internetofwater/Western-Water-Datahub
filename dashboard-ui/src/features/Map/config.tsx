@@ -452,7 +452,10 @@ export const getLayerConfig = (
                 id: LayerId.Snotel,
                 type: LayerType.Circle,
                 source: SourceId.Snotel,
-                filter: ['has', SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent],
+                filter: [
+                    'has',
+                    SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent,
+                ],
                 paint: {
                     'circle-radius': 5,
                     'circle-stroke-width': 1,
@@ -461,7 +464,10 @@ export const getLayerConfig = (
                         'step',
                         [
                             'coalesce',
-                            ['get', SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent],
+                            [
+                                'get',
+                                SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent,
+                            ],
                             -1,
                         ],
                         '#fff',

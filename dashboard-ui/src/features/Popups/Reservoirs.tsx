@@ -38,7 +38,7 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
                     {reservoirProperties[config.labelProperty]}
                 </Title>
                 <Text size="xs">
-                    Last Updated:{' '}
+                    Data as of:{' '}
                     {dayjs(
                         reservoirProperties[
                             config.storageDateProperty
