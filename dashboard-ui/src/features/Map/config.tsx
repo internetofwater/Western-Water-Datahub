@@ -25,6 +25,7 @@ import {
     BaseLayerOpacity,
     ValidStates,
     ResVizEDRReservoirSource,
+    ValidBasins,
 } from '@/features/Map/consts';
 import {
     getReservoirConfig,
@@ -37,6 +38,7 @@ import { Root } from 'react-dom/client';
 import { SnotelHucMeansField } from '@/features/Map/types/snotel';
 import { StateField } from '@/features/Map/types/state';
 import { showReservoirPopup } from '@/features/Popups/utils';
+import { Huc02BasinField } from './types/basin';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -133,7 +135,7 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'vector',
             tiles: [
-                `https://reference.geoconnex.us/collections/hu06/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`,
+                `https://reference.geoconnex.us/collections/hu02/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`,
             ],
             minzoom: 0,
             maxzoom: 10,
@@ -269,7 +271,12 @@ export const getLayerConfig = (
                 id: SubLayerId.BasinsBoundary,
                 type: LayerType.Line,
                 source: SourceId.Basins,
-                'source-layer': 'hu06',
+                'source-layer': SourceId.Basins,
+                filter: [
+                    'in',
+                    ['get', Huc02BasinField.Id],
+                    ['literal', ValidBasins],
+                ],
                 layout: {
                     visibility: 'none',
                     'line-cap': 'round',
@@ -286,7 +293,12 @@ export const getLayerConfig = (
                 id: SubLayerId.BasinsFill,
                 type: LayerType.Fill,
                 source: SourceId.Basins,
-                'source-layer': 'hu06',
+                'source-layer': SourceId.Basins,
+                filter: [
+                    'in',
+                    ['get', Huc02BasinField.Id],
+                    ['literal', ValidBasins],
+                ],
                 layout: {
                     visibility: 'none',
                 },
@@ -452,7 +464,10 @@ export const getLayerConfig = (
                 id: LayerId.Snotel,
                 type: LayerType.Circle,
                 source: SourceId.Snotel,
-                filter: ['has', SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent],
+                filter: [
+                    'has',
+                    SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent,
+                ],
                 paint: {
                     'circle-radius': 5,
                     'circle-stroke-width': 1,
@@ -461,7 +476,10 @@ export const getLayerConfig = (
                         'step',
                         [
                             'coalesce',
-                            ['get', SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent],
+                            [
+                                'get',
+                                SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent,
+                            ],
                             -1,
                         ],
                         '#fff',

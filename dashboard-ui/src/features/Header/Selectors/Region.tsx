@@ -16,6 +16,7 @@ import { SourceDataEvent } from '@/features/Map/types';
 import { useMap } from '@/contexts/MapContexts';
 import styles from '@/features/Header/Header.module.css';
 import { RegionField } from '@/features/Map/types/region';
+import { RegionDefault } from '@/lib/consts';
 
 /**
 
@@ -116,12 +117,15 @@ export const Region: React.FC = () => {
                 data-testid="region-select"
                 aria-label="Select a region"
                 placeholder="Select a region"
-                label="Filter by Geography"
+                label="Filter by Region"
                 onChange={(value) => {
                     if (value) {
                         setRegion(value);
+                    } else {
+                        setRegion(RegionDefault);
                     }
                 }}
+                clearable
             />
         </Skeleton>
     );

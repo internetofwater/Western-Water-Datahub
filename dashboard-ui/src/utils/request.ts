@@ -52,9 +52,9 @@ function getContentType(headers: IRequestHeaders): string {
 
 function toSearchParams(params: IRequestParams) {
     const searchParams = new URLSearchParams();
-    if (!('f' in params)) {
-        searchParams.append('f', 'json');
-    }
+    // if (!('f' in params)) {
+    //     searchParams.append('f', 'json');
+    // }
     for (const key in params) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         searchParams.append(key, params[key].toString());
@@ -70,7 +70,7 @@ const getRequestArgsMap: Record<TRequestMethods, TRequestArgsGetter> = {
     GET: ({
         url: baseUrl,
         signal,
-        headers = {Accept: 'application/json'},
+        headers = { Accept: 'application/json' },
         params = {},
     }: IRequestOptions): TRequestArgs => {
         const url = `${baseUrl}?${toSearchParams(params).toString()}`;

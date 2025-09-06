@@ -53,7 +53,7 @@ export const Info: React.FC<Props> = (props) => {
             <Stack gap="xs" w="100%" className={styles.infoGroup}>
                 <Box>
                     <Text>
-                        Last Updated:{' '}
+                        Data as of:{' '}
                         {dayjs(
                             reservoirProperties[
                                 config.storageDateProperty

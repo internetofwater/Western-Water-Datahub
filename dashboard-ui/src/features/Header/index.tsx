@@ -12,15 +12,8 @@ import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { Basin } from '@/features/Header/Selectors/Basin';
-import { ClearAll } from '@/features/Header/Selectors/ClearAll';
 import useMainStore from '@/lib/main';
 import { State } from '@/features/Header/Selectors/State';
-import {
-    BasinDefault,
-    RegionDefault,
-    ReservoirDefault,
-    StateDefault,
-} from '@/lib/consts';
 import { BoundingGeographyLevel } from '@/lib/types';
 import { BoundingGeography } from '@/features/Header/Selectors/BoundingGeography';
 
@@ -33,10 +26,6 @@ const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
  * @component
  */
 const Header: React.FC = () => {
-    const region = useMainStore((state) => state.region);
-    const reservoir = useMainStore((state) => state.reservoir);
-    const basin = useMainStore((state) => state.basin);
-    const state = useMainStore((state) => state.state);
     const boundingGeographyLevel = useMainStore(
         (state) => state.boundingGeographyLevel
     );
@@ -119,11 +108,6 @@ const Header: React.FC = () => {
                                 className={styles.selectorDivider}
                             />
                             <Reservoir />
-
-                            {(region !== RegionDefault ||
-                                reservoir !== ReservoirDefault ||
-                                basin !== BasinDefault ||
-                                state !== StateDefault) && <ClearAll />}
                         </Group>
                     </Group>
                     <Suspense>

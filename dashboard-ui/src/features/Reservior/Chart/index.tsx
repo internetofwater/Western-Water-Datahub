@@ -109,7 +109,7 @@ export const Chart: React.FC<Props> = (props) => {
         setError('');
         chartDidUpdate.current = false;
         void getReservoirStorage(range);
-    }, [range]);
+    }, [range, id]);
 
     const chartData: ChartData<'line', Array<{ x: string; y: number }>> = {
         datasets: [

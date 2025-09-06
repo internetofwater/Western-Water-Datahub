@@ -41,6 +41,14 @@ export const BoundingGeometryVisibilityMap: {
         [SubLayerId.StatesFill]: true,
         [SubLayerId.StatesBoundary]: true,
     },
+    [BoundingGeographyLevel.None]: {
+        [SubLayerId.RegionsFill]: false,
+        [SubLayerId.RegionsBoundary]: false,
+        [SubLayerId.BasinsFill]: false,
+        [SubLayerId.BasinsBoundary]: false,
+        [SubLayerId.StatesFill]: false,
+        [SubLayerId.StatesBoundary]: false,
+    },
 };
 
 export const BoundingGeography: React.FC = () => {
@@ -84,6 +92,10 @@ export const BoundingGeography: React.FC = () => {
                 {
                     value: BoundingGeographyLevel.State,
                     label: 'State',
+                },
+                {
+                    value: BoundingGeographyLevel.None,
+                    label: 'None',
                 },
             ]}
             value={boundingGeographyLevel}

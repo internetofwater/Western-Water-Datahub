@@ -42,7 +42,7 @@ import {
     StateDefault,
 } from '@/lib/consts';
 import { StateField } from './types/state';
-import { Huc06BasinField } from './types/basin';
+import { Huc02BasinField } from './types/basin';
 import { BoundingGeographyLevel } from '@/lib/types';
 
 type Props = {
@@ -135,7 +135,7 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (features && features.length) {
                 const feature = features[0];
-                console.log('Region', feature);
+
                 if (feature.properties) {
                     const region = feature.properties[
                         RegionField.Name
@@ -155,10 +155,9 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (features && features.length) {
                 const feature = features[0];
-                console.log('Basin', feature);
                 if (feature.properties) {
                     const basin = feature.properties[
-                        Huc06BasinField.Id
+                        Huc02BasinField.Id
                     ] as string;
 
                     if (basin) {
@@ -175,7 +174,6 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (features && features.length) {
                 const feature = features[0];
-                console.log('State', feature);
                 if (feature.properties) {
                     const state = feature.properties[
                         StateField.Acronym
@@ -235,7 +233,7 @@ const MainMap: React.FC<Props> = (props) => {
                         );
                         const basinProperty = rawBasinProperty.startsWith('[')
                             ? (JSON.parse(rawBasinProperty) as string[])
-                            : rawBasinProperty;
+                            : String(rawBasinProperty).slice(0, 2);
 
                         setBasin(
                             Array.isArray(basinProperty)
@@ -365,17 +363,16 @@ const MainMap: React.FC<Props> = (props) => {
         } else {
             map.setFilter(SubLayerId.BasinsFill, [
                 '==',
-                ['get', Huc06BasinField.Id],
+                ['get', Huc02BasinField.Id],
                 basin,
             ]);
             map.setFilter(SubLayerId.BasinsBoundary, [
                 '==',
-                ['get', Huc06BasinField.Id],
+                ['get', Huc02BasinField.Id],
                 basin,
             ]);
 
             if (boundingGeographyLevel === BoundingGeographyLevel.Basin) {
-                console.log('basin', basin);
                 ReservoirConfigs.forEach((config) => {
                     config.connectedLayers.forEach((layerId) => {
                         map.setFilter(
@@ -383,7 +380,7 @@ const MainMap: React.FC<Props> = (props) => {
                             getBoundingGeographyFilter(
                                 config,
                                 'basinConnectorProperty',
-                                Number(basin)
+                                basin
                             )
                         );
                     });
@@ -499,7 +496,7 @@ const MainMap: React.FC<Props> = (props) => {
                                     requestAnimationFrame(() => {
                                         map.flyTo({
                                             center: center,
-                                            zoom: 10,
+                                            zoom: 6,
                                             speed: 2,
                                             easing: (t) => t, // linear easing
                                         });
