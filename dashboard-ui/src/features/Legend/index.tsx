@@ -13,7 +13,9 @@ import { Gradient } from '@/features/Legend/Gradient';
 import styles from '@/features/Legend/Legend.module.css';
 import { getLayerName } from '@/features/Map/config';
 import useMainStore from '@/lib/main';
-import { Group } from '@mantine/core';
+import { Box, Group, Tooltip } from '@mantine/core';
+import { getTooltipContent } from './utils';
+import Info from '@/icons/Info';
 
 const entries: Entry[] = [
     {
@@ -146,13 +148,25 @@ const Legend: React.FC = () => {
                     <li
                         className={styles.listItem}
                         key={`legend-entry-${entry.id}`}
-                        style={{
-                            ...(entry.type === LayerType.Raster
-                                ? { flexGrow: 1 }
-                                : {}),
-                        }}
                     >
-                        <h4>{getLayerName(entry.id)}</h4>
+                        <Tooltip label={getTooltipContent(entry.id)}>
+                            <Group align="center" gap="xs">
+                                <h4>{getLayerName(entry.id)}</h4>
+                                <Box
+                                    component="span"
+                                    style={{
+                                        display:
+                                            getTooltipContent(entry.id).length >
+                                            0
+                                                ? 'inline-block'
+                                                : 'none',
+                                    }}
+                                    className={styles.listItemIconWrapper}
+                                >
+                                    <Info />
+                                </Box>
+                            </Group>
+                        </Tooltip>
                         {[
                             LayerType.Line,
                             LayerType.Circle,

@@ -127,7 +127,7 @@ const Controls: React.FC = () => {
                     </Stack>
                     <Divider mx="xl" />
                     <Switch
-                        label="Show NOAA RFC"
+                        label="Show River Forecast Points (NOAA RFC)"
                         checked={toggleableLayers[LayerId.NOAARiverForecast]}
                         onClick={() =>
                             handleNOAARFCChange(
@@ -136,7 +136,7 @@ const Controls: React.FC = () => {
                         }
                     />
                     <Switch
-                        label="Show Snotel"
+                        label="Show Snow Monitoring Points (NRCS SNOTEL)"
                         checked={toggleableLayers[LayerId.Snotel]}
                         onClick={() =>
                             handleSnotelChange(

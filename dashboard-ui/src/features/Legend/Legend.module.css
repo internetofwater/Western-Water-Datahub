@@ -5,13 +5,14 @@
 
 .gradientContainer {
     min-width: 200px;
+    max-width: 250px;
     width: 100%;
     margin: 0 auto;
 }
 
 .gradient {
     width: 100%;
-    height: 50px;
+    height: 35px;
     border: 1px solid #000;
 }
 
@@ -27,6 +28,11 @@
 
 .listItem {
     list-style: none;
+}
+
+.listItemIconWrapper > svg {
+    width: 18px;
+    height: auto;
 }
 
 .list {

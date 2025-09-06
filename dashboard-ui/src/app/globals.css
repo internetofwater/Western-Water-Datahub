@@ -118,6 +118,12 @@ div.mapboxgl-popup-content {
     border-radius: 0.5rem;
 }
 
+button.mapboxgl-popup-close-button {
+    font-size: x-large;
+    top: 8px;
+    right: 8px;
+}
+
 .grow {
     transition: all 0.2s ease-in-out;
 }
