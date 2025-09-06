@@ -76,12 +76,6 @@ export const Basin: React.FC = () => {
                     'All Basins'
                 );
 
-                console.log(
-                    'sanity check',
-                    basinFeatureCollection,
-                    basinOptions
-                );
-
                 if (isMounted.current) {
                     setLoading(false);
                     setBasinOptions(basinOptions);
