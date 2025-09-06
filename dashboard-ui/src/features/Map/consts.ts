@@ -18,7 +18,7 @@ export const INITIAL_ZOOM = 4.15;
 
 export enum SourceId {
     Regions = 'regions-source',
-    Basins = 'hu06',
+    Basins = 'hu02',
     States = 'states',
     RiseEDRReservoirs = 'rise-edr',
     ResvizEDRReservoirs = 'resviz-edr',
@@ -225,4 +225,17 @@ export const ValidStates = [
     'CA',
     'OR',
     'WA',
+];
+
+export const ValidBasins = [
+    '09',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16',
+    '17',
+    '18',
 ];

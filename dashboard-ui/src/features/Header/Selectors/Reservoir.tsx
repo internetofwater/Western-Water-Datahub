@@ -179,7 +179,7 @@ export const Reservoir: React.FC = () => {
         }
 
         if (!option || option.value === String(ReservoirDefault)) {
-            setReservoir(null);
+            setReservoir(ReservoirDefault);
         } else if (option.source) {
             const config = getReservoirConfig(option.source as SourceId);
             const identifier =

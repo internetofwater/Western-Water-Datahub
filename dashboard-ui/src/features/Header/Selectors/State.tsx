@@ -17,6 +17,7 @@ import { FeatureCollection, Polygon } from 'geojson';
 import { formatOptions } from '@/features/Header/Selectors/utils';
 import { StateField, StateProperties } from '@/features/Map/types/state';
 import useMainStore from '@/lib/main';
+import { StateDefault } from '@/lib/consts';
 
 export const State: React.FC = () => {
     const state = useMainStore((state) => state.state);
@@ -123,6 +124,8 @@ export const State: React.FC = () => {
                 onChange={(_value) => {
                     if (_value) {
                         setState(_value);
+                    } else {
+                        setState(StateDefault);
                     }
                 }}
                 clearable

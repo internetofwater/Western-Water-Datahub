@@ -8,18 +8,19 @@
 import { ComboboxData, Select, Skeleton } from '@mantine/core';
 import useMainStore from '@/lib/main';
 import { useMap } from '@/contexts/MapContexts';
-import { MAP_ID, SourceId } from '@/features/Map/consts';
+import { MAP_ID, SourceId, ValidBasins } from '@/features/Map/consts';
 import { useEffect, useRef, useState } from 'react';
 import styles from '@/features/Header/Header.module.css';
 import geoconnexService from '@/services/init/geoconnex.init';
 import { formatOptions } from '@/features/Header/Selectors/utils';
 import { FeatureCollection, Polygon } from 'geojson';
 import {
-    Huc06BasinField,
+    Huc02BasinField,
     Huc06BasinProperties,
 } from '@/features/Map/types/basin';
 import { SourceDataEvent } from '@/features/Map/types';
 import { isSourceDataLoaded } from '@/features/Map/utils';
+import { BasinDefault } from '@/lib/consts';
 
 export const Basin: React.FC = () => {
     const { map } = useMap(MAP_ID);
@@ -66,11 +67,19 @@ export const Basin: React.FC = () => {
 
             if (basinFeatureCollection.features.length) {
                 const basinOptions = formatOptions(
-                    basinFeatureCollection.features,
+                    basinFeatureCollection.features.filter((feature) =>
+                        ValidBasins.includes(String(feature.id))
+                    ),
                     (feature) => String(feature.id),
                     (feature) =>
-                        String(feature?.properties?.[Huc06BasinField.Name]),
+                        String(feature?.properties?.[Huc02BasinField.Name]),
                     'All Basins'
+                );
+
+                console.log(
+                    'sanity check',
+                    basinFeatureCollection,
+                    basinOptions
                 );
 
                 if (isMounted.current) {
@@ -122,6 +131,8 @@ export const Basin: React.FC = () => {
                 onChange={(value) => {
                     if (value) {
                         setBasin(value);
+                    } else {
+                        setBasin(BasinDefault);
                     }
                 }}
                 clearable

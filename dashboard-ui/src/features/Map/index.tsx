@@ -42,7 +42,7 @@ import {
     StateDefault,
 } from '@/lib/consts';
 import { StateField } from './types/state';
-import { Huc06BasinField } from './types/basin';
+import { Huc02BasinField } from './types/basin';
 import { BoundingGeographyLevel } from '@/lib/types';
 
 type Props = {
@@ -155,10 +155,9 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (features && features.length) {
                 const feature = features[0];
-
                 if (feature.properties) {
                     const basin = feature.properties[
-                        Huc06BasinField.Id
+                        Huc02BasinField.Id
                     ] as string;
 
                     if (basin) {
@@ -234,7 +233,7 @@ const MainMap: React.FC<Props> = (props) => {
                         );
                         const basinProperty = rawBasinProperty.startsWith('[')
                             ? (JSON.parse(rawBasinProperty) as string[])
-                            : rawBasinProperty;
+                            : String(rawBasinProperty).slice(0, 2);
 
                         setBasin(
                             Array.isArray(basinProperty)
@@ -364,12 +363,12 @@ const MainMap: React.FC<Props> = (props) => {
         } else {
             map.setFilter(SubLayerId.BasinsFill, [
                 '==',
-                ['get', Huc06BasinField.Id],
+                ['get', Huc02BasinField.Id],
                 basin,
             ]);
             map.setFilter(SubLayerId.BasinsBoundary, [
                 '==',
-                ['get', Huc06BasinField.Id],
+                ['get', Huc02BasinField.Id],
                 basin,
             ]);
 
@@ -381,7 +380,7 @@ const MainMap: React.FC<Props> = (props) => {
                             getBoundingGeographyFilter(
                                 config,
                                 'basinConnectorProperty',
-                                Number(basin)
+                                basin
                             )
                         );
                     });

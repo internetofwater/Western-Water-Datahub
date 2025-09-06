@@ -511,6 +511,27 @@ export const getBoundingGeographyFilter = (
     property: keyof ReservoirConfig,
     value: string | number | string[] | number[]
 ): FilterSpecification => {
+    if (property === 'basinConnectorProperty') {
+        return [
+            'all',
+            getReservoirFilter(config),
+            [
+                'case',
+                [
+                    'any',
+                    ['==', ['typeof', ['get', config[property]]], 'literal'],
+                    ['==', ['typeof', ['get', config[property]]], 'array'],
+                ],
+                ['in', value, ['get', config[property]]],
+                [
+                    '==',
+                    ['slice', ['to-string', ['get', config[property]]], 0, 2],
+                    ['to-string', value],
+                ],
+            ],
+        ];
+    }
+
     return [
         'all',
         getReservoirFilter(config),
