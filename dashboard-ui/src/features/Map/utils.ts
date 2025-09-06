@@ -310,7 +310,11 @@ export const getReservoirLabelLayout = (
         'text-field': ['get', config.labelProperty],
         'text-anchor': 'bottom',
         'text-size': 16,
-        'symbol-sort-key': ['coalesce', ['get', config.capacityProperty], 1],
+        'symbol-sort-key': [
+            '+',
+            ['coalesce', ['get', config.capacityProperty], 1],
+            1,
+        ],
         'text-offset': [
             'let',
             'capacity',

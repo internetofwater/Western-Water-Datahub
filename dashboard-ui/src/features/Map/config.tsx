@@ -182,9 +182,9 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
         case LayerId.Regions:
             return 'Regions';
         case LayerId.Snotel:
-            return 'Snow Monitoring Points (SNOTEL)';
+            return 'Snow Monitoring Points (%)';
         case LayerId.NOAARiverForecast:
-            return 'River Forecast Points (NOAA RFC)';
+            return 'River Forecast Points (%)';
         case LayerId.USDroughtMonitor:
             return 'Drought';
         case LayerId.NOAAPrecipSixToTen:

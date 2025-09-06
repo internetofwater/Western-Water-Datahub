@@ -1,11 +1,11 @@
 import { LayerId, SubLayerId } from '../Map/consts';
 
-export const getTooltipContent = (layerId: LayerId | SubLayerId): string => {
+export const getTooltipContent = (layerId: LayerId | SubLayerId) => {
     switch (layerId) {
         case LayerId.Snotel:
             return 'Change in snowpack water content (SWE) in the HUC06 basin compared to the 30-year average';
         case LayerId.NOAARiverForecast:
-            return 'Forecasted average for current season';
+            return 'Forecasted average change in flow for current season';
         default:
             return '';
     }
