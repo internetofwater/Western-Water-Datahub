@@ -4,9 +4,9 @@
  */
 
 export enum NotificationType {
-  Success = "success",
-  Error = "error",
-  Info = "info",
+  Success = 'success',
+  Error = 'error',
+  Info = 'info',
 }
 
 /**
@@ -20,14 +20,14 @@ export enum NotificationType {
  * @enum
  */
 export enum LoadingType {
-  Locations = "locations",
-  Collections = "collections",
-  Geography = "geography",
-  Data = "data",
+  Locations = 'locations',
+  Collections = 'collections',
+  Geography = 'geography',
+  Data = 'data',
 }
 
 export enum Tools {
-  Legend = "legend",
+  Legend = 'legend',
 }
 
 export type Notification = {
@@ -51,11 +51,9 @@ export type LegendEntry = {
 
 export type SessionState = {
   legendEntries: LegendEntry[];
-  setLegendEntries: (legendEntries: SessionState["legendEntries"]) => void;
+  setLegendEntries: (legendEntries: SessionState['legendEntries']) => void;
   downloadModalOpen: boolean;
-  setDownloadModalOpen: (
-    downloadModalOpen: SessionState["downloadModalOpen"],
-  ) => void;
+  setDownloadModalOpen: (downloadModalOpen: SessionState['downloadModalOpen']) => void;
   tools: {
     [Tools.Legend]: boolean;
   };

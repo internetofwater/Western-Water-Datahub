@@ -3,17 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Box, Button } from "@mantine/core";
-import styles from "@/features/Download/Download.module.css";
-import useMainStore from "@/stores/main";
-import useSessionStore from "@/stores/session";
+import { Box, Button } from '@mantine/core';
+import styles from '@/features/Download/Download.module.css';
+import useMainStore from '@/stores/main';
+import useSessionStore from '@/stores/session';
 
 const Download: React.FC = () => {
   const locations = useMainStore((state) => state.locations);
   const setLocations = useMainStore((state) => state.setLocations);
-  const setDownloadModalOpen = useSessionStore(
-    (state) => state.setDownloadModalOpen,
-  );
+  const setDownloadModalOpen = useSessionStore((state) => state.setDownloadModalOpen);
 
   const hasLocations = locations.length > 0;
 
