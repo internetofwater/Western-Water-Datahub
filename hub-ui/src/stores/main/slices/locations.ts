@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { StateCreator } from "zustand";
-import { Location, MainState } from "@/stores/main/types";
+import { StateCreator } from 'zustand';
+import { Location, MainState } from '@/stores/main/types';
 
 interface LocationSlice {
   locations: Location[];
   setLocations: (locations: Location[]) => void;
   addLocation: (location: Location) => void;
-  removeLocation: (locationId: Location["id"]) => void;
-  hasLocation: (locationId: Location["id"]) => boolean;
+  removeLocation: (locationId: Location['id']) => void;
+  hasLocation: (locationId: Location['id']) => boolean;
 }
 
 export const createLocationSlice: StateCreator<
   MainState,
-  [["zustand/immer", never]],
+  [['zustand/immer', never]],
   [],
   LocationSlice
 > = (set, get) => ({

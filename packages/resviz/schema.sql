@@ -383,14 +383,8 @@ ALTER TABLE ONLY public.resviz
 -- Name: covjson_param_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX covjson_param_idx ON public.resviz USING btree (monitoring_location_id, parameter_id);
-
-
---
--- Name: covjson_time_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX covjson_time_idx ON public.resviz USING btree (data_date DESC) INCLUDE (value);
+CREATE INDEX covjson_param_idx 
+    ON public.resviz USING btree (monitoring_location_id, parameter_id, data_date DESC) INCLUDE (value);
 
 
 --

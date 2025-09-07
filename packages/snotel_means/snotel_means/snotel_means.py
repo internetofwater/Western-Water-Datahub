@@ -21,7 +21,7 @@ from com.cache import RedisCache
 from awdb_com.types import StationDTO
 
 from snotel_means.lib.locations import (
-    WaterTemperatureCollectionWithMetadata,
+    SnowWaterEquivalentCollectionWithMetadata,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -67,7 +67,7 @@ class SnotelMeansProvider(BaseProvider, OAFProviderProtocol):
         skip_geometry: Optional[bool] = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        collection = WaterTemperatureCollectionWithMetadata()
+        collection = SnowWaterEquivalentCollectionWithMetadata()
 
         hucToAverage = collection.get_averages_by_huc6()
         relevant_features: list[geojson_pydantic.Feature] = []
@@ -85,7 +85,7 @@ class SnotelMeansProvider(BaseProvider, OAFProviderProtocol):
             mergedDict: dict = featureProperties.copy()
             mergedDict.update(
                 {
-                    "snowpack_water_temp_avg_relative_to_thirty_year_avg": hucToAverage[
+                    "current_snow_water_equivalent_relative_to_thirty_year_avg": hucToAverage[
                         huc6
                     ]
                 }

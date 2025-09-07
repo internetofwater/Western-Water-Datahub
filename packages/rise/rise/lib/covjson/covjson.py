@@ -101,8 +101,7 @@ class CovJSONBuilder:
                     "label": {"en": associatedData["title"]},
                 },
             }
-            natural_language_name = associatedData["title"]
-            paramNameToMetadata[natural_language_name] = _param
+            paramNameToMetadata[param_id] = _param
 
         return paramNameToMetadata
 
@@ -123,13 +122,12 @@ class CovJSONBuilder:
                     # we can skip adding the parameter/location combination all together
                     continue
 
-                value = paramsToGeoJsonOutput.get(str(param.parameterId))
+                value = paramsToGeoJsonOutput.get(param.parameterId)
                 if not value:
                     continue
-                naturalLanguageName = value["title"]
 
                 range: dict[str, CoverageRangeDict] = {
-                    naturalLanguageName: {
+                    param.parameterId: {
                         "axisNames": ["t"],
                         "dataType": "float",
                         "shape": [len(param.timeseriesResults)],

@@ -4,21 +4,21 @@
  */
 
 export enum RegionField {
-  ObjectId = "OBJECTID",
-  RegNum = "REG_NUM",
-  Name = "REG_NAME",
-  AreaSqMi = "AREA_SQMI",
-  AreaAcres = "AREA_ACRES",
-  ShapeArea = "Shape__Area",
-  ShapeLength = "Shape__Length",
-  GlobalID = "GlobalID",
-  CreationDate = "CreationDate",
-  Creator = "Creator",
-  EditDate = "EditDate",
-  Editor = "Editor",
-  InteriorRegion = "InteriorRegion",
-  OfficialAbbreviation = "OfficialAbbreviation",
-  UsbrXs = "usbr_xs",
+  ObjectId = 'OBJECTID',
+  RegNum = 'REG_NUM',
+  Name = 'REG_NAME',
+  AreaSqMi = 'AREA_SQMI',
+  AreaAcres = 'AREA_ACRES',
+  ShapeArea = 'Shape__Area',
+  ShapeLength = 'Shape__Length',
+  GlobalID = 'GlobalID',
+  CreationDate = 'CreationDate',
+  Creator = 'Creator',
+  EditDate = 'EditDate',
+  Editor = 'Editor',
+  InteriorRegion = 'InteriorRegion',
+  OfficialAbbreviation = 'OfficialAbbreviation',
+  UsbrXs = 'usbr_xs',
 }
 
 export type RegionProperties = {
@@ -31,7 +31,6 @@ export type RegionProperties = {
   [RegionField.ShapeLength]: number;
   [RegionField.GlobalID]: string;
   [RegionField.CreationDate]: number;
-  [RegionField.Creator]: string;
   [RegionField.EditDate]: number;
   [RegionField.Editor]: string;
   [RegionField.InteriorRegion]: string | null;

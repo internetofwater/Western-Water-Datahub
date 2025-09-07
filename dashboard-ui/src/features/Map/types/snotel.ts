@@ -41,7 +41,7 @@ export type SnotelProperties = {
     [SnotelField.StationElements]: null;
     [SnotelField.StationId]: string;
     [SnotelField.StationTriplet]: string;
-    [SnotelHucMeansField.SnowpackTempRelative]?: number; // appended field
+    [SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent]?: number; // appended field
 };
 
 export enum SnotelHucMeansField {
@@ -50,7 +50,7 @@ export enum SnotelHucMeansField {
     GnisUrl = 'gnis_url',
     LoadDate = 'loaddate',
     Name = 'name',
-    SnowpackTempRelative = 'snowpack_water_temp_avg_relative_to_thirty_year_avg',
+    CurrentRelativeSnowWaterEquivalent = 'current_snow_water_equivalent_relative_to_thirty_year_avg',
     Uri = 'uri',
 }
 
@@ -60,6 +60,6 @@ export type SnotelHucMeansProperties = {
     [SnotelHucMeansField.GnisUrl]: string;
     [SnotelHucMeansField.LoadDate]: string; // ISO date string
     [SnotelHucMeansField.Name]: string;
-    [SnotelHucMeansField.SnowpackTempRelative]: number;
+    [SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent]: number;
     [SnotelHucMeansField.Uri]: string;
 };

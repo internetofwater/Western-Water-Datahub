@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { PropsWithChildren } from "react";
+import { PropsWithChildren } from 'react';
 import {
   Box,
   HoverCard,
@@ -13,8 +13,8 @@ import {
   ListItem,
   Text,
   Title,
-} from "@mantine/core";
-import styles from "@/features/Loading/Loading.module.css";
+} from '@mantine/core';
+import styles from '@/features/Loading/Loading.module.css';
 
 type Props = {
   loadingTexts: string[];

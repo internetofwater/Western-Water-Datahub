@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Progress } from "@mantine/core";
-import { Info } from "@/features/Loading/Info";
-import useSessionStore from "@/stores/session";
+import { Progress } from '@mantine/core';
+import { Info } from '@/features/Loading/Info';
+import useSessionStore from '@/stores/session';
 
 type Props = {
   desktop: boolean;
@@ -21,10 +21,7 @@ const Loading: React.FC<Props> = (props) => {
   return (
     <>
       {hasLoadingInstances && (
-        <Info
-          loadingTexts={loadingInstances.map((instance) => instance.message)}
-          desktop={desktop}
-        >
+        <Info loadingTexts={loadingInstances.map((instance) => instance.message)} desktop={desktop}>
           <Progress value={100} size="lg" radius={0} animated />
         </Info>
       )}

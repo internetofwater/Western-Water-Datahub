@@ -110,9 +110,14 @@ class RISECache(RedisCache):
         properties_to_filter_by: Optional[list[str]] = None,
         only_include_locations_with_data: bool = True,
         force_fetch=False,
+        itemId: Optional[str] = None,
     ):
         """Return all locations which contain timeseries data and optionally, also a given list of properties. Will return the associated catalogitems / catalogrecords for joins"""
-        base_url = "https://data.usbr.gov/rise/api/location?order[id]=asc&include=catalogRecords.catalogItems"
+        base_url = (
+            "https://data.usbr.gov/rise/api/location?order[id]=asc&include=catalogRecords.catalogItems"
+            if not itemId
+            else f"https://data.usbr.gov/rise/api/location/{itemId}?include=catalogRecords.catalogItems"
+        )
         hasTimeseriesData = "itemStructureId=1"
         if only_include_locations_with_data:
             base_url += f"&{hasTimeseriesData}"

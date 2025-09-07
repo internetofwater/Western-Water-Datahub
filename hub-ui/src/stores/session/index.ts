@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
-import { SessionState, Tools } from "@/stores/session/types";
-import { createLoadingSlice } from "./slices/loading";
-import { createNotificationsSlice } from "./slices/notifications";
+import { create } from 'zustand';
+import { immer } from 'zustand/middleware/immer';
+import { SessionState, Tools } from '@/stores/session/types';
+import { createLoadingSlice } from './slices/loading';
+import { createNotificationsSlice } from './slices/notifications';
 
 const useSessionStore = create<SessionState>()(
   immer((set, get, store) => ({
@@ -27,7 +27,7 @@ const useSessionStore = create<SessionState>()(
       })),
     ...createLoadingSlice(set, get, store),
     ...createNotificationsSlice(set, get, store),
-  })),
+  }))
 );
 
 export default useSessionStore;

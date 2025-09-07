@@ -57,7 +57,7 @@ class LocationDataAttributes(BaseModel):
     ] = Field(discriminator="type")
     elevation: Optional[float] = None
     createDate: str
-    updateDate: str
+    updateDate: Optional[str]
     horizontalDatum: dict
     locationGeometry: dict
     timezone: Optional[str] = None
