@@ -93,10 +93,6 @@ export const BoundingGeography: React.FC = () => {
                     value: BoundingGeographyLevel.State,
                     label: 'State',
                 },
-                {
-                    value: BoundingGeographyLevel.None,
-                    label: 'None',
-                },
             ]}
             value={boundingGeographyLevel}
             aria-label="Show Boundaries"
