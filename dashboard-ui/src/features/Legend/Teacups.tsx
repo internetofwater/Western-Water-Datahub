@@ -1,8 +1,9 @@
 import DashedLine from '@/icons/DashedLine';
 import Square from '@/icons/Square';
-import { Stack, Text, Image, Group } from '@mantine/core';
+import { Stack, Text, Image, Group, Box, Tooltip } from '@mantine/core';
 import { capacityFill, storageFill } from '../Reservior/TeacupDiagram/consts';
 import styles from '@/features/Legend/Legend.module.css';
+import Info from '@/icons/Info';
 
 export const Teacups: React.FC = () => {
     return (
@@ -19,18 +20,55 @@ export const Teacups: React.FC = () => {
                     fit="contain"
                 />
                 <Stack>
-                    <Group gap="xs" className={styles.teacupLegend}>
-                        <Square fill={capacityFill} width={20} height={20} />
-                        <Text>Capacity</Text>
-                    </Group>
-                    <Group gap="xs" className={styles.teacupLegend}>
-                        <Square fill={storageFill} width={20} height={20} />
-                        <Text>Storage</Text>
-                    </Group>
-                    <Group gap="xs" className={styles.thirtyYearAverageLegend}>
-                        <DashedLine />
-                        <Text>30 year Average</Text>
-                    </Group>
+                    <Tooltip
+                        label="Potential water storage"
+                        position="top-start"
+                    >
+                        <Group gap="xs" className={styles.teacupLegend}>
+                            <Square
+                                fill={capacityFill}
+                                width={20}
+                                height={20}
+                            />
+                            <Text>Capacity</Text>
+                            <Box
+                                component="span"
+                                className={styles.listItemIconWrapper}
+                            >
+                                <Info />
+                            </Box>
+                        </Group>
+                    </Tooltip>
+                    <Tooltip label="Current water storage" position="top-start">
+                        <Group gap="xs" className={styles.teacupLegend}>
+                            <Square fill={storageFill} width={20} height={20} />
+                            <Text>Storage</Text>
+                            <Box
+                                component="span"
+                                className={styles.listItemIconWrapper}
+                            >
+                                <Info />
+                            </Box>
+                        </Group>
+                    </Tooltip>
+                    <Tooltip
+                        label="Average water storage on this date"
+                        position="top-start"
+                    >
+                        <Group
+                            gap="xs"
+                            className={styles.thirtyYearAverageLegend}
+                        >
+                            <DashedLine />
+                            <Text>30 year Average</Text>
+                            <Box
+                                component="span"
+                                className={styles.listItemIconWrapper}
+                            >
+                                <Info />
+                            </Box>
+                        </Group>
+                    </Tooltip>
                 </Stack>
             </Group>
         </Stack>

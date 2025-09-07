@@ -884,7 +884,7 @@ export const getLayerClickFunction = (
                                 'image_plot_link'
                             ] as string;
                             const html = `
-                                <div style="color:black;width:500px;">
+                                <div style="color:black;width:400px;">
                                     <img style="width:100%;" src="${imageLink}" alt="Plot of forecasted river conditions" />
                                 </div>
                                 `;

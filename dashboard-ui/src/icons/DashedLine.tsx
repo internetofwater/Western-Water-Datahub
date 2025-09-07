@@ -5,12 +5,11 @@
 
 const DashedLine: React.FC = () => {
     return (
-        <svg viewBox="0 0 58 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 30 5" fill="none" xmlns="http://www.w3.org/2000/svg">
             <line
-                x1="-0.00561523"
-                y1="3.25"
-                x2="58.0012"
-                y2="3.25"
+                y1="2.5"
+                x2="30"
+                y2="2.5"
                 stroke="#D0A02A"
                 strokeWidth="5"
                 strokeDasharray="5 3"

@@ -33,6 +33,10 @@ import {
     handleAverageLineLeave,
 } from '@/features/Reservior/TeacupDiagram/listeners';
 import useMainStore from '@/lib/main';
+import { useMap } from '@/contexts/MapContexts';
+import { MAP_ID } from '@/features/Map/consts';
+import { resetMap } from '@/features/Map/utils';
+import { ReservoirDefault } from '@/lib/consts';
 
 type Props = {
     accessToken: string;
@@ -50,6 +54,8 @@ const InfoWrapper: React.FC<Props> = (props) => {
         props;
 
     const setReservoir = useMainStore((state) => state.setReservoir);
+
+    const { map } = useMap(MAP_ID);
 
     if (!reservoirProperties) {
         return null;
@@ -71,6 +77,15 @@ const InfoWrapper: React.FC<Props> = (props) => {
         setShowLabels(showLabels);
     };
 
+    const handleDeselect = () => {
+        if (!map) {
+            return;
+        }
+
+        setReservoir(ReservoirDefault);
+        resetMap(map);
+    };
+
     return (
         <Paper
             shadow="xs"
@@ -79,13 +94,19 @@ const InfoWrapper: React.FC<Props> = (props) => {
             data-testid="reservoir-info"
         >
             <Group justify="space-between" align="flex-start" mb="xs">
-                <Title order={2} size={'h3'}>
+                <Title order={2} size={'h3'} className={styles.reservoirTitle}>
                     {reservoirProperties[config.labelProperty]}
                 </Title>
-                <CloseButton onClick={() => setReservoir(null)} />
+                <CloseButton
+                    onClick={() => handleDeselect()}
+                    title="Deselect Reservoir"
+                    aria-lable="Deselect Reservoir"
+                    size="lg"
+                    ml="auto"
+                />
             </Group>
             <Group
-                align="center"
+                align="flex-start"
                 justify="space-between"
                 className={styles.infoChartGroup}
             >
@@ -102,7 +123,7 @@ const InfoWrapper: React.FC<Props> = (props) => {
                         config={config}
                         showLabels={showLabels}
                     />
-                    <Group>
+                    <Group mx="auto">
                         <Paper bg="#fff">
                             <Group p={8} data-testid="graphic-legend">
                                 <Group

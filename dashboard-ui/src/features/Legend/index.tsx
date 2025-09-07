@@ -155,6 +155,7 @@ const Legend: React.FC = () => {
                         <Tooltip
                             label={getTooltipContent(entry.id)}
                             disabled={!getTooltipContent(entry.id)}
+                            position="top-start"
                         >
                             <Group align="center" gap="xs">
                                 <h4>{getLayerName(entry.id)}</h4>

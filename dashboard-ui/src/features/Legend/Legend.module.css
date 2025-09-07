@@ -39,7 +39,7 @@
 }
 
 .listItemIconWrapper > svg {
-    /* width: 18px; */
+    width: 18px;
     height: auto;
 }
 
@@ -69,5 +69,5 @@
 }
 
 .thirtyYearAverageLegend > svg {
-    width: 60px;
+    width: 40px;
 }
