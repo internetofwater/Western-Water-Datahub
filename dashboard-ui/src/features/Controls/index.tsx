@@ -26,6 +26,7 @@ import {
     updateSnotel,
 } from '@/features/Controls/utils';
 import { ReservoirDateSelector } from '@/features/Controls/ReservoirDateSelector';
+import styles from '@/features/Controls/Controls.module.css';
 
 const RasterBaseLayerIconObj = [
     {
@@ -154,6 +155,7 @@ const Controls: React.FC = () => {
                         aria-label="Select a Base Layer"
                         placeholder="Select a Base Layer"
                         label="Base Layer"
+                        className={styles.baseLayerSelector}
                         onChange={(_value) =>
                             handleBaseLayerChange(_value as RasterBaseLayers)
                         }
@@ -176,96 +178,6 @@ const Controls: React.FC = () => {
                 </Group>
             )}
         </Stack>
-
-        // <Card
-        //     withBorder
-        //     shadow="sm"
-        //     radius="md"
-        //     padding="md"
-        //     className={styles.controlsContainer}
-        // >
-        //     <CardSection withBorder inheritPadding py="xs">
-        //         <Group justify="space-between">
-        //             <Title order={3} className={styles.mapToolTitle}>
-        //                 Controls
-        //             </Title>
-        //             <CloseButton
-        //                 onClick={() => setOpenTools(Tools.Controls, false)}
-        //                 aria-label="Close Controls"
-        //             />
-        //         </Group>
-        //     </CardSection>
-        //     {map ? (
-        //         <CardSection
-        //             inheritPadding
-        //             py="md"
-        //             className={styles.toolContent}
-        //         >
-        //             <Stack>
-        //                 <Stack>
-        //                     <ReservoirDateSelector />
-        //                 </Stack>
-        //                 <Divider />
-        //                 <Switch
-        //                     label="Show Teacups"
-        //                     checked={showTeacups}
-        //                     onClick={() => handleTeacupChange(!showTeacups)}
-        //                 />
-        //                 <Switch
-        //                     label="Show NOAA RFC"
-        //                     checked={
-        //                         toggleableLayers[LayerId.NOAARiverForecast]
-        //                     }
-        //                     onClick={() =>
-        //                         handleNOAARFCChange(
-        //                             !toggleableLayers[LayerId.NOAARiverForecast]
-        //                         )
-        //                     }
-        //                 />
-        //                 <Switch
-        //                     label="Show Snotel"
-        //                     checked={toggleableLayers[LayerId.Snotel]}
-        //                     onClick={() =>
-        //                         handleSnotelChange(
-        //                             !toggleableLayers[LayerId.Snotel]
-        //                         )
-        //                     }
-        //                 />
-        //                 <Select
-        //                     id="basinSelector"
-        //                     data={RasterBaseLayerIconObj.map((obj) => ({
-        //                         value: obj.id,
-        //                         label: obj.friendlyName,
-        //                     }))}
-        //                     value={getBaseLayerValue()}
-        //                     aria-label="Select a Base Layer"
-        //                     placeholder="Select a Base Layer"
-        //                     label="Base Layer"
-        //                     onChange={(_value) =>
-        //                         handleBaseLayerChange(
-        //                             _value as RasterBaseLayers
-        //                         )
-        //                     }
-        //                 />
-        //                 <Stack gap="xs">
-        //                     <Text size="sm">Base Layer Opacity</Text>
-        //                     <Slider
-        //                         min={0}
-        //                         max={1}
-        //                         step={0.1}
-        //                         value={baseLayerOpacity}
-        //                         onChange={handleBaseLayerOpacityChange}
-        //                         label={(value) => value.toFixed(1)}
-        //                     />
-        //                 </Stack>
-        //             </Stack>
-        //         </CardSection>
-        //     ) : (
-        //         <Group w={200} h={100} justify="center" align="center">
-        //             <Loader />
-        //         </Group>
-        //     )}
-        // </Card>
     );
 };
 

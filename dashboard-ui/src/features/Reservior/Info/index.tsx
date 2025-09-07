@@ -4,7 +4,16 @@
  */
 
 import { ReservoirConfig } from '@/features/Map/types';
-import { Box, Group, Paper, Switch, Title, Text } from '@mantine/core';
+import {
+    Box,
+    Group,
+    Paper,
+    Switch,
+    Title,
+    Text,
+    Stack,
+    CloseButton,
+} from '@mantine/core';
 import { GeoJsonProperties } from 'geojson';
 import { RefObject, useState } from 'react';
 import { Chart as ChartJS } from 'chart.js';
@@ -23,6 +32,7 @@ import {
     handleCapacityLeave,
     handleAverageLineLeave,
 } from '@/features/Reservior/TeacupDiagram/listeners';
+import useMainStore from '@/lib/main';
 
 type Props = {
     accessToken: string;
@@ -38,6 +48,8 @@ type Props = {
 const InfoWrapper: React.FC<Props> = (props) => {
     const { accessToken, reservoirProperties, center, chartRef, config } =
         props;
+
+    const setReservoir = useMainStore((state) => state.setReservoir);
 
     if (!reservoirProperties) {
         return null;
@@ -66,63 +78,11 @@ const InfoWrapper: React.FC<Props> = (props) => {
             className={styles.infoContainer}
             data-testid="reservoir-info"
         >
-            <Group justify="space-between" mb="xs">
+            <Group justify="space-between" align="flex-start" mb="xs">
                 <Title order={2} size={'h3'}>
                     {reservoirProperties[config.labelProperty]}
                 </Title>
-                <Group>
-                    <Paper bg="#fff">
-                        <Group p={8} data-testid="graphic-legend">
-                            <Group
-                                gap={5}
-                                onMouseEnter={handleCapacityEnter}
-                                onMouseLeave={() =>
-                                    handleCapacityLeave(showLabels)
-                                }
-                            >
-                                <Box
-                                    style={{
-                                        backgroundColor: capacityFill,
-                                    }}
-                                    className={styles.graphicLegendColor}
-                                ></Box>
-                                <Text
-                                    size="sm"
-                                    c="#000"
-                                    fw={700}
-                                    className={styles.graphicLegendText}
-                                >
-                                    Capacity
-                                </Text>
-                            </Group>
-                            <Group
-                                gap={5}
-                                onMouseEnter={handleStorageEnter}
-                                onMouseLeave={() =>
-                                    handleStorageLeave(showLabels)
-                                }
-                            >
-                                <Box
-                                    style={{ backgroundColor: storageFill }}
-                                    className={styles.graphicLegendColor}
-                                ></Box>
-                                <Text
-                                    size="sm"
-                                    c="#000"
-                                    fw={700}
-                                    className={styles.graphicLegendText}
-                                >
-                                    Storage
-                                </Text>
-                            </Group>
-                        </Group>
-                    </Paper>
-                    <Switch
-                        label="Show Labels"
-                        checked={showLabels}
-                        onClick={() => handleShowLabels(!showLabels)}
-                    />
-                </Group>
+                <CloseButton onClick={() => setReservoir(null)} />
             </Group>
             <Group
                 align="center"
@@ -136,11 +96,66 @@ const InfoWrapper: React.FC<Props> = (props) => {
                     chartRef={chartRef}
                     config={config}
                 />
-                <TeacupDiagram
-                    reservoirProperties={reservoirProperties}
-                    config={config}
-                    showLabels={showLabels}
-                />
+                <Stack className={styles.graphicPanel}>
+                    <TeacupDiagram
+                        reservoirProperties={reservoirProperties}
+                        config={config}
+                        showLabels={showLabels}
+                    />
+                    <Group>
+                        <Paper bg="#fff">
+                            <Group p={8} data-testid="graphic-legend">
+                                <Group
+                                    gap={5}
+                                    onMouseEnter={handleCapacityEnter}
+                                    onMouseLeave={() =>
+                                        handleCapacityLeave(showLabels)
+                                    }
+                                >
+                                    <Box
+                                        style={{
+                                            backgroundColor: capacityFill,
+                                        }}
+                                        className={styles.graphicLegendColor}
+                                    ></Box>
+                                    <Text
+                                        size="sm"
+                                        c="#000"
+                                        fw={700}
+                                        className={styles.graphicLegendText}
+                                    >
+                                        Capacity
+                                    </Text>
+                                </Group>
+                                <Group
+                                    gap={5}
+                                    onMouseEnter={handleStorageEnter}
+                                    onMouseLeave={() =>
+                                        handleStorageLeave(showLabels)
+                                    }
+                                >
+                                    <Box
+                                        style={{ backgroundColor: storageFill }}
+                                        className={styles.graphicLegendColor}
+                                    ></Box>
+                                    <Text
+                                        size="sm"
+                                        c="#000"
+                                        fw={700}
+                                        className={styles.graphicLegendText}
+                                    >
+                                        Storage
+                                    </Text>
+                                </Group>
+                            </Group>
+                        </Paper>
+                        <Switch
+                            label="Show Volumes"
+                            checked={showLabels}
+                            onClick={() => handleShowLabels(!showLabels)}
+                        />
+                    </Group>
+                </Stack>
             </Group>
         </Paper>
     );

@@ -8,7 +8,7 @@ export const Teacups: React.FC = () => {
     return (
         <Stack>
             <Text size="xl" fw={700}>
-                Reservoir Icons
+                Reservoirs
             </Text>
             <Group>
                 <Image

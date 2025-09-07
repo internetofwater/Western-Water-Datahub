@@ -5,6 +5,7 @@
 
 .infoContainer {
     width: 100%;
+    max-width: 100svw;
     height: 328px; /* map container - header height = info container */
     max-height: 328px;
 }
@@ -15,6 +16,7 @@
 
 .chartContainer {
     width: 100%;
+    max-width: 99%;
     height: 88%;
     display: flex;
     justify-content: center;
@@ -78,7 +80,6 @@
 @media screen and (max-width: 1817px) {
     .chartContainer {
         height: 79%;
-        max-width: unset;
     }
 }
 
@@ -87,11 +88,6 @@
         max-height: unset;
         height: unset;
         min-height: unset;
-    }
-
-    .chartContainer {
-        min-width: unset;
-        max-width: unset;
     }
 }
 

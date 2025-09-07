@@ -4,7 +4,7 @@
  */
 'use client';
 
-import { Box, Divider, Group, Paper } from '@mantine/core';
+import { Box, Divider, Group, Paper, Title } from '@mantine/core';
 import styles from '@/features/Header/Header.module.css';
 import { Region } from '@/features/Header/Selectors/Region';
 import { Reservoir } from '@/features/Header/Selectors/Reservoir';
@@ -64,6 +64,13 @@ const Header: React.FC = () => {
                             />
                         </Box>
 
+                        <Divider
+                            orientation="vertical"
+                            className={styles.logoDivider}
+                        />
+                        <Title order={1} size="h3">
+                            Western Water Data Dashboard
+                        </Title>
                         <Divider
                             orientation="vertical"
                             className={styles.headerDivider}
