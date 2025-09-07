@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { LayerId, SubLayerId } from '../Map/consts';
 
 export const getTooltipContent = (layerId: LayerId | SubLayerId) => {

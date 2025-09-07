@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import DashedLine from '@/icons/DashedLine';
 import Square from '@/icons/Square';
 import { Stack, Text, Image, Group, Box, Tooltip } from '@mantine/core';
