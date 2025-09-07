@@ -31,7 +31,6 @@ export type RegionProperties = {
   [RegionField.ShapeLength]: number;
   [RegionField.GlobalID]: string;
   [RegionField.CreationDate]: number;
-  [RegionField.Creator]: string;
   [RegionField.EditDate]: number;
   [RegionField.Editor]: string;
   [RegionField.InteriorRegion]: string | null;

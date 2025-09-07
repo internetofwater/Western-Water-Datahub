@@ -20,22 +20,22 @@ def get_all_snotel_station_metadata() -> dict[str, StationDTO]:
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
-class TemperatureData:
-    water_temp_yesterday: float
-    water_temp_30_year_average: float
+class SnowWaterEquivalentData:
+    snow_water_equivalent_yesterday: float
+    snow_water_equivalent_30_year_average: float
 
 
-type StationTripleToTemp = dict[str, float]
+type StationTripleToSnowWaterEquivalent = dict[str, float]
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
 class StationData:
-    tempData: TemperatureData
+    snowWaterData: SnowWaterEquivalentData
     metadata: StationDTO
 
 
 @dataclass(kw_only=True, slots=True)
-class WaterTemperatureCollectionWithMetadata:
+class SnowWaterEquivalentCollectionWithMetadata:
     stations: dict[
         str,
         StationData,
@@ -43,17 +43,17 @@ class WaterTemperatureCollectionWithMetadata:
 
     def __init__(self):
         yesterday = get_yesterdays_month_and_day()
-        averages = get_30_year_water_temp_average(yesterday)
+        averages = get_30_year_snow_water_equivalent_average(yesterday)
         assert len(averages) > 0
 
-        daily = get_water_temp(yesterday)
+        daily = get_daily_snow_water_equivalent(yesterday)
         assert len(daily) > 0
 
         self.stations = self._make_station_dict(averages, daily)
 
     def get_averages_by_huc6(self) -> dict[str, float]:
         """
-        Get the average water temperate for each huc6
+        Get the average snow water equivalent for each huc6
         by getting the average for each station (Relative to 30 year average) in the huc6
         and then averaging those together. This essentially gives you a weighted average
         against the 30 year average
@@ -68,15 +68,15 @@ class WaterTemperatureCollectionWithMetadata:
             if huc6 not in huc6ToAvgList:
                 huc6ToAvgList[huc6] = []
 
-            if station.tempData.water_temp_30_year_average == 0:
+            if station.snowWaterData.snow_water_equivalent_30_year_average == 0:
                 huc6ToAvgList[huc6].append(0)
             else:
-                tempRelativeTo30Year = (
-                    station.tempData.water_temp_yesterday
-                    / station.tempData.water_temp_30_year_average
+                snowWaterEquivalentRelativeTo30Year = (
+                    station.snowWaterData.snow_water_equivalent_yesterday
+                    / station.snowWaterData.snow_water_equivalent_30_year_average
                     * 100
                 )
-                huc6ToAvgList[huc6].append(tempRelativeTo30Year)
+                huc6ToAvgList[huc6].append(snowWaterEquivalentRelativeTo30Year)
 
         averagedAverages: dict[str, float] = {}
         for huc6 in huc6ToAvgList:
@@ -87,8 +87,8 @@ class WaterTemperatureCollectionWithMetadata:
     @classmethod
     def _make_station_dict(
         cls,
-        idTo30YearTemp: StationTripleToTemp,
-        idToYesterdayTemp: StationTripleToTemp,
+        idTo30YearSnowWaterEquivalent: StationTripleToSnowWaterEquivalent,
+        idToYesterdaySnowWaterEquivalent: StationTripleToSnowWaterEquivalent,
     ):
         """
         Merge the data from yesterday and 30 year average
@@ -96,11 +96,11 @@ class WaterTemperatureCollectionWithMetadata:
         """
         allmetadata = get_all_snotel_station_metadata()
         stations: dict[str, StationData] = {}
-        for id, valueToday in idToYesterdayTemp.items():
+        for id, valueToday in idToYesterdaySnowWaterEquivalent.items():
             if valueToday is None:
                 continue
 
-            thirtyYearAvg = idTo30YearTemp.get(id)
+            thirtyYearAvg = idTo30YearSnowWaterEquivalent.get(id)
             # some stations don't have 30 year data
             # if this is the case, skip them
             if thirtyYearAvg is None:
@@ -110,9 +110,9 @@ class WaterTemperatureCollectionWithMetadata:
                 continue
 
             stations[id] = StationData(
-                tempData=TemperatureData(
-                    water_temp_yesterday=valueToday,
-                    water_temp_30_year_average=thirtyYearAvg,
+                snowWaterData=SnowWaterEquivalentData(
+                    snow_water_equivalent_yesterday=valueToday,
+                    snow_water_equivalent_30_year_average=thirtyYearAvg,
                 ),
                 metadata=allmetadata[id],
             )
@@ -125,40 +125,44 @@ def get_yesterdays_month_and_day():
     return (datetime.now() - timedelta(days=1)).strftime("%m-%d")
 
 
-def get_30_year_water_temp_average(month_and_date: str) -> dict[str, float]:
+def get_30_year_snow_water_equivalent_average(month_and_date: str) -> dict[str, float]:
     """
     Fetch the json file from the awdb api; this file represents the 30 year average
     for each snotel station; the first item for each station is the year of the start
     of the data and each subsequent item is the average for that year; i.e. if
     index 0: 2015 and index 1: 5 then that makes the average of 2016 was 5
+
+    Definition: WTEQ is the depth of water that would result if the entire snowpack were to melt instantaneously.
     """
     url = f"https://nwcc-apps.sc.egov.usda.gov/awdb/data/WTEQ/DAILY/AVG/WTEQ_DAILY_AVG_{month_and_date}.json"
     resp = requests.get(url)
     resp.raise_for_status()
     asJson = resp.json()
-    snotelStationTripleToWaterTemp: dict[str, float] = {}
+    snotelStationTripleToSnowWaterEquivalent: dict[str, float] = {}
     for station in asJson:
         dataArray = asJson[station]
         assert len(dataArray) == 1
         thirtyYearAvgForToday = dataArray[0]
-        snotelStationTripleToWaterTemp[station] = thirtyYearAvgForToday
+        snotelStationTripleToSnowWaterEquivalent[station] = thirtyYearAvgForToday
 
-    return snotelStationTripleToWaterTemp
+    return snotelStationTripleToSnowWaterEquivalent
 
 
-def get_water_temp(month_and_date: str) -> dict[str, float]:
+def get_daily_snow_water_equivalent(month_and_date: str) -> dict[str, float]:
     """
-    Returns the water temperature for each snotel station; data may be missing
+    Returns the snow water equivalent for each snotel station; data may be missing
     if you fetch for the current day and the day is not yet complete
+
+    Definition: WTEQ is the depth of water that would result if the entire snowpack were to melt instantaneously.
     """
     url = f"https://nwcc-apps.sc.egov.usda.gov/awdb/data/WTEQ/DAILY/OBS/WTEQ_DAILY_OBS_{month_and_date}.json"
     resp = requests.get(url)
     resp.raise_for_status()
     asJson = resp.json()
-    snotelStationTripleToWaterTemp: dict[str, float] = {}
+    snotelStationTripleToWaterEquivalent: dict[str, float] = {}
     for station in asJson:
         dataArray = asJson[station]
-        latestTemp = dataArray[-1]
-        snotelStationTripleToWaterTemp[station] = latestTemp
+        latestSnowWaterEquivalent = dataArray[-1]
+        snotelStationTripleToWaterEquivalent[station] = latestSnowWaterEquivalent
 
-    return snotelStationTripleToWaterTemp
+    return snotelStationTripleToWaterEquivalent

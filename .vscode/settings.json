@@ -15,11 +15,15 @@
     "htmlcov/": true,
     "node_modules/": true
   },
+  "python.analysis.typeCheckingMode": "standard",
   "[python]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "charliermarsh.ruff"
   },
   "editor.codeActionsOnSave": {
     "source.fixAll.ruff": "always"
+  },
+  "files.associations": {
+    "*.jsonld": "jinja"
   }
 }
