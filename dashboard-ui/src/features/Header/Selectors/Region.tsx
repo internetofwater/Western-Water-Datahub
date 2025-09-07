@@ -64,7 +64,11 @@ export const Region: React.FC = () => {
 
             if (regionFeatureCollection.features.length) {
                 const regionOptions = formatOptions(
-                    regionFeatureCollection.features,
+                    regionFeatureCollection.features.filter((feature) =>
+                        [5, 6, 7, 8, 9, 10].includes(
+                            feature.properties![RegionField.RegNum] as number
+                        )
+                    ),
                     (feature) =>
                         String(feature?.properties?.[RegionField.Name]),
                     (feature) =>

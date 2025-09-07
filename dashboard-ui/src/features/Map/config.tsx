@@ -35,10 +35,15 @@ import {
     getReservoirSymbolLayout,
 } from '@/features/Map/utils';
 import { Root } from 'react-dom/client';
-import { SnotelHucMeansField } from '@/features/Map/types/snotel';
+import {
+    SnotelField,
+    SnotelHucMeansField,
+    SnotelProperties,
+} from '@/features/Map/types/snotel';
 import { StateField } from '@/features/Map/types/state';
 import { showReservoirPopup } from '@/features/Popups/utils';
 import { Huc02BasinField } from './types/basin';
+import { Feature, Point } from 'geojson';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -177,9 +182,9 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
         case LayerId.Regions:
             return 'Regions';
         case LayerId.Snotel:
-            return 'SNOTEL';
+            return 'Snow Monitoring Points (%)';
         case LayerId.NOAARiverForecast:
-            return 'NOAA RFC';
+            return 'River Forecast Points (%)';
         case LayerId.USDroughtMonitor:
             return 'Drought';
         case LayerId.NOAAPrecipSixToTen:
@@ -540,6 +545,78 @@ export const getLayerHoverFunction = (
                         false
                     );
                 };
+
+            case LayerId.Snotel:
+                return (e) => {
+                    map.getCanvas().style.cursor = 'pointer';
+                    const { features } = e;
+                    if (features && features.length > 0) {
+                        const feature = features[0] as Feature<Point>;
+                        if (feature.properties) {
+                            const name = feature.properties[
+                                SnotelField.Name
+                            ] as string;
+                            const elevation = feature.properties[
+                                SnotelField.Elevation
+                            ] as string;
+                            const swe = Number(
+                                feature.properties[
+                                    SnotelHucMeansField
+                                        .CurrentRelativeSnowWaterEquivalent
+                                ]
+                            ).toFixed(1);
+                            const html = `
+                            <div style="color:black;">
+                              <strong>${name}</strong><br/>
+                              <p>Elevation: ${elevation} ft</p>
+                              <p>Change in Snow Water Equivalent: ${swe}%</p>
+                              <p style="margin: 0 auto;"}>Click to learn more</p>
+                            </div>
+                            `;
+                            hoverPopup
+                                .setLngLat(
+                                    feature.geometry.coordinates as [
+                                        number,
+                                        number
+                                    ]
+                                )
+                                .setHTML(html)
+                                .addTo(map);
+                        }
+                    }
+                };
+            case LayerId.NOAARiverForecast:
+                return (e) => {
+                    map.getCanvas().style.cursor = 'pointer';
+                    const { features } = e;
+                    if (features && features.length > 0) {
+                        const feature = features[0] as Feature<Point>;
+                        if (feature.properties) {
+                            const title = feature.properties[
+                                'espname'
+                            ] as string;
+                            const average = Number(
+                                feature.properties['esppavg']
+                            ).toFixed(1);
+                            const html = `
+                            <div style="color:black;">
+                              <strong>${title}</strong><br/>
+                              <p>Percent Normal: ${average}%</p>
+                              <p style="margin: 0 auto;"}>Click to learn more</p>
+                            </div>
+                            `;
+                            hoverPopup
+                                .setLngLat(
+                                    feature.geometry.coordinates as [
+                                        number,
+                                        number
+                                    ]
+                                )
+                                .setHTML(html)
+                                .addTo(map);
+                        }
+                    }
+                };
             default:
                 return (e) => {
                     console.log('Hover Event Triggered: ', e);
@@ -640,6 +717,77 @@ export const getLayerMouseMoveFunction = (
                         true
                     );
                 };
+            case LayerId.Snotel:
+                return (e) => {
+                    map.getCanvas().style.cursor = 'pointer';
+                    const { features } = e;
+                    if (features && features.length > 0) {
+                        const feature = features[0] as Feature<Point>;
+                        if (feature.properties) {
+                            const name = feature.properties[
+                                SnotelField.Name
+                            ] as string;
+                            const elevation = feature.properties[
+                                SnotelField.Elevation
+                            ] as string;
+                            const swe = Number(
+                                feature.properties[
+                                    SnotelHucMeansField
+                                        .CurrentRelativeSnowWaterEquivalent
+                                ]
+                            ).toFixed(1);
+                            const html = `
+                            <div style="color:black;">
+                              <strong>${name}</strong><br/>
+                              <p>Elevation: ${elevation} ft</p>
+                              <p>Change in Snow Water Equivalent: ${swe}%</p>
+                              <p style="margin: 0 auto;"}>Click to learn more</p>
+                            </div>
+                            `;
+                            hoverPopup
+                                .setLngLat(
+                                    feature.geometry.coordinates as [
+                                        number,
+                                        number
+                                    ]
+                                )
+                                .setHTML(html)
+                                .addTo(map);
+                        }
+                    }
+                };
+            case LayerId.NOAARiverForecast:
+                return (e) => {
+                    map.getCanvas().style.cursor = 'pointer';
+                    const { features } = e;
+                    if (features && features.length > 0) {
+                        const feature = features[0] as Feature<Point>;
+                        if (feature.properties) {
+                            const title = feature.properties[
+                                'espname'
+                            ] as string;
+                            const average = Number(
+                                feature.properties['esppavg']
+                            ).toFixed(1);
+                            const html = `
+                                <div style="color:black;">
+                                  <strong>${title}</strong><br/>
+                                  <p>Percent Normal: ${average}%</p>
+                                  <p style="margin: 0 auto;"}>Click to learn more</p>
+                                </div>
+                                `;
+                            hoverPopup
+                                .setLngLat(
+                                    feature.geometry.coordinates as [
+                                        number,
+                                        number
+                                    ]
+                                )
+                                .setHTML(html)
+                                .addTo(map);
+                        }
+                    }
+                };
             default:
                 return (e) => {
                     console.log('Hover Exit Event Triggered: ', e);
@@ -676,6 +824,82 @@ export const getLayerClickFunction = (
         container: HTMLDivElement
     ) => {
         switch (id) {
+            case LayerId.Snotel:
+                return (e) => {
+                    const { features } = e;
+                    if (features && features.length > 0) {
+                        const feature = features[0] as unknown as Feature<
+                            Point,
+                            SnotelProperties
+                        >;
+                        if (feature.properties) {
+                            // void showSnotelPopup(
+                            //     map,
+                            //     root,
+                            //     container,
+                            //     persistentPopup,
+                            //     feature
+                            // );
+                            const name = feature.properties[SnotelField.Name];
+                            const elevation =
+                                feature.properties[SnotelField.Elevation];
+                            const swe = Number(
+                                feature.properties[
+                                    SnotelHucMeansField
+                                        .CurrentRelativeSnowWaterEquivalent
+                                ]
+                            ).toFixed(1);
+                            const state =
+                                feature.properties[SnotelField.StateCode];
+                            const url = `https://nwcc-apps.sc.egov.usda.gov/awdb/site-plots/POR/WTEQ/${state}/${name}.html`;
+                            const html = `
+                            <div style="color:black;">
+                              <strong>${name}</strong><br/>
+                              <p>Elevation: ${elevation} ft</p>
+                              <p>Change in Snow Water Equivalent: ${swe}%</p>
+                              <a href="${url}" target="_blank">View Chart</a>
+                            </div>
+                            `;
+                            persistentPopup
+                                .setLngLat(
+                                    feature.geometry.coordinates as [
+                                        number,
+                                        number
+                                    ]
+                                )
+                                .setHTML(html)
+                                .addTo(map);
+                        }
+                    }
+                };
+
+            case LayerId.NOAARiverForecast:
+                return (e) => {
+                    hoverPopup.remove();
+                    const { features } = e;
+                    if (features && features.length > 0) {
+                        const feature = features[0] as Feature<Point>;
+                        if (feature.properties) {
+                            const imageLink = feature.properties[
+                                'image_plot_link'
+                            ] as string;
+                            const html = `
+                                <div style="color:black;width:400px;">
+                                    <img style="width:100%;" src="${imageLink}" alt="Plot of forecasted river conditions" />
+                                </div>
+                                `;
+                            persistentPopup
+                                .setLngLat(
+                                    feature.geometry.coordinates as [
+                                        number,
+                                        number
+                                    ]
+                                )
+                                .setHTML(html)
+                                .addTo(map);
+                        }
+                    }
+                };
             default:
                 return (e) => {
                     console.log('Click Event Triggered: ', e);
@@ -750,7 +974,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 config: getLayerConfig(SubLayerId.RegionsFill),
                 controllable: false,
                 legend: false,
-                // hoverFunction: getLayerHoverFunction(SubLayerId.RegionsFill),
             },
         ],
     },
@@ -771,7 +994,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 config: getLayerConfig(SubLayerId.BasinsFill),
                 controllable: false,
                 legend: false,
-                clickFunction: getLayerClickFunction(SubLayerId.BasinsFill),
             },
         ],
     },
@@ -792,7 +1014,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 config: getLayerConfig(SubLayerId.StatesFill),
                 controllable: false,
                 legend: false,
-                clickFunction: getLayerClickFunction(SubLayerId.StatesFill),
             },
         ],
     },
@@ -802,6 +1023,7 @@ export const layerDefinitions: MainLayerDefinition[] = [
         controllable: false,
         legend: false,
         clickFunction: getLayerClickFunction(LayerId.NOAARiverForecast),
+        hoverFunction: getLayerHoverFunction(LayerId.NOAARiverForecast),
     },
     {
         id: LayerId.Snotel,
@@ -809,6 +1031,7 @@ export const layerDefinitions: MainLayerDefinition[] = [
         controllable: false,
         legend: false,
         clickFunction: getLayerClickFunction(LayerId.Snotel),
+        hoverFunction: getLayerHoverFunction(LayerId.Snotel),
     },
     // {
     //     id: LayerId.RiseEDRReservoirs,

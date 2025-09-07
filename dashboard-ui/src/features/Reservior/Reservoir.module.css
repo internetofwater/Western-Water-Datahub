@@ -5,16 +5,28 @@
 
 .infoContainer {
     width: 100%;
+    max-width: 100svw;
     height: 328px; /* map container - header height = info container */
     max-height: 328px;
 }
 
 .infoPanel {
     width: 42%;
+    max-height: inherit;
+    overflow-y: auto;
+}
+
+.reservoirTitle {
+    max-width: 85%;
+}
+
+.infoChartGroup {
+    max-height: 268px;
 }
 
 .chartContainer {
     width: 100%;
+    max-width: 99%;
     height: 88%;
     display: flex;
     justify-content: center;
@@ -56,7 +68,7 @@
     width: 100%;
     min-width: 250px;
     height: 100%;
-    max-height: 260px;
+    max-height: 205px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
@@ -78,7 +90,6 @@
 @media screen and (max-width: 1817px) {
     .chartContainer {
         height: 79%;
-        max-width: unset;
     }
 }
 
@@ -88,16 +99,34 @@
         height: unset;
         min-height: unset;
     }
+}
 
-    .chartContainer {
-        min-width: unset;
-        max-width: unset;
+@media screen and (max-width: 689px) {
+    .svg {
+        max-height: 172px;
     }
 }
 
 @media screen and (max-width: 568px) {
+    .infoContainer {
+        height: unset; /* map container - header height = info container */
+        max-height: unset;
+    }
+
+    .infoChartGroup {
+        max-height: unset;
+    }
+
     .infoPanel {
         width: 100%;
+    }
+
+    .infoPanel {
+        max-height: unset;
+    }
+
+    .svg {
+        max-height: unset;
     }
 
     .graphicPanel {
