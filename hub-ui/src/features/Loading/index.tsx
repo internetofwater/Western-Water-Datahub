@@ -4,10 +4,16 @@
  */
 
 import { Progress } from "@mantine/core";
+import { Info } from "@/features/Loading/Info";
 import useSessionStore from "@/stores/session";
-import { Info } from "./Info";
 
-const Loading: React.FC = () => {
+type Props = {
+  desktop: boolean;
+};
+
+const Loading: React.FC<Props> = (props) => {
+  const { desktop } = props;
+
   const loadingInstances = useSessionStore((state) => state.loadingInstances);
 
   const hasLoadingInstances = loadingInstances.length > 0;
@@ -17,8 +23,9 @@ const Loading: React.FC = () => {
       {hasLoadingInstances && (
         <Info
           loadingTexts={loadingInstances.map((instance) => instance.message)}
+          desktop={desktop}
         >
-          <Progress value={100} size="lg" radius="sm" animated />
+          <Progress value={100} size="lg" radius={0} animated />
         </Info>
       )}
     </>

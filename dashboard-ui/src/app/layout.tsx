@@ -28,7 +28,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-    title: 'USBR Dashboard UI',
+    title: 'Western Water Data Dashboard',
     description: 'TODO: add description',
 };
 

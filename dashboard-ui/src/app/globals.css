@@ -118,6 +118,19 @@ div.mapboxgl-popup-content {
     border-radius: 0.5rem;
 }
 
+:where([data-mantine-color-scheme='light']) div.mapboxgl-popup-content {
+    color: #000;
+}
+:where([data-mantine-color-scheme='dark']) div.mapboxgl-popup-content {
+    color: #fff;
+}
+
+button.mapboxgl-popup-close-button {
+    font-size: x-large;
+    top: 8px;
+    right: 8px;
+}
+
 .grow {
     transition: all 0.2s ease-in-out;
 }
@@ -130,11 +143,6 @@ div.mapboxgl-popup-content {
     box-sizing: border-box;
     padding: 0;
     margin: 0;
-}
-
-a {
-    color: inherit;
-    text-decoration: none;
 }
 
 html[data-mantine-color-scheme='dark'] {

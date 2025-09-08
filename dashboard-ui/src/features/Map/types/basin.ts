@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-export enum Huc06BasinField {
+export enum Huc02BasinField {
     Id = 'id', // Id field is appended in vector tile layer, not items
     GnisUrl = 'gnis_url',
     Uri = 'uri',
@@ -14,11 +14,11 @@ export enum Huc06BasinField {
 }
 
 export type Huc06BasinProperties = {
-    [Huc06BasinField.Id]: number;
-    [Huc06BasinField.GnisUrl]: string;
-    [Huc06BasinField.Uri]: string;
-    [Huc06BasinField.GnisId]: string | null;
-    [Huc06BasinField.Name]: string;
-    [Huc06BasinField.Fid]: number;
-    [Huc06BasinField.LoadDate]: string; // ISO 8601 date string
+    [Huc02BasinField.Id]: number;
+    [Huc02BasinField.GnisUrl]: string;
+    [Huc02BasinField.Uri]: string;
+    [Huc02BasinField.GnisId]: string | null;
+    [Huc02BasinField.Name]: string;
+    [Huc02BasinField.Fid]: number;
+    [Huc02BasinField.LoadDate]: string; // ISO 8601 date string
 };

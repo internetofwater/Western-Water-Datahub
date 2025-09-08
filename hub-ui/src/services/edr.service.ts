@@ -50,6 +50,8 @@ export interface IGetCollectionsParams {
   f?: string;
   skipGeometry?: boolean;
   limit?: number;
+  ["parameter-name"]?: string;
+  ["provider-name"]?: string;
 }
 
 export interface IDataQueryParams {
