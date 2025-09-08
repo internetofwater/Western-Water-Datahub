@@ -98,6 +98,8 @@ resources:
       - SNOTEL
       - NRCS
       - USDA
+    templates:
+      path: templates/jsonld/snotel
     links:
       - <<: *default-link
         href: https://www.nrcs.usda.gov/wps/portal/wcc/home/aboutUs/monitoringPrograms/automatedSnowMonitoring/
@@ -164,6 +166,8 @@ resources:
     links:
       - <<: *default-link
         href: https://www.nrcs.usda.gov/wps/portal/wcc/home/aboutUs/monitoringPrograms/automatedSnowMonitoring
+    templates:
+      path: templates/jsonld/snotel
 
   snotel-huc06-means:
     type: collection
