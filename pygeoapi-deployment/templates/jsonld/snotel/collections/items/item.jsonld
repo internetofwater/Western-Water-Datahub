@@ -35,7 +35,7 @@
       "schema:provider": {
         "@type": "schema:GovernmentOrganization",
         "schema:url": "https://wcc.sc.egov.usda.gov/awdbRestApi/",
-        "name": "United States Department of Agriculture's (USDA) Natural Resources Conservation Service (NRCS)"
+        "schema:name": "United States Department of Agriculture's (USDA) Natural Resources Conservation Service (NRCS)"
       },
       "schema:variableMeasured": {
         "@type": "schema:PropertyValue",
