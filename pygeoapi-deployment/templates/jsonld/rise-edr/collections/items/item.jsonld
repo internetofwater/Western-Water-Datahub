@@ -23,5 +23,25 @@
 
     "hyf:HY_HydroLocationType": "{% if data['locationTypeName'] == 'Lake/Reservoir' %}HY_Reservoir{% elif data['locationTypeName'] == 'River/Stream' %}HY_River{% elif data['locationTypeName'] == "Canal" %}HY_Canal{% else %}Unknown{% endif %}",
     "gsp:hasGeometry": {{ data["gsp:hasGeometry" ] | to_json }}, 
-    "schema:geo": {{ data["schema:geo" ] | to_json }}
+    "schema:geo": {{ data["schema:geo" ] | to_json }},
+    "schema:subjectOf": [
+    {% for item in data["catalogItems"] if item["type"] == "CatalogItem" %}
+    {
+        "@type": "Dataset",
+        "schema:name": "{{ item['attributes']['itemTitle'] }}",
+        "schema:description": "{{ item['attributes']['itemDescription'] }}",
+        "schema:identifier": "{{ item['id'] }}",
+        "schema:variableMeasured": {
+            "@type": "PropertyValue",
+            "schema:name": "{{ item['attributes']['parameterName'] }}",
+            "schema:unitText": "{{ item['attributes']['parameterUnit'] }}"
+        },
+        "schema:dateCreated": "{{ item['attributes']['createDate'] }}",
+        "schema:dateUpdated": "{{ item['attributes']['updateDate'] }}",
+        "schema:frequency": "{{ item['attributes']['updateFrequency']['updatefrequency'] }}",
+        "schema:temporalCoverage": "{{ item['attributes']['temporalStartDate'] }}/{{ item['attributes']['temporalEndDate'] }}"
+    }
+    {% if not loop.last %},{% endif %}
+    {% endfor %}
+    ]
 }
