@@ -18,9 +18,10 @@ class LoadingManager {
     return v6();
   }
 
-  add(message: Loading["message"]): Loading["id"] {
+  add(message: Loading["message"], type: Loading["type"]): Loading["id"] {
     const loadingInstance: Loading = {
       id: this.createUUID(),
+      type,
       message,
     };
 
@@ -29,8 +30,32 @@ class LoadingManager {
     return loadingInstance.id;
   }
 
-  remove(id: Loading["id"]) {
+  remove(id: Loading["id"]): null {
     this.store.getState().removeLoadingInstance(id);
+
+    return null;
+  }
+
+  has({
+    message,
+    type,
+  }: {
+    message?: Loading["message"];
+    type?: Loading["type"];
+  }): boolean {
+    const loadingInstances = this.store.getState().loadingInstances;
+
+    if (message) {
+      return loadingInstances.some((instance) =>
+        instance.message.includes(message),
+      );
+    }
+
+    if (type) {
+      return loadingInstances.some((instance) => instance.type === type);
+    }
+
+    return false;
   }
 }
 

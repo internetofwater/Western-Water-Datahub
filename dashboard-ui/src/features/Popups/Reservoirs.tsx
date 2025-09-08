@@ -34,11 +34,11 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
             className={styles.reservoirPopup}
         >
             <Stack align="center" gap="xs">
-                <Title order={4} size="h5">
+                <Title order={4} size="h6">
                     {reservoirProperties[config.labelProperty]}
                 </Title>
                 <Text size="xs">
-                    Last Updated:{' '}
+                    Data as of:{' '}
                     {dayjs(
                         reservoirProperties[
                             config.storageDateProperty
@@ -53,7 +53,7 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
                     listeners={false}
                     colorScheme={colorScheme}
                 />
-                <Text size="sm">Click to Learn More</Text>
+                <Text size="xs">Click to Learn More</Text>
             </Stack>
         </Card>
     );

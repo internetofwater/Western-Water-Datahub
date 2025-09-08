@@ -11,7 +11,20 @@ export const Header: React.FC = () => {
   return (
     <Stack p="lg">
       <Image
+        darkHidden
         src="/BofR-logo-dark.png"
+        alt="United States Bureau of Reclamation Logo"
+        h={60}
+        style={{
+          maxHeight: "60px",
+          height: "auto",
+          width: "auto",
+        }}
+        fit="contain"
+      />
+      <Image
+        lightHidden
+        src="/BofR-logo-white.png"
         alt="United States Bureau of Reclamation Logo"
         h={60}
         style={{

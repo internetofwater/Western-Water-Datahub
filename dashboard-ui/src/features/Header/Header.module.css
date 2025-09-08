@@ -40,7 +40,7 @@
     margin-top: 1.7rem;
 }
 
-@media (max-width: 1020px) {
+@media (max-width: 1267) {
     .headerDivider {
         visibility: hidden;
     }
@@ -52,8 +52,8 @@
     }
 }
 
-@media (max-width: 478px) {
-    .skeleton {
-        max-width: 47%;
+@media (max-width: 564px) {
+    .logoDivider {
+        visibility: hidden;
     }
 }

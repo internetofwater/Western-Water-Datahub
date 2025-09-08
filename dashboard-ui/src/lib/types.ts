@@ -24,4 +24,5 @@ export enum BoundingGeographyLevel {
     Region = 'region',
     Basin = 'basin',
     State = 'state',
+    None = 'none',
 }

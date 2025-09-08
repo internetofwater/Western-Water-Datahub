@@ -3,23 +3,50 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Select, Stack, Title } from "@mantine/core";
+import {
+  Group,
+  Select,
+  Stack,
+  Title,
+  Tooltip,
+  VisuallyHidden,
+} from "@mantine/core";
+import Info from "@/assets/Info";
+import styles from "@/features/Panel/Panel.module.css";
+import useMainStore from "@/stores/main";
 
-const Provider: React.FC = () => {
+export const Provider: React.FC = () => {
+  const provider = useMainStore((state) => state.provider);
+  const setProvider = useMainStore((state) => state.setProvider);
+
+  const helpText = "Data Provider tooltip placeholder";
+
   return (
     <Stack gap={0}>
-      <Title order={2} size="h3">
-        Filter by Provider
-      </Title>
+      {/* TODO */}
+      <Tooltip
+        label={helpText}
+        transitionProps={{ transition: "fade-right", duration: 300 }}
+        position="top-start"
+      >
+        <Group className={styles.filterTitleWrapper} gap="xs">
+          <Title order={2} size="h3">
+            Filter by Data Provider
+          </Title>
+          <Info />
+        </Group>
+      </Tooltip>
+      <VisuallyHidden>{helpText}</VisuallyHidden>
       <Select
-        size="xs"
-        label="Provider"
+        size="sm"
+        label="Data Provider"
         placeholder="Select..."
-        data={["React", "Angular", "Vue", "Svelte"]}
+        data={["USBR", "USGS", "USACE", "USDA"]}
+        value={provider}
+        onChange={setProvider}
         searchable
+        clearable
       />
     </Stack>
   );
 };
-
-export default Provider;

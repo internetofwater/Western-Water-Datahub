@@ -7,8 +7,8 @@ import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "@/global.css";
 
+import { LayoutPage } from "@/pages/Layout.page";
 import { Providers } from "@/providers";
-import { LayoutPage } from "./pages/Layout.page";
 
 /**
  * This component renderes the router and wraps it in the map and mantine providers.
