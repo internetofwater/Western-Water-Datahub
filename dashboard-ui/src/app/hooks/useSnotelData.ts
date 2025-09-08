@@ -26,6 +26,9 @@ export const useSnotelData = () => {
         if (!snotelSource) return;
 
         try {
+            if (controller.current) {
+                controller.current.abort();
+            }
             controller.current = new AbortController();
 
             const [snotelHucMeans, snotelLocation] = await Promise.all([
@@ -55,7 +58,8 @@ export const useSnotelData = () => {
                             ...loc.properties,
                             [SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent]:
                                 mean.properties[
-                                    SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent
+                                    SnotelHucMeansField
+                                        .CurrentRelativeSnowWaterEquivalent
                                 ],
                         };
                     });

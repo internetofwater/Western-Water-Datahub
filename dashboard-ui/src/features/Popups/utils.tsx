@@ -10,6 +10,8 @@ import { ReservoirPopup } from '@/features/Popups/Reservoirs';
 import { Map, MapMouseEvent, Popup } from 'mapbox-gl';
 import { Root } from 'react-dom/client';
 import { getReservoirIdentifier } from '@/features/Map/utils';
+import { SnotelProperties, SnotelField } from '../Map/types/snotel';
+import { SnotelPopup } from './Snotel';
 
 export const showReservoirPopup = (
     config: ReservoirConfig,
@@ -50,4 +52,32 @@ export const showReservoirPopup = (
             }
         }
     }
+};
+
+export const showSnotelPopup = (
+    map: Map,
+    root: Root,
+    container: HTMLDivElement,
+    persistentPopup: Popup,
+    feature: Feature<Point, SnotelProperties>
+) => {
+    const state = feature.properties[SnotelField.StateCode];
+    const name = feature.properties[SnotelField.Name];
+    const url = `https://nwcc-apps.sc.egov.usda.gov/awdb/site-plots/POR/WTEQ/${state}/${name}.html?hideAnno=true&hideControls=true&activeOnly=true&showYears=2025`;
+    // const response = await fetch(url);
+
+    // const htmlText = await response.text();
+
+    root.render(
+        <MantineProvider defaultColorScheme="auto">
+            <SnotelPopup html={url} />
+        </MantineProvider>
+    );
+
+    const center = feature.geometry.coordinates as [number, number];
+    persistentPopup
+        .setLngLat(center)
+        .setDOMContent(container)
+        .setMaxWidth('fit-content')
+        .addTo(map);
 };

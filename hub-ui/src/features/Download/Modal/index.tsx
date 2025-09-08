@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Modal as _Modal } from "@mantine/core";
+import { Fragment } from "react/jsx-runtime";
+import { Modal as _Modal, Divider } from "@mantine/core";
+import Collection from "@/features/Download/Modal/Collection/Collection";
 import useMainStore from "@/stores/main";
 import useSessionStore from "@/stores/session";
 import { groupLocationIdsByCollection } from "@/utils/groupLocationsByCollection";
-import { Collection } from "./Collection";
 
 const Modal: React.FC = () => {
   const downloadModalOpen = useSessionStore((state) => state.downloadModalOpen);
@@ -28,7 +29,14 @@ const Modal: React.FC = () => {
       {locationsByCollections &&
         Object.entries(locationsByCollections).map(
           ([collectionId, locationIds]) => (
-            <Collection collectionId={collectionId} locationIds={locationIds} />
+            <Fragment key={`collection-download-${collectionId}`}>
+              <Collection
+                collectionId={collectionId}
+                locationIds={locationIds}
+                open={Object.keys(locationsByCollections).length === 1}
+              />
+              {Object.keys(locationsByCollections).length > 1 && <Divider />}
+            </Fragment>
           ),
         )}
     </_Modal>
