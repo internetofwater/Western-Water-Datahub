@@ -3,21 +3,22 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Group, Stack, Title, Tooltip, VisuallyHidden } from '@mantine/core';
-import Info from '@/assets/Info';
-import { Basin } from '@/features/Panel/Filters/Geography/Basin';
-import { Region } from '@/features/Panel/Filters/Geography/Region';
-import { State } from '@/features/Panel/Filters/Geography/State';
-import styles from '@/features/Panel/Panel.module.css';
+import { Group, Stack, Title, Tooltip, VisuallyHidden } from "@mantine/core";
+import Info from "@/assets/Info";
+import { Basin } from "@/features/Panel/Filters/Geography/Basin";
+import { Region } from "@/features/Panel/Filters/Geography/Region";
+import { State } from "@/features/Panel/Filters/Geography/State";
+import styles from "@/features/Panel/Panel.module.css";
 
 const Geography: React.FC = () => {
-  const helpText = 'Add a geographic filter to limit locations to a designated area';
+  const helpText =
+    "Add a geographic filter to limit locations to a designated area";
 
   return (
     <Stack gap="xs" mb="xl">
       <Tooltip
         label={helpText}
-        transitionProps={{ transition: 'fade-right', duration: 300 }}
+        transitionProps={{ transition: "fade-right", duration: 300 }}
         position="top-start"
       >
         <Group className={styles.filterTitleWrapper} gap="xs" mb={-8}>
