@@ -5,7 +5,67 @@
 
 .downloadButtonWrapper {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: var(--default-spacing);
+  left: var(--default-spacing);
   z-index: 1;
+}
+
+.downloadButtonWrapper > button:first-of-type {
+  margin-right: var(--default-spacing);
+}
+
+.parameterNameSelect {
+  min-width: 24em;
+}
+
+.chartWrapper {
+  height: 300px;
+}
+.chartNoData {
+  width: 100%;
+  height: 95%;
+}
+
+.goButton {
+  margin-top: 3.15em;
+  max-width: 5em;
+}
+
+.csvButton {
+  max-width: 10em;
+  margin-left: auto;
+}
+
+.parameterLabelWrapper > svg {
+  width: 14px;
+  height: auto;
+}
+.parameterLabelWrapper > label > span {
+  color: red;
+}
+
+.copyInputWrapper {
+  width: 84%;
+  max-width: 100%;
+}
+
+.datePicker {
+  min-width: 11em;
+}
+
+@media screen and (max-width: 816px) {
+  .copyInputWrapper {
+    width: unset;
+  }
+
+  .csvButton {
+    max-width: unset;
+    margin-left: unset;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .parameterNameSelect {
+    min-width: 100%;
+  }
 }
