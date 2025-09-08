@@ -30,7 +30,7 @@ function toCsvRow(row: CsvRowOutput): string {
 
   // First dataset
   const riseItems = await fetch(
-    "https://api.wwdh.internetofwater.app/collections/rise-edr/items?limit=10000",
+    "https://api.wwdh.internetofwater.app/collections/rise-edr/items?limit=10000"
   ).then((res) => res.json());
 
   riseItems.features.forEach((item: any) => {
@@ -46,7 +46,7 @@ function toCsvRow(row: CsvRowOutput): string {
 
   // Second dataset
   const usaceItems = await fetch(
-    "https://api.wwdh.internetofwater.app/collections/usace-edr/items?limit=10000",
+    "https://api.wwdh.internetofwater.app/collections/usace-edr/items?limit=10000"
   ).then((res) => res.json());
 
   usaceItems.features.forEach((item: any) => {
@@ -55,6 +55,22 @@ function toCsvRow(row: CsvRowOutput): string {
       url: `https://api.wwdh.internetofwater.app/collections/usace-edr/items/${item.id}`,
       collectionId: "usace",
       name: item.properties.public_name,
+      locationTypeName: "Dam/Reservoir",
+    };
+    console.log(toCsvRow(csvRow));
+  });
+
+  // Third dataset
+  const resvizeItems = await fetch(
+    "https://api.wwdh.internetofwater.app/collections/resviz-edr/items?limit=10000"
+  ).then((res) => res.json());
+
+  resvizeItems.features.forEach((item: any) => {
+    const csvRow: CsvRowOutput = {
+      id: item.id,
+      url: `https://api.wwdh.internetofwater.app/collections/resviz-edr/items/${item.id}`,
+      collectionId: "resviz",
+      name: item.properties.site_name,
       locationTypeName: "Dam/Reservoir",
     };
     console.log(toCsvRow(csvRow));
