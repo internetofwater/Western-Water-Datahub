@@ -544,8 +544,7 @@ resources:
     title: Reservoir drought conditions
     description: USBR Reservoir drought conditions
     provider-name:
-      - BOR
-      - USBR
+      - DERIVED
     keywords:
       - reservoir
       - drought
@@ -671,9 +670,7 @@ resources:
     title: ResOpsUS 30 Year Reservoir Storage Info
     description: Aggregated storage data of USACE dams in the ResOpsUS reservoir dataset identified according to the national inventory of dams (NID) ID.
     provider-name:
-      - DOA
-      - USACE
-      - NRCS
+      - DERIVED
     keywords:
       - EDR
       - ResOpsUS

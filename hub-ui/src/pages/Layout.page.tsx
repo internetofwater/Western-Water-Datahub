@@ -4,13 +4,14 @@
  */
 
 import { Box, Group, Stack } from "@mantine/core";
+import Download from "@/features/Download";
 import DownloadModal from "@/features/Download/Modal";
 import Loading from "@/features/Loading";
 import Map from "@/features/Map";
+import MapTools from "@/features/Map/Tools";
 import Notifications from "@/features/Notifications";
 import Panel from "@/features/Panel";
 import styles from "@/pages/pages.module.css";
-import Download from "../features/Download";
 
 export const LayoutPage: React.FC = () => {
   return (
@@ -24,8 +25,9 @@ export const LayoutPage: React.FC = () => {
             <Notifications />
           </Stack>
         </Group>
-        <Loading />
+        <Loading desktop />
       </Stack>
+      <MapTools />
       <DownloadModal />
     </Box>
   );

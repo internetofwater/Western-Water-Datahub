@@ -51,27 +51,36 @@ export const Selector: React.FC = () => {
             </CardSection>
             <CardSection inheritPadding py="md" className={styles.toolContent}>
                 <Stack>
-                    {Object.keys(basemaps).map((key) => {
-                        const basemapId = key as BasemapId;
+                    {Object.keys(basemaps)
+                        .filter((key) =>
+                            [
+                                BasemapId.Standard,
+                                BasemapId.SatelliteStreets,
+                                BasemapId.Light,
+                                BasemapId.Dark,
+                            ].includes(key as BasemapId)
+                        )
+                        .map((key) => {
+                            const basemapId = key as BasemapId;
 
-                        return (
-                            <Checkbox
-                                key={basemapId}
-                                label={
-                                    <Box
-                                        component="span"
-                                        className={
-                                            styles.basemapSelectorCheckboxLabel
-                                        }
-                                    >
-                                        {basemapId.replace(/-/g, ' ')}
-                                    </Box>
-                                }
-                                checked={basemapId === basemap}
-                                onChange={() => setBasemap(basemapId)}
-                            />
-                        );
-                    })}
+                            return (
+                                <Checkbox
+                                    key={basemapId}
+                                    label={
+                                        <Box
+                                            component="span"
+                                            className={
+                                                styles.basemapSelectorCheckboxLabel
+                                            }
+                                        >
+                                            {basemapId.replace(/-/g, ' ')}
+                                        </Box>
+                                    }
+                                    checked={basemapId === basemap}
+                                    onChange={() => setBasemap(basemapId)}
+                                />
+                            );
+                        })}
                 </Stack>
             </CardSection>
         </Card>

@@ -20,6 +20,7 @@ import {
     getReservoirIdentifier,
     isReservoirIdentifier,
     isSourceDataLoaded,
+    resetMap,
 } from '@/features/Map/utils';
 import { SourceDataEvent } from '@/features/Map/types';
 import styles from '@/features/Header/Header.module.css';
@@ -58,10 +59,24 @@ export const Reservoir: React.FC = () => {
 
             if (collection) {
                 const features = collection.features;
-
                 if (features.length) {
                     const options = formatOptions(
-                        features,
+                        features.filter(
+                            (feature) =>
+                                feature.properties![config.capacityProperty] !==
+                                    undefined &&
+                                feature.properties![config.storageProperty] !==
+                                    undefined &&
+                                feature.properties![
+                                    config.tenthPercentileProperty
+                                ] !== undefined &&
+                                feature.properties![
+                                    config.ninetiethPercentileProperty
+                                ] !== undefined &&
+                                feature.properties![
+                                    config.thirtyYearAverageProperty
+                                ] !== undefined
+                        ),
                         (feature) => String(feature?.id),
                         (feature) =>
                             String(feature?.properties?.[config.labelProperty]),
@@ -174,12 +189,13 @@ export const Reservoir: React.FC = () => {
     }, [region]);
 
     const handleChange = (option: ItemWithSource) => {
-        if (!reservoirCollections || !option) {
+        if (!reservoirCollections || !map) {
             return;
         }
 
-        if (option.value === String(ReservoirDefault)) {
-            setReservoir(null);
+        if (!option || option.value === String(ReservoirDefault)) {
+            setReservoir(ReservoirDefault);
+            resetMap(map);
         } else if (option.source) {
             const config = getReservoirConfig(option.source as SourceId);
             const identifier =
@@ -240,6 +256,7 @@ export const Reservoir: React.FC = () => {
                 placeholder="Select a Reservior"
                 label="Find a Reservoir"
                 onChange={(_, option) => handleChange(option)}
+                clearable
             />
         </Skeleton>
     );

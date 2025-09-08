@@ -34,13 +34,33 @@
 }
 
 @media (max-width: 992px) {
-    .mapContainer,
+}
+
+@media screen and (max-width: 1403px) {
+    .sideContainer {
+        max-height: calc(100vh - 138px);
+    }
+
+    .sideContainerSmall,
     .mapContainerSmall {
-        min-height: 400px;
+        height: calc(100vh - 474px);
+        max-height: calc(100vh - 474px);
     }
 }
 
-@media screen and (max-width: 1044px) {
+@media screen and (max-width: 1267px) {
+    .sideContainer {
+        max-height: calc(100vh - 196px);
+    }
+
+    .sideContainerSmall,
+    .mapContainerSmall {
+        height: calc(100vh - 540px);
+        max-height: calc(100vh - 540px);
+    }
+}
+
+@media screen and (max-width: 1200px) {
     .sideContainer {
         max-height: calc(100vh - 138px);
     }
@@ -53,8 +73,14 @@
 }
 
 @media screen and (max-width: 992px) {
+    .mapContainer,
+    .mapContainerSmall {
+        min-height: 400px;
+    }
+
     .sideContainer,
     .sideContainerSmall {
+        height: unset;
         max-height: unset;
     }
 }
