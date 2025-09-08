@@ -118,6 +118,13 @@ div.mapboxgl-popup-content {
     border-radius: 0.5rem;
 }
 
+:where([data-mantine-color-scheme='light']) div.mapboxgl-popup-content {
+    color: #000;
+}
+:where([data-mantine-color-scheme='dark']) div.mapboxgl-popup-content {
+    color: #fff;
+}
+
 button.mapboxgl-popup-close-button {
     font-size: x-large;
     top: 8px;

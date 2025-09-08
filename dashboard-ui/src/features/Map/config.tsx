@@ -566,7 +566,7 @@ export const getLayerHoverFunction = (
                                 ]
                             ).toFixed(1);
                             const html = `
-                            <div style="color:black;">
+                            <div>
                               <strong>${name}</strong><br/>
                               <p>Elevation: ${elevation} ft</p>
                               <p>Change in Snow Water Equivalent: ${swe}%</p>
@@ -599,7 +599,7 @@ export const getLayerHoverFunction = (
                                 feature.properties['esppavg']
                             ).toFixed(1);
                             const html = `
-                            <div style="color:black;">
+                            <div>
                               <strong>${title}</strong><br/>
                               <p>Percent Normal: ${average}%</p>
                               <p style="margin: 0 auto;"}>Click to learn more</p>
@@ -737,7 +737,7 @@ export const getLayerMouseMoveFunction = (
                                 ]
                             ).toFixed(1);
                             const html = `
-                            <div style="color:black;">
+                            <div>
                               <strong>${name}</strong><br/>
                               <p>Elevation: ${elevation} ft</p>
                               <p>Change in Snow Water Equivalent: ${swe}%</p>
@@ -770,7 +770,7 @@ export const getLayerMouseMoveFunction = (
                                 feature.properties['esppavg']
                             ).toFixed(1);
                             const html = `
-                                <div style="color:black;">
+                                <div>
                                   <strong>${title}</strong><br/>
                                   <p>Percent Normal: ${average}%</p>
                                   <p style="margin: 0 auto;"}>Click to learn more</p>
