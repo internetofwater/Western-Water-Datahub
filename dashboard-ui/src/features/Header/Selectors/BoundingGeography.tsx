@@ -41,6 +41,14 @@ export const BoundingGeometryVisibilityMap: {
         [SubLayerId.StatesFill]: true,
         [SubLayerId.StatesBoundary]: true,
     },
+    [BoundingGeographyLevel.None]: {
+        [SubLayerId.RegionsFill]: false,
+        [SubLayerId.RegionsBoundary]: false,
+        [SubLayerId.BasinsFill]: false,
+        [SubLayerId.BasinsBoundary]: false,
+        [SubLayerId.StatesFill]: false,
+        [SubLayerId.StatesBoundary]: false,
+    },
 };
 
 export const BoundingGeography: React.FC = () => {
@@ -87,9 +95,9 @@ export const BoundingGeography: React.FC = () => {
                 },
             ]}
             value={boundingGeographyLevel}
-            aria-label="Select Geography Level"
-            placeholder="Select Geography Level"
-            label="Select Geography Level"
+            aria-label="Show Boundaries"
+            placeholder="Show Boundaries"
+            label="Show Boundaries"
             onChange={(value) => {
                 if (value) {
                     setBoundingGeographyLevel(value as BoundingGeographyLevel);
