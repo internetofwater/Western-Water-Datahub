@@ -3,23 +3,30 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Group, Select, Stack, Title, Tooltip, VisuallyHidden } from '@mantine/core';
-import Info from '@/assets/Info';
-import styles from '@/features/Panel/Panel.module.css';
-import useMainStore from '@/stores/main';
+import {
+  Group,
+  Select,
+  Stack,
+  Title,
+  Tooltip,
+  VisuallyHidden,
+} from "@mantine/core";
+import Info from "@/assets/Info";
+import styles from "@/features/Panel/Panel.module.css";
+import useMainStore from "@/stores/main";
 
 export const Provider: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
   const setProvider = useMainStore((state) => state.setProvider);
 
-  const helpText = 'Data Provider tooltip placeholder';
+  const helpText = "Data Provider tooltip placeholder";
 
   return (
     <Stack gap={0}>
       {/* TODO */}
       <Tooltip
         label={helpText}
-        transitionProps={{ transition: 'fade-right', duration: 300 }}
+        transitionProps={{ transition: "fade-right", duration: 300 }}
         position="top-start"
       >
         <Group className={styles.filterTitleWrapper} gap="xs">
@@ -34,7 +41,7 @@ export const Provider: React.FC = () => {
         size="sm"
         label="Data Provider"
         placeholder="Select..."
-        data={['USBR', 'USGS', 'USACE', 'USDA']}
+        data={["USBR", "USGS", "USACE", "USDA"]}
         value={provider}
         onChange={setProvider}
         searchable
