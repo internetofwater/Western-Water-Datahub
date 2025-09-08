@@ -30,7 +30,7 @@
         "@type": "Dataset",
         "schema:name": "{{ item['attributes']['itemTitle'] }}",
         "schema:description": "{{ item['attributes']['itemDescription'] }}",
-        "schema:identifier": "{{ item['id'] }}",
+        "schema:identifier": "{{ item['attributes']["_id"] }}",
         "schema:variableMeasured": {
             "@type": "PropertyValue",
             "schema:name": "{{ item['attributes']['parameterName'] }}",
