@@ -30,7 +30,7 @@ function toCsvRow(row: CsvRowOutput): string {
 
   // First dataset
   const riseItems = await fetch(
-    "https://api.wwdh.internetofwater.app/collections/rise-edr/items?limit=10000"
+    "https://api.wwdh.internetofwater.app/collections/rise-edr/items?limit=10000",
   ).then((res) => res.json());
 
   riseItems.features.forEach((item: any) => {
@@ -46,7 +46,7 @@ function toCsvRow(row: CsvRowOutput): string {
 
   // Second dataset
   const usaceItems = await fetch(
-    "https://api.wwdh.internetofwater.app/collections/usace-edr/items?limit=10000"
+    "https://api.wwdh.internetofwater.app/collections/usace-edr/items?limit=10000",
   ).then((res) => res.json());
 
   usaceItems.features.forEach((item: any) => {
@@ -62,7 +62,7 @@ function toCsvRow(row: CsvRowOutput): string {
 
   // Third dataset
   const resvizeItems = await fetch(
-    "https://api.wwdh.internetofwater.app/collections/resviz-edr/items?limit=10000"
+    "https://api.wwdh.internetofwater.app/collections/resviz-edr/items?limit=10000",
   ).then((res) => res.json());
 
   resvizeItems.features.forEach((item: any) => {
