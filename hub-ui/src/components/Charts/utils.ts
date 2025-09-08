@@ -3,13 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GeoJsonProperties } from "geojson";
-import { Series } from "@/components/Charts/types";
-import { CoverageCollection, CoverageJSON } from "@/services/edr.service";
+import { GeoJsonProperties } from 'geojson';
+import { Series } from '@/components/Charts/types';
+import notificationManager from '@/managers/Notification.init';
+import { CoverageCollection, CoverageJSON } from '@/services/edr.service';
+import { NotificationType } from '@/stores/session/types';
 
 export const aggregateProperties = <T extends GeoJsonProperties>(
   series: Series<T>[],
-  properties: Array<keyof T>,
+  properties: Array<keyof T>
 ): { source: string; name: string; value: number }[] => {
   const aggregatedProperties: {
     source: string;
@@ -21,10 +23,8 @@ export const aggregateProperties = <T extends GeoJsonProperties>(
     series.forEach((_series) => {
       const features = _series.data.features;
       const average =
-        features.reduce(
-          (sum, feature) => sum + Number(feature.properties![property]),
-          0,
-        ) / features.length;
+        features.reduce((sum, feature) => sum + Number(feature.properties![property]), 0) /
+        features.length;
       aggregatedProperties.push({
         source: _series.name,
         name: String(property),
@@ -38,30 +38,33 @@ export const aggregateProperties = <T extends GeoJsonProperties>(
 
 type EChartsSeries = {
   name: string;
-  type: "line";
+  type: 'line';
   stack: string;
   data: number[];
 };
 
 const isCoverageCollection = (
-  coverage: CoverageCollection | CoverageJSON,
+  coverage: CoverageCollection | CoverageJSON
 ): coverage is CoverageCollection => {
-  return coverage.type === "CoverageCollection";
+  return coverage.type === 'CoverageCollection';
 };
 
 export const coverageJSONToSeries = (
-  coverage: CoverageCollection | CoverageJSON,
+  coverage: CoverageCollection | CoverageJSON
 ): EChartsSeries[] => {
-  const ranges = isCoverageCollection(coverage)
-    ? coverage.coverages[0]?.ranges
-    : coverage.ranges;
+  const ranges = isCoverageCollection(coverage) ? coverage.coverages[0]?.ranges : coverage.ranges;
 
   const dates = isCoverageCollection(coverage)
     ? coverage.coverages[0]?.domain.axes.t.values
     : coverage.domain.axes.t.values;
 
   if (!ranges || !dates) {
-    throw new Error("Missing ranges or date axis in coverage data");
+    notificationManager.show(
+      'Missing ranges or date axis in coverage data',
+      NotificationType.Error,
+      10000
+    );
+    return [];
   }
 
   const series: EChartsSeries[] = [];
@@ -74,8 +77,8 @@ export const coverageJSONToSeries = (
 
     series.push({
       name: parameter,
-      type: "line",
-      stack: "Total",
+      type: 'line',
+      stack: 'Total',
       data: range.values,
     });
   }
