@@ -24,12 +24,14 @@
   "schema:subjectOf": [
     {% for element in data["stationElements"] %}
     {
+      {% set duration = element["durationName"].removeprefix("DurationName.")%}
       "@type": "schema:Dataset",
       "schema:identifier": "{{ element["elementCode"] }}",
-      "schema:duration": "{{ element["durationName"] }}",
+      "schema:duration": "{{ duration }}",
       "schema:unitCode": "{{ element["storedUnitCode"] }}",
       "schema:dateCreated": "{{ element['beginDate'] | safe }}",
       "schema:dateModified": "{{ element['endDate'] | safe }}",
+      "schema:name": "Data for {{ duration }} {{ element['elementCode'] }} in units: {{ element['storedUnitCode'] }}",
       "schema:provider": {
         "@type": "schema:GovernmentOrganization",
         "schema:url": "https://wcc.sc.egov.usda.gov/awdbRestApi/",
@@ -37,7 +39,7 @@
       },
       "schema:variableMeasured": {
         "@type": "schema:PropertyValue",
-        "schema:description": "{{ element['durationName'] }} {{ element['elementCode'] }} as {{ element['storedUnitCode'] }}",
+        "schema:description": "{{ duration }} {{ element['elementCode'] }} as {{ element['storedUnitCode'] }}",
         "schema:unitText": "{{ element['storedUnitCode'] }}"
       }
     }{% if not loop.last %},{% endif %}
