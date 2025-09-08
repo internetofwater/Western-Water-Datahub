@@ -39,7 +39,12 @@
         "schema:dateCreated": "{{ item['attributes']['createDate'] }}",
         "schema:dateUpdated": "{{ item['attributes']['updateDate'] }}",
         "schema:frequency": "{{ item['attributes']['updateFrequency']['updatefrequency'] }}",
-        "schema:temporalCoverage": "{{ item['attributes']['temporalStartDate'] }}/{{ item['attributes']['temporalEndDate'] }}"
+        "schema:temporalCoverage": "{{ item['attributes']['temporalStartDate'] }}/{{ item['attributes']['temporalEndDate'] }}",
+        "schema:provider": {
+            "@type": "schema:GovernmentOrganization",
+            "schema:url": "https://data.usbr.gov/rise-api",
+            "schema:name": "US Bureau of Reclamation RISE API"
+        },
     }
     {% if not loop.last %},{% endif %}
     {% endfor %}
