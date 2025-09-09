@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   ComboboxData,
   Group,
@@ -12,14 +12,14 @@ import {
   Stack,
   Text,
   Title,
-  Tooltip,
   VisuallyHidden,
-} from "@mantine/core";
-import Info from "@/assets/Info";
-import styles from "@/features/Panel/Panel.module.css";
-import { useLoading } from "@/hooks/useLoading";
-import useMainStore from "@/stores/main";
-import { MainState } from "@/stores/main/types";
+} from '@mantine/core';
+import Info from '@/assets/Info';
+import Tooltip from '@/components/Tooltip';
+import styles from '@/features/Panel/Panel.module.css';
+import { useLoading } from '@/hooks/useLoading';
+import useMainStore from '@/stores/main';
+import { MainState } from '@/stores/main/types';
 
 export const Collection: React.FC = () => {
   const collection = useMainStore((state) => state.collection);
@@ -46,10 +46,7 @@ export const Collection: React.FC = () => {
     setCollectionOptions(collectionOptions);
   }, [collections]);
 
-  const getDescription = (
-    provider: MainState["provider"],
-    category: MainState["category"],
-  ) => {
+  const getDescription = (provider: MainState['provider'], category: MainState['category']) => {
     if (provider && category) {
       return `Showing collections available for provider: ${provider}, in category: ${category.label}`;
     } else if (provider) {
@@ -61,16 +58,20 @@ export const Collection: React.FC = () => {
     return null;
   };
 
-  const helpText = "Collection tooltip placeholder";
+  const helpText = (
+    <>
+      <Text size="sm">Select a specific collection to add locations from.</Text>
+      <br />
+      <Text size="sm">
+        Locations connect scientific measurements to a geographic point on the map.
+      </Text>
+    </>
+  );
 
   return (
     <Stack gap={0}>
       {/* TODO */}
-      <Tooltip
-        label={helpText}
-        transitionProps={{ transition: "fade-right", duration: 300 }}
-        position="top-start"
-      >
+      <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
           <Title order={2} size="h3">
             Filter by Collection
