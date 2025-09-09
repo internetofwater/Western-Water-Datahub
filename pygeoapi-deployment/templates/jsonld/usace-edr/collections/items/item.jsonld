@@ -14,7 +14,7 @@
     "schema:subjectOf": [
     {% for element in data["timeseries"] %}{
         "@type": "schema:Dataset",
-        "schema:identifier": "{{element["tsid"]}}",
+        "schema:identifier": "{{element["label"]}}",
         "schema:name": "{{element["label"]}} in {{element["unit_long_name"]}}",
         "schema:provider": {
             "@type": "schema:GovernmentOrganization",
