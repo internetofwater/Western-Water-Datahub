@@ -36,7 +36,10 @@ def merge_pages(pages: Dict[str, dict]) -> dict:
 def no_duplicates_in_pages(pages: dict):
     found = {}
     for url in pages:
-        for data in pages[url]["data"]:
+        dataToCheck = pages[url]["data"]
+        if not isinstance(dataToCheck, list):
+            dataToCheck = [dataToCheck]
+        for data in dataToCheck:
             id = data["attributes"]["_id"]
             assert id not in found, (
                 f"{id} with name {data['attributes']['locationName']} was found in both {url} and {found[id]}. You may need to clear the cache for {found[id]}"

@@ -54,9 +54,7 @@ class SnotelProvider(BaseProvider, OAFProviderProtocol):
         skip_geometry: Optional[bool] = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        collection = SnotelLocationCollection()
-        if itemId:
-            collection.drop_all_locations_but_id(itemId)
+        collection = SnotelLocationCollection(itemId=itemId)
         if bbox:
             collection.drop_all_locations_outside_bounding_box(bbox)
 

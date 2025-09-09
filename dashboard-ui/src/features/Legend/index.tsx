@@ -13,7 +13,10 @@ import { Gradient } from '@/features/Legend/Gradient';
 import styles from '@/features/Legend/Legend.module.css';
 import { getLayerName } from '@/features/Map/config';
 import useMainStore from '@/lib/main';
-import { Group } from '@mantine/core';
+import { Box, Divider, Group, Stack, Tooltip } from '@mantine/core';
+import { getTooltipContent } from './utils';
+import Info from '@/icons/Info';
+import { Teacups } from './Teacups';
 
 const entries: Entry[] = [
     {
@@ -139,20 +142,38 @@ const Legend: React.FC = () => {
     const toggleableLayers = useMainStore((state) => state.toggleableLayers);
 
     return (
-        <Group align="flex-start">
+        <Stack>
+            <Teacups />
+            <Divider />
             {entries
                 .filter((entry) => Boolean(toggleableLayers[entry.id]))
                 .map((entry) => (
                     <li
                         className={styles.listItem}
                         key={`legend-entry-${entry.id}`}
-                        style={{
-                            ...(entry.type === LayerType.Raster
-                                ? { flexGrow: 1 }
-                                : {}),
-                        }}
                     >
-                        <h4>{getLayerName(entry.id)}</h4>
+                        <Tooltip
+                            label={getTooltipContent(entry.id)}
+                            disabled={!getTooltipContent(entry.id)}
+                            position="top-start"
+                        >
+                            <Group align="center" gap="xs">
+                                <h4>{getLayerName(entry.id)}</h4>
+                                <Box
+                                    component="span"
+                                    style={{
+                                        display:
+                                            getTooltipContent(entry.id).length >
+                                            0
+                                                ? 'inline-block'
+                                                : 'none',
+                                    }}
+                                    className={styles.listItemIconWrapper}
+                                >
+                                    <Info />
+                                </Box>
+                            </Group>
+                        </Tooltip>
                         {[
                             LayerType.Line,
                             LayerType.Circle,
@@ -163,7 +184,7 @@ const Legend: React.FC = () => {
                                     entry?.items &&
                                     entry.items.map((item) => (
                                         <li
-                                            className={styles.listItem}
+                                            className={styles.subListItem}
                                             key={`legend-item-${entry.id}-${item.label}`}
                                         >
                                             <div
@@ -172,7 +193,7 @@ const Legend: React.FC = () => {
                                                 }
                                             >
                                                 <Line color={item.color} />
-                                                <span>{item.label}</span>
+                                                <div>{item.label}</div>
                                             </div>
                                         </li>
                                     ))}
@@ -180,7 +201,7 @@ const Legend: React.FC = () => {
                                     entry?.items &&
                                     entry.items.map((item) => (
                                         <li
-                                            className={styles.listItem}
+                                            className={styles.subListItem}
                                             key={`legend-item-${entry.id}-${item.label}`}
                                         >
                                             <div
@@ -189,7 +210,7 @@ const Legend: React.FC = () => {
                                                 }
                                             >
                                                 <Circle color={item.color} />
-                                                <span>{item.label}</span>
+                                                <div>{item.label}</div>
                                             </div>
                                         </li>
                                     ))}
@@ -197,7 +218,7 @@ const Legend: React.FC = () => {
                                     entry?.items &&
                                     entry.items.map((item) => (
                                         <li
-                                            className={styles.listItem}
+                                            className={styles.subListItem}
                                             key={`legend-item-${entry.id}-${item.label}`}
                                         >
                                             <div
@@ -206,7 +227,7 @@ const Legend: React.FC = () => {
                                                 }
                                             >
                                                 <Square fill={item.color} />
-                                                <span>{item.label}</span>
+                                                <div>{item.label}</div>
                                             </div>
                                         </li>
                                     ))}
@@ -225,7 +246,7 @@ const Legend: React.FC = () => {
                         )}
                     </li>
                 ))}
-        </Group>
+        </Stack>
     );
 };
 
