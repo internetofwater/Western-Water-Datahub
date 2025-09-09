@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Group, Stack, Title, VisuallyHidden } from '@mantine/core';
-import Info from '@/assets/Info';
-import Tooltip from '@/components/Tooltip';
-import { Basin } from '@/features/Panel/Filters/Geography/Basin';
-import { Region } from '@/features/Panel/Filters/Geography/Region';
-import { State } from '@/features/Panel/Filters/Geography/State';
-import styles from '@/features/Panel/Panel.module.css';
+import { Group, Stack, Title, VisuallyHidden } from "@mantine/core";
+import Info from "@/assets/Info";
+import Tooltip from "@/components/Tooltip";
+import { Basin } from "@/features/Panel/Filters/Geography/Basin";
+import { Region } from "@/features/Panel/Filters/Geography/Region";
+import { State } from "@/features/Panel/Filters/Geography/State";
+import styles from "@/features/Panel/Panel.module.css";
 
 const Geography: React.FC = () => {
   const helpText =
-    'Add a geographic filter to limit locations to a designated region, basin, or state.';
+    "Add a geographic filter to limit locations to a designated region, basin, or state.";
 
   return (
     <Stack gap="xs" mb="xl">
