@@ -1,0 +1,36 @@
+{
+    "@context": {
+        "schema": "https://schema.org/",
+        "gsp": "https://www.opengis.net/ont/geosparql#"
+    },
+    "@type": "schema:Place",
+    "@id": "{{data["@id"]}}",
+    "schema:name": "{{data["public_name"]}}",
+    "schema:identifier": "{{data["id"]}}",
+    "schema:dateModified": "{{data["dataUpdated"]}}",
+    "schema:description": "{{data["projectDescription"]}}",
+    "gsp:hasGeometry": {{ data["gsp:hasGeometry"] | to_json }}, 
+    "schema:geo": {{ data["schema:geo"] | to_json }},
+    "schema:subjectOf": [
+    {% for element in data["timeseries"] %}{
+        "@type": "schema:Dataset",
+        "schema:identifier": "{{element["label"]}}",
+        "schema:name": "{{element["label"]}} in {{element["unit_long_name"]}}",
+        "schema:provider": {
+            "@type": "schema:GovernmentOrganization",
+            "schema:url": {
+                "@id": "https://water.sec.usace.army.mil/cda/reporting/providers/projects?fmt=geojson"
+            },
+            "schema:name": "US Army Corps of Engineers"
+        },
+        "schema:variableMeasured": {
+            "@type": "schema:PropertyValue",
+            "schema:description": "{{element["label"]}} in {{element["unit_long_name"]}}",
+            "schema:unitText": "{{ element['unit'] }}",
+            "schema:name": "{{ element['unit_long_name'] }}"
+        }
+
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+    ]
+}
