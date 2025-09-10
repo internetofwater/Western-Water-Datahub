@@ -21,7 +21,7 @@ dependencies = [
     "orjson>=3.10.15",
     "pygeoapi @ git+https://github.com/internetofwater/pygeoapi.git@wwdh",
     "msgspec>=0.19.0",
-    "pygeoapi-plugins @ git+https://github.com/cgs-earth/pygeoapi-plugins.git",
+    "pygeoapi-plugins  @ git+https://github.com/cgs-earth/pygeoapi-plugins.git@master",
 ]
 
 classifiers = [
@@ -65,6 +65,9 @@ deployment = [
 
 [tool.uv.workspace]
 members = ["packages/*"]
+
+[tool.uv.sources]
+pygeoapi-plugins = { git = "https://github.com/cgs-earth/pygeoapi-plugins", rev = "master" }
 
 [tool.pytest.ini_options]
 # needed to prevent a deprecation warning; doesnt really affect any behavior
