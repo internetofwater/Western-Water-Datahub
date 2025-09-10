@@ -66,9 +66,6 @@ deployment = [
 [tool.uv.workspace]
 members = ["packages/*"]
 
-[tool.uv.sources]
-pygeoapi-plugins = { git = "https://github.com/cgs-earth/pygeoapi-plugins", rev = "master" }
-
 [tool.pytest.ini_options]
 # needed to prevent a deprecation warning; doesnt really affect any behavior
 asyncio_default_fixture_loop_scope = "function"
