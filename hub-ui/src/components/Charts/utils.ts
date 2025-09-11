@@ -8,6 +8,7 @@ import { Series } from "@/components/Charts/types";
 import notificationManager from "@/managers/Notification.init";
 import { CoverageCollection, CoverageJSON } from "@/services/edr.service";
 import { NotificationType } from "@/stores/session/types";
+import { isCoverageCollection } from "@/utils/clarifyObject";
 
 export const aggregateProperties = <T extends GeoJsonProperties>(
   series: Series<T>[],
@@ -43,12 +44,6 @@ type EChartsSeries = {
   type: "line";
   stack: string;
   data: number[];
-};
-
-const isCoverageCollection = (
-  coverage: CoverageCollection | CoverageJSON,
-): coverage is CoverageCollection => {
-  return coverage.type === "CoverageCollection";
 };
 
 export const coverageJSONToSeries = (

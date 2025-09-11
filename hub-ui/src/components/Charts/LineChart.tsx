@@ -18,6 +18,7 @@ import * as echarts from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { coverageJSONToSeries } from "@/components/Charts/utils";
 import { CoverageCollection, CoverageJSON } from "@/services/edr.service";
+import { isCoverageCollection } from "@/utils/clarifyObject";
 
 echarts.use([
   TitleComponent,
@@ -50,10 +51,6 @@ const LineChart = (props: Props) => {
   } = props;
 
   const option: echarts.EChartsCoreOption = useMemo(() => {
-    const isCoverageCollection = (
-      coverage: CoverageCollection | CoverageJSON,
-    ): coverage is CoverageCollection => coverage.type === "CoverageCollection";
-
     const dates = isCoverageCollection(data)
       ? data.coverages[0]?.domain.axes.t.values
       : data.domain.axes.t.values;

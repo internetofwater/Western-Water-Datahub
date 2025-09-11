@@ -64,7 +64,7 @@ export const Reset: React.FC = () => {
       !isFetchingLocations &&
       !isLoadingGeography &&
       (hasLocationsLoaded || hasGeographyFilter()) ? (
-        <Button onClick={() => mainManager.clearAllData()} color="red">
+        <Button onClick={() => mainManager.clearAllData()} color="red-rocks">
           Reset
         </Button>
       ) : (
@@ -72,7 +72,7 @@ export const Reset: React.FC = () => {
           <Button
             data-disabled
             onClick={(event) => event.preventDefault()}
-            color="red"
+            color="red-rocks"
           >
             Reset
           </Button>

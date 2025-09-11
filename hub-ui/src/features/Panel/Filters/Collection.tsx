@@ -12,10 +12,10 @@ import {
   Stack,
   Text,
   Title,
-  Tooltip,
   VisuallyHidden,
 } from "@mantine/core";
 import Info from "@/assets/Info";
+import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Panel/Panel.module.css";
 import { useLoading } from "@/hooks/useLoading";
 import useMainStore from "@/stores/main";
@@ -34,10 +34,12 @@ export const Collection: React.FC = () => {
   const { isFetchingCollections } = useLoading();
 
   useEffect(() => {
-    const collectionOptions: ComboboxData = collections.map((collection) => ({
-      value: collection.id,
-      label: collection.title ?? collection.id,
-    }));
+    const collectionOptions: ComboboxData = collections
+      .map((collection) => ({
+        value: collection.id,
+        label: collection.title ?? collection.id,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
 
     if (!collections.some((_collection) => _collection.id === collection)) {
       setCollection(null);
@@ -61,16 +63,21 @@ export const Collection: React.FC = () => {
     return null;
   };
 
-  const helpText = "Collection tooltip placeholder";
+  const helpText = (
+    <>
+      <Text size="sm">Select a specific collection to add locations from.</Text>
+      <br />
+      <Text size="sm">
+        Locations connect scientific measurements to a geographic point on the
+        map.
+      </Text>
+    </>
+  );
 
   return (
     <Stack gap={0}>
       {/* TODO */}
-      <Tooltip
-        label={helpText}
-        transitionProps={{ transition: "fade-right", duration: 300 }}
-        position="top-start"
-      >
+      <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
           <Title order={2} size="h3">
             Filter by Collection

@@ -898,42 +898,42 @@ export interface IDataQueries {
   /**
    *
    */
-  position?: ILink;
+  position?: { link: ILink };
 
   /**
    *
    */
-  radius?: ILink;
+  radius?: { link: ILink };
 
   /**
    *
    */
-  area?: ILink;
+  area?: { link: ILink };
 
   /**
    *
    */
-  cube?: ILink;
+  cube?: { link: ILink };
 
   /**
    *
    */
-  trajectory?: ILink;
+  trajectory?: { link: ILink };
 
   /**
    *
    */
-  corridor?: ILink;
+  corridor?: { link: ILink };
 
   /**
    *
    */
-  locations?: ILink;
+  locations?: { link: ILink };
 
   /**
    *
    */
-  items?: ILink;
+  items?: { link: ILink };
 }
 
 /**

@@ -22,9 +22,10 @@ const Download: React.FC = () => {
       {hasLocations && (
         <>
           <Button onClick={() => setDownloadModalOpen(true)}>
-            Download {locations.length} Location(s)
+            Download {locations.length} Location
+            {locations.length !== 1 ? "s" : ""}
           </Button>
-          <Button onClick={() => setLocations([])} color="red">
+          <Button onClick={() => setLocations([])} color="red-rocks">
             Clear selection
           </Button>
         </>
