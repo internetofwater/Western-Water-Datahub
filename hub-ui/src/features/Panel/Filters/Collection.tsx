@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   ComboboxData,
   Group,
@@ -13,13 +13,13 @@ import {
   Text,
   Title,
   VisuallyHidden,
-} from '@mantine/core';
-import Info from '@/assets/Info';
-import Tooltip from '@/components/Tooltip';
-import styles from '@/features/Panel/Panel.module.css';
-import { useLoading } from '@/hooks/useLoading';
-import useMainStore from '@/stores/main';
-import { MainState } from '@/stores/main/types';
+} from "@mantine/core";
+import Info from "@/assets/Info";
+import Tooltip from "@/components/Tooltip";
+import styles from "@/features/Panel/Panel.module.css";
+import { useLoading } from "@/hooks/useLoading";
+import useMainStore from "@/stores/main";
+import { MainState } from "@/stores/main/types";
 
 export const Collection: React.FC = () => {
   const collection = useMainStore((state) => state.collection);
@@ -48,7 +48,10 @@ export const Collection: React.FC = () => {
     setCollectionOptions(collectionOptions);
   }, [collections]);
 
-  const getDescription = (provider: MainState['provider'], category: MainState['category']) => {
+  const getDescription = (
+    provider: MainState["provider"],
+    category: MainState["category"],
+  ) => {
     if (provider && category) {
       return `Showing collections available for provider: ${provider}, in category: ${category.label}`;
     } else if (provider) {
@@ -65,7 +68,8 @@ export const Collection: React.FC = () => {
       <Text size="sm">Select a specific collection to add locations from.</Text>
       <br />
       <Text size="sm">
-        Locations connect scientific measurements to a geographic point on the map.
+        Locations connect scientific measurements to a geographic point on the
+        map.
       </Text>
     </>
   );
