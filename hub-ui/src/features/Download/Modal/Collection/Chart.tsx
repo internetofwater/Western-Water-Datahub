@@ -3,22 +3,26 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useRef, useState } from 'react';
-import { Group, Skeleton, Text, useComputedColorScheme } from '@mantine/core';
-import LineChart from '@/components/Charts/LineChart';
-import styles from '@/features/Download/Download.module.css';
-import { getDatetime } from '@/features/Download/Modal/utils';
-import loadingManager from '@/managers/Loading.init';
-import notificationManager from '@/managers/Notification.init';
-import { CoverageCollection, CoverageJSON, ICollection } from '@/services/edr.service';
-import wwdhService from '@/services/init/wwdh.init';
-import { Location } from '@/stores/main/types';
-import { LoadingType, NotificationType } from '@/stores/session/types';
+import { useEffect, useRef, useState } from "react";
+import { Group, Skeleton, Text, useComputedColorScheme } from "@mantine/core";
+import LineChart from "@/components/Charts/LineChart";
+import styles from "@/features/Download/Download.module.css";
+import { getDatetime } from "@/features/Download/Modal/utils";
+import loadingManager from "@/managers/Loading.init";
+import notificationManager from "@/managers/Notification.init";
+import {
+  CoverageCollection,
+  CoverageJSON,
+  ICollection,
+} from "@/services/edr.service";
+import wwdhService from "@/services/init/wwdh.init";
+import { Location } from "@/stores/main/types";
+import { LoadingType, NotificationType } from "@/stores/session/types";
 
 type Props = {
   instanceId: number;
-  collectionId: ICollection['id'];
-  locationId: Location['id'];
+  collectionId: ICollection["id"];
+  locationId: Location["id"];
   parameters: string[];
   from: string | null;
   to: string | null;
@@ -26,7 +30,8 @@ type Props = {
 };
 
 export const Chart: React.FC<Props> = (props) => {
-  const { instanceId, collectionId, locationId, parameters, from, to, onData } = props;
+  const { instanceId, collectionId, locationId, parameters, from, to, onData } =
+    props;
 
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
@@ -34,50 +39,58 @@ export const Chart: React.FC<Props> = (props) => {
 
   const computedColorScheme = useComputedColorScheme();
 
-  const [data, setData] = useState<CoverageCollection | CoverageJSON | null>(null);
+  const [data, setData] = useState<CoverageCollection | CoverageJSON | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
     loadingInstance.current = loadingManager.add(
       `Fetching chart data for location: ${locationId}, of collection: ${collectionId}`,
-      LoadingType.Data
+      LoadingType.Data,
     );
     try {
       controller.current = new AbortController();
 
       const datetime = getDatetime(from, to);
 
-      const coverageCollection = await wwdhService.getLocation<CoverageCollection | CoverageJSON>(
-        collectionId,
-        String(locationId),
-        {
-          signal: controller.current.signal,
-          params: {
-            'parameter-name': parameters.join(','),
-            ...(datetime ? { datetime } : {}),
-          },
-        }
-      );
+      const coverageCollection = await wwdhService.getLocation<
+        CoverageCollection | CoverageJSON
+      >(collectionId, String(locationId), {
+        signal: controller.current.signal,
+        params: {
+          "parameter-name": parameters.join(","),
+          ...(datetime ? { datetime } : {}),
+        },
+      });
 
       if (isMounted.current) {
-        loadingInstance.current = loadingManager.remove(loadingInstance.current);
+        loadingInstance.current = loadingManager.remove(
+          loadingInstance.current,
+        );
         setData(coverageCollection);
         onData();
       }
     } catch (error) {
       if (
-        (error as Error)?.name === 'AbortError' ||
-        (typeof error === 'string' && error === 'Component unmount')
+        (error as Error)?.name === "AbortError" ||
+        (typeof error === "string" && error === "Component unmount")
       ) {
-        console.log('Fetch request canceled');
+        console.log("Fetch request canceled");
       } else if ((error as Error)?.message) {
         const _error = error as Error;
-        notificationManager.show(`Error: ${_error.message}`, NotificationType.Error, 10000);
+        notificationManager.show(
+          `Error: ${_error.message}`,
+          NotificationType.Error,
+          10000,
+        );
         setError(_error.message);
       }
 
       if (loadingInstance.current) {
-        loadingInstance.current = loadingManager.remove(loadingInstance.current);
+        loadingInstance.current = loadingManager.remove(
+          loadingInstance.current,
+        );
       }
       onData();
     }
@@ -90,7 +103,7 @@ export const Chart: React.FC<Props> = (props) => {
     return () => {
       isMounted.current = false;
       if (controller.current) {
-        controller.current.abort('Component unmount');
+        controller.current.abort("Component unmount");
       }
     };
   }, [instanceId]);
@@ -107,11 +120,11 @@ export const Chart: React.FC<Props> = (props) => {
           legend
           legendEntries={parameters}
           theme={computedColorScheme}
-          filename={`line-chart-${locationId}-${parameters.join('-')}`}
+          filename={`line-chart-${locationId}-${parameters.join("-")}`}
         />
       ) : (
         <Group justify="center" align="center" className={styles.chartNoData}>
-          <Text>No Data found for {parameters.join(', ')}</Text>
+          <Text>No Data found for {parameters.join(", ")}</Text>
         </Group>
       )}
       {error && (

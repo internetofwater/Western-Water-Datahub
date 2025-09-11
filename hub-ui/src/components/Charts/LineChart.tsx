@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useMemo } from 'react';
-import ReactEChartsCore from 'echarts-for-react/lib/core';
-import { LineChart as _LineChart } from 'echarts/charts';
+import { useMemo } from "react";
+import ReactEChartsCore from "echarts-for-react/lib/core";
+import { LineChart as _LineChart } from "echarts/charts";
 import {
   DatasetComponent,
   GridComponent,
@@ -13,12 +13,12 @@ import {
   TitleComponent,
   ToolboxComponent,
   TooltipComponent,
-} from 'echarts/components';
-import * as echarts from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import { coverageJSONToSeries } from '@/components/Charts/utils';
-import { CoverageCollection, CoverageJSON } from '@/services/edr.service';
-import { isCoverageCollection } from '@/utils/clarifyObject';
+} from "echarts/components";
+import * as echarts from "echarts/core";
+import { CanvasRenderer } from "echarts/renderers";
+import { coverageJSONToSeries } from "@/components/Charts/utils";
+import { CoverageCollection, CoverageJSON } from "@/services/edr.service";
+import { isCoverageCollection } from "@/utils/clarifyObject";
 
 echarts.use([
   TitleComponent,
@@ -36,12 +36,19 @@ type Props = {
   title?: string;
   legend?: boolean;
   filename?: string;
-  theme?: 'light' | 'dark';
+  theme?: "light" | "dark";
   legendEntries?: string[];
 };
 
 const LineChart = (props: Props) => {
-  const { title, data, legend = false, filename, theme = 'light', legendEntries = [] } = props;
+  const {
+    title,
+    data,
+    legend = false,
+    filename,
+    theme = "light",
+    legendEntries = [],
+  } = props;
 
   const option: echarts.EChartsCoreOption = useMemo(() => {
     const dates = isCoverageCollection(data)
@@ -53,31 +60,31 @@ const LineChart = (props: Props) => {
     return {
       title: title ? { text: title } : undefined,
       tooltip: {
-        trigger: 'axis',
+        trigger: "axis",
       },
       legend: legend ? { data: legendEntries } : undefined,
       toolbox: {
         feature: {
           saveAsImage: {
             show: true,
-            type: 'png',
-            name: filename ? filename : title ? title : 'line-chart',
+            type: "png",
+            name: filename ? filename : title ? title : "line-chart",
           },
         },
       },
       grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
+        left: "3%",
+        right: "4%",
+        bottom: "3%",
         containLabel: true,
       },
       xAxis: {
-        type: 'category',
+        type: "category",
         boundaryGap: false,
         data: dates,
       },
       yAxis: {
-        type: 'value',
+        type: "value",
       },
       series,
     };
@@ -86,9 +93,9 @@ const LineChart = (props: Props) => {
   return (
     <ReactEChartsCore
       style={{
-        height: '100%',
-        width: '98%',
-        marginLeft: '8px',
+        height: "100%",
+        width: "98%",
+        marginLeft: "8px",
       }}
       echarts={echarts}
       option={option}
