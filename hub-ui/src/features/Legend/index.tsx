@@ -107,6 +107,7 @@ const Legend: React.FC = () => {
               <Text>{getCollectionTitle(entry.layerId)}</Text>
               <Group justify="space-between">
                 <ColorInput
+                  label="Location Points"
                   value={entry.color}
                   onChange={(color) => handleColorChange(color, entry.layerId)}
                   className={styles.colorPicker}

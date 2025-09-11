@@ -156,7 +156,7 @@ const Collection: React.FC<Props> = (props) => {
                           </Group>
                         </Tooltip>
                       }
-                      description="Select at one to ten parameters"
+                      description="Select 1-10 parameters"
                       placeholder="Select..."
                       data={parameterNameOptions}
                       value={selectedParameters}
@@ -166,7 +166,7 @@ const Collection: React.FC<Props> = (props) => {
                       error={
                         isParameterSelectionUnderLimit
                           ? false
-                          : `Please remove ${selectedParameters.length - PARAMETER_LIMIT} parameter(s)`
+                          : `Please remove ${selectedParameters.length - PARAMETER_LIMIT} parameter${selectedParameters.length - PARAMETER_LIMIT > 1 ? 's' : ''}`
                       }
                     />
                     <VisuallyHidden>{parameterHelpText}</VisuallyHidden>
@@ -210,6 +210,7 @@ const Collection: React.FC<Props> = (props) => {
 
                   return (
                     <Fragment key={`collection-download-${collectionId}-${locationId}`}>
+                      <Text>Location: {locationId}</Text>
                       <Chart
                         instanceId={startDownload}
                         collectionId={collectionId}

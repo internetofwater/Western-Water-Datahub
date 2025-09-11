@@ -16,6 +16,10 @@ export async function request<T>(options: IRequestOptions): Promise<T> {
     throw new Error(res.statusText);
   }
 
+  if (res.status === 204) {
+    return null as T;
+  }
+
   // no content
   const json = res.json();
 
