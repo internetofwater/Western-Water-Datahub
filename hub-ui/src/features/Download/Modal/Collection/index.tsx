@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import {
+  Anchor,
   Box,
   Button,
   Collapse,
@@ -129,12 +130,24 @@ const Collection: React.FC<Props> = (props) => {
     </>
   );
 
+  const alternateLink = collection?.links?.find(
+    (link) => link.rel === 'alternate' && link.type === 'text/html'
+  )?.href;
+
+  console.log('collection', collection);
+
   return (
     <Box>
       {collection && (
         <Box p="lg">
           <Group justify="space-between" mb="sm">
-            <Title order={3}>{collection.title}</Title>
+            {alternateLink ? (
+              <Anchor href={alternateLink} target="_blank">
+                <Title order={3}>{collection.title}</Title>
+              </Anchor>
+            ) : (
+              <Title order={3}>{collection.title}</Title>
+            )}
             <Button onClick={toggle}>{opened ? 'Hide' : 'Show'}</Button>
           </Group>
           <Collapse in={opened}>
@@ -210,7 +223,16 @@ const Collection: React.FC<Props> = (props) => {
 
                   return (
                     <Fragment key={`collection-download-${collectionId}-${locationId}`}>
-                      <Text>Location: {locationId}</Text>
+                      <Group gap="xs">
+                        <Text>Location:</Text>
+                        <Anchor
+                          href={`${collection.data_queries.locations?.link?.href}/${locationId}`}
+                          target="_blank"
+                        >
+                          {' '}
+                          {locationId}
+                        </Anchor>
+                      </Group>
                       <Chart
                         instanceId={startDownload}
                         collectionId={collectionId}
