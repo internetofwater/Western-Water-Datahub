@@ -3,18 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import {
-  Group,
-  Select,
-  Stack,
-  Text,
-  Title,
-  VisuallyHidden,
-} from "@mantine/core";
-import Info from "@/assets/Info";
-import Tooltip from "@/components/Tooltip";
-import styles from "@/features/Panel/Panel.module.css";
-import useMainStore from "@/stores/main";
+import { Group, Select, Stack, Text, Title, VisuallyHidden } from '@mantine/core';
+import Info from '@/assets/Info';
+import Tooltip from '@/components/Tooltip';
+import styles from '@/features/Panel/Panel.module.css';
+import useMainStore from '@/stores/main';
 
 export const Provider: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
@@ -23,13 +16,10 @@ export const Provider: React.FC = () => {
   const helpText = (
     <>
       <Text size="sm">
-        Select a data provider to explore the categories and collections they've
-        published.
+        Select a data provider to explore the categories and collections they've published.
       </Text>
       <br />
-      <Text size="sm">
-        This filters results based on the source of the data.
-      </Text>
+      <Text size="sm">This filters results based on the source of the data.</Text>
     </>
   );
 
@@ -49,7 +39,7 @@ export const Provider: React.FC = () => {
         size="sm"
         label="Data Provider"
         placeholder="Select..."
-        data={["USBR", "USGS", "USACE", "USDA"]}
+        data={['USACE', 'USDA', 'USBR', 'USGS']}
         value={provider}
         onChange={setProvider}
         searchable

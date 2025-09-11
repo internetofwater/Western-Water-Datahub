@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Feature, GeoJsonProperties, Geometry } from "geojson";
-import { ComboboxItem } from "@mantine/core";
+import { Feature, GeoJsonProperties, Geometry } from 'geojson';
+import { ComboboxItem } from '@mantine/core';
 
 export type ItemWithSource = ComboboxItem & { source?: string };
 
@@ -12,7 +12,7 @@ export const formatOptions = (
   features: Feature<Geometry, GeoJsonProperties>[],
   getValueProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
   getLabelProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
-  source?: string,
+  source?: string
 ): ItemWithSource[] => {
   const options = new Map<string, ItemWithSource>();
   //   options.set('all', { value: defaultValue, label: defaultLabel });
@@ -31,5 +31,6 @@ export const formatOptions = (
       }
     }
   });
-  return Array.from(options.values());
+
+  return Array.from(options.values()).sort((a, b) => a.label.localeCompare(b.label));
 };

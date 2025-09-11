@@ -229,7 +229,6 @@ const Collection: React.FC<Props> = (props) => {
                           href={`${collection.data_queries.locations?.link?.href}/${locationId}`}
                           target="_blank"
                         >
-                          {' '}
                           {locationId}
                         </Anchor>
                       </Group>
