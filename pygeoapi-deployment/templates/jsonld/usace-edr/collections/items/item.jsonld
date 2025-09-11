@@ -8,10 +8,13 @@
     "schema:name": "{{data["public_name"]}}",
     "schema:identifier": "{{data["id"]}}",
     "schema:dateModified": "{{data["dataUpdated"]}}",
-    "schema:description": "{{data["projectDescription"]}}",
+    {% if data["projectDescription"] %}
+    "schema:description": "{{ data["projectDescription"].replace('\n', ' ').replace('\r', '').replace('"', '\'').replace("\t", " ") }}",
+    {% endif %}
     "gsp:hasGeometry": {{ data["gsp:hasGeometry"] | to_json }}, 
-    "schema:geo": {{ data["schema:geo"] | to_json }},
-    "schema:subjectOf": [
+    "schema:geo": {{ data["schema:geo"] | to_json }}
+    {% if data["timeseries"] %}
+    ,"schema:subjectOf": [
     {% for element in data["timeseries"] %}{
         "@type": "schema:Dataset",
         "schema:identifier": "{{element["label"]}}",
@@ -33,4 +36,5 @@
     }{% if not loop.last %},{% endif %}
     {% endfor %}
     ]
+    {% endif %}
 }
