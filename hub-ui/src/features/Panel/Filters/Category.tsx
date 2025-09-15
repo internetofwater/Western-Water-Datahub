@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import {
   ComboboxData,
   Group,
@@ -13,15 +13,15 @@ import {
   Text,
   Title,
   VisuallyHidden,
-} from "@mantine/core";
-import Info from "@/assets/Info";
-import Tooltip from "@/components/Tooltip";
-import styles from "@/features/Panel/Panel.module.css";
-import loadingManager from "@/managers/Loading.init";
-import notificationManager from "@/managers/Notification.init";
-import wwdhService from "@/services/init/wwdh.init";
-import useMainStore from "@/stores/main";
-import { LoadingType, NotificationType } from "@/stores/session/types";
+} from '@mantine/core';
+import Info from '@/assets/Info';
+import Tooltip from '@/components/Tooltip';
+import styles from '@/features/Panel/Panel.module.css';
+import loadingManager from '@/managers/Loading.init';
+import notificationManager from '@/managers/Notification.init';
+import wwdhService from '@/services/init/wwdh.init';
+import useMainStore from '@/stores/main';
+import { LoadingType, NotificationType } from '@/stores/session/types';
 
 export const Category: React.FC = () => {
   const category = useMainStore((state) => state.category);
@@ -37,44 +37,34 @@ export const Category: React.FC = () => {
 
   const getCategoryOptions = async () => {
     const loadingInstance = loadingManager.add(
-      "Fetching category dropdown options",
-      LoadingType.Data,
+      'Fetching category dropdown options',
+      LoadingType.Data
     );
 
     try {
       setIsLoading(true);
       controller.current = new AbortController();
 
-      const { collections } = await wwdhService.getCollections({
+      const { parameterGroups } = await wwdhService.getCollections({
         params: {
-          "parameter-name": "*",
-          ...(provider ? { "provider-name": provider } : {}),
+          'parameter-name': '*',
+          ...(provider ? { 'provider-name': provider } : {}),
         },
       });
 
-      const categoryOptions: ComboboxData = collections
-        .flatMap((collection) =>
-          Object.values(collection.parameter_names).map((parameterName) => ({
-            value: parameterName.id,
-            label: parameterName.name,
-          })),
-        )
+      const categoryOptions: ComboboxData = parameterGroups
+        .map((parameterGroup) => ({
+          value: parameterGroup.label,
+          label: parameterGroup.label,
+        }))
         .filter(
           (parameterName, index, categoryOptions) =>
-            categoryOptions
-              .map(({ value }) => value)
-              .indexOf(parameterName.value) === index,
+            categoryOptions.map(({ value }) => value).indexOf(parameterName.value) === index
         )
         .sort((a, b) => a.label.localeCompare(b.label));
 
       if (isMounted.current) {
-        if (
-          !collections.some((collection) =>
-            Object.values(collection.parameter_names).some(
-              (parameterName) => parameterName.id === category?.value,
-            ),
-          )
-        ) {
+        if (!parameterGroups.some((parameterGroup) => parameterGroup.label === category?.value)) {
           setCategory(null);
         }
 
@@ -84,17 +74,13 @@ export const Category: React.FC = () => {
       }
     } catch (error) {
       if (
-        (error as Error)?.name === "AbortError" ||
-        (typeof error === "string" && error === "Component unmount")
+        (error as Error)?.name === 'AbortError' ||
+        (typeof error === 'string' && error === 'Component unmount')
       ) {
-        console.log("Fetch request canceled");
+        console.log('Fetch request canceled');
       } else if ((error as Error)?.message) {
         const _error = error as Error;
-        notificationManager.show(
-          `Error: ${_error.message}`,
-          NotificationType.Error,
-          10000,
-        );
+        notificationManager.show(`Error: ${_error.message}`, NotificationType.Error, 10000);
       }
       if (loadingInstance) {
         loadingManager.remove(loadingInstance);
@@ -111,7 +97,7 @@ export const Category: React.FC = () => {
     return () => {
       isMounted.current = false;
       if (controller.current) {
-        controller.current.abort("Component unmount");
+        controller.current.abort('Component unmount');
       }
     };
   }, []);
@@ -123,14 +109,11 @@ export const Category: React.FC = () => {
   const helpText = (
     <>
       <Text size="sm">
-        Choose a data category to narrow down the available collections.
-        Categories group collection by type or theme (e.g., reservoir storage,
-        atmospheric measurements, water constituents).
+        Choose a data category to narrow down the available collections. Categories group collection
+        by type or theme (e.g., reservoir storage, atmospheric measurements, water constituents).
       </Text>
       <br />
-      <Text size="sm">
-        This helps you focus on collections relevant to a domain of interest.
-      </Text>
+      <Text size="sm">This helps you focus on collections relevant to a domain of interest.</Text>
     </>
   );
 
@@ -148,11 +131,7 @@ export const Category: React.FC = () => {
       <Select
         size="sm"
         label="Category"
-        description={
-          provider
-            ? `Showing categories available for provider: ${provider}`
-            : null
-        }
+        description={provider ? `Showing categories available for provider: ${provider}` : null}
         placeholder="Select..."
         data={categoryOptions}
         value={category?.value}
