@@ -117,7 +117,6 @@ export const Chart: React.FC<Props> = (props) => {
       {data ? (
         <LineChart
           data={data}
-          title={String(locationId)}
           legend
           legendEntries={parameters}
           theme={computedColorScheme}
@@ -125,7 +124,7 @@ export const Chart: React.FC<Props> = (props) => {
         />
       ) : (
         <Group justify="center" align="center" className={styles.chartNoData}>
-          <Text>No Data</Text>
+          <Text>No Data found for {parameters.join(", ")}</Text>
         </Group>
       )}
       {error && (
