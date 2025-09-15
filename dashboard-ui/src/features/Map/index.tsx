@@ -15,6 +15,7 @@ import {
     INITIAL_ZOOM,
     SourceId,
     ReservoirConfigs,
+    ValidBasins,
 } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore from '@/lib/main';
@@ -26,6 +27,7 @@ import {
     isReservoirIdentifier,
     getReservoirFilter,
     getBoundingGeographyFilter,
+    resetMap,
 } from '@/features/Map/utils';
 import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
@@ -42,7 +44,7 @@ import {
     StateDefault,
 } from '@/lib/consts';
 import { StateField } from './types/state';
-import { Huc06BasinField } from './types/basin';
+import { Huc02BasinField } from './types/basin';
 import { BoundingGeographyLevel } from '@/lib/types';
 
 type Props = {
@@ -123,70 +125,68 @@ const MainMap: React.FC<Props> = (props) => {
             (config) => config.connectedLayers
         );
 
-        const handleRegionsClick = (e: MapMouseEvent) => {
-            const zoom = map.getZoom();
-            if (zoom > 6) {
-                return;
-            }
+        // const handleRegionsClick = (e: MapMouseEvent) => {
+        //     const zoom = map.getZoom();
+        //     if (zoom > 6) {
+        //         return;
+        //     }
 
-            const features = map.queryRenderedFeatures(e.point, {
-                layers: [SubLayerId.RegionsFill],
-            });
+        //     const features = map.queryRenderedFeatures(e.point, {
+        //         layers: [SubLayerId.RegionsFill],
+        //     });
 
-            if (features && features.length) {
-                const feature = features[0];
-                console.log('Region', feature);
-                if (feature.properties) {
-                    const region = feature.properties[
-                        RegionField.Name
-                    ] as string;
+        //     if (features && features.length) {
+        //         const feature = features[0];
 
-                    if (region) {
-                        setRegion(region);
-                    }
-                }
-            }
-        };
+        //         if (feature.properties) {
+        //             const region = feature.properties[
+        //                 RegionField.Name
+        //             ] as string;
 
-        const handleBasinsClick = (e: MapMouseEvent) => {
-            const features = map.queryRenderedFeatures(e.point, {
-                layers: [SubLayerId.BasinsFill],
-            });
+        //             if (region) {
+        //                 setRegion(region);
+        //             }
+        //         }
+        //     }
+        // };
 
-            if (features && features.length) {
-                const feature = features[0];
-                console.log('Basin', feature);
-                if (feature.properties) {
-                    const basin = feature.properties[
-                        Huc06BasinField.Id
-                    ] as string;
+        // const handleBasinsClick = (e: MapMouseEvent) => {
+        //     const features = map.queryRenderedFeatures(e.point, {
+        //         layers: [SubLayerId.BasinsFill],
+        //     });
 
-                    if (basin) {
-                        setBasin(basin);
-                    }
-                }
-            }
-        };
+        //     if (features && features.length) {
+        //         const feature = features[0];
+        //         if (feature.properties) {
+        //             const basin = feature.properties[
+        //                 Huc02BasinField.Id
+        //             ] as string;
 
-        const handleStatesClick = (e: MapMouseEvent) => {
-            const features = map.queryRenderedFeatures(e.point, {
-                layers: [SubLayerId.StatesFill],
-            });
+        //             if (basin) {
+        //                 setBasin(basin);
+        //             }
+        //         }
+        //     }
+        // };
 
-            if (features && features.length) {
-                const feature = features[0];
-                console.log('State', feature);
-                if (feature.properties) {
-                    const state = feature.properties[
-                        StateField.Acronym
-                    ] as string;
+        // const handleStatesClick = (e: MapMouseEvent) => {
+        //     const features = map.queryRenderedFeatures(e.point, {
+        //         layers: [SubLayerId.StatesFill],
+        //     });
 
-                    if (state) {
-                        setState(state);
-                    }
-                }
-            }
-        };
+        //     if (features && features.length) {
+        //         const feature = features[0];
+        //         if (feature.properties) {
+        //             const state = feature.properties[
+        //                 StateField.Acronym
+        //             ] as string;
+
+        //             if (state) {
+        //                 setState(state);
+        //             }
+        //         }
+        //     }
+        // };
 
         const handleReservoirsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
@@ -235,7 +235,7 @@ const MainMap: React.FC<Props> = (props) => {
                         );
                         const basinProperty = rawBasinProperty.startsWith('[')
                             ? (JSON.parse(rawBasinProperty) as string[])
-                            : rawBasinProperty;
+                            : String(rawBasinProperty).slice(0, 2);
 
                         setBasin(
                             Array.isArray(basinProperty)
@@ -269,9 +269,9 @@ const MainMap: React.FC<Props> = (props) => {
             }
         };
 
-        map.on('click', SubLayerId.RegionsFill, handleRegionsClick);
-        map.on('click', SubLayerId.BasinsFill, handleBasinsClick);
-        map.on('click', SubLayerId.StatesFill, handleStatesClick);
+        // map.on('click', SubLayerId.RegionsFill, handleRegionsClick);
+        // map.on('click', SubLayerId.BasinsFill, handleBasinsClick);
+        // map.on('click', SubLayerId.StatesFill, handleStatesClick);
 
         map.on('click', reservoirLayers, handleReservoirsClick);
 
@@ -294,9 +294,9 @@ const MainMap: React.FC<Props> = (props) => {
         );
 
         return () => {
-            map.off('click', SubLayerId.RegionsFill, handleRegionsClick);
-            map.off('click', SubLayerId.BasinsFill, handleBasinsClick);
-            map.off('click', SubLayerId.StatesFill, handleStatesClick);
+            // map.off('click', SubLayerId.RegionsFill, handleRegionsClick);
+            // map.off('click', SubLayerId.BasinsFill, handleBasinsClick);
+            // map.off('click', SubLayerId.StatesFill, handleStatesClick);
             map.off('click', reservoirLayers, handleReservoirsClick);
         };
     }, [map]);
@@ -352,8 +352,16 @@ const MainMap: React.FC<Props> = (props) => {
         }
         if (basin === BasinDefault) {
             // Unset Filter
-            map.setFilter(SubLayerId.BasinsFill, null);
-            map.setFilter(SubLayerId.BasinsBoundary, null);
+            map.setFilter(SubLayerId.BasinsFill, [
+                'in',
+                ['get', Huc02BasinField.Id],
+                ['literal', ValidBasins],
+            ]);
+            map.setFilter(SubLayerId.BasinsBoundary, [
+                'in',
+                ['get', Huc02BasinField.Id],
+                ['literal', ValidBasins],
+            ]);
 
             if (reservoir === ReservoirDefault) {
                 ReservoirConfigs.forEach((config) => {
@@ -365,17 +373,16 @@ const MainMap: React.FC<Props> = (props) => {
         } else {
             map.setFilter(SubLayerId.BasinsFill, [
                 '==',
-                ['get', Huc06BasinField.Id],
+                ['get', Huc02BasinField.Id],
                 basin,
             ]);
             map.setFilter(SubLayerId.BasinsBoundary, [
                 '==',
-                ['get', Huc06BasinField.Id],
+                ['get', Huc02BasinField.Id],
                 basin,
             ]);
 
             if (boundingGeographyLevel === BoundingGeographyLevel.Basin) {
-                console.log('basin', basin);
                 ReservoirConfigs.forEach((config) => {
                     config.connectedLayers.forEach((layerId) => {
                         map.setFilter(
@@ -383,7 +390,7 @@ const MainMap: React.FC<Props> = (props) => {
                             getBoundingGeographyFilter(
                                 config,
                                 'basinConnectorProperty',
-                                Number(basin)
+                                basin
                             )
                         );
                     });
@@ -455,15 +462,7 @@ const MainMap: React.FC<Props> = (props) => {
                     setBasin(BasinDefault);
                     setState(StateDefault);
                     setReservoir(ReservoirDefault);
-                    map.once('idle', () => {
-                        requestAnimationFrame(() => {
-                            map.flyTo({
-                                center: INITIAL_CENTER,
-                                zoom: INITIAL_ZOOM,
-                                speed: 2,
-                            });
-                        });
-                    });
+                    resetMap(map);
                 }
             }
         };
@@ -494,16 +493,12 @@ const MainMap: React.FC<Props> = (props) => {
                                 const center = feature.geometry
                                     .coordinates as LngLatLike;
 
-                                map.once('idle', () => {
-                                    // Wait for the next animation frame to ensure layout is complete
-                                    requestAnimationFrame(() => {
-                                        map.flyTo({
-                                            center: center,
-                                            zoom: 10,
-                                            speed: 2,
-                                            easing: (t) => t, // linear easing
-                                        });
-                                    });
+                                map.resize();
+                                map.flyTo({
+                                    center: center,
+                                    zoom: 6,
+                                    speed: 2,
+                                    easing: (t) => t, // linear easing
                                 });
                             }
                         }

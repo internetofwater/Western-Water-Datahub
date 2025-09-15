@@ -39,6 +39,12 @@ export const Info: React.FC<Props> = (props) => {
     const average = Number(
         reservoirProperties[config.thirtyYearAverageProperty]
     );
+    const ninetiethPercentile = Number(
+        reservoirProperties[config.ninetiethPercentileProperty]
+    );
+    const tenthPercentile = Number(
+        reservoirProperties[config.tenthPercentileProperty]
+    );
 
     const percentFull = ((storage / capacity) * 100).toFixed(1);
     const percentOfAverage = ((storage / average) * 100).toFixed(1);
@@ -53,7 +59,7 @@ export const Info: React.FC<Props> = (props) => {
             <Stack gap="xs" w="100%" className={styles.infoGroup}>
                 <Box>
                     <Text>
-                        Last Updated:{' '}
+                        Data as of:{' '}
                         {dayjs(
                             reservoirProperties[
                                 config.storageDateProperty
@@ -75,9 +81,21 @@ export const Info: React.FC<Props> = (props) => {
                             </Text>
                         </Group>
                         <Group gap="xs" justify="flex-start">
-                            <Text fw={700}>Average:</Text>
+                            <Text fw={700}>
+                                (High) 90<sup>th</sup> Percentile:
+                            </Text>
                             <Text>
-                                {average.toLocaleString('en-US')}&nbsp;acre-feet
+                                {ninetiethPercentile.toLocaleString('en-US')}
+                                &nbsp;acre-feet
+                            </Text>
+                        </Group>
+                        <Group gap="xs" justify="flex-start">
+                            <Text fw={700}>
+                                (Low) 10<sup>th</sup> Percentile:
+                            </Text>
+                            <Text>
+                                {tenthPercentile.toLocaleString('en-US')}
+                                &nbsp;acre-feet
                             </Text>
                         </Group>
                     </TextBlock>

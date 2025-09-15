@@ -10,16 +10,25 @@ import {
     LayoutSpecification,
     Map,
     PaintSpecification,
+    Popup,
 } from 'mapbox-gl';
 import { SourceDataEvent, ReservoirConfig } from '@/features/Map/types';
 import {
     ComplexReservoirProperties,
+    INITIAL_CENTER,
+    INITIAL_ZOOM,
     ReservoirConfigs,
     TeacupPercentageOfCapacityExpression,
     ZoomCapacityArray,
 } from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/consts';
-import { FeatureCollection, GeoJsonProperties, Geometry, Point } from 'geojson';
+import {
+    Feature,
+    FeatureCollection,
+    GeoJsonProperties,
+    Geometry,
+    Point,
+} from 'geojson';
 import {
     RiseReservoirProperties,
     RiseReservoirPropertiesRaw,
@@ -27,6 +36,7 @@ import {
 import wwdhService from '@/services/init/wwdh.init';
 import { CoverageJSON } from '@/services/edr.service';
 import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
+import { SnotelField, SnotelProperties } from './types/snotel';
 
 /**
  *
@@ -300,7 +310,11 @@ export const getReservoirLabelLayout = (
         'text-field': ['get', config.labelProperty],
         'text-anchor': 'bottom',
         'text-size': 16,
-        'symbol-sort-key': ['coalesce', ['get', config.capacityProperty], 1],
+        'symbol-sort-key': [
+            '+',
+            ['coalesce', ['get', config.capacityProperty], 1],
+            1,
+        ],
         'text-offset': [
             'let',
             'capacity',
@@ -511,6 +525,27 @@ export const getBoundingGeographyFilter = (
     property: keyof ReservoirConfig,
     value: string | number | string[] | number[]
 ): FilterSpecification => {
+    if (property === 'basinConnectorProperty') {
+        return [
+            'all',
+            getReservoirFilter(config),
+            [
+                'case',
+                [
+                    'any',
+                    ['==', ['typeof', ['get', config[property]]], 'literal'],
+                    ['==', ['typeof', ['get', config[property]]], 'array'],
+                ],
+                ['in', value, ['get', config[property]]],
+                [
+                    '==',
+                    ['slice', ['to-string', ['get', config[property]]], 0, 2],
+                    ['to-string', value],
+                ],
+            ],
+        ];
+    }
+
     return [
         'all',
         getReservoirFilter(config),
@@ -525,4 +560,42 @@ export const getBoundingGeographyFilter = (
             ['==', ['get', config[property]], value],
         ],
     ];
+};
+
+export const resetMap = (map: Map) => {
+    map.resize();
+    map.once('idle', () => {
+        requestAnimationFrame(() => {
+            map.flyTo({
+                center: INITIAL_CENTER,
+                zoom: INITIAL_ZOOM,
+                speed: 2,
+                easing: (t) => t, // linear easing
+            });
+        });
+    });
+};
+
+export const getAndDisplaySnotelChart = async (
+    map: Map,
+    persistentPopup: Popup,
+    feature: Feature<Point, SnotelProperties>
+) => {
+    const state = feature.properties[SnotelField.StateCode];
+    const name = feature.properties[SnotelField.Name];
+    const url = `https://nwcc-apps.sc.egov.usda.gov/awdb/site-plots/POR/WTEQ/${state}/${name}.html`;
+    const response = await fetch(url);
+
+    const htmlText = await response.text();
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlText, 'text/html');
+    const graphContainer = doc.querySelector('.graph-container')?.innerHTML;
+
+    if (graphContainer) {
+        persistentPopup
+            .setLngLat(feature.geometry.coordinates as [number, number])
+            .setHTML(htmlText)
+            .addTo(map);
+    }
 };
