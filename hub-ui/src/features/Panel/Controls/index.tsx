@@ -10,7 +10,7 @@ import { SearchLocations } from "./SearchLocations";
 
 const Controls: React.FC = () => {
   return (
-    <Group className={styles.controlsWrapper} grow>
+    <Group className={styles.controlsWrapper} grow gap="sm">
       <SearchLocations />
       <Reset />
     </Group>

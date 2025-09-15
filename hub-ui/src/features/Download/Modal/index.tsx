@@ -5,7 +5,7 @@
 
 import { Fragment } from "react/jsx-runtime";
 import { Modal as _Modal, Divider } from "@mantine/core";
-import Collection from "@/features/Download/Modal/Collection/Collection";
+import Collection from "@/features/Download/Modal/Collection";
 import useMainStore from "@/stores/main";
 import useSessionStore from "@/stores/session";
 import { groupLocationIdsByCollection } from "@/utils/groupLocationsByCollection";

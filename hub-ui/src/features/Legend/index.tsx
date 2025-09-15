@@ -30,6 +30,8 @@ const Legend: React.FC = () => {
 
     map.on("styledata", () => {
       const originalCollections = useMainStore.getState().originalCollections;
+      const legendEntries = useSessionStore.getState().legendEntries;
+
       const layers = map.getStyle().layers;
       const newLegendEntries: SessionState["legendEntries"] = [];
       layers.forEach((layer) => {
@@ -46,7 +48,9 @@ const Legend: React.FC = () => {
             newLegendEntries.push({
               layerId: layer.id,
               color: color ?? "#000",
-              visible: true,
+              visible:
+                legendEntries.find((entry) => entry.layerId === layer.id)
+                  ?.visible ?? true,
             });
           }
         }
@@ -119,8 +123,9 @@ const Legend: React.FC = () => {
           <Fragment key={`legend-entry-${entry.layerId}`}>
             <Stack>
               <Text>{getCollectionTitle(entry.layerId)}</Text>
-              <Group justify="space-between">
+              <Group justify="space-between" align="flex-end">
                 <ColorInput
+                  label="Location Points"
                   value={entry.color}
                   onChange={(color) => handleColorChange(color, entry.layerId)}
                   className={styles.colorPicker}
