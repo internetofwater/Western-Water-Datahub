@@ -17,6 +17,7 @@
   min-width: 0;
   overflow: hidden;
   display: block;
+  margin-left: 8px;
 }
 
 .buttonWrapper {

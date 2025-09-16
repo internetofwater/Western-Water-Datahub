@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { Fragment, useEffect, useRef, useState } from "react";
 import {
+  Anchor,
   Box,
   Button,
   Collapse,
@@ -17,13 +18,13 @@ import {
   Stack,
   Text,
   Title,
-  Tooltip,
   VisuallyHidden,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import Info from "@/assets/Info";
 import CopyInput from "@/components/CopyInput";
+import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Download/Download.module.css";
 import { Chart } from "@/features/Download/Modal/Collection/Chart";
 import { CSV } from "@/features/Download/Modal/Collection/CSV";
@@ -129,15 +130,35 @@ const Collection: React.FC<Props> = (props) => {
     selectedParameters.length <= PARAMETER_LIMIT;
   const areParametersSelected = selectedParameters.length > 0;
 
-  const parameterHelpText =
-    "Parameters are scientific measurements that may exist at a location";
+  const parameterHelpText = (
+    <>
+      <Text size="sm">
+        Parameters are scientific measurements that may be available at a
+        location.
+      </Text>
+      <br />
+      <Text size="sm">
+        These measurements are connected to an individual time and date.
+      </Text>
+    </>
+  );
+
+  const alternateLink = collection?.links?.find(
+    (link) => link.rel === "alternate" && link.type === "text/html",
+  )?.href;
 
   return (
     <Box>
       {collection && (
         <Box p="lg">
           <Group justify="space-between" mb="sm">
-            <Title order={3}>{collection.title}</Title>
+            {alternateLink ? (
+              <Anchor href={alternateLink} target="_blank">
+                <Title order={3}>{collection.title}</Title>
+              </Anchor>
+            ) : (
+              <Title order={3}>{collection.title}</Title>
+            )}
             <Button onClick={toggle}>{opened ? "Hide" : "Show"}</Button>
           </Group>
           <Collapse in={opened}>
@@ -150,14 +171,7 @@ const Collection: React.FC<Props> = (props) => {
                       size="sm"
                       className={styles.parameterNameSelect}
                       label={
-                        <Tooltip
-                          label={parameterHelpText}
-                          transitionProps={{
-                            transition: "fade-right",
-                            duration: 300,
-                          }}
-                          position="top-start"
-                        >
+                        <Tooltip multiline label={parameterHelpText}>
                           <Group
                             className={styles.parameterLabelWrapper}
                             gap="xs"
@@ -169,7 +183,7 @@ const Collection: React.FC<Props> = (props) => {
                           </Group>
                         </Tooltip>
                       }
-                      description="Select at least one parameter"
+                      description="Select 1-10 parameters"
                       placeholder="Select..."
                       data={parameterNameOptions}
                       value={selectedParameters}
@@ -179,7 +193,7 @@ const Collection: React.FC<Props> = (props) => {
                       error={
                         isParameterSelectionUnderLimit
                           ? false
-                          : `Please remove ${selectedParameters.length - PARAMETER_LIMIT} parameter(s)`
+                          : `Please remove ${selectedParameters.length - PARAMETER_LIMIT} parameter${selectedParameters.length - PARAMETER_LIMIT > 1 ? "s" : ""}`
                       }
                     />
                     <VisuallyHidden>{parameterHelpText}</VisuallyHidden>
@@ -233,6 +247,15 @@ const Collection: React.FC<Props> = (props) => {
                     <Fragment
                       key={`collection-download-${collectionId}-${locationId}`}
                     >
+                      <Group gap="xs">
+                        <Text>Location:</Text>
+                        <Anchor
+                          href={`${collection.data_queries.locations?.link?.href}/${locationId}`}
+                          target="_blank"
+                        >
+                          {locationId}
+                        </Anchor>
+                      </Group>
                       <Chart
                         instanceId={startDownload}
                         collectionId={collectionId}

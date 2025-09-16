@@ -16,6 +16,10 @@ export async function request<T>(options: IRequestOptions): Promise<T> {
     throw new Error(res.statusText);
   }
 
+  if (res.status === 204) {
+    return null as T;
+  }
+
   // no content
   const json = res.json();
 
@@ -52,9 +56,9 @@ function getContentType(headers: IRequestHeaders): string {
 
 function toSearchParams(params: IRequestParams) {
   const searchParams = new URLSearchParams();
-  if (!("f" in params)) {
-    searchParams.append("f", "json");
-  }
+  // if (!("f" in params)) {
+  //   searchParams.append("f", "json");
+  // }
   for (const key in params) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     searchParams.append(key, params[key].toString());
