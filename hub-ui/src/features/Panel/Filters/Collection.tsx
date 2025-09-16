@@ -53,7 +53,7 @@ export const Collection: React.FC = () => {
     category: MainState["category"],
   ) => {
     if (provider && category) {
-      return `Showing data sources available for provider: ${provider}, about category: ${category.label}`;
+      return `Showing data sources available from provider: ${provider}, about category: ${category.label}`;
     } else if (provider) {
       return `Showing data sources available from provider: ${provider}`;
     } else if (category) {
