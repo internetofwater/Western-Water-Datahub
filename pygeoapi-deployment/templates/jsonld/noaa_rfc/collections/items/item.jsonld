@@ -1,0 +1,41 @@
+{
+    "@context":[
+        {
+            "schema":"https://schema.org/",
+            "gsp":"http://www.opengis.net/ont/geosparql#",
+            "type":"@type"
+        }
+    ],
+    "type":"schema:Place",
+    "@id":"{{ data['@id'] }}",
+    "schema:name": {{ data['espname'] | tojson }},
+    "gsp:hasGeometry": {{ data["gsp:hasGeometry"] | to_json }},
+    "schema:geo": {{ data["schema:geo"] | to_json }},
+    "schema:subjectOf": [
+        {
+            "@type":"Dataset",
+            "schema:name":{{ data['espname'] | tojson }},
+            "schema:description": "A ensemble streamflow forecast prediction for {{ data['espname'] }}",
+            "schema:isAccessibleForFree": true,
+            "schema:provider": {
+                "@type": "schema:GovernmentOrganization",
+                "schema:name": "National Oceanic and Atmospheric Administration",
+                "schema:url": "https://www.noaa.gov/"
+            },
+            "schema:keywords": [
+                "NOAA",
+                "National Oceanic and Atmospheric Administration",
+                "River Forecast Center",
+                "ESP",
+                "Ensemble Streamflow Prediction"
+            ],
+            "schema:identifier": {{ data['espid'] | tojson }}
+            {% if data['dataset_link'] %},
+            "schema:url": {{ data['dataset_link'] | tojson }}
+            {% endif %}
+            {% if data['image_plot_link'] %},
+            "schema:image": {{ data['image_plot_link'] | tojson }}
+            {% endif %}
+        }
+    ]
+}

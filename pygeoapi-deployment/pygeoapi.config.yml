@@ -410,6 +410,8 @@ resources:
       - <<: *default-link
         href: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
     extents: *default-extent
+    templates:
+      path: templates/jsonld/noaa_rfc
     providers:
       - type: feature
         name: noaa_rfc.noaa_rfc.NOAARFCProvider

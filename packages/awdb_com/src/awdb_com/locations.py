@@ -39,6 +39,10 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         data = [v for v in self.locations if v.stationId == str(location_id)]
         self.locations = data
 
+    def drop_all_locations_but_station_triplet(self, station_triplet: str):
+        data = [v for v in self.locations if v.stationTriplet == str(station_triplet)]
+        self.locations = data
+
     def select_date_range(self, datetime_: str):
         """
         Drop locations if their begin-end range is outside of the query date range
@@ -102,6 +106,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         properties: Optional[list[tuple[str, str]]] = None,
         fields_mapping: EDRFieldsMapping | OAFFieldsMapping = {},
         sortby: Optional[list[SortDict]] = None,
+        useStationTripletAsId: bool = False,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
         Return a geojson feature if the client queried for items/{itemId} or a feature collection if they queried for items/ even if the result is only one item
@@ -118,7 +123,12 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                 }
                 if not skip_geometry
                 else None,
-                "id": loc.stationId,
+                # If the user is returning awdb data not just snotel stations we
+                # have to use the station triplet as the id since different orgs in awdb
+                # may have the same id, but the triplet is unique
+                "id": str(loc.stationTriplet)
+                if useStationTripletAsId
+                else loc.stationId,
             }
 
             serialized_feature = geojson_pydantic.Feature.model_validate(feature)
