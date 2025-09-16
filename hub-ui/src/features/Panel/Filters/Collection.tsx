@@ -37,7 +37,7 @@ export const Collection: React.FC = () => {
     const collectionOptions: ComboboxData = collections
       .map((collection) => ({
         value: collection.id,
-        label: collection.title ?? collection.id,
+        label: collection.description ?? collection.id,
       }))
       .sort((a, b) => a.label.localeCompare(b.label));
 
@@ -53,11 +53,11 @@ export const Collection: React.FC = () => {
     category: MainState["category"],
   ) => {
     if (provider && category) {
-      return `Showing collections available for provider: ${provider}, in category: ${category.label}`;
+      return `Showing data sources available from provider: ${provider}, about category: ${category.label}`;
     } else if (provider) {
-      return `Showing collections available for provider: ${provider}`;
+      return `Showing data sources available from provider: ${provider}`;
     } else if (category) {
-      return `Showing collections available in category: ${category.label}`;
+      return `Showing data sources available about category: ${category.label}`;
     }
 
     return null;
@@ -65,7 +65,7 @@ export const Collection: React.FC = () => {
 
   const helpText = (
     <>
-      <Text size="sm">Select a specific collection to add locations from.</Text>
+      <Text size="sm">Select a data source to add locations from.</Text>
       <br />
       <Text size="sm">
         Locations connect scientific measurements to a geographic point on the

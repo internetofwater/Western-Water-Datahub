@@ -6,12 +6,12 @@
 import { Category } from "@/features/Panel/Filters/Category";
 import { Collection } from "@/features/Panel/Filters/Collection";
 import Geography from "@/features/Panel/Filters/Geography";
-import { Provider } from "@/features/Panel/Filters/Provider";
+// import { Provider } from "@/features/Panel/Filters/Provider";
 
 const Filters: React.FC = () => {
   return (
     <>
-      <Provider />
+      {/* <Provider /> */}
       <Category />
       <Collection />
       <Geography />
