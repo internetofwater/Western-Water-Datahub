@@ -26,7 +26,9 @@ class SnotelLocationCollection(LocationCollection, LocationCollectionProtocolWit
     ):
         self.cache = RedisCache()
         # snotel also proxies usgs so we just want to get SNOTEL stations
-        stations_to_fetch = "*:*:SNTL" if not itemId else itemId
+        # we assume that sntl has a unique id on the triplet so we can specify itemId:*:SNTL
+        # which is the same as fetching all snotel and filtering by the item id
+        stations_to_fetch = "*:*:SNTL" if not itemId else f"{itemId}:*:SNTL"
         url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?activeOnly=true&stationTriplets={stations_to_fetch}"
 
         if itemId:

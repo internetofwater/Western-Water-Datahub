@@ -146,7 +146,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         )
         if itemsIDSingleFeature:
             assert len(features) == 1, (
-                "The user queried a single item but we have more than one present. This is a sign that filtering by locationid wasn't done properly"
+                f"The user queried a single item but we have {len(features)} present. This is a sign that filtering by locationid wasn't done properly"
             )
             return GeojsonFeatureDict(**features[0].model_dump(exclude_unset=True))
         return GeojsonFeatureCollectionDict(
