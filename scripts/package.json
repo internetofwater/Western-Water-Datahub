@@ -1,0 +1,14 @@
+{
+  "name": "wwdh-scripts",
+  "version": "1.0.0",
+  "description": "Any helper scripts that are requested by the client for generating assets like CSVs/reports etc",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@camptocamp/ogc-client": "^1.3.0"
+  }
+}
