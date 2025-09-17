@@ -246,6 +246,9 @@ class ForecastCollection(LocationCollectionProtocol):
                     "espname",
                     "dataset_link",
                     "image_plot_link",
+                    "espfgroupid",
+                    "espbasin",
+                    "espsubbasin",
                 }
             )
 
@@ -259,6 +262,10 @@ class ForecastCollection(LocationCollectionProtocol):
                     "image_plot_link": forecast.image_plot_link,
                     "dataset_link": forecast.dataset_link,
                     "espname": forecast.espname,
+                    "espfgroupid": forecast.espfgroupid,
+                    "espbasin": forecast.espbasin,
+                    "espsubbasin": forecast.espsubbasin,
+                    "espid": forecast.espid,
                 },
                 geometry=Point(
                     coordinates=Position2D(forecast.esplngdd, forecast.esplatdd),
