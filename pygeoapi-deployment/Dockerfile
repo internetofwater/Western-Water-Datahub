@@ -35,6 +35,7 @@ COPY packages /opt/pygeoapi/packages/
 RUN uv sync --all-packages --inexact 
 
 COPY pygeoapi-deployment/ /opt/pygeoapi/pygeoapi-deployment/
+COPY pygeoapi.config.yml /opt/pygeoapi/pygeoapi.config.yml
 
 RUN cp /opt/pygeoapi/packages/resviz/resviz.crontab /etc/cron.d/resviz-cron && \
     chmod 0644 /etc/cron.d/resviz-cron && \
@@ -43,6 +44,7 @@ RUN cp /opt/pygeoapi/packages/resviz/resviz.crontab /etc/cron.d/resviz-cron && \
 
 # Set up environment
 ENV PATH="/opt/pygeoapi/.venv/bin:$PATH"
+ENV CONFIG_FILE="/opt/pygeoapi/pygeoapi.config.yml"
 
 # Entrypoint for running the app
 ENTRYPOINT [ "/opt/pygeoapi/pygeoapi-deployment/entrypoint.sh" ]

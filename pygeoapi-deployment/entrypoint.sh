@@ -9,9 +9,9 @@ echo "START /entrypoint.sh"
 
 set +e
 
-export PYGEOAPI_HOME=/opt/pygeoapi/pygeoapi-deployment
-export PYGEOAPI_CONFIG="${PYGEOAPI_HOME}/pygeoapi.config.yml"
-export PYGEOAPI_OPENAPI="${PYGEOAPI_HOME}/pygeoapi.openapi.yml"
+export PYGEOAPI_HOME=/opt/pygeoapi
+export PYGEOAPI_CONFIG="/opt/pygeoapi/pygeoapi.config.yml"
+export PYGEOAPI_OPENAPI="/opt/pygeoapi/pygeoapi.openapi.yml"
 
 # gunicorn env settings with defaults
 SCRIPT_NAME=${SCRIPT_NAME:=/}
