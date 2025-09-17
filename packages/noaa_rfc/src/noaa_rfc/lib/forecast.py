@@ -232,14 +232,34 @@ class ForecastCollection(LocationCollectionProtocol):
         fields_mapping: EDRFieldsMapping | OAFFieldsMapping = {},
         sortby: Optional[list[SortDict]] = None,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        features: list[Feature] = []
+        features: dict[str, Feature] = {}
         for forecast in self.locations:
             forecast.extend_with_metadata()
+
+            # get all forecast values besides those which are shared across the entire forecast
+            all_forecast_values = forecast.model_dump(
+                exclude={
+                    "esplatdd",
+                    "esplngdd",
+                    "espid",
+                    "espfdate",
+                    "espname",
+                    "dataset_link",
+                    "image_plot_link",
+                }
+            )
 
             serialized_feature = Feature(
                 type="Feature",
                 id=forecast.espid,
-                properties=forecast.model_dump(exclude={"esplatdd", "esplngdd"}),
+                properties={
+                    "forecasts": {
+                        str(forecast.espfdate): all_forecast_values,
+                    },
+                    "image_plot_link": forecast.image_plot_link,
+                    "dataset_link": forecast.dataset_link,
+                    "espname": forecast.espname,
+                },
                 geometry=Point(
                     coordinates=Position2D(forecast.esplngdd, forecast.esplatdd),
                     type="Point",
@@ -260,17 +280,27 @@ class ForecastCollection(LocationCollectionProtocol):
                     serialized_feature, select_properties
                 )
 
-            features.append(serialized_feature)
-
+            if forecast.espid in features:
+                alreadyExistingFeature = features[forecast.espid]
+                assert alreadyExistingFeature.properties
+                alreadyExistingFeature.properties["forecasts"][
+                    str(forecast.espfdate)
+                ] = all_forecast_values
+            else:
+                features[forecast.espid] = serialized_feature
+        allFeatures = list(features.values())
         if itemsIDSingleFeature:
-            return cast(GeojsonFeatureDict, features[0].model_dump(exclude_unset=True))
+            assert len(allFeatures) == 1, f"Expected 1 feature, got {len(features)}"
+            return cast(
+                GeojsonFeatureDict, allFeatures[0].model_dump(exclude_unset=True)
+            )
 
         if sortby:
-            sort_by_properties_in_place(features, sortby)
+            sort_by_properties_in_place(allFeatures, sortby)
 
         return cast(
             GeojsonFeatureCollectionDict,
-            FeatureCollection(type="FeatureCollection", features=features).model_dump(
-                exclude_unset=True
-            ),
+            FeatureCollection(
+                type="FeatureCollection", features=allFeatures
+            ).model_dump(exclude_unset=True),
         )
