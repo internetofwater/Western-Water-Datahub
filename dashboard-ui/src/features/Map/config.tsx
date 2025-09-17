@@ -442,7 +442,7 @@ export const getLayerConfig = (
                     'circle-stroke-color': '#000',
                     'circle-color': [
                         'step',
-                        ['get', 'esppavg'],
+                        ['get', 'latest_esppavg'],
                         '#d73027',
                         25,
                         '#f46d43',
@@ -596,7 +596,7 @@ export const getLayerHoverFunction = (
                                 'espname'
                             ] as string;
                             const average = Number(
-                                feature.properties['esppavg']
+                                feature.properties['latest_esppavg']
                             ).toFixed(1);
                             const html = `
                             <div>
@@ -767,7 +767,7 @@ export const getLayerMouseMoveFunction = (
                                 'espname'
                             ] as string;
                             const average = Number(
-                                feature.properties['esppavg']
+                                feature.properties['espplatest_esppavgavg']
                             ).toFixed(1);
                             const html = `
                                 <div>
