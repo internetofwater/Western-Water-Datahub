@@ -9,7 +9,7 @@ echo "START /entrypoint.sh"
 
 set +e
 
-export PYGEOAPI_HOME=/opt/pygeoapi/pygeoapi-deployment
+export PYGEOAPI_HOME=/opt/pygeoapi
 export PYGEOAPI_CONFIG="${PYGEOAPI_HOME}/pygeoapi.config.yml"
 export PYGEOAPI_OPENAPI="${PYGEOAPI_HOME}/pygeoapi.openapi.yml"
 
