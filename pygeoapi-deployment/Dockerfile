@@ -44,7 +44,6 @@ RUN cp /opt/pygeoapi/packages/resviz/resviz.crontab /etc/cron.d/resviz-cron && \
 
 # Set up environment
 ENV PATH="/opt/pygeoapi/.venv/bin:$PATH"
-ENV CONFIG_FILE="/opt/pygeoapi/pygeoapi.config.yml"
 
 # Entrypoint for running the app
 ENTRYPOINT [ "/opt/pygeoapi/pygeoapi-deployment/entrypoint.sh" ]
