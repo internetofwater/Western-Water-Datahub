@@ -767,7 +767,7 @@ export const getLayerMouseMoveFunction = (
                                 'espname'
                             ] as string;
                             const average = Number(
-                                feature.properties['espplatest_esppavgavg']
+                                feature.properties['esppavg']
                             ).toFixed(1);
                             const html = `
                                 <div>
