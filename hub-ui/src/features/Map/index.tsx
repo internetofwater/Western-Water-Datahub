@@ -12,7 +12,7 @@ import { useMap } from "@/contexts/MapContexts";
 import { layerDefinitions, MAP_ID } from "@/features/Map/config";
 import { sourceConfigs } from "@/features/Map/sources";
 import { MapButton as Legend } from "@/features/Map/Tools/Legend/Button";
-import { getCircleStrokeColor } from "@/features/Map/utils";
+import { getSelectedColor } from "@/features/Map/utils";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import useSessionStore from "@/stores/session";
@@ -93,14 +93,25 @@ const MainMap: React.FC<Props> = (props) => {
 
     const locationsByCollection = groupLocationIdsByCollection(locations);
     collections.forEach((collection) => {
-      const layerId = mainManager.getLocationsLayerId(collection.id);
+      const { pointLayerId, lineLayerId } = mainManager.getLocationsLayerIds(
+        collection.id,
+      );
 
       const locationIds = locationsByCollection[collection.id] ?? [];
-      if (map.getLayer(layerId)) {
+      let color;
+      if (map.getLayer(pointLayerId)) {
+        color = map.getPaintProperty(pointLayerId, "circle-color") as string;
         map.setPaintProperty(
-          layerId,
+          pointLayerId,
           "circle-stroke-color",
-          getCircleStrokeColor(locationIds),
+          getSelectedColor(locationIds),
+        );
+      }
+      if (map.getLayer(lineLayerId)) {
+        map.setPaintProperty(
+          lineLayerId,
+          "line-color",
+          getSelectedColor(locationIds, color),
         );
       }
     });

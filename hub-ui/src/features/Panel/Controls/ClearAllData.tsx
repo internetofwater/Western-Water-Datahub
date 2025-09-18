@@ -31,9 +31,10 @@ export const Reset: React.FC = () => {
       const layers = map.getStyle().layers;
       setHasLocationsLoaded(
         layers.some((layer) =>
-          collections.some(
-            (collection) =>
-              mainManager.getLocationsLayerId(collection.id) === layer.id,
+          collections.some((collection) =>
+            Object.values(
+              mainManager.getLocationsLayerIds(collection.id),
+            ).includes(layer.id),
           ),
         ),
       );
