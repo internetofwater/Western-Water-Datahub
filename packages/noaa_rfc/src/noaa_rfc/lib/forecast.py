@@ -1,7 +1,7 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from datetime import date
+from datetime import date, datetime
 import time
 from typing import Literal, Optional, cast
 from com.cache import RedisCache
@@ -295,6 +295,30 @@ class ForecastCollection(LocationCollectionProtocol):
                 ] = all_forecast_values
             else:
                 features[forecast.espid] = serialized_feature
+
+        # since mapbox requires a static property for the latest forecast, we create it here
+        # so the frontend doesn't need to do transformations on the data
+        for feature in features.values():
+            if not feature.properties or not feature.properties["forecasts"]:
+                continue
+
+            # if there is only one forecast we use that as the latest by default
+            if len(feature.properties["forecasts"]) == 1:
+                feature.properties["latest_esppavg"] = list(
+                    feature.properties["forecasts"].values()
+                )[0]["esppavg"]
+                continue
+
+            latestDate = max(
+                [
+                    datetime.strptime(forecast, "%Y-%m-%d")
+                    for forecast in feature.properties["forecasts"].keys()
+                ]
+            )
+            feature.properties["latest_esppavg"] = feature.properties["forecasts"][
+                latestDate.strftime("%Y-%m-%d")
+            ]["esppavg"]
+
         allFeatures = list(features.values())
         if itemsIDSingleFeature:
             assert len(allFeatures) == 1, f"Expected 1 feature, got {len(features)}"

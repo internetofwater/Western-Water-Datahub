@@ -442,7 +442,7 @@ export const getLayerConfig = (
                     'circle-stroke-color': '#000',
                     'circle-color': [
                         'step',
-                        ['get', 'esppavg'],
+                        ['get', 'latest_esppavg'],
                         '#d73027',
                         25,
                         '#f46d43',
@@ -596,7 +596,7 @@ export const getLayerHoverFunction = (
                                 'espname'
                             ] as string;
                             const average = Number(
-                                feature.properties['esppavg']
+                                feature.properties['latest_esppavg']
                             ).toFixed(1);
                             const html = `
                             <div>
@@ -767,7 +767,7 @@ export const getLayerMouseMoveFunction = (
                                 'espname'
                             ] as string;
                             const average = Number(
-                                feature.properties['esppavg']
+                                feature.properties['latest_esppavg']
                             ).toFixed(1);
                             const html = `
                                 <div>
@@ -883,9 +883,15 @@ export const getLayerClickFunction = (
                             const imageLink = feature.properties[
                                 'image_plot_link'
                             ] as string;
+                            const datasetLink = feature.properties[
+                                'dataset_link'
+                            ] as string;
                             const html = `
                                 <div style="color:black;width:400px;">
-                                    <img style="width:100%;" src="${imageLink}" alt="Plot of forecasted river conditions" />
+                                    <a href="${datasetLink}" target="_blank">
+                                        <img style="width:100%;" src="${imageLink}" alt="Plot of forecasted river conditions" />
+                                        Data Source
+                                    </a>
                                 </div>
                                 `;
                             persistentPopup
