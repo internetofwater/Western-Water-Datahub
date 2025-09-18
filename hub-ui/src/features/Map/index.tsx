@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useRef, useState } from 'react';
-import Map from '@/components/Map';
-import { basemaps } from '@/components/Map/consts';
-import CustomControl from '@/components/Map/tools/CustomControl';
-import { BasemapId } from '@/components/Map/types';
-import { useMap } from '@/contexts/MapContexts';
-import { layerDefinitions, MAP_ID } from '@/features/Map/config';
-import { sourceConfigs } from '@/features/Map/sources';
-import { MapButton as Legend } from '@/features/Map/Tools/Legend/Button';
-import { getSelectedColor } from '@/features/Map/utils';
-import mainManager from '@/managers/Main.init';
-import useMainStore from '@/stores/main';
-import useSessionStore from '@/stores/session';
-import { groupLocationIdsByCollection } from '@/utils/groupLocationsByCollection';
+import { useEffect, useRef, useState } from "react";
+import Map from "@/components/Map";
+import { basemaps } from "@/components/Map/consts";
+import CustomControl from "@/components/Map/tools/CustomControl";
+import { BasemapId } from "@/components/Map/types";
+import { useMap } from "@/contexts/MapContexts";
+import { layerDefinitions, MAP_ID } from "@/features/Map/config";
+import { sourceConfigs } from "@/features/Map/sources";
+import { MapButton as Legend } from "@/features/Map/Tools/Legend/Button";
+import { getSelectedColor } from "@/features/Map/utils";
+import mainManager from "@/managers/Main.init";
+import useMainStore from "@/stores/main";
+import useSessionStore from "@/stores/session";
+import { groupLocationIdsByCollection } from "@/utils/groupLocationsByCollection";
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;
@@ -72,7 +72,7 @@ const MainMap: React.FC<Props> = (props) => {
         {
           padding: 50,
           animate: false,
-        }
+        },
       );
       initialMapLoad.current = false;
     }
@@ -93,16 +93,26 @@ const MainMap: React.FC<Props> = (props) => {
 
     const locationsByCollection = groupLocationIdsByCollection(locations);
     collections.forEach((collection) => {
-      const { pointLayerId, lineLayerId } = mainManager.getLocationsLayerIds(collection.id);
+      const { pointLayerId, lineLayerId } = mainManager.getLocationsLayerIds(
+        collection.id,
+      );
 
       const locationIds = locationsByCollection[collection.id] ?? [];
       let color;
       if (map.getLayer(pointLayerId)) {
-        color = map.getPaintProperty(pointLayerId, 'circle-color') as string;
-        map.setPaintProperty(pointLayerId, 'circle-stroke-color', getSelectedColor(locationIds));
+        color = map.getPaintProperty(pointLayerId, "circle-color") as string;
+        map.setPaintProperty(
+          pointLayerId,
+          "circle-stroke-color",
+          getSelectedColor(locationIds),
+        );
       }
       if (map.getLayer(lineLayerId)) {
-        map.setPaintProperty(lineLayerId, 'line-color', getSelectedColor(locationIds, color));
+        map.setPaintProperty(
+          lineLayerId,
+          "line-color",
+          getSelectedColor(locationIds, color),
+        );
       }
     });
   }, [locations]);
@@ -162,7 +172,7 @@ const MainMap: React.FC<Props> = (props) => {
         layers={layerDefinitions}
         options={{
           style: basemaps[BasemapId.Streets],
-          projection: 'mercator',
+          projection: "mercator",
           center: INITIAL_CENTER,
           zoom: INITIAL_ZOOM,
           maxZoom: 20,
@@ -174,7 +184,7 @@ const MainMap: React.FC<Props> = (props) => {
         customControls={[
           {
             control: new CustomControl(<Legend />),
-            position: 'top-right',
+            position: "top-right",
           },
         ]}
       />
