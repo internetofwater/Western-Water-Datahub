@@ -888,9 +888,10 @@ export const getLayerClickFunction = (
                             ] as string;
                             const html = `
                                 <div style="color:black;width:400px;">
-                                <a href="${datasetLink}" target="_blank">Data Source
-                                    <img style="width:100%;" src="${imageLink}" alt="Plot of forecasted river conditions" />
-                                </a>
+                                    <a href="${datasetLink}" target="_blank">
+                                        <img style="width:100%;" src="${imageLink}" alt="Plot of forecasted river conditions" />
+                                        Data Source
+                                    </a>
                                 </div>
                                 `;
                             persistentPopup
