@@ -84,6 +84,7 @@ class AwdbForecastsProvider(BaseProvider, OAFProviderProtocol):
             properties=properties,
             sortby=sortby,
             fields_mapping=self.get_fields(),
+            useStationTripletAsId=True,
         )
 
     @crs_transform

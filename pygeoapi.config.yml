@@ -61,7 +61,7 @@ resources:
       - RISE
       - USBR
     templates:
-      path: templates/jsonld/rise-edr
+      path: pygeoapi-deployment/templates/jsonld/rise-edr
     links:
       - &default-link
         type: application/html
@@ -99,7 +99,7 @@ resources:
       - NRCS
       - USDA
     templates:
-      path: templates/jsonld/snotel
+      path: pygeoapi-deployment/templates/jsonld/snotel
     links:
       - <<: *default-link
         href: https://www.nrcs.usda.gov/wps/portal/wcc/home/aboutUs/monitoringPrograms/automatedSnowMonitoring/
@@ -167,7 +167,7 @@ resources:
       - <<: *default-link
         href: https://www.nrcs.usda.gov/wps/portal/wcc/home/aboutUs/monitoringPrograms/automatedSnowMonitoring
     templates:
-      path: templates/jsonld/snotel
+      path: pygeoapi-deployment/templates/jsonld/snotel
 
   snotel-huc06-means:
     type: collection
@@ -198,7 +198,7 @@ resources:
     keywords:
       - open data
     templates:
-      path: templates/jsonld/usace-edr
+      path: pygeoapi-deployment/templates/jsonld/usace-edr
     extents: *default-extent
     providers:
       - type: edr
@@ -410,6 +410,8 @@ resources:
       - <<: *default-link
         href: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
     extents: *default-extent
+    templates:
+      path: pygeoapi-deployment/templates/jsonld/noaa_rfc
     providers:
       - type: feature
         name: noaa_rfc.noaa_rfc.NOAARFCProvider
