@@ -105,7 +105,7 @@ async def main() -> None:
         allMetadata[nidid] = metadataResponse
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    output = os.path.join(current_dir, "usace_metadata.json")
+    output = os.path.join(current_dir, "usace", "usace_metadata.json")
     with open(output, "w") as f:
         json.dump(allMetadata, f, indent=2)
 

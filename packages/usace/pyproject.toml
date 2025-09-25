@@ -23,6 +23,11 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["usace"]
+force-include = { "usace/usace_metadata.json" = "usace/usace_metadata.json" }
+
+artifacts = [
+    "*.json"
+]
 
 [tool.hatch.metadata]
 allow-direct-references = true
