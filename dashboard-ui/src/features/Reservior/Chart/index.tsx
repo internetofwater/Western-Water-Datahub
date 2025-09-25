@@ -74,6 +74,7 @@ export const Chart: React.FC<Props> = (props) => {
                         params: {
                             ...config.params,
                             datetime: dateRange.startDate + '/' + '..',
+                            limit: dateRange.days
                         },
                     }
                 );
