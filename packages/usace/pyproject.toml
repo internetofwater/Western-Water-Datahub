@@ -16,6 +16,11 @@ package = true
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
+[dependency-groups]
+dev = [
+    "pandas>=2.3.0",
+]
+
 [tool.hatch.build.targets.wheel]
 packages = ["usace"]
 force-include = { "usace/usace_metadata.json" = "usace/usace_metadata.json" }

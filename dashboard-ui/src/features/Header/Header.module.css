@@ -36,8 +36,24 @@
     height: 50px;
 }
 
-@media (max-width: 1225px) {
-    .divider {
+.clearAllButton {
+    margin-top: 1.7rem;
+}
+
+@media (max-width: 1267) {
+    .headerDivider {
+        visibility: hidden;
+    }
+}
+
+@media (max-width: 717px) {
+    .selectorDivider {
+        visibility: hidden;
+    }
+}
+
+@media (max-width: 564px) {
+    .logoDivider {
         visibility: hidden;
     }
 }

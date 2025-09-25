@@ -19,11 +19,21 @@ type longitudeAndLatitude = tuple[float, float]
 class SnotelLocationCollection(LocationCollection, LocationCollectionProtocolWithEDR):
     """A wrapper class containing locations and methods to filter them"""
 
-    def __init__(self, select_properties: Optional[list[str]] = None):
+    def __init__(
+        self,
+        select_properties: Optional[list[str]] = None,
+        itemId: Optional[str] = None,
+    ):
         self.cache = RedisCache()
         # snotel also proxies usgs so we just want to get SNOTEL stations
-        JUST_SNOTEL_STATIONS = "*:*:SNTL"
-        url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?activeOnly=true&stationTriplets={JUST_SNOTEL_STATIONS}"
+        # we assume that sntl has a unique id on the triplet so we can specify itemId:*:SNTL
+        # which is the same as fetching all snotel and filtering by the item id
+        stations_to_fetch = "*:*:SNTL" if not itemId else f"{itemId}:*:SNTL"
+        url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?activeOnly=true&stationTriplets={stations_to_fetch}"
+
+        if itemId:
+            url += "&returnStationElements=true"
+
         if select_properties:
             url += f"&elements={','.join(select_properties)}"
         result = await_(self.cache.get_or_fetch_json(url))

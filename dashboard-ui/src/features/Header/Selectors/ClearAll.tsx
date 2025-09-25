@@ -5,8 +5,15 @@
 
 import { useMap } from '@/contexts/MapContexts';
 import { INITIAL_CENTER, INITIAL_ZOOM, MAP_ID } from '@/features/Map/consts';
-import useMainStore, { ReservoirDefault } from '@/lib/main';
+import {
+    BasinDefault,
+    RegionDefault,
+    ReservoirDefault,
+    StateDefault,
+} from '@/lib/consts';
+import useMainStore from '@/lib/main';
 import { Button } from '@mantine/core';
+import styles from '@/features/Header/Header.module.css';
 
 /**
 
@@ -17,14 +24,24 @@ export const ClearAll: React.FC = () => {
     const setRegion = useMainStore((state) => state.setRegion);
     const reservoir = useMainStore((state) => state.reservoir);
     const setReservoir = useMainStore((state) => state.setReservoir);
+    const basin = useMainStore((state) => state.basin);
+    const setBasin = useMainStore((state) => state.setBasin);
+    const state = useMainStore((state) => state.state);
+    const setState = useMainStore((state) => state.setState);
 
-    const noSelections = region === 'all' && reservoir === ReservoirDefault;
+    const noSelections =
+        region === RegionDefault &&
+        reservoir === ReservoirDefault &&
+        basin === BasinDefault &&
+        state === StateDefault;
 
     const { map } = useMap(MAP_ID);
 
     const handleClick = () => {
         setRegion('all');
         setReservoir(ReservoirDefault);
+        setBasin(BasinDefault);
+        setState(StateDefault);
         if (map) {
             map.once('idle', () => {
                 requestAnimationFrame(() => {
@@ -45,6 +62,7 @@ export const ClearAll: React.FC = () => {
             title="Clear All"
             disabled={noSelections}
             onClick={handleClick}
+            className={styles.clearAllButton}
         >
             Clear All
         </Button>

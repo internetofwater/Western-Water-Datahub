@@ -4,7 +4,7 @@
  */
 'use client';
 
-import { Box, Divider, Group, Paper, Select } from '@mantine/core';
+import { Box, Divider, Group, Paper, Title } from '@mantine/core';
 import styles from '@/features/Header/Header.module.css';
 import { Region } from '@/features/Header/Selectors/Region';
 import { Reservoir } from '@/features/Header/Selectors/Reservoir';
@@ -12,8 +12,10 @@ import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { Basin } from '@/features/Header/Selectors/Basin';
-import { ClearAll } from '@/features/Header/Selectors/ClearAll';
-import useMainStore, { RegionDefault, ReservoirDefault } from '@/lib/main';
+import useMainStore from '@/lib/main';
+import { State } from '@/features/Header/Selectors/State';
+import { BoundingGeographyLevel } from '@/lib/types';
+import { BoundingGeography } from '@/features/Header/Selectors/BoundingGeography';
 
 const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
     ssr: false,
@@ -24,81 +26,103 @@ const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {
  * @component
  */
 const Header: React.FC = () => {
-    const region = useMainStore((state) => state.region);
-    const reservoir = useMainStore((state) => state.reservoir);
+    const boundingGeographyLevel = useMainStore(
+        (state) => state.boundingGeographyLevel
+    );
 
     return (
-        <>
-            <Box component="div" className={styles.topBarContainer}>
-                <Paper
-                    radius={0}
-                    shadow="xs"
-                    className={`${styles.topBarPaper} ${styles.logoBarPaper}`}
-                >
-                    <Group justify="space-between" align="center">
+        <Box component="div" className={styles.topBarContainer}>
+            <Paper
+                radius={0}
+                shadow="xs"
+                className={`${styles.topBarPaper} ${styles.logoBarPaper}`}
+            >
+                <Group justify="space-between" align="center">
+                    <Group>
+                        <Box
+                            component="span"
+                            darkHidden
+                            className={styles.logoContainer}
+                        >
+                            <Image
+                                src={'/BofR-logo-dark.png'}
+                                alt="United States Bureau of Reclamation Logo"
+                                width={157}
+                                height={50}
+                            />
+                        </Box>
+                        <Box
+                            component="span"
+                            lightHidden
+                            className={styles.logoContainer}
+                        >
+                            <Image
+                                src={'/BofR-logo-white.png'}
+                                alt="United States Bureau of Reclamation Logo"
+                                width={157}
+                                height={50}
+                            />
+                        </Box>
+
+                        <Divider
+                            orientation="vertical"
+                            className={styles.logoDivider}
+                        />
+                        <Title order={1} size="h3">
+                            Western Water Data Dashboard
+                        </Title>
+                        <Divider
+                            orientation="vertical"
+                            className={styles.headerDivider}
+                        />
                         <Group>
+                            <BoundingGeography />
                             <Box
-                                component="span"
-                                darkHidden
-                                className={styles.logoContainer}
+                                style={{
+                                    display:
+                                        boundingGeographyLevel ===
+                                        BoundingGeographyLevel.Region
+                                            ? 'block'
+                                            : 'none',
+                                }}
                             >
-                                <Image
-                                    src={'/BofR-logo-dark.png'}
-                                    alt="United States Bureau of Reclamation Logo"
-                                    width={157}
-                                    height={50}
-                                />
+                                <Region />
                             </Box>
                             <Box
-                                component="span"
-                                lightHidden
-                                className={styles.logoContainer}
+                                style={{
+                                    display:
+                                        boundingGeographyLevel ===
+                                        BoundingGeographyLevel.Basin
+                                            ? 'block'
+                                            : 'none',
+                                }}
                             >
-                                <Image
-                                    src={'/BofR-logo-white.png'}
-                                    alt="United States Bureau of Reclamation Logo"
-                                    width={157}
-                                    height={50}
-                                />
+                                <Basin />
+                            </Box>
+                            <Box
+                                style={{
+                                    display:
+                                        boundingGeographyLevel ===
+                                        BoundingGeographyLevel.State
+                                            ? 'block'
+                                            : 'none',
+                                }}
+                            >
+                                <State />
                             </Box>
                             <Divider
                                 orientation="vertical"
-                                className={styles.divider}
+                                className={styles.selectorDivider}
                             />
-                            <Group>
-                                <Region />
-                                <Basin />
-                                {/* Group these so they move together when decreasing screen width */}
-                                <Group>
-                                    <Select
-                                        id="stateSelector"
-                                        searchable
-                                        data={[
-                                            {
-                                                value: 'all',
-                                                label: 'All States',
-                                            },
-                                        ]}
-                                        value={'all'}
-                                        aria-label="Select a State"
-                                        placeholder="Select a State"
-                                        onChange={() => {}}
-                                    />
-                                    <Reservoir />
-                                </Group>
-                                {(region !== RegionDefault ||
-                                    reservoir !== ReservoirDefault) && (
-                                    <ClearAll />
-                                )}
-                            </Group>
+                            <Reservoir />
                         </Group>
-                        <Suspense>
-                            <DarkModeToggle />
-                        </Suspense>
                     </Group>
-                </Paper>
-            </Box>
-        </>
+                    <Suspense>
+                        <DarkModeToggle />
+                    </Suspense>
+                </Group>
+            </Paper>
+        </Box>
     );
 };
 

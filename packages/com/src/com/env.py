@@ -26,7 +26,9 @@ print(
 
 def init_otel():
     """Initialize the open telemetry config"""
-    resource = Resource(attributes={"service.name": "iodh"})
+    resource = Resource(
+        attributes={"service.name": os.getenv("OTEL_SERVICE_NAME", "iodh")}
+    )
     provider = TracerProvider(resource=resource)
     COLLECTOR_ENDPOINT = os.environ.get("COLLECTOR_ENDPOINT", "127.0.0.1")
     COLLECTOR_GRPC_PORT = os.environ.get("COLLECTOR_GRPC_PORT", 4317)

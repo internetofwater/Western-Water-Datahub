@@ -50,7 +50,7 @@ LOGGER = logging.getLogger(__name__)
 metadata_path = pathlib.Path(__file__).parent.parent / "usace_metadata.json"
 with metadata_path.open() as f:
     LOGGER.info(f"Loading static USACE metadata from {metadata_path}")
-    USACE_STATIC_METADATA = json.load(f)
+    USACE_STATIC_METADATA: dict = json.load(f)
 
 
 class LocationCollection(LocationCollectionProtocolWithEDR):

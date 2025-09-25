@@ -4,7 +4,7 @@
  */
 
 import { LineChart } from '@/components/LineChart';
-import edrService from '@/services/init/edr.init';
+import wwdhService from '@/services/init/wwdh.init';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import {
     DateRange,
@@ -19,7 +19,7 @@ import useMainStore from '@/lib/main';
 import { ReservoirConfig } from '@/features/Map/types';
 
 type Props = {
-    id: number;
+    id: string | number;
     ref: RefObject<ChartJS<'line', Array<{ x: string; y: number }>> | null>;
     config: ReservoirConfig;
 };
@@ -66,21 +66,21 @@ export const Chart: React.FC<Props> = (props) => {
             const dateRange = getDateRange(range);
 
             const coverageCollection =
-                await edrService.getLocation<CoverageCollection>(
+                await wwdhService.getLocation<CoverageCollection>(
                     config.id,
                     String(id),
                     {
                         signal: controller.current.signal,
                         params: {
-                            'parameter-name': 'reservoirStorage',
-                            datetime: dateRange.startDate + '/',
+                            ...config.params,
+                            datetime: dateRange.startDate + '/' + '..',
                         },
                     }
                 );
 
             const data = getLabelsAndValues(
                 coverageCollection,
-                'Lake/Reservoir Storage'
+                config.chartLabel
             );
 
             if (isMounted.current) {
@@ -95,9 +95,11 @@ export const Chart: React.FC<Props> = (props) => {
                 console.log('Fetch request canceled');
             } else {
                 if ((error as Error)?.message) {
-                    const _error = error as Error;
-                    setError(_error.message);
-                    setLoading(false);
+                    if (isMounted.current) {
+                        const _error = error as Error;
+                        setError(_error.message);
+                        setLoading(false);
+                    }
                 }
             }
         }
@@ -107,7 +109,7 @@ export const Chart: React.FC<Props> = (props) => {
         setError('');
         chartDidUpdate.current = false;
         void getReservoirStorage(range);
-    }, [id, range]);
+    }, [range, id]);
 
     const chartData: ChartData<'line', Array<{ x: string; y: number }>> = {
         datasets: [

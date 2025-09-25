@@ -6,16 +6,18 @@
 import React, { act } from 'react';
 import { render } from '@/utils/test-utils';
 import { screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
-import edrService from '@/services/init/edr.init';
+import wwdhService from '@/services/init/wwdh.init';
 import * as utils from '@/features/Reservior/Chart/utils';
 import { Chart } from '@/features/Reservior/Chart';
+import { LayerId, SourceId, SubLayerId } from '@/features/Map/consts';
+import { getReservoirConfig } from '@/features/Map/utils';
 
 jest.mock('@/lib/main', () => ({
     __esModule: true,
     default: jest.fn((selector) => selector({ setChartUpdate: jest.fn() })),
 }));
 
-jest.mock('@/services/init/edr.init');
+jest.mock('@/services/init/wwdh.init');
 
 jest.mock('@/features/Reservior/Chart/utils', () => ({
     getDateRange: jest.fn(() => ({
@@ -42,7 +44,7 @@ describe('Chart component', () => {
                     },
                 },
                 ranges: {
-                    'Lake/Reservoir Storage': {
+                    raw: {
                         values: [100, 200],
                     },
                 },
@@ -68,10 +70,16 @@ describe('Chart component', () => {
     });
 
     test('renders loading state initially', async () => {
-        (edrService.getLocation as jest.Mock).mockResolvedValueOnce(
+        (wwdhService.getLocation as jest.Mock).mockResolvedValueOnce(
             mockCoverageCollection
         );
-        render(<Chart id={1} ref={mockRef} />);
+        render(
+            <Chart
+                id={1}
+                ref={mockRef}
+                config={getReservoirConfig(SourceId.ResvizEDRReservoirs)!}
+            />
+        );
 
         await waitFor(() => {
             expect(screen.getByTestId('chart-loader-bar')).toBeInTheDocument();
@@ -79,10 +87,16 @@ describe('Chart component', () => {
     });
 
     test('renders chart after data loads', async () => {
-        (edrService.getLocation as jest.Mock).mockResolvedValueOnce(
+        (wwdhService.getLocation as jest.Mock).mockResolvedValueOnce(
             mockCoverageCollection
         );
-        render(<Chart id={1} ref={mockRef} />);
+        render(
+            <Chart
+                id={1}
+                ref={mockRef}
+                config={getReservoirConfig(SourceId.ResvizEDRReservoirs)!}
+            />
+        );
 
         await waitFor(() => {
             expect(screen.getByText(/Storage Volume/i)).toBeInTheDocument();
@@ -102,10 +116,16 @@ describe('Chart component', () => {
     // });
 
     test('toggles range with radio buttons', async () => {
-        (edrService.getLocation as jest.Mock).mockResolvedValue(
+        (wwdhService.getLocation as jest.Mock).mockResolvedValue(
             mockCoverageCollection
         );
-        render(<Chart id={1} ref={mockRef} />);
+        render(
+            <Chart
+                id={1}
+                ref={mockRef}
+                config={getReservoirConfig(SourceId.ResvizEDRReservoirs)!}
+            />
+        );
 
         await waitFor(() => {
             const fiveYearRadio = screen.getByTestId('5-year-radio');

@@ -16,7 +16,7 @@ import {
     addSources,
     addControls,
     addCustomControls,
-} from '../utils';
+} from '@/components/Map/utils';
 
 jest.mock('mapbox-gl');
 jest.mock('../utils', () => ({

@@ -1,20 +1,17 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-# /// script
-# requires-python = ">=3.12"
-# dependencies = []
-# ///
-
 # this is a script for genering the static data dump of all USACE dams
 
 import os
+from pathlib import Path
 import aiohttp
 import aiohttp.client_exceptions
 import requests
 from rise.lib.cache import RISECache
 import asyncio
 import json
+import shapely
 
 """
 Script to generate a static data dump of all the metadata for the 
@@ -22,6 +19,18 @@ USACE dams. This does not include all the dams
 in the NID since that would be over 90k; this script only generates
 the dams for the dams in our API mappings
 """
+
+# we have this on disk already so best to just load it statically
+huc06Json = Path(__file__).parent.parent / "snotel_means" / "huc06.json"
+
+with open(huc06Json, "r") as f:
+    huc06 = json.load(f)
+
+# we have this collection and no need to version control it in git
+# so we can just fetch it dynamically
+resp = requests.get("http://localhost:5005/collections/doi-regions/items?f=json")
+resp.raise_for_status()
+doi = resp.json()
 
 
 async def main() -> None:
@@ -55,6 +64,44 @@ async def main() -> None:
         except aiohttp.client_exceptions.ClientResponseError as e:
             print(f"Failed to fetch {metadataUrl}: {e}")
             continue
+
+        longitude = metadataResponse["longitude"]
+        latitude = metadataResponse["latitude"]
+
+        for feature in huc06["features"]:
+            if shapely.geometry.shape(feature["geometry"]).contains(
+                shapely.geometry.Point((longitude, latitude))
+            ):
+                # assert there is only one; make sure there are no
+                # edge cases where there is unusual geo filtering behavior
+                if "huc06" in metadataResponse:
+                    raise Exception(
+                        f"Got multiple huc06 values {metadataResponse['huc06']}, {feature}"
+                    )
+
+                metadataResponse["huc06"] = feature["id"]
+
+        for feature in doi["features"]:
+            if shapely.geometry.shape(feature["geometry"]).contains(
+                shapely.geometry.Point((longitude, latitude))
+            ):
+                if "doi_region" in metadataResponse:
+                    raise Exception(
+                        f"Got multiple doi_region values {metadataResponse['doi_region']}, {feature}"
+                    )
+
+                # the abbreviation is the same one as used on resviz, so thus this is the
+                # source of truth for identifying the region; note that for some reason, the eastern
+                # doi regions sometimes don't have this, but that is fine since for this project
+                # we don't use the eastern regions
+                metadataResponse["doi_region"] = feature["properties"][
+                    "OfficialAbbreviation"
+                ]
+                # this is the full length name
+                metadataResponse["doi_region_name"] = feature["properties"]["REG_NAME"]
+                # this is the id number like 1 or 2 etc; it is not used as the id since resviz doesn't use it
+                metadataResponse["doi_region_number"] = feature["properties"]["REG_NUM"]
+
         allMetadata[nidid] = metadataResponse
 
     current_dir = os.path.dirname(os.path.abspath(__file__))

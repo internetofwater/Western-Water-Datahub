@@ -6,6 +6,7 @@
 'use client';
 import { Popup, Map } from 'mapbox-gl';
 import React, { createContext, useState, useContext, ReactNode } from 'react';
+import { Root } from 'react-dom/client';
 
 /**
  * Defines the structure for a single map context, including the map instance, hover popup, persistent popup, and a function to set the map context.
@@ -14,6 +15,7 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
  * - map: Map | null - The Mapbox GL map instance.
  * - hoverPopup: Popup | null - The popup displayed on hover.
  * - persistentPopup: Popup | null - The popup displayed persistently.
+ * - root: Root | null - A React root for rendering react components in popups
  * - setMap: (map: Map, hoverPopup: Popup, persistentPopup: Popup) => void - Function to set the map context.
  * @interface
  */
@@ -21,7 +23,15 @@ interface MapContextType {
     map: Map | null;
     hoverPopup: Popup | null;
     persistentPopup: Popup | null;
-    setMap: (map: Map, hoverPopup: Popup, persistentPopup: Popup) => void;
+    root: Root | null;
+    container: HTMLDivElement | null;
+    setMap: (
+        map: Map,
+        hoverPopup: Popup,
+        persistentPopup: Popup,
+        root: Root,
+        container: HTMLDivElement
+    ) => void;
 }
 
 /**
@@ -66,7 +76,9 @@ export const MapProvider: React.FC<{
         id: string,
         map: Map | null,
         hoverPopup: Popup,
-        persistentPopup: Popup
+        persistentPopup: Popup,
+        root: Root,
+        container: HTMLDivElement
     ) => {
         const _maps: MapContextsType = {
             ...maps,
@@ -74,7 +86,15 @@ export const MapProvider: React.FC<{
                 map,
                 hoverPopup,
                 persistentPopup,
-                setMap: (m: Map, h: Popup, p: Popup) => setMap(id, m, h, p),
+                root,
+                container,
+                setMap: (
+                    m: Map,
+                    h: Popup,
+                    p: Popup,
+                    r: Root,
+                    c: HTMLDivElement
+                ) => setMap(id, m, h, p, r, c),
             },
         };
 
@@ -88,8 +108,23 @@ export const MapProvider: React.FC<{
             map: null,
             hoverPopup: null,
             persistentPopup: null,
-            setMap: (map: Map, hoverPopup: Popup, persistentPopup: Popup) =>
-                setMap(mapId, map, hoverPopup, persistentPopup),
+            root: null,
+            container: null,
+            setMap: (
+                map: Map,
+                hoverPopup: Popup,
+                persistentPopup: Popup,
+                root: Root,
+                container: HTMLDivElement
+            ) =>
+                setMap(
+                    mapId,
+                    map,
+                    hoverPopup,
+                    persistentPopup,
+                    root,
+                    container
+                ),
         };
     });
 

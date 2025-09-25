@@ -69,3 +69,17 @@ def test_filter_by_property_and_itemid_at_once():
     assert out1["type"] == "Feature"
     assert out1["properties"]["networkCode"] == "SNTL"
     assert out1["properties"]["stationId"] == str(idForAdinMtnInCalifornia)
+
+
+def test_only_snotel_stations():
+    """Ensure that we only get snotel stations and no duplicates"""
+    p = SnotelProvider(conf)
+    out = p.items()
+    assert out["type"] == "FeatureCollection"
+    assert len(out["features"]) > 0
+    for item in out["features"]:
+        assert "SNTL" in item["properties"]["networkCode"]
+
+    out = p.items(itemId="1000")
+    assert out["type"] == "Feature"
+    assert "SNTL" in out["properties"]["networkCode"]
