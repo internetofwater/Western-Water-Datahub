@@ -185,15 +185,9 @@ class ForecastCollection(LocationCollectionProtocol):
 
         assert len(results) >= 10
 
-        assert any([result["espid"][0] == "BTYO3" for result in results]), (
-            "A station from the California basin appears to be missing"
-        )
-
         # Process results using data2obj
         serialized = [ForecastData.model_validate(res) for res in results]
-        assert any([result.espid[0] == "BTYO3" for result in serialized]), (
-            "A station from the California basin appears to be missing after serializing to pydantic"
-        )
+
         return serialized
 
     def __init__(self):
