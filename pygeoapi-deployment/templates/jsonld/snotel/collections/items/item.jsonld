@@ -9,7 +9,7 @@
   ],
   "type": ["schema:Place", "hyf:HY_HydroLocation"],
   "@id": "{{ data['@id'] | safe }}",
-  "schema:identifier": {{ data["id"] | safe }},
+  "schema:identifier": {{ data["id"] | tojson }},
   "schema:name": "{{ data['name'] }}",
   {% if data["description"] %}
   "schema:description": {{ data["description"] }},
@@ -20,8 +20,9 @@
 
   "hyf:HY_HydroLocationType": "{% if data['locationTypeName'] == 'Lake/Reservoir' %}HY_Reservoir{% elif data['locationTypeName'] == 'River/Stream' %}HY_River{% elif data['locationTypeName'] == 'Canal' %}HY_Canal{% else %}Unknown{% endif %}",
   "gsp:hasGeometry": {{ data["gsp:hasGeometry"] | to_json }}, 
-  "schema:geo": {{ data["schema:geo"] | to_json }},
-  "schema:subjectOf": [
+  "schema:geo": {{ data["schema:geo"] | to_json }}
+  {% if data["stationElements"] %}
+  ,"schema:subjectOf": [
     {% for element in data["stationElements"] %}
     {
       {% set duration = element["durationName"].removeprefix("DurationName.")%}
@@ -45,4 +46,5 @@
     }{% if not loop.last %},{% endif %}
     {% endfor %}
   ]
+  {% endif %}
 }

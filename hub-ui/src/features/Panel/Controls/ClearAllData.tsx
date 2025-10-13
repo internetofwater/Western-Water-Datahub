@@ -31,9 +31,10 @@ export const Reset: React.FC = () => {
       const layers = map.getStyle().layers;
       setHasLocationsLoaded(
         layers.some((layer) =>
-          collections.some(
-            (collection) =>
-              mainManager.getLocationsLayerId(collection.id) === layer.id,
+          collections.some((collection) =>
+            Object.values(
+              mainManager.getLocationsLayerIds(collection.id),
+            ).includes(layer.id),
           ),
         ),
       );
@@ -64,7 +65,7 @@ export const Reset: React.FC = () => {
       !isFetchingLocations &&
       !isLoadingGeography &&
       (hasLocationsLoaded || hasGeographyFilter()) ? (
-        <Button onClick={() => mainManager.clearAllData()} color="red">
+        <Button onClick={() => mainManager.clearAllData()} color="red-rocks">
           Reset
         </Button>
       ) : (
@@ -72,7 +73,7 @@ export const Reset: React.FC = () => {
           <Button
             data-disabled
             onClick={(event) => event.preventDefault()}
-            color="red"
+            color="red-rocks"
           >
             Reset
           </Button>

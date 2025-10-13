@@ -8,17 +8,17 @@ This project is a collaboration between the United States Beaureu of Reclamation
 
 The interface consolidates access to multiple water data sources, offering a standardized API pattern to retrieve information from different systems. The sources are listed below:
 
-| Data Source | Variables                                                 | OGC API Format |
-| ----------- | --------------------------------------------------------- | -------------- |
-| USBR/RISE   | Reservoir Storage/Release/Level/Evap (current/historical) | Features, EDR  |
-| NRCS/SNOTEL | Snow Water Equivalent (station, current/historical)       | Features, EDR  |
-| USGS/WMA    | Streamflow (current)                                      | Features, EDR  |
-| AWDB        | Streamflow (forecast)                                     | Features, EDR  |
-| USACE       | Reservoir Storage/Release/Level/Evap (forecast)           | Features, EDR  |
-| NOAA/QPF    | Precipitation (Raster forecast)                           | Features       |
-| NOAA/RFC    | Streamflow (forecast)                                     | Features       |
-| NOAA/NOHRSC | Snow Water/Depth (forecast)                               | Maps           |
-| PRISM       | Precipitation (historical)                                | EDR            |
+| Data Source | Variables                                                 | OGC API Format | Source URL Link                                                                          |
+| ----------- | --------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------- |
+| USBR/RISE   | Reservoir Storage/Release/Level/Evap (current/historical) | Features, EDR  | [🔗](https://data.usbr.gov/rise-api)                                                     |
+| NRCS/SNOTEL | Snow Water Equivalent (station, current/historical)       | Features, EDR  | [🔗](https://wcc.sc.egov.usda.gov/awdbRestApi/swagger-ui/index.html)                     |
+| USGS/WMA    | Streamflow (current)                                      | Features, EDR  | [🔗](https://labs.waterdata.usgs.gov/)                                                   |
+| AWDB        | Streamflow (forecast)                                     | Features, EDR  | [🔗](https://wcc.sc.egov.usda.gov/awdbRestApi/swagger-ui/index.html)                     |
+| USACE       | Reservoir Storage/Release/Level/Evap (forecast)           | Features, EDR  | [🔗](https://water.sec.usace.army.mil/cda/reporting/)                                    |
+| NOAA/QPF    | Precipitation (Raster forecast)                           | Features       | [🔗](https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer) |
+| NOAA/RFC    | Streamflow (forecast)                                     | Features       | [🔗](https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html)                        |
+| NOAA/NOHRSC | Snow Water/Depth (forecast)                               | Maps           | [🔗](https://www.nohrsc.noaa.gov/nsa/)                                                   |
+| PRISM       | Precipitation (historical)                                | EDR            | [🔗](https://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/prism_v2)          |
 
 To learn more about custom mappings, visit the [Western Water Datahub Mappings directory](./docs/mappings.md).
 

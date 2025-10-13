@@ -44,7 +44,7 @@ export type Loading = {
 };
 
 export type LegendEntry = {
-  layerId: string;
+  collectionId: string;
   color: string;
   visible: boolean;
 };

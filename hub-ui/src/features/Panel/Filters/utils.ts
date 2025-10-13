@@ -31,5 +31,8 @@ export const formatOptions = (
       }
     }
   });
-  return Array.from(options.values());
+
+  return Array.from(options.values()).sort((a, b) =>
+    a.label.localeCompare(b.label),
+  );
 };
