@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 
 # This script builds the Qlever graph
 # it uses buildkit to allow for secrets

@@ -1,3 +1,6 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 FROM internetofwater/nabu:latest AS nabu
 
 # Copy and make the script executable

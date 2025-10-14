@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 set -euo pipefail
 
 S3_ACCESS_KEY=$(cat /run/secrets/S3_ACCESS_KEY)

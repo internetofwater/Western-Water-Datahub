@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 
 # This script generates release graphs
 # and ensures that all the relevant sources for
