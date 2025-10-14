@@ -13,7 +13,7 @@
     "schema:geo": {{ data["schema:geo"] | to_json }},
     "schema:subjectOf": [
         {
-            "@type":"Dataset",
+            "@type":"schema:Dataset",
             "schema:name":{{ data['espname'] | tojson }},
             "schema:description": "A ensemble streamflow forecast prediction for {{ data['espname'] }}",
             "schema:isAccessibleForFree": true,

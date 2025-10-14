@@ -29,12 +29,12 @@
     "schema:subjectOf": [
     {% for item in data["catalogItems"] if item["type"] == "CatalogItem" %}
     {
-        "@type": "Dataset",
+        "@type": "schema:Dataset",
         "schema:name": {{ item['attributes']['itemTitle'] | tojson }},
         "schema:description": {{ item['attributes']['itemDescription'] | tojson }},
         "schema:identifier": "{{ item['attributes']["_id"] }}",
         "schema:variableMeasured": {
-            "@type": "PropertyValue",
+            "@type": "schema:PropertyValue",
             "schema:name": "{{ item['attributes']['parameterName'] }}",
             "schema:unitText": "{{ item['attributes']['parameterUnit'] }}"
         },
