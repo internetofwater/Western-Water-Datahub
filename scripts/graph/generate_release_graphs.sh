@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+
+# This script generates release graphs
+# and ensures that all the relevant sources for
+# wwdh are using the latest released data
+
+
 set -e  # exit on error
 
 # Load environment variables from .env file
@@ -7,16 +13,17 @@ set -a
 source .env
 set +a
 # Now the variables from .env are available
-cd ~/github/nabu
+
+docker pull internetofwater/nabu:latest
 
 for PREFIX in \
   "summoned/wwdh_awdb_forecasts_awdb_forecasts__0/" \
   "summoned/wwdh_noaa_rfc_noaa_rfc__0/" \
   "summoned/wwdh_snotel_snotel__0/" \
   "summoned/wwdh_usace_usace_access_to_water__0" \
-  "summoned/harvest-geoconnex-us/summoned/wwdh_usbr_rise_rise__0"
+  "summoned/wwdh_usbr_rise_rise__0"
 do
-  go run ./cmd/nabu release \
+  docker run internetofwater/nabu:latest release \
     --port 443 \
     --region us \
     --ssl \
