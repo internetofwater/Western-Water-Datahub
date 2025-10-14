@@ -1,0 +1,21 @@
+
+[data]
+NAME         = geoconnex
+GET_DATA_CMD =
+DESCRIPTION  = the full geoconnex graph
+FORMAT = nq
+HOST_NAME = 127.0.0.1
+
+[server]
+# this port should match the port that is exposed from the dockerfile
+PORT         = 8888
+ACCESS_TOKEN = ChangeMe
+
+[runtime]
+SYSTEM = docker
+# pin to a specific image
+IMAGE  = docker.io/adfreiburg/qlever:commit-55c05d4
+
+[ui]
+UI_PORT   = 8176
+UI_CONFIG = default

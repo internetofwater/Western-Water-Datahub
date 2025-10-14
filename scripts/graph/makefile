@@ -15,3 +15,16 @@ rm:
 
 login:
 	docker exec -it wwdh-qlever /bin/bash
+
+push:
+	docker tag wwdh-qlever:latest internetofwater/wwdh-qlever:latest
+	docker push internetofwater/wwdh-qlever
+
+scan:
+	docker save -o /tmp/wwdh-qlever.tar wwdh-qlever
+	mkdir /tmp/wwdh-qlever
+	tar -xvf /tmp/wwdh-qlever.tar -C /tmp/wwdh-qlever
+	trufflehog filesystem /tmp/wwdh-qlever
+
+ui:
+	qlever ui --host-name localhost

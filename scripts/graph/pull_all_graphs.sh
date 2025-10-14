@@ -15,6 +15,7 @@ echo "Pulling release graphs"
   --port 443 \
   --address storage.googleapis.com \
   --ssl \
+  --name-filter "wwdh" \
   --log-level DEBUG 
 
 # ensure that there are graphs in /tmp/pull

@@ -34,3 +34,5 @@ __MACOSX
 
 
 .env
+
+*.sqlite*

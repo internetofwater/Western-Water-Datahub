@@ -6,10 +6,11 @@
 # in the final image
 
 set -a; source .env; set +a
-echo "Building Qlever with $S3_ACCESS_KEY $S3_SECRET_KEY" 
 
 export DOCKER_BUILDKIT=1
 
+# we bust the cache so that we can use nabu's built in caching
+# otherwise we might not fetch the latest graphs
 docker build \
   --build-arg CACHEBUST=$(date +%s)  \
   --secret id=S3_ACCESS_KEY,env=S3_ACCESS_KEY \
