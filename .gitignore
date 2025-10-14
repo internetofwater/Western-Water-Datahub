@@ -31,3 +31,6 @@ ResOpsUS/
 __MACOSX
 
 *.gpkg
+
+
+.env
