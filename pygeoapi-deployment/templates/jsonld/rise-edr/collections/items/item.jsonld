@@ -41,7 +41,9 @@
         "schema:dateCreated": "{{ item['attributes']['createDate'] }}",
         "schema:dateUpdated": "{{ item['attributes']['updateDate'] }}",
         "schema:frequency": "{{ item['attributes']['updateFrequency']['updatefrequency'] }}",
+        {% if item['attributes']['temporalStartDate'] != None and item['attributes']['temporalEndDate'] != None %}
         "schema:temporalCoverage": "{{ item['attributes']['temporalStartDate'] }}/{{ item['attributes']['temporalEndDate'] }}",
+        {% endif %}
         "schema:provider": {
             "@type": "schema:GovernmentOrganization",
             "schema:url": "https://data.usbr.gov/rise-api",
