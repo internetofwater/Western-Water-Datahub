@@ -1,0 +1,42 @@
+{
+    "@context": {
+        "schema": "https://schema.org/",
+        "gsp": "http://www.opengis.net/ont/geosparql#"
+    },
+    "@type": "schema:Place",
+    "@id": "{{data["@id"]}}",
+    "schema:name": "{{data["public_name"]}}",
+    "schema:identifier": "{{data["id"]}}",
+    "schema:dateModified": "{{data["dataUpdated"]}}",
+    {% if data["projectDescription"] %}
+    "schema:description": "{{ data["projectDescription"].replace('\n', ' ').replace('\r', '').replace('"', '\'').replace("\t", " ") }}",
+    {% endif %}
+    "gsp:hasGeometry": {{ data["gsp:hasGeometry"] | to_json }}, 
+    "schema:geo": {{ data["schema:geo"] | to_json }}
+    {% if data["timeseries"] %}
+    ,"schema:subjectOf": [
+    {% for element in data["timeseries"] %}{
+        "@type": "schema:Dataset",
+        "schema:identifier": "{{element["label"]}}",
+        "schema:name": "{{element["label"]}} in {{element["unit_long_name"]}}",
+        "schema:provider": {
+            "@type": "schema:GovernmentOrganization",
+            "schema:url": "https://water.sec.usace.army.mil/cda/reporting/providers/projects?fmt=geojson",
+            "schema:name": "US Army Corps of Engineers"
+        },
+        "schema:variableMeasured": {
+            "@type": "schema:PropertyValue",
+            "schema:description": "{{element["label"]}} in {{element["unit_long_name"]}}",
+            "schema:unitText": "{{ element['unit'] }}",
+            "schema:name": "{{ element['unit_long_name'] }}"
+        },
+        "schema:publisher": {
+            "@type": "schema:Organization",
+            "schema:name": "Internet of Water",
+            "schema:email": "internetofwater@lincolninst.edu"
+        }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+    ]
+    {% endif %}
+}

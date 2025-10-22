@@ -17,11 +17,45 @@
     "schema:description": {{ data["description"] }},
     {% endif %}
     "schema:AdministrativeArea": "{{ data["locationUnifiedRegionNames" ][0] | safe }}",
+    {% if data["elevation"] %}
     "schema:elevation": {{ data["elevation" ] | safe }},
+    {% endif %}
     "schema:dateCreated": "{{ data["createDate" ] | safe }}",
     "schema:dateModified": "{{ data["updateDate" ] | safe }}",
 
-    "hyf:HY_HydroLocationType": "{% if data['locationTypeName'] == 'Lake/Reservoir' %}HY_Reservoir{% elif data['locationTypeName'] == 'River/Stream' %}HY_River{% elif data['locationTypeName'] == "Canal" %}HY_Canal{% else %}Unknown{% endif %}",
+    "hyf:HY_HydroLocationType": "{% if data['locationTypeName'] == 'Lake/Reservoir' %}HY_Reservoir{% elif data['locationTypeName'] == 'River/Stream' %}HY_River{% elif data['locationTypeName'] == "Canal" %}HY_Canal{% else %}HY_HydrometricFeature{% endif %}",
     "gsp:hasGeometry": {{ data["gsp:hasGeometry" ] | to_json }}, 
-    "schema:geo": {{ data["schema:geo" ] | to_json }}
+    "schema:geo": {{ data["schema:geo" ] | to_json }},
+    "schema:subjectOf": [
+    {% for item in data["catalogItems"] if item["type"] == "CatalogItem" %}
+    {
+        "@type": "schema:Dataset",
+        "schema:name": {{ item['attributes']['itemTitle'] | tojson }},
+        "schema:description": {{ item['attributes']['itemDescription'] | tojson }},
+        "schema:identifier": "{{ item['attributes']["_id"] }}",
+        "schema:variableMeasured": {
+            "@type": "schema:PropertyValue",
+            "schema:name": "{{ item['attributes']['parameterName'] }}",
+            "schema:unitText": "{{ item['attributes']['parameterUnit'] }}"
+        },
+        "schema:dateCreated": "{{ item['attributes']['createDate'] }}",
+        "schema:dateUpdated": "{{ item['attributes']['updateDate'] }}",
+        "schema:frequency": "{{ item['attributes']['updateFrequency']['updatefrequency'] }}",
+        {% if item['attributes']['temporalStartDate'] != None and item['attributes']['temporalEndDate'] != None %}
+        "schema:temporalCoverage": "{{ item['attributes']['temporalStartDate'] }}/{{ item['attributes']['temporalEndDate'] }}",
+        {% endif %}
+        "schema:provider": {
+            "@type": "schema:GovernmentOrganization",
+            "schema:url": "https://data.usbr.gov/rise-api",
+            "schema:name": "US Bureau of Reclamation"
+        },
+        "schema:publisher": {
+            "@type": "schema:Organization",
+            "schema:name": "Internet of Water",
+            "schema:email": "internetofwater@lincolninst.edu"
+        }
+    }
+    {% if not loop.last %},{% endif %}
+    {% endfor %}
+    ]
 }

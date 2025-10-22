@@ -50,6 +50,8 @@ export interface IGetCollectionsParams {
   f?: string;
   skipGeometry?: boolean;
   limit?: number;
+  ["parameter-name"]?: string;
+  ["provider-name"]?: string;
 }
 
 export interface IDataQueryParams {
@@ -896,42 +898,42 @@ export interface IDataQueries {
   /**
    *
    */
-  position?: ILink;
+  position?: { link: ILink };
 
   /**
    *
    */
-  radius?: ILink;
+  radius?: { link: ILink };
 
   /**
    *
    */
-  area?: ILink;
+  area?: { link: ILink };
 
   /**
    *
    */
-  cube?: ILink;
+  cube?: { link: ILink };
 
   /**
    *
    */
-  trajectory?: ILink;
+  trajectory?: { link: ILink };
 
   /**
    *
    */
-  corridor?: ILink;
+  corridor?: { link: ILink };
 
   /**
    *
    */
-  locations?: ILink;
+  locations?: { link: ILink };
 
   /**
    *
    */
-  items?: ILink;
+  items?: { link: ILink };
 }
 
 /**
@@ -967,6 +969,21 @@ export interface ParameterName {
       value: string;
       type: string; // e.g., "http://www.opengis.net/def/uom/UCUM/"
     };
+  };
+}
+
+export interface ParameterGroup {
+  type: "ParameterGroup";
+  id: string;
+  label: string;
+  observedProperty: {
+    id: string;
+    label: {
+      en: string;
+    };
+  };
+  members: {
+    [source: string]: string[];
   };
 }
 
@@ -1044,6 +1061,8 @@ export interface IGetCollectionsResponse {
    * links
    */
   links: ILink[];
+
+  parameterGroups: ParameterGroup[];
 }
 
 export type CoverageCollection = {

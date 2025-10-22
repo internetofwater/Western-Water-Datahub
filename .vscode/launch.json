@@ -8,7 +8,7 @@
       "module": "uvicorn",
       "args": ["pygeoapi.starlette_app:APP", "--reload", "--port", "5005"],
       "env": {
-        "PYGEOAPI_CONFIG": "${workspaceFolder}/pygeoapi-deployment/pygeoapi.config.yml",
+        "PYGEOAPI_CONFIG": "${workspaceFolder}/pygeoapi.config.yml",
         "PYGEOAPI_OPENAPI": "${workspaceFolder}/local.openapi.yml"
       },
       "autoStartBrowser": true

@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: MIT
  */
 
-import DataCategory from "./DataCategory";
-import Location from "./Location";
-import Provider from "./Provider";
-import Time from "./Time";
+import { Category } from "@/features/Panel/Filters/Category";
+import { Collection } from "@/features/Panel/Filters/Collection";
+import Geography from "@/features/Panel/Filters/Geography";
+// import { Provider } from "@/features/Panel/Filters/Provider";
 
 const Filters: React.FC = () => {
   return (
     <>
-      <DataCategory />
-      <Provider />
-      <Location />
-      <Time />
+      {/* <Provider /> */}
+      <Category />
+      <Collection />
+      <Geography />
     </>
   );
 };

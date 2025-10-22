@@ -5,6 +5,10 @@
 
 import { GeoJsonProperties } from "geojson";
 import { Series } from "@/components/Charts/types";
+import notificationManager from "@/managers/Notification.init";
+import { CoverageCollection, CoverageJSON } from "@/services/edr.service";
+import { NotificationType } from "@/stores/session/types";
+import { isCoverageCollection } from "@/utils/clarifyObject";
 
 export const aggregateProperties = <T extends GeoJsonProperties>(
   series: Series<T>[],
@@ -33,4 +37,50 @@ export const aggregateProperties = <T extends GeoJsonProperties>(
   });
 
   return aggregatedProperties;
+};
+
+type EChartsSeries = {
+  name: string;
+  type: "line";
+  stack: string;
+  data: number[];
+};
+
+export const coverageJSONToSeries = (
+  coverage: CoverageCollection | CoverageJSON,
+): EChartsSeries[] => {
+  const ranges = isCoverageCollection(coverage)
+    ? coverage.coverages[0]?.ranges
+    : coverage.ranges;
+
+  const dates = isCoverageCollection(coverage)
+    ? coverage.coverages[0]?.domain.axes.t.values
+    : coverage.domain.axes.t.values;
+
+  if (!ranges || !dates) {
+    notificationManager.show(
+      "Missing ranges or date axis in coverage data",
+      NotificationType.Error,
+      10000,
+    );
+    return [];
+  }
+
+  const series: EChartsSeries[] = [];
+
+  for (const [parameter, range] of Object.entries(ranges)) {
+    if (!range.values || range.values.length !== dates.length) {
+      console.warn(`Skipping ${parameter} due to mismatched or missing values`);
+      continue;
+    }
+
+    series.push({
+      name: parameter,
+      type: "line",
+      stack: "Total",
+      data: range.values,
+    });
+  }
+
+  return series;
 };

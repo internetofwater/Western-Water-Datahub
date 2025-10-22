@@ -264,7 +264,7 @@ class StateDTO(BaseModel):
     )
 
 
-class DurationName(Enum):
+class DurationName(str, Enum):
     DAILY = "DAILY"
     HOURLY = "HOURLY"
     SEMIMONTHLY = "SEMIMONTHLY"

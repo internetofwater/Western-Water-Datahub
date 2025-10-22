@@ -20,6 +20,7 @@ export const getDateRange = (range: DateRange) => {
     return {
         startDate: startDate.toISOString().split('T')[0],
         endDate: endDate.toISOString().split('T')[0],
+        days: range * 365
     };
 };
 

@@ -1,7 +1,17 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from typing import Literal, TypedDict
+from typing import Literal, NotRequired, TypedDict
+
+
+class ObservedPropertyDict(TypedDict):
+    id: str
+    label: dict[Literal["en"], str]
+
+
+class UnitDict(TypedDict):
+    label: dict[Literal["en"], str]
+    symbol: dict
 
 
 class ParameterDict(TypedDict):
@@ -23,7 +33,8 @@ class CoverageDict(TypedDict):
     type: Literal["Coverage"]
     domain: dict
     ranges: dict[str, CoverageRangeDict]
-    domainType: Literal["PolygonSeries", "PointSeries"]
+    domainType: NotRequired[Literal["PolygonSeries", "PointSeries"]]
+    parameters: NotRequired[dict[str, ParameterDict]]
 
 
 class CoverageCollectionDict(TypedDict):

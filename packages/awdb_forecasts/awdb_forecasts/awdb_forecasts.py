@@ -55,9 +55,9 @@ class AwdbForecastsProvider(BaseProvider, OAFProviderProtocol):
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         # items/ returns all features, locations/ returns only features with timeseries, and thus forecasts
-        collection = ForecastLocationCollection(only_stations_with_forecasts=False)
-        if itemId:
-            collection.drop_all_locations_but_id(itemId)
+        collection = ForecastLocationCollection(
+            only_stations_with_forecasts=False, itemId=itemId
+        )
         if bbox:
             collection.drop_all_locations_outside_bounding_box(bbox)
 
@@ -84,6 +84,7 @@ class AwdbForecastsProvider(BaseProvider, OAFProviderProtocol):
             properties=properties,
             sortby=sortby,
             fields_mapping=self.get_fields(),
+            useStationTripletAsId=True,
         )
 
     @crs_transform
