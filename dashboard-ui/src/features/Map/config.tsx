@@ -42,7 +42,7 @@ import {
 } from '@/features/Map/types/snotel';
 import { StateField } from '@/features/Map/types/state';
 import { showReservoirPopup } from '@/features/Popups/utils';
-import { Huc02BasinField } from './types/basin';
+import { Huc02BasinField } from '@/features/Map/types/basin';
 import { Feature, Point } from 'geojson';
 
 /**********************************************************************

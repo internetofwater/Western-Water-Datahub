@@ -32,11 +32,11 @@ import {
     handleCapacityLeave,
     handleAverageLineLeave,
 } from '@/features/Reservior/TeacupDiagram/listeners';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID } from '@/features/Map/consts';
 import { resetMap } from '@/features/Map/utils';
-import { ReservoirDefault } from '@/lib/consts';
+import { ReservoirDefault } from '@/stores/main/consts';
 
 type Props = {
     accessToken: string;

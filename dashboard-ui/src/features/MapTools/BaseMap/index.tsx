@@ -5,7 +5,7 @@
 
 import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import {
     Box,
     Card,
@@ -17,7 +17,7 @@ import {
     Title,
 } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
-import { Tools } from '@/lib/types';
+import { Tools } from '@/stores/main/types';
 
 /**
  *

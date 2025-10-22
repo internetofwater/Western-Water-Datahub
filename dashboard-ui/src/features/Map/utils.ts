@@ -36,7 +36,7 @@ import {
 import wwdhService from '@/services/init/wwdh.init';
 import { CoverageJSON } from '@/services/edr.service';
 import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
-import { SnotelField, SnotelProperties } from './types/snotel';
+import { SnotelField, SnotelProperties } from '@/features/Map/types/snotel';
 
 /**
  *

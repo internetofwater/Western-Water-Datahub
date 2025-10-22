@@ -10,8 +10,8 @@ import { ReservoirPopup } from '@/features/Popups/Reservoirs';
 import { Map, MapMouseEvent, Popup } from 'mapbox-gl';
 import { Root } from 'react-dom/client';
 import { getReservoirIdentifier } from '@/features/Map/utils';
-import { SnotelProperties, SnotelField } from '../Map/types/snotel';
-import { SnotelPopup } from './Snotel';
+import { SnotelProperties, SnotelField } from '@/features/Map/types/snotel';
+import { SnotelPopup } from '@/features/Popups/Snotel';
 
 export const showReservoirPopup = (
     config: ReservoirConfig,

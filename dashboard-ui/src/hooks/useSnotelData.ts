@@ -15,6 +15,9 @@ import {
 } from '@/features/Map/types/snotel';
 import { useMap } from '@/contexts/MapContexts';
 import { GeoJSONSource, Map } from 'mapbox-gl';
+import notificationManager from '@/managers/Notification.init';
+import { LoadingType, NotificationType } from '@/stores/session/types';
+import loadingManager from '@/managers/Loading.init';
 
 export const useSnotelData = () => {
     const controller = useRef<AbortController | null>(null);
@@ -24,6 +27,11 @@ export const useSnotelData = () => {
     const updateSnotelLocations = useCallback(async (map: Map) => {
         const snotelSource = map.getSource<GeoJSONSource>(SourceId.Snotel);
         if (!snotelSource) return;
+
+        const loadingInstance = loadingManager.add(
+            'Loading Snow Monitoring Points data',
+            LoadingType.Snotel
+        );
 
         try {
             if (controller.current) {
@@ -66,12 +74,26 @@ export const useSnotelData = () => {
             });
 
             if (isMounted.current) {
+                notificationManager.show(
+                    'Snow Monitoring Points data loaded',
+                    NotificationType.Success,
+                    5000
+                );
                 snotelSource.setData(snotelLocation);
             }
         } catch (error) {
             if ((error as Error)?.name !== 'AbortError') {
                 console.error('Failed to update SNOTEL data:', error);
+            } else if ((error as Error)?.message) {
+                const _error = error as Error;
+                notificationManager.show(
+                    `Error: ${_error.message}`,
+                    NotificationType.Error,
+                    10000
+                );
             }
+        } finally {
+            loadingManager.remove(loadingInstance);
         }
     }, []);
 

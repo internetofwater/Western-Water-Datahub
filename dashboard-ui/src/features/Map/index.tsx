@@ -18,7 +18,7 @@ import {
     ValidBasins,
 } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import {
     loadTeacups as loadImages,
     getReservoirConfig,
@@ -34,18 +34,18 @@ import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButto
 import CustomControl from '@/components/Map/tools/CustomControl';
 import { basemaps } from '@/components/Map/consts';
 import { GeoJSONSource, LngLatLike, MapMouseEvent } from 'mapbox-gl';
-import { useReservoirData } from '@/app/hooks/useReservoirData';
-import { useSnotelData } from '@/app/hooks/useSnotelData';
+import { useReservoirData } from '@/hooks/useReservoirData';
+import { useSnotelData } from '@/hooks/useSnotelData';
 import { RegionField } from '@/features/Map/types/region';
 import {
     BasinDefault,
     RegionDefault,
     ReservoirDefault,
     StateDefault,
-} from '@/lib/consts';
-import { StateField } from './types/state';
-import { Huc02BasinField } from './types/basin';
-import { BoundingGeographyLevel } from '@/lib/types';
+} from '@/stores/main/consts';
+import { StateField } from '@/features/Map/types/state';
+import { Huc02BasinField } from '@/features/Map/types/basin';
+import { BoundingGeographyLevel } from '@/stores/main/types';
 
 type Props = {
     accessToken: string;

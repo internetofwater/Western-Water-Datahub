@@ -7,7 +7,7 @@ import { ReservoirConfig } from '@/features/Map/types';
 import { Box } from '@mantine/core';
 import { GeoJsonProperties } from 'geojson';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
