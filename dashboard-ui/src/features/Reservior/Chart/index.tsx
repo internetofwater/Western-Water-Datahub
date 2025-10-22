@@ -15,7 +15,7 @@ import { CoverageCollection } from '@/services/edr.service';
 import { Box, Group, Loader, Paper, Radio, Space, Title } from '@mantine/core';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { Chart as ChartJS, ChartData } from 'chart.js';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import { ReservoirConfig } from '@/features/Map/types';
 
 type Props = {

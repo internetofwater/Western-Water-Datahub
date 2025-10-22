@@ -17,7 +17,7 @@ import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { RasterBaseLayers } from '@/features/Map/types';
 import { useState } from 'react';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import {
     RasterVisibilityMap,
     updateBaseLayer,
@@ -27,6 +27,7 @@ import {
 } from '@/features/Controls/utils';
 import { ReservoirDateSelector } from '@/features/Controls/ReservoirDateSelector';
 import styles from '@/features/Controls/Controls.module.css';
+import { useLoading } from '@/hooks/useLoading';
 
 const RasterBaseLayerIconObj = [
     {
@@ -60,6 +61,8 @@ const Controls: React.FC = () => {
     );
 
     const { map } = useMap(MAP_ID);
+
+    const { isFetchingSnotel } = useLoading();
 
     const handleBaseLayerChange = (baseLayer: RasterBaseLayers) => {
         if (!map) {
@@ -119,6 +122,10 @@ const Controls: React.FC = () => {
         return RasterBaseLayers.None;
     };
 
+    // TODO: address through styling if bug occurs >1 place, assess if upgrade to next Mantine v
+    // Work around, Mantine bug applies data-disabled styling even when false
+    const snotelSwitchProps = isFetchingSnotel ? { 'data-disabled': true } : {};
+
     return (
         <Stack>
             {map ? (
@@ -138,12 +145,14 @@ const Controls: React.FC = () => {
                     />
                     <Switch
                         label="Show Snow Monitoring Points (NRCS SNOTEL)"
+                        disabled={isFetchingSnotel}
                         checked={toggleableLayers[LayerId.Snotel]}
                         onClick={() =>
                             handleSnotelChange(
                                 !toggleableLayers[LayerId.Snotel]
                             )
                         }
+                        {...snotelSwitchProps}
                     />
                     <Select
                         id="baseLayerSelector"

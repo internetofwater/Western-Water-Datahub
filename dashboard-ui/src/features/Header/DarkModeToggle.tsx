@@ -14,7 +14,7 @@ import {
 import { useColorScheme } from '@mantine/hooks';
 import styles from '@/features/Header/Header.module.css';
 import { useEffect } from 'react';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 
 const DarkModeToggle: React.FC = () => {
     const preferredColorScheme = useColorScheme();

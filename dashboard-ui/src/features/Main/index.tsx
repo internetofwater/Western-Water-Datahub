@@ -16,16 +16,16 @@ import {
     Paper,
 } from '@mantine/core';
 import Map from '@/features/Map';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import styles from '@/features/Main/Main.module.css';
 import { MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { useEffect } from 'react';
 import { MapTools } from '@/features/MapTools';
 import Reservoir from '@/features/Reservior';
-import { ReservoirDefault } from '@/lib/consts';
-import Controls from '../Controls';
-import Legend from '../Legend';
+import { ReservoirDefault } from '@/stores/main/consts';
+import Controls from '@/features/Controls';
+import Legend from '@/features/Legend';
 
 type Props = {
     accessToken: string;
@@ -45,6 +45,7 @@ const Main: React.FC<Props> = (props) => {
     const { map } = useMap(MAP_ID);
 
     const hasSelectedReservoir = reservoir !== ReservoirDefault;
+
     // Whenever reservoir or region change, resize map
     useEffect(() => {
         if (!map) {

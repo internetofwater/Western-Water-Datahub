@@ -6,14 +6,14 @@
 'use client';
 
 import { Select, Skeleton } from '@mantine/core';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import { MAP_ID, SourceId, ReservoirConfigs } from '@/features/Map/consts';
 import { useEffect, useRef, useState } from 'react';
 import {
     formatOptions,
     ItemWithSource,
 } from '@/features/Header/Selectors/utils';
-import { useReservoirData } from '@/app/hooks/useReservoirData';
+import { useReservoirData } from '@/hooks/useReservoirData';
 import { useMap } from '@/contexts/MapContexts';
 import {
     getReservoirConfig,
@@ -24,7 +24,7 @@ import {
 } from '@/features/Map/utils';
 import { SourceDataEvent } from '@/features/Map/types';
 import styles from '@/features/Header/Header.module.css';
-import { ReservoirDefault } from '@/lib/consts';
+import { ReservoirDefault } from '@/stores/main/consts';
 
 /**
 

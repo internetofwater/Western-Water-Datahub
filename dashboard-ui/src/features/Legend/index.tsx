@@ -12,11 +12,11 @@ import Square from '@/icons/Square';
 import { Gradient } from '@/features/Legend/Gradient';
 import styles from '@/features/Legend/Legend.module.css';
 import { getLayerName } from '@/features/Map/config';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import { Box, Divider, Group, Stack, Tooltip } from '@mantine/core';
-import { getTooltipContent } from './utils';
+import { getTooltipContent } from '@/features/Legend/utils';
 import Info from '@/icons/Info';
-import { Teacups } from './Teacups';
+import { Teacups } from '@/features/Legend/Teacups';
 
 const entries: Entry[] = [
     {

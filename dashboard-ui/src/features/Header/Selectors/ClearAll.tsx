@@ -10,8 +10,8 @@ import {
     RegionDefault,
     ReservoirDefault,
     StateDefault,
-} from '@/lib/consts';
-import useMainStore from '@/lib/main';
+} from '@/stores/main/consts';
+import useMainStore from '@/stores/main/main';
 import { Button } from '@mantine/core';
 import styles from '@/features/Header/Header.module.css';
 

@@ -6,7 +6,7 @@
 'use client';
 
 import { ComboboxData, Select, Skeleton } from '@mantine/core';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId, ValidBasins } from '@/features/Map/consts';
 import { useEffect, useRef, useState } from 'react';
@@ -20,7 +20,7 @@ import {
 } from '@/features/Map/types/basin';
 import { SourceDataEvent } from '@/features/Map/types';
 import { isSourceDataLoaded } from '@/features/Map/utils';
-import { BasinDefault } from '@/lib/consts';
+import { BasinDefault } from '@/stores/main/consts';
 
 export const Basin: React.FC = () => {
     const { map } = useMap(MAP_ID);

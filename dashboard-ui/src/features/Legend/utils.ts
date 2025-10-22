@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { LayerId, SubLayerId } from '../Map/consts';
+import { LayerId, SubLayerId } from '@/features/Map/consts';
 
 export const getTooltipContent = (layerId: LayerId | SubLayerId) => {
     switch (layerId) {

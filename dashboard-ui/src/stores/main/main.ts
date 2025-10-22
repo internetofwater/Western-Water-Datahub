@@ -11,13 +11,13 @@ import {
     Reservoir,
     ReservoirCollections,
     Tools,
-} from '@/lib/types';
+} from '@/stores/main/types';
 import {
     BasinDefault,
     RegionDefault,
     ReservoirDefault,
     StateDefault,
-} from '@/lib/consts';
+} from '@/stores/main/consts';
 
 export interface MainState {
     region: string;

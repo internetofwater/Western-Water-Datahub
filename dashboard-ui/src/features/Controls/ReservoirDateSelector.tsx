@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import { Checkbox } from '@mantine/core';
 import { DateInput, DateValue } from '@mantine/dates';
 import dayjs from 'dayjs';
@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { SourceId } from '@/features/Map/consts';
 import { FeatureCollection, Point, GeoJsonProperties } from 'geojson';
 import { appendResvizDataProperties } from '@/features/Map/utils';
+import { useLoading } from '@/hooks/useLoading';
 
 export const ReservoirDateSelector: React.FC = () => {
     const reservoirDate = useMainStore((state) => state.reservoirDate);
@@ -21,6 +22,8 @@ export const ReservoirDateSelector: React.FC = () => {
     const setReservoirCollections = useMainStore(
         (state) => state.setReservoirCollections
     );
+
+    const { isFetchingReservoirs } = useLoading();
 
     const handleCheckboxChange = (checked: boolean) => {
         if (checked) {
@@ -77,12 +80,16 @@ export const ReservoirDateSelector: React.FC = () => {
         <>
             <Checkbox
                 checked={!reservoirDate}
+                disabled={isFetchingReservoirs}
+                data-disabled={isFetchingReservoirs}
                 label="Latest Storage Value"
                 onChange={() => handleCheckboxChange(!reservoirDate)}
             />
             {reservoirDate && (
                 <DateInput
                     valueFormat="MM/DD/YYYY"
+                    disabled={isFetchingReservoirs}
+                    data-disabled={isFetchingReservoirs}
                     value={dayjs(reservoirDate).toDate()}
                     // minDate={new Date()}
                     maxDate={new Date()}

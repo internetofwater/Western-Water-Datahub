@@ -15,8 +15,8 @@ import {
 import { Chart } from '@/features/Reservior/Chart';
 import { Chart as ChartJS } from 'chart.js';
 import Info from '@/features/Reservior/Info';
-import useMainStore from '@/lib/main';
-import { Reservoir as ReservoirType } from '@/lib/types';
+import useMainStore from '@/stores/main/main';
+import { Reservoir as ReservoirType } from '@/stores/main/types';
 import { RiseReservoirProperties } from '@/features/Map/types/reservoir/rise';
 
 type Props = {

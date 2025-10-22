@@ -6,7 +6,10 @@
 import DashedLine from '@/icons/DashedLine';
 import Square from '@/icons/Square';
 import { Stack, Text, Image, Group, Box, Tooltip } from '@mantine/core';
-import { capacityFill, storageFill } from '../Reservior/TeacupDiagram/consts';
+import {
+    capacityFill,
+    storageFill,
+} from '@/features/Reservior/TeacupDiagram/consts';
 import styles from '@/features/Legend/Legend.module.css';
 import Info from '@/icons/Info';
 
