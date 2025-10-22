@@ -100,7 +100,7 @@ const InfoWrapper: React.FC<Props> = (props) => {
                 <CloseButton
                     onClick={() => handleDeselect()}
                     title="Deselect Reservoir"
-                    aria-lable="Deselect Reservoir"
+                    aria-label="Deselect Reservoir"
                     size="lg"
                     ml="auto"
                 />
