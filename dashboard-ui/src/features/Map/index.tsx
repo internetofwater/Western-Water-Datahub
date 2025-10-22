@@ -6,7 +6,7 @@
 'use client';
 
 import Map from '@/components/Map';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { layerDefinitions, sourceConfigs } from '@/features/Map/config';
 import {
     MAP_ID,
@@ -46,6 +46,7 @@ import {
 import { StateField } from '@/features/Map/types/state';
 import { Huc02BasinField } from '@/features/Map/types/basin';
 import { BoundingGeographyLevel } from '@/stores/main/types';
+import useSessionStore from '@/stores/session';
 
 type Props = {
     accessToken: string;
@@ -80,6 +81,10 @@ const MainMap: React.FC<Props> = (props) => {
         (state) => state.reservoirCollections
     );
 
+    const loadingInstances = useSessionStore((state) => state.loadingInstances);
+
+    const [shouldResize, setShouldResize] = useState(false);
+
     const isMounted = useRef(true);
 
     useReservoirData();
@@ -91,6 +96,18 @@ const MainMap: React.FC<Props> = (props) => {
             isMounted.current = false;
         };
     }, []);
+
+    useEffect(() => {
+        setShouldResize(loadingInstances.length > 0);
+    }, [loadingInstances]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        map.resize();
+    }, [shouldResize]);
 
     useEffect(() => {
         const resvizData = reservoirCollections?.[SourceId.ResvizEDRReservoirs];
