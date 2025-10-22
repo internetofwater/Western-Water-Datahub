@@ -171,8 +171,8 @@ resources:
 
   snotel-huc06-means:
     type: collection
-    title: Snotel HUC06 Water Temp Means from Snowpack Melt
-    description: The average water temperature from snowpack melt; each feature contains one average for each HUC06 watershed; these averages are relative to the 30 year average
+    title: Snotel Snow Water Equivalent Aggregated by HUC06
+    description: The average snow water equivalent; each feature contains one average for each HUC06 watershed; these averages are relative to the 30 year average
     provider-name:
       - DOA
       - USDA
