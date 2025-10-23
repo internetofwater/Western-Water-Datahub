@@ -17,19 +17,19 @@ export const INITIAL_CENTER: [number, number] = [-107.85792, 38.1736];
 export const INITIAL_ZOOM = 4.15;
 
 export enum SourceId {
-    Regions = 'dash-regions-source',
-    Basins = 'dash-hu02',
-    States = 'dash-states',
-    RiseEDRReservoirs = 'dash-rise-edr',
-    ResvizEDRReservoirs = 'dash-resviz-edr',
-    USACEEDRReservoirs = 'dash-usace-edr',
-    SnowWater = 'dash-snow-water',
-    USDroughtMonitor = 'dash-us-drought-monitor',
-    NOAAPrecipSixToTen = 'dash-noaa-precip-6-10-day',
-    NOAATempSixToTen = 'dash-noaa-temp-6-10-day',
-    NOAARiverForecast = 'dash-noaa-rfc',
-    Snotel = 'dash-snotel-edr',
-    SnotelHucSixMeans = 'dash-snotel-huc06-means',
+    Regions = 'regions-source',
+    Basins = 'hu02',
+    States = 'states',
+    RiseEDRReservoirs = 'rise-edr',
+    ResvizEDRReservoirs = 'resviz-edr',
+    USACEEDRReservoirs = 'usace-edr',
+    SnowWater = 'snow-water',
+    USDroughtMonitor = 'us-drought-monitor',
+    NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
+    NOAATempSixToTen = 'noaa-temp-6-10-day',
+    NOAARiverForecast = 'noaa-rfc',
+    Snotel = 'snotel-edr',
+    SnotelHucSixMeans = 'snotel-huc06-means',
 }
 
 export enum LayerId {
@@ -56,6 +56,8 @@ export enum SubLayerId {
     StatesFill = 'dash-states-fill',
     RiseEDRReservoirLabels = 'dash-rise-edr-reservoir-labels',
     ResvizEDRReservoirLabels = 'dash-resviz-edr-reservoir-labels',
+    SnotelBoundary = 'dash-snotel-edr-boundary',
+    SnotelFill = 'dash-snotel-edr-fill',
 }
 
 export const allLayerIds = [

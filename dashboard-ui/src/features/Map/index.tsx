@@ -35,7 +35,6 @@ import CustomControl from '@/components/Map/tools/CustomControl';
 import { basemaps } from '@/components/Map/consts';
 import { GeoJSONSource, LngLatLike, MapMouseEvent } from 'mapbox-gl';
 import { useReservoirData } from '@/hooks/useReservoirData';
-import { useSnotelData } from '@/hooks/useSnotelData';
 import { RegionField } from '@/features/Map/types/region';
 import {
     BasinDefault,
@@ -89,7 +88,7 @@ const MainMap: React.FC<Props> = (props) => {
 
     useReservoirData();
 
-    useSnotelData();
+    // useSnotelData();
 
     useEffect(() => {
         return () => {
@@ -543,7 +542,7 @@ const MainMap: React.FC<Props> = (props) => {
         });
 
         const customSources = Object.entries(sources).filter(([id]) => {
-            return id.startsWith('dash-');
+            return !id.startsWith('mapbox');
         });
 
         map.once('styledata', () => {

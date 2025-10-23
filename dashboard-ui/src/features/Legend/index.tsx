@@ -21,7 +21,7 @@ import { Teacups } from '@/features/Legend/Teacups';
 const entries: Entry[] = [
     {
         id: LayerId.Snotel,
-        type: LayerType.Circle,
+        type: LayerType.Fill,
         items: [
             {
                 color: '#7b3294',
@@ -226,7 +226,10 @@ const Legend: React.FC = () => {
                                                     styles.entryContainer
                                                 }
                                             >
-                                                <Square fill={item.color} />
+                                                <Square
+                                                    fill={item.color}
+                                                    stroke={item.color}
+                                                />
                                                 <div>{item.label}</div>
                                             </div>
                                         </li>

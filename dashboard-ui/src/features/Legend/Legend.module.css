@@ -44,12 +44,15 @@
 }
 
 .list {
-    width: 100%;
+    width: fit-content;
 
     display: flex;
     flex-wrap: wrap;
 
     margin-bottom: 8px;
+
+    background-color: var(--mantine-color-gray-4);
+    padding: 4px;
 }
 
 .title {

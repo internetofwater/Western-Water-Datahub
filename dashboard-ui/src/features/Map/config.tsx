@@ -43,7 +43,7 @@ import {
 import { StateField } from '@/features/Map/types/state';
 import { showReservoirPopup } from '@/features/Popups/utils';
 import { Huc02BasinField } from '@/features/Map/types/basin';
-import { Feature, Point } from 'geojson';
+import { Feature, Point, Polygon } from 'geojson';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -131,7 +131,7 @@ export const sourceConfigs: SourceConfig[] = [
         type: Sources.GeoJSON,
         definition: {
             type: 'geojson',
-            data: { type: 'FeatureCollection', features: [] }, // Data set at runtime after combining with mean values
+            data: 'https://cache.wwdh.internetofwater.app/collections/snotel-huc06-means/items',
         },
     },
     {
@@ -182,7 +182,7 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
         case LayerId.Regions:
             return 'Regions';
         case LayerId.Snotel:
-            return 'Snow Monitoring Points (%)';
+            return 'Snow Water Equivalent Averages (%)';
         case LayerId.NOAARiverForecast:
             return 'River Forecast Points (%)';
         case LayerId.USDroughtMonitor:
@@ -465,19 +465,24 @@ export const getLayerConfig = (
                 },
             };
         case LayerId.Snotel:
+            return null;
+        case SubLayerId.SnotelBoundary:
             return {
-                id: LayerId.Snotel,
-                type: LayerType.Circle,
+                id: SubLayerId.SnotelBoundary,
+                type: LayerType.Line,
                 source: SourceId.Snotel,
                 filter: [
                     'has',
                     SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent,
                 ],
+                layout: {
+                    visibility: 'none',
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                },
                 paint: {
-                    'circle-radius': 5,
-                    'circle-stroke-width': 1,
-                    'circle-stroke-color': '#000',
-                    'circle-color': [
+                    'line-opacity': 1,
+                    'line-color': [
                         'step',
                         [
                             'coalesce',
@@ -499,6 +504,42 @@ export const getLayerConfig = (
                         90,
                         '#008837',
                     ],
+                    'line-width': 3,
+                },
+            };
+        case SubLayerId.SnotelFill:
+            return {
+                id: SubLayerId.SnotelFill,
+                type: LayerType.Fill,
+                source: SourceId.Snotel,
+                filter: [
+                    'has',
+                    SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent,
+                ],
+                paint: {
+                    'fill-color': [
+                        'step',
+                        [
+                            'coalesce',
+                            [
+                                'get',
+                                SnotelHucMeansField.CurrentRelativeSnowWaterEquivalent,
+                            ],
+                            -1,
+                        ],
+                        '#fff',
+                        0,
+                        '#7b3294',
+                        25,
+                        '#c2a5cf',
+                        50,
+                        '#f7f7f7',
+                        75,
+                        '#a6dba0',
+                        90,
+                        '#008837',
+                    ],
+                    'fill-opacity': 0.5,
                 },
                 layout: {
                     visibility: 'none',
@@ -545,41 +586,45 @@ export const getLayerHoverFunction = (
                         false
                     );
                 };
-
-            case LayerId.Snotel:
+            case SubLayerId.SnotelFill:
                 return (e) => {
-                    map.getCanvas().style.cursor = 'pointer';
                     const { features } = e;
-                    if (features && features.length > 0) {
-                        const feature = features[0] as Feature<Point>;
+                    const priorityFeatures = map.queryRenderedFeatures(
+                        e.point,
+                        {
+                            layers: [
+                                LayerId.NOAARiverForecast,
+                                LayerId.ResvizEDRReservoirs,
+                            ],
+                        }
+                    );
+                    if (
+                        priorityFeatures.length === 0 &&
+                        features &&
+                        features.length > 0
+                    ) {
+                        const feature = features[0] as Feature<Polygon>;
                         if (feature.properties) {
                             const name = feature.properties[
-                                SnotelField.Name
+                                SnotelHucMeansField.Name
                             ] as string;
-                            const elevation = feature.properties[
-                                SnotelField.Elevation
-                            ] as string;
+                            const huc06 = feature.id as string;
                             const swe = Number(
                                 feature.properties[
                                     SnotelHucMeansField
                                         .CurrentRelativeSnowWaterEquivalent
-                                ]
+                                ] ?? 0
                             ).toFixed(1);
                             const html = `
-                            <div>
-                              <strong>${name}</strong><br/>
-                              <p>Elevation: ${elevation} ft</p>
-                              <p>Change in Snow Water Equivalent: ${swe}%</p>
-                              <p style="margin: 0 auto;"}>Click to learn more</p>
-                            </div>
-                            `;
+                                <div>
+                                  <strong>${name}</strong><br/>
+                                  <p>Huc06: ${huc06}</p>
+                                  <p>Change in Snow Water Equivalent: ${swe}%</p>
+                                </div>
+                                `;
+
                             hoverPopup
-                                .setLngLat(
-                                    feature.geometry.coordinates as [
-                                        number,
-                                        number
-                                    ]
-                                )
+                                .setLngLat(e.lngLat)
                                 .setHTML(html)
                                 .addTo(map);
                         }
@@ -606,12 +651,7 @@ export const getLayerHoverFunction = (
                             </div>
                             `;
                             hoverPopup
-                                .setLngLat(
-                                    feature.geometry.coordinates as [
-                                        number,
-                                        number
-                                    ]
-                                )
+                                .setLngLat(e.lngLat)
                                 .setHTML(html)
                                 .addTo(map);
                         }
@@ -717,40 +757,45 @@ export const getLayerMouseMoveFunction = (
                         true
                     );
                 };
-            case LayerId.Snotel:
+            case SubLayerId.SnotelFill:
                 return (e) => {
-                    map.getCanvas().style.cursor = 'pointer';
                     const { features } = e;
-                    if (features && features.length > 0) {
-                        const feature = features[0] as Feature<Point>;
+                    const priorityFeatures = map.queryRenderedFeatures(
+                        e.point,
+                        {
+                            layers: [
+                                LayerId.NOAARiverForecast,
+                                LayerId.ResvizEDRReservoirs,
+                            ],
+                        }
+                    );
+                    if (
+                        priorityFeatures.length === 0 &&
+                        features &&
+                        features.length > 0
+                    ) {
+                        const feature = features[0] as Feature<Polygon>;
                         if (feature.properties) {
                             const name = feature.properties[
-                                SnotelField.Name
+                                SnotelHucMeansField.Name
                             ] as string;
-                            const elevation = feature.properties[
-                                SnotelField.Elevation
-                            ] as string;
+                            const huc06 = feature.id as string;
                             const swe = Number(
                                 feature.properties[
                                     SnotelHucMeansField
                                         .CurrentRelativeSnowWaterEquivalent
-                                ]
+                                ] ?? 0
                             ).toFixed(1);
                             const html = `
                             <div>
                               <strong>${name}</strong><br/>
-                              <p>Elevation: ${elevation} ft</p>
+                              <p>Huc06: ${huc06}</p>
                               <p>Change in Snow Water Equivalent: ${swe}%</p>
-                              <p style="margin: 0 auto;"}>Click to learn more</p>
                             </div>
                             `;
+
                             hoverPopup
-                                .setLngLat(
-                                    feature.geometry.coordinates as [
-                                        number,
-                                        number
-                                    ]
-                                )
+                                .setLngLat(e.lngLat)
                                 .setHTML(html)
                                 .addTo(map);
                         }
@@ -833,13 +878,6 @@ export const getLayerClickFunction = (
                             SnotelProperties
                         >;
                         if (feature.properties) {
-                            // void showSnotelPopup(
-                            //     map,
-                            //     root,
-                            //     container,
-                            //     persistentPopup,
-                            //     feature
-                            // );
                             const name = feature.properties[SnotelField.Name];
                             const elevation =
                                 feature.properties[SnotelField.Elevation];
@@ -964,6 +1002,30 @@ export const layerDefinitions: MainLayerDefinition[] = [
         legend: false,
     },
     {
+        id: LayerId.Snotel,
+        config: getLayerConfig(LayerId.Snotel),
+        controllable: false,
+        legend: false,
+        subLayers: [
+            {
+                id: SubLayerId.SnotelBoundary,
+                config: getLayerConfig(SubLayerId.SnotelBoundary),
+                controllable: false,
+                legend: false,
+            },
+            {
+                id: SubLayerId.SnotelFill,
+                config: getLayerConfig(SubLayerId.SnotelFill),
+                controllable: false,
+                legend: false,
+                hoverFunction: getLayerHoverFunction(SubLayerId.SnotelFill),
+                mouseMoveFunction: getLayerMouseMoveFunction(
+                    SubLayerId.SnotelFill
+                ),
+            },
+        ],
+    },
+    {
         id: LayerId.Regions,
         config: getLayerConfig(LayerId.Regions),
         controllable: false,
@@ -1031,14 +1093,7 @@ export const layerDefinitions: MainLayerDefinition[] = [
         clickFunction: getLayerClickFunction(LayerId.NOAARiverForecast),
         hoverFunction: getLayerHoverFunction(LayerId.NOAARiverForecast),
     },
-    {
-        id: LayerId.Snotel,
-        config: getLayerConfig(LayerId.Snotel),
-        controllable: false,
-        legend: false,
-        clickFunction: getLayerClickFunction(LayerId.Snotel),
-        hoverFunction: getLayerHoverFunction(LayerId.Snotel),
-    },
+
     // {
     //     id: LayerId.RiseEDRReservoirs,
     //     config: getLayerConfig(LayerId.RiseEDRReservoirs),

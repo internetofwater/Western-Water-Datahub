@@ -145,7 +145,7 @@ const Controls: React.FC = () => {
                         }
                     />
                     <Switch
-                        label="Show Snow Monitoring Points (NRCS SNOTEL)"
+                        label="Show Snow Water Equivalent Averages (NRCS SNOTEL)"
                         disabled={isFetchingSnotel}
                         checked={toggleableLayers[LayerId.Snotel]}
                         onClick={() =>

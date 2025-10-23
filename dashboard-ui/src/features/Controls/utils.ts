@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { LayerId, ReservoirConfigs } from '@/features/Map/consts';
+import { LayerId, ReservoirConfigs, SubLayerId } from '@/features/Map/consts';
 import { RasterBaseLayers } from '@/features/Map/types';
 import { getReservoirIconImageExpression } from '@/features/Map/utils';
 import { Map } from 'mapbox-gl';
@@ -95,5 +95,6 @@ export const updateNOAARFC = (showNOAARFC: boolean, map: Map) => {
 export const updateSnotel = (showSnotel: boolean, map: Map) => {
     const visibility = showSnotel ? 'visible' : 'none';
 
-    map.setLayoutProperty(LayerId.Snotel, 'visibility', visibility);
+    map.setLayoutProperty(SubLayerId.SnotelBoundary, 'visibility', visibility);
+    map.setLayoutProperty(SubLayerId.SnotelFill, 'visibility', visibility);
 };
