@@ -35,12 +35,27 @@
     margin-right: 8px;
 }
 
-.basemapSelectorContainer {
-    width: 210px;
-}
-
 .mapToolTitle {
     text-align: center;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.basemapWrapper {
+    width: 300px;
+    --grid-gutter: calc(var(--default-spacing) * 2);
+}
+
+.basemapSelector {
+    cursor: pointer;
+    padding: 8px;
+}
+
+.basemapSelector[data-disabled='true'] {
+    cursor: not-allowed;
+    opacity: 0.8;
 }
 
 .basemapSelectorCheckboxLabel {

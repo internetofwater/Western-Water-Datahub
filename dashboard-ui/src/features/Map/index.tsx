@@ -539,11 +539,11 @@ const MainMap: React.FC<Props> = (props) => {
         const sources = map.getStyle().sources || {};
 
         const customLayers = layers.filter((layer) => {
-            return !layer.id.startsWith('mapbox');
+            return layer.id.startsWith('dash-');
         });
 
         const customSources = Object.entries(sources).filter(([id]) => {
-            return !id.startsWith('mapbox');
+            return id.startsWith('dash-');
         });
 
         map.once('styledata', () => {
