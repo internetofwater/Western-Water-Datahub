@@ -1,0 +1,7 @@
+.infoButton svg[data-identifier='help-svg'] {
+  fill: var(--mantine-color-white);
+}
+
+.tabList {
+  margin-bottom: calc(var(--default-spacing) * 2);
+}

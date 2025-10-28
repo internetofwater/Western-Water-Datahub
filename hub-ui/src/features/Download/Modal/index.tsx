@@ -3,43 +3,44 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Fragment } from "react/jsx-runtime";
-import { Modal as _Modal, Divider } from "@mantine/core";
-import Collection from "@/features/Download/Modal/Collection";
-import useMainStore from "@/stores/main";
-import useSessionStore from "@/stores/session";
-import { groupLocationIdsByCollection } from "@/utils/groupLocationsByCollection";
+import { Fragment } from 'react/jsx-runtime';
+import { Divider, Modal as ModalComponent, Title } from '@mantine/core';
+import Collection from '@/features/Download/Modal/Collection';
+import useMainStore from '@/stores/main';
+import useSessionStore from '@/stores/session';
+import { Modal as ModalEnum } from '@/stores/session/types';
+import { groupLocationIdsByCollection } from '@/utils/groupLocationsByCollection';
 
 const Modal: React.FC = () => {
-  const downloadModalOpen = useSessionStore((state) => state.downloadModalOpen);
-  const setDownloadModalOpen = useSessionStore(
-    (state) => state.setDownloadModalOpen,
-  );
+  const openModal = useSessionStore((state) => state.openModal);
+  const setOpenModal = useSessionStore((state) => state.setOpenModal);
   const locations = useMainStore((state) => state.locations);
 
   const locationsByCollections = groupLocationIdsByCollection(locations);
 
   return (
-    <_Modal
-      opened={downloadModalOpen}
-      onClose={() => setDownloadModalOpen(false)}
-      title="Download"
+    <ModalComponent
+      opened={openModal === ModalEnum.Download}
+      onClose={() => setOpenModal(null)}
+      title={
+        <Title order={3} size="h4">
+          Download
+        </Title>
+      }
       size="xl"
     >
       {locationsByCollections &&
-        Object.entries(locationsByCollections).map(
-          ([collectionId, locationIds]) => (
-            <Fragment key={`collection-download-${collectionId}`}>
-              <Collection
-                collectionId={collectionId}
-                locationIds={locationIds}
-                open={Object.keys(locationsByCollections).length === 1}
-              />
-              {Object.keys(locationsByCollections).length > 1 && <Divider />}
-            </Fragment>
-          ),
-        )}
-    </_Modal>
+        Object.entries(locationsByCollections).map(([collectionId, locationIds]) => (
+          <Fragment key={`collection-download-${collectionId}`}>
+            <Collection
+              collectionId={collectionId}
+              locationIds={locationIds}
+              open={Object.keys(locationsByCollections).length === 1}
+            />
+            {Object.keys(locationsByCollections).length > 1 && <Divider />}
+          </Fragment>
+        ))}
+    </ModalComponent>
   );
 };
 

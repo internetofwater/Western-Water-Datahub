@@ -3,34 +3,45 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Box, Button } from "@mantine/core";
-import styles from "@/features/Download/Download.module.css";
-import useMainStore from "@/stores/main";
-import useSessionStore from "@/stores/session";
+import { Button, Text, Tooltip } from '@mantine/core';
+import useMainStore from '@/stores/main';
+import useSessionStore from '@/stores/session';
 
 const Download: React.FC = () => {
   const locations = useMainStore((state) => state.locations);
   const setLocations = useMainStore((state) => state.setLocations);
-  const setDownloadModalOpen = useSessionStore(
-    (state) => state.setDownloadModalOpen,
-  );
+  const setDownloadModalOpen = useSessionStore((state) => state.setDownloadModalOpen);
 
   const hasLocations = locations.length > 0;
 
+  const helpDownloadText = (
+    <>
+      <Text size="sm">Curate data requests for selected requests.</Text>
+      <br />
+      <Text size="sm">
+        Select parameters and an optional timeframe for locations across all displayed collections.
+      </Text>
+    </>
+  );
+
   return (
-    <Box className={styles.downloadButtonWrapper}>
+    <>
       {hasLocations && (
         <>
-          <Button onClick={() => setDownloadModalOpen(true)}>
-            Download {locations.length} Location
-            {locations.length !== 1 ? "s" : ""}
-          </Button>
-          <Button onClick={() => setLocations([])} color="red-rocks">
-            Clear selection
-          </Button>
+          <Tooltip label={helpDownloadText}>
+            <Button onClick={() => setDownloadModalOpen(true)}>
+              Explore {locations.length} selected Location
+              {locations.length !== 1 ? 's' : ''}
+            </Button>
+          </Tooltip>
+          <Tooltip label="Deselect all selected locations">
+            <Button onClick={() => setLocations([])} color="red-rocks">
+              Clear selection
+            </Button>
+          </Tooltip>
         </>
       )}
-    </Box>
+    </>
   );
 };
 

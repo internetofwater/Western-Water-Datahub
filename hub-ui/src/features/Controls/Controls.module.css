@@ -1,0 +1,6 @@
+.controlsWrapper {
+  position: absolute;
+  top: var(--default-spacing);
+  left: var(--default-spacing);
+  z-index: 1;
+}

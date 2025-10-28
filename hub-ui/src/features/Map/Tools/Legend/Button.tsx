@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Legend from "@/assets/Legend";
-import useSessionStore from "@/stores/session";
-import { Tools } from "@/stores/session/types";
+import Legend from '@/assets/Legend';
+import useSessionStore from '@/stores/session';
+import { Tool } from '@/stores/session/types';
 
 /**
  *
@@ -16,7 +16,7 @@ export const MapButton: React.FC = () => {
   const setOpenTools = useSessionStore((state) => state.setOpenTools);
 
   const onClick = () => {
-    setOpenTools(Tools.Legend, !tools[Tools.Legend]);
+    setOpenTools(Tool.Legend, !tools[Tool.Legend]);
   };
 
   return (
@@ -25,7 +25,7 @@ export const MapButton: React.FC = () => {
       aria-label="Show legend"
       aria-disabled="false"
       onClick={onClick}
-      style={{ padding: "3px" }}
+      style={{ padding: '3px' }}
     >
       <Legend />
     </button>
