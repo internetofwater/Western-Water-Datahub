@@ -44,6 +44,10 @@ import { StateField } from '@/features/Map/types/state';
 import { showReservoirPopup } from '@/features/Popups/utils';
 import { Huc02BasinField } from '@/features/Map/types/basin';
 import { Feature, Point, Polygon } from 'geojson';
+import { huc02Centers } from '@/data/huc02Centers';
+import { stateCenters } from '@/data/stateCenters';
+import { regionCenters } from '@/data/regionCenters';
+import { RegionField } from './types/region';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -61,6 +65,60 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             url: RegionsSource,
             where: 'REG_NUM IN (5,6,7,8,9,10)',
+        },
+    },
+    {
+        id: SourceId.RegionCenters,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: regionCenters,
+            cluster: false,
+        },
+    },
+    {
+        id: SourceId.Basins,
+        type: Sources.VectorTile,
+        definition: {
+            type: 'vector',
+            tiles: [
+                `https://reference.geoconnex.us/collections/hu02/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`,
+            ],
+            minzoom: 0,
+            maxzoom: 10,
+            tileSize: 512,
+            bounds: [-124.707777, 25.190876, -67.05824, 49.376613],
+        },
+    },
+    {
+        id: SourceId.BasinCenters,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: huc02Centers,
+            cluster: false,
+        },
+    },
+    {
+        id: SourceId.States,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: 'https://reference.geoconnex.us/collections/states/items',
+            filter: [
+                'in',
+                ['get', StateField.Acronym],
+                ['literal', ValidStates],
+            ],
+        },
+    },
+    {
+        id: SourceId.StateCenters,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: stateCenters,
+            cluster: false,
         },
     },
     {
@@ -132,32 +190,10 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'geojson',
             data: 'https://cache.wwdh.internetofwater.app/collections/snotel-huc06-means/items',
-        },
-    },
-    {
-        id: SourceId.Basins,
-        type: Sources.VectorTile,
-        definition: {
-            type: 'vector',
-            tiles: [
-                `https://reference.geoconnex.us/collections/hu02/tiles/WebMercatorQuad/{z}/{y}/{x}?f=mvt`,
-            ],
-            minzoom: 0,
-            maxzoom: 10,
-            tileSize: 512,
-            bounds: [-124.707777, 25.190876, -67.05824, 49.376613],
-        },
-    },
-    {
-        id: SourceId.States,
-        type: Sources.GeoJSON,
-        definition: {
-            type: 'geojson',
-            data: 'https://reference.geoconnex.us/collections/states/items',
             filter: [
                 'in',
-                ['get', StateField.Acronym],
-                ['literal', ValidStates],
+                ['slice', ['to-string', ['id']], 0, 2],
+                ['literal', ValidBasins],
             ],
         },
     },
@@ -269,6 +305,26 @@ export const getLayerConfig = (
                     'fill-opacity': 0,
                 },
             };
+        case SubLayerId.RegionLabels:
+            return {
+                id: SubLayerId.RegionLabels,
+                type: LayerType.Symbol,
+                source: SourceId.RegionCenters,
+                layout: {
+                    'text-field': ['get', 'name'],
+                    'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                    'text-size': 18,
+                    'text-allow-overlap': true,
+                    'text-ignore-placement': true,
+                },
+                paint: {
+                    'text-color': '#fff',
+                    'text-opacity': 0,
+                    'text-halo-blur': 1,
+                    'text-halo-color': '#000000',
+                    'text-halo-width': 2,
+                },
+            };
         case LayerId.Basins:
             return null;
         case SubLayerId.BasinsBoundary:
@@ -312,6 +368,26 @@ export const getLayerConfig = (
                     'fill-opacity': 0,
                 },
             };
+        case SubLayerId.BasinLabels:
+            return {
+                id: SubLayerId.BasinLabels,
+                type: LayerType.Symbol,
+                source: SourceId.BasinCenters,
+                layout: {
+                    'text-field': ['get', 'name'],
+                    'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                    'text-size': 18,
+                    'text-allow-overlap': true,
+                    'text-ignore-placement': true,
+                },
+                paint: {
+                    'text-color': '#fff',
+                    'text-opacity': 0,
+                    'text-halo-blur': 1,
+                    'text-halo-color': '#000000',
+                    'text-halo-width': 2,
+                },
+            };
         case LayerId.States:
             return null;
         case SubLayerId.StatesBoundary:
@@ -341,6 +417,26 @@ export const getLayerConfig = (
                 paint: {
                     'fill-color': getLayerColor(LayerId.States),
                     'fill-opacity': 0,
+                },
+            };
+        case SubLayerId.StateLabels:
+            return {
+                id: SubLayerId.StateLabels,
+                type: LayerType.Symbol,
+                source: SourceId.StateCenters,
+                layout: {
+                    'text-field': ['get', 'name'],
+                    'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                    'text-size': 18,
+                    'text-allow-overlap': true,
+                    'text-ignore-placement': true,
+                },
+                paint: {
+                    'text-color': '#fff',
+                    'text-opacity': 0,
+                    'text-halo-blur': 1,
+                    'text-halo-color': '#000000',
+                    'text-halo-width': 2,
                 },
             };
         case LayerId.RiseEDRReservoirs:
@@ -586,6 +682,82 @@ export const getLayerHoverFunction = (
                         false
                     );
                 };
+            case SubLayerId.RegionsFill:
+                return (e) => {
+                    const zoom = map.getZoom();
+                    if (zoom < 12) {
+                        const feature = e.features?.[0] as
+                            | Feature<Polygon>
+                            | undefined;
+                        if (feature && feature.properties) {
+                            map.getCanvas().style.cursor = 'pointer';
+                            const id = feature.properties[
+                                RegionField.RegNum
+                            ] as string;
+                            map.setPaintProperty(
+                                SubLayerId.RegionLabels,
+                                'text-opacity',
+                                [
+                                    'case',
+                                    ['==', ['get', RegionField.RegNum], id],
+                                    1,
+                                    0,
+                                ]
+                            );
+                        }
+                    }
+                };
+            case SubLayerId.BasinsFill:
+                return (e) => {
+                    const zoom = map.getZoom();
+                    if (zoom < 12) {
+                        const feature = e.features?.[0] as
+                            | Feature<Polygon>
+                            | undefined;
+                        if (feature && feature.properties) {
+                            map.getCanvas().style.cursor = 'pointer';
+                            const id = Number(
+                                feature.properties[Huc02BasinField.Id]
+                            );
+
+                            map.setPaintProperty(
+                                SubLayerId.BasinLabels,
+                                'text-opacity',
+                                ['case', ['==', ['get', 'id'], id], 1, 0]
+                            );
+                        }
+                    }
+                };
+            case SubLayerId.StatesFill:
+                return (e) => {
+                    const zoom = map.getZoom();
+                    if (zoom < 12) {
+                        const feature = e.features?.[0] as
+                            | Feature<Polygon>
+                            | undefined;
+                        if (feature && feature.properties) {
+                            map.getCanvas().style.cursor = 'pointer';
+                            const accronym = feature.properties[
+                                StateField.Acronym
+                            ] as string;
+
+                            map.setPaintProperty(
+                                SubLayerId.StateLabels,
+                                'text-opacity',
+                                [
+                                    'case',
+                                    [
+                                        '==',
+                                        ['get', StateField.Acronym],
+                                        accronym,
+                                    ],
+                                    1,
+                                    0,
+                                ]
+                            );
+                        }
+                    }
+                };
             case SubLayerId.SnotelFill:
                 return (e) => {
                     const { features } = e;
@@ -696,6 +868,33 @@ export const getLayerCustomHoverExitFunction = (
         container: HTMLDivElement
     ) => {
         switch (id) {
+            case SubLayerId.RegionsFill:
+                return () => {
+                    map.getCanvas().style.cursor = '';
+                    map.setPaintProperty(
+                        SubLayerId.RegionLabels,
+                        'text-opacity',
+                        0
+                    );
+                };
+            case SubLayerId.BasinsFill:
+                return () => {
+                    map.getCanvas().style.cursor = '';
+                    map.setPaintProperty(
+                        SubLayerId.BasinLabels,
+                        'text-opacity',
+                        0
+                    );
+                };
+            case SubLayerId.StatesFill:
+                return () => {
+                    map.getCanvas().style.cursor = '';
+                    map.setPaintProperty(
+                        SubLayerId.StateLabels,
+                        'text-opacity',
+                        0
+                    );
+                };
             default:
                 return (e) => {
                     console.log('Hover Exit Event Triggered: ', e);
@@ -756,6 +955,80 @@ export const getLayerMouseMoveFunction = (
                         hoverPopup,
                         true
                     );
+                };
+            case SubLayerId.RegionsFill:
+                return (e) => {
+                    const zoom = map.getZoom();
+                    if (zoom < 12) {
+                        const feature = e.features?.[0] as
+                            | Feature<Polygon>
+                            | undefined;
+                        if (feature && feature.properties) {
+                            map.getCanvas().style.cursor = 'pointer';
+                            const id = feature.properties[
+                                RegionField.RegNum
+                            ] as string;
+                            map.setPaintProperty(
+                                SubLayerId.RegionLabels,
+                                'text-opacity',
+                                [
+                                    'case',
+                                    ['==', ['get', RegionField.RegNum], id],
+                                    1,
+                                    0,
+                                ]
+                            );
+                        }
+                    }
+                };
+            case SubLayerId.BasinsFill:
+                return (e) => {
+                    const zoom = map.getZoom();
+                    if (zoom < 12) {
+                        const feature = e.features?.[0] as
+                            | Feature<Polygon>
+                            | undefined;
+                        if (feature && feature.properties) {
+                            map.getCanvas().style.cursor = 'pointer';
+                            const id = Number(
+                                feature.properties[Huc02BasinField.Id]
+                            );
+                            map.setPaintProperty(
+                                SubLayerId.BasinLabels,
+                                'text-opacity',
+                                ['case', ['==', ['get', 'id'], id], 1, 0]
+                            );
+                        }
+                    }
+                };
+            case SubLayerId.StatesFill:
+                return (e) => {
+                    const zoom = map.getZoom();
+                    if (zoom < 12) {
+                        const feature = e.features?.[0] as
+                            | Feature<Polygon>
+                            | undefined;
+                        if (feature && feature.properties) {
+                            map.getCanvas().style.cursor = 'pointer';
+                            const accronym = feature.properties[
+                                StateField.Acronym
+                            ] as string;
+                            map.setPaintProperty(
+                                SubLayerId.StateLabels,
+                                'text-opacity',
+                                [
+                                    'case',
+                                    [
+                                        '==',
+                                        ['get', StateField.Acronym],
+                                        accronym,
+                                    ],
+                                    1,
+                                    0,
+                                ]
+                            );
+                        }
+                    }
                 };
             case SubLayerId.SnotelFill:
                 return (e) => {
@@ -1042,6 +1315,13 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 config: getLayerConfig(SubLayerId.RegionsFill),
                 controllable: false,
                 legend: false,
+                hoverFunction: getLayerHoverFunction(SubLayerId.RegionsFill),
+                mouseMoveFunction: getLayerMouseMoveFunction(
+                    SubLayerId.RegionsFill
+                ),
+                customHoverExitFunction: getLayerCustomHoverExitFunction(
+                    SubLayerId.RegionsFill
+                ),
             },
         ],
     },
@@ -1062,6 +1342,13 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 config: getLayerConfig(SubLayerId.BasinsFill),
                 controllable: false,
                 legend: false,
+                hoverFunction: getLayerHoverFunction(SubLayerId.BasinsFill),
+                mouseMoveFunction: getLayerMouseMoveFunction(
+                    SubLayerId.BasinsFill
+                ),
+                customHoverExitFunction: getLayerCustomHoverExitFunction(
+                    SubLayerId.BasinsFill
+                ),
             },
         ],
     },
@@ -1082,6 +1369,13 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 config: getLayerConfig(SubLayerId.StatesFill),
                 controllable: false,
                 legend: false,
+                hoverFunction: getLayerHoverFunction(SubLayerId.StatesFill),
+                mouseMoveFunction: getLayerMouseMoveFunction(
+                    SubLayerId.StatesFill
+                ),
+                customHoverExitFunction: getLayerCustomHoverExitFunction(
+                    SubLayerId.StatesFill
+                ),
             },
         ],
     },
@@ -1129,5 +1423,23 @@ export const layerDefinitions: MainLayerDefinition[] = [
             },
         ],
         // hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
+    },
+    {
+        id: SubLayerId.RegionLabels,
+        config: getLayerConfig(SubLayerId.RegionLabels),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: SubLayerId.BasinLabels,
+        config: getLayerConfig(SubLayerId.BasinLabels),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: SubLayerId.StateLabels,
+        config: getLayerConfig(SubLayerId.StateLabels),
+        controllable: false,
+        legend: false,
     },
 ];

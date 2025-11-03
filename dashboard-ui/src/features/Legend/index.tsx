@@ -193,7 +193,9 @@ const Legend: React.FC = () => {
                                                 }
                                             >
                                                 <Line color={item.color} />
-                                                <div>{item.label}</div>
+                                                <div style={{ color: 'black' }}>
+                                                    {item.label}
+                                                </div>
                                             </div>
                                         </li>
                                     ))}
@@ -210,7 +212,9 @@ const Legend: React.FC = () => {
                                                 }
                                             >
                                                 <Circle color={item.color} />
-                                                <div>{item.label}</div>
+                                                <div style={{ color: 'black' }}>
+                                                    {item.label}
+                                                </div>
                                             </div>
                                         </li>
                                     ))}
@@ -230,7 +234,9 @@ const Legend: React.FC = () => {
                                                     fill={item.color}
                                                     stroke={item.color}
                                                 />
-                                                <div>{item.label}</div>
+                                                <div style={{ color: 'black' }}>
+                                                    {item.label}
+                                                </div>
                                             </div>
                                         </li>
                                     ))}
