@@ -14,7 +14,6 @@ export const About: React.FC<Props> = (props) => {
   const [showHelpAgain, setShowHelpAgain] = useState(showHelp);
 
   const handleDontShowClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('click', event.currentTarget, event.currentTarget.checked);
     const { checked } = event.currentTarget;
     if (checked) {
       localStorage.setItem('showHelp', 'false');
