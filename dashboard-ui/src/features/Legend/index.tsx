@@ -21,7 +21,7 @@ import { Teacups } from '@/features/Legend/Teacups';
 const entries: Entry[] = [
     {
         id: LayerId.Snotel,
-        type: LayerType.Circle,
+        type: LayerType.Fill,
         items: [
             {
                 color: '#7b3294',
@@ -193,7 +193,9 @@ const Legend: React.FC = () => {
                                                 }
                                             >
                                                 <Line color={item.color} />
-                                                <div>{item.label}</div>
+                                                <div style={{ color: 'black' }}>
+                                                    {item.label}
+                                                </div>
                                             </div>
                                         </li>
                                     ))}
@@ -210,7 +212,9 @@ const Legend: React.FC = () => {
                                                 }
                                             >
                                                 <Circle color={item.color} />
-                                                <div>{item.label}</div>
+                                                <div style={{ color: 'black' }}>
+                                                    {item.label}
+                                                </div>
                                             </div>
                                         </li>
                                     ))}
@@ -226,8 +230,13 @@ const Legend: React.FC = () => {
                                                     styles.entryContainer
                                                 }
                                             >
-                                                <Square fill={item.color} />
-                                                <div>{item.label}</div>
+                                                <Square
+                                                    fill={item.color}
+                                                    stroke={item.color}
+                                                />
+                                                <div style={{ color: 'black' }}>
+                                                    {item.label}
+                                                </div>
                                             </div>
                                         </li>
                                     ))}

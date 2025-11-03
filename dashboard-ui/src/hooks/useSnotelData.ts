@@ -84,7 +84,10 @@ export const useSnotelData = () => {
         } catch (error) {
             if ((error as Error)?.name !== 'AbortError') {
                 console.error('Failed to update SNOTEL data:', error);
-            } else if ((error as Error)?.message) {
+            } else if (
+                (error as Error)?.message &&
+                !(error as Error)?.message.includes('AbortError')
+            ) {
                 const _error = error as Error;
                 notificationManager.show(
                     `Error: ${_error.message}`,

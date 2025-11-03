@@ -17,9 +17,12 @@ export const INITIAL_CENTER: [number, number] = [-107.85792, 38.1736];
 export const INITIAL_ZOOM = 4.15;
 
 export enum SourceId {
-    Regions = 'regions-source',
+    Regions = 'regions',
+    RegionCenters = 'regions-center',
     Basins = 'hu02',
+    BasinCenters = 'hu02-center',
     States = 'states',
+    StateCenters = 'states-center',
     RiseEDRReservoirs = 'rise-edr',
     ResvizEDRReservoirs = 'resviz-edr',
     USACEEDRReservoirs = 'usace-edr',
@@ -33,29 +36,34 @@ export enum SourceId {
 }
 
 export enum LayerId {
-    Regions = 'regions-main',
-    Basins = 'basins-main',
-    States = 'states-main',
-    RiseEDRReservoirs = 'rise-edr-reservoir-points',
-    ResvizEDRReservoirs = 'resviz-edr-reservoir-points',
-    SnowWater = 'snow-water',
-    USDroughtMonitor = 'us-drought-monitor',
-    NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
-    NOAATempSixToTen = 'noaa-temp-6-10-day',
-    NOAARiverForecast = 'noaa-rfc',
-    Snotel = 'snotel-edr',
-    SnotelHucSixMeans = 'snotel-huc06-means',
+    Regions = 'dash-regions-main',
+    Basins = 'dash-basins-main',
+    States = 'dash-states-main',
+    RiseEDRReservoirs = 'dash-rise-edr-reservoir-points',
+    ResvizEDRReservoirs = 'dash-resviz-edr-reservoir-points',
+    SnowWater = 'dash-snow-water',
+    USDroughtMonitor = 'dash-us-drought-monitor',
+    NOAAPrecipSixToTen = 'dash-noaa-precip-6-10-day',
+    NOAATempSixToTen = 'dash-noaa-temp-6-10-day',
+    NOAARiverForecast = 'dash-noaa-rfc',
+    Snotel = 'dash-snotel-edr',
+    SnotelHucSixMeans = 'dash-snotel-huc06-means',
 }
 
 export enum SubLayerId {
-    RegionsBoundary = 'regions-boundary',
-    RegionsFill = 'regions-fill',
-    BasinsBoundary = 'basins-boundary',
-    BasinsFill = 'basins-fill',
-    StatesBoundary = 'states-boundary',
-    StatesFill = 'states-fill',
-    RiseEDRReservoirLabels = 'rise-edr-reservoir-labels',
-    ResvizEDRReservoirLabels = 'resviz-edr-reservoir-labels',
+    RegionsBoundary = 'dash-regions-boundary',
+    RegionsFill = 'dash-regions-fill',
+    RegionLabels = 'dash-regions-labels',
+    BasinsBoundary = 'dash-basins-boundary',
+    BasinsFill = 'dash-basins-fill',
+    BasinLabels = 'dash-basins-labels',
+    StatesBoundary = 'dash-states-boundary',
+    StatesFill = 'dash-states-fill',
+    StateLabels = 'dash-states-labels',
+    RiseEDRReservoirLabels = 'dash-rise-edr-reservoir-labels',
+    ResvizEDRReservoirLabels = 'dash-resviz-edr-reservoir-labels',
+    SnotelBoundary = 'dash-snotel-edr-boundary',
+    SnotelFill = 'dash-snotel-edr-fill',
 }
 
 export const allLayerIds = [
@@ -222,6 +230,7 @@ export const ValidStates = [
     'NV',
     'AZ',
     'MT',
+    'WY',
     'CA',
     'OR',
     'WA',

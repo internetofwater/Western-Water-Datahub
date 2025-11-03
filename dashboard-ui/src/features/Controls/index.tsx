@@ -130,10 +130,11 @@ const Controls: React.FC = () => {
         <Stack>
             {map ? (
                 <>
-                    <Stack>
-                        <ReservoirDateSelector />
-                    </Stack>
+                    <ReservoirDateSelector />
                     <Divider mx="xl" />
+                    <Text size="md" fw={500}>
+                        Reference Data
+                    </Text>
                     <Switch
                         label="Show River Forecast Points (NOAA RFC)"
                         checked={toggleableLayers[LayerId.NOAARiverForecast]}
@@ -144,7 +145,7 @@ const Controls: React.FC = () => {
                         }
                     />
                     <Switch
-                        label="Show Snow Monitoring Points (NRCS SNOTEL)"
+                        label="Show Snow Water Equivalent Averages (NRCS SNOTEL)"
                         disabled={isFetchingSnotel}
                         checked={toggleableLayers[LayerId.Snotel]}
                         onClick={() =>
@@ -169,17 +170,19 @@ const Controls: React.FC = () => {
                             handleBaseLayerChange(_value as RasterBaseLayers)
                         }
                     />
-                    <Stack gap="xs">
-                        <Text size="sm">Base Layer Opacity</Text>
-                        <Slider
-                            min={0}
-                            max={1}
-                            step={0.05}
-                            value={baseLayerOpacity}
-                            onChange={handleBaseLayerOpacityChange}
-                            label={(value) => `${Math.round(value * 100)}%`}
-                        />
-                    </Stack>
+                    {getBaseLayerValue() !== RasterBaseLayers.None && (
+                        <Stack gap="xs">
+                            <Text size="sm">Base Layer Opacity</Text>
+                            <Slider
+                                min={0}
+                                max={1}
+                                step={0.05}
+                                value={baseLayerOpacity}
+                                onChange={handleBaseLayerOpacityChange}
+                                label={(value) => `${Math.round(value * 100)}%`}
+                            />
+                        </Stack>
+                    )}
                 </>
             ) : (
                 <Group justify="center" align="center">
