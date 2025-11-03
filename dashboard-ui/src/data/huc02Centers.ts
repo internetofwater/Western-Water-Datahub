@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 // Center point of each huc boundary for drawing labels
 // Some adjustments for better position
 import { FeatureCollection, Point } from 'geojson';

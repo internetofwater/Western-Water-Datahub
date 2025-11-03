@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { FeatureCollection, Point } from 'geojson';
 
 export const regionCenters: FeatureCollection<Point> = {
