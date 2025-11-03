@@ -4,17 +4,9 @@
  */
 
 import { useEffect, useState } from 'react';
-import {
-  ComboboxData,
-  Group,
-  Loader,
-  Select,
-  Stack,
-  Text,
-  Title,
-  VisuallyHidden,
-} from '@mantine/core';
+import { ComboboxData, Group, Loader, Stack, Text, Title, VisuallyHidden } from '@mantine/core';
 import Info from '@/assets/Info';
+import Select from '@/components/Select';
 import Tooltip from '@/components/Tooltip';
 import styles from '@/features/Panel/Panel.module.css';
 import { useLoading } from '@/hooks/useLoading';
@@ -22,8 +14,8 @@ import useMainStore from '@/stores/main';
 import { MainState } from '@/stores/main/types';
 
 export const Collection: React.FC = () => {
-  const collection = useMainStore((state) => state.collection);
-  const setCollection = useMainStore((state) => state.setCollection);
+  const selectedCollections = useMainStore((state) => state.selectedCollections);
+  const setSelectedCollections = useMainStore((state) => state.setSelectedCollections);
 
   const provider = useMainStore((state) => state.provider);
   const category = useMainStore((state) => state.category);
@@ -41,8 +33,9 @@ export const Collection: React.FC = () => {
       }))
       .sort((a, b) => a.label.localeCompare(b.label));
 
-    if (!collections.some((_collection) => _collection.id === collection)) {
-      setCollection(null);
+    // TODO: update this for array
+    if (!collections.some((_collection) => selectedCollections.includes(_collection.id))) {
+      setSelectedCollections([]);
     }
 
     setCollectionOptions(collectionOptions);
@@ -83,16 +76,14 @@ export const Collection: React.FC = () => {
       </Tooltip>
       <VisuallyHidden>{helpText}</VisuallyHidden>
       <Select
-        size="sm"
         label="Collection"
+        multiple
         description={getDescription(provider, category)}
         placeholder="Select..."
         data={collectionOptions}
-        value={collection}
-        onChange={setCollection}
+        value={selectedCollections}
+        onChange={setSelectedCollections}
         disabled={isFetchingCollections}
-        searchable
-        clearable
       />
       {isFetchingCollections && (
         <Group>

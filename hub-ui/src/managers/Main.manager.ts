@@ -3,29 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as turf from "@turf/turf";
-import { Feature, FeatureCollection, Geometry, Point, Polygon } from "geojson";
-import {
-  GeoJSONFeature,
-  GeoJSONSource,
-  LngLatBoundsLike,
-  Map,
-  Popup,
-} from "mapbox-gl";
-import { stringify, GeoJSONFeature as WellknownFeature } from "wellknown";
-import { StoreApi, UseBoundStore } from "zustand";
-import { GeographyFilterSources } from "@/features/Map/consts";
-import { SourceId } from "@/features/Map/sources";
+import * as turf from '@turf/turf';
+import { Feature, FeatureCollection, Geometry, Point, Polygon } from 'geojson';
+import { GeoJSONFeature, GeoJSONSource, LngLatBoundsLike, Map, Popup } from 'mapbox-gl';
+import { stringify, GeoJSONFeature as WellknownFeature } from 'wellknown';
+import { StoreApi, UseBoundStore } from 'zustand';
+import { GeographyFilterSources } from '@/features/Map/consts';
+import { SourceId } from '@/features/Map/sources';
 import {
   getFillLayerDefinition,
   getLineLayerDefinition,
   getPointLayerDefinition,
-} from "@/features/Map/utils";
-import { ICollection } from "@/services/edr.service";
-import geoconnexService from "@/services/init/geoconnex.init";
-import wwdhService from "@/services/init/wwdh.init";
-import { Location, MainState } from "@/stores/main/types";
-import { getRandomHexColor } from "@/utils/hexColor";
+} from '@/features/Map/utils';
+import { ICollection } from '@/services/edr.service';
+import geoconnexService from '@/services/init/geoconnex.init';
+import wwdhService from '@/services/init/wwdh.init';
+import { Location, MainState } from '@/stores/main/types';
+import { getRandomHexColor } from '@/utils/hexColor';
 
 /**
  *
@@ -72,7 +66,7 @@ class MainManager {
    *
    * @function
    */
-  public hasCollection(collectionId: ICollection["id"]): boolean {
+  public hasCollection(collectionId: ICollection['id']): boolean {
     return this.store.getState().hasCollection(collectionId);
   }
 
@@ -80,7 +74,7 @@ class MainManager {
    *
    * @function
    */
-  public hasLocation(locationId: Location["id"]): boolean {
+  public hasLocation(locationId: Location['id']): boolean {
     return this.store.getState().hasLocation(locationId);
   }
 
@@ -88,9 +82,7 @@ class MainManager {
    *
    * @function
    */
-  private async fetchLocations(
-    collectionId: ICollection["id"],
-  ): Promise<FeatureCollection<Point>> {
+  private async fetchLocations(collectionId: ICollection['id']): Promise<FeatureCollection<Point>> {
     return wwdhService.getLocations<FeatureCollection<Point>>(collectionId);
   }
 
@@ -99,13 +91,13 @@ class MainManager {
    * @function
    */
   private async getArea(
-    collectionId: ICollection["id"],
-    feature: WellknownFeature,
+    collectionId: ICollection['id'],
+    feature: WellknownFeature
   ): Promise<FeatureCollection<Point>> {
     const wkt = stringify(feature);
 
     return wwdhService.getArea<FeatureCollection<Point>>(collectionId, {
-      method: "POST",
+      method: 'POST',
       params: {
         coords: wkt,
       },
@@ -116,7 +108,7 @@ class MainManager {
    *
    * @function
    */
-  public getSourceId(collectionId: ICollection["id"]): string {
+  public getSourceId(collectionId: ICollection['id']): string {
     return `${collectionId}-source`;
   }
 
@@ -124,7 +116,7 @@ class MainManager {
    *
    * @function
    */
-  public getLocationsLayerIds(collectionId: ICollection["id"]): {
+  public getLocationsLayerIds(collectionId: ICollection['id']): {
     pointLayerId: string;
     fillLayerId: string;
     lineLayerId: string;
@@ -136,34 +128,31 @@ class MainManager {
     };
   }
 
-  public getFilterLayerId(collectionId: ICollection["id"]): string {
+  public getFilterLayerId(collectionId: ICollection['id']): string {
     return `${collectionId}-filter`;
   }
 
   private filterByGeometryType(
     featureCollection: FeatureCollection<Geometry>,
-    geographyFilterFeature: Feature<Polygon>,
+    geographyFilterFeature: Feature<Polygon>
   ): FeatureCollection<Geometry> {
     return {
-      type: "FeatureCollection",
+      type: 'FeatureCollection',
       features: featureCollection.features.filter((feature) => {
         switch (feature.geometry.type) {
-          case "Point":
-            return turf.booleanPointInPolygon(
-              feature as Feature<Point>,
-              geographyFilterFeature,
-            );
+          case 'Point':
+            return turf.booleanPointInPolygon(feature as Feature<Point>, geographyFilterFeature);
 
-          case "LineString":
-          case "MultiLineString":
-          case "Polygon":
-          case "MultiPolygon":
+          case 'LineString':
+          case 'MultiLineString':
+          case 'Polygon':
+          case 'MultiPolygon':
             return turf.booleanIntersects(feature, geographyFilterFeature);
 
           default:
             console.error(
               `Unexpected geometry type: ${feature.geometry?.type} in feature: `,
-              feature,
+              feature
             );
             return false;
         }
@@ -172,15 +161,12 @@ class MainManager {
   }
 
   private filterLocations(
-    featureCollection: FeatureCollection<Geometry>,
+    featureCollection: FeatureCollection<Geometry>
   ): FeatureCollection<Geometry> {
     const geographyFilter = this.store.getState().geographyFilter;
 
     if (geographyFilter) {
-      return this.filterByGeometryType(
-        featureCollection,
-        geographyFilter.feature,
-      );
+      return this.filterByGeometryType(featureCollection, geographyFilter.feature);
     }
 
     return featureCollection;
@@ -190,9 +176,7 @@ class MainManager {
    *
    * @function
    */
-  private async addLocationSource(
-    collectionId: ICollection["id"],
-  ): Promise<string> {
+  private async addLocationSource(collectionId: ICollection['id']): Promise<string> {
     const sourceId = this.getSourceId(collectionId);
     if (this.map) {
       const data = await this.fetchLocations(collectionId);
@@ -201,7 +185,7 @@ class MainManager {
       const source = this.map.getSource(sourceId) as GeoJSONSource;
       if (!source) {
         this.map.addSource(sourceId, {
-          type: "geojson",
+          type: 'geojson',
           data: geographyFilteredData,
         });
       } else {
@@ -228,16 +212,12 @@ class MainManager {
    *
    * @function
    */
-  private async addLocationLayer(
-    collectionId: ICollection["id"],
-    sourceId: string,
-  ): Promise<void> {
+  private async addLocationLayer(collectionId: ICollection['id'], sourceId: string): Promise<void> {
     const geographyFilter = this.store.getState().geographyFilter;
 
     const collections = this.store.getState().collections;
 
-    const { pointLayerId, fillLayerId, lineLayerId } =
-      this.getLocationsLayerIds(collectionId);
+    const { pointLayerId, fillLayerId, lineLayerId } = this.getLocationsLayerIds(collectionId);
     if (this.map) {
       const color = getRandomHexColor();
       if (
@@ -247,11 +227,9 @@ class MainManager {
       ) {
         this.map.addLayer(getFillLayerDefinition(fillLayerId, sourceId, color));
         this.map.addLayer(getLineLayerDefinition(lineLayerId, sourceId, color));
-        this.map.addLayer(
-          getPointLayerDefinition(pointLayerId, sourceId, color),
-        );
+        this.map.addLayer(getPointLayerDefinition(pointLayerId, sourceId, color));
 
-        this.map.on("click", pointLayerId, (e) => {
+        this.map.on('click', pointLayerId, (e) => {
           e.originalEvent.preventDefault();
 
           const features = this.map!.queryRenderedFeatures(e.point, {
@@ -272,7 +250,7 @@ class MainManager {
           }
         });
 
-        this.map.on("click", fillLayerId, (e) => {
+        this.map.on('click', fillLayerId, (e) => {
           if (!e.originalEvent.defaultPrevented) {
             e.originalEvent.preventDefault();
 
@@ -295,7 +273,7 @@ class MainManager {
           }
         });
 
-        this.map.on("click", lineLayerId, (e) => {
+        this.map.on('click', lineLayerId, (e) => {
           if (!e.originalEvent.defaultPrevented) {
             e.originalEvent.preventDefault();
 
@@ -318,71 +296,49 @@ class MainManager {
           }
         });
 
-        this.map.on(
-          "mouseenter",
-          [pointLayerId, fillLayerId, lineLayerId],
-          (e) => {
-            this.map!.getCanvas().style.cursor = "pointer";
-            const { features } = e;
-            if (features && features.length > 0) {
-              const collection = collections.find(
-                (collection) => collection.id === collectionId,
-              );
-              const uniqueFeatures = this.getUniqueIds(features);
-              if (collection) {
-                const html = `
+        this.map.on('mouseenter', [pointLayerId, fillLayerId, lineLayerId], (e) => {
+          this.map!.getCanvas().style.cursor = 'pointer';
+          const { features } = e;
+          if (features && features.length > 0) {
+            const collection = collections.find((collection) => collection.id === collectionId);
+            const uniqueFeatures = this.getUniqueIds(features);
+            if (collection) {
+              const html = `
                 <span style="color:black;">
                   <strong>${collection.title}</strong><br/>
-                  ${uniqueFeatures.map((locationId) => `<strong>Location Id: </strong>${locationId}`).join("<br/>")}
+                  ${uniqueFeatures.map((locationId) => `<strong>Location Id: </strong>${locationId}`).join('<br/>')}
                 </span>
               `;
-                this.hoverPopup!.setLngLat(e.lngLat)
-                  .setHTML(html)
-                  .addTo(this.map!);
-              }
+              this.hoverPopup!.setLngLat(e.lngLat).setHTML(html).addTo(this.map!);
             }
-          },
-        );
-        this.map.on(
-          "mousemove",
-          [pointLayerId, fillLayerId, lineLayerId],
-          (e) => {
-            this.map!.getCanvas().style.cursor = "pointer";
-            const { features } = e;
-            if (features && features.length > 0) {
-              const collection = collections.find(
-                (collection) => collection.id === collectionId,
-              );
-              const uniqueFeatures = this.getUniqueIds(features);
-              if (collection) {
-                const html = `
+          }
+        });
+        this.map.on('mousemove', [pointLayerId, fillLayerId, lineLayerId], (e) => {
+          this.map!.getCanvas().style.cursor = 'pointer';
+          const { features } = e;
+          if (features && features.length > 0) {
+            const collection = collections.find((collection) => collection.id === collectionId);
+            const uniqueFeatures = this.getUniqueIds(features);
+            if (collection) {
+              const html = `
                 <span style="color:black;">
                   <strong>${collection.title}</strong><br/>
-                  ${uniqueFeatures.map((locationId) => `<strong>Location Id: </strong>${locationId}`).join("<br/>")}
+                  ${uniqueFeatures.map((locationId) => `<strong>Location Id: </strong>${locationId}`).join('<br/>')}
                 </span>
               `;
-                this.hoverPopup!.setLngLat(e.lngLat)
-                  .setHTML(html)
-                  .addTo(this.map!);
-              }
+              this.hoverPopup!.setLngLat(e.lngLat).setHTML(html).addTo(this.map!);
             }
-          },
-        );
-        this.map.on(
-          "mouseleave",
-          [pointLayerId, fillLayerId, lineLayerId],
-          () => {
-            this.map!.getCanvas().style.cursor = "";
-            this.hoverPopup!.remove();
-          },
-        );
+          }
+        });
+        this.map.on('mouseleave', [pointLayerId, fillLayerId, lineLayerId], () => {
+          this.map!.getCanvas().style.cursor = '';
+          this.hoverPopup!.remove();
+        });
       }
       if (geographyFilter) {
-        const geoFilterLayerId = this.getFilterLayerId(
-          geographyFilter.collectionId,
-        );
+        const geoFilterLayerId = this.getFilterLayerId(geographyFilter.collectionId);
         [fillLayerId, lineLayerId, pointLayerId].forEach((layerId) =>
-          this.map!.moveLayer(geoFilterLayerId, layerId),
+          this.map!.moveLayer(geoFilterLayerId, layerId)
         );
       }
     }
@@ -394,27 +350,26 @@ class MainManager {
    */
   public async getLocations(): Promise<void> {
     // Specific user collection choice
-    const collection = this.store.getState().collection;
+    const selectedCollections = this.store.getState().selectedCollections;
     // All collections for selected filters
     const collections = this.store.getState().collections;
 
-    if (collection) {
-      const sourceId = await this.addLocationSource(collection);
-      this.addLocationLayer(collection, sourceId);
-    } else {
-      const chunkSize = 5;
+    const filteredCollections = collections.filter(
+      (collection) =>
+        selectedCollections.length === 0 || selectedCollections.includes(collection.id)
+    );
 
-      for (let i = 0; i < collections.length; i += chunkSize) {
-        const chunk = collections.slice(i, i + chunkSize);
+    const chunkSize = 5;
+    for (let i = 0; i < filteredCollections.length; i += chunkSize) {
+      const chunk = filteredCollections.slice(i, i + chunkSize);
 
-        await Promise.all(
-          chunk.map(async (collection) => {
-            const collectionId = collection.id;
-            const sourceId = await this.addLocationSource(collectionId);
-            this.addLocationLayer(collectionId, sourceId);
-          }),
-        );
-      }
+      await Promise.all(
+        chunk.map(async (collection) => {
+          const collectionId = collection.id;
+          const sourceId = await this.addLocationSource(collectionId);
+          this.addLocationLayer(collectionId, sourceId);
+        })
+      );
     }
   }
 
@@ -428,8 +383,8 @@ class MainManager {
 
     const response = await wwdhService.getCollections({
       params: {
-        ...(provider ? { "provider-name": provider } : {}),
-        "parameter-name": category ? category.value : "*",
+        ...(provider ? { 'provider-name': provider } : {}),
+        'parameter-name': category ? category.value : '*',
       },
     });
     const originalCollections = this.store.getState().originalCollections;
@@ -445,24 +400,23 @@ class MainManager {
    * @function
    */
   private async getFilterGeometry(
-    collectionId: ICollection["id"],
-    itemId: string,
+    collectionId: ICollection['id'],
+    itemId: string
   ): Promise<Feature<Polygon>> {
-    const service =
-      collectionId === SourceId.DoiRegions ? wwdhService : geoconnexService;
+    const service = collectionId === SourceId.DoiRegions ? wwdhService : geoconnexService;
     return service.getItem<Feature<Polygon>>(collectionId, itemId);
   }
 
   private addGeographyFilterSource(
-    collectionId: ICollection["id"],
-    feature: Feature<Polygon>,
+    collectionId: ICollection['id'],
+    feature: Feature<Polygon>
   ): string {
     const sourceId = this.getSourceId(collectionId);
     if (this.map) {
       const source = this.map.getSource(sourceId) as GeoJSONSource;
       if (!source) {
         this.map.addSource(sourceId, {
-          type: "geojson",
+          type: 'geojson',
           data: turf.featureCollection([feature]),
         });
       } else {
@@ -477,16 +431,13 @@ class MainManager {
    *
    * @function
    */
-  private addGeographyFilterLayer(
-    collectionId: ICollection["id"],
-    sourceId: string,
-  ): void {
+  private addGeographyFilterLayer(collectionId: ICollection['id'], sourceId: string): void {
     const layerId = this.getFilterLayerId(collectionId);
     if (this.map) {
       if (!this.map.getLayer(layerId)) {
         this.map.addLayer(getLineLayerDefinition(layerId, sourceId));
       } else {
-        this.map.setLayoutProperty(layerId, "visibility", "visible");
+        this.map.setLayoutProperty(layerId, 'visibility', 'visible');
       }
     }
   }
@@ -500,7 +451,7 @@ class MainManager {
       sourceIds.forEach((sourceId) => {
         const layerId = this.getFilterLayerId(sourceId);
         if (this.map!.getLayer(layerId)) {
-          this.map!.setLayoutProperty(layerId, "visibility", "none");
+          this.map!.setLayoutProperty(layerId, 'visibility', 'none');
         }
       });
     }
@@ -511,8 +462,8 @@ class MainManager {
    * @function
    */
   public async updateGeographyFilter(
-    collectionId: ICollection["id"],
-    itemId: string,
+    collectionId: ICollection['id'],
+    itemId: string
   ): Promise<void> {
     const feature = await this.getFilterGeometry(collectionId, itemId);
 
@@ -520,7 +471,7 @@ class MainManager {
     this.addGeographyFilterLayer(collectionId, sourceId);
 
     const otherGeographyFilterSources = GeographyFilterSources.filter(
-      (source) => source !== collectionId,
+      (source) => source !== collectionId
     );
 
     this.hideGeographyFilterLayers(otherGeographyFilterSources);
@@ -553,7 +504,7 @@ class MainManager {
         ],
         {
           padding: 50,
-        },
+        }
       );
     }
 
@@ -602,7 +553,7 @@ class MainManager {
 
     this.store.getState().setProvider(null);
     this.store.getState().setCategory(null);
-    this.store.getState().setCollection(null);
+    this.store.getState().setSelectedCollections([]);
   }
 }
 

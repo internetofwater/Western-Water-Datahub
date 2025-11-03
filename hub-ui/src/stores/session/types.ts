@@ -65,8 +65,6 @@ export type SessionState = {
   setLegendEntries: (legendEntries: SessionState['legendEntries']) => void;
   openModal: Modal | null;
   setOpenModal: (openModal: SessionState['openModal']) => void;
-  downloadModalOpen: boolean;
-  setDownloadModalOpen: (downloadModalOpen: SessionState['downloadModalOpen']) => void;
   tools: {
     [Tool.Legend]: boolean;
   };

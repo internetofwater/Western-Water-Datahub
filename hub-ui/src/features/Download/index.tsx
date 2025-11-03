@@ -6,11 +6,12 @@
 import { Button, Text, Tooltip } from '@mantine/core';
 import useMainStore from '@/stores/main';
 import useSessionStore from '@/stores/session';
+import { Modal as ModalEnum } from '@/stores/session/types';
 
 const Download: React.FC = () => {
   const locations = useMainStore((state) => state.locations);
   const setLocations = useMainStore((state) => state.setLocations);
-  const setDownloadModalOpen = useSessionStore((state) => state.setDownloadModalOpen);
+  const setOpenModal = useSessionStore((state) => state.setOpenModal);
 
   const hasLocations = locations.length > 0;
 
@@ -29,7 +30,7 @@ const Download: React.FC = () => {
       {hasLocations && (
         <>
           <Tooltip label={helpDownloadText}>
-            <Button onClick={() => setDownloadModalOpen(true)}>
+            <Button onClick={() => setOpenModal(ModalEnum.Download)}>
               Explore {locations.length} selected Location
               {locations.length !== 1 ? 's' : ''}
             </Button>

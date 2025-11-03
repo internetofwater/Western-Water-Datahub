@@ -14,7 +14,7 @@ import { LoadingType, NotificationType } from '@/stores/session/types';
 
 export const ShowLocations: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
-  const collection = useMainStore((state) => state.collection);
+  const selectedCollections = useMainStore((state) => state.selectedCollections);
 
   const { isLoadingGeography, isFetchingCollections, isFetchingLocations } = useLoading();
 
@@ -46,7 +46,7 @@ export const ShowLocations: React.FC = () => {
       return 'Please wait for locations request to complete';
     }
 
-    if (!(provider || collection)) {
+    if (!(provider || selectedCollections)) {
       return 'Please select a provider or collection';
     }
 
@@ -65,7 +65,10 @@ export const ShowLocations: React.FC = () => {
   };
 
   const isDisabled =
-    isLoadingGeography || isFetchingCollections || isFetchingLocations || !(provider || collection);
+    isLoadingGeography ||
+    isFetchingCollections ||
+    isFetchingLocations ||
+    !(provider || selectedCollections);
 
   return (
     <Tooltip multiline label={getLabel()}>

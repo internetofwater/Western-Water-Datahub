@@ -1,7 +1,7 @@
 import { Group } from '@mantine/core';
 import styles from '@/features/Controls/Controls.module.css';
+import Download from '@/features/Download';
 import Info from '@/features/Info';
-import Download from '../Download';
 
 const Controls: React.FC = () => {
   return (
