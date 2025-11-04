@@ -187,6 +187,7 @@ class MainManager {
         this.map.addSource(sourceId, {
           type: 'geojson',
           data: geographyFilteredData,
+          generateId: true,
         });
       } else {
         source.setData(geographyFilteredData);
@@ -419,6 +420,7 @@ class MainManager {
         this.map.addSource(sourceId, {
           type: 'geojson',
           data: turf.featureCollection([feature]),
+          cluster: true,
         });
       } else {
         source.setData(turf.featureCollection([feature]));
