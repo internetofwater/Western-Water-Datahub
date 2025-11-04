@@ -237,6 +237,7 @@ class MainManager {
           });
           if (features.length > 0) {
             const uniqueFeatures = this.getUniqueIds(features);
+
             uniqueFeatures.forEach((locationId) => {
               if (this.hasLocation(locationId)) {
                 this.store.getState().removeLocation(locationId);

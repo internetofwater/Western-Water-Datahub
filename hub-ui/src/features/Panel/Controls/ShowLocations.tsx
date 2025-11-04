@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { useRef } from 'react';
 import { Button, Text } from '@mantine/core';
 import Tooltip from '@/components/Tooltip';
 import { useLoading } from '@/hooks/useLoading';
@@ -10,19 +11,27 @@ import loadingManager from '@/managers/Loading.init';
 import mainManager from '@/managers/Main.init';
 import notificationManager from '@/managers/Notification.init';
 import useMainStore from '@/stores/main';
-import { LoadingType, NotificationType } from '@/stores/session/types';
+import useSessionStore from '@/stores/session';
+import { LoadingType, NotificationType, Tool } from '@/stores/session/types';
 
 export const ShowLocations: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
   const selectedCollections = useMainStore((state) => state.selectedCollections);
+  const setOpenTools = useSessionStore((state) => state.setOpenTools);
 
   const { isLoadingGeography, isFetchingCollections, isFetchingLocations } = useLoading();
+
+  const isFirstTime = useRef(true);
 
   const addData = async () => {
     const loadingInstance = loadingManager.add('Fetching Locations', LoadingType.Locations);
     try {
       await mainManager.getLocations();
       loadingManager.remove(loadingInstance);
+      if (isFirstTime.current) {
+        isFirstTime.current = false;
+        setOpenTools(Tool.Legend, true);
+      }
       notificationManager.show('Done fetching data', NotificationType.Success);
     } catch (error) {
       if ((error as Error)?.message) {
@@ -46,7 +55,7 @@ export const ShowLocations: React.FC = () => {
       return 'Please wait for locations request to complete';
     }
 
-    if (!(provider || selectedCollections)) {
+    if (!(provider || selectedCollections.length > 0)) {
       return 'Please select a provider or collection';
     }
 
@@ -68,7 +77,7 @@ export const ShowLocations: React.FC = () => {
     isLoadingGeography ||
     isFetchingCollections ||
     isFetchingLocations ||
-    !(provider || selectedCollections);
+    !(provider || selectedCollections.length > 0);
 
   return (
     <Tooltip multiline label={getLabel()}>
