@@ -1,6 +1,6 @@
 import { useReservoirData } from '@/hooks/useReservoirData';
 import { Filter } from './Filter';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     OrganizedFeature,
     OrganizedProperties,
@@ -17,7 +17,6 @@ import {
     RegionDefault,
     StateDefault,
 } from '@/stores/main/consts';
-import debounce from 'lodash.debounce';
 
 const Reservoirs: React.FC = () => {
     const region = useMainStore((state) => state.region);
@@ -27,9 +26,6 @@ const Reservoirs: React.FC = () => {
     const [search, setSearch] = useState('');
     const [sortBy, setSortBy] = useState<SortBy>(SortBy.Capacity);
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
-    const [filtersOpen, setFiltersOpen] = useState<string | null>(null);
-
-    const [maxTableHeight, setMaxTableHeight] = useState(656);
 
     const { reservoirCollections } = useReservoirData();
 
@@ -39,8 +35,6 @@ const Reservoirs: React.FC = () => {
     const [filteredReservoirs, setFilteredReservoirs] = useState<
         OrganizedFeature[]
     >([]);
-
-    const filtersRef = useRef<HTMLDivElement>(null);
 
     const getSortByProperty = (sortBy: SortBy): keyof OrganizedProperties => {
         switch (sortBy) {
@@ -187,10 +181,7 @@ const Reservoirs: React.FC = () => {
                 handleSortByChange={handleSortByChange}
             />
             {filteredReservoirs && (
-                <Table
-                    maxHeight={maxTableHeight}
-                    filteredReservoirs={filteredReservoirs}
-                />
+                <Table filteredReservoirs={filteredReservoirs} />
             )}
         </>
     );

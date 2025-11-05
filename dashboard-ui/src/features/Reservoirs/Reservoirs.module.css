@@ -1,6 +1,9 @@
 .table {
-    table-layout: fixed;
     width: 100%;
+}
+
+.nameColumn {
+    width: 155px;
 }
 
 .content {
@@ -13,4 +16,12 @@
 
 .sortBySelect {
     width: 130px;
+}
+
+.pageSizeInput {
+    width: 113px;
+}
+
+.buttonColumn {
+    width: 70px;
 }

@@ -1,6 +1,5 @@
 import { TextInput } from '@mantine/core';
-import debounce from 'lodash.debounce';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 
 type Props = {
@@ -11,13 +10,17 @@ type Props = {
 export const Search: React.FC<Props> = (props) => {
     const { search, handleChange } = props;
 
-    const debouncedHandleChange = debounce(handleChange, 150);
+    const [localSearch, setLocalSearch] = useState(search);
 
     useEffect(() => {
+        const timeout = setTimeout(() => {
+            handleChange(localSearch);
+        }, 150);
+
         return () => {
-            debouncedHandleChange.cancel();
+            clearTimeout(timeout);
         };
-    }, []);
+    }, [localSearch]);
 
     return (
         <TextInput
@@ -25,10 +28,8 @@ export const Search: React.FC<Props> = (props) => {
             className={styles.searchInput}
             label={'Reservoir'}
             placeholder="Search by name"
-            value={search}
-            onChange={(event) =>
-                debouncedHandleChange(event.currentTarget.value)
-            }
+            value={localSearch}
+            onChange={(event) => setLocalSearch(event.currentTarget.value)}
         />
     );
 };

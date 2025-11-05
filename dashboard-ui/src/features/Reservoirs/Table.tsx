@@ -22,7 +22,6 @@ import Controls from '@/icons/Controls';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 
 type Props = {
-    maxHeight: number;
     filteredReservoirs: Feature<Point, OrganizedProperties>[];
 };
 export const Table: React.FC<Props> = (props) => {
@@ -77,7 +76,7 @@ export const Table: React.FC<Props> = (props) => {
     };
 
     return (
-        <Stack className={styles.tableWrapper}>
+        <Stack className={styles.tableWrapper} mb={16}>
             <TableComponent
                 striped
                 stickyHeader
@@ -87,7 +86,7 @@ export const Table: React.FC<Props> = (props) => {
             >
                 <TableThead>
                     <TableTr>
-                        <TableTh>
+                        <TableTh className={styles.nameColumn}>
                             <Stack>
                                 <Text {...textProps}>Name</Text>
                                 <Text {...textProps}>Date Measured</Text>
@@ -105,14 +104,18 @@ export const Table: React.FC<Props> = (props) => {
                                 <Text {...textProps}>% of Average</Text>
                             </Stack>
                         </TableTh>
-                        <TableTh>
+                        <TableTh className={styles.buttonColumn}>
                             <Stack align="center" justify="center">
-                                <Text {...textProps}>View on Map</Text>
+                                <Text {...textProps} ta="center">
+                                    View on Map
+                                </Text>
                             </Stack>
                         </TableTh>
-                        <TableTh>
+                        <TableTh className={styles.buttonColumn}>
                             <Stack align="center" justify="center">
-                                <Text {...textProps}>See More</Text>
+                                <Text {...textProps} ta="center">
+                                    See More
+                                </Text>
                             </Stack>
                         </TableTh>
                     </TableTr>
@@ -144,13 +147,17 @@ export const Table: React.FC<Props> = (props) => {
                                     </Stack>
                                 </TableTd>
                                 <TableTd>
-                                    <Stack>
-                                        <Text {...textProps}>{storage}</Text>
-                                        <Text {...textProps}>{capacity}</Text>
+                                    <Stack justify="space-between">
+                                        <Text {...textProps}>
+                                            {storage.toLocaleString('en-US')}
+                                        </Text>
+                                        <Text {...textProps}>
+                                            {capacity.toLocaleString('en-US')}
+                                        </Text>
                                     </Stack>
                                 </TableTd>
                                 <TableTd>
-                                    <Stack>
+                                    <Stack justify="space-between">
                                         <Text {...textProps}>
                                             {percentFull.toFixed(1)}%
                                         </Text>
@@ -160,28 +167,37 @@ export const Table: React.FC<Props> = (props) => {
                                     </Stack>
                                 </TableTd>
                                 <TableTd>
-                                    <ActionIcon
-                                        onClick={() => handleViewOnMap(feature)}
-                                    >
-                                        <Controls />
-                                    </ActionIcon>
+                                    <Group justify="center" align="center">
+                                        <ActionIcon
+                                            onClick={() =>
+                                                handleViewOnMap(feature)
+                                            }
+                                        >
+                                            <Controls />
+                                        </ActionIcon>
+                                    </Group>
                                 </TableTd>
                                 <TableTd>
-                                    <ActionIcon
-                                        onClick={() => handleViewOnMap(feature)}
-                                    >
-                                        <Controls />
-                                    </ActionIcon>
+                                    <Group justify="center" align="center">
+                                        <ActionIcon
+                                            onClick={() =>
+                                                handleViewOnMap(feature)
+                                            }
+                                        >
+                                            <Controls />
+                                        </ActionIcon>
+                                    </Group>
                                 </TableTd>
                             </TableTr>
                         );
                     })}
                 </TableTbody>
             </TableComponent>
-            <Group justify="space-between" align="flex-end">
+            <Group justify="space-between" align="flex-end" mx={8}>
                 <NumberInput
                     size="xs"
-                    label="Locations per page"
+                    className={styles.pageSizeInput}
+                    label="Reservoirs per page"
                     value={pageSize}
                     onChange={(value) => handlePageSizeChange(Number(value))}
                     min={1}
