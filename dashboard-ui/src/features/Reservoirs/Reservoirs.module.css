@@ -1,0 +1,16 @@
+.table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.content {
+    padding: 0px;
+}
+
+.searchInput {
+    width: 140px;
+}
+
+.sortBySelect {
+    width: 130px;
+}

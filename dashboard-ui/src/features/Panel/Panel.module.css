@@ -1,0 +1,13 @@
+.panel {
+    min-width: 500px;
+    width: 500px;
+}
+
+.root {
+    max-height: calc(100vh - 137px);
+    overflow-y: auto;
+}
+
+.content {
+    padding: 0px;
+}
