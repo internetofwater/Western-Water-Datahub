@@ -105,9 +105,10 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         features_to_keep: list[geojson_pydantic.Feature] = []
 
         for feature in self.locations:
+            assert feature.id, f"Feature {feature} is missing id"
             serialized_feature = geojson_pydantic.Feature(
                 type="Feature",
-                id=feature.id,
+                id=int(feature.id),
                 properties=feature.properties.model_dump(),
                 geometry=geojson_pydantic.Point(
                     type="Point",
