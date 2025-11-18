@@ -128,7 +128,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                 # may have the same id, but the triplet is unique
                 "id": str(loc.stationTriplet)
                 if useStationTripletAsId
-                else loc.stationId,
+                else int(loc.stationId),
             }
 
             serialized_feature = geojson_pydantic.Feature.model_validate(feature)
