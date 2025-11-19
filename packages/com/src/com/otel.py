@@ -25,6 +25,7 @@ def otel_trace():
 
     return decorator
 
+
 def add_args_as_attributes_to_span():
     """
     Inspect the caller's frame and add all arguments (except `self`)
