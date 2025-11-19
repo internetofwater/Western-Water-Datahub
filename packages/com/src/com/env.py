@@ -23,9 +23,15 @@ print(
     f"Starting server with env var OTEL_SDK_DISABLED set to '{os.environ.get('OTEL_SDK_DISABLED')}'"
 )
 
+_otel_initialized = False
+
 
 def init_otel():
     """Initialize the open telemetry config"""
+    global _otel_initialized
+    assert not _otel_initialized, "Open telemetry has already been initialized"
+    _otel_initialized = True
+
     resource = Resource(
         attributes={"service.name": os.getenv("OTEL_SERVICE_NAME", "iodh")}
     )
@@ -41,14 +47,18 @@ def init_otel():
     # Sets the global default tracer provider
     trace.set_tracer_provider(provider)
 
-    AioHttpClientInstrumentor().instrument()
+    if (
+        os.environ.get("OTEL_PYTHON_AIOHTTP_CLIENT_INSTRUMENTATION", "true").lower()
+        == "true"
+    ):
+        AioHttpClientInstrumentor().instrument()
     print("Initialized open telemetry")
 
 
 init_otel()
 requests.packages.urllib3.util.connection.HAS_IPV6 = False  # type: ignore
 
-TRACER = trace.get_tracer("iodh_tracer")
+TRACER = trace.get_tracer(os.environ.get("OTEL_TRACER_NAME", "iodh_tracer"))
 
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
