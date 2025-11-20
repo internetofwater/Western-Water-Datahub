@@ -16,7 +16,9 @@ provider_def = {
 def test_usace_decode_param():
     p = USACEEDRProvider(provider_def)
     result = p.locations(
-        location_id="2796555126", select_properties=["Stage"], datetime_="2025-01-01/.."
+        location_id="2796555126",
+        select_properties=["Stage"],
+        datetime_="2025-01-01/..",
     )
     assert result and "coverages" in result
     assert len(result["coverages"]) == 1, (
