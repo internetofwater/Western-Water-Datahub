@@ -58,6 +58,9 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         if location_id:
             collection.drop_all_locations_but_station_triplet(location_id)
 
+        if bbox:
+            collection.drop_all_locations_outside_bounding_box(bbox)
+
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return collection.to_geojson(
                 itemsIDSingleFeature=location_id is not None,
