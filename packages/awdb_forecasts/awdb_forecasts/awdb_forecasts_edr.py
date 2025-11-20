@@ -43,6 +43,7 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         select_properties: Optional[list[str]] = None,
         crs: Optional[str] = None,
         format_: Optional[str] = None,
+        bbox: Optional[list] = None,
         **kwargs,
     ) -> CoverageCollectionDict | GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """

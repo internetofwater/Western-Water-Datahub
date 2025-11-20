@@ -217,6 +217,17 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         self.locations = [loc for loc in self.locations if loc.id == location_id]
         assert len(self.locations) == 1
 
+    def drop_all_locations_without_parameters(self, parameters: list[str]):
+        locations_to_keep: list[Feature] = []
+        for loc in self.locations:
+            if not loc.properties.timeseries:
+                continue
+            for param in loc.properties.timeseries:
+                if param.tsid in parameters:
+                    locations_to_keep.append(loc)
+                    break
+        self.locations = locations_to_keep
+
     def get_fields(self) -> EDRFieldsMapping:
         """
         Return all fields used for EDR queries
