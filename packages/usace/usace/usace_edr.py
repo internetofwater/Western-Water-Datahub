@@ -58,10 +58,14 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         if location_id:
             collection.drop_all_locations_but_id(location_id)
 
+        if bbox:
+            collection.drop_all_locations_outside_bounding_box(bbox)
+
         if select_properties:
             select_properties = get_upstream_ids_of_select_properties(
                 select_properties, collection
             )
+            collection.drop_all_locations_without_parameters(select_properties)
 
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return collection.to_geojson(itemsIDSingleFeature=location_id is not None)
