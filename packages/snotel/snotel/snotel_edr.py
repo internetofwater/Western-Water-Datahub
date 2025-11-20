@@ -39,6 +39,7 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         select_properties: Optional[list[str]] = None,
         crs: Optional[str] = None,
         format_: Optional[str] = None,
+        bbox: Optional[list] = None,
         **kwargs,
     ) -> CoverageCollectionDict | GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
@@ -52,6 +53,9 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         collection = SnotelLocationCollection(select_properties)
         if location_id:
             collection.drop_all_locations_but_id(location_id)
+
+        if bbox:
+            collection.drop_all_locations_outside_bounding_box(bbox)
 
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return collection.to_geojson(

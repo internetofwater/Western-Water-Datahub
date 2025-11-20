@@ -43,6 +43,7 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         select_properties: Optional[list[str]] = None,
         crs: Optional[str] = None,
         format_: Optional[str] = None,
+        bbox: Optional[list] = None,
         **kwargs,
     ) -> CoverageCollectionDict | GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
@@ -56,6 +57,9 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         collection = ForecastLocationCollection(select_properties)
         if location_id:
             collection.drop_all_locations_but_station_triplet(location_id)
+
+        if bbox:
+            collection.drop_all_locations_outside_bounding_box(bbox)
 
         if not any([crs, datetime_, location_id]) or format_ == "geojson":
             return collection.to_geojson(
