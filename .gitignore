@@ -31,3 +31,8 @@ ResOpsUS/
 __MACOSX
 
 *.gpkg
+
+
+.env
+
+*.sqlite*
