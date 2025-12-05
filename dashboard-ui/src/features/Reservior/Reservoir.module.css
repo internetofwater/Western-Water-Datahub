@@ -3,72 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-.infoContainer {
-    width: 100%;
-    max-width: 100svw;
-    height: 328px; /* map container - header height = info container */
-    max-height: 328px;
-}
-
-.infoPanel {
-    width: 42%;
-    max-height: inherit;
-    overflow-y: auto;
-}
-
-.reservoirTitle {
-    max-width: 85%;
-}
-
-.infoChartGroup {
-    max-height: 268px;
-}
-
-.chartContainer {
-    width: 100%;
-    max-width: 99%;
-    height: 88%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.graphicContainer {
-    margin: auto;
-}
-
 .graphicPanel {
-    width: 55%;
+    width: calc(55% - var(--default-spacing));
 }
-
-.PDFViewer {
-    width: 100%;
-}
-
-.PDFViewer iframe {
-    height: 70vh;
-    width: 100%;
-}
-
-.PDFButton {
-    width: 165px;
-    margin: 0 auto;
-}
-
-.loaderGroup {
-    height: 70vh;
-    width: 100%;
-}
-
-.controlButton {
-    min-width: 105px;
+.infoPanel {
+    width: calc(45% - var(--default-spacing));
 }
 
 .svg {
-    width: 100%;
-    min-width: 250px;
-    height: 100%;
-    max-height: 205px;
+    max-width: 75%;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
@@ -77,63 +20,20 @@
     transform: scale(1.05);
 }
 
+.row {
+    height: calc(48% - var(--default-spacing));
+}
+
+.chartWrapper {
+    height: 54%;
+}
+
+.chartContainer {
+    min-height: 300px;
+}
+
 .graphicLegendColor {
     width: 20px;
     height: 20px;
     border-radius: 4px;
-}
-
-.graphicLegendText {
-    color: #000;
-}
-
-@media screen and (max-width: 1817px) {
-    .chartContainer {
-        height: 79%;
-    }
-}
-
-@media screen and (max-width: 992px) {
-    .infoContainer {
-        max-height: unset;
-        height: unset;
-        min-height: unset;
-    }
-}
-
-@media screen and (max-width: 689px) {
-    .svg {
-        max-height: 172px;
-    }
-}
-
-@media screen and (max-width: 568px) {
-    .infoContainer {
-        height: unset; /* map container - header height = info container */
-        max-height: unset;
-    }
-
-    .infoChartGroup {
-        max-height: unset;
-    }
-
-    .infoPanel {
-        width: 100%;
-    }
-
-    .infoPanel {
-        max-height: unset;
-    }
-
-    .svg {
-        max-height: unset;
-    }
-
-    .graphicPanel {
-        width: 100%;
-    }
-
-    .infoChartGroup {
-        flex-direction: column-reverse;
-    }
 }

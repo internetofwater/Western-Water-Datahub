@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+:root {
+    --default-spacing: 8px;
+}
+
 html,
 body {
     max-width: 100vw;

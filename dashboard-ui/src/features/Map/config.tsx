@@ -48,6 +48,7 @@ import { huc02Centers } from '@/data/huc02Centers';
 import { stateCenters } from '@/data/stateCenters';
 import { regionCenters } from '@/data/regionCenters';
 import { RegionField } from './types/region';
+import useSessionStore from '@/stores/session';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -672,15 +673,19 @@ export const getLayerHoverFunction = (
                 };
             case LayerId.ResvizEDRReservoirs:
                 return (e) => {
-                    showReservoirPopup(
-                        getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
-                        map,
-                        e,
-                        root,
-                        container,
-                        hoverPopup,
-                        false
-                    );
+                    const feature = e.features?.[0];
+                    if (feature) {
+                        useSessionStore.getState().setHoverFeature(feature);
+                    }
+                    // showReservoirPopup(
+                    //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
+                    //     map,
+                    //     e,
+                    //     root,
+                    //     container,
+                    //     hoverPopup,
+                    //     false
+                    // );
                 };
             case SubLayerId.RegionsFill:
                 return (e) => {
@@ -868,6 +873,11 @@ export const getLayerCustomHoverExitFunction = (
         container: HTMLDivElement
     ) => {
         switch (id) {
+            case LayerId.ResvizEDRReservoirs:
+                return () => {
+                    map.getCanvas().style.cursor = '';
+                    useSessionStore.getState().setHoverFeature(null);
+                };
             case SubLayerId.RegionsFill:
                 return () => {
                     map.getCanvas().style.cursor = '';
@@ -946,15 +956,19 @@ export const getLayerMouseMoveFunction = (
                 };
             case LayerId.ResvizEDRReservoirs:
                 return (e) => {
-                    showReservoirPopup(
-                        getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
-                        map,
-                        e,
-                        root,
-                        container,
-                        hoverPopup,
-                        true
-                    );
+                    const feature = e.features?.[0];
+                    if (feature) {
+                        useSessionStore.getState().setHoverFeature(feature);
+                    }
+                    // showReservoirPopup(
+                    //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
+                    //     map,
+                    //     e,
+                    //     root,
+                    //     container,
+                    //     hoverPopup,
+                    //     false
+                    // );
                 };
             case SubLayerId.RegionsFill:
                 return (e) => {
@@ -1411,6 +1425,9 @@ export const layerDefinitions: MainLayerDefinition[] = [
         controllable: false,
         legend: false,
         hoverFunction: getLayerHoverFunction(LayerId.ResvizEDRReservoirs),
+        customHoverExitFunction: getLayerCustomHoverExitFunction(
+            LayerId.ResvizEDRReservoirs
+        ),
         mouseMoveFunction: getLayerMouseMoveFunction(
             LayerId.ResvizEDRReservoirs
         ),
@@ -1422,7 +1439,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 legend: false,
             },
         ],
-        // hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
     },
     {
         id: SubLayerId.RegionLabels,

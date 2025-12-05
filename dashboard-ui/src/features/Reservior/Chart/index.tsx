@@ -12,7 +12,7 @@ import {
     getLabelsAndValues,
 } from '@/features/Reservior/Chart/utils';
 import { CoverageCollection } from '@/services/edr.service';
-import { Box, Group, Loader, Paper, Radio, Space, Title } from '@mantine/core';
+import { Box, Group, Loader, Radio, Space, Title } from '@mantine/core';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { Chart as ChartJS, ChartData } from 'chart.js';
 import useMainStore from '@/stores/main/main';
@@ -127,7 +127,7 @@ export const Chart: React.FC<Props> = (props) => {
     };
 
     return (
-        <Paper shadow="xs" p="xs" className={styles.infoContainer}>
+        <>
             <Group justify="space-between">
                 <Title order={3} size="h5">
                     Storage Volume (acre-feet)
@@ -202,6 +202,6 @@ export const Chart: React.FC<Props> = (props) => {
                     />
                 )}
             </Box>
-        </Paper>
+        </>
     );
 };

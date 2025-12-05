@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { useRef } from 'react';
-import { GridCol } from '@mantine/core';
+import { Box, Divider, Modal } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { ReservoirConfig } from '@/features/Map/types';
 import { SourceId } from '@/features/Map/consts';
@@ -16,21 +16,19 @@ import { Chart } from '@/features/Reservior/Chart';
 import { Chart as ChartJS } from 'chart.js';
 import Info from '@/features/Reservior/Info';
 import useMainStore from '@/stores/main/main';
-import { Reservoir as ReservoirType } from '@/stores/main/types';
-import { RiseReservoirProperties } from '@/features/Map/types/reservoir/rise';
-
-type Props = {
-    reservoir: ReservoirType;
-    accessToken: string;
-};
+import { useDisclosure } from '@mantine/hooks';
+import { ReservoirDefault } from '@/stores/main/consts';
+import { GeoJsonProperties } from 'geojson';
+import styles from '@/features/Reservior/Reservoir.module.css';
 
 /**
  *
  * @component
  */
-const Reservoir: React.FC<Props> = (props) => {
-    const { reservoir, accessToken } = props;
+const Reservoir: React.FC = () => {
+    const [opened, { open, close }] = useDisclosure(false);
 
+    const reservoir = useMainStore((state) => state.reservoir);
     const reservoirCollections = useMainStore(
         (state) => state.reservoirCollections
     );
@@ -39,75 +37,85 @@ const Reservoir: React.FC<Props> = (props) => {
         useRef<ChartJS<'line', Array<{ x: string; y: number }>>>(null);
 
     const [reservoirProperties, setReservoirProperties] =
-        useState<RiseReservoirProperties>();
+        useState<GeoJsonProperties>();
     const [reservoirId, setReservoirId] = useState<string | number>();
     const [config, setConfig] = useState<ReservoirConfig>();
-    const [center, setCenter] = useState<[number, number] | null>(null);
 
     useEffect(() => {
         if (!reservoirCollections) {
             return;
         }
 
-        const collection = reservoirCollections[reservoir.source as SourceId];
+        if (reservoir !== ReservoirDefault) {
+            const collection =
+                reservoirCollections[reservoir.source as SourceId];
 
-        const config = getReservoirConfig(reservoir.source as SourceId);
+            const config = getReservoirConfig(reservoir.source as SourceId);
 
-        if (collection && config) {
-            setConfig(config);
+            if (collection && config) {
+                setConfig(config);
 
-            const features = collection.features.filter((feature) =>
-                isReservoirIdentifier(
-                    config,
-                    feature.properties,
-                    feature.id!,
-                    reservoir.identifier
-                )
-            );
-
-            if (features.length) {
-                const feature = features[0];
-                const properties =
-                    feature.properties as RiseReservoirProperties;
-                const id = getReservoirIdentifier(
-                    config,
-                    feature.properties,
-                    feature.id!
+                const features = collection.features.filter((feature) =>
+                    isReservoirIdentifier(
+                        config,
+                        feature.properties,
+                        feature.id!,
+                        reservoir.identifier
+                    )
                 );
 
-                setReservoirId(id);
-                setCenter(feature.geometry.coordinates as [number, number]);
+                if (features.length) {
+                    const feature = features[0];
+                    const properties = feature.properties;
+                    const id = getReservoirIdentifier(
+                        config,
+                        feature.properties,
+                        feature.id!
+                    );
 
-                setReservoirProperties(properties);
+                    setReservoirId(id);
+
+                    setReservoirProperties(properties);
+                }
+                open();
             }
         }
     }, [reservoir]);
 
+    if (!reservoirProperties || !config || !reservoirId) {
+        return null;
+    }
+
     return (
-        <>
-            {reservoirProperties && config && (
-                <>
-                    <GridCol span={{ sm: 12, lg: 7 }} order={3}>
-                        <Info
-                            reservoirProperties={reservoirProperties}
-                            accessToken={accessToken}
-                            center={center}
-                            chartRef={chartRef}
-                            config={config}
-                        />
-                    </GridCol>
-                    <GridCol span={{ sm: 12, lg: 5 }} order={4}>
-                        {reservoirId && (
-                            <Chart
-                                id={reservoirId}
-                                ref={chartRef}
-                                config={config}
-                            />
-                        )}
-                    </GridCol>
-                </>
-            )}
-        </>
+        <Modal
+            centered
+            size="auto"
+            styles={{
+                content: {
+                    width: 'min(80vw, 1265px)',
+                    height: 800,
+                    maxWidth: 1265,
+                },
+                body: {
+                    height: 'min(80vh, 735px)',
+                    maxHeight: 735,
+                },
+            }}
+            opened={opened}
+            onClose={close}
+            title={String(reservoirProperties[config.labelProperty]) ?? ''}
+        >
+            <Box>
+                <Info
+                    reservoirProperties={reservoirProperties}
+                    config={config}
+                />
+            </Box>
+            <Divider my="var(--default-spacing)" />
+            <Box className={styles.chartWrapper}>
+                <Chart id={reservoirId} ref={chartRef} config={config} />
+            </Box>
+        </Modal>
     );
 };
 

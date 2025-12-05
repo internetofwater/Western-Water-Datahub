@@ -4,19 +4,9 @@
  */
 
 import { ReservoirConfig } from '@/features/Map/types';
-import {
-    Box,
-    Group,
-    Paper,
-    Switch,
-    Title,
-    Text,
-    Stack,
-    CloseButton,
-} from '@mantine/core';
+import { Box, Group, Paper, Switch, Text, Stack } from '@mantine/core';
 import { GeoJsonProperties } from 'geojson';
-import { RefObject, useState } from 'react';
-import { Chart as ChartJS } from 'chart.js';
+import { useState } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { Info } from '@/features/Reservior/Info/Info';
 import { TeacupDiagram } from '@/features/Reservior/TeacupDiagram';
@@ -32,30 +22,14 @@ import {
     handleCapacityLeave,
     handleAverageLineLeave,
 } from '@/features/Reservior/TeacupDiagram/listeners';
-import useMainStore from '@/stores/main/main';
-import { useMap } from '@/contexts/MapContexts';
-import { MAP_ID } from '@/features/Map/consts';
-import { resetMap } from '@/features/Map/utils';
-import { ReservoirDefault } from '@/stores/main/consts';
 
 type Props = {
-    accessToken: string;
     reservoirProperties: GeoJsonProperties;
-    center: [number, number] | null;
-    chartRef: RefObject<ChartJS<
-        'line',
-        Array<{ x: string; y: number }>
-    > | null>;
     config: ReservoirConfig;
 };
 
 const InfoWrapper: React.FC<Props> = (props) => {
-    const { accessToken, reservoirProperties, center, chartRef, config } =
-        props;
-
-    const setReservoir = useMainStore((state) => state.setReservoir);
-
-    const { map } = useMap(MAP_ID);
+    const { reservoirProperties, config } = props;
 
     if (!reservoirProperties) {
         return null;
@@ -77,55 +51,22 @@ const InfoWrapper: React.FC<Props> = (props) => {
         setShowLabels(showLabels);
     };
 
-    const handleDeselect = () => {
-        if (!map) {
-            return;
-        }
-
-        setReservoir(ReservoirDefault);
-        resetMap(map);
-    };
-
     return (
-        <Paper
-            shadow="xs"
-            p="xs"
-            className={styles.infoContainer}
-            data-testid="reservoir-info"
-        >
-            <Group justify="space-between" align="flex-start" mb="xs">
-                <Title order={2} size={'h3'} className={styles.reservoirTitle}>
-                    {reservoirProperties[config.labelProperty]}
-                </Title>
-                <CloseButton
-                    onClick={() => handleDeselect()}
-                    title="Deselect Reservoir"
-                    aria-label="Deselect Reservoir"
-                    size="lg"
-                    ml="auto"
-                />
-            </Group>
+        <>
             <Group
                 align="flex-start"
                 justify="space-between"
                 className={styles.infoChartGroup}
             >
-                <Info
-                    reservoirProperties={reservoirProperties}
-                    accessToken={accessToken}
-                    center={center}
-                    chartRef={chartRef}
-                    config={config}
-                />
-                <Stack className={styles.graphicPanel}>
-                    <TeacupDiagram
-                        reservoirProperties={reservoirProperties}
-                        config={config}
-                        showLabels={showLabels}
-                    />
-                    <Group mx="auto">
+                <Group align="flex=start" className={styles.graphicPanel}>
+                    <Stack align="flex-start" mx="auto">
+                        <Switch
+                            label="Show Volumes"
+                            checked={showLabels}
+                            onClick={() => handleShowLabels(!showLabels)}
+                        />
                         <Paper bg="#fff">
-                            <Group p={8} data-testid="graphic-legend">
+                            <Stack p={8} data-testid="graphic-legend">
                                 <Group
                                     gap={5}
                                     onMouseEnter={handleCapacityEnter}
@@ -168,17 +109,21 @@ const InfoWrapper: React.FC<Props> = (props) => {
                                         Storage
                                     </Text>
                                 </Group>
-                            </Group>
+                            </Stack>
                         </Paper>
-                        <Switch
-                            label="Show Volumes"
-                            checked={showLabels}
-                            onClick={() => handleShowLabels(!showLabels)}
-                        />
-                    </Group>
-                </Stack>
+                    </Stack>
+                    <TeacupDiagram
+                        reservoirProperties={reservoirProperties}
+                        config={config}
+                        showLabels={showLabels}
+                    />
+                </Group>
+                <Info
+                    reservoirProperties={reservoirProperties}
+                    config={config}
+                />
             </Group>
-        </Paper>
+        </>
     );
 };
 

@@ -20,12 +20,15 @@ import { OrganizedProperties } from './types';
 import { chunk } from './utils';
 import Controls from '@/icons/Controls';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
+import useMainStore from '@/stores/main/main';
 
 type Props = {
     filteredReservoirs: Feature<Point, OrganizedProperties>[];
 };
 export const Table: React.FC<Props> = (props) => {
     const { filteredReservoirs } = props;
+
+    const setReservoir = useMainStore((state) => state.setReservoir);
 
     const [chunkedLocations, setChunkedLocations] = useState<
         Feature<Point, OrganizedProperties>[][]
@@ -62,6 +65,16 @@ export const Table: React.FC<Props> = (props) => {
             speed: 1.2, // Animation speed (default is 1.2)
             curve: 1.42, // Flight curve (default is 1.42)
             essential: true, // Ensures animation is not skipped for accessibility
+        });
+    };
+
+    const handleSeeMore = (
+        identifier: OrganizedProperties['identifier'],
+        source: OrganizedProperties['sourceId']
+    ) => {
+        setReservoir({
+            identifier,
+            source,
         });
     };
 
@@ -181,7 +194,11 @@ export const Table: React.FC<Props> = (props) => {
                                     <Group justify="center" align="center">
                                         <ActionIcon
                                             onClick={() =>
-                                                handleViewOnMap(feature)
+                                                handleSeeMore(
+                                                    feature.properties
+                                                        .identifier,
+                                                    feature.properties.sourceId
+                                                )
                                             }
                                         >
                                             <Controls />

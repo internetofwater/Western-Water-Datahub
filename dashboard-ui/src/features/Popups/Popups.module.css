@@ -4,12 +4,17 @@
  */
 
 .reservoirPopup {
-    width: fit-content;
-    max-width: 200px;
-    margin: -10px -10px -15px;
+    width: 620px;
 }
 
-.reservoirPopup svg {
-    min-width: unset;
-    width: 150px;
+.reservoirLeft {
+    width: calc(54% - var(--default-spacing));
+}
+
+.reservoirRight {
+    width: calc(46% - var(--default-spacing));
+}
+
+.section {
+    width: calc(50% - var(--default-spacing));
 }

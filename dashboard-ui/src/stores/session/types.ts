@@ -5,6 +5,7 @@
 
 import { LoadingSlice } from '@/stores/session/slices/loading';
 import { NotificationsSlice } from '@/stores/session/slices/notifications';
+import { GeoJSONFeature } from 'mapbox-gl';
 
 export enum NotificationType {
     Success = 'success',
@@ -59,6 +60,8 @@ export type SessionState = {
     setDownloadModalOpen: (
         downloadModalOpen: SessionState['downloadModalOpen']
     ) => void;
+    hoverFeature: GeoJSONFeature | null;
+    setHoverFeature: (hoverFeature: SessionState['hoverFeature']) => void;
     tools: {
         [Tool.Legend]: boolean;
     };

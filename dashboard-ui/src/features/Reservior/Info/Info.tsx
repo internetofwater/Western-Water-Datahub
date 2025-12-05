@@ -3,23 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Stack, Text, Group, Box } from '@mantine/core';
+import { Stack, Text, Group, Box, Divider } from '@mantine/core';
 import { ReservoirConfig } from '@/features/Map/types';
-import { Chart as ChartJS } from 'chart.js';
-import { RefObject } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { GeoJsonProperties } from 'geojson';
-import { TextBlock } from '@/components/TextBlock';
 import dayjs from 'dayjs';
 
 type Props = {
-    accessToken: string;
     reservoirProperties: GeoJsonProperties;
-    center: [number, number] | null;
-    chartRef: RefObject<ChartJS<
-        'line',
-        Array<{ x: string; y: number }>
-    > | null>;
     config: ReservoirConfig;
 };
 
@@ -58,49 +49,13 @@ export const Info: React.FC<Props> = (props) => {
         >
             <Stack gap="xs" w="100%" className={styles.infoGroup}>
                 <Box>
-                    <Text>
-                        Data as of:{' '}
-                        {dayjs(
-                            reservoirProperties[
-                                config.storageDateProperty
-                            ] as string
-                        ).format('MM/DD/YYYY')}
-                    </Text>
-                    <TextBlock w="100%">
-                        <Group gap="xs" justify="flex-start">
-                            <Text fw={700}>Capacity:</Text>
-                            <Text>
-                                {capacity.toLocaleString('en-US')}
-                                &nbsp;acre-feet
-                            </Text>
-                        </Group>
-                        <Group gap="xs" justify="flex-start">
-                            <Text fw={700}>Storage:</Text>
-                            <Text>
-                                {storage.toLocaleString('en-US')}&nbsp;acre-feet
-                            </Text>
-                        </Group>
-                        <Group gap="xs" justify="flex-start">
-                            <Text fw={700}>
-                                (High) 90<sup>th</sup> Percentile:
-                            </Text>
-                            <Text>
-                                {ninetiethPercentile.toLocaleString('en-US')}
-                                &nbsp;acre-feet
-                            </Text>
-                        </Group>
-                        <Group gap="xs" justify="flex-start">
-                            <Text fw={700}>
-                                (Low) 10<sup>th</sup> Percentile:
-                            </Text>
-                            <Text>
-                                {tenthPercentile.toLocaleString('en-US')}
-                                &nbsp;acre-feet
-                            </Text>
-                        </Group>
-                    </TextBlock>
-                </Box>
-                <TextBlock w="100%">
+                    <Group gap="xs" justify="flex-start">
+                        <Text fw={700}>Storage:</Text>
+                        <Text>
+                            {storage.toLocaleString('en-US')}&nbsp;acre-feet
+                        </Text>
+                    </Group>
+
                     <Group gap="xs" justify="flex-start">
                         <Text fw={700}>Percent Full:</Text>
                         <Text>{percentFull}%</Text>
@@ -109,7 +64,50 @@ export const Info: React.FC<Props> = (props) => {
                         <Text fw={700}>Percent of Average:</Text>
                         <Text>{percentOfAverage}%</Text>
                     </Group>
-                </TextBlock>
+                </Box>
+                <Divider />
+                <Box>
+                    <Group gap="xs" justify="flex-start">
+                        <Text fw={700}>Capacity:</Text>
+                        <Text>
+                            {capacity.toLocaleString('en-US')}
+                            &nbsp;acre-feet
+                        </Text>
+                    </Group>
+                    <Group gap="xs" justify="flex-start">
+                        <Text fw={700}>30-year Average:</Text>
+                        <Text>
+                            {Math.round(average).toLocaleString('en-US')}
+                            &nbsp;acre-feet
+                        </Text>
+                    </Group>
+                    <Group gap="xs" justify="flex-start">
+                        <Text fw={700}>
+                            (High) 90<sup>th</sup> Percentile:
+                        </Text>
+                        <Text>
+                            {ninetiethPercentile.toLocaleString('en-US')}
+                            &nbsp;acre-feet
+                        </Text>
+                    </Group>
+                    <Group gap="xs" justify="flex-start">
+                        <Text fw={700}>
+                            (Low) 10<sup>th</sup> Percentile:
+                        </Text>
+                        <Text>
+                            {tenthPercentile.toLocaleString('en-US')}
+                            &nbsp;acre-feet
+                        </Text>
+                    </Group>
+                </Box>
+                <Text size="xs">
+                    Data as of:{' '}
+                    {dayjs(
+                        reservoirProperties[
+                            config.storageDateProperty
+                        ] as string
+                    ).format('MM/DD/YYYY')}
+                </Text>
             </Stack>
         </Stack>
     );

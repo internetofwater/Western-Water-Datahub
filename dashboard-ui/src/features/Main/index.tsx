@@ -10,6 +10,8 @@ import Map from '@/features/Map';
 import styles from '@/features/Main/Main.module.css';
 import { MapTools } from '@/features/MapTools';
 import Panel from '../Panel';
+import Popups from '../Popups';
+import Reservoir from '../Reservior';
 
 type Props = {
     accessToken: string;
@@ -27,8 +29,16 @@ const Main: React.FC<Props> = (props) => {
             <Panel />
             <Box className={styles.mapContainer}>
                 <Map accessToken={accessToken} />
-                <MapTools />
+                <Box className={`${styles.container} ${styles.right}`}>
+                    <MapTools />
+                </Box>
+                <Box
+                    className={`${styles.container} ${styles.left} ${styles.bottom}`}
+                >
+                    <Popups />
+                </Box>
             </Box>
+            <Reservoir />
         </>
     );
 };

@@ -104,9 +104,10 @@ const Reservoirs: React.FC = () => {
                     return {
                         ...feature,
                         properties: {
-                            identifier: props[config.identifierProperty] as
-                                | string
-                                | number,
+                            identifier:
+                                config.identifierType === 'number'
+                                    ? Number(props[config.identifierProperty])
+                                    : String(props[config.identifierProperty]),
                             name: getString(config.labelProperty),
                             dateMeasured: dayjs(
                                 getString(config.storageDateProperty)
