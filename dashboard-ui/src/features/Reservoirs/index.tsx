@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { useReservoirData } from '@/hooks/useReservoirData';
 import { Filter } from './Filter';
 import { useEffect, useState } from 'react';

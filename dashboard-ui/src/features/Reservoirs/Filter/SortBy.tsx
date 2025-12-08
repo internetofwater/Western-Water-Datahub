@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { Select } from '@mantine/core';
 import { SortBy as SortByType } from '../types';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
