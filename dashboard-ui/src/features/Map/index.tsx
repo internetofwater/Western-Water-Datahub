@@ -16,6 +16,7 @@ import {
     SourceId,
     ReservoirConfigs,
     ValidBasins,
+    LayerId,
 } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore from '@/stores/main/main';
@@ -28,6 +29,10 @@ import {
     getReservoirFilter,
     getBoundingGeographyFilter,
     resetMap,
+    getDefaultGeoJSON,
+    getReservoirSymbolSize,
+    getReservoirSymbolSortKey,
+    getHighlightIcon,
 } from '@/features/Map/utils';
 import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
@@ -79,6 +84,8 @@ const MainMap: React.FC<Props> = (props) => {
     const reservoirCollections = useMainStore(
         (state) => state.reservoirCollections
     );
+
+    const highlight = useSessionStore((state) => state.highlight);
 
     const loadingInstances = useSessionStore((state) => state.loadingInstances);
 
@@ -464,6 +471,52 @@ const MainMap: React.FC<Props> = (props) => {
             map.off('click', handleClickOffReservoir);
         };
     }, [reservoir]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        const source = map.getSource(SourceId.Highlight) as GeoJSONSource;
+
+        if (!source) {
+            return;
+        }
+
+        if (highlight) {
+            const iconImageExpression = getHighlightIcon(highlight.config);
+            const iconSizeExpression = getReservoirSymbolSize(
+                highlight.config,
+                0.15
+            );
+            const symbolSortExpression = getReservoirSymbolSortKey(
+                highlight.config
+            );
+
+            map.setLayoutProperty(
+                LayerId.Highlight,
+                'icon-image',
+                iconImageExpression
+            );
+            map.setLayoutProperty(
+                LayerId.Highlight,
+                'icon-size',
+                iconSizeExpression
+            );
+            map.setLayoutProperty(
+                LayerId.Highlight,
+                'symbol-sort-key',
+                symbolSortExpression
+            );
+
+            source.setData({
+                type: 'FeatureCollection',
+                features: [highlight.feature],
+            });
+        } else {
+            source.setData(getDefaultGeoJSON());
+        }
+    }, [highlight]);
 
     useEffect(() => {
         if (!map) {

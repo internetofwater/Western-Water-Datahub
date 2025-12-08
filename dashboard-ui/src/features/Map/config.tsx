@@ -28,6 +28,7 @@ import {
     ValidBasins,
 } from '@/features/Map/consts';
 import {
+    getDefaultGeoJSON,
     getReservoirConfig,
     getReservoirFilter,
     getReservoirLabelLayout,
@@ -196,6 +197,14 @@ export const sourceConfigs: SourceConfig[] = [
                 ['slice', ['to-string', ['id']], 0, 2],
                 ['literal', ValidBasins],
             ],
+        },
+    },
+    {
+        id: SourceId.Highlight,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: getDefaultGeoJSON(),
         },
     },
 ];
@@ -495,6 +504,27 @@ export const getLayerConfig = (
                 ),
             };
 
+        case LayerId.Highlight:
+            return {
+                id: LayerId.Highlight,
+                type: LayerType.Symbol,
+                source: SourceId.Highlight,
+
+                layout: {
+                    'icon-image': 'outline',
+                    'icon-size': 1,
+                    'icon-allow-overlap': true,
+                    'icon-offset': [
+                        'step',
+                        ['zoom'],
+                        [0, 3],
+                        0,
+                        ['coalesce', ['get', 'offset'], [0, 3]],
+                        5,
+                        [0, 3],
+                    ],
+                },
+            };
         case LayerId.USDroughtMonitor:
             return {
                 id: LayerId.USDroughtMonitor,
@@ -673,9 +703,14 @@ export const getLayerHoverFunction = (
                 };
             case LayerId.ResvizEDRReservoirs:
                 return (e) => {
-                    const feature = e.features?.[0];
+                    const feature = e.features?.[0] as Feature<Point>;
                     if (feature) {
-                        useSessionStore.getState().setHoverFeature(feature);
+                        useSessionStore.getState().setHighlight({
+                            config: getReservoirConfig(
+                                SourceId.ResvizEDRReservoirs
+                            )!,
+                            feature,
+                        });
                     }
                     // showReservoirPopup(
                     //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
@@ -875,8 +910,9 @@ export const getLayerCustomHoverExitFunction = (
         switch (id) {
             case LayerId.ResvizEDRReservoirs:
                 return () => {
+                    console.log('called');
                     map.getCanvas().style.cursor = '';
-                    useSessionStore.getState().setHoverFeature(null);
+                    useSessionStore.getState().setHighlight(null);
                 };
             case SubLayerId.RegionsFill:
                 return () => {
@@ -956,9 +992,14 @@ export const getLayerMouseMoveFunction = (
                 };
             case LayerId.ResvizEDRReservoirs:
                 return (e) => {
-                    const feature = e.features?.[0];
+                    const feature = e.features?.[0] as Feature<Point>;
                     if (feature) {
-                        useSessionStore.getState().setHoverFeature(feature);
+                        useSessionStore.getState().setHighlight({
+                            config: getReservoirConfig(
+                                SourceId.ResvizEDRReservoirs
+                            )!,
+                            feature,
+                        });
                     }
                     // showReservoirPopup(
                     //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
@@ -1455,6 +1496,12 @@ export const layerDefinitions: MainLayerDefinition[] = [
     {
         id: SubLayerId.StateLabels,
         config: getLayerConfig(SubLayerId.StateLabels),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.Highlight,
+        config: getLayerConfig(LayerId.Highlight),
         controllable: false,
         legend: false,
     },

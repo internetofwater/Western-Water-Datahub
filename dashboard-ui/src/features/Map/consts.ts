@@ -33,6 +33,7 @@ export enum SourceId {
     NOAARiverForecast = 'noaa-rfc',
     Snotel = 'snotel-edr',
     SnotelHucSixMeans = 'snotel-huc06-means',
+    Highlight = 'highlight',
 }
 
 export enum LayerId {
@@ -48,6 +49,7 @@ export enum LayerId {
     NOAARiverForecast = 'dash-noaa-rfc',
     Snotel = 'dash-snotel-edr',
     SnotelHucSixMeans = 'dash-snotel-huc06-means',
+    Highlight = 'highlight',
 }
 
 export enum SubLayerId {
@@ -77,6 +79,18 @@ export const ZoomCapacityArray = [
     [6, 320000],
     [7, 65000],
     [8, -1],
+];
+
+export const TeacupSizeExpression: ExpressionSpecification = [
+    'step',
+    ['var', 'capacity'],
+    0.3,
+    45000,
+    0.4,
+    320000,
+    0.5,
+    2010000,
+    0.55,
 ];
 
 export const TeacupPercentageOfCapacityExpression: ExpressionSpecification = [

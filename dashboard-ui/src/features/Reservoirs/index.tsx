@@ -110,6 +110,8 @@ const Reservoirs: React.FC = () => {
                     return {
                         ...feature,
                         properties: {
+                            ...feature.properties,
+                            collectionId,
                             identifier:
                                 config.identifierType === 'number'
                                     ? Number(props[config.identifierProperty])

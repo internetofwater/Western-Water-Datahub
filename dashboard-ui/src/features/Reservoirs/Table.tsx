@@ -18,7 +18,7 @@ import {
     Text,
 } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { MAP_ID } from '../Map/consts';
+import { MAP_ID, SourceId } from '../Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { Feature, Point } from 'geojson';
 import { OrganizedProperties } from './types';
@@ -26,6 +26,8 @@ import { chunk } from './utils';
 import Controls from '@/icons/Controls';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import useMainStore from '@/stores/main/main';
+import useSessionStore from '@/stores/session';
+import { getReservoirConfig } from '../Map/utils';
 
 type Props = {
     filteredReservoirs: Feature<Point, OrganizedProperties>[];
@@ -34,6 +36,8 @@ export const Table: React.FC<Props> = (props) => {
     const { filteredReservoirs } = props;
 
     const setReservoir = useMainStore((state) => state.setReservoir);
+    const highlight = useSessionStore((state) => state.highlight);
+    const setHighlight = useSessionStore((state) => state.setHighlight);
 
     const [chunkedLocations, setChunkedLocations] = useState<
         Feature<Point, OrganizedProperties>[][]
@@ -86,6 +90,37 @@ export const Table: React.FC<Props> = (props) => {
     const handlePageSizeChange = (pageSize: number) => {
         setPageSize(pageSize);
         setPage(1);
+    };
+
+    const handleMouseOver = (feature: Feature<Point>) => {
+        if (!feature.properties) {
+            return;
+        }
+
+        const config = getReservoirConfig(
+            feature.properties.collectionId as SourceId
+        );
+
+        if (config) {
+            const correctedFeature = {
+                ...feature,
+                properties: {
+                    ...feature.properties,
+                    [config.storageProperty]: Number(
+                        feature.properties.storage
+                    ),
+                    [config.capacityProperty]: Number(
+                        feature.properties.capacity
+                    ),
+                },
+            };
+
+            setHighlight({ feature: correctedFeature, config });
+        }
+    };
+
+    const handleMouseExit = () => {
+        setHighlight(null);
     };
 
     const textProps = {
@@ -155,7 +190,17 @@ export const Table: React.FC<Props> = (props) => {
                         };
 
                         return (
-                            <TableTr key={`row-${identifier}`}>
+                            <TableTr
+                                key={`row-${identifier}`}
+                                className={
+                                    highlight &&
+                                    highlight.feature.id === feature.id
+                                        ? styles.highlight
+                                        : ''
+                                }
+                                onMouseEnter={() => handleMouseOver(feature)}
+                                onMouseLeave={() => handleMouseExit()}
+                            >
                                 <TableTd>
                                     <Stack>
                                         <Text {...textProps}>{name}</Text>

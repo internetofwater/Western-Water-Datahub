@@ -30,3 +30,8 @@
 .buttonColumn {
     width: 70px;
 }
+
+.highlight {
+    font-weight: bold;
+    color: #d0a02a;
+}
