@@ -4,8 +4,8 @@
  */
 
 .panel {
-    min-width: 500px;
-    width: 500px;
+    min-width: 31rem;
+    width: 31rem;
     z-index: 2;
 }
 
