@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { Box, Divider, Stack, Title } from '@mantine/core';
 import Image from 'next/image';
 import styles from '@/features/Panel/Panel.module.css';

@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { ReservoirConfig } from '@/features/Map/types';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
 import useMainStore from '@/stores/main/main';
