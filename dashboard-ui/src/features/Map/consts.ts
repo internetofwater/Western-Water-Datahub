@@ -73,9 +73,9 @@ export const allLayerIds = [
 
 export const ZoomCapacityArray = [
     [0, 2010000],
-    [4, 465000],
+    // [4, 465000],
     [5, 320000],
-    [7, 65000],
+    // [7, 65000],
     [8, -1],
 ];
 

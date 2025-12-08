@@ -25,6 +25,7 @@ const Reservoirs: React.FC = () => {
 
     const [search, setSearch] = useState('');
     const [sortBy, setSortBy] = useState<SortBy>(SortBy.Capacity);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
     const { reservoirCollections } = useReservoirData();
