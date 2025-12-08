@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+.wrapper {
+    padding: calc(var(--default-spacing) * 2);
+}
+
 .gradientContainer {
     min-width: 200px;
     max-width: 250px;
@@ -34,8 +38,8 @@
 }
 
 .subListItem {
-    margin-left: 8px;
-    margin-right: 8px;
+    margin-left: var(--default-spacing);
+    margin-right: var(--default-spacing);
 }
 
 .listItemIconWrapper > svg {
@@ -49,7 +53,7 @@
     display: flex;
     flex-wrap: wrap;
 
-    margin-bottom: 8px;
+    margin-bottom: var(--default-spacing);
 
     background-color: var(--mantine-color-gray-4);
     padding: 4px;

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { useRef } from 'react';
-import { Box, Divider, Modal } from '@mantine/core';
+import { Divider, Modal, Stack } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { ReservoirConfig } from '@/features/Map/types';
 import { SourceId } from '@/features/Map/consts';
@@ -19,7 +19,6 @@ import useMainStore from '@/stores/main/main';
 import { useDisclosure } from '@mantine/hooks';
 import { ReservoirDefault } from '@/stores/main/consts';
 import { GeoJsonProperties } from 'geojson';
-import styles from '@/features/Reservior/Reservoir.module.css';
 
 /**
  *
@@ -105,16 +104,14 @@ const Reservoir: React.FC = () => {
             onClose={close}
             title={String(reservoirProperties[config.labelProperty]) ?? ''}
         >
-            <Box>
+            <Stack gap="var(--default-spacing)">
                 <Info
                     reservoirProperties={reservoirProperties}
                     config={config}
                 />
-            </Box>
-            <Divider my="var(--default-spacing)" />
-            <Box className={styles.chartWrapper}>
+                <Divider />
                 <Chart id={reservoirId} ref={chartRef} config={config} />
-            </Box>
+            </Stack>
         </Modal>
     );
 };

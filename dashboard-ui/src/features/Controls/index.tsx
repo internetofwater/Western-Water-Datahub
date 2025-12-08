@@ -127,7 +127,7 @@ const Controls: React.FC = () => {
     const snotelSwitchProps = isFetchingSnotel ? { 'data-disabled': true } : {};
 
     return (
-        <Stack>
+        <Stack className={styles.wrapper}>
             {map ? (
                 <>
                     <ReservoirDateSelector />

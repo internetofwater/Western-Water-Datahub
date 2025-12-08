@@ -4,7 +4,7 @@
  */
 
 import { ReservoirConfig } from '@/features/Map/types';
-import { Box, Group, Paper, Switch, Text, Stack } from '@mantine/core';
+import { Box, Group, Paper, Switch, Text, Stack, Flex } from '@mantine/core';
 import { GeoJsonProperties } from 'geojson';
 import { useState } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
@@ -59,14 +59,19 @@ const InfoWrapper: React.FC<Props> = (props) => {
                 className={styles.infoChartGroup}
             >
                 <Group align="flex=start" className={styles.graphicPanel}>
-                    <Stack align="flex-start" mx="auto">
+                    <Stack>
                         <Switch
                             label="Show Volumes"
                             checked={showLabels}
                             onClick={() => handleShowLabels(!showLabels)}
                         />
                         <Paper bg="#fff">
-                            <Stack p={8} data-testid="graphic-legend">
+                            <Flex
+                                direction={{ base: 'row', xl: 'column' }}
+                                p="var(--default-spacing)"
+                                gap="var(--default-spacing)"
+                                data-testid="graphic-legend"
+                            >
                                 <Group
                                     gap={5}
                                     onMouseEnter={handleCapacityEnter}
@@ -109,7 +114,7 @@ const InfoWrapper: React.FC<Props> = (props) => {
                                         Storage
                                     </Text>
                                 </Group>
-                            </Stack>
+                            </Flex>
                         </Paper>
                     </Stack>
                     <TeacupDiagram

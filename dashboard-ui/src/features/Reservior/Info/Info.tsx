@@ -41,12 +41,7 @@ export const Info: React.FC<Props> = (props) => {
     const percentOfAverage = ((storage / average) * 100).toFixed(1);
 
     return (
-        <Stack
-            justify="space-between"
-            align="flex-start"
-            gap="xs"
-            className={styles.infoPanel}
-        >
+        <Stack justify="space-between" align="flex-start" gap="xs">
             <Stack gap="xs" w="100%" className={styles.infoGroup}>
                 <Box>
                     <Group gap="xs" justify="flex-start">

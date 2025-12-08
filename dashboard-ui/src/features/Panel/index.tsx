@@ -8,8 +8,9 @@ import {
 } from '@mantine/core';
 import { Header } from '@/features/Panel/Header';
 import styles from '@/features/Panel/Panel.module.css';
-import Reservoirs from '../Reservoirs';
-import Legend from '../Legend';
+import Reservoirs from '@/features/Reservoirs';
+import Legend from '@/features/Legend';
+import Controls from '@/features/Controls';
 
 const items = [
     {
@@ -22,7 +23,7 @@ const items = [
     },
     {
         title: 'Controls',
-        content: <></>,
+        content: <Controls />,
     },
     {
         title: 'Report',
@@ -36,7 +37,12 @@ const Panel: React.FC = () => {
             <Header />
             <Accordion
                 multiple
-                classNames={{ root: styles.root, content: styles.content }}
+                className={styles.sticky}
+                classNames={{
+                    root: styles.root,
+                    content: styles.content,
+                    control: styles.control,
+                }}
             >
                 {items.map(({ title, content }) => (
                     <AccordionItem key={title} value={title}>

@@ -142,7 +142,7 @@ const Legend: React.FC = () => {
     const toggleableLayers = useMainStore((state) => state.toggleableLayers);
 
     return (
-        <Stack>
+        <Stack className={styles.wrapper}>
             <Teacups />
             <Divider />
             {entries
