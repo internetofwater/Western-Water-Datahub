@@ -30,10 +30,6 @@ const items = [
         title: 'Controls',
         content: <Controls />,
     },
-    {
-        title: 'Report',
-        content: <></>,
-    },
 ];
 
 const Panel: React.FC = () => {

@@ -233,9 +233,9 @@ export const Table: React.FC<Props> = (props) => {
                             <Tooltip
                                 label="Click to learn more."
                                 openDelay={500}
+                                key={`row-${identifier}`}
                             >
                                 <TableTr
-                                    key={`row-${identifier}`}
                                     className={styles.row}
                                     role="button"
                                     tabIndex={0}

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Switch, Text, Paper, Flex, Group, Box } from '@mantine/core';
+import { Switch, Paper, Flex } from '@mantine/core';
 import {
     capacityFill,
     storageFill,
@@ -17,10 +17,20 @@ import {
     handleStorageLeave,
 } from '@/features/Reservior/TeacupDiagram/listeners';
 import styles from '@/features/Reservior/Reservoir.module.css';
+import { Entry } from './Entry';
 
 type Props = {
     showLabels: boolean;
     onChange: (showLabels: boolean) => void;
+};
+
+type EntryTypew = {
+    fill: string | [string, string];
+    text: string;
+    stroke?: string;
+    dashed?: boolean;
+    onMouseEnter: () => void;
+    onMouseLeave: () => void;
 };
 
 export const Legend: React.FC<Props> = (props) => {
@@ -40,6 +50,45 @@ export const Legend: React.FC<Props> = (props) => {
         onChange(showLabels);
     };
 
+    const entries: EntryTypew[] = [
+        {
+            fill: capacityFill,
+            text: 'Capacity',
+            onMouseEnter: handleCapacityEnter,
+            onMouseLeave: () => handleCapacityLeave(showLabels),
+        },
+        {
+            fill: storageFill,
+            text: 'Storage',
+            onMouseEnter: handleStorageEnter,
+            onMouseLeave: () => handleStorageLeave(showLabels),
+        },
+        {
+            fill: [storageFill, capacityFill],
+            stroke: '#D0A02A',
+            text: '30 year Average',
+            onMouseEnter: handleAverageLineEnter,
+            onMouseLeave: () => handleAverageLineLeave(showLabels),
+            dashed: true,
+        },
+        {
+            fill: [storageFill, capacityFill],
+            stroke: '#fff',
+            text: 'High (90th Percentile)',
+            onMouseEnter: () => null,
+            onMouseLeave: () => null,
+            dashed: true,
+        },
+        {
+            fill: [storageFill, capacityFill],
+            stroke: '#fff',
+            text: 'Low (10th Percentile)',
+            onMouseEnter: () => null,
+            onMouseLeave: () => null,
+            dashed: true,
+        },
+    ];
+
     return (
         <Flex
             className={styles.legendWrapper}
@@ -58,44 +107,17 @@ export const Legend: React.FC<Props> = (props) => {
                     gap="var(--default-spacing)"
                     data-testid="graphic-legend"
                 >
-                    <Group
-                        gap={5}
-                        onMouseEnter={handleCapacityEnter}
-                        onMouseLeave={() => handleCapacityLeave(showLabels)}
-                    >
-                        <Box
-                            style={{
-                                backgroundColor: capacityFill,
-                            }}
-                            className={styles.graphicLegendColor}
-                        ></Box>
-                        <Text
-                            size="sm"
-                            c="#000"
-                            fw={700}
-                            className={styles.graphicLegendText}
-                        >
-                            Capacity
-                        </Text>
-                    </Group>
-                    <Group
-                        gap={5}
-                        onMouseEnter={handleStorageEnter}
-                        onMouseLeave={() => handleStorageLeave(showLabels)}
-                    >
-                        <Box
-                            style={{ backgroundColor: storageFill }}
-                            className={styles.graphicLegendColor}
-                        ></Box>
-                        <Text
-                            size="sm"
-                            c="#000"
-                            fw={700}
-                            className={styles.graphicLegendText}
-                        >
-                            Storage
-                        </Text>
-                    </Group>
+                    {entries.map((entry) => (
+                        <Entry
+                            key={`teacup-legend-entry-${entry.text}`}
+                            text={entry.text}
+                            fill={entry.fill}
+                            stroke={entry?.stroke}
+                            dashed={entry?.dashed}
+                            onMouseEnter={entry.onMouseEnter}
+                            onMouseLeave={entry.onMouseLeave}
+                        />
+                    ))}
                 </Flex>
             </Paper>
         </Flex>
