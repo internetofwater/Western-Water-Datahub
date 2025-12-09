@@ -1,6 +1,11 @@
-import { useState } from 'react';
-import { Button, Checkbox, Group, Stack, Text } from '@mantine/core';
-import useSessionStore from '@/stores/session';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import { useState } from "react";
+import { Button, Checkbox, Group, Stack, Text } from "@mantine/core";
+import useSessionStore from "@/stores/session";
 
 type Props = {
   showHelp: boolean;
@@ -16,17 +21,20 @@ export const About: React.FC<Props> = (props) => {
   const handleDontShowClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { checked } = event.currentTarget;
     if (checked) {
-      localStorage.setItem('showHelp', 'false');
+      localStorage.setItem("showHelp", "false");
       setShowHelpAgain(false);
     } else {
-      localStorage.setItem('showHelp', 'true');
+      localStorage.setItem("showHelp", "true");
       setShowHelpAgain(true);
     }
   };
 
   return (
     <Stack>
-      <Text>This is where we will place the welcome message and application background.</Text>
+      <Text>
+        This is where we will place the welcome message and application
+        background.
+      </Text>
       <Group justify="space-between">
         <Button onClick={() => setOpenModal(null)}>Continue</Button>
         <Checkbox

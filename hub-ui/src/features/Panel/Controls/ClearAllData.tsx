@@ -3,21 +3,22 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from 'react';
-import { Button } from '@mantine/core';
-import Tooltip from '@/components/Tooltip';
-import { useMap } from '@/contexts/MapContexts';
-import { MAP_ID } from '@/features/Map/config';
-import { useLoading } from '@/hooks/useLoading';
-import mainManager from '@/managers/Main.init';
-import useMainStore from '@/stores/main';
+import { useEffect, useState } from "react";
+import { Button } from "@mantine/core";
+import Tooltip from "@/components/Tooltip";
+import { useMap } from "@/contexts/MapContexts";
+import { MAP_ID } from "@/features/Map/config";
+import { useLoading } from "@/hooks/useLoading";
+import mainManager from "@/managers/Main.init";
+import useMainStore from "@/stores/main";
 
 export const Reset: React.FC = () => {
   const hasGeographyFilter = useMainStore((state) => state.hasGeographyFilter);
 
   const [hasLocationsLoaded, setHasLocationsLoaded] = useState(false);
 
-  const { isLoadingGeography, isFetchingCollections, isFetchingLocations } = useLoading();
+  const { isLoadingGeography, isFetchingCollections, isFetchingLocations } =
+    useLoading();
 
   const { map } = useMap(MAP_ID);
 
@@ -26,37 +27,39 @@ export const Reset: React.FC = () => {
       return;
     }
 
-    map.on('styledata', () => {
+    map.on("styledata", () => {
       const collections = useMainStore.getState().collections;
       const layers = map.getStyle().layers;
       setHasLocationsLoaded(
         layers.some((layer) =>
           collections.some((collection) =>
-            Object.values(mainManager.getLocationsLayerIds(collection.id)).includes(layer.id)
-          )
-        )
+            Object.values(
+              mainManager.getLocationsLayerIds(collection.id),
+            ).includes(layer.id),
+          ),
+        ),
       );
     });
   }, [map]);
 
   const getLabel = () => {
     if (isLoadingGeography) {
-      return 'Please wait for geography filter to load';
+      return "Please wait for geography filter to load";
     }
 
     if (isFetchingCollections) {
-      return 'Please wait for collections request to complete';
+      return "Please wait for collections request to complete";
     }
 
     if (isFetchingLocations) {
-      return 'Please wait for locations request to complete';
+      return "Please wait for locations request to complete";
     }
 
     if (!hasLocationsLoaded && !hasGeographyFilter()) {
-      return 'No locations or geography to clear';
+      return "No locations or geography to clear";
     }
 
-    return 'Clear all map data and selections in the side panel.';
+    return "Clear all map data and selections in the side panel.";
   };
 
   const isDisabled =

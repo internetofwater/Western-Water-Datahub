@@ -1,4 +1,9 @@
-.infoButton svg[data-identifier='help-svg'] {
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+.infoButton svg[data-identifier="help-svg"] {
   fill: var(--mantine-color-white);
 }
 

@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Box, Group, Stack } from '@mantine/core';
-import Controls from '@/features/Controls';
-import DownloadModal from '@/features/Download/Modal';
-import InfoModal from '@/features/Info/Modal';
-import Loading from '@/features/Loading';
-import Map from '@/features/Map';
-import MapTools from '@/features/Map/Tools';
-import Notifications from '@/features/Notifications';
-import Panel from '@/features/Panel';
-import styles from '@/pages/pages.module.css';
+import { Box, Group, Stack } from "@mantine/core";
+import Controls from "@/features/Controls";
+import DownloadModal from "@/features/Download/Modal";
+import InfoModal from "@/features/Info/Modal";
+import Loading from "@/features/Loading";
+import Map from "@/features/Map";
+import MapTools from "@/features/Map/Tools";
+import Notifications from "@/features/Notifications";
+import Panel from "@/features/Panel";
+import styles from "@/pages/pages.module.css";
 
 export const LayoutPage: React.FC = () => {
   return (

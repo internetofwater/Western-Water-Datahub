@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from 'react';
+import React from "react";
 
 type Props = {
   fill: string;
@@ -13,7 +13,7 @@ type Props = {
 };
 
 const FilledSquare: React.FC<Props> = (props) => {
-  const { fill = 'black', stroke, width = 24, height = 24 } = props;
+  const { fill = "black", stroke, width = 24, height = 24 } = props;
 
   return (
     <svg

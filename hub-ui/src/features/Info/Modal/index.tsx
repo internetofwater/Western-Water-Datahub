@@ -1,11 +1,16 @@
-import { useEffect, useState } from 'react';
-import { Modal as ModalComponent, Tabs, Title } from '@mantine/core';
-import styles from '@/features/Info/Info.module.css';
-import { About } from '@/features/Info/Modal/About';
-import { FAQ } from '@/features/Info/Modal/FAQ';
-import { Glossary } from '@/features/Info/Modal/Glossary';
-import useSessionStore from '@/stores/session';
-import { HelpTab, Modal as ModalEnum } from '@/stores/session/types';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import { useEffect, useState } from "react";
+import { Modal as ModalComponent, Tabs, Title } from "@mantine/core";
+import styles from "@/features/Info/Info.module.css";
+import { About } from "@/features/Info/Modal/About";
+import { FAQ } from "@/features/Info/Modal/FAQ";
+import { Glossary } from "@/features/Info/Modal/Glossary";
+import useSessionStore from "@/stores/session";
+import { HelpTab, Modal as ModalEnum } from "@/stores/session/types";
 
 const Modal: React.FC = () => {
   const openModal = useSessionStore((state) => state.openModal);
@@ -17,11 +22,11 @@ const Modal: React.FC = () => {
   const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
-    const showHelp = localStorage.getItem('showHelp');
-    if (!showHelp || showHelp === 'true') {
+    const showHelp = localStorage.getItem("showHelp");
+    if (!showHelp || showHelp === "true") {
       setOpenModal(ModalEnum.Help);
       setShowHelp(true);
-    } else if (showHelp === 'false') {
+    } else if (showHelp === "false") {
       setShowHelp(false);
     }
   }, []);
