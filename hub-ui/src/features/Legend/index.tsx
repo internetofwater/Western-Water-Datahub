@@ -5,6 +5,9 @@
 
 import { Fragment, useEffect } from "react";
 import { ColorInput, Divider, Group, Stack, Switch, Text } from "@mantine/core";
+import Circle from "@/assets/Circle";
+import Line from "@/assets/Line";
+import Square from "@/assets/Square";
 import { useMap } from "@/contexts/MapContexts";
 import styles from "@/features/Legend/Legend.module.css";
 import { MAP_ID } from "@/features/Map/config";
@@ -136,29 +139,48 @@ const Legend: React.FC = () => {
         .sort((a, b) => a.collectionId.localeCompare(b.collectionId))
         .map((entry, index) => (
           <Fragment key={`legend-entry-${entry.collectionId}`}>
-            <Stack>
+            <Stack w="100%" gap="xs">
               <Text>{getCollectionTitle(entry.collectionId)}</Text>
-              <Group justify="space-between" align="flex-end">
-                <ColorInput
-                  label="Locations"
-                  value={entry.color}
-                  onChange={(color) =>
-                    handleColorChange(color, entry.collectionId)
-                  }
-                  className={styles.colorPicker}
-                />
-                <Switch
-                  size="lg"
-                  onLabel="ON"
-                  offLabel="OFF"
-                  checked={entry.visible}
-                  onChange={(event) =>
-                    handleVisibilityChange(
-                      event.target.checked,
-                      entry.collectionId,
-                    )
-                  }
-                />
+              <Group w="100%" justify="space-between" align="flex-start">
+                <Stack justify="flex-start">
+                  <ColorInput
+                    label="Locations"
+                    value={entry.color}
+                    onChange={(color) =>
+                      handleColorChange(color, entry.collectionId)
+                    }
+                    className={styles.colorPicker}
+                  />
+                  <Switch
+                    size="lg"
+                    onLabel="ON"
+                    offLabel="OFF"
+                    checked={entry.visible}
+                    onChange={(event) =>
+                      handleVisibilityChange(
+                        event.target.checked,
+                        entry.collectionId,
+                      )
+                    }
+                  />
+                </Stack>
+                <Group gap="xs" justify="flex-start" align="flex-start">
+                  <Stack className={styles.legendContrast} gap="xs">
+                    <Circle fill={entry.color} />
+                    <Line color={entry.color} />
+                    <Square fill={entry.color} />
+                    <Circle fill={entry.color} stroke="#fff" />
+                  </Stack>
+                  <Stack gap={10} pt={8} mt={0} align="flex-start">
+                    <Text size="xs">Point Locations</Text>
+                    <Text size="xs">Line Locations</Text>
+                    <Text size="xs">Polygon Locations</Text>
+                    <Stack gap={0}>
+                      <Text size="xs">Selected Locations</Text>
+                      <Text size="xs">(all shapes)</Text>
+                    </Stack>
+                  </Stack>
+                </Group>
               </Group>
             </Stack>
             {index < legendEntries.length - 1 && <Divider />}

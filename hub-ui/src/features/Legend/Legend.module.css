@@ -6,3 +6,8 @@
 .colorPicker {
   width: 135px;
 }
+
+.legendContrast {
+  padding: 4px;
+  background: var(--mantine-color-gray-4);
+}

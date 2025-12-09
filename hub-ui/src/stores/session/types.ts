@@ -26,8 +26,19 @@ export enum LoadingType {
   Data = "data",
 }
 
-export enum Tools {
+export enum Tool {
   Legend = "legend",
+}
+
+export enum Modal {
+  Download = "download",
+  Help = "help",
+}
+
+export enum HelpTab {
+  About = "about",
+  FAQ = "FAQ",
+  Glossary = "glossary",
 }
 
 export type Notification = {
@@ -52,17 +63,17 @@ export type LegendEntry = {
 export type SessionState = {
   legendEntries: LegendEntry[];
   setLegendEntries: (legendEntries: SessionState["legendEntries"]) => void;
-  downloadModalOpen: boolean;
-  setDownloadModalOpen: (
-    downloadModalOpen: SessionState["downloadModalOpen"],
-  ) => void;
+  openModal: Modal | null;
+  setOpenModal: (openModal: SessionState["openModal"]) => void;
   tools: {
-    [Tools.Legend]: boolean;
+    [Tool.Legend]: boolean;
   };
-  setOpenTools: (tool: Tools, open: boolean) => void;
+  setOpenTools: (tool: Tool, open: boolean) => void;
+  helpTab: HelpTab;
+  setHelpTab: (helpTab: SessionState["helpTab"]) => void;
   loadingInstances: Loading[];
   addLoadingInstance: (loadingInstance: Loading) => void;
-  removeLoadingInstance: (id: string) => void;
+  removeLoadingInstance: (id: Loading["id"]) => void;
   hasLoadingInstance: (text: string) => boolean;
   notifications: Notification[];
   addNotification: (notification: Notification) => void;

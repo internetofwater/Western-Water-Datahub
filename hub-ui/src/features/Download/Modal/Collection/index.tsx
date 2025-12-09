@@ -37,6 +37,7 @@ import notificationManager from "@/managers/Notification.init";
 import { ICollection } from "@/services/edr.service";
 import wwdhService from "@/services/init/wwdh.init";
 import { LoadingType, NotificationType } from "@/stores/session/types";
+import { DatePreset, getSimplePresetDates } from "@/utils/dates";
 
 dayjs.extend(isSameOrBefore);
 
@@ -208,6 +209,13 @@ const Collection: React.FC<Props> = (props) => {
                     value={from}
                     onChange={setFrom}
                     clearable
+                    presets={getSimplePresetDates([
+                      DatePreset.OneYear,
+                      DatePreset.FiveYears,
+                      DatePreset.TenYears,
+                      DatePreset.FifteenYears,
+                      DatePreset.ThirtyYears,
+                    ])}
                     error={isValidRange ? false : "Invalid date range"}
                   />
                   <DatePickerInput
@@ -217,6 +225,13 @@ const Collection: React.FC<Props> = (props) => {
                     value={to}
                     onChange={setTo}
                     clearable
+                    presets={getSimplePresetDates([
+                      DatePreset.OneYear,
+                      DatePreset.FiveYears,
+                      DatePreset.TenYears,
+                      DatePreset.FifteenYears,
+                      DatePreset.ThirtyYears,
+                    ])}
                     error={isValidRange ? false : "Invalid date range"}
                   />
                 </Stack>
@@ -229,7 +244,7 @@ const Collection: React.FC<Props> = (props) => {
                   className={styles.goButton}
                   onClick={() => setStartDownload(Date.now())}
                 >
-                  Go
+                  Search
                 </Button>
               </Group>
 

@@ -203,6 +203,7 @@ class MainManager {
         this.map.addSource(sourceId, {
           type: "geojson",
           data: geographyFilteredData,
+          generateId: true,
         });
       } else {
         source.setData(geographyFilteredData);
@@ -259,6 +260,7 @@ class MainManager {
           });
           if (features.length > 0) {
             const uniqueFeatures = this.getUniqueIds(features);
+
             uniqueFeatures.forEach((locationId) => {
               if (this.hasLocation(locationId)) {
                 this.store.getState().removeLocation(locationId);
@@ -394,27 +396,27 @@ class MainManager {
    */
   public async getLocations(): Promise<void> {
     // Specific user collection choice
-    const collection = this.store.getState().collection;
+    const selectedCollections = this.store.getState().selectedCollections;
     // All collections for selected filters
     const collections = this.store.getState().collections;
 
-    if (collection) {
-      const sourceId = await this.addLocationSource(collection);
-      this.addLocationLayer(collection, sourceId);
-    } else {
-      const chunkSize = 5;
+    const filteredCollections = collections.filter(
+      (collection) =>
+        selectedCollections.length === 0 ||
+        selectedCollections.includes(collection.id),
+    );
 
-      for (let i = 0; i < collections.length; i += chunkSize) {
-        const chunk = collections.slice(i, i + chunkSize);
+    const chunkSize = 5;
+    for (let i = 0; i < filteredCollections.length; i += chunkSize) {
+      const chunk = filteredCollections.slice(i, i + chunkSize);
 
-        await Promise.all(
-          chunk.map(async (collection) => {
-            const collectionId = collection.id;
-            const sourceId = await this.addLocationSource(collectionId);
-            this.addLocationLayer(collectionId, sourceId);
-          }),
-        );
-      }
+      await Promise.all(
+        chunk.map(async (collection) => {
+          const collectionId = collection.id;
+          const sourceId = await this.addLocationSource(collectionId);
+          this.addLocationLayer(collectionId, sourceId);
+        }),
+      );
     }
   }
 
@@ -464,6 +466,7 @@ class MainManager {
         this.map.addSource(sourceId, {
           type: "geojson",
           data: turf.featureCollection([feature]),
+          cluster: true,
         });
       } else {
         source.setData(turf.featureCollection([feature]));
@@ -602,7 +605,7 @@ class MainManager {
 
     this.store.getState().setProvider(null);
     this.store.getState().setCategory(null);
-    this.store.getState().setCollection(null);
+    this.store.getState().setSelectedCollections([]);
   }
 }
 

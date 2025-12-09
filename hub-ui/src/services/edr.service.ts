@@ -517,12 +517,8 @@ export class EDRService extends Service {
    * - `f`: Format of the response.
    */
   async getLocation<
-    T extends
-      | JSON
-      | GeoJSON
-      | CoverageJSON
-      | CoverageCollection
-      | string = GeoJSON,
+    T extends JSON | GeoJSON | CoverageJSON | CoverageCollection | string =
+      GeoJSON,
   >(
     collectionId: string,
     locId: string,

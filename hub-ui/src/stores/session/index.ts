@@ -5,18 +5,18 @@
 
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { SessionState, Tools } from "@/stores/session/types";
-import { createLoadingSlice } from "./slices/loading";
-import { createNotificationsSlice } from "./slices/notifications";
+import { createLoadingSlice } from "@/stores/session/slices/loading";
+import { createNotificationsSlice } from "@/stores/session/slices/notifications";
+import { HelpTab, SessionState, Tool } from "@/stores/session/types";
 
 const useSessionStore = create<SessionState>()(
   immer((set, get, store) => ({
     legendEntries: [],
     setLegendEntries: (legendEntries) => set({ legendEntries }),
-    downloadModalOpen: false,
-    setDownloadModalOpen: (downloadModalOpen) => set({ downloadModalOpen }),
+    openModal: null,
+    setOpenModal: (openModal) => set({ openModal }),
     tools: {
-      [Tools.Legend]: false,
+      [Tool.Legend]: false,
     },
     setOpenTools: (tool, open) =>
       set((state) => ({
@@ -25,6 +25,8 @@ const useSessionStore = create<SessionState>()(
           [tool]: open,
         },
       })),
+    helpTab: HelpTab.About,
+    setHelpTab: (helpTab) => set({ helpTab }),
     ...createLoadingSlice(set, get, store),
     ...createNotificationsSlice(set, get, store),
   })),

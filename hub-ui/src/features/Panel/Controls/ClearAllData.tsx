@@ -4,7 +4,8 @@
  */
 
 import { useEffect, useState } from "react";
-import { Button, Tooltip } from "@mantine/core";
+import { Button } from "@mantine/core";
+import Tooltip from "@/components/Tooltip";
 import { useMap } from "@/contexts/MapContexts";
 import { MAP_ID } from "@/features/Map/config";
 import { useLoading } from "@/hooks/useLoading";
@@ -57,28 +58,26 @@ export const Reset: React.FC = () => {
     if (!hasLocationsLoaded && !hasGeographyFilter()) {
       return "No locations or geography to clear";
     }
+
+    return "Clear all map data and selections in the side panel.";
   };
 
+  const isDisabled =
+    isFetchingCollections ||
+    isFetchingLocations ||
+    isLoadingGeography ||
+    !(hasLocationsLoaded || hasGeographyFilter());
+
   return (
-    <>
-      {!isFetchingCollections &&
-      !isFetchingLocations &&
-      !isLoadingGeography &&
-      (hasLocationsLoaded || hasGeographyFilter()) ? (
-        <Button onClick={() => mainManager.clearAllData()} color="red-rocks">
-          Reset
-        </Button>
-      ) : (
-        <Tooltip label={getLabel()}>
-          <Button
-            data-disabled
-            onClick={(event) => event.preventDefault()}
-            color="red-rocks"
-          >
-            Reset
-          </Button>
-        </Tooltip>
-      )}
-    </>
+    <Tooltip label={getLabel()}>
+      <Button
+        disabled={isDisabled}
+        data-disabled={isDisabled}
+        onClick={() => mainManager.clearAllData()}
+        color="red-rocks"
+      >
+        Reset
+      </Button>
+    </Tooltip>
   );
 };

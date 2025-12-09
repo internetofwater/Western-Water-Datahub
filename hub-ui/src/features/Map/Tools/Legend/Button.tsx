@@ -5,7 +5,7 @@
 
 import Legend from "@/assets/Legend";
 import useSessionStore from "@/stores/session";
-import { Tools } from "@/stores/session/types";
+import { Tool } from "@/stores/session/types";
 
 /**
  *
@@ -16,7 +16,7 @@ export const MapButton: React.FC = () => {
   const setOpenTools = useSessionStore((state) => state.setOpenTools);
 
   const onClick = () => {
-    setOpenTools(Tools.Legend, !tools[Tools.Legend]);
+    setOpenTools(Tool.Legend, !tools[Tool.Legend]);
   };
 
   return (

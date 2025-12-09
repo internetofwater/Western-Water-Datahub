@@ -73,8 +73,10 @@ export interface MainState {
   setProvider: (provider: MainState["provider"]) => void;
   category: Category | null;
   setCategory: (category: MainState["category"]) => void;
-  collection: string | null;
-  setCollection: (collection: MainState["collection"]) => void;
+  selectedCollections: string[];
+  setSelectedCollections: (
+    collection: MainState["selectedCollections"],
+  ) => void;
   geographyFilter: GeographyFilter | null;
   setGeographyFilter: (geographyFilter: MainState["geographyFilter"]) => void;
   hasGeographyFilter: () => boolean;

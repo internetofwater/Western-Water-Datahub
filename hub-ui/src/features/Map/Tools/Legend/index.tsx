@@ -7,7 +7,7 @@ import { Card, CardSection, CloseButton, Group, Title } from "@mantine/core";
 import Legend from "@/features/Legend";
 import styles from "@/features/Map/Tools/Tools.module.css";
 import useSessionStore from "@/stores/session";
-import { Tools } from "@/stores/session/types";
+import { Tool } from "@/stores/session/types";
 
 /**
  *
@@ -30,7 +30,7 @@ const LegendTool: React.FC = () => {
             Legend
           </Title>
           <CloseButton
-            onClick={() => setOpenTools(Tools.Legend, false)}
+            onClick={() => setOpenTools(Tool.Legend, false)}
             aria-label="Close Legend"
           />
         </Group>
