@@ -245,6 +245,7 @@ export const Table: React.FC<Props> = (props) => {
                                 <TableTd>
                                     <Group justify="center" align="center">
                                         <ActionIcon
+                                            className=""
                                             onClick={() =>
                                                 handleSeeMore(
                                                     feature.properties

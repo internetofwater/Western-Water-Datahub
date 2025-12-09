@@ -390,7 +390,7 @@ export const getReservoirLabelPaint = (
     config: ReservoirConfig
 ): PaintSpecification => {
     return {
-        'text-color': '#000',
+        'text-color': '#fff',
         'text-opacity': [
             'let',
             'capacity',
@@ -411,7 +411,7 @@ export const getReservoirLabelPaint = (
                 ]),
             ],
         ],
-        'text-halo-color': '#fff',
+        'text-halo-color': '#000',
         'text-halo-width': 2,
     };
 };

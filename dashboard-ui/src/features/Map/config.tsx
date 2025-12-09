@@ -323,14 +323,13 @@ export const getLayerConfig = (
                 layout: {
                     'text-field': ['get', 'name'],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-                    'text-size': 18,
+                    'text-size': 22,
                     'text-allow-overlap': true,
                     'text-ignore-placement': true,
                 },
                 paint: {
                     'text-color': '#fff',
                     'text-opacity': 0,
-                    'text-halo-blur': 1,
                     'text-halo-color': '#000000',
                     'text-halo-width': 2,
                 },
@@ -386,14 +385,13 @@ export const getLayerConfig = (
                 layout: {
                     'text-field': ['get', 'name'],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-                    'text-size': 18,
+                    'text-size': 22,
                     'text-allow-overlap': true,
                     'text-ignore-placement': true,
                 },
                 paint: {
                     'text-color': '#fff',
                     'text-opacity': 0,
-                    'text-halo-blur': 1,
                     'text-halo-color': '#000000',
                     'text-halo-width': 2,
                 },
@@ -437,14 +435,13 @@ export const getLayerConfig = (
                 layout: {
                     'text-field': ['get', 'name'],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-                    'text-size': 18,
+                    'text-size': 22,
                     'text-allow-overlap': true,
                     'text-ignore-placement': true,
                 },
                 paint: {
                     'text-color': '#fff',
                     'text-opacity': 0,
-                    'text-halo-blur': 1,
                     'text-halo-color': '#000000',
                     'text-halo-width': 2,
                 },

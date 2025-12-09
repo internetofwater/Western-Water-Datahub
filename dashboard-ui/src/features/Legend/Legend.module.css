@@ -43,6 +43,8 @@
 }
 
 .listItemIconWrapper > svg {
+    fill: var(--mantine-color-text);
+    stroke: var(--mantine-color-text);
     width: 18px;
     height: auto;
 }
