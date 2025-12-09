@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ActionIcon, Text, Tooltip } from "@mantine/core";
-import Help from "@/assets/Help";
-import styles from "@/features/Info/Info.module.css";
-import useSessionStore from "@/stores/session";
-import { HelpTab, Modal } from "@/stores/session/types";
+import { ActionIcon, Text, Tooltip } from '@mantine/core';
+import Help from '@/assets/Help';
+import styles from '@/features/Info/Info.module.css';
+import useSessionStore from '@/stores/session';
+import { HelpTab, Modal } from '@/stores/session/types';
 
 const Info: React.FC = () => {
   const setOpenModal = useSessionStore((state) => state.setOpenModal);
@@ -18,15 +18,14 @@ const Info: React.FC = () => {
     setOpenModal(Modal.Help);
   };
 
-  const helpText = (
-    <Text size="sm">
-      Access the glossary, frequently asked questions (FAQ), and welcome screen.
-    </Text>
-  );
+  const help = 'Access the glossary, frequently asked questions (FAQ), and welcome screen.';
+
+  const helpText = <Text size="sm">{help}</Text>;
 
   return (
     <Tooltip label={helpText}>
       <ActionIcon
+        aria-label={help}
         size="lg"
         onClick={() => handleClick()}
         className={styles.infoButton}
