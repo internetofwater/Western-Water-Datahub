@@ -16,6 +16,7 @@ import {
     TableThead,
     TableTr,
     Text,
+    Tooltip,
 } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { MAP_ID, SourceId } from '@/features/Map/consts';
@@ -37,7 +38,6 @@ export const Table: React.FC<Props> = (props) => {
     const { filteredReservoirs } = props;
 
     const setReservoir = useMainStore((state) => state.setReservoir);
-    const highlight = useSessionStore((state) => state.highlight);
     const setHighlight = useSessionStore((state) => state.setHighlight);
 
     const [chunkedLocations, setChunkedLocations] = useState<
@@ -185,80 +185,111 @@ export const Table: React.FC<Props> = (props) => {
                             capacity,
                             percentFull,
                             percentAverage,
+                            sourceId,
                         } = feature.properties;
 
                         const textProps = {
                             size: 'xs',
                         };
 
+                        const rowLabel = `Reservoir ${name}, measured ${dateMeasured}. Storage ${storage.toLocaleString(
+                            'en-US'
+                        )}, Capacity ${capacity.toLocaleString(
+                            'en-US'
+                        )}. ${percentFull.toFixed(1)} percent full.`;
+
+                        const onRowActivate = () =>
+                            handleSeeMore(identifier, sourceId);
+
+                        const onRowKeyDown: React.KeyboardEventHandler<
+                            HTMLTableRowElement
+                        > = (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                onRowActivate();
+                            }
+                        };
+
                         return (
-                            <TableTr
-                                key={`row-${identifier}`}
-                                className={
-                                    highlight &&
-                                    highlight.feature.id === feature.id
-                                        ? styles.highlight
-                                        : ''
-                                }
-                                onMouseEnter={() => handleMouseOver(feature)}
-                                onMouseLeave={() => handleMouseExit()}
+                            <Tooltip
+                                label="Click to learn more."
+                                openDelay={500}
                             >
-                                <TableTd>
-                                    <Stack>
-                                        <Text {...textProps}>{name}</Text>
-                                        <Text {...textProps}>
-                                            {dateMeasured}
-                                        </Text>
-                                    </Stack>
-                                </TableTd>
-                                <TableTd>
-                                    <Stack justify="space-between">
-                                        <Text {...textProps}>
-                                            {storage.toLocaleString('en-US')}
-                                        </Text>
-                                        <Text {...textProps}>
-                                            {capacity.toLocaleString('en-US')}
-                                        </Text>
-                                    </Stack>
-                                </TableTd>
-                                <TableTd>
-                                    <Stack justify="space-between">
-                                        <Text {...textProps}>
-                                            {percentFull.toFixed(1)}%
-                                        </Text>
-                                        <Text {...textProps}>
-                                            {percentAverage.toFixed(1)}%
-                                        </Text>
-                                    </Stack>
-                                </TableTd>
-                                <TableTd>
-                                    <Group justify="center" align="center">
-                                        <ActionIcon
-                                            onClick={() =>
-                                                handleViewOnMap(feature)
-                                            }
-                                        >
-                                            <MapSearch />
-                                        </ActionIcon>
-                                    </Group>
-                                </TableTd>
-                                <TableTd>
-                                    <Group justify="center" align="center">
-                                        <ActionIcon
-                                            className=""
-                                            onClick={() =>
-                                                handleSeeMore(
-                                                    feature.properties
-                                                        .identifier,
-                                                    feature.properties.sourceId
-                                                )
-                                            }
-                                        >
-                                            <Info />
-                                        </ActionIcon>
-                                    </Group>
-                                </TableTd>
-                            </TableTr>
+                                <TableTr
+                                    key={`row-${identifier}`}
+                                    className={styles.row}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-label={rowLabel}
+                                    onClick={onRowActivate}
+                                    onKeyDown={onRowKeyDown}
+                                    onMouseEnter={() =>
+                                        handleMouseOver(feature)
+                                    }
+                                    onMouseLeave={() => handleMouseExit()}
+                                >
+                                    <TableTd>
+                                        <Stack>
+                                            <Text {...textProps}>{name}</Text>
+                                            <Text {...textProps}>
+                                                {dateMeasured}
+                                            </Text>
+                                        </Stack>
+                                    </TableTd>
+                                    <TableTd>
+                                        <Stack justify="space-between">
+                                            <Text {...textProps}>
+                                                {storage.toLocaleString(
+                                                    'en-US'
+                                                )}
+                                            </Text>
+                                            <Text {...textProps}>
+                                                {capacity.toLocaleString(
+                                                    'en-US'
+                                                )}
+                                            </Text>
+                                        </Stack>
+                                    </TableTd>
+                                    <TableTd>
+                                        <Stack justify="space-between">
+                                            <Text {...textProps}>
+                                                {percentFull.toFixed(1)}%
+                                            </Text>
+                                            <Text {...textProps}>
+                                                {percentAverage.toFixed(1)}%
+                                            </Text>
+                                        </Stack>
+                                    </TableTd>
+                                    <TableTd>
+                                        <Group justify="center" align="center">
+                                            <ActionIcon
+                                                title={`Go to ${name} on the map`}
+                                                onClick={() =>
+                                                    handleViewOnMap(feature)
+                                                }
+                                            >
+                                                <MapSearch />
+                                            </ActionIcon>
+                                        </Group>
+                                    </TableTd>
+                                    <TableTd>
+                                        <Group justify="center" align="center">
+                                            <ActionIcon
+                                                onClick={() =>
+                                                    handleSeeMore(
+                                                        feature.properties
+                                                            .identifier,
+                                                        feature.properties
+                                                            .sourceId
+                                                    )
+                                                }
+                                            >
+                                                <Info />
+                                            </ActionIcon>
+                                        </Group>
+                                    </TableTd>
+                                </TableTr>
+                            </Tooltip>
                         );
                     })}
                 </TableTbody>
