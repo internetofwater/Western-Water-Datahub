@@ -62,6 +62,7 @@ export const Hover: React.FC<Props> = (props) => {
                         labels={true}
                         listeners={false}
                         colorScheme={colorScheme}
+                        className={styles.svg}
                     />
                 </Stack>
                 <Stack gap="xs" className={styles.reservoirRight}>

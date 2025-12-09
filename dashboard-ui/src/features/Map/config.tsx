@@ -48,7 +48,7 @@ import { Feature, Point, Polygon } from 'geojson';
 import { huc02Centers } from '@/data/huc02Centers';
 import { stateCenters } from '@/data/stateCenters';
 import { regionCenters } from '@/data/regionCenters';
-import { RegionField } from './types/region';
+import { RegionField } from '@/features/Map/types/region';
 import useSessionStore from '@/stores/session';
 
 /**********************************************************************

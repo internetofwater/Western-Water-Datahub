@@ -9,9 +9,9 @@ import { Box } from '@mantine/core';
 import Map from '@/features/Map';
 import styles from '@/features/Main/Main.module.css';
 import { MapTools } from '@/features/MapTools';
-import Panel from '../Panel';
-import Popups from '../Popups';
-import Reservoir from '../Reservior';
+import Panel from '@/features/Panel';
+import Popups from '@/features/Popups';
+import Reservoir from '@/features/Reservior';
 
 type Props = {
     accessToken: string;

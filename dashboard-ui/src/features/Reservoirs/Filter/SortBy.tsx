@@ -4,7 +4,7 @@
  */
 
 import { Select } from '@mantine/core';
-import { SortBy as SortByType } from '../types';
+import { SortBy as SortByType } from '@/features/Reservoirs/types';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 
 type Props = {

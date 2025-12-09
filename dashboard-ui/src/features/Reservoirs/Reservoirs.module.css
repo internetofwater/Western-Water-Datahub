@@ -8,7 +8,7 @@
 }
 
 .nameColumn {
-    width: 155px;
+    width: 9.6875rem;
 }
 
 .content {
@@ -34,4 +34,10 @@
 .highlight {
     font-weight: bold;
     color: #d0a02a;
+}
+
+@media screen and (max-width: 400px) {
+    .nameColumn {
+        width: 7.6875rem;
+    }
 }

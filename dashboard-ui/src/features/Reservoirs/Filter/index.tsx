@@ -13,14 +13,14 @@ import {
     Group,
     Title,
 } from '@mantine/core';
-import { BoundingGeography } from './Selectors/BoundingGeography';
+import { BoundingGeography } from '@/features/Reservoirs/Filter/Selectors/BoundingGeography';
 import { BoundingGeographyLevel } from '@/stores/main/types';
-import { Region } from './Selectors/Region';
-import { Basin } from './Selectors/Basin';
-import { State } from './Selectors/State';
-import { Search } from './Search';
-import { SortBy } from './SortBy';
-import { SortBy as SortByType } from '../types';
+import { Region } from '@/features/Reservoirs/Filter/Selectors/Region';
+import { Basin } from '@/features/Reservoirs/Filter/Selectors/Basin';
+import { State } from '@/features/Reservoirs/Filter/Selectors/State';
+import { Search } from '@/features/Reservoirs/Filter/Search';
+import { SortBy } from '@/features/Reservoirs/Filter/SortBy';
+import { SortBy as SortByType } from '@/features/Reservoirs/types';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 
 type Props = {

@@ -18,3 +18,7 @@
 .section {
     width: calc(50% - var(--default-spacing));
 }
+
+.svg {
+    max-width: 75%;
+}

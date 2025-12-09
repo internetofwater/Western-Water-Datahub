@@ -3,27 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-.graphicPanel {
-    width: calc(55% - var(--default-spacing));
-}
-.infoPanel {
-    width: calc(45% - var(--default-spacing));
-}
-
-.svg {
-    max-width: 75%;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-}
-
-.svg:hover {
-    transform: scale(1.05);
-}
-
-.row {
-    height: calc(48% - var(--default-spacing));
-}
-
 .chartWrapper {
     height: 54%;
 }
@@ -36,4 +15,94 @@
     width: 20px;
     height: 20px;
     border-radius: 4px;
+}
+
+.graphicPanel {
+    flex-direction: row;
+    /* width: calc(66% - var(--default-spacing)); */
+}
+
+/* justify="space-between"
+align="flex-start" */
+.infoGroup {
+    flex-direction: column;
+    justify-content: space-between;
+
+    /* min-width: 33%; */
+}
+
+.legendWrapper {
+    flex-direction: column;
+}
+
+.legend {
+    flex-direction: column;
+}
+
+.metrics {
+    flex-direction: column;
+}
+
+.svg {
+    width: 32rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.svg:hover {
+    transform: scale(1.05);
+}
+
+.row {
+    height: calc(48% - var(--default-spacing));
+}
+
+@media screen and (max-width: 1464px) {
+    /* .graphicPanel,
+    .infoPanel {
+        width: calc(50% - (var(--default-spacing) / 2));
+    } */
+
+    .graphicPanel {
+        flex-direction: column-reverse;
+    }
+
+    .legendWrapper,
+    .legend {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+@media screen and (max-width: 866px) {
+    .graphicPanel {
+        align-items: center;
+    }
+
+    .metrics {
+        flex-direction: row;
+    }
+
+    .graphicPanel,
+    .metrics {
+        width: 100%;
+    }
+
+    .metricsGroup {
+        width: calc(50% - (var(--default-spacing) / 2));
+    }
+
+    .metricsWrapper {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 664px) {
+    .metrics {
+        flex-direction: column;
+    }
+
+    .metricsGroup {
+        width: unset;
+    }
 }

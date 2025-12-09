@@ -18,16 +18,17 @@ import {
     Text,
 } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { MAP_ID, SourceId } from '../Map/consts';
+import { MAP_ID, SourceId } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { Feature, Point } from 'geojson';
-import { OrganizedProperties } from './types';
-import { chunk } from './utils';
-import Controls from '@/icons/Controls';
+import { OrganizedProperties } from '@/features/Reservoirs/types';
+import { chunk } from '@/features/Reservoirs/utils';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import useMainStore from '@/stores/main/main';
 import useSessionStore from '@/stores/session';
-import { getReservoirConfig } from '../Map/utils';
+import { getReservoirConfig } from '@/features/Map/utils';
+import MapSearch from '@/icons/MapSearch';
+import Info from '@/icons/Info';
 
 type Props = {
     filteredReservoirs: Feature<Point, OrganizedProperties>[];
@@ -85,6 +86,7 @@ export const Table: React.FC<Props> = (props) => {
             identifier,
             source,
         });
+        setHighlight(null);
     };
 
     const handlePageSizeChange = (pageSize: number) => {
@@ -236,7 +238,7 @@ export const Table: React.FC<Props> = (props) => {
                                                 handleViewOnMap(feature)
                                             }
                                         >
-                                            <Controls />
+                                            <MapSearch />
                                         </ActionIcon>
                                     </Group>
                                 </TableTd>
@@ -251,7 +253,7 @@ export const Table: React.FC<Props> = (props) => {
                                                 )
                                             }
                                         >
-                                            <Controls />
+                                            <Info />
                                         </ActionIcon>
                                     </Group>
                                 </TableTd>

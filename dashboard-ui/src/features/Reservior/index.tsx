@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { useRef } from 'react';
-import { Divider, Modal, Stack } from '@mantine/core';
+import { Divider, Modal, Title } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { ReservoirConfig } from '@/features/Map/types';
 import { SourceId } from '@/features/Map/consts';
@@ -102,16 +102,20 @@ const Reservoir: React.FC = () => {
             }}
             opened={opened}
             onClose={close}
-            title={String(reservoirProperties[config.labelProperty]) ?? ''}
+            title={
+                <Title order={3}>
+                    {String(reservoirProperties[config.labelProperty]) ?? ''}
+                </Title>
+            }
         >
-            <Stack gap="var(--default-spacing)">
+            <>
                 <Info
                     reservoirProperties={reservoirProperties}
                     config={config}
                 />
-                <Divider />
+                <Divider my="var(--default-spacing)" />
                 <Chart id={reservoirId} ref={chartRef} config={config} />
-            </Stack>
+            </>
         </Modal>
     );
 };

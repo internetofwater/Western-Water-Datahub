@@ -4,17 +4,17 @@
  */
 
 import { useReservoirData } from '@/hooks/useReservoirData';
-import { Filter } from './Filter';
+import { Filter } from '@/features/Reservoirs/Filter';
 import { useEffect, useState } from 'react';
 import {
     OrganizedFeature,
     OrganizedProperties,
     SortBy,
     SortOrder,
-} from './types';
-import { Table } from './Table';
-import { getReservoirConfig } from '../Map/utils';
-import { SourceId } from '../Map/consts';
+} from '@/features/Reservoirs/types';
+import { Table } from '@/features/Reservoirs/Table';
+import { getReservoirConfig } from '@/features/Map/utils';
+import { SourceId } from '@/features/Map/consts';
 import dayjs from 'dayjs';
 import useMainStore from '@/stores/main/main';
 import {

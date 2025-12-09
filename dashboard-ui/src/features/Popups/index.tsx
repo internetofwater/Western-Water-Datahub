@@ -4,7 +4,7 @@
  */
 
 import useSessionStore from '@/stores/session';
-import { Hover } from './Reservoir/Hover';
+import { Hover } from '@/features/Popups/Reservoir/Hover';
 
 const Popups: React.FC = () => {
     const hoverFeature = useSessionStore((state) => state.highlight);

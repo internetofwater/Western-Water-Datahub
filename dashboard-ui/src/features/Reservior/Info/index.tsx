@@ -4,24 +4,13 @@
  */
 
 import { ReservoirConfig } from '@/features/Map/types';
-import { Box, Group, Paper, Switch, Text, Stack, Flex } from '@mantine/core';
+import { Group, Flex } from '@mantine/core';
 import { GeoJsonProperties } from 'geojson';
 import { useState } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
-import { Info } from '@/features/Reservior/Info/Info';
+import { Info } from '@/features/Reservior/Info/Metrics';
 import { TeacupDiagram } from '@/features/Reservior/TeacupDiagram';
-import {
-    capacityFill,
-    storageFill,
-} from '@/features/Reservior/TeacupDiagram/consts';
-import {
-    handleStorageEnter,
-    handleCapacityEnter,
-    handleAverageLineEnter,
-    handleStorageLeave,
-    handleCapacityLeave,
-    handleAverageLineLeave,
-} from '@/features/Reservior/TeacupDiagram/listeners';
+import { Legend } from '@/features/Reservior/Info/Legend';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
@@ -37,17 +26,7 @@ const InfoWrapper: React.FC<Props> = (props) => {
 
     const [showLabels, setShowLabels] = useState(true);
 
-    const handleShowLabels = (showLabels: boolean) => {
-        if (showLabels) {
-            handleStorageEnter();
-            handleCapacityEnter();
-            handleAverageLineEnter();
-        } else {
-            handleStorageLeave(false);
-            handleCapacityLeave(false);
-            handleAverageLineLeave(false);
-        }
-
+    const handleLabelsChange = (showLabels: boolean) => {
         setShowLabels(showLabels);
     };
 
@@ -58,71 +37,17 @@ const InfoWrapper: React.FC<Props> = (props) => {
                 justify="space-between"
                 className={styles.infoChartGroup}
             >
-                <Group align="flex=start" className={styles.graphicPanel}>
-                    <Stack>
-                        <Switch
-                            label="Show Volumes"
-                            checked={showLabels}
-                            onClick={() => handleShowLabels(!showLabels)}
-                        />
-                        <Paper bg="#fff">
-                            <Flex
-                                direction={{ base: 'row', xl: 'column' }}
-                                p="var(--default-spacing)"
-                                gap="var(--default-spacing)"
-                                data-testid="graphic-legend"
-                            >
-                                <Group
-                                    gap={5}
-                                    onMouseEnter={handleCapacityEnter}
-                                    onMouseLeave={() =>
-                                        handleCapacityLeave(showLabels)
-                                    }
-                                >
-                                    <Box
-                                        style={{
-                                            backgroundColor: capacityFill,
-                                        }}
-                                        className={styles.graphicLegendColor}
-                                    ></Box>
-                                    <Text
-                                        size="sm"
-                                        c="#000"
-                                        fw={700}
-                                        className={styles.graphicLegendText}
-                                    >
-                                        Capacity
-                                    </Text>
-                                </Group>
-                                <Group
-                                    gap={5}
-                                    onMouseEnter={handleStorageEnter}
-                                    onMouseLeave={() =>
-                                        handleStorageLeave(showLabels)
-                                    }
-                                >
-                                    <Box
-                                        style={{ backgroundColor: storageFill }}
-                                        className={styles.graphicLegendColor}
-                                    ></Box>
-                                    <Text
-                                        size="sm"
-                                        c="#000"
-                                        fw={700}
-                                        className={styles.graphicLegendText}
-                                    >
-                                        Storage
-                                    </Text>
-                                </Group>
-                            </Flex>
-                        </Paper>
-                    </Stack>
+                <Flex className={styles.graphicPanel}>
+                    <Legend
+                        showLabels={showLabels}
+                        onChange={handleLabelsChange}
+                    />
                     <TeacupDiagram
                         reservoirProperties={reservoirProperties}
                         config={config}
                         showLabels={showLabels}
                     />
-                </Group>
+                </Flex>
                 <Info
                     reservoirProperties={reservoirProperties}
                     config={config}

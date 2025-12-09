@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Stack, Text, Group, Box, Divider } from '@mantine/core';
+import { Stack, Text, Group, Box, Divider, Flex } from '@mantine/core';
 import { ReservoirConfig } from '@/features/Map/types';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { GeoJsonProperties } from 'geojson';
 import dayjs from 'dayjs';
+import { useMediaQuery } from '@mantine/hooks';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
@@ -20,6 +21,10 @@ type Props = {
  */
 export const Info: React.FC<Props> = (props) => {
     const { reservoirProperties, config } = props;
+
+    const verticalDivider = useMediaQuery(
+        '(min-width: 664px) and (max-width: 866px)'
+    );
 
     if (!reservoirProperties) {
         return null;
@@ -40,70 +45,87 @@ export const Info: React.FC<Props> = (props) => {
     const percentFull = ((storage / capacity) * 100).toFixed(1);
     const percentOfAverage = ((storage / average) * 100).toFixed(1);
 
+    const text = {
+        size: 'lg',
+    };
+
     return (
-        <Stack justify="space-between" align="flex-start" gap="xs">
-            <Stack gap="xs" w="100%" className={styles.infoGroup}>
-                <Box>
+        <Stack className={styles.metricsWrapper}>
+            <Text size="sm">
+                Data as of:{' '}
+                {dayjs(
+                    reservoirProperties[config.storageDateProperty] as string
+                ).format('MM/DD/YYYY')}
+            </Text>
+            <Flex gap="var(--default-spacing)" className={styles.metrics}>
+                <Box className={styles.metricsGroup}>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Storage:</Text>
-                        <Text>
+                        <Text {...text} fw={700}>
+                            Storage:
+                        </Text>
+                        <Text {...text}>
                             {storage.toLocaleString('en-US')}&nbsp;acre-feet
                         </Text>
                     </Group>
 
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Percent Full:</Text>
-                        <Text>{percentFull}%</Text>
+                        <Text {...text} fw={700}>
+                            Percent Full:
+                        </Text>
+                        <Text {...text}>{percentFull}%</Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Percent of Average:</Text>
-                        <Text>{percentOfAverage}%</Text>
+                        <Text {...text} fw={700}>
+                            Percent of Average:
+                        </Text>
+                        <Text {...text}>{percentOfAverage}%</Text>
                     </Group>
                 </Box>
-                <Divider />
-                <Box>
+                {verticalDivider ? (
+                    <Divider orientation="vertical" />
+                ) : (
+                    <Divider w="100%" />
+                )}
+
+                <Box className={styles.metricsGroup}>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>Capacity:</Text>
-                        <Text>
+                        <Text {...text} fw={700}>
+                            Capacity:
+                        </Text>
+                        <Text {...text}>
                             {capacity.toLocaleString('en-US')}
                             &nbsp;acre-feet
                         </Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>30-year Average:</Text>
-                        <Text>
+                        <Text {...text} fw={700}>
+                            30-year Average:
+                        </Text>
+                        <Text {...text}>
                             {Math.round(average).toLocaleString('en-US')}
                             &nbsp;acre-feet
                         </Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>
+                        <Text {...text} fw={700}>
                             (High) 90<sup>th</sup> Percentile:
                         </Text>
-                        <Text>
+                        <Text {...text}>
                             {ninetiethPercentile.toLocaleString('en-US')}
                             &nbsp;acre-feet
                         </Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
-                        <Text fw={700}>
+                        <Text {...text} fw={700}>
                             (Low) 10<sup>th</sup> Percentile:
                         </Text>
-                        <Text>
+                        <Text {...text}>
                             {tenthPercentile.toLocaleString('en-US')}
                             &nbsp;acre-feet
                         </Text>
                     </Group>
                 </Box>
-                <Text size="xs">
-                    Data as of:{' '}
-                    {dayjs(
-                        reservoirProperties[
-                            config.storageDateProperty
-                        ] as string
-                    ).format('MM/DD/YYYY')}
-                </Text>
-            </Stack>
+            </Flex>
         </Stack>
     );
 };
