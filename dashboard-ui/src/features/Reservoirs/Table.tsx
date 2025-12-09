@@ -18,7 +18,7 @@ import {
     Text,
     Tooltip,
 } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import { MAP_ID, SourceId } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { Feature, Point } from 'geojson';
@@ -29,7 +29,6 @@ import useMainStore from '@/stores/main/main';
 import useSessionStore from '@/stores/session';
 import { getReservoirConfig } from '@/features/Map/utils';
 import MapSearch from '@/icons/MapSearch';
-import Info from '@/icons/Info';
 
 type Props = {
     filteredReservoirs: Feature<Point, OrganizedProperties>[];
@@ -65,7 +64,12 @@ export const Table: React.FC<Props> = (props) => {
         setCurrentChunk(currentChunk);
     }, [chunkedLocations, page]);
 
-    const handleViewOnMap = (feature: Feature<Point>) => {
+    const handleViewOnMap = (
+        event: MouseEvent<HTMLButtonElement>,
+        feature: Feature<Point>
+    ) => {
+        event.stopPropagation();
+
         if (!map) {
             return;
         }
@@ -130,6 +134,10 @@ export const Table: React.FC<Props> = (props) => {
         fw: 700,
     };
 
+    const stackProps = {
+        gap: 'var(--default-spacing)',
+    };
+
     return (
         <Stack className={styles.tableWrapper} mb={16}>
             <TableComponent
@@ -142,37 +150,47 @@ export const Table: React.FC<Props> = (props) => {
                 <TableThead>
                     <TableTr>
                         <TableTh className={styles.nameColumn}>
-                            <Stack>
+                            <Stack {...stackProps}>
                                 <Text {...textProps}>Name</Text>
                                 <Text {...textProps}>Date Measured</Text>
                             </Stack>
                         </TableTh>
                         <TableTh>
-                            <Stack>
-                                <Text {...textProps}>Storage</Text>
-                                <Text {...textProps}>Capacity</Text>
+                            <Stack {...stackProps}>
+                                <Text {...textProps}>
+                                    Storage
+                                    <br /> (acre-feet)
+                                </Text>
+                                <Text {...textProps}>
+                                    Capacity
+                                    <br /> (acre-feet)
+                                </Text>
                             </Stack>
                         </TableTh>
                         <TableTh>
-                            <Stack>
+                            <Stack {...stackProps}>
                                 <Text {...textProps}>% Full</Text>
                                 <Text {...textProps}>% of Average</Text>
                             </Stack>
                         </TableTh>
                         <TableTh className={styles.buttonColumn}>
-                            <Stack align="center" justify="center">
+                            <Stack
+                                {...stackProps}
+                                align="center"
+                                justify="center"
+                            >
                                 <Text {...textProps} ta="center">
                                     View on Map
                                 </Text>
                             </Stack>
                         </TableTh>
-                        <TableTh className={styles.buttonColumn}>
+                        {/* <TableTh className={styles.buttonColumn}>
                             <Stack align="center" justify="center">
                                 <Text {...textProps} ta="center">
                                     See More
                                 </Text>
                             </Stack>
-                        </TableTh>
+                        </TableTh> */}
                     </TableTr>
                 </TableThead>
                 <TableTbody>
@@ -198,8 +216,9 @@ export const Table: React.FC<Props> = (props) => {
                             'en-US'
                         )}. ${percentFull.toFixed(1)} percent full.`;
 
-                        const onRowActivate = () =>
+                        const onRowActivate = () => {
                             handleSeeMore(identifier, sourceId);
+                        };
 
                         const onRowKeyDown: React.KeyboardEventHandler<
                             HTMLTableRowElement
@@ -229,15 +248,20 @@ export const Table: React.FC<Props> = (props) => {
                                     onMouseLeave={() => handleMouseExit()}
                                 >
                                     <TableTd>
-                                        <Stack>
-                                            <Text {...textProps}>{name}</Text>
+                                        <Stack {...stackProps}>
+                                            <Text {...textProps} fw="bold">
+                                                {name}
+                                            </Text>
                                             <Text {...textProps}>
                                                 {dateMeasured}
                                             </Text>
                                         </Stack>
                                     </TableTd>
                                     <TableTd>
-                                        <Stack justify="space-between">
+                                        <Stack
+                                            {...stackProps}
+                                            justify="space-between"
+                                        >
                                             <Text {...textProps}>
                                                 {storage.toLocaleString(
                                                     'en-US'
@@ -251,7 +275,10 @@ export const Table: React.FC<Props> = (props) => {
                                         </Stack>
                                     </TableTd>
                                     <TableTd>
-                                        <Stack justify="space-between">
+                                        <Stack
+                                            {...stackProps}
+                                            justify="space-between"
+                                        >
                                             <Text {...textProps}>
                                                 {percentFull.toFixed(1)}%
                                             </Text>
@@ -264,15 +291,15 @@ export const Table: React.FC<Props> = (props) => {
                                         <Group justify="center" align="center">
                                             <ActionIcon
                                                 title={`Go to ${name} on the map`}
-                                                onClick={() =>
-                                                    handleViewOnMap(feature)
+                                                onClick={(e) =>
+                                                    handleViewOnMap(e, feature)
                                                 }
                                             >
                                                 <MapSearch />
                                             </ActionIcon>
                                         </Group>
                                     </TableTd>
-                                    <TableTd>
+                                    {/* <TableTd>
                                         <Group justify="center" align="center">
                                             <ActionIcon
                                                 onClick={() =>
@@ -287,7 +314,7 @@ export const Table: React.FC<Props> = (props) => {
                                                 <Info />
                                             </ActionIcon>
                                         </Group>
-                                    </TableTd>
+                                    </TableTd> */}
                                 </TableTr>
                             </Tooltip>
                         );

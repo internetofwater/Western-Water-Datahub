@@ -8,7 +8,7 @@
 }
 
 .nameColumn {
-    width: 9.6875rem;
+    width: 14.15rem;
 }
 
 .content {
@@ -21,6 +21,7 @@
 
 .row:focus-visible,
 .row:hover {
+    background-color: var(--mantine-color-default-hover);
     outline: 3px solid #d0a02a;
     outline-offset: -3px;
     font-weight: bold;
@@ -48,6 +49,6 @@
 
 @media screen and (max-width: 400px) {
     .nameColumn {
-        width: 7.6875rem;
+        width: 10rem;
     }
 }

@@ -51,7 +51,7 @@ export const Legend: React.FC<Props> = (props) => {
                 checked={showLabels}
                 onClick={() => handleShowLabels(!showLabels)}
             />
-            <Paper bg="#fff">
+            <Paper shadow="sm" className={styles.legendPaper}>
                 <Flex
                     className={styles.legend}
                     p="var(--default-spacing)"
