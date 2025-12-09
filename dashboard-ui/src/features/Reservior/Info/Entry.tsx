@@ -1,3 +1,8 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
 import { Group, Box, Text } from '@mantine/core';
 
 import styles from '@/features/Reservior/Reservoir.module.css';
