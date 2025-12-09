@@ -115,34 +115,34 @@ resources:
         name: snotel.snotel.SnotelProvider
         data: https://wcc.sc.egov.usda.gov/
 
-  usgs-sta:
-    type: collection
-    title: United States Geologic Survey Streamgages
-    description: USGS Streamgages API EDR
-    provider-name:
-      - GS
-      - USGS
-      - WMA
-    keywords:
-      - EDR
-      - SensorThings
-      - USGS
-    links:
-      - <<: *default-link
-        href: https://labs.waterdata.usgs.gov
-    extents: &default-extent
-      spatial:
-        bbox: [-170, 15, -51, 72]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    providers:
-      - type: edr
-        name: SensorThingsEDR
-        data: https://labs.waterdata.usgs.gov/sta/v1.1/
-      - type: feature
-        name: SensorThings
-        data: https://labs.waterdata.usgs.gov/sta/v1.1/
-        entity: Things
-        title_field: name
+  # usgs-sta:
+  #   type: collection
+  #   title: United States Geologic Survey Streamgages
+  #   description: USGS Streamgages API EDR
+  #   provider-name:
+  #     - GS
+  #     - USGS
+  #     - WMA
+  #   keywords:
+  #     - EDR
+  #     - SensorThings
+  #     - USGS
+  #   links:
+  #     - <<: *default-link
+  #       href: https://labs.waterdata.usgs.gov
+  #   extents: &default-extent
+  #     spatial:
+  #       bbox: [-170, 15, -51, 72]
+  #       crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+  #   providers:
+  #     - type: edr
+  #       name: SensorThingsEDR
+  #       data: https://labs.waterdata.usgs.gov/sta/v1.1/
+  #     - type: feature
+  #       name: SensorThings
+  #       data: https://labs.waterdata.usgs.gov/sta/v1.1/
+  #       entity: Things
+  #       title_field: name
 
   awdb-forecasts-edr:
     type: collection
