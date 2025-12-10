@@ -180,6 +180,8 @@ const Reservoirs: React.FC = () => {
 
     const handleSearchChange = (search: string) => setSearch(search);
     const handleSortByChange = (sortBy: SortBy) => setSortBy(sortBy);
+    const handleSortOrderChange = (sortOrder: SortOrder) =>
+        setSortOrder(sortOrder);
 
     return (
         <>
@@ -188,6 +190,8 @@ const Reservoirs: React.FC = () => {
                 handleSearchChange={handleSearchChange}
                 sortBy={sortBy}
                 handleSortByChange={handleSortByChange}
+                sortOrder={sortOrder}
+                handleSortOrderChange={handleSortOrderChange}
             />
             {filteredReservoirs && (
                 <Table filteredReservoirs={filteredReservoirs} />

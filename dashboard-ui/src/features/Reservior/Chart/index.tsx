@@ -12,7 +12,15 @@ import {
     getLabelsAndValues,
 } from '@/features/Reservior/Chart/utils';
 import { CoverageCollection } from '@/services/edr.service';
-import { Box, Group, Loader, Radio, Space, Stack, Title } from '@mantine/core';
+import {
+    Box,
+    Group,
+    Radio,
+    Skeleton,
+    Space,
+    Stack,
+    Title,
+} from '@mantine/core';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { Chart as ChartJS, ChartData } from 'chart.js';
 import useMainStore from '@/stores/main/main';
@@ -160,48 +168,48 @@ export const Chart: React.FC<Props> = (props) => {
                 </Group>
             </Group>
             <Space h="sm" />
-            <Box className={styles.chartContainer}>
-                {loading ? (
-                    <Loader data-testid="chart-loader-bar" />
-                ) : error.length > 0 ? (
-                    <>{error}</>
-                ) : (
-                    <LineChart
-                        ref={ref}
-                        data={chartData}
-                        options={{
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                x: {
-                                    type: 'time',
+            <Skeleton visible={loading}>
+                <Box className={styles.chartContainer}>
+                    {error.length > 0 ? (
+                        <>{error}</>
+                    ) : (
+                        <LineChart
+                            ref={ref}
+                            data={chartData}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        type: 'time',
 
-                                    time: {
-                                        minUnit: 'month', // smallest time format
-                                        displayFormats: {
-                                            month: 'MMM yyyy',
+                                        time: {
+                                            minUnit: 'month', // smallest time format
+                                            displayFormats: {
+                                                month: 'MMM yyyy',
+                                            },
+                                            tooltipFormat: 'MMM D, yyyy',
                                         },
-                                        tooltipFormat: 'MMM D, yyyy',
                                     },
                                 },
-                            },
-                            plugins: {
-                                legend: {
-                                    display: false,
+                                plugins: {
+                                    legend: {
+                                        display: false,
+                                    },
                                 },
-                            },
-                            animation: {
-                                onComplete: function () {
-                                    if (!chartDidUpdate.current) {
-                                        chartDidUpdate.current = true;
-                                        setChartUpdate(Date.now());
-                                    }
+                                animation: {
+                                    onComplete: function () {
+                                        if (!chartDidUpdate.current) {
+                                            chartDidUpdate.current = true;
+                                            setChartUpdate(Date.now());
+                                        }
+                                    },
                                 },
-                            },
-                        }}
-                    />
-                )}
-            </Box>
+                            }}
+                        />
+                    )}
+                </Box>
+            </Skeleton>
         </Stack>
     );
 };

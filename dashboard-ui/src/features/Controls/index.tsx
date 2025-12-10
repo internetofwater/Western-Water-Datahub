@@ -11,7 +11,6 @@ import {
     Stack,
     Switch,
     Text,
-    Divider,
 } from '@mantine/core';
 import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
@@ -25,7 +24,6 @@ import {
     updateNOAARFC,
     updateSnotel,
 } from '@/features/Controls/utils';
-import { ReservoirDateSelector } from '@/features/Controls/ReservoirDateSelector';
 import styles from '@/features/Controls/Controls.module.css';
 import { useLoading } from '@/hooks/useLoading';
 
@@ -130,8 +128,8 @@ const Controls: React.FC = () => {
         <Stack className={styles.wrapper}>
             {map ? (
                 <>
-                    <ReservoirDateSelector />
-                    <Divider mx="xl" />
+                    {/* <ReservoirDateSelector />
+                    <Divider mx="xl" /> */}
                     <Text size="md" fw={500}>
                         Reference Data
                     </Text>

@@ -32,19 +32,27 @@
 }
 
 .searchInput {
-    width: 140px;
+    width: 8.75rem;
 }
 
 .sortBySelect {
-    width: 130px;
+    width: 7.6875rem;
+}
+
+.sortOrderButton {
+    margin-bottom: 0.25rem;
+}
+
+.rotate180 {
+    transform: rotate(180deg);
 }
 
 .pageSizeInput {
-    width: 113px;
+    width: 7.0625rem;
 }
 
 .buttonColumn {
-    width: 70px;
+    width: 4.375rem;
 }
 
 @media screen and (max-width: 400px) {

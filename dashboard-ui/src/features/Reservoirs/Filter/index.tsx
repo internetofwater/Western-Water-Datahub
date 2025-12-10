@@ -9,6 +9,7 @@ import {
     AccordionControl,
     AccordionItem,
     AccordionPanel,
+    ActionIcon,
     Box,
     Group,
     Title,
@@ -20,18 +21,28 @@ import { Basin } from '@/features/Reservoirs/Filter/Selectors/Basin';
 import { State } from '@/features/Reservoirs/Filter/Selectors/State';
 import { Search } from '@/features/Reservoirs/Filter/Search';
 import { SortBy } from '@/features/Reservoirs/Filter/SortBy';
-import { SortBy as SortByType } from '@/features/Reservoirs/types';
+import { SortBy as SortByType, SortOrder } from '@/features/Reservoirs/types';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
+import Up from '@/icons/Up';
 
 type Props = {
     search: string;
     handleSearchChange: (value: string) => void;
     sortBy: SortByType;
     handleSortByChange: (value: SortByType) => void;
+    sortOrder: SortOrder;
+    handleSortOrderChange: (value: SortOrder) => void;
 };
 
 export const Filter: React.FC<Props> = (props) => {
-    const { search, handleSearchChange, sortBy, handleSortByChange } = props;
+    const {
+        search,
+        handleSearchChange,
+        sortBy,
+        handleSortByChange,
+        sortOrder,
+        handleSortOrderChange,
+    } = props;
 
     const boundingGeographyLevel = useMainStore(
         (state) => state.boundingGeographyLevel
@@ -48,7 +59,7 @@ export const Filter: React.FC<Props> = (props) => {
                 <AccordionPanel>
                     <Box m={16}>
                         <BoundingGeography />
-                        <Group gap={8} mt={8}>
+                        <Group gap={8} mt={8} align="flex-end">
                             <Box
                                 style={{
                                     display:
@@ -90,6 +101,20 @@ export const Filter: React.FC<Props> = (props) => {
                                 sortBy={sortBy}
                                 handleChange={handleSortByChange}
                             />
+                            <ActionIcon
+                                size="sm"
+                                variant="filled"
+                                className={`${styles.sortOrderButton} ${
+                                    sortOrder === 'asc' ? styles.rotate180 : ''
+                                }`}
+                                onClick={() =>
+                                    handleSortOrderChange(
+                                        sortOrder === 'asc' ? 'desc' : 'asc'
+                                    )
+                                }
+                            >
+                                <Up />
+                            </ActionIcon>
                         </Group>
                     </Box>
                 </AccordionPanel>

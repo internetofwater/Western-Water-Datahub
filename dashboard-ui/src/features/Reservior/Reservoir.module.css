@@ -50,10 +50,6 @@
     flex-direction: column;
 }
 
-.legendPaper {
-    background-color: var(--mantine-color-);
-}
-
 .metrics {
     flex-direction: column;
 }
@@ -119,5 +115,25 @@
 
     .metricsGroup {
         width: unset;
+    }
+}
+
+:where([data-mantine-color-scheme='dark']) {
+    .graphicLegendText {
+        color: #000;
+    }
+
+    .legendPaper {
+        background-color: var(--mantine-color-gray-0);
+    }
+}
+
+:where([data-mantine-color-scheme='light']) {
+    .graphicLegendText {
+        color: #fff;
+    }
+
+    .legendPaper {
+        background-color: var(--mantine-color-dark-2);
     }
 }

@@ -50,12 +50,7 @@ export const Entry: React.FC<Props> = (props) => {
                 )}
             </Box>
 
-            <Text
-                size="sm"
-                c="#000"
-                fw={700}
-                className={styles.graphicLegendText}
-            >
+            <Text size="sm" fw={700} className={styles.graphicLegendText}>
                 {text}
             </Text>
         </Group>

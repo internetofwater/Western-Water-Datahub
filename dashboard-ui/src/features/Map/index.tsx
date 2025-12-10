@@ -567,7 +567,7 @@ const MainMap: React.FC<Props> = (props) => {
                     maxZoom: 20,
                 }}
                 controls={{
-                    scaleControl: true,
+                    // scaleControl: true,
                     navigationControl: true,
                 }}
                 customControls={[
