@@ -19,7 +19,7 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["rise"]
 
-force-include = { "rise/generated/Reservoirs_and_Capacity_Data.json" = "rise/generated/Reservoirs_and_Capacity_Data.json" }
+force-include = { "generated/Reservoirs_and_Capacity_Data.json" = "generated/Reservoirs_and_Capacity_Data.json" }
 
 artifacts = [
     "*.json"
