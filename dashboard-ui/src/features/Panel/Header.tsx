@@ -34,7 +34,7 @@ export const Header: React.FC = () => {
                 />
             </Box>
             <Divider />
-            <Title order={1} size="h3">
+            <Title order={1} size="h2">
                 Western Water Data Dashboard
             </Title>
         </Stack>

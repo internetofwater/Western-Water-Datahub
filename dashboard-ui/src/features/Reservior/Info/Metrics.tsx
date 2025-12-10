@@ -108,7 +108,7 @@ export const Info: React.FC<Props> = (props) => {
                     </Group>
                     <Group gap="xs" justify="flex-start">
                         <Text {...text} fw={700}>
-                            (High) 90<sup>th</sup> Percentile:
+                            High (90<sup>th</sup> Percentile):
                         </Text>
                         <Text {...text}>
                             {ninetiethPercentile.toLocaleString('en-US')}
@@ -117,7 +117,7 @@ export const Info: React.FC<Props> = (props) => {
                     </Group>
                     <Group gap="xs" justify="flex-start">
                         <Text {...text} fw={700}>
-                            (Low) 10<sup>th</sup> Percentile:
+                            Low (10<sup>th</sup> Percentile):
                         </Text>
                         <Text {...text}>
                             {tenthPercentile.toLocaleString('en-US')}

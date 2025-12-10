@@ -907,7 +907,6 @@ export const getLayerCustomHoverExitFunction = (
         switch (id) {
             case LayerId.ResvizEDRReservoirs:
                 return () => {
-                    console.log('called');
                     map.getCanvas().style.cursor = '';
                     useSessionStore.getState().setHighlight(null);
                 };

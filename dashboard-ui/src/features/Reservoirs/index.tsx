@@ -175,6 +175,8 @@ const Reservoirs: React.FC = () => {
             )
             .sort(getSort(sortBy, sortOrder));
 
+        console.log('filterfuncs', filterFunctions, filteredReservoirs);
+
         setFilteredReservoirs(filteredReservoirs);
     }, [organizedReservoirs, search, region, basin, state, sortBy, sortOrder]);
 

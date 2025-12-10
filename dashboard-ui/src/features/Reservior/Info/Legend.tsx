@@ -18,6 +18,7 @@ import {
 } from '@/features/Reservior/TeacupDiagram/listeners';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { Entry } from './Entry';
+import { ReactNode } from 'react';
 
 type Props = {
     showLabels: boolean;
@@ -25,8 +26,9 @@ type Props = {
 };
 
 type EntryTypew = {
+    id: string;
     fill: string | [string, string];
-    text: string;
+    text: ReactNode;
     stroke?: string;
     dashed?: boolean;
     onMouseEnter: () => void;
@@ -52,18 +54,21 @@ export const Legend: React.FC<Props> = (props) => {
 
     const entries: EntryTypew[] = [
         {
+            id: 'capacity',
             fill: capacityFill,
             text: 'Capacity',
             onMouseEnter: handleCapacityEnter,
             onMouseLeave: () => handleCapacityLeave(showLabels),
         },
         {
+            id: 'storage',
             fill: storageFill,
             text: 'Storage',
             onMouseEnter: handleStorageEnter,
             onMouseLeave: () => handleStorageLeave(showLabels),
         },
         {
+            id: 'average',
             fill: [storageFill, capacityFill],
             stroke: '#D0A02A',
             text: '30 year Average',
@@ -72,17 +77,27 @@ export const Legend: React.FC<Props> = (props) => {
             dashed: true,
         },
         {
+            id: 'high-percentile',
             fill: [storageFill, capacityFill],
             stroke: '#fff',
-            text: 'High (90th Percentile)',
+            text: (
+                <>
+                    High (90<sup>th</sup> Percentile)
+                </>
+            ),
             onMouseEnter: () => null,
             onMouseLeave: () => null,
             dashed: true,
         },
         {
+            id: 'low-percentile',
             fill: [storageFill, capacityFill],
             stroke: '#fff',
-            text: 'Low (10th Percentile)',
+            text: (
+                <>
+                    Low (10<sup>th</sup> Percentile)
+                </>
+            ),
             onMouseEnter: () => null,
             onMouseLeave: () => null,
             dashed: true,
@@ -109,7 +124,7 @@ export const Legend: React.FC<Props> = (props) => {
                 >
                     {entries.map((entry) => (
                         <Entry
-                            key={`teacup-legend-entry-${entry.text}`}
+                            key={`teacup-legend-entry-${entry.id}`}
                             text={entry.text}
                             fill={entry.fill}
                             stroke={entry?.stroke}

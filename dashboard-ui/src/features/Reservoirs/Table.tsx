@@ -57,6 +57,7 @@ export const Table: React.FC<Props> = (props) => {
 
     useEffect(() => {
         if (chunkedLocations.length === 0 || chunkedLocations.length < page) {
+            setCurrentChunk([]);
             return;
         }
 
@@ -326,6 +327,8 @@ export const Table: React.FC<Props> = (props) => {
                     size="xs"
                     className={styles.pageSizeInput}
                     label="Reservoirs per page"
+                    disabled={currentChunk.length === 0}
+                    data-disabled={currentChunk.length === 0}
                     value={pageSize}
                     onChange={(value) => handlePageSizeChange(Number(value))}
                     min={1}
