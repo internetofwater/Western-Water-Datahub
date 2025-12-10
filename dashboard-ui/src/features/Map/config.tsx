@@ -1478,6 +1478,12 @@ export const layerDefinitions: MainLayerDefinition[] = [
         ],
     },
     {
+        id: LayerId.Highlight,
+        config: getLayerConfig(LayerId.Highlight),
+        controllable: false,
+        legend: false,
+    },
+    {
         id: SubLayerId.RegionLabels,
         config: getLayerConfig(SubLayerId.RegionLabels),
         controllable: false,
@@ -1492,12 +1498,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
     {
         id: SubLayerId.StateLabels,
         config: getLayerConfig(SubLayerId.StateLabels),
-        controllable: false,
-        legend: false,
-    },
-    {
-        id: LayerId.Highlight,
-        config: getLayerConfig(LayerId.Highlight),
         controllable: false,
         legend: false,
     },
