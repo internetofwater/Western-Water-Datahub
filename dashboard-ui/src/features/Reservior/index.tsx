@@ -19,18 +19,26 @@ import useMainStore from '@/stores/main/main';
 import { useDisclosure } from '@mantine/hooks';
 import { ReservoirDefault } from '@/stores/main/consts';
 import { GeoJsonProperties } from 'geojson';
+import useSessionStore from '@/stores/session';
+import { Overlay } from '@/stores/session/types';
 
 /**
  *
  * @component
  */
 const Reservoir: React.FC = () => {
-    const [opened, { open, close }] = useDisclosure(false);
+    const [opened, { open, close }] = useDisclosure(false, {
+        onClose: () => {
+            setOverlay(null);
+        },
+    });
 
     const reservoir = useMainStore((state) => state.reservoir);
     const reservoirCollections = useMainStore(
         (state) => state.reservoirCollections
     );
+    const overlay = useSessionStore((store) => store.overlay);
+    const setOverlay = useSessionStore((store) => store.setOverlay);
 
     const chartRef =
         useRef<ChartJS<'line', Array<{ x: string; y: number }>>>(null);
@@ -80,6 +88,14 @@ const Reservoir: React.FC = () => {
             }
         }
     }, [reservoir]);
+
+    useEffect(() => {
+        if (overlay !== Overlay.Detail) {
+            close();
+        } else if (!opened) {
+            open();
+        }
+    }, [overlay]);
 
     if (!reservoirProperties || !config || !reservoirId) {
         return null;

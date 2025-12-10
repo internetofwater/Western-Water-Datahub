@@ -21,6 +21,7 @@ import Moon from '@/icons/Moon';
 const DarkModeToggle: React.FC = () => {
     const preferredColorScheme = useColorScheme();
     const { setColorScheme } = useMantineColorScheme();
+    const colorScheme = useMainStore((state) => state.colorScheme);
     const setAppColorScheme = useMainStore((state) => state.setColorScheme);
     const computedColorScheme = useComputedColorScheme(preferredColorScheme);
 
@@ -31,48 +32,43 @@ const DarkModeToggle: React.FC = () => {
         setAppColorScheme(computedColorScheme);
     }, [computedColorScheme]);
 
+    const checked = colorScheme ? colorScheme === 'dark' : undefined;
+
+    const handleChange = () => {
+        setColorScheme(colorScheme === 'light' ? 'dark' : 'light');
+    };
+
     return (
-        // Adjust style to handle logo positioning
         <Box component="span" className={styles.darkModeToggleContainer}>
-            {computedColorScheme && (
-                <Switch
-                    size="lg"
-                    color="dark.4"
-                    title="Toggle dark and light mode"
-                    checked={
-                        (Boolean(computedColorScheme) &&
-                            computedColorScheme === 'dark') ||
-                        false
-                    }
-                    onChange={() =>
-                        setColorScheme(
-                            computedColorScheme === 'light' ? 'dark' : 'light'
-                        )
-                    }
-                    onLabel={
-                        <Box
-                            component="span"
-                            className={styles.darkModeIcon}
-                            style={{
-                                fill: '#d0a02a',
-                            }}
-                        >
-                            <Sun />
-                        </Box>
-                    }
-                    offLabel={
-                        <Box
-                            component="span"
-                            className={styles.darkModeIcon}
-                            style={{
-                                fill: '#1c638e',
-                            }}
-                        >
-                            <Moon />
-                        </Box>
-                    }
-                />
-            )}
+            <Switch
+                size="lg"
+                color="dark.4"
+                title="Toggle dark and light mode"
+                checked={checked}
+                onChange={handleChange}
+                onLabel={
+                    <Box
+                        component="span"
+                        className={styles.darkModeIcon}
+                        style={{
+                            fill: '#d0a02a',
+                        }}
+                    >
+                        <Sun />
+                    </Box>
+                }
+                offLabel={
+                    <Box
+                        component="span"
+                        className={styles.darkModeIcon}
+                        style={{
+                            fill: '#1c638e',
+                        }}
+                    >
+                        <Moon />
+                    </Box>
+                }
+            />
         </Box>
     );
 };

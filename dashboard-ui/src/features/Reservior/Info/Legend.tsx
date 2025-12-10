@@ -71,7 +71,7 @@ export const Legend: React.FC<Props> = (props) => {
             id: 'average',
             fill: [storageFill, capacityFill],
             stroke: '#D0A02A',
-            text: '30 year Average',
+            text: '30-year Average',
             onMouseEnter: handleAverageLineEnter,
             onMouseLeave: () => handleAverageLineLeave(showLabels),
             dashed: true,
@@ -121,6 +121,7 @@ export const Legend: React.FC<Props> = (props) => {
                     p="var(--default-spacing)"
                     gap="var(--default-spacing)"
                     data-testid="graphic-legend"
+                    wrap={'wrap'}
                 >
                     {entries.map((entry) => (
                         <Entry
