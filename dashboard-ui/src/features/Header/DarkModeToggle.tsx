@@ -15,6 +15,8 @@ import { useColorScheme } from '@mantine/hooks';
 import styles from '@/features/Header/Header.module.css';
 import { useEffect } from 'react';
 import useMainStore from '@/stores/main/main';
+import Sun from '@/icons/Sun';
+import Moon from '@/icons/Moon';
 
 const DarkModeToggle: React.FC = () => {
     const preferredColorScheme = useColorScheme();
@@ -34,6 +36,9 @@ const DarkModeToggle: React.FC = () => {
         <Box component="span" className={styles.darkModeToggleContainer}>
             {computedColorScheme && (
                 <Switch
+                    size="lg"
+                    color="dark.4"
+                    title="Toggle dark and light mode"
                     checked={
                         (Boolean(computedColorScheme) &&
                             computedColorScheme === 'dark') ||
@@ -44,7 +49,28 @@ const DarkModeToggle: React.FC = () => {
                             computedColorScheme === 'light' ? 'dark' : 'light'
                         )
                     }
-                    label="Dark Mode"
+                    onLabel={
+                        <Box
+                            component="span"
+                            className={styles.darkModeIcon}
+                            style={{
+                                fill: '#d0a02a',
+                            }}
+                        >
+                            <Sun />
+                        </Box>
+                    }
+                    offLabel={
+                        <Box
+                            component="span"
+                            className={styles.darkModeIcon}
+                            style={{
+                                fill: '#1c638e',
+                            }}
+                        >
+                            <Moon />
+                        </Box>
+                    }
                 />
             )}
         </Box>

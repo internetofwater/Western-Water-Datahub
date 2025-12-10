@@ -1,0 +1,62 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+.table {
+    width: 100%;
+}
+
+.nameColumn {
+    width: 14.15rem;
+}
+
+.content {
+    padding: 0px;
+}
+
+.row {
+    cursor: pointer;
+}
+
+.row:focus-visible,
+.row:hover {
+    background-color: var(--mantine-color-default-hover);
+    outline: 3px solid #d0a02a;
+    outline-offset: -3px;
+    font-weight: bold;
+}
+
+.rowButton {
+    display: contents;
+}
+
+.searchInput {
+    width: 8.75rem;
+}
+
+.sortBySelect {
+    width: 7.6875rem;
+}
+
+.sortOrderButton {
+    margin-bottom: 0.25rem;
+}
+
+.rotate180 {
+    transform: rotate(180deg);
+}
+
+.pageSizeInput {
+    width: 7.0625rem;
+}
+
+.buttonColumn {
+    width: 4.375rem;
+}
+
+@media screen and (max-width: 400px) {
+    .nameColumn {
+        width: 10rem;
+    }
+}

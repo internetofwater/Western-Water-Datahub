@@ -17,6 +17,8 @@ const useSessionStore = create<SessionState>()(
         setDownloadModalOpen: (downloadModalOpen) => set({ downloadModalOpen }),
         overlay: null,
         setOverlay: (overlay) => set({ overlay }),
+        highlight: null,
+        setHighlight: (hoverFeature) => set({ highlight: hoverFeature }),
         tools: {
             [Tool.Legend]: false,
         },

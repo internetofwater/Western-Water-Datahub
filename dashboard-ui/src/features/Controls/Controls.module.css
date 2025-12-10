@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+.wrapper {
+    padding: calc(var(--default-spacing) * 2);
+}
+
 .baseLayerSelector {
     max-width: 250px;
 }

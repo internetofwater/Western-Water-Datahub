@@ -15,7 +15,7 @@ import { useLoading } from '@/hooks/useLoading';
 import loadingManager from '@/managers/Loading.init';
 import { LoadingType, NotificationType } from '@/stores/session/types';
 import notificationManager from '@/managers/Notification.init';
-import { ResvizReservoirField } from '../Map/types/reservoir/resviz';
+import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
 
 export const ReservoirDateSelector: React.FC = () => {
     const reservoirDate = useMainStore((state) => state.reservoirDate);

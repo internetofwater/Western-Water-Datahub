@@ -28,6 +28,7 @@ import {
     ValidBasins,
 } from '@/features/Map/consts';
 import {
+    getDefaultGeoJSON,
     getReservoirConfig,
     getReservoirFilter,
     getReservoirLabelLayout,
@@ -47,7 +48,8 @@ import { Feature, Point, Polygon } from 'geojson';
 import { huc02Centers } from '@/data/huc02Centers';
 import { stateCenters } from '@/data/stateCenters';
 import { regionCenters } from '@/data/regionCenters';
-import { RegionField } from './types/region';
+import { RegionField } from '@/features/Map/types/region';
+import useSessionStore from '@/stores/session';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -197,6 +199,14 @@ export const sourceConfigs: SourceConfig[] = [
             ],
         },
     },
+    {
+        id: SourceId.Highlight,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: getDefaultGeoJSON(),
+        },
+    },
 ];
 
 /**********************************************************************
@@ -313,14 +323,13 @@ export const getLayerConfig = (
                 layout: {
                     'text-field': ['get', 'name'],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-                    'text-size': 18,
+                    'text-size': 22,
                     'text-allow-overlap': true,
                     'text-ignore-placement': true,
                 },
                 paint: {
                     'text-color': '#fff',
                     'text-opacity': 0,
-                    'text-halo-blur': 1,
                     'text-halo-color': '#000000',
                     'text-halo-width': 2,
                 },
@@ -376,14 +385,13 @@ export const getLayerConfig = (
                 layout: {
                     'text-field': ['get', 'name'],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-                    'text-size': 18,
+                    'text-size': 22,
                     'text-allow-overlap': true,
                     'text-ignore-placement': true,
                 },
                 paint: {
                     'text-color': '#fff',
                     'text-opacity': 0,
-                    'text-halo-blur': 1,
                     'text-halo-color': '#000000',
                     'text-halo-width': 2,
                 },
@@ -427,14 +435,13 @@ export const getLayerConfig = (
                 layout: {
                     'text-field': ['get', 'name'],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-                    'text-size': 18,
+                    'text-size': 22,
                     'text-allow-overlap': true,
                     'text-ignore-placement': true,
                 },
                 paint: {
                     'text-color': '#fff',
                     'text-opacity': 0,
-                    'text-halo-blur': 1,
                     'text-halo-color': '#000000',
                     'text-halo-width': 2,
                 },
@@ -494,6 +501,27 @@ export const getLayerConfig = (
                 ),
             };
 
+        case LayerId.Highlight:
+            return {
+                id: LayerId.Highlight,
+                type: LayerType.Symbol,
+                source: SourceId.Highlight,
+
+                layout: {
+                    'icon-image': 'outline',
+                    'icon-size': 1,
+                    'icon-allow-overlap': true,
+                    'icon-offset': [
+                        'step',
+                        ['zoom'],
+                        [0, 3],
+                        0,
+                        ['coalesce', ['get', 'offset'], [0, 3]],
+                        5,
+                        [0, 3],
+                    ],
+                },
+            };
         case LayerId.USDroughtMonitor:
             return {
                 id: LayerId.USDroughtMonitor,
@@ -672,15 +700,24 @@ export const getLayerHoverFunction = (
                 };
             case LayerId.ResvizEDRReservoirs:
                 return (e) => {
-                    showReservoirPopup(
-                        getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
-                        map,
-                        e,
-                        root,
-                        container,
-                        hoverPopup,
-                        false
-                    );
+                    const feature = e.features?.[0] as Feature<Point>;
+                    if (feature) {
+                        useSessionStore.getState().setHighlight({
+                            config: getReservoirConfig(
+                                SourceId.ResvizEDRReservoirs
+                            )!,
+                            feature,
+                        });
+                    }
+                    // showReservoirPopup(
+                    //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
+                    //     map,
+                    //     e,
+                    //     root,
+                    //     container,
+                    //     hoverPopup,
+                    //     false
+                    // );
                 };
             case SubLayerId.RegionsFill:
                 return (e) => {
@@ -868,6 +905,11 @@ export const getLayerCustomHoverExitFunction = (
         container: HTMLDivElement
     ) => {
         switch (id) {
+            case LayerId.ResvizEDRReservoirs:
+                return () => {
+                    map.getCanvas().style.cursor = '';
+                    useSessionStore.getState().setHighlight(null);
+                };
             case SubLayerId.RegionsFill:
                 return () => {
                     map.getCanvas().style.cursor = '';
@@ -946,15 +988,24 @@ export const getLayerMouseMoveFunction = (
                 };
             case LayerId.ResvizEDRReservoirs:
                 return (e) => {
-                    showReservoirPopup(
-                        getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
-                        map,
-                        e,
-                        root,
-                        container,
-                        hoverPopup,
-                        true
-                    );
+                    const feature = e.features?.[0] as Feature<Point>;
+                    if (feature) {
+                        useSessionStore.getState().setHighlight({
+                            config: getReservoirConfig(
+                                SourceId.ResvizEDRReservoirs
+                            )!,
+                            feature,
+                        });
+                    }
+                    // showReservoirPopup(
+                    //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
+                    //     map,
+                    //     e,
+                    //     root,
+                    //     container,
+                    //     hoverPopup,
+                    //     false
+                    // );
                 };
             case SubLayerId.RegionsFill:
                 return (e) => {
@@ -1411,6 +1462,9 @@ export const layerDefinitions: MainLayerDefinition[] = [
         controllable: false,
         legend: false,
         hoverFunction: getLayerHoverFunction(LayerId.ResvizEDRReservoirs),
+        customHoverExitFunction: getLayerCustomHoverExitFunction(
+            LayerId.ResvizEDRReservoirs
+        ),
         mouseMoveFunction: getLayerMouseMoveFunction(
             LayerId.ResvizEDRReservoirs
         ),
@@ -1422,7 +1476,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 legend: false,
             },
         ],
-        // hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
     },
     {
         id: SubLayerId.RegionLabels,
@@ -1439,6 +1492,12 @@ export const layerDefinitions: MainLayerDefinition[] = [
     {
         id: SubLayerId.StateLabels,
         config: getLayerConfig(SubLayerId.StateLabels),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.Highlight,
+        config: getLayerConfig(LayerId.Highlight),
         controllable: false,
         legend: false,
     },

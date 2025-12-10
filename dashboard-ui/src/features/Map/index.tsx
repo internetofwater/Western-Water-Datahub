@@ -16,6 +16,7 @@ import {
     SourceId,
     ReservoirConfigs,
     ValidBasins,
+    LayerId,
 } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore from '@/stores/main/main';
@@ -28,6 +29,10 @@ import {
     getReservoirFilter,
     getBoundingGeographyFilter,
     resetMap,
+    getDefaultGeoJSON,
+    getReservoirSymbolSize,
+    getReservoirSymbolSortKey,
+    getHighlightIcon,
 } from '@/features/Map/utils';
 import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
@@ -79,6 +84,8 @@ const MainMap: React.FC<Props> = (props) => {
     const reservoirCollections = useMainStore(
         (state) => state.reservoirCollections
     );
+
+    const highlight = useSessionStore((state) => state.highlight);
 
     const loadingInstances = useSessionStore((state) => state.loadingInstances);
 
@@ -141,69 +148,6 @@ const MainMap: React.FC<Props> = (props) => {
             (config) => config.connectedLayers
         );
 
-        // const handleRegionsClick = (e: MapMouseEvent) => {
-        //     const zoom = map.getZoom();
-        //     if (zoom > 6) {
-        //         return;
-        //     }
-
-        //     const features = map.queryRenderedFeatures(e.point, {
-        //         layers: [SubLayerId.RegionsFill],
-        //     });
-
-        //     if (features && features.length) {
-        //         const feature = features[0];
-
-        //         if (feature.properties) {
-        //             const region = feature.properties[
-        //                 RegionField.Name
-        //             ] as string;
-
-        //             if (region) {
-        //                 setRegion(region);
-        //             }
-        //         }
-        //     }
-        // };
-
-        // const handleBasinsClick = (e: MapMouseEvent) => {
-        //     const features = map.queryRenderedFeatures(e.point, {
-        //         layers: [SubLayerId.BasinsFill],
-        //     });
-
-        //     if (features && features.length) {
-        //         const feature = features[0];
-        //         if (feature.properties) {
-        //             const basin = feature.properties[
-        //                 Huc02BasinField.Id
-        //             ] as string;
-
-        //             if (basin) {
-        //                 setBasin(basin);
-        //             }
-        //         }
-        //     }
-        // };
-
-        // const handleStatesClick = (e: MapMouseEvent) => {
-        //     const features = map.queryRenderedFeatures(e.point, {
-        //         layers: [SubLayerId.StatesFill],
-        //     });
-
-        //     if (features && features.length) {
-        //         const feature = features[0];
-        //         if (feature.properties) {
-        //             const state = feature.properties[
-        //                 StateField.Acronym
-        //             ] as string;
-
-        //             if (state) {
-        //                 setState(state);
-        //             }
-        //         }
-        //     }
-        // };
-
         const handleReservoirsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: reservoirLayers,
@@ -231,48 +175,48 @@ const MainMap: React.FC<Props> = (props) => {
                         feature.id!
                     );
 
-                    if (feature.properties[config.regionConnectorProperty]) {
-                        const rawRegionProperty = String(
-                            feature.properties[config.regionConnectorProperty]
-                        );
-                        const regionProperty = rawRegionProperty.startsWith('[')
-                            ? (JSON.parse(rawRegionProperty) as string[])
-                            : rawRegionProperty;
+                    // if (feature.properties[config.regionConnectorProperty]) {
+                    //     const rawRegionProperty = String(
+                    //         feature.properties[config.regionConnectorProperty]
+                    //     );
+                    //     const regionProperty = rawRegionProperty.startsWith('[')
+                    //         ? (JSON.parse(rawRegionProperty) as string[])
+                    //         : rawRegionProperty;
 
-                        setRegion(
-                            Array.isArray(regionProperty)
-                                ? regionProperty[0]
-                                : regionProperty
-                        );
-                    }
-                    if (feature.properties[config.basinConnectorProperty]) {
-                        const rawBasinProperty = String(
-                            feature.properties[config.basinConnectorProperty]
-                        );
-                        const basinProperty = rawBasinProperty.startsWith('[')
-                            ? (JSON.parse(rawBasinProperty) as string[])
-                            : String(rawBasinProperty).slice(0, 2);
+                    //     setRegion(
+                    //         Array.isArray(regionProperty)
+                    //             ? regionProperty[0]
+                    //             : regionProperty
+                    //     );
+                    // }
+                    // if (feature.properties[config.basinConnectorProperty]) {
+                    //     const rawBasinProperty = String(
+                    //         feature.properties[config.basinConnectorProperty]
+                    //     );
+                    //     const basinProperty = rawBasinProperty.startsWith('[')
+                    //         ? (JSON.parse(rawBasinProperty) as string[])
+                    //         : String(rawBasinProperty).slice(0, 2);
 
-                        setBasin(
-                            Array.isArray(basinProperty)
-                                ? basinProperty[0]
-                                : basinProperty
-                        );
-                    }
-                    if (feature.properties[config.stateConnectorProperty]) {
-                        const rawStateProperty = String(
-                            feature.properties[config.stateConnectorProperty]
-                        );
-                        const stateProperty = rawStateProperty.startsWith('[')
-                            ? (JSON.parse(rawStateProperty) as string[])
-                            : rawStateProperty;
+                    //     setBasin(
+                    //         Array.isArray(basinProperty)
+                    //             ? basinProperty[0]
+                    //             : basinProperty
+                    //     );
+                    // }
+                    // if (feature.properties[config.stateConnectorProperty]) {
+                    //     const rawStateProperty = String(
+                    //         feature.properties[config.stateConnectorProperty]
+                    //     );
+                    //     const stateProperty = rawStateProperty.startsWith('[')
+                    //         ? (JSON.parse(rawStateProperty) as string[])
+                    //         : rawStateProperty;
 
-                        setState(
-                            Array.isArray(stateProperty)
-                                ? stateProperty[0]
-                                : stateProperty
-                        );
-                    }
+                    //     setState(
+                    //         Array.isArray(stateProperty)
+                    //             ? stateProperty[0]
+                    //             : stateProperty
+                    //     );
+                    // }
 
                     setReservoir({
                         identifier:
@@ -533,6 +477,52 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
+        const source = map.getSource(SourceId.Highlight) as GeoJSONSource;
+
+        if (!source) {
+            return;
+        }
+
+        if (highlight) {
+            const iconImageExpression = getHighlightIcon(highlight.config);
+            const iconSizeExpression = getReservoirSymbolSize(
+                highlight.config,
+                0.15
+            );
+            const symbolSortExpression = getReservoirSymbolSortKey(
+                highlight.config
+            );
+
+            map.setLayoutProperty(
+                LayerId.Highlight,
+                'icon-image',
+                iconImageExpression
+            );
+            map.setLayoutProperty(
+                LayerId.Highlight,
+                'icon-size',
+                iconSizeExpression
+            );
+            map.setLayoutProperty(
+                LayerId.Highlight,
+                'symbol-sort-key',
+                symbolSortExpression
+            );
+
+            source.setData({
+                type: 'FeatureCollection',
+                features: [highlight.feature],
+            });
+        } else {
+            source.setData(getDefaultGeoJSON());
+        }
+    }, [highlight]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
         // Copy over all existing layers and sources when changing basemaps
         const layers = map.getStyle().layers || [];
         const sources = map.getStyle().sources || {};
@@ -577,7 +567,7 @@ const MainMap: React.FC<Props> = (props) => {
                     maxZoom: 20,
                 }}
                 controls={{
-                    scaleControl: true,
+                    // scaleControl: true,
                     navigationControl: true,
                 }}
                 customControls={[

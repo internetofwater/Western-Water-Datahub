@@ -3,8 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { ReservoirConfig } from '@/features/Map/types';
 import { LoadingSlice } from '@/stores/session/slices/loading';
 import { NotificationsSlice } from '@/stores/session/slices/notifications';
+import { Feature, Point } from 'geojson';
 
 export enum NotificationType {
     Success = 'success',
@@ -50,6 +52,11 @@ export type LegendEntry = {
     visible: boolean;
 };
 
+export type Highlight = {
+    config: ReservoirConfig;
+    feature: Feature<Point>;
+};
+
 export type SessionState = {
     legendEntries: LegendEntry[];
     setLegendEntries: (legendEntries: SessionState['legendEntries']) => void;
@@ -59,6 +66,8 @@ export type SessionState = {
     setDownloadModalOpen: (
         downloadModalOpen: SessionState['downloadModalOpen']
     ) => void;
+    highlight: Highlight | null;
+    setHighlight: (highlight: SessionState['highlight']) => void;
     tools: {
         [Tool.Legend]: boolean;
     };
