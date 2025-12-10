@@ -10,7 +10,7 @@
 }
 
 .root {
-    max-height: calc(100% - 12.5rem);
+    max-height: calc(100% - 13.125rem);
     overflow-y: auto;
 }
 

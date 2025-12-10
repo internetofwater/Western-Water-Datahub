@@ -21,15 +21,11 @@ export enum LoadingType {
     Chart = 'chart',
 }
 
-export enum Tool {
-    Legend = 'legend',
-}
-
 export enum Overlay {
-    Share = 'share',
-    Draw = 'draw',
     Basemap = 'basemap',
-    Legend = 'legend',
+    Screenshot = 'screenshot',
+    Detail = 'detail',
+    Help = 'help',
 }
 
 export type Notification = {
@@ -57,6 +53,13 @@ export type Highlight = {
     feature: Feature<Point>;
 };
 
+export enum HelpTab {
+    About = 'about',
+    FAQ = 'FAQ',
+    Glossary = 'glossary',
+    Contact = 'contact',
+}
+
 export type SessionState = {
     legendEntries: LegendEntry[];
     setLegendEntries: (legendEntries: SessionState['legendEntries']) => void;
@@ -68,9 +71,7 @@ export type SessionState = {
     ) => void;
     highlight: Highlight | null;
     setHighlight: (highlight: SessionState['highlight']) => void;
-    tools: {
-        [Tool.Legend]: boolean;
-    };
-    setOpenTools: (tool: Tool, open: boolean) => void;
+    helpTab: HelpTab;
+    setHelpTab: (helpTab: SessionState['helpTab']) => void;
 } & NotificationsSlice &
     LoadingSlice;

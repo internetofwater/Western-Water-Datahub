@@ -8,18 +8,17 @@ import {
     AccordionControl,
     AccordionItem,
     AccordionPanel,
-    Button,
     Group,
     Paper,
     Title,
-    Tooltip,
 } from '@mantine/core';
 import { Header } from '@/features/Panel/Header';
 import styles from '@/features/Panel/Panel.module.css';
 import Reservoirs from '@/features/Reservoirs';
 import Legend from '@/features/Legend';
 import Controls from '@/features/Controls';
-import DarkModeToggle from '../Header/DarkModeToggle';
+import DarkModeToggle from '@/features/Header/DarkModeToggle';
+import Help from '@/features/Help';
 
 const items = [
     {
@@ -62,12 +61,7 @@ const Panel: React.FC = () => {
             </Accordion>
             <Group justify="space-between" p="calc(var(--default-spacing) * 2)">
                 <Group gap="var(--default-spacing)">
-                    <Tooltip label="Feature in development">
-                        <Button w="6.25rem">Glossary</Button>
-                    </Tooltip>
-                    <Tooltip label="Feature in development">
-                        <Button w="6.25rem">About</Button>
-                    </Tooltip>
+                    <Help />
                 </Group>
                 <DarkModeToggle />
             </Group>
