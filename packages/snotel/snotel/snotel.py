@@ -4,7 +4,7 @@
 import logging
 from typing import Literal, Optional
 
-from com.helpers import get_oaf_fields_from_pydantic_model
+from com.helpers import OAFFieldsMapping, get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
 from com.protocols.providers import OAFProviderProtocol
 from pygeoapi.provider.base import BaseProvider
@@ -107,5 +107,7 @@ class SnotelProvider(BaseProvider, OAFProviderProtocol):
         :returns: dict of field names and their associated JSON Schema types
         """
         if not self._fields:
-            self._fields = get_oaf_fields_from_pydantic_model(StationDTO)
+            self._fields: OAFFieldsMapping = get_oaf_fields_from_pydantic_model(
+                StationDTO
+            )
         return self._fields
