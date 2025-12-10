@@ -21,6 +21,7 @@ import {
 import { SourceDataEvent } from '@/features/Map/types';
 import { isSourceDataLoaded } from '@/features/Map/utils';
 import { BasinDefault } from '@/stores/main/consts';
+import { useLoading } from '@/hooks/useLoading';
 
 export const Basin: React.FC = () => {
     const { map } = useMap(MAP_ID);
@@ -30,6 +31,8 @@ export const Basin: React.FC = () => {
 
     const [loading, setLoading] = useState(true);
     const [basinOptions, setBasinOptions] = useState<ComboboxData>([]);
+
+    const { isFetchingReservoirs } = useLoading();
 
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
@@ -116,6 +119,7 @@ export const Basin: React.FC = () => {
         >
             <Select
                 size="xs"
+                disabled={isFetchingReservoirs}
                 id="basinSelector"
                 searchable
                 data={basinOptions}

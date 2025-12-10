@@ -6,6 +6,7 @@
 import { Select } from '@mantine/core';
 import { SortBy as SortByType } from '@/features/Reservoirs/types';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
+import { useLoading } from '@/hooks/useLoading';
 
 type Props = {
     sortBy: SortByType;
@@ -22,11 +23,14 @@ const data = [
 export const SortBy: React.FC<Props> = (props) => {
     const { sortBy, handleChange } = props;
 
+    const { isFetchingReservoirs } = useLoading();
+
     return (
         <Select
             size="xs"
             className={styles.sortBySelect}
-            label={'Sort by'}
+            disabled={isFetchingReservoirs}
+            label="Sort by"
             value={sortBy}
             onChange={(value) => handleChange(value as SortByType)}
             data={data}

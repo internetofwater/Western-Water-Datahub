@@ -24,6 +24,7 @@ import { SortBy } from '@/features/Reservoirs/Filter/SortBy';
 import { SortBy as SortByType, SortOrder } from '@/features/Reservoirs/types';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import Up from '@/icons/Up';
+import { useLoading } from '@/hooks/useLoading';
 
 type Props = {
     search: string;
@@ -47,6 +48,8 @@ export const Filter: React.FC<Props> = (props) => {
     const boundingGeographyLevel = useMainStore(
         (state) => state.boundingGeographyLevel
     );
+
+    const { isFetchingReservoirs } = useLoading();
 
     return (
         <Accordion classNames={{ content: styles.content }}>
@@ -103,6 +106,7 @@ export const Filter: React.FC<Props> = (props) => {
                             />
                             <ActionIcon
                                 size="sm"
+                                disabled={isFetchingReservoirs}
                                 variant="filled"
                                 className={`${styles.sortOrderButton} ${
                                     sortOrder === 'asc' ? styles.rotate180 : ''

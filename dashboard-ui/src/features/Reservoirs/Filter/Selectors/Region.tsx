@@ -17,6 +17,7 @@ import { useMap } from '@/contexts/MapContexts';
 import styles from '@/features/Header/Header.module.css';
 import { RegionField } from '@/features/Map/types/region';
 import { RegionDefault } from '@/stores/main/consts';
+import { useLoading } from '@/hooks/useLoading';
 
 /**
 
@@ -28,6 +29,8 @@ export const Region: React.FC = () => {
 
     const [regionOptions, setRegionOptions] = useState<ComboboxData>([]);
     const [loading, setLoading] = useState(true);
+
+    const { isFetchingReservoirs } = useLoading();
 
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
@@ -116,6 +119,7 @@ export const Region: React.FC = () => {
             <Select
                 size="xs"
                 id="regionSelector"
+                disabled={isFetchingReservoirs}
                 searchable
                 data={regionOptions}
                 value={region}

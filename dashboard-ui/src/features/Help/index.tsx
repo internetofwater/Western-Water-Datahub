@@ -17,11 +17,7 @@ import { Contact } from '@/features/Help/Contact';
 export const INFO_LOCAL_KEY = 'awo-show-info';
 
 const Help: React.FC = () => {
-    const [opened, { open, close }] = useDisclosure(false, {
-        onClose: () => {
-            setOverlay(null);
-        },
-    });
+    const [opened, { open, close }] = useDisclosure(false);
 
     const overlay = useSessionStore((store) => store.overlay);
     const setOverlay = useSessionStore((store) => store.setOverlay);
@@ -55,6 +51,10 @@ const Help: React.FC = () => {
         setOverlay(Overlay.Help);
     };
 
+    const handleClose = () => {
+        setOverlay(null);
+    };
+
     return (
         <>
             <Tooltip label="Access the about page.">
@@ -64,7 +64,7 @@ const Help: React.FC = () => {
                 size="xl"
                 classNames={{ header: styles.modalHeader }}
                 opened={opened}
-                onClose={close}
+                onClose={handleClose}
             >
                 <Tabs
                     value={helpTab}
