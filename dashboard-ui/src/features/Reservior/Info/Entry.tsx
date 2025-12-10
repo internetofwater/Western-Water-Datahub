@@ -6,12 +6,13 @@
 import { Group, Box, Text } from '@mantine/core';
 
 import styles from '@/features/Reservior/Reservoir.module.css';
+import { ReactNode } from 'react';
 
 type Props = {
     onMouseEnter: () => void;
     onMouseLeave: () => void;
     fill: string | [string, string];
-    text: string;
+    text: ReactNode;
     stroke?: string;
     dashed?: boolean;
 };
