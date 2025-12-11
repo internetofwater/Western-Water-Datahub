@@ -12,6 +12,11 @@ import { BoundingGeographyLevel } from '@/stores/main/types';
 import useMainStore from '@/stores/main/main';
 import { useEffect } from 'react';
 import { useLoading } from '@/hooks/useLoading';
+import {
+    BasinDefault,
+    RegionDefault,
+    StateDefault,
+} from '@/stores/main/consts';
 
 export const BoundingGeometryVisibilityMap: {
     [key in BoundingGeographyLevel]: {
@@ -79,6 +84,9 @@ export const BoundingGeography: React.FC = () => {
     const setBoundingGeographyLevel = useMainStore(
         (state) => state.setBoundingGeographyLevel
     );
+    const setRegion = useMainStore((state) => state.setRegion);
+    const setBasin = useMainStore((state) => state.setBasin);
+    const setState = useMainStore((state) => state.setState);
 
     const { isFetchingReservoirs } = useLoading();
 
@@ -99,13 +107,18 @@ export const BoundingGeography: React.FC = () => {
         });
     }, [boundingGeographyLevel]);
 
+    const handleChange = (value: string) => {
+        setRegion(RegionDefault);
+        setBasin(BasinDefault);
+        setState(StateDefault);
+        setBoundingGeographyLevel(value as BoundingGeographyLevel);
+    };
+
     return (
         <RadioGroup
             size="xs"
             value={boundingGeographyLevel}
-            onChange={(value) =>
-                setBoundingGeographyLevel(value as BoundingGeographyLevel)
-            }
+            onChange={handleChange}
         >
             <Group gap={8}>
                 {data.map(({ value, label }) => (
