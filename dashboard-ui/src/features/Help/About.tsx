@@ -5,7 +5,7 @@
 
 import { useState } from 'react';
 import { Box, Button, Checkbox, Group, Stack, Text } from '@mantine/core';
-import { INFO_LOCAL_KEY } from '@/features/Help';
+import { HELP_LOCAL_KEY } from '@/features/Help';
 import useSessionStore from '@/stores/session';
 
 type Props = {
@@ -24,10 +24,10 @@ export const About: React.FC<Props> = (props) => {
     ) => {
         const { checked } = event.currentTarget;
         if (checked) {
-            localStorage.setItem(INFO_LOCAL_KEY, 'false');
+            localStorage.setItem(HELP_LOCAL_KEY, 'false');
             setShowHelpAgain(false);
         } else {
-            localStorage.setItem(INFO_LOCAL_KEY, 'true');
+            localStorage.setItem(HELP_LOCAL_KEY, 'true');
             setShowHelpAgain(true);
         }
     };

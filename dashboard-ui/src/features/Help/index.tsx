@@ -14,7 +14,7 @@ import useSessionStore from '@/stores/session';
 import { HelpTab, Overlay } from '@/stores/session/types';
 import { Contact } from '@/features/Help/Contact';
 
-export const INFO_LOCAL_KEY = 'awo-show-info';
+export const HELP_LOCAL_KEY = 'wwdh-show-help';
 
 const Help: React.FC = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -37,7 +37,7 @@ const Help: React.FC = () => {
     }, [overlay]);
 
     useEffect(() => {
-        const showHelp = localStorage.getItem(INFO_LOCAL_KEY);
+        const showHelp = localStorage.getItem(HELP_LOCAL_KEY);
         if (!showHelp || showHelp === 'true') {
             setOverlay(Overlay.Help);
             setShowHelp(true);
