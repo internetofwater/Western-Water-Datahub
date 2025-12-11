@@ -11,35 +11,35 @@ import {
     Reservoir,
     ReservoirCollections,
     Tools,
-} from '@/lib/types';
+} from '@/stores/main/types';
 import {
     BasinDefault,
     RegionDefault,
     ReservoirDefault,
     StateDefault,
-} from '@/lib/consts';
+} from '@/stores/main/consts';
 
 export interface MainState {
     region: string;
-    setRegion: (region: string) => void;
+    setRegion: (region: MainState['region']) => void;
     basin: string;
-    setBasin: (basin: string) => void;
+    setBasin: (basin: MainState['basin']) => void;
     state: string;
-    setState: (state: string) => void;
+    setState: (state: MainState['state']) => void;
     reservoir: Reservoir | null;
-    setReservoir: (reservoir: Reservoir | null) => void;
+    setReservoir: (reservoir: MainState['reservoir']) => void;
     boundingGeographyLevel: BoundingGeographyLevel;
     setBoundingGeographyLevel: (
-        boundingGeographyLevel: BoundingGeographyLevel
+        boundingGeographyLevel: MainState['boundingGeographyLevel']
     ) => void;
     reservoirCollections: ReservoirCollections | null;
     setReservoirCollections: (
-        reservoirCollection: ReservoirCollections
+        reservoirCollection: MainState['reservoirCollections']
     ) => void;
     basemap: BasemapId;
-    setBasemap: (basemap: BasemapId) => void;
+    setBasemap: (basemap: MainState['basemap']) => void;
     chartUpdate: number;
-    setChartUpdate: (chartUpdate: number) => void;
+    setChartUpdate: (chartUpdate: MainState['chartUpdate']) => void;
     toggleableLayers: {
         [LayerId.Snotel]: boolean;
         [LayerId.NOAARiverForecast]: boolean;
@@ -47,16 +47,16 @@ export interface MainState {
         [LayerId.NOAAPrecipSixToTen]: boolean;
         [LayerId.NOAATempSixToTen]: boolean;
     };
-    setToggleableLayers: (layer: LayerId, visible: boolean) => void;
+    setToggleableLayers: (layer: string, visible: boolean) => void;
     reservoirDate: string | null;
-    setReservoirDate: (reservoirDate: string | null) => void;
+    setReservoirDate: (reservoirDate: MainState['reservoirDate']) => void;
     tools: {
         [Tools.BasemapSelector]: boolean;
         [Tools.Print]: boolean;
     };
     setOpenTools: (tool: Tools, open: boolean) => void;
     colorScheme: 'dark' | 'light';
-    setColorScheme: (colorScheme: 'dark' | 'light') => void;
+    setColorScheme: (colorScheme: MainState['colorScheme']) => void;
 }
 
 const useMainStore = create<MainState>()((set) => ({
@@ -69,9 +69,8 @@ const useMainStore = create<MainState>()((set) => ({
     reservoir: ReservoirDefault,
     setReservoir: (reservoir) => set({ reservoir }),
     boundingGeographyLevel: BoundingGeographyLevel.Region,
-    setBoundingGeographyLevel: (
-        boundingGeographyLevel: BoundingGeographyLevel
-    ) => set({ boundingGeographyLevel }),
+    setBoundingGeographyLevel: (boundingGeographyLevel) =>
+        set({ boundingGeographyLevel }),
     reservoirCollections: null,
     setReservoirCollections: (reservoirCollection) =>
         set({ reservoirCollections: reservoirCollection }),
@@ -107,7 +106,7 @@ const useMainStore = create<MainState>()((set) => ({
             },
         })),
     colorScheme: 'dark',
-    setColorScheme: (colorScheme: 'dark' | 'light') => set({ colorScheme }),
+    setColorScheme: (colorScheme) => set({ colorScheme }),
 }));
 
 export default useMainStore;

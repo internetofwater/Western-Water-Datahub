@@ -5,19 +5,22 @@
 
 import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import {
-    Box,
     Card,
     CardSection,
-    Checkbox,
     CloseButton,
+    Grid,
+    GridCol,
     Group,
-    Stack,
+    Image,
+    Text,
+    Paper,
     Title,
 } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
-import { Tools } from '@/lib/types';
+import { Tools } from '@/stores/main/types';
+import { useEffect, useRef, useState } from 'react';
 
 /**
  *
@@ -27,6 +30,31 @@ export const Selector: React.FC = () => {
     const basemap = useMainStore((state) => state.basemap);
     const setBasemap = useMainStore((state) => state.setBasemap);
     const setOpenTools = useMainStore((state) => state.setOpenTools);
+
+    const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+    const [isLocked, setIsLocked] = useState(false);
+
+    const handleClick = (basemapId: BasemapId) => {
+        setBasemap(basemapId);
+        setIsLocked(true);
+
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+        }
+
+        timerRef.current = setTimeout(() => {
+            setIsLocked(false);
+        }, 3500);
+    };
+
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+            }
+        };
+    }, []);
 
     return (
         <Card
@@ -50,11 +78,11 @@ export const Selector: React.FC = () => {
                 </Group>
             </CardSection>
             <CardSection inheritPadding py="md" className={styles.toolContent}>
-                <Stack>
+                <Grid className={styles.basemapWrapper} gutter="sm">
                     {Object.keys(basemaps)
                         .filter((key) =>
                             [
-                                BasemapId.Standard,
+                                BasemapId.Streets,
                                 BasemapId.SatelliteStreets,
                                 BasemapId.Light,
                                 BasemapId.Dark,
@@ -62,26 +90,65 @@ export const Selector: React.FC = () => {
                         )
                         .map((key) => {
                             const basemapId = key as BasemapId;
+                            const isSelected = basemap === basemapId;
 
                             return (
-                                <Checkbox
-                                    key={basemapId}
-                                    label={
-                                        <Box
-                                            component="span"
-                                            className={
-                                                styles.basemapSelectorCheckboxLabel
+                                <GridCol span={6} key={basemapId}>
+                                    <Paper
+                                        role="radio"
+                                        id={basemapId}
+                                        withBorder
+                                        className={styles.basemapSelector}
+                                        radius={0}
+                                        tabIndex={0}
+                                        data-disabled={isLocked}
+                                        onClick={() =>
+                                            !isLocked && handleClick(basemapId)
+                                        }
+                                        onKeyDown={(e) => {
+                                            if (
+                                                !isLocked &&
+                                                (e.key === 'Enter' ||
+                                                    e.key === ' ')
+                                            ) {
+                                                handleClick(basemapId);
                                             }
+                                        }}
+                                        style={{
+                                            borderColor: isSelected
+                                                ? '#4B5563'
+                                                : '#D1D5DB',
+                                            backgroundColor: isSelected
+                                                ? '#F3F4F6'
+                                                : '#FFFFFF',
+                                        }}
+                                    >
+                                        <Image
+                                            src={`/basemaps/${basemapId}.png`}
+                                            alt={`Image for ${basemapId.replace(
+                                                /-/g,
+                                                ' '
+                                            )}`}
+                                            width="auto"
+                                            height={55}
+                                            fit="contain"
+                                            radius="sm"
+                                        />
+                                        <Text
+                                            component="label"
+                                            htmlFor={basemapId}
+                                            mt="xs"
+                                            mb={0}
+                                            size="sm"
+                                            className={styles.capitalize}
                                         >
                                             {basemapId.replace(/-/g, ' ')}
-                                        </Box>
-                                    }
-                                    checked={basemapId === basemap}
-                                    onChange={() => setBasemap(basemapId)}
-                                />
+                                        </Text>
+                                    </Paper>
+                                </GridCol>
                             );
                         })}
-                </Stack>
+                </Grid>
             </CardSection>
         </Card>
     );

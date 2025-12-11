@@ -6,9 +6,13 @@
 import DashedLine from '@/icons/DashedLine';
 import Square from '@/icons/Square';
 import { Stack, Text, Image, Group, Box, Tooltip } from '@mantine/core';
-import { capacityFill, storageFill } from '../Reservior/TeacupDiagram/consts';
+import {
+    capacityFill,
+    storageFill,
+} from '@/features/Reservior/TeacupDiagram/consts';
 import styles from '@/features/Legend/Legend.module.css';
 import Info from '@/icons/Info';
+import { getTooltipContent } from './utils';
 
 export const Teacups: React.FC = () => {
     return (
@@ -26,7 +30,7 @@ export const Teacups: React.FC = () => {
                 />
                 <Stack>
                     <Tooltip
-                        label="Potential water storage"
+                        label={getTooltipContent('capacity')}
                         position="top-start"
                     >
                         <Group gap="xs" className={styles.teacupLegend}>
@@ -44,7 +48,10 @@ export const Teacups: React.FC = () => {
                             </Box>
                         </Group>
                     </Tooltip>
-                    <Tooltip label="Current water storage" position="top-start">
+                    <Tooltip
+                        label={getTooltipContent('storage')}
+                        position="top-start"
+                    >
                         <Group gap="xs" className={styles.teacupLegend}>
                             <Square fill={storageFill} width={20} height={20} />
                             <Text>Storage</Text>
@@ -57,7 +64,7 @@ export const Teacups: React.FC = () => {
                         </Group>
                     </Tooltip>
                     <Tooltip
-                        label="Average water storage on this date"
+                        label={getTooltipContent('average')}
                         position="top-start"
                     >
                         <Group
@@ -65,7 +72,7 @@ export const Teacups: React.FC = () => {
                             className={styles.thirtyYearAverageLegend}
                         >
                             <DashedLine />
-                            <Text>30 year Average</Text>
+                            <Text>30-year Average</Text>
                             <Box
                                 component="span"
                                 className={styles.listItemIconWrapper}

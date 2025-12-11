@@ -19,6 +19,7 @@ import {
     INITIAL_ZOOM,
     ReservoirConfigs,
     TeacupPercentageOfCapacityExpression,
+    TeacupSizeExpression,
     ZoomCapacityArray,
 } from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/consts';
@@ -36,7 +37,7 @@ import {
 import wwdhService from '@/services/init/wwdh.init';
 import { CoverageJSON } from '@/services/edr.service';
 import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
-import { SnotelField, SnotelProperties } from './types/snotel';
+import { SnotelField, SnotelProperties } from '@/features/Map/types/snotel';
 
 /**
  *
@@ -64,6 +65,24 @@ export const loadTeacups = (map: Map) => {
                 throw new Error('Image not found: no-data.png');
             }
             map.addImage('no-data', image);
+        });
+    }
+    if (!map.hasImage('outline')) {
+        map.loadImage('/map-icons/outline.png', (error, image) => {
+            if (error) throw error;
+            if (!image) {
+                throw new Error('Image not found: outline.png');
+            }
+            map.addImage('outline', image);
+        });
+    }
+    if (!map.hasImage('outline-large')) {
+        map.loadImage('/map-icons/outline-large.png', (error, image) => {
+            if (error) throw error;
+            if (!image) {
+                throw new Error('Image not found: outline-large.png');
+            }
+            map.addImage('outline-large', image);
         });
     }
 
@@ -209,8 +228,7 @@ export const getReservoirIconImageExpression = (
             '95',
             1.0,
             '100,',
-        ], // averag
-        // e variable value
+        ], // average variable value
         // Primary expression
         ['step', ['zoom'], TeacupPercentageOfCapacityExpression, ...zoomSteps],
     ];
@@ -237,57 +255,61 @@ export const findReservoirIndex = (
     return index !== -1 ? index : 0;
 };
 
+export const getHighlightIcon = (
+    config: ReservoirConfig
+): ExpressionSpecification => {
+    const zoomSteps = ZoomCapacityArray.flatMap(([zoom, capacity]) => [
+        zoom, // for this zoom level
+        [
+            'case',
+            ['>=', ['var', 'capacity'], capacity],
+            'outline',
+            'outline-large',
+        ], // evaluate this expression
+    ]);
+
+    return [
+        'let',
+        'capacity',
+        ['coalesce', ['get', config.capacityProperty], 1],
+        ['step', ['zoom'], 'outline', ...zoomSteps],
+    ];
+};
+
+export const getReservoirSymbolSize = (
+    config: ReservoirConfig,
+    defaultSize: number = 0.4
+): ExpressionSpecification => {
+    const zoomSteps = ZoomCapacityArray.flatMap(([zoom, capacity]) => [
+        zoom, // for this zoom level
+        [
+            'case',
+            ['>=', ['var', 'capacity'], capacity],
+            TeacupSizeExpression,
+            defaultSize,
+        ], // evaluate this expression
+    ]);
+
+    return [
+        'let',
+        'capacity',
+        ['coalesce', ['get', config.capacityProperty], 1],
+        ['step', ['zoom'], TeacupSizeExpression, ...zoomSteps],
+    ];
+};
+
+export const getReservoirSymbolSortKey = (
+    config: ReservoirConfig
+): ExpressionSpecification => {
+    return ['coalesce', ['get', config.capacityProperty], 1];
+};
+
 export const getReservoirSymbolLayout = (
     config: ReservoirConfig
 ): LayoutSpecification => {
     return {
         'icon-image': getReservoirIconImageExpression(config),
-        'icon-size': [
-            'let',
-            'capacity',
-            ['coalesce', ['get', config.capacityProperty], 1],
-            [
-                'step',
-                ['zoom'],
-                1,
-                0,
-                [
-                    'step',
-                    ['var', 'capacity'],
-                    0.3,
-                    45000,
-                    0.4,
-                    320000,
-                    0.3,
-                    2010000,
-                    0.5,
-                ],
-                5,
-                [
-                    'step',
-                    ['var', 'capacity'],
-                    0.3,
-                    45000,
-                    0.3,
-                    320000,
-                    0.4,
-                    2010000,
-                    0.5,
-                ],
-                8,
-                [
-                    'step',
-                    ['var', 'capacity'],
-                    0.3,
-                    45000,
-                    0.4,
-                    320000,
-                    0.5,
-                    2010000,
-                    0.6,
-                ],
-            ],
-        ],
+        'icon-size': getReservoirSymbolSize(config),
 
         'symbol-sort-key': ['coalesce', ['get', config.capacityProperty], 1],
         'icon-offset': [
@@ -368,7 +390,7 @@ export const getReservoirLabelPaint = (
     config: ReservoirConfig
 ): PaintSpecification => {
     return {
-        'text-color': '#000',
+        'text-color': '#fff',
         'text-opacity': [
             'let',
             'capacity',
@@ -389,7 +411,7 @@ export const getReservoirLabelPaint = (
                 ]),
             ],
         ],
-        'text-halo-color': '#fff',
+        'text-halo-color': '#000',
         'text-halo-width': 2,
     };
 };

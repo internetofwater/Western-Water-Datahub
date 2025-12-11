@@ -3,13 +3,16 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import wwdhService from '@/services/init/wwdh.init';
 import { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import { ReservoirConfigs, SourceId } from '@/features/Map/consts';
 import { appendResvizDataProperties } from '@/features/Map/utils';
-import { ReservoirCollections } from '@/lib/types';
+import { ReservoirCollections } from '@/stores/main/types';
+import loadingManager from '@/managers/Loading.init';
+import { LoadingType, NotificationType } from '@/stores/session/types';
+import notificationManager from '@/managers/Notification.init';
 
 export const useReservoirData = () => {
     const reservoirCollections = useMainStore(
@@ -18,15 +21,17 @@ export const useReservoirData = () => {
     const setReservoirCollections = useMainStore(
         (state) => state.setReservoirCollections
     );
-    // const reservoirDate = useMainStore((state) => state.reservoirDate);
 
-    const [loading, setLoading] = useState(false);
     const controller = useRef<AbortController | null>(null);
     const isMounted = useRef(true);
 
     const fetchReservoirLocations = async () => {
+        const loadingInstance = loadingManager.add(
+            'Loading reservoir data',
+            LoadingType.Reservoirs
+        );
+
         try {
-            setLoading(true);
             controller.current = new AbortController();
             const reservoirCollections: ReservoirCollections = {};
 
@@ -41,7 +46,7 @@ export const useReservoirData = () => {
                     const processedResult = await appendResvizDataProperties(
                         result
                     );
-                    const test = {
+                    const reservoirCollection = {
                         ...processedResult,
                         features: processedResult.features.map((feature) => {
                             const newProperties: GeoJsonProperties = {};
@@ -62,25 +67,40 @@ export const useReservoirData = () => {
                         }),
                     };
 
-                    reservoirCollections[config.id] = test;
+                    reservoirCollections[config.id] = reservoirCollection;
                 }
             }
 
             if (isMounted.current) {
+                notificationManager.show(
+                    'Reservoir data loaded',
+                    NotificationType.Success,
+                    5000
+                );
                 setReservoirCollections(reservoirCollections);
-                setLoading(false);
             }
         } catch (error) {
             if ((error as Error)?.name !== 'AbortError') {
                 console.error(error);
-                setLoading(false);
+            } else if ((error as Error)?.message) {
+                const _error = error as Error;
+                notificationManager.show(
+                    `Error: ${_error.message}`,
+                    NotificationType.Error,
+                    10000
+                );
             }
+        } finally {
+            loadingManager.remove(loadingInstance);
         }
     };
 
     useEffect(() => {
         isMounted.current = true;
-        if (!reservoirCollections) {
+        if (
+            !reservoirCollections &&
+            !loadingManager.has({ type: LoadingType.Reservoirs })
+        ) {
             void fetchReservoirLocations();
         }
 
@@ -92,6 +112,5 @@ export const useReservoirData = () => {
 
     return {
         reservoirCollections,
-        loading,
     };
 };
