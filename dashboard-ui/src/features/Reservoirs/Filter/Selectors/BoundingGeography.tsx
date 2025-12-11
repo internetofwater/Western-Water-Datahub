@@ -11,6 +11,7 @@ import { LayerId, MAP_ID, SubLayerId } from '@/features/Map/consts';
 import { BoundingGeographyLevel } from '@/stores/main/types';
 import useMainStore from '@/stores/main/main';
 import { useEffect } from 'react';
+import { useLoading } from '@/hooks/useLoading';
 
 export const BoundingGeometryVisibilityMap: {
     [key in BoundingGeographyLevel]: {
@@ -79,6 +80,8 @@ export const BoundingGeography: React.FC = () => {
         (state) => state.setBoundingGeographyLevel
     );
 
+    const { isFetchingReservoirs } = useLoading();
+
     useEffect(() => {
         if (!map) {
             return;
@@ -108,6 +111,8 @@ export const BoundingGeography: React.FC = () => {
                 {data.map(({ value, label }) => (
                     <Radio
                         size="xs"
+                        disabled={isFetchingReservoirs}
+                        data-disabled={isFetchingReservoirs}
                         key={`radio-geobound-${label}`}
                         value={value}
                         label={label}

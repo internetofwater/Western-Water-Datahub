@@ -509,11 +509,14 @@ const MainMap: React.FC<Props> = (props) => {
                 symbolSortExpression
             );
 
+            map.setFilter(LayerId.Highlight, null);
             source.setData({
                 type: 'FeatureCollection',
                 features: [highlight.feature],
             });
         } else {
+            // TODO, determine why the highlight is sticking
+            map.setFilter(LayerId.Highlight, ['==', ['id'], -1]);
             source.setData(getDefaultGeoJSON());
         }
     }, [highlight]);
@@ -548,6 +551,7 @@ const MainMap: React.FC<Props> = (props) => {
                 }
             }
         });
+
         map.setStyle(basemaps[basemap]);
     }, [basemap]);
 

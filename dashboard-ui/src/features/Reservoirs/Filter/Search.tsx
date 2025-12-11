@@ -6,6 +6,7 @@
 import { TextInput } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
+import { useLoading } from '@/hooks/useLoading';
 
 type Props = {
     search: string;
@@ -16,6 +17,8 @@ export const Search: React.FC<Props> = (props) => {
     const { search, handleChange } = props;
 
     const [localSearch, setLocalSearch] = useState(search);
+
+    const { isFetchingReservoirs } = useLoading();
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -30,6 +33,7 @@ export const Search: React.FC<Props> = (props) => {
     return (
         <TextInput
             size="xs"
+            disabled={isFetchingReservoirs}
             className={styles.searchInput}
             label={'Reservoir'}
             placeholder="Search by name"

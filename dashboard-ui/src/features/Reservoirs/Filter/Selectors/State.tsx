@@ -18,6 +18,7 @@ import { formatOptions } from '@/features/Header/Selectors/utils';
 import { StateField, StateProperties } from '@/features/Map/types/state';
 import useMainStore from '@/stores/main/main';
 import { StateDefault } from '@/stores/main/consts';
+import { useLoading } from '@/hooks/useLoading';
 
 export const State: React.FC = () => {
     const state = useMainStore((state) => state.state);
@@ -27,6 +28,8 @@ export const State: React.FC = () => {
 
     const [loading, setLoading] = useState(true);
     const [stateOptions, setStateOptions] = useState<ComboboxData>([]);
+
+    const { isFetchingReservoirs } = useLoading();
 
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
@@ -116,6 +119,7 @@ export const State: React.FC = () => {
             <Select
                 size="xs"
                 id="stateSelector"
+                disabled={isFetchingReservoirs}
                 searchable
                 data={stateOptions}
                 value={state}
