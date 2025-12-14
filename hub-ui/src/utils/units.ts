@@ -7,12 +7,12 @@ export const getUnitShorthand = (unit: string) => {
   const lowercaseUnit = unit.toLowerCase();
 
   switch (lowercaseUnit) {
-    case 'miles':
-      return 'mi';
-    case 'feet':
-      return 'ft';
-    case 'kilometers':
-      return 'km';
+    case "miles":
+      return "mi";
+    case "feet":
+      return "ft";
+    case "kilometers":
+      return "km";
     default:
       return unit;
   }

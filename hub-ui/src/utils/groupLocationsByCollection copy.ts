@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { TLocation } from '@/stores/main/types';
+import { TLocation } from "@/stores/main/types";
 
 export const groupLocationIdsByLayer = (
-  locations: TLocation[]
-): Record<TLocation['layerId'], Array<TLocation['id']>> => {
+  locations: TLocation[],
+): Record<TLocation["layerId"], Array<TLocation["id"]>> => {
   return locations.reduce(
     (acc, location) => {
       const { layerId, id } = location;
@@ -17,6 +17,6 @@ export const groupLocationIdsByLayer = (
       acc[layerId].push(id);
       return acc;
     },
-    {} as Record<TLocation['layerId'], Array<TLocation['id']>>
+    {} as Record<TLocation["layerId"], Array<TLocation["id"]>>,
   );
 };

@@ -3,22 +3,22 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { StateCreator } from 'zustand';
-import { ICollection } from '@/services/edr.service';
-import { MainState, TParameter } from '@/stores/main/types';
+import { StateCreator } from "zustand";
+import { ICollection } from "@/services/edr.service";
+import { MainState, TParameter } from "@/stores/main/types";
 
 export interface IParameterSlice {
   parameters: TParameter[];
   setParameters: (parameters: TParameter[]) => void;
-  addParameter: (collectionId: ICollection['id'], parameter: string) => void;
-  removeParameter: (collectionId: ICollection['id'], parameter: string) => void;
-  hasParameter: (collectionId: ICollection['id'], parameter: string) => boolean;
+  addParameter: (collectionId: ICollection["id"], parameter: string) => void;
+  removeParameter: (collectionId: ICollection["id"], parameter: string) => void;
+  hasParameter: (collectionId: ICollection["id"], parameter: string) => boolean;
   hasCollection: (collectionId: string) => boolean;
 }
 
 export const createParametersSlice: StateCreator<
   MainState,
-  [['zustand/immer', never]],
+  [["zustand/immer", never]],
   [],
   IParameterSlice
 > = (set, get) => ({
@@ -31,7 +31,9 @@ export const createParametersSlice: StateCreator<
 
   addParameter: (collectionId, parameter) =>
     set((state) => {
-      const entry = state.parameters.find((p) => p.collectionId === collectionId);
+      const entry = state.parameters.find(
+        (p) => p.collectionId === collectionId,
+      );
 
       if (!entry) {
         state.parameters.push({
@@ -47,7 +49,9 @@ export const createParametersSlice: StateCreator<
     }),
   removeParameter: (collectionId, parameter) =>
     set((state) => {
-      const entry = state.parameters.find((p) => p.collectionId === collectionId);
+      const entry = state.parameters.find(
+        (p) => p.collectionId === collectionId,
+      );
       if (!entry) {
         return;
       }
@@ -55,7 +59,9 @@ export const createParametersSlice: StateCreator<
       entry.parameters = entry.parameters.filter((p) => p !== parameter);
 
       if (entry.parameters.length === 0) {
-        state.parameters = state.parameters.filter((p) => p.collectionId !== collectionId);
+        state.parameters = state.parameters.filter(
+          (p) => p.collectionId !== collectionId,
+        );
       }
     }),
   hasParameter: (collectionId, parameter) => {

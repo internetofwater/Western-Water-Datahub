@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { StateCreator } from 'zustand';
-import { Notification, SessionState } from '@/stores/session/types';
+import { StateCreator } from "zustand";
+import { Notification, SessionState } from "@/stores/session/types";
 
 export interface NotificationsSlice {
   notifications: Notification[];
@@ -14,7 +14,7 @@ export interface NotificationsSlice {
 
 export const createNotificationsSlice: StateCreator<
   SessionState,
-  [['zustand/immer', never]],
+  [["zustand/immer", never]],
   [],
   NotificationsSlice
 > = (set, _get) => ({
@@ -25,6 +25,8 @@ export const createNotificationsSlice: StateCreator<
     })),
   removeNotification: (id) =>
     set((state) => ({
-      notifications: state.notifications.filter((notification) => notification.id !== id),
+      notifications: state.notifications.filter(
+        (notification) => notification.id !== id,
+      ),
     })),
 });

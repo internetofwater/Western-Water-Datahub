@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Feature } from 'geojson';
-import { Box, Group, Tooltip } from '@mantine/core';
-import Button from '@/components/Button';
-import Select from '@/components/Select';
-import { Variant } from '@/components/types';
-import styles from '@/features/Popup/Popup.module.css';
-import { Table } from '@/features/TopBar/Links/Table';
-import { TLocation as LocationType } from '@/stores/main/types';
+import { Feature } from "geojson";
+import { Box, Group, Tooltip } from "@mantine/core";
+import Button from "@/components/Button";
+import Select from "@/components/Select";
+import { Variant } from "@/components/types";
+import styles from "@/features/Popup/Popup.module.css";
+import { Table } from "@/features/TopBar/Links/Table";
+import { TLocation as LocationType } from "@/stores/main/types";
 
 type Props = {
   location: LocationType;
@@ -21,7 +21,13 @@ type Props = {
 };
 
 export const Item: React.FC<Props> = (props) => {
-  const { location, locations, feature, handleLocationChange, handleLinkClick } = props;
+  const {
+    location,
+    locations,
+    feature,
+    handleLocationChange,
+    handleLinkClick,
+  } = props;
 
   return (
     <>
@@ -47,7 +53,11 @@ export const Item: React.FC<Props> = (props) => {
         )}
         <Box component="span" className={styles.linkButtonWrapper}>
           <Tooltip label="Open this item in the Links modal.">
-            <Button size="xs" onClick={handleLinkClick} variant={Variant.Primary}>
+            <Button
+              size="xs"
+              onClick={handleLinkClick}
+              variant={Variant.Primary}
+            >
               Link
             </Button>
           </Tooltip>

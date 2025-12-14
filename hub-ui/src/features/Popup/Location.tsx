@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useState } from 'react';
-import { Feature } from 'geojson';
-import { Box, Group, Tooltip } from '@mantine/core';
-import Button from '@/components/Button';
-import Select from '@/components/Select';
-import { Variant } from '@/components/types';
-import { StringIdentifierCollections } from '@/consts/collections';
-import { Parameter } from '@/features/Popup';
-import { Chart } from '@/features/Popup/Chart';
-import styles from '@/features/Popup/Popup.module.css';
-import { Table } from '@/features/TopBar/Links/Table';
-import { Layer, Location as LocationType } from '@/stores/main/types';
-import { getIdStore } from '@/utils/getIdStore';
+import { useEffect, useState } from "react";
+import { Feature } from "geojson";
+import { Box, Group, Tooltip } from "@mantine/core";
+import Button from "@/components/Button";
+import Select from "@/components/Select";
+import { Variant } from "@/components/types";
+import { StringIdentifierCollections } from "@/consts/collections";
+import { Parameter } from "@/features/Popup";
+import { Chart } from "@/features/Popup/Chart";
+import styles from "@/features/Popup/Popup.module.css";
+import { Table } from "@/features/TopBar/Links/Table";
+import { Layer, Location as LocationType } from "@/stores/main/types";
+import { getIdStore } from "@/utils/getIdStore";
 
 type Props = {
   location: LocationType;
@@ -40,12 +40,12 @@ export const Location: React.FC<Props> = (props) => {
     handleLinkClick,
   } = props;
 
-  const [tab, setTab] = useState<'chart' | 'table'>('chart');
+  const [tab, setTab] = useState<"chart" | "table">("chart");
   const [id, setId] = useState<string>();
 
   useEffect(() => {
     if (parameters.length === 0) {
-      setTab('table');
+      setTab("table");
     }
   }, [parameters]);
 
@@ -60,7 +60,7 @@ export const Location: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Box style={{ display: tab === 'chart' ? 'block' : 'none' }}>
+      <Box style={{ display: tab === "chart" ? "block" : "none" }}>
         {layer && datasetName.length > 0 && parameters.length > 0 && id && (
           <Chart
             collectionId={location.collectionId}
@@ -72,7 +72,10 @@ export const Location: React.FC<Props> = (props) => {
           />
         )}
       </Box>
-      <Box style={{ display: tab === 'table' ? 'block' : 'none' }} className={styles.tableWrapper}>
+      <Box
+        style={{ display: tab === "table" ? "block" : "none" }}
+        className={styles.tableWrapper}
+      >
         {feature && <Table size="xs" properties={feature.properties} />}
       </Box>
       <Group
@@ -96,14 +99,19 @@ export const Location: React.FC<Props> = (props) => {
           {parameters.length > 0 ? (
             <Button
               size="xs"
-              onClick={() => setTab('chart')}
-              variant={tab === 'chart' ? Variant.Selected : Variant.Secondary}
+              onClick={() => setTab("chart")}
+              variant={tab === "chart" ? Variant.Selected : Variant.Secondary}
             >
               Chart
             </Button>
           ) : (
             <Tooltip label="Select one or more parameters in the layer controls to enable charts.">
-              <Button size="xs" variant={Variant.Secondary} disabled data-disabled>
+              <Button
+                size="xs"
+                variant={Variant.Secondary}
+                disabled
+                data-disabled
+              >
                 Chart
               </Button>
             </Tooltip>
@@ -111,8 +119,8 @@ export const Location: React.FC<Props> = (props) => {
 
           <Button
             size="xs"
-            onClick={() => setTab('table')}
-            variant={tab === 'table' ? Variant.Selected : Variant.Secondary}
+            onClick={() => setTab("table")}
+            variant={tab === "table" ? Variant.Selected : Variant.Secondary}
           >
             Properties
           </Button>
@@ -120,13 +128,22 @@ export const Location: React.FC<Props> = (props) => {
         <Box component="span" className={styles.linkButtonWrapper}>
           {parameters.length > 0 ? (
             <Tooltip label="Open this location in the Links modal.">
-              <Button size="xs" onClick={handleLinkClick} variant={Variant.Primary}>
+              <Button
+                size="xs"
+                onClick={handleLinkClick}
+                variant={Variant.Primary}
+              >
                 Link
               </Button>
             </Tooltip>
           ) : (
             <Tooltip label="Select one or more parameters in the layer controls to access links modal.">
-              <Button size="xs" variant={Variant.Primary} disabled data-disabled>
+              <Button
+                size="xs"
+                variant={Variant.Primary}
+                disabled
+                data-disabled
+              >
                 Link
               </Button>
             </Tooltip>

@@ -3,31 +3,31 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CollectionType } from '@/utils/collection';
+import { CollectionType } from "@/utils/collection";
 
 export enum CollectionId {
-  RISEEdr = 'rise-edr',
-  SNOTELEdr = 'snotel-edr',
-  USACEEdr = 'usace-edr',
-  Streamgages = 'usgs-sta',
+  RISEEdr = "rise-edr",
+  SNOTELEdr = "snotel-edr",
+  USACEEdr = "usace-edr",
+  Streamgages = "usgs-sta",
 
-  NWMChannelRouting = 'National_Water_Model_Channel_Routing_Output',
-  NWMAssimilationSystem = 'National_Water_Model_Land_Data_Assimilation_System_Output',
-  NWMReachToReach = 'National_Water_Data_Reach_to_Reach_Routing_Output',
-  NWMLakeOutput = 'National_Water_Model_Lakeout',
+  NWMChannelRouting = "National_Water_Model_Channel_Routing_Output",
+  NWMAssimilationSystem = "National_Water_Model_Land_Data_Assimilation_System_Output",
+  NWMReachToReach = "National_Water_Data_Reach_to_Reach_Routing_Output",
+  NWMLakeOutput = "National_Water_Model_Lakeout",
 
-  ArizonaWaterWells = 'ArizonaWaterWells',
-  AWDB = 'awdb-forecasts-edr',
+  ArizonaWaterWells = "ArizonaWaterWells",
+  AWDB = "awdb-forecasts-edr",
 
-  NOAARFC = 'noaa-rfc',
+  NOAARFC = "noaa-rfc",
 }
 
 export enum Provider {
-  USBR = 'usbr',
-  USDA = 'usda',
-  USGS = 'usgs',
-  USACE = 'usace',
-  NOAA = 'noaa',
+  USBR = "usbr",
+  USDA = "usda",
+  USGS = "usgs",
+  USACE = "usace",
+  NOAA = "noaa",
 }
 
 export const ProviderDatasources: Record<Provider, string[]> = {
@@ -38,7 +38,7 @@ export const ProviderDatasources: Record<Provider, string[]> = {
   [Provider.NOAA]: [],
 };
 
-export const idStoreProperty = 'id_store';
+export const idStoreProperty = "id_store";
 
 // These feature collections have feature identifiers not compatible with Mapbox
 export const StringIdentifierCollections: string[] = [
@@ -63,10 +63,10 @@ export const DatasourceCollectionType: Record<CollectionType, string[]> = {
 };
 
 export enum RestrictionType {
-  Size = 'size',
-  Day = 'day',
-  Parameter = 'parameter', // Limit number of parameters
-  ParameterFirst = 'parameter-first', // Select a parameter before fetch
+  Size = "size",
+  Day = "day",
+  Parameter = "parameter", // Limit number of parameters
+  ParameterFirst = "parameter-first", // Select a parameter before fetch
 }
 
 type RestrictionBase = {
@@ -114,12 +114,12 @@ export const CollectionRestrictions: Record<string, Restiction[]> = {
     {
       type: RestrictionType.Day,
       days: 1,
-      message: 'Select a date range no greater than one day.',
+      message: "Select a date range no greater than one day.",
     },
     {
       type: RestrictionType.Parameter,
       count: 1,
-      message: 'Select only one parameter.',
+      message: "Select only one parameter.",
     },
   ],
   [CollectionId.NWMReachToReach]: [
@@ -131,12 +131,12 @@ export const CollectionRestrictions: Record<string, Restiction[]> = {
     {
       type: RestrictionType.Day,
       days: 1,
-      message: 'Select a date range no greater than one day.',
+      message: "Select a date range no greater than one day.",
     },
     {
       type: RestrictionType.Parameter,
       count: 1,
-      message: 'Select only one parameter.',
+      message: "Select only one parameter.",
     },
   ],
   [CollectionId.NWMChannelRouting]: [
@@ -148,24 +148,24 @@ export const CollectionRestrictions: Record<string, Restiction[]> = {
     {
       type: RestrictionType.Day,
       days: 1,
-      message: 'Select a date range no greater than one day.',
+      message: "Select a date range no greater than one day.",
     },
     {
       type: RestrictionType.Parameter,
       count: 1,
-      message: 'Select only one parameter.',
+      message: "Select only one parameter.",
     },
   ],
   [CollectionId.NWMLakeOutput]: [
     {
       type: RestrictionType.Day,
       days: 7,
-      message: 'Select a date range no greater than one week.',
+      message: "Select a date range no greater than one week.",
     },
     {
       type: RestrictionType.Parameter,
       count: 1,
-      message: 'Select only one parameter.',
+      message: "Select only one parameter.",
     },
   ],
 };

@@ -3,16 +3,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
-import { Feature } from 'geojson';
-import { Box, Divider, Group, ScrollArea, Stack, Text, Tooltip } from '@mantine/core';
-import Button from '@/components/Button';
-import Select from '@/components/Select';
-import { Variant } from '@/components/types';
-import { Parameter } from '@/features/Popup';
-import styles from '@/features/Popup/Popup.module.css';
-import { TLocation as LocationType, TLayer } from '@/stores/main/types';
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { Feature } from "geojson";
+import {
+  Box,
+  Divider,
+  Group,
+  ScrollArea,
+  Stack,
+  Text,
+  Tooltip,
+} from "@mantine/core";
+import Button from "@/components/Button";
+import Select from "@/components/Select";
+import { Variant } from "@/components/types";
+import { Parameter } from "@/features/Popup";
+import styles from "@/features/Popup/Popup.module.css";
+import { TLocation as LocationType, TLayer } from "@/stores/main/types";
 
 type Props = {
   location: LocationType;
@@ -26,8 +34,15 @@ type Props = {
 };
 
 export const Grid: React.FC<Props> = (props) => {
-  const { location, locations, feature, layer, parameters, handleLocationChange, handleLinkClick } =
-    props;
+  const {
+    location,
+    locations,
+    feature,
+    layer,
+    parameters,
+    handleLocationChange,
+    handleLinkClick,
+  } = props;
 
   const [times, setTimes] = useState<{ value: string; label: string }[]>([]);
   const [time, setTime] = useState<{ value: string; label: string }>();
@@ -37,21 +52,24 @@ export const Grid: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (feature.properties) {
-      if (typeof feature.properties === 'object') {
+      if (typeof feature.properties === "object") {
         const { times: rawTimes } = feature.properties as { times: string };
 
         const times = JSON.parse(rawTimes) as string[];
 
         if (
           times &&
-          times.every((time) => typeof time === 'string') &&
+          times.every((time) => typeof time === "string") &&
           times.every((time) => dayjs(time).isValid())
         ) {
           setTimes(
-            times.map((time) => ({ value: time, label: dayjs(time).format('MM/DD/YYYY h:mm A') }))
+            times.map((time) => ({
+              value: time,
+              label: dayjs(time).format("MM/DD/YYYY h:mm A"),
+            })),
           );
         }
-      } else if (typeof feature.properties === 'string') {
+      } else if (typeof feature.properties === "string") {
         const properties = JSON.parse(feature.properties);
 
         const { times: rawTimes } = properties as { times: string };
@@ -60,11 +78,14 @@ export const Grid: React.FC<Props> = (props) => {
 
         if (
           times &&
-          times.every((time) => typeof time === 'string') &&
+          times.every((time) => typeof time === "string") &&
           times.every((time) => dayjs(time).isValid())
         ) {
           setTimes(
-            times.map((time) => ({ value: time, label: dayjs(time).format('MM/DD/YYYY h:mm A') }))
+            times.map((time) => ({
+              value: time,
+              label: dayjs(time).format("MM/DD/YYYY h:mm A"),
+            })),
           );
         }
       }
@@ -72,7 +93,10 @@ export const Grid: React.FC<Props> = (props) => {
   }, [feature]);
 
   useEffect(() => {
-    if (times.length === 0 || times.some((timeObj) => timeObj.value === time?.value)) {
+    if (
+      times.length === 0 ||
+      times.some((timeObj) => timeObj.value === time?.value)
+    ) {
       return;
     }
 
@@ -82,9 +106,12 @@ export const Grid: React.FC<Props> = (props) => {
   }, [times]);
 
   useEffect(() => {
-    const timeIndex = times.findIndex((timeObj) => timeObj.value === time?.value);
+    const timeIndex = times.findIndex(
+      (timeObj) => timeObj.value === time?.value,
+    );
     if (timeIndex !== -1 && feature.properties) {
-      const displayValues: { value: string; label: string; unit: string }[] = [];
+      const displayValues: { value: string; label: string; unit: string }[] =
+        [];
       parameters.forEach((parameter) => {
         const rawValues = feature.properties![parameter.id];
         if (rawValues) {
@@ -113,12 +140,16 @@ export const Grid: React.FC<Props> = (props) => {
     <>
       <Divider mt="calc(var(--default-spacing) / 2)" />
       {time && (
-        <Text size="sm" mt="calc(var(--default-spacing) * 2)" mb="var(--default-spacing)">
+        <Text
+          size="sm"
+          mt="calc(var(--default-spacing) * 2)"
+          mb="var(--default-spacing)"
+        >
           {time?.label}
         </Text>
       )}
 
-      <ScrollArea scrollbars="x" type="hover" style={{ maxWidth: '100%' }}>
+      <ScrollArea scrollbars="x" type="hover" style={{ maxWidth: "100%" }}>
         <Group
           justify="flex-start"
           align="flex-start"
@@ -173,7 +204,11 @@ export const Grid: React.FC<Props> = (props) => {
         </Group>
         <Box component="span" className={styles.linkButtonWrapper}>
           <Tooltip label="Open this location in the Links modal.">
-            <Button size="xs" onClick={handleLinkClick} variant={Variant.Primary}>
+            <Button
+              size="xs"
+              onClick={handleLinkClick}
+              variant={Variant.Primary}
+            >
               Link
             </Button>
           </Tooltip>

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Provider, ProviderDatasources } from '@/consts/collections';
-import { ICollection } from '@/services/edr.service';
+import { Provider, ProviderDatasources } from "@/consts/collections";
+import { ICollection } from "@/services/edr.service";
 
-export const getProvider = (collectionId: ICollection['id']): string => {
+export const getProvider = (collectionId: ICollection["id"]): string => {
   if (ProviderDatasources[Provider.USBR].includes(collectionId)) {
     return Provider.USBR.toUpperCase();
   }
@@ -20,5 +20,5 @@ export const getProvider = (collectionId: ICollection['id']): string => {
     return Provider.USACE.toUpperCase();
   }
 
-  return '';
+  return "";
 };

@@ -1,28 +1,35 @@
-import { useEffect, useState } from 'react';
-import { ComboboxData, Text } from '@mantine/core';
-import Select from '@/components/Select';
-import mainManager from '@/managers/Main.init';
-import { ICollection } from '@/services/edr.service';
-import useMainStore from '@/stores/main';
-import { CollectionType, getCollectionType } from '@/utils/collection';
-import { getParameterUnit } from '@/utils/parameters';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import { useEffect, useState } from "react";
+import { ComboboxData, Text } from "@mantine/core";
+import Select from "@/components/Select";
+import mainManager from "@/managers/Main.init";
+import { ICollection } from "@/services/edr.service";
+import useMainStore from "@/stores/main";
+import { CollectionType, getCollectionType } from "@/utils/collection";
+import { getParameterUnit } from "@/utils/parameters";
 
 type Props = {
-  collectionId: ICollection['id'];
+  collectionId: ICollection["id"];
 };
 
 const ParameterSelect: React.FC<Props> = (props) => {
   const { collectionId } = props;
 
   const collections = useMainStore((state) => state.collections);
-  const selectedCollections = useMainStore((state) => state.selectedCollections);
+  const selectedCollections = useMainStore(
+    (state) => state.selectedCollections,
+  );
   const parameters = useMainStore((state) => state.parameters);
 
   const addParameter = useMainStore((state) => state.addParameter);
   const removeParameter = useMainStore((state) => state.removeParameter);
   const hasParameter = useMainStore((state) => state.hasParameter);
 
-  const [name, setName] = useState<string>('Parameters');
+  const [name, setName] = useState<string>("Parameters");
   const [data, setData] = useState<ComboboxData>([]);
 
   useEffect(() => {
@@ -64,13 +71,15 @@ const ParameterSelect: React.FC<Props> = (props) => {
     }
   };
 
-  const showParameterSelect = (collectionId: ICollection['id']) => {
+  const showParameterSelect = (collectionId: ICollection["id"]) => {
     const collection = mainManager.getCollection(collectionId);
 
     if (collection) {
       const collectionType = getCollectionType(collection);
 
-      return [CollectionType.EDR, CollectionType.EDRGrid].includes(collectionType);
+      return [CollectionType.EDR, CollectionType.EDRGrid].includes(
+        collectionType,
+      );
     }
 
     return false;
@@ -85,7 +94,9 @@ const ParameterSelect: React.FC<Props> = (props) => {
           placeholder="Select..."
           data={data}
           value={
-            parameters.find((parameter) => parameter.collectionId === collectionId)?.parameters
+            parameters.find(
+              (parameter) => parameter.collectionId === collectionId,
+            )?.parameters
           }
           onChange={handleChange}
           disabled={data.length === 0}

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { StoreApi, UseBoundStore } from 'zustand';
-import { SessionState, Warning } from '@/stores/session/types';
+import { StoreApi, UseBoundStore } from "zustand";
+import { SessionState, Warning } from "@/stores/session/types";
 
-export const WARNING_PREFIX = 'warning';
+export const WARNING_PREFIX = "warning";
 
 class WarningManager {
   private store: UseBoundStore<StoreApi<SessionState>>;
@@ -15,7 +15,7 @@ class WarningManager {
     this.store = store;
   }
 
-  add(id: Warning['id'], content: Warning['content']): Warning['id'] {
+  add(id: Warning["id"], content: Warning["content"]): Warning["id"] {
     const loadingInstance: Warning = {
       id,
       content,
@@ -26,7 +26,7 @@ class WarningManager {
     return loadingInstance.id;
   }
 
-  remove(id: Warning['id']): null {
+  remove(id: Warning["id"]): null {
     this.store.getState().removeWarning(id);
 
     return null;

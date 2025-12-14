@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Feature, FeatureCollection, Polygon } from 'geojson';
-import { Properties } from '@/components/Map/types';
-import { ICollection } from '@/services/edr.service';
-import { ICollectionSlice } from './slices/collections';
-import { ILocationSlice } from './slices/locations';
-import { IParameterSlice } from './slices/parameters';
+import { Feature, FeatureCollection, Polygon } from "geojson";
+import { Properties } from "@/components/Map/types";
+import { ICollection } from "@/services/edr.service";
+import { ICollectionSlice } from "./slices/collections";
+import { ILocationSlice } from "./slices/locations";
+import { IParameterSlice } from "./slices/parameters";
 
 export type ColorValueHex = `#${string}`;
 
 enum ESpatialSelectionType {
-  Drawn = 'custom-drawn-polygon',
-  Selected = 'select-existing-polygons',
-  Upload = 'custom-upload-shape',
+  Drawn = "custom-drawn-polygon",
+  Selected = "select-existing-polygons",
+  Upload = "custom-upload-shape",
 }
 
 interface ISpatialSelectionBase {
@@ -44,25 +44,25 @@ export type TSpatialSelection =
   | ISpatialSelectionSelected;
 
 export enum EDatasourceType {
-  Point = 'point',
-  Line = 'line',
-  Polygon = 'polygon',
-  Raster = 'raster',
+  Point = "point",
+  Line = "line",
+  Polygon = "polygon",
+  Raster = "raster",
 }
 
 export type TLayer = {
   id: string; // uuid
-  collectionId: ICollection['id'];
+  collectionId: ICollection["id"];
 };
 
 export type TLocation = {
   id: string; // location/{this}
-  collectionId: ICollection['id'];
+  collectionId: ICollection["id"];
 };
 
 export type TGeographyFilter = {
   itemId: string;
-  collectionId: ICollection['id'];
+  collectionId: ICollection["id"];
   feature: Feature<Polygon>;
 };
 
@@ -72,19 +72,21 @@ export type TCategory = {
 };
 
 export type TParameter = {
-  collectionId: ICollection['id'];
+  collectionId: ICollection["id"];
   parameters: string[];
 };
 
 export type MainState = {
   provider: string | null;
-  setProvider: (provider: MainState['provider']) => void;
+  setProvider: (provider: MainState["provider"]) => void;
   category: TCategory | null;
-  setCategory: (category: MainState['category']) => void;
+  setCategory: (category: MainState["category"]) => void;
   selectedCollections: string[];
-  setSelectedCollections: (collection: MainState['selectedCollections']) => void;
+  setSelectedCollections: (
+    collection: MainState["selectedCollections"],
+  ) => void;
   geographyFilter: TGeographyFilter | null;
-  setGeographyFilter: (geographyFilter: MainState['geographyFilter']) => void;
+  setGeographyFilter: (geographyFilter: MainState["geographyFilter"]) => void;
   hasGeographyFilter: () => boolean;
 } & ICollectionSlice &
   ILocationSlice &

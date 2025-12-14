@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ICollection } from '@/services/edr.service';
+import { ICollection } from "@/services/edr.service";
 
 const hasTemporalExtent = (collection: ICollection) => {
   return (
@@ -16,7 +16,7 @@ const hasTemporalExtent = (collection: ICollection) => {
 };
 
 export const getTemporalExtent = (
-  collection: ICollection
+  collection: ICollection,
 ): { min: string | null; max: string | null } | null => {
   if (hasTemporalExtent(collection)) {
     const [min, max] = collection!.extent!.temporal!.interval[0];
