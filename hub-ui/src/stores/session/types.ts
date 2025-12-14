@@ -3,10 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { ReactNode } from 'react';
+import { TLocation } from '@/stores/main/types';
+import { LoadingSlice } from './slices/loading';
+import { NotificationsSlice } from './slices/notifications';
+import { WarningsSlice } from './slices/warning';
+
 export enum NotificationType {
-  Success = "success",
-  Error = "error",
-  Info = "info",
+  Success = 'success',
+  Error = 'error',
+  Info = 'info',
 }
 
 /**
@@ -20,25 +26,25 @@ export enum NotificationType {
  * @enum
  */
 export enum LoadingType {
-  Locations = "locations",
-  Collections = "collections",
-  Geography = "geography",
-  Data = "data",
+  Locations = 'locations',
+  Collections = 'collections',
+  Geography = 'geography',
+  Data = 'data',
 }
 
 export enum Tool {
-  Legend = "legend",
+  Legend = 'legend',
 }
 
 export enum Modal {
-  Download = "download",
-  Help = "help",
+  Download = 'download',
+  Help = 'help',
 }
 
 export enum HelpTab {
-  About = "about",
-  FAQ = "FAQ",
-  Glossary = "glossary",
+  About = 'about',
+  FAQ = 'FAQ',
+  Glossary = 'glossary',
 }
 
 export type Notification = {
@@ -60,22 +66,24 @@ export type LegendEntry = {
   visible: boolean;
 };
 
+export type Warning = {
+  id: string;
+  content: ReactNode;
+};
+
 export type SessionState = {
   legendEntries: LegendEntry[];
-  setLegendEntries: (legendEntries: SessionState["legendEntries"]) => void;
+  setLegendEntries: (legendEntries: SessionState['legendEntries']) => void;
   openModal: Modal | null;
-  setOpenModal: (openModal: SessionState["openModal"]) => void;
+  setOpenModal: (openModal: SessionState['openModal']) => void;
   tools: {
     [Tool.Legend]: boolean;
   };
   setOpenTools: (tool: Tool, open: boolean) => void;
+  linkLocation: TLocation | null;
+  setLinkLocation: (linkLocation: SessionState['linkLocation']) => void;
   helpTab: HelpTab;
-  setHelpTab: (helpTab: SessionState["helpTab"]) => void;
-  loadingInstances: Loading[];
-  addLoadingInstance: (loadingInstance: Loading) => void;
-  removeLoadingInstance: (id: Loading["id"]) => void;
-  hasLoadingInstance: (text: string) => boolean;
-  notifications: Notification[];
-  addNotification: (notification: Notification) => void;
-  removeNotification: (id: string) => void;
-};
+  setHelpTab: (helpTab: SessionState['helpTab']) => void;
+} & LoadingSlice &
+  NotificationsSlice &
+  WarningsSlice;

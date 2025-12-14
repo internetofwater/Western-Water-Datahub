@@ -3,92 +3,89 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Feature, FeatureCollection, Polygon } from "geojson";
-import { Properties } from "@/components/Map/types";
-import { ICollection } from "@/services/edr.service";
+import { Feature, FeatureCollection, Polygon } from 'geojson';
+import { Properties } from '@/components/Map/types';
+import { ICollection } from '@/services/edr.service';
+import { ICollectionSlice } from './slices/collections';
+import { ILocationSlice } from './slices/locations';
+import { IParameterSlice } from './slices/parameters';
 
 export type ColorValueHex = `#${string}`;
 
-enum SpatialSelectionType {
-  Drawn = "custom-drawn-polygon",
-  Selected = "select-existing-polygons",
-  Upload = "custom-upload-shape",
+enum ESpatialSelectionType {
+  Drawn = 'custom-drawn-polygon',
+  Selected = 'select-existing-polygons',
+  Upload = 'custom-upload-shape',
 }
 
-interface SpatialSelectionBase {
-  type: SpatialSelectionType;
+interface ISpatialSelectionBase {
+  type: ESpatialSelectionType;
 }
 
-interface SpatialSelectionDrawn extends SpatialSelectionBase {
-  type: SpatialSelectionType.Drawn;
+interface ISpatialSelectionDrawn extends ISpatialSelectionBase {
+  type: ESpatialSelectionType.Drawn;
   shapes: FeatureCollection<Polygon, Properties>[];
 }
 
-interface SpatialSelectionUpload extends SpatialSelectionBase {
-  type: SpatialSelectionType.Upload;
+interface ISpatialSelectionUpload extends ISpatialSelectionBase {
+  type: ESpatialSelectionType.Upload;
   shapes: FeatureCollection<Polygon, Properties>[];
 }
 
-interface SpatialSelectionSelected extends SpatialSelectionBase {
-  type: SpatialSelectionType.Selected;
+interface ISpatialSelectionSelected extends ISpatialSelectionBase {
+  type: ESpatialSelectionType.Selected;
   locations: string[]; // location IDs
 }
 
 // Discriminated union for all spatial selection types
-export type SpatialSelection =
-  | SpatialSelectionDrawn
-  | SpatialSelectionUpload
-  | SpatialSelectionSelected;
+export type TSpatialSelection =
+  | ISpatialSelectionDrawn
+  | ISpatialSelectionUpload
+  | ISpatialSelectionSelected;
 
-export enum DatasourceType {
-  Point = "point",
-  Line = "line",
-  Polygon = "polygon",
-  Raster = "raster",
+export enum EDatasourceType {
+  Point = 'point',
+  Line = 'line',
+  Polygon = 'polygon',
+  Raster = 'raster',
 }
 
-export type Layer = {
+export type TLayer = {
   id: string; // uuid
-  collectionId: ICollection["id"];
+  collectionId: ICollection['id'];
 };
 
-export type Location = {
-  id: string | number; // location/{this}
-  collectionId: ICollection["id"];
+export type TLocation = {
+  id: string; // location/{this}
+  collectionId: ICollection['id'];
 };
 
-export type GeographyFilter = {
+export type TGeographyFilter = {
   itemId: string;
-  collectionId: ICollection["id"];
+  collectionId: ICollection['id'];
   feature: Feature<Polygon>;
 };
 
-export type Category = {
+export type TCategory = {
   value: string;
   label: string;
 };
 
-export interface MainState {
+export type TParameter = {
+  collectionId: ICollection['id'];
+  parameters: string[];
+};
+
+export type MainState = {
   provider: string | null;
-  setProvider: (provider: MainState["provider"]) => void;
-  category: Category | null;
-  setCategory: (category: MainState["category"]) => void;
+  setProvider: (provider: MainState['provider']) => void;
+  category: TCategory | null;
+  setCategory: (category: MainState['category']) => void;
   selectedCollections: string[];
-  setSelectedCollections: (
-    collection: MainState["selectedCollections"],
-  ) => void;
-  geographyFilter: GeographyFilter | null;
-  setGeographyFilter: (geographyFilter: MainState["geographyFilter"]) => void;
+  setSelectedCollections: (collection: MainState['selectedCollections']) => void;
+  geographyFilter: TGeographyFilter | null;
+  setGeographyFilter: (geographyFilter: MainState['geographyFilter']) => void;
   hasGeographyFilter: () => boolean;
-  collections: ICollection[];
-  setCollections: (collections: MainState["collections"]) => void;
-  originalCollections: ICollection[];
-  setOriginalCollections: (collections: MainState["collections"]) => void;
-  addCollection: (collection: ICollection) => void;
-  hasCollection: (collectionId: ICollection["id"]) => boolean;
-  locations: Location[];
-  setLocations: (locations: MainState["locations"]) => void;
-  addLocation: (location: Location) => void;
-  hasLocation: (locationId: Location["id"]) => boolean;
-  removeLocation: (locationId: Location["id"]) => void;
-}
+} & ICollectionSlice &
+  ILocationSlice &
+  IParameterSlice;

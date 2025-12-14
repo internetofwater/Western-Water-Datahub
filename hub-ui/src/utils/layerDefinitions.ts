@@ -1,17 +1,24 @@
 /**
  * Copyright 2025 Lincoln Institute of Land Policy
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ExpressionSpecification, LayerSpecification } from 'mapbox-gl';
+import {
+  CircleLayerSpecification,
+  ExpressionSpecification,
+  FillLayerSpecification,
+  LineLayerSpecification,
+  RasterLayerSpecification,
+} from 'mapbox-gl';
 import { LayerType } from '@/components/Map/types';
-import { TLocation } from '@/stores/main/types';
+import { DEFAULT_FILL_OPACITY, DEFAULT_RASTER_OPACITY } from '@/features/Map/consts';
+import { Color, TLocation } from '@/stores/main/types';
 
 export const getPointLayerDefinition = (
   layerId: string,
   sourceId: string,
-  color: string
-): LayerSpecification => {
+  color: Color
+): CircleLayerSpecification => {
   return {
     id: layerId,
     type: LayerType.Circle,
@@ -28,8 +35,8 @@ export const getPointLayerDefinition = (
 export const getLineLayerDefinition = (
   layerId: string,
   sourceId: string,
-  color: string = '#000'
-): LayerSpecification => {
+  color: Color = '#000'
+): LineLayerSpecification => {
   return {
     id: layerId,
     type: LayerType.Line,
@@ -50,23 +57,36 @@ export const getLineLayerDefinition = (
 export const getFillLayerDefinition = (
   layerId: string,
   sourceId: string,
-  color: string = '#000'
-): LayerSpecification => {
+  color: Color = '#000'
+): FillLayerSpecification => {
   return {
     id: layerId,
     type: LayerType.Fill,
     source: sourceId,
     filter: ['==', ['geometry-type'], 'Polygon'],
     paint: {
-      'fill-opacity': 0.7,
+      'fill-opacity': DEFAULT_FILL_OPACITY,
       'fill-color': color,
+    },
+  };
+};
+export const getRasterLayerSpecification = (
+  layerId: string,
+  sourceId: string
+): RasterLayerSpecification => {
+  return {
+    id: layerId,
+    type: LayerType.Raster,
+    source: sourceId,
+    paint: {
+      'raster-opacity': DEFAULT_RASTER_OPACITY,
     },
   };
 };
 
 export const getSelectedColor = (
   locationIds: Array<TLocation['id']>,
-  originalColor: string = '#000'
+  originalColor: Color = '#000'
 ): ExpressionSpecification => {
   return ['case', ['in', ['id'], ['literal', locationIds]], '#FFF', originalColor];
 };

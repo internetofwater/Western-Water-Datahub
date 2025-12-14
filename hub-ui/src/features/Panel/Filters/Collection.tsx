@@ -3,31 +3,19 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from "react";
-import {
-  ComboboxData,
-  Group,
-  Loader,
-  Stack,
-  Text,
-  Title,
-  VisuallyHidden,
-} from "@mantine/core";
-import Info from "@/assets/Info";
-import Select from "@/components/Select";
-import Tooltip from "@/components/Tooltip";
-import styles from "@/features/Panel/Panel.module.css";
-import { useLoading } from "@/hooks/useLoading";
-import useMainStore from "@/stores/main";
-import { MainState } from "@/stores/main/types";
+import { useEffect, useState } from 'react';
+import { ComboboxData, Group, Loader, Stack, Text, Title, VisuallyHidden } from '@mantine/core';
+import Info from '@/assets/Info';
+import Select from '@/components/Select';
+import Tooltip from '@/components/Tooltip';
+import styles from '@/features/Panel/Panel.module.css';
+import { useLoading } from '@/hooks/useLoading';
+import useMainStore from '@/stores/main';
+import { MainState } from '@/stores/main/types';
 
 export const Collection: React.FC = () => {
-  const selectedCollections = useMainStore(
-    (state) => state.selectedCollections,
-  );
-  const setSelectedCollections = useMainStore(
-    (state) => state.setSelectedCollections,
-  );
+  const selectedCollections = useMainStore((state) => state.selectedCollections);
+  const setSelectedCollections = useMainStore((state) => state.setSelectedCollections);
 
   const provider = useMainStore((state) => state.provider);
   const category = useMainStore((state) => state.category);
@@ -46,21 +34,14 @@ export const Collection: React.FC = () => {
       .sort((a, b) => a.label.localeCompare(b.label));
 
     // TODO: update this for array
-    if (
-      !collections.some((_collection) =>
-        selectedCollections.includes(_collection.id),
-      )
-    ) {
+    if (!collections.some((_collection) => selectedCollections.includes(_collection.id))) {
       setSelectedCollections([]);
     }
 
     setCollectionOptions(collectionOptions);
   }, [collections]);
 
-  const getDescription = (
-    provider: MainState["provider"],
-    category: MainState["category"],
-  ) => {
+  const getDescription = (provider: MainState['provider'], category: MainState['category']) => {
     if (provider && category) {
       return `Showing data sources available from provider: ${provider}, about category: ${category.label}`;
     } else if (provider) {
@@ -77,8 +58,7 @@ export const Collection: React.FC = () => {
       <Text size="sm">Select a data source to add locations from.</Text>
       <br />
       <Text size="sm">
-        Locations connect scientific measurements to a geographic point on the
-        map.
+        Locations connect scientific measurements to a geographic point on the map.
       </Text>
     </>
   );
@@ -104,6 +84,7 @@ export const Collection: React.FC = () => {
         value={selectedCollections}
         onChange={setSelectedCollections}
         disabled={isFetchingCollections}
+        withAsterisk
       />
       {isFetchingCollections && (
         <Group>
