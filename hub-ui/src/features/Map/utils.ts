@@ -5,6 +5,7 @@
 
 import { ExpressionSpecification, LayerSpecification } from 'mapbox-gl';
 import { LayerType } from '@/components/Map/types';
+import { idStoreProperty } from '@/consts/collections';
 import { TLocation } from '@/stores/main/types';
 
 export const getPointLayerDefinition = (
@@ -68,5 +69,10 @@ export const getSelectedColor = (
   locationIds: Array<TLocation['id']>,
   originalColor: string = '#000'
 ): ExpressionSpecification => {
-  return ['case', ['in', ['id'], ['literal', locationIds]], '#FFF', originalColor];
+  return [
+    'case',
+    ['in', ['to-string', ['coalesce', ['get', idStoreProperty], ['id']]], ['literal', locationIds]],
+    '#FFF',
+    originalColor,
+  ];
 };

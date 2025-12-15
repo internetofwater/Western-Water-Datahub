@@ -6,19 +6,16 @@
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { Feature } from 'geojson';
-import { Box, Divider, Group, ScrollArea, Stack, Text, Tooltip } from '@mantine/core';
-import Button from '@/components/Button';
+import { Box, Button, Divider, Group, ScrollArea, Stack, Text, Tooltip } from '@mantine/core';
 import Select from '@/components/Select';
-import { Variant } from '@/components/types';
 import { Parameter } from '@/features/Popup';
 import styles from '@/features/Popup/Popup.module.css';
-import { TLocation as LocationType, TLayer } from '@/stores/main/types';
+import { TLocation as LocationType } from '@/stores/main/types';
 
 type Props = {
   location: LocationType;
   locations: LocationType[];
   feature: Feature;
-  layer: TLayer;
   datasetName: string;
   parameters: Parameter[];
   handleLocationChange: (id: string | null) => void;
@@ -26,8 +23,7 @@ type Props = {
 };
 
 export const Grid: React.FC<Props> = (props) => {
-  const { location, locations, feature, layer, parameters, handleLocationChange, handleLinkClick } =
-    props;
+  const { location, locations, feature, parameters, handleLocationChange, handleLinkClick } = props;
 
   const [times, setTimes] = useState<{ value: string; label: string }[]>([]);
   const [time, setTime] = useState<{ value: string; label: string }>();
@@ -71,15 +67,15 @@ export const Grid: React.FC<Props> = (props) => {
     }
   }, [feature]);
 
-  useEffect(() => {
-    if (times.length === 0 || times.some((timeObj) => timeObj.value === time?.value)) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (times.length === 0 || times.some((timeObj) => timeObj.value === time?.value)) {
+  //     return;
+  //   }
 
-    const index = layer.paletteDefinition?.index ?? 0;
+  //   const index = layer.paletteDefinition?.index ?? 0;
 
-    setTime(times[index]);
-  }, [times]);
+  //   setTime(times[index]);
+  // }, [times]);
 
   useEffect(() => {
     const timeIndex = times.findIndex((timeObj) => timeObj.value === time?.value);
@@ -100,14 +96,6 @@ export const Grid: React.FC<Props> = (props) => {
       setDisplayValues(displayValues);
     }
   }, [time]);
-
-  useEffect(() => {
-    if (!layer.paletteDefinition) {
-      return;
-    }
-
-    setTime(times[layer.paletteDefinition.index]);
-  }, [layer.paletteDefinition]);
 
   return (
     <>
@@ -173,7 +161,7 @@ export const Grid: React.FC<Props> = (props) => {
         </Group>
         <Box component="span" className={styles.linkButtonWrapper}>
           <Tooltip label="Open this location in the Links modal.">
-            <Button size="xs" onClick={handleLinkClick} variant={Variant.Primary}>
+            <Button size="xs" onClick={handleLinkClick}>
               Link
             </Button>
           </Tooltip>

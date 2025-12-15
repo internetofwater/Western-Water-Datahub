@@ -4303,6 +4303,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"colorbrewer@npm:^1.6.1":
+  version: 1.6.1
+  resolution: "colorbrewer@npm:1.6.1"
+  checksum: 10c0/27b8bb83f1343fa763541b16820c34a22b68b6200835dc43b5f8cc6b1270ad66c03c377a30b5819fa04c08d0930ea4e478b4779f5abcefd8f337c691e3c19189
+  languageName: node
+  linkType: hard
+
 "colord@npm:^2.9.3":
   version: 2.9.3
   resolution: "colord@npm:2.9.3"
@@ -6039,6 +6046,7 @@ __metadata:
     "@types/react-dom": "npm:^19.1.6"
     "@types/wellknown": "npm:^0"
     "@vitejs/plugin-react": "npm:^4.5.2"
+    colorbrewer: "npm:^1.6.1"
     dayjs: "npm:^1.11.13"
     echarts: "npm:^5.6.0"
     echarts-for-react: "npm:^3.0.2"

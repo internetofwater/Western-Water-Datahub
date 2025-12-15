@@ -5,23 +5,20 @@
 
 import { useEffect, useState } from 'react';
 import { Feature } from 'geojson';
-import { Box, Group, Tooltip } from '@mantine/core';
-import Button from '@/components/Button';
+import { Box, Button, Group, Tooltip } from '@mantine/core';
 import Select from '@/components/Select';
-import { Variant } from '@/components/types';
 import { StringIdentifierCollections } from '@/consts/collections';
 import { Parameter } from '@/features/Popup';
 import { Chart } from '@/features/Popup/Chart';
 import styles from '@/features/Popup/Popup.module.css';
-import { Table } from '@/features/TopBar/Links/Table';
-import { Layer, Location as LocationType } from '@/stores/main/types';
+import { TLocation } from '@/stores/main/types';
 import { getIdStore } from '@/utils/getIdStore';
+import { Table } from '../Table';
 
 type Props = {
-  location: LocationType;
-  locations: LocationType[];
+  location: TLocation;
+  locations: TLocation[];
   feature: Feature;
-  layer: Layer;
   datasetName: string;
   parameters: Parameter[];
   handleLocationChange: (id: string | null) => void;
@@ -33,7 +30,6 @@ export const Location: React.FC<Props> = (props) => {
     location,
     locations,
     feature,
-    layer,
     datasetName,
     parameters,
     handleLocationChange,
@@ -56,19 +52,18 @@ export const Location: React.FC<Props> = (props) => {
     } else {
       setId(location.id);
     }
-  }, [layer, location, feature]);
+  }, [location, feature]);
 
   return (
     <>
       <Box style={{ display: tab === 'chart' ? 'block' : 'none' }}>
-        {layer && datasetName.length > 0 && parameters.length > 0 && id && (
+        {datasetName.length > 0 && parameters.length > 0 && id && (
           <Chart
             collectionId={location.collectionId}
             locationId={id}
             title={datasetName}
-            parameters={layer.parameters}
-            from={layer.from}
-            to={layer.to}
+            from={null}
+            to={null}
           />
         )}
       </Box>
@@ -94,39 +89,31 @@ export const Location: React.FC<Props> = (props) => {
             />
           )}
           {parameters.length > 0 ? (
-            <Button
-              size="xs"
-              onClick={() => setTab('chart')}
-              variant={tab === 'chart' ? Variant.Selected : Variant.Secondary}
-            >
+            <Button size="xs" onClick={() => setTab('chart')}>
               Chart
             </Button>
           ) : (
             <Tooltip label="Select one or more parameters in the layer controls to enable charts.">
-              <Button size="xs" variant={Variant.Secondary} disabled data-disabled>
+              <Button size="xs" disabled data-disabled>
                 Chart
               </Button>
             </Tooltip>
           )}
 
-          <Button
-            size="xs"
-            onClick={() => setTab('table')}
-            variant={tab === 'table' ? Variant.Selected : Variant.Secondary}
-          >
+          <Button size="xs" onClick={() => setTab('table')}>
             Properties
           </Button>
         </Group>
         <Box component="span" className={styles.linkButtonWrapper}>
           {parameters.length > 0 ? (
             <Tooltip label="Open this location in the Links modal.">
-              <Button size="xs" onClick={handleLinkClick} variant={Variant.Primary}>
+              <Button size="xs" onClick={handleLinkClick}>
                 Link
               </Button>
             </Tooltip>
           ) : (
             <Tooltip label="Select one or more parameters in the layer controls to access links modal.">
-              <Button size="xs" variant={Variant.Primary} disabled data-disabled>
+              <Button size="xs" disabled data-disabled>
                 Link
               </Button>
             </Tooltip>

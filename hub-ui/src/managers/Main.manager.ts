@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import dayjs from 'dayjs';
 import * as turf from '@turf/turf';
 import {
   BBox,
@@ -20,16 +21,19 @@ import {
   Map,
   MapMouseEvent,
   Popup,
+  RasterTileSource,
 } from 'mapbox-gl';
 import { stringify, GeoJSONFeature as WellknownFeature } from 'wellknown';
 import { StoreApi, UseBoundStore } from 'zustand';
 import {
+  CollectionRestrictions,
   idStoreProperty,
   ItemsOnlyCollections,
+  RestrictionType,
   StringIdentifierCollections,
 } from '@/consts/collections';
 import { getDefaultGeoJSON } from '@/consts/geojson';
-import { GeographyFilterSources } from '@/features/Map/consts';
+import { DEFAULT_BBOX, GeographyFilterSources } from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/sources';
 import {
   getFillLayerDefinition,
@@ -41,10 +45,14 @@ import { ICollection } from '@/services/edr.service';
 import geoconnexService from '@/services/init/geoconnex.init';
 import wwdhService from '@/services/init/wwdh.init';
 import { MainState, TLocation } from '@/stores/main/types';
-import { CollectionType, getCollectionType } from '@/utils/collection';
+import { CollectionType, getCollectionType, isEdrGrid } from '@/utils/collection';
+import { createDynamicStepExpression } from '@/utils/colors';
+import { PaletteDefinition } from '@/utils/colors/types';
 import { getIdStore } from '@/utils/getIdStore';
 import { getRandomHexColor } from '@/utils/hexColor';
-import { ExtendedFeatureCollection } from './types';
+import { getRasterLayerSpecification } from '@/utils/layerDefinitions';
+import { getNextLink } from './Main.utils';
+import { ExtendedFeatureCollection, SourceOptions, StyleOptions } from './types';
 
 /**
  *
@@ -300,7 +308,7 @@ class MainManager {
    * @function
    */
   public getSourceId(collectionId: ICollection['id']): string {
-    return `${collectionId}-source`;
+    return `user-${collectionId}-source`;
   }
 
   /**
@@ -311,11 +319,13 @@ class MainManager {
     pointLayerId: string;
     fillLayerId: string;
     lineLayerId: string;
+    rasterLayerId: string;
   } {
     return {
-      pointLayerId: `${collectionId}-edr-locations-point`,
-      fillLayerId: `${collectionId}-edr-locations-fill`,
-      lineLayerId: `${collectionId}-edr-locations-line`,
+      pointLayerId: `user-${collectionId}-point`,
+      fillLayerId: `user-${collectionId}-fill`,
+      lineLayerId: `user-${collectionId}-line`,
+      rasterLayerId: `user-${collectionId}-raster`,
     };
   }
 
@@ -429,10 +439,13 @@ class MainManager {
       const features = this.map!.queryRenderedFeatures(e.point, {
         layers: [mapLayerId],
       });
+      console.log('click?', features, mapLayerId);
+
       if (features.length > 0) {
         // Hack, use the feature id to track this location, fetch id store in consuming features
         const uniqueFeatures = this.getUniqueIds(features, collectionId);
 
+        console.log('CLICK', uniqueFeatures);
         uniqueFeatures.forEach((locationId) => {
           if (this.hasLocation(locationId)) {
             this.store.getState().removeLocation(locationId);
@@ -498,35 +511,230 @@ class MainManager {
     }
   }
 
+  private clearInvalidLocations = (
+    collectionId: ICollection['id'],
+    featureCollection: FeatureCollection<Geometry>
+  ) => {
+    const datasource = this.getCollection(collectionId);
+
+    if (datasource && isEdrGrid(datasource)) {
+      this.store.getState().setLocations([]);
+    } else {
+      const { locations, removeLocation } = this.store.getState();
+
+      const layerLocations = locations.filter((location) => location.collectionId === collectionId);
+
+      const validIds = new Set(featureCollection.features.map((feature) => String(feature.id)));
+      const invalidLocations = layerLocations.filter((location) => !validIds.has(location.id));
+
+      if (invalidLocations.length === 0) {
+        return;
+      }
+
+      invalidLocations.forEach((location) => removeLocation(location.id));
+    }
+  };
+
+  private checkParameterRestrictions(collectionId: ICollection['id']) {
+    const restrictions = CollectionRestrictions[collectionId];
+    if (restrictions && restrictions.length > 0) {
+      const parameterRestriction = restrictions.find(
+        (restriction) => restriction.type === RestrictionType.Parameter
+      );
+
+      if (parameterRestriction) {
+        const parameters =
+          this.store
+            .getState()
+            .parameters.find((parameter) => parameter.collectionId === collectionId)?.parameters ??
+          [];
+
+        const datasource = this.getCollection(collectionId);
+        const hasNoParameters = parameters.length === 0;
+
+        if (hasNoParameters || parameters.length > parameterRestriction.count) {
+          let message = `Dataset: ${datasource?.title}, requires at least one and up to ${parameterRestriction.count} parameter${parameters.length - parameterRestriction.count > 1 ? 's' : ''} to be fetched at one time.`;
+          if (hasNoParameters) {
+            message += ' Please select at least one parameter.';
+          } else {
+            message += ` Please remove ${parameters.length - parameterRestriction.count} parameter${parameters.length - parameterRestriction.count > 1 ? 's' : ''}`;
+          }
+          throw new Error(message);
+        }
+      }
+    }
+  }
+
+  private checkDateRestrictions(
+    collectionId: ICollection['id'],
+    from: string | null,
+    to: string | null
+  ) {
+    const restrictions = CollectionRestrictions[collectionId];
+
+    if (restrictions && restrictions.length > 0) {
+      const dateRestriction = restrictions.find(
+        (restriction) => restriction.type === RestrictionType.Day
+      );
+
+      if (dateRestriction && dateRestriction.days) {
+        const datasource = this.getCollection(collectionId);
+        if (!from || !to) {
+          throw new Error(
+            `Dataset: ${datasource?.title}, requires a bounded date range of no longer than ${dateRestriction.days} days.`
+          );
+        }
+        const diff = dayjs(to).diff(dayjs(from), 'days');
+
+        if (diff > dateRestriction.days) {
+          throw new Error(
+            `Dataset: ${datasource?.title}, requires a bounded date range of no longer than ${dateRestriction.days}. Current date range is ${diff - dateRestriction.days} days too long.`
+          );
+        }
+      }
+    }
+  }
+
+  private checkCollectionBBoxRestrictions(collectionId: ICollection['id'], area: number) {
+    const restrictions = CollectionRestrictions[collectionId];
+
+    if (restrictions && restrictions.length > 0) {
+      const sizeRestriction = restrictions.find(
+        (restriction) => restriction.type === RestrictionType.Size
+      );
+
+      if (sizeRestriction && sizeRestriction.size && area > sizeRestriction.size) {
+        const datasource = this.getCollection(collectionId);
+        const factor = area / sizeRestriction.size;
+        throw new Error(
+          `Target area ${factor.toFixed(2)}x too large for instance of dataset: ${datasource?.title}.\n ${sizeRestriction.message}`
+        );
+      }
+    }
+  }
+
+  private validateBBox(bbox: BBox, collectionId: ICollection['id']) {
+    // TODO: update
+    const userBBox = turf.bboxPolygon(bbox);
+    const AZBBox = turf.bboxPolygon(DEFAULT_BBOX);
+
+    const userBBoxArea = turf.area(userBBox);
+    const AZBBoxArea = turf.area(AZBBox);
+
+    // Valid bbox should touch the AZ bbox, not contain it fully, and be smaller than the size limit
+    // Certain collections have additional size restrictions due to large datasets
+    // Throw errors to stop process and provide feedback to user
+    this.checkCollectionBBoxRestrictions(collectionId, userBBoxArea);
+
+    const intersectsAZ = turf.booleanIntersects(userBBox, AZBBox);
+    const containsAZ = turf.booleanContains(userBBox, AZBBox);
+    const smaller = userBBoxArea <= AZBBoxArea;
+
+    if (!intersectsAZ) {
+      throw new Error('Target area not connected to Arizona.');
+    }
+    if (containsAZ) {
+      throw new Error('Target area can not contain Arizona.');
+    }
+    if (!smaller) {
+      throw new Error('Target area must be smaller than Arizona.');
+    }
+  }
+
+  private getBBox(collectionId: ICollection['id']): BBox {
+    // TODO: update
+    const drawnShapes: Feature[] = [];
+
+    if (drawnShapes.length === 0) {
+      this.checkCollectionBBoxRestrictions(collectionId, turf.area(turf.bboxPolygon(DEFAULT_BBOX)));
+      return DEFAULT_BBOX;
+    }
+
+    const featureCollection = turf.featureCollection(drawnShapes);
+
+    const userBBox = turf.bbox(featureCollection);
+
+    this.validateBBox(userBBox, collectionId);
+
+    return userBBox;
+  }
+
+  public async styleLayer(
+    collectionId: ICollection['id'],
+    paletteDefinition: PaletteDefinition,
+    { features, signal }: StyleOptions<{ [paletteDefinition.parameter]: number }>
+  ) {
+    if (!this.map) {
+      return;
+    }
+
+    const defaultedfeatures =
+      features ??
+      (
+        await this.getFeatures<Geometry, { [paletteDefinition.parameter]: number }>(
+          collectionId,
+          signal
+        )
+      ).features;
+
+    const { parameter, count, palette, index } = paletteDefinition;
+    const expression = createDynamicStepExpression(
+      defaultedfeatures,
+      parameter,
+      palette,
+      count,
+      index
+    );
+
+    const { pointLayerId, fillLayerId, lineLayerId } = this.getLocationsLayerIds(collectionId);
+
+    if (this.map.getLayer(pointLayerId)) {
+      this.map.setPaintProperty(pointLayerId, 'circle-color', expression);
+    }
+    if (this.map.getLayer(fillLayerId)) {
+      this.map.setPaintProperty(fillLayerId, 'fill-color', expression);
+    }
+    if (this.map.getLayer(lineLayerId)) {
+      this.map.setPaintProperty(lineLayerId, 'line-color', expression);
+    }
+
+    return expression;
+  }
+
   /**
    *
    * @function
    */
-  private async addLocationLayer(collectionId: ICollection['id'], sourceId: string): Promise<void> {
+  private async addStandardLayer(collectionId: ICollection['id']): Promise<void> {
     const geographyFilter = this.store.getState().geographyFilter;
+    console.log('In func', collectionId);
 
     const { pointLayerId, fillLayerId, lineLayerId } = this.getLocationsLayerIds(collectionId);
     if (this.map) {
       const color = getRandomHexColor();
+      console.log('1', pointLayerId, fillLayerId, lineLayerId);
       if (
         !this.map.getLayer(pointLayerId) &&
         !this.map.getLayer(lineLayerId) &&
         !this.map.getLayer(pointLayerId)
       ) {
         const collection = this.getCollection(collectionId);
+        console.log('2', collection);
         if (collection) {
+          const sourceId = this.getSourceId(collectionId);
           const collectionType = getCollectionType(collection);
 
           const { upperLabel, lowerLabel } = this.getLabels(collectionType);
           this.map.addLayer(getFillLayerDefinition(fillLayerId, sourceId, color));
           this.map.addLayer(getLineLayerDefinition(lineLayerId, sourceId, color));
           this.map.addLayer(getPointLayerDefinition(pointLayerId, sourceId, color));
+          console.log('3', collection);
 
-          this.map.on('click', pointLayerId, this.getClickEventHandler(fillLayerId, collectionId));
+          this.map.on('click', pointLayerId, this.getClickEventHandler(pointLayerId, collectionId));
 
           this.map.on('click', fillLayerId, this.getClickEventHandler(fillLayerId, collectionId));
 
-          this.map.on('click', lineLayerId, this.getClickEventHandler(fillLayerId, collectionId));
+          this.map.on('click', lineLayerId, this.getClickEventHandler(lineLayerId, collectionId));
 
           this.map.on(
             'mouseenter',
@@ -553,18 +761,209 @@ class MainManager {
     }
   }
 
+  private async addData(collectionId: ICollection['id'], options?: SourceOptions) {
+    const datasource = this.getCollection(collectionId);
+    const sourceId = this.getSourceId(collectionId);
+
+    if (datasource) {
+      const collectionType = getCollectionType(datasource);
+
+      if (
+        [CollectionType.EDR, CollectionType.Features, CollectionType.EDRGrid].includes(
+          collectionType
+        )
+      ) {
+        await this.addGeoJsonData(collectionId, options);
+      }
+    }
+
+    return sourceId;
+  }
+
+  private addSource(collectionId: ICollection['id']) {
+    const datasource = this.getCollection(collectionId);
+    const sourceId = this.getSourceId(collectionId);
+
+    if (datasource) {
+      const collectionType = getCollectionType(datasource);
+
+      if (
+        [CollectionType.EDR, CollectionType.Features, CollectionType.EDRGrid].includes(
+          collectionType
+        )
+      ) {
+        this.addGeoJsonSource(collectionId);
+      } else if (collectionType === CollectionType.Map) {
+        this.addRasterSource(datasource);
+      }
+    }
+
+    return sourceId;
+  }
+
+  /**
+   * * Adds (or updates) a GeoJSON source and pages through all results,
+   * streaming each page into the source as it arrives.
+   *
+   * @function
+   */
+  private async addGeoJsonData(
+    collectionId: ICollection['id'],
+    options?: SourceOptions
+  ): Promise<string> {
+    const sourceId = this.getSourceId(collectionId);
+
+    if (!this.map) {
+      return sourceId;
+    }
+
+    const source = this.map.getSource(sourceId) as GeoJSONSource | undefined;
+
+    if (options?.noFetch || !source) {
+      return sourceId;
+    }
+
+    const bbox = this.getBBox(collectionId);
+    const from = options?.from ?? null;
+    const to = options?.to ?? null;
+    const parameters =
+      options?.parameterNames ??
+      this.store.getState().parameters.find((parameter) => parameter.collectionId === collectionId)
+        ?.parameters ??
+      [];
+
+    this.checkDateRestrictions(collectionId, from, to);
+
+    this.checkParameterRestrictions(collectionId);
+
+    let aggregate = getDefaultGeoJSON();
+    let next: string | undefined;
+
+    do {
+      if (options?.signal?.aborted) {
+        break;
+      }
+
+      const page = await this.fetchData(
+        collectionId,
+        bbox,
+        from,
+        to,
+        parameters,
+        options?.signal,
+        next
+      );
+
+      let filtered = this.filterLocations(page);
+      this.clearInvalidLocations(collectionId, filtered);
+      if (Array.isArray(filtered.features)) {
+        aggregate.features.push(...filtered.features);
+        source.setData(aggregate);
+      }
+
+      (filtered as any) = undefined;
+      next = getNextLink(page);
+    } while (next);
+
+    // TODO: Add this after figuring out pattern
+    // if (layer.paletteDefinition) {
+    //   const features = aggregate.features as Feature<
+    //     Geometry,
+    //     { [layer.paletteDefinition.parameter]: number }
+    //   >[];
+    //   this.styleLayer(layer, layer.paletteDefinition, { features, signal: options?.signal });
+    // }
+
+    (aggregate as any) = undefined;
+
+    return sourceId;
+  }
+
   /**
    *
    * @function
    */
-  public async getLocations(): Promise<void> {
+  /**
+   * Adds (or updates) a GeoJSON source and pages through all results,
+   * streaming each page into the source as it arrives.
+   */
+  private addGeoJsonSource(collectionId: ICollection['id']): string {
+    const sourceId = this.getSourceId(collectionId);
+
+    if (!this.map) {
+      return sourceId;
+    }
+
+    const source = this.map.getSource(sourceId) as GeoJSONSource | undefined;
+    if (!source) {
+      this.map.addSource(sourceId, {
+        type: 'geojson',
+        data: getDefaultGeoJSON(),
+      });
+    }
+
+    return sourceId;
+  }
+
+  private addRasterSource(collection: ICollection) {
+    const link = collection.links.find(
+      (link) => link.rel.includes('map') && link.type === 'image/png'
+    );
+    const sourceId = this.getSourceId(collection.id);
+    if (link && this.map) {
+      const source = this.map.getSource(sourceId) as RasterTileSource;
+
+      if (!source) {
+        this.map.addSource(sourceId, {
+          type: 'raster',
+          bounds: DEFAULT_BBOX,
+          tiles: [
+            `${link.href}&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}`,
+          ],
+          tileSize: 256,
+          minzoom: 4,
+        });
+      }
+    }
+  }
+
+  private addLayer(collectionId: ICollection['id']): void {
+    const datasource = this.getCollection(collectionId);
+
+    if (datasource) {
+      const collectionType = getCollectionType(datasource);
+
+      if (
+        [CollectionType.EDR, CollectionType.Features, CollectionType.EDRGrid].includes(
+          collectionType
+        )
+      ) {
+        this.addStandardLayer(collectionId);
+      } else if (collectionType === CollectionType.Map) {
+        this.addRasterLayer(collectionId);
+      }
+    }
+  }
+
+  private addRasterLayer(collectionId: ICollection['id']): void {
+    const { rasterLayerId } = this.getLocationsLayerIds(collectionId);
+
+    const sourceId = this.getSourceId(collectionId);
+
+    if (this.map && !this.map.getLayer(rasterLayerId)) {
+      this.map.addLayer(getRasterLayerSpecification(rasterLayerId, sourceId));
+    }
+  }
+
+  /**
+   *
+   * @function
+   */
+  public async createLayer(): Promise<void> {
     // Specific user collection choice
     const selectedCollections = this.store.getState().selectedCollections;
     // All collections for selected filters
     const collections = this.store.getState().collections;
-    const parameters = this.store.getState().parameters;
-
-    console.log('HERE', parameters);
 
     const filteredCollections = collections.filter(
       (collection) =>
@@ -579,8 +978,14 @@ class MainManager {
         chunk.map(async (collection) => {
           const collectionId = collection.id;
 
-          const sourceId = await this.addLocationSource(collectionId);
-          this.addLocationLayer(collectionId, sourceId);
+          this.addSource(collectionId);
+          this.addLayer(collectionId);
+          await this.addData(collectionId, {
+            // TODO: determine if these need to be included
+            // filterFeatures: drawnShapes,
+            // signal,
+            // noFetch: collectionType === CollectionType.EDRGrid && layer.parameters.length === 0,
+          });
         })
       );
     }
@@ -701,6 +1106,46 @@ class MainManager {
       collectionId,
       feature,
     });
+  }
+
+  /**
+   *
+   * @function
+   */
+  public async getFeatures<
+    T extends Geometry = Geometry,
+    V extends GeoJsonProperties = GeoJsonProperties,
+  >(collectionId: ICollection['id'], signal?: AbortSignal): Promise<FeatureCollection<T, V>> {
+    try {
+      const sourceId = this.getSourceId(collectionId);
+
+      const source = this.map?.getSource(sourceId) as GeoJSONSource;
+
+      const data = source._data;
+      if (typeof data !== 'string') {
+        const featureCollection = turf.featureCollection<T, V>(
+          (data as FeatureCollection<T, V>).features as Feature<T, V>[]
+        );
+
+        return featureCollection;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    const bbox = this.getBBox(collectionId);
+
+    // TODO: update to remove extra args
+    const data = await this.fetchData<T, V>(
+      collectionId,
+      bbox,
+      undefined,
+      undefined,
+      undefined,
+      signal
+    );
+
+    return data;
   }
 
   /**
