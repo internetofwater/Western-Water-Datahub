@@ -34,9 +34,23 @@
   width: 410px;
 }
 
+.table {
+  table-layout: fixed;
+  width: 100%;
+}
+
 .tableWrapper {
   max-height: 200px;
   overflow-y: scroll;
+}
+
+.propertyColumn {
+  width: fit-content;
+}
+
+.valueColumn {
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .linkButtonWrapper {

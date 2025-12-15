@@ -3,13 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { v6 } from "uuid";
-import { StoreApi, UseBoundStore } from "zustand";
-import {
-  Notification,
-  NotificationType,
-  SessionState,
-} from "@/stores/session/types";
+import { v6 } from 'uuid';
+import { StoreApi, UseBoundStore } from 'zustand';
+import { ENotificationType, SessionState, TNotification } from '@/stores/session/types';
 
 type Timer = {
   timeoutId: ReturnType<typeof setTimeout>;
@@ -26,26 +22,23 @@ class NotificationManager {
     this.timers = new Map<string, Timer>();
   }
 
-  private createUUID(): Notification["id"] {
+  private createUUID(): TNotification['id'] {
     return v6();
   }
 
-  private get(id: Notification["id"]): Timer | undefined {
+  private get(id: TNotification['id']): Timer | undefined {
     return this.timers.get(id);
   }
 
-  private add(id: Notification["id"], timer: Timer) {
+  private add(id: TNotification['id'], timer: Timer) {
     this.timers.set(id, timer);
   }
 
-  private remove(id: Notification["id"]) {
+  private remove(id: TNotification['id']) {
     this.timers.delete(id);
   }
 
-  private startTimer(
-    id: Notification["id"],
-    duration: number,
-  ): ReturnType<typeof setTimeout> {
+  private startTimer(id: TNotification['id'], duration: number): ReturnType<typeof setTimeout> {
     return setTimeout(() => {
       this.store.getState().removeNotification(id);
       this.remove(id);
@@ -54,9 +47,9 @@ class NotificationManager {
 
   show(
     message: string,
-    type: NotificationType = NotificationType.Info,
-    duration: number = 3000,
-  ): Notification["id"] {
+    type: ENotificationType = ENotificationType.Info,
+    duration: number = 3000
+  ): TNotification['id'] {
     const id = this.createUUID();
 
     this.store.getState().addNotification({

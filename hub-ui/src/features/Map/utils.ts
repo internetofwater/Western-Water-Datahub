@@ -6,12 +6,13 @@
 import { ExpressionSpecification, LayerSpecification } from 'mapbox-gl';
 import { LayerType } from '@/components/Map/types';
 import { idStoreProperty } from '@/consts/collections';
-import { TLocation } from '@/stores/main/types';
+import { TLayer, TLocation } from '@/stores/main/types';
+import { DEFAULT_FILL_OPACITY } from './consts';
 
 export const getPointLayerDefinition = (
   layerId: string,
   sourceId: string,
-  color: string
+  color: TLayer['color']
 ): LayerSpecification => {
   return {
     id: layerId,
@@ -29,7 +30,7 @@ export const getPointLayerDefinition = (
 export const getLineLayerDefinition = (
   layerId: string,
   sourceId: string,
-  color: string = '#000'
+  color: TLayer['color'] = '#000'
 ): LayerSpecification => {
   return {
     id: layerId,
@@ -51,7 +52,7 @@ export const getLineLayerDefinition = (
 export const getFillLayerDefinition = (
   layerId: string,
   sourceId: string,
-  color: string = '#000'
+  color: TLayer['color'] = '#000'
 ): LayerSpecification => {
   return {
     id: layerId,
@@ -59,7 +60,7 @@ export const getFillLayerDefinition = (
     source: sourceId,
     filter: ['==', ['geometry-type'], 'Polygon'],
     paint: {
-      'fill-opacity': 0.7,
+      'fill-opacity': DEFAULT_FILL_OPACITY,
       'fill-color': color,
     },
   };
@@ -67,7 +68,7 @@ export const getFillLayerDefinition = (
 
 export const getSelectedColor = (
   locationIds: Array<TLocation['id']>,
-  originalColor: string = '#000'
+  originalColor: TLayer['color'] = '#000'
 ): ExpressionSpecification => {
   return [
     'case',

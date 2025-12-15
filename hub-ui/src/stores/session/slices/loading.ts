@@ -4,11 +4,11 @@
  */
 
 import { StateCreator } from 'zustand';
-import { Loading, SessionState } from '@/stores/session/types';
+import { SessionState, TLoading } from '@/stores/session/types';
 
 export interface LoadingSlice {
-  loadingInstances: Loading[];
-  addLoadingInstance: (loadingInstance: Loading) => void;
+  loadingInstances: TLoading[];
+  addLoadingInstance: (loadingInstance: TLoading) => void;
   removeLoadingInstance: (id: string) => void;
   hasLoadingInstance: (text: string) => boolean;
 }

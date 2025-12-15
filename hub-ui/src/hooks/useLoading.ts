@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from "react";
-import loadingManager from "@/managers/Loading.init";
-import useSessionStore from "@/stores/session";
-import { LoadingType } from "@/stores/session/types";
+import { useEffect, useState } from 'react';
+import loadingManager from '@/managers/Loading.init';
+import useSessionStore from '@/stores/session';
+import { ELoadingType } from '@/stores/session/types';
 
 export const useLoading = () => {
   const loadingInstances = useSessionStore((state) => state.loadingInstances);
@@ -16,11 +16,9 @@ export const useLoading = () => {
   const [isFetchingLocations, setIsFetchingLocations] = useState(false);
 
   useEffect(() => {
-    setIsFetchingLocations(loadingManager.has({ type: LoadingType.Locations }));
-    setIsFetchingCollections(
-      loadingManager.has({ type: LoadingType.Collections }),
-    );
-    setIsLoadingGeography(loadingManager.has({ type: LoadingType.Geography }));
+    setIsFetchingLocations(loadingManager.has({ type: ELoadingType.Locations }));
+    setIsFetchingCollections(loadingManager.has({ type: ELoadingType.Collections }));
+    setIsLoadingGeography(loadingManager.has({ type: ELoadingType.Geography }));
   }, [loadingInstances]);
 
   return {

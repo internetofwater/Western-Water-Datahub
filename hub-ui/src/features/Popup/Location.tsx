@@ -61,6 +61,7 @@ export const Location: React.FC<Props> = (props) => {
           <Chart
             collectionId={location.collectionId}
             locationId={id}
+            parameters={parameters.map((parameter) => parameter.id)}
             title={datasetName}
             from={null}
             to={null}

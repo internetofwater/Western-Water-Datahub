@@ -9,7 +9,7 @@ import { LoadingSlice } from './slices/loading';
 import { NotificationsSlice } from './slices/notifications';
 import { WarningsSlice } from './slices/warning';
 
-export enum NotificationType {
+export enum ENotificationType {
   Success = 'success',
   Error = 'error',
   Info = 'info',
@@ -25,40 +25,48 @@ export enum NotificationType {
  *
  * @enum
  */
-export enum LoadingType {
+export enum ELoadingType {
   Locations = 'locations',
   Collections = 'collections',
   Geography = 'geography',
   Data = 'data',
 }
 
-export enum Tool {
+export enum ETool {
   Legend = 'legend',
 }
 
-export enum Modal {
+export enum EModal {
   Download = 'download',
   Help = 'help',
 }
 
-export enum HelpTab {
+export enum EHelpTab {
   About = 'about',
   FAQ = 'FAQ',
   Glossary = 'glossary',
 }
 
-export type Notification = {
+export type TNotification = {
   id: string;
   message: string;
-  type: NotificationType;
+  type: ENotificationType;
   visible: boolean;
 };
 
-export type Loading = {
+export type TLoading = {
   id: string;
-  type: LoadingType;
+  type: ELoadingType;
   message: string;
 };
+
+export enum EOverlay {
+  Legend = 'legend',
+  Info = 'info',
+  Warning = 'warning',
+  Download = 'download',
+  Date = 'date',
+}
 
 export type LegendEntry = {
   collectionId: string;
@@ -74,15 +82,17 @@ export type Warning = {
 export type SessionState = {
   legendEntries: LegendEntry[];
   setLegendEntries: (legendEntries: SessionState['legendEntries']) => void;
-  openModal: Modal | null;
+  openModal: EModal | null;
   setOpenModal: (openModal: SessionState['openModal']) => void;
+  overlay: EOverlay | null;
+  setOverlay: (overlay: SessionState['overlay']) => void;
   tools: {
-    [Tool.Legend]: boolean;
+    [ETool.Legend]: boolean;
   };
-  setOpenTools: (tool: Tool, open: boolean) => void;
+  setOpenTools: (tool: ETool, open: boolean) => void;
   linkLocation: TLocation | null;
   setLinkLocation: (linkLocation: SessionState['linkLocation']) => void;
-  helpTab: HelpTab;
+  helpTab: EHelpTab;
   setHelpTab: (helpTab: SessionState['helpTab']) => void;
 } & LoadingSlice &
   NotificationsSlice &

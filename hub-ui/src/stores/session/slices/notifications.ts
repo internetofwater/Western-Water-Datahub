@@ -4,11 +4,11 @@
  */
 
 import { StateCreator } from 'zustand';
-import { Notification, SessionState } from '@/stores/session/types';
+import { SessionState, TNotification } from '@/stores/session/types';
 
 export interface NotificationsSlice {
-  notifications: Notification[];
-  addNotification: (notification: Notification) => void;
+  notifications: TNotification[];
+  addNotification: (notification: TNotification) => void;
   removeNotification: (id: string) => void;
 }
 

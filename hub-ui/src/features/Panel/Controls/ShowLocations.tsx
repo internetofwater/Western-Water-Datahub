@@ -12,7 +12,7 @@ import mainManager from '@/managers/Main.init';
 import notificationManager from '@/managers/Notification.init';
 import useMainStore from '@/stores/main';
 import useSessionStore from '@/stores/session';
-import { LoadingType, NotificationType, Tool } from '@/stores/session/types';
+import { ELoadingType, ENotificationType, ETool } from '@/stores/session/types';
 
 export const ShowLocations: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
@@ -24,19 +24,19 @@ export const ShowLocations: React.FC = () => {
   const isFirstTime = useRef(true);
 
   const addData = async () => {
-    const loadingInstance = loadingManager.add('Fetching Locations', LoadingType.Locations);
+    const loadingInstance = loadingManager.add('Fetching Locations', ELoadingType.Locations);
     try {
       await mainManager.createLayer();
       loadingManager.remove(loadingInstance);
       if (isFirstTime.current) {
         isFirstTime.current = false;
-        setOpenTools(Tool.Legend, true);
+        setOpenTools(ETool.Legend, true);
       }
-      notificationManager.show('Done fetching data', NotificationType.Success);
+      notificationManager.show('Done fetching data', ENotificationType.Success);
     } catch (error) {
       if ((error as Error)?.message) {
         const _error = error as Error;
-        notificationManager.show(`Error: ${_error.message}`, NotificationType.Error, 10000);
+        notificationManager.show(`Error: ${_error.message}`, ENotificationType.Error, 10000);
       }
       loadingManager.remove(loadingInstance);
     }

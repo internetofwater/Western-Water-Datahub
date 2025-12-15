@@ -14,9 +14,8 @@ import mainManager from '@/managers/Main.init';
 import notificationManager from '@/managers/Notification.init';
 import { CoverageCollection, CoverageJSON, ICollection } from '@/services/edr.service';
 import wwdhService from '@/services/init/wwdh.init';
-import useMainStore from '@/stores/main';
 import { TLocation } from '@/stores/main/types';
-import { LoadingType, NotificationType } from '@/stores/session/types';
+import { ELoadingType, ENotificationType } from '@/stores/session/types';
 import { isCoverageCollection } from '@/utils/isTypeObject';
 import { getLabel } from '@/utils/parameters';
 import { getDatetime } from '@/utils/url';
@@ -27,6 +26,7 @@ type Props = {
   collectionId: ICollection['id'];
   locationId: TLocation['id'];
   title: string;
+  parameters: string[];
   from: string | null;
   to: string | null;
   className?: string;
@@ -34,9 +34,15 @@ type Props = {
 };
 
 export const Chart: React.FC<Props> = (props) => {
-  const { collectionId, locationId, from, to, className = '', onData = () => null } = props;
-
-  const allParameters = useMainStore((state) => state.parameters);
+  const {
+    collectionId,
+    locationId,
+    parameters,
+    from,
+    to,
+    className = '',
+    onData = () => null,
+  } = props;
 
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
@@ -47,12 +53,11 @@ export const Chart: React.FC<Props> = (props) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [labels, setLabels] = useState<Array<{ parameter: string; label: string }>>([]);
-  const [parameters, setParameters] = useState<string[]>([]);
 
   const fetchData = async () => {
     const loadingInstance = loadingManager.add(
       `Fetching chart data for location: ${locationId}, of collection: ${collectionId}`,
-      LoadingType.Data
+      ELoadingType.Data
     );
     setIsLoading(true);
     try {
@@ -84,7 +89,7 @@ export const Chart: React.FC<Props> = (props) => {
         console.log('Fetch request canceled');
       } else if ((error as Error)?.message) {
         const _error = error as Error;
-        notificationManager.show(`Error: ${_error.message}`, NotificationType.Error, 10000);
+        notificationManager.show(`Error: ${_error.message}`, ENotificationType.Error, 10000);
         setError(_error.message);
       }
 
@@ -115,13 +120,6 @@ export const Chart: React.FC<Props> = (props) => {
       }
     };
   }, [locationId, from, to]);
-
-  useEffect(() => {
-    const parameters =
-      allParameters.find((parameter) => parameter.collectionId === collectionId)?.parameters ?? [];
-
-    setParameters(parameters);
-  }, [collectionId, allParameters]);
 
   useEffect(() => {
     const collection = mainManager.getCollection(collectionId);

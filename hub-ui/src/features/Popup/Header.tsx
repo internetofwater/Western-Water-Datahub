@@ -4,12 +4,12 @@
  */
 
 import { Box, Text } from '@mantine/core';
-import { TLayer, TLocation } from '@/stores/main/types';
+import { TLocation } from '@/stores/main/types';
 import { CollectionType } from '@/utils/collection';
 
 type Props = {
   id: TLocation['id'];
-  name: TLayer['name'];
+  name: string;
   collectionType: CollectionType;
 };
 

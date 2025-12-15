@@ -7,7 +7,7 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { createLoadingSlice } from '@/stores/session/slices/loading';
 import { createNotificationsSlice } from '@/stores/session/slices/notifications';
-import { HelpTab, SessionState, Tool } from '@/stores/session/types';
+import { EHelpTab, ETool, SessionState } from '@/stores/session/types';
 import { createWarningsSlice } from './slices/warning';
 
 const useSessionStore = create<SessionState>()(
@@ -16,8 +16,10 @@ const useSessionStore = create<SessionState>()(
     setLegendEntries: (legendEntries) => set({ legendEntries }),
     openModal: null,
     setOpenModal: (openModal) => set({ openModal }),
+    overlay: null,
+    setOverlay: (overlay) => set({ overlay }),
     tools: {
-      [Tool.Legend]: false,
+      [ETool.Legend]: false,
     },
     setOpenTools: (tool, open) =>
       set((state) => ({
@@ -28,7 +30,7 @@ const useSessionStore = create<SessionState>()(
       })),
     linkLocation: null,
     setLinkLocation: (linkLocation) => set({ linkLocation }),
-    helpTab: HelpTab.About,
+    helpTab: EHelpTab.About,
     setHelpTab: (helpTab) => set({ helpTab }),
     ...createLoadingSlice(set, get, store),
     ...createNotificationsSlice(set, get, store),

@@ -45,7 +45,10 @@ const Popup: React.FC<Props> = (props) => {
   const [id, setId] = useState<string>(location.id);
 
   const setLinkLocation = useSessionStore((state) => state.setLinkLocation);
-  const allParamters = useMainStore((state) => state.parameters);
+  const allParameters =
+    useMainStore((state) => state.layers).find(
+      (layer) => layer.collectionId === location.collectionId
+    )?.parameters ?? [];
   // const setOverlay = useSessionStore((state) => state.setOverlay);
 
   useEffect(() => {
@@ -76,12 +79,8 @@ const Popup: React.FC<Props> = (props) => {
       setDatasetName(newDataset.title ?? '');
       const paramObjects = Object.values(newDataset?.parameter_names ?? {});
 
-      const collectionParameters =
-        allParamters.find((parameter) => parameter.collectionId === location.collectionId)
-          ?.parameters ?? [];
-
       const parameters = paramObjects
-        .filter((object) => object.type === 'Parameter' && collectionParameters.includes(object.id))
+        .filter((object) => object.type === 'Parameter' && allParameters.includes(object.id))
         .map((object) => ({ id: object.id, name: object.name, unit: getParameterUnit(object) }));
 
       setParameters(parameters);

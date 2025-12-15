@@ -8,6 +8,7 @@ import { immer } from 'zustand/middleware/immer';
 import { createCollectionSlice } from '@/stores/main/slices/collections';
 import { createLocationSlice } from '@/stores/main/slices/locations';
 import { MainState } from '@/stores/main/types';
+import { createLayerSlice } from './slices/layers';
 import { createParametersSlice } from './slices/parameters';
 
 const useMainStore = create<MainState>()(
@@ -35,6 +36,7 @@ const useMainStore = create<MainState>()(
     hasGeographyFilter: () => Boolean(get().geographyFilter),
 
     ...createCollectionSlice(set, get, store),
+    ...createLayerSlice(set, get, store),
     ...createLocationSlice(set, get, store),
     ...createParametersSlice(set, get, store),
   }))

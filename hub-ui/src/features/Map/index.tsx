@@ -15,8 +15,10 @@ import { MapButton as Legend } from '@/features/Map/Tools/Legend/Button';
 import { getSelectedColor } from '@/features/Map/utils';
 import mainManager from '@/managers/Main.init';
 import useMainStore from '@/stores/main';
+import { TLocation } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
 import { groupLocationIdsByCollection } from '@/utils/groupLocationsByCollection';
+import { showGraphPopup } from '../Popup/utils';
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;
@@ -37,6 +39,7 @@ type Props = {
 const MainMap: React.FC<Props> = (props) => {
   const { accessToken } = props;
 
+  const layers = useMainStore((state) => state.layers);
   const locations = useMainStore((state) => state.locations);
   const collections = useMainStore((state) => state.collections);
 
@@ -44,10 +47,11 @@ const MainMap: React.FC<Props> = (props) => {
 
   const [shouldResize, setShouldResize] = useState(false);
 
-  const { map, hoverPopup } = useMap(MAP_ID);
+  const { map, hoverPopup, persistentPopup, root, container } = useMap(MAP_ID);
 
   const isMounted = useRef(true);
   const initialMapLoad = useRef(true);
+  const layerPopupListeners = useRef<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     return () => {
@@ -98,12 +102,6 @@ const MainMap: React.FC<Props> = (props) => {
       const locationIds = locationsByCollection[collection.id] ?? [];
       let color;
 
-      console.log(
-        'changing colors',
-        locationsByCollection,
-        locationIds,
-        getSelectedColor(locationIds)
-      );
       if (map.getLayer(pointLayerId)) {
         color = map.getPaintProperty(pointLayerId, 'circle-color') as string;
         map.setPaintProperty(pointLayerId, 'circle-stroke-color', getSelectedColor(locationIds));
@@ -125,6 +123,43 @@ const MainMap: React.FC<Props> = (props) => {
 
     map.resize();
   }, [shouldResize]);
+
+  useEffect(() => {
+    if (!map || !persistentPopup || !hoverPopup || !root || !container) {
+      return;
+    }
+
+    const allIds: string[] = [];
+    layers.forEach((layer) => {
+      const { pointLayerId, lineLayerId, fillLayerId } = mainManager.getLocationsLayerIds(
+        layer.collectionId
+      );
+
+      allIds.push(pointLayerId);
+      allIds.push(lineLayerId);
+      allIds.push(fillLayerId);
+      if (!layerPopupListeners.current[layer.id]) {
+        map.on('dblclick', [pointLayerId, lineLayerId, fillLayerId], (e) => {
+          const features = e.features;
+          if (features && features.length > 0) {
+            hoverPopup.remove();
+
+            const uniqueFeatures = mainManager.getUniqueIds(features, layer.collectionId);
+            const locations: TLocation[] = uniqueFeatures.map((id) => ({
+              id,
+              collectionId: layer.collectionId,
+            }));
+
+            locations.forEach((location) => useMainStore.getState().addLocation(location));
+
+            showGraphPopup(locations, map, e, root, container, persistentPopup);
+          }
+        });
+
+        layerPopupListeners.current[layer.id] = true;
+      }
+    });
+  }, [layers]);
 
   //   TODO: uncomment when basemap selector is implemented
   //   useEffect(() => {

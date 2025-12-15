@@ -13,7 +13,7 @@ import notificationManager from '@/managers/Notification.init';
 import { CoverageCollection, CoverageJSON, ICollection } from '@/services/edr.service';
 import wwdhService from '@/services/init/wwdh.init';
 import { TLocation } from '@/stores/main/types';
-import { LoadingType, NotificationType } from '@/stores/session/types';
+import { ELoadingType, ENotificationType } from '@/stores/session/types';
 
 type Props = {
   instanceId: number;
@@ -40,7 +40,7 @@ export const Chart: React.FC<Props> = (props) => {
   const fetchData = async () => {
     loadingInstance.current = loadingManager.add(
       `Fetching chart data for location: ${locationId}, of collection: ${collectionId}`,
-      LoadingType.Data
+      ELoadingType.Data
     );
     try {
       controller.current = new AbortController();
@@ -72,7 +72,7 @@ export const Chart: React.FC<Props> = (props) => {
         console.log('Fetch request canceled');
       } else if ((error as Error)?.message) {
         const _error = error as Error;
-        notificationManager.show(`Error: ${_error.message}`, NotificationType.Error, 10000);
+        notificationManager.show(`Error: ${_error.message}`, ENotificationType.Error, 10000);
         setError(_error.message);
       }
 

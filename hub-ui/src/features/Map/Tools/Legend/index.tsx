@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Card, CardSection, CloseButton, Group, Title } from "@mantine/core";
-import Legend from "@/features/Legend";
-import styles from "@/features/Map/Tools/Tools.module.css";
-import useSessionStore from "@/stores/session";
-import { Tool } from "@/stores/session/types";
+import { Card, CardSection, CloseButton, Group, Title } from '@mantine/core';
+import Legend from '@/features/Legend';
+import styles from '@/features/Map/Tools/Tools.module.css';
+import useSessionStore from '@/stores/session';
+import { ETool } from '@/stores/session/types';
 
 /**
  *
@@ -17,20 +17,14 @@ const LegendTool: React.FC = () => {
   const setOpenTools = useSessionStore((state) => state.setOpenTools);
 
   return (
-    <Card
-      withBorder
-      shadow="sm"
-      radius="md"
-      padding="md"
-      className={styles.legendContainer}
-    >
-      <CardSection withBorder inheritPadding py="xs">
+    <Card withBorder shadow="sm" radius="md" padding="0" className={styles.legendContainer}>
+      <CardSection withBorder p="var(--default-spacing)">
         <Group justify="space-between">
           <Title order={3} className={styles.mapToolTitle}>
             Legend
           </Title>
           <CloseButton
-            onClick={() => setOpenTools(Tool.Legend, false)}
+            onClick={() => setOpenTools(ETool.Legend, false)}
             aria-label="Close Legend"
           />
         </Group>

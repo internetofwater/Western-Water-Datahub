@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from "react";
-import { Modal as ModalComponent, Tabs, Title } from "@mantine/core";
-import styles from "@/features/Info/Info.module.css";
-import { About } from "@/features/Info/Modal/About";
-import { FAQ } from "@/features/Info/Modal/FAQ";
-import { Glossary } from "@/features/Info/Modal/Glossary";
-import useSessionStore from "@/stores/session";
-import { HelpTab, Modal as ModalEnum } from "@/stores/session/types";
+import { useEffect, useState } from 'react';
+import { Modal as ModalComponent, Tabs, Title } from '@mantine/core';
+import styles from '@/features/Info/Info.module.css';
+import { About } from '@/features/Info/Modal/About';
+import { FAQ } from '@/features/Info/Modal/FAQ';
+import { Glossary } from '@/features/Info/Modal/Glossary';
+import useSessionStore from '@/stores/session';
+import { EHelpTab, EModal as ModalEnum } from '@/stores/session/types';
 
 const Modal: React.FC = () => {
   const openModal = useSessionStore((state) => state.openModal);
@@ -22,11 +22,11 @@ const Modal: React.FC = () => {
   const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
-    const showHelp = localStorage.getItem("showHelp");
-    if (!showHelp || showHelp === "true") {
+    const showHelp = localStorage.getItem('showHelp');
+    if (!showHelp || showHelp === 'true') {
       setOpenModal(ModalEnum.Help);
       setShowHelp(true);
-    } else if (showHelp === "false") {
+    } else if (showHelp === 'false') {
       setShowHelp(false);
     }
   }, []);
@@ -39,24 +39,24 @@ const Modal: React.FC = () => {
           Help
         </Title>
       }
-      closeButtonProps={{ "aria-label": "Close information modal" }}
+      closeButtonProps={{ 'aria-label': 'Close information modal' }}
       opened={openModal === ModalEnum.Help}
       onClose={() => setOpenModal(null)}
     >
-      <Tabs value={helpTab} onChange={(tab) => setHelpTab(tab as HelpTab)}>
+      <Tabs value={helpTab} onChange={(tab) => setHelpTab(tab as EHelpTab)}>
         <Tabs.List grow className={styles.tabList}>
-          <Tabs.Tab value={HelpTab.About}>About</Tabs.Tab>
-          <Tabs.Tab value={HelpTab.Glossary}>Glossary</Tabs.Tab>
-          <Tabs.Tab value={HelpTab.FAQ}>Frequently Asked Questions</Tabs.Tab>
+          <Tabs.Tab value={EHelpTab.About}>About</Tabs.Tab>
+          <Tabs.Tab value={EHelpTab.Glossary}>Glossary</Tabs.Tab>
+          <Tabs.Tab value={EHelpTab.FAQ}>Frequently Asked Questions</Tabs.Tab>
         </Tabs.List>
 
-        <Tabs.Panel value={HelpTab.About}>
+        <Tabs.Panel value={EHelpTab.About}>
           <About showHelp={showHelp} />
         </Tabs.Panel>
-        <Tabs.Panel value={HelpTab.Glossary}>
+        <Tabs.Panel value={EHelpTab.Glossary}>
           <Glossary />
         </Tabs.Panel>
-        <Tabs.Panel value={HelpTab.FAQ}>
+        <Tabs.Panel value={EHelpTab.FAQ}>
           <FAQ />
         </Tabs.Panel>
       </Tabs>

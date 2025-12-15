@@ -6,10 +6,10 @@
 import colorbrewer from 'colorbrewer';
 import { Feature, Geometry } from 'geojson';
 import { ExpressionSpecification } from 'mapbox-gl';
+import { TLayer } from '@/stores/main/types';
 import {
   ColorBrewerIndex,
   FriendlyColorBrewerPalettes,
-  PaletteDefinition,
   validColorBrewerIndex,
   ValidThresholdArray,
 } from '@/utils/colors/types';
@@ -128,8 +128,8 @@ export const createStaticStepExpression = (
 };
 
 export const isSamePalette = (
-  paletteA: PaletteDefinition,
-  paletteB: PaletteDefinition
+  paletteA: TLayer['paletteDefinition'],
+  paletteB: TLayer['paletteDefinition']
 ): boolean => {
   return Boolean(
     (!paletteA && !paletteB) ||
@@ -141,7 +141,7 @@ export const isSamePalette = (
   );
 };
 
-export const isValidPalette = (palette: PaletteDefinition): boolean => {
+export const isValidPalette = (palette: TLayer['paletteDefinition']): boolean => {
   return Boolean(
     !palette ||
       (!isNaN(palette.count) && palette.palette.length > 0 && palette.parameter.length > 0)

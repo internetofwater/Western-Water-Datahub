@@ -16,11 +16,13 @@ const ParameterSelect: React.FC<Props> = (props) => {
 
   const collections = useMainStore((state) => state.collections);
   const selectedCollections = useMainStore((state) => state.selectedCollections);
-  const parameters = useMainStore((state) => state.parameters);
+  const parameters =
+    useMainStore((state) => state.layers).find((layer) => layer.collectionId === collectionId)
+      ?.parameters ?? [];
 
-  const addParameter = useMainStore((state) => state.addParameter);
-  const removeParameter = useMainStore((state) => state.removeParameter);
-  const hasParameter = useMainStore((state) => state.hasParameter);
+  const addLayerParameter = useMainStore((state) => state.addLayerParameter);
+  const removeLayerParameter = useMainStore((state) => state.removeLayerParameter);
+  const hasLayerParameter = useMainStore((state) => state.hasLayerParameter);
 
   const [name, setName] = useState<string>('Parameters');
   const [data, setData] = useState<ComboboxData>([]);
@@ -56,10 +58,10 @@ const ParameterSelect: React.FC<Props> = (props) => {
 
   const handleChange = (parameters: string[]) => {
     for (const parameter of parameters) {
-      if (hasParameter(collectionId, parameter)) {
-        removeParameter(collectionId, parameter);
+      if (hasLayerParameter({ collectionId }, parameter)) {
+        removeLayerParameter({ collectionId }, parameter);
       } else {
-        addParameter(collectionId, parameter);
+        addLayerParameter({ collectionId }, parameter);
       }
     }
   };
@@ -84,9 +86,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
           label={name}
           placeholder="Select..."
           data={data}
-          value={
-            parameters.find((parameter) => parameter.collectionId === collectionId)?.parameters
-          }
+          value={parameters}
           onChange={handleChange}
           disabled={data.length === 0}
           searchable

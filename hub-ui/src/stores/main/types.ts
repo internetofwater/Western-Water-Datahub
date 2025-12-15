@@ -4,9 +4,12 @@
  */
 
 import { Feature, FeatureCollection, Polygon } from 'geojson';
+import { ColorSpecification, PropertyValueSpecification } from 'mapbox-gl';
 import { Properties } from '@/components/Map/types';
 import { ICollection } from '@/services/edr.service';
+import { PaletteDefinition } from '@/utils/colors/types';
 import { ICollectionSlice } from './slices/collections';
+import { ILayerSlice } from './slices/layers';
 import { ILocationSlice } from './slices/locations';
 import { IParameterSlice } from './slices/parameters';
 
@@ -50,9 +53,21 @@ export enum EDatasourceType {
   Raster = 'raster',
 }
 
+// Allows for basic string colors (hex, rgba etc) or an expression
+export type TColor = PropertyValueSpecification<ColorSpecification>;
+
 export type TLayer = {
   id: string; // uuid
   collectionId: ICollection['id'];
+  color: TColor;
+  parameters: string[];
+  from: string | null;
+  to: string | null;
+  visible: boolean; // visible ? 'visible' : 'none'
+  opacity: number;
+  position: number; // The order this layer is drawn relative to other user layers
+  paletteDefinition: PaletteDefinition | null;
+  loaded: boolean;
 };
 
 export type TLocation = {
@@ -87,5 +102,6 @@ export type MainState = {
   setGeographyFilter: (geographyFilter: MainState['geographyFilter']) => void;
   hasGeographyFilter: () => boolean;
 } & ICollectionSlice &
+  ILayerSlice &
   ILocationSlice &
   IParameterSlice;

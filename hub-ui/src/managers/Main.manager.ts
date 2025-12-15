@@ -23,6 +23,7 @@ import {
   Popup,
   RasterTileSource,
 } from 'mapbox-gl';
+import { v6 } from 'uuid';
 import { stringify, GeoJSONFeature as WellknownFeature } from 'wellknown';
 import { StoreApi, UseBoundStore } from 'zustand';
 import {
@@ -44,14 +45,15 @@ import { CoverageGridService } from '@/services/coverageGrid.service';
 import { ICollection } from '@/services/edr.service';
 import geoconnexService from '@/services/init/geoconnex.init';
 import wwdhService from '@/services/init/wwdh.init';
-import { MainState, TLocation } from '@/stores/main/types';
+import { MainState, TLayer, TLocation } from '@/stores/main/types';
+import { ENotificationType } from '@/stores/session/types';
 import { CollectionType, getCollectionType, isEdrGrid } from '@/utils/collection';
-import { createDynamicStepExpression } from '@/utils/colors';
-import { PaletteDefinition } from '@/utils/colors/types';
+import { createDynamicStepExpression, isSamePalette } from '@/utils/colors';
+import { isValidColorBrewerIndex, PaletteDefinition } from '@/utils/colors/types';
 import { getIdStore } from '@/utils/getIdStore';
-import { getRandomHexColor } from '@/utils/hexColor';
 import { getRasterLayerSpecification } from '@/utils/layerDefinitions';
 import { getNextLink } from './Main.utils';
+import notificationManager from './Notification.init';
 import { ExtendedFeatureCollection, SourceOptions, StyleOptions } from './types';
 
 /**
@@ -88,6 +90,15 @@ class MainManager {
   }
 
   /**
+   * Creates a new v6 uuid
+   *
+   * @function
+   */
+  public createUUID(): string {
+    return v6();
+  }
+
+  /**
    *
    * @function
    */
@@ -99,6 +110,18 @@ class MainManager {
     return this.store
       .getState()
       .originalCollections.find((collection) => collection.id === collectionId);
+  }
+
+  public getLayer({
+    collectionId,
+    layerId,
+  }: {
+    collectionId?: ICollection['id'];
+    layerId?: TLayer['id'];
+  }): TLayer | undefined {
+    return this.store
+      .getState()
+      .layers.find((layer) => layer.collectionId === collectionId || layer.id === layerId);
   }
 
   /**
@@ -439,13 +462,11 @@ class MainManager {
       const features = this.map!.queryRenderedFeatures(e.point, {
         layers: [mapLayerId],
       });
-      console.log('click?', features, mapLayerId);
 
       if (features.length > 0) {
         // Hack, use the feature id to track this location, fetch id store in consuming features
         const uniqueFeatures = this.getUniqueIds(features, collectionId);
 
-        console.log('CLICK', uniqueFeatures);
         uniqueFeatures.forEach((locationId) => {
           if (this.hasLocation(locationId)) {
             this.store.getState().removeLocation(locationId);
@@ -707,19 +728,17 @@ class MainManager {
    */
   private async addStandardLayer(collectionId: ICollection['id']): Promise<void> {
     const geographyFilter = this.store.getState().geographyFilter;
-    console.log('In func', collectionId);
+    const layer = this.getLayer({ collectionId });
 
     const { pointLayerId, fillLayerId, lineLayerId } = this.getLocationsLayerIds(collectionId);
-    if (this.map) {
-      const color = getRandomHexColor();
-      console.log('1', pointLayerId, fillLayerId, lineLayerId);
+    if (layer && this.map) {
+      const color = layer.color;
       if (
         !this.map.getLayer(pointLayerId) &&
         !this.map.getLayer(lineLayerId) &&
         !this.map.getLayer(pointLayerId)
       ) {
         const collection = this.getCollection(collectionId);
-        console.log('2', collection);
         if (collection) {
           const sourceId = this.getSourceId(collectionId);
           const collectionType = getCollectionType(collection);
@@ -728,7 +747,6 @@ class MainManager {
           this.map.addLayer(getFillLayerDefinition(fillLayerId, sourceId, color));
           this.map.addLayer(getLineLayerDefinition(lineLayerId, sourceId, color));
           this.map.addLayer(getPointLayerDefinition(pointLayerId, sourceId, color));
-          console.log('3', collection);
 
           this.map.on('click', pointLayerId, this.getClickEventHandler(pointLayerId, collectionId));
 
@@ -828,7 +846,7 @@ class MainManager {
     const to = options?.to ?? null;
     const parameters =
       options?.parameterNames ??
-      this.store.getState().parameters.find((parameter) => parameter.collectionId === collectionId)
+      this.store.getState().layers.find((parameter) => parameter.collectionId === collectionId)
         ?.parameters ??
       [];
 
@@ -986,6 +1004,16 @@ class MainManager {
             // signal,
             // noFetch: collectionType === CollectionType.EDRGrid && layer.parameters.length === 0,
           });
+
+          const layer = this.getLayer({ collectionId });
+
+          if (layer) {
+            this.store.getState().updateLayer({
+              ...layer,
+              visible: true,
+              loaded: true,
+            });
+          }
         })
       );
     }
@@ -1213,6 +1241,93 @@ class MainManager {
     this.store.getState().setProvider(null);
     this.store.getState().setCategory(null);
     this.store.getState().setSelectedCollections([]);
+  }
+
+  public async updateLayer(
+    layer: TLayer,
+    color: TLayer['color'],
+    visible: TLayer['visible'],
+    opacity: TLayer['opacity'],
+    paletteDefinition: TLayer['paletteDefinition']
+  ): Promise<void> {
+    const layerIds = this.getLocationsLayerIds(layer.collectionId);
+
+    if (color !== layer.color) {
+      if (this.map) {
+        const { pointLayerId, fillLayerId, lineLayerId } = layerIds;
+        if (this.map.getLayer(pointLayerId)) {
+          this.map.setPaintProperty(pointLayerId, 'circle-color', color);
+        }
+        if (this.map.getLayer(fillLayerId)) {
+          this.map.setPaintProperty(fillLayerId, 'fill-color', color);
+        }
+        if (this.map.getLayer(lineLayerId)) {
+          this.map.setPaintProperty(lineLayerId, 'line-color', color);
+        }
+      }
+    }
+
+    if (visible !== layer.visible) {
+      if (this.map) {
+        for (const layerId of Object.values(layerIds)) {
+          if (this.map.getLayer(layerId)) {
+            this.map.setLayoutProperty(layerId, 'visibility', visible ? 'visible' : 'none');
+          }
+        }
+      }
+    }
+
+    if (opacity !== layer.opacity) {
+      if (this.map) {
+        const { fillLayerId, rasterLayerId } = layerIds;
+        if (this.map.getLayer(fillLayerId)) {
+          this.map.setPaintProperty(fillLayerId, 'fill-opacity', opacity);
+        }
+
+        if (this.map.getLayer(rasterLayerId)) {
+          this.map.setPaintProperty(rasterLayerId, 'raster-opacity', opacity);
+        }
+      }
+    }
+
+    const paletteChanged = !isSamePalette(paletteDefinition, layer.paletteDefinition);
+
+    // If the parameters have changed, or this is a grid layer and the temporal range has updated
+    // grid layers are the only instance where temporal filtering applies, requiring a new fetch
+    let _color = color;
+
+    let correctedPaletteDefinition = paletteDefinition;
+    if (paletteChanged && paletteDefinition) {
+      const expression = await this.styleLayer(layer.collectionId, paletteDefinition, {
+        updateStore: false,
+      });
+      if (expression) {
+        _color = expression;
+
+        if (expression.length !== paletteDefinition.count * 2 + 3) {
+          const count = (expression.length - 3) / 2;
+
+          if (isValidColorBrewerIndex(count)) {
+            correctedPaletteDefinition = {
+              ...paletteDefinition,
+              count,
+            };
+            notificationManager.show(
+              `Duplicate thresholds detected. Reducing to ${count} threshold(s)`,
+              ENotificationType.Info,
+              5000
+            );
+          }
+        }
+      }
+    }
+    this.store.getState().updateLayer({
+      ...layer,
+      color: _color,
+      visible,
+      opacity,
+      paletteDefinition: correctedPaletteDefinition,
+    });
   }
 }
 

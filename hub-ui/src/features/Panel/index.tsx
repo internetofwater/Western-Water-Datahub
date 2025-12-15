@@ -13,7 +13,7 @@ import loadingManager from '@/managers/Loading.init';
 import mainManager from '@/managers/Main.init';
 import notificationManager from '@/managers/Notification.init';
 import useMainStore from '@/stores/main';
-import { LoadingType, NotificationType } from '@/stores/session/types';
+import { ELoadingType, ENotificationType } from '@/stores/session/types';
 import Controls from './Controls';
 import ParameterSelect from './ParameterSelect';
 
@@ -22,15 +22,15 @@ const Panel: React.FC = () => {
   const category = useMainStore((state) => state.category);
 
   const getCollections = async () => {
-    const loadingInstance = loadingManager.add('Updating collections', LoadingType.Collections);
+    const loadingInstance = loadingManager.add('Updating collections', ELoadingType.Collections);
     try {
       await mainManager.getCollections();
       loadingManager.remove(loadingInstance);
-      notificationManager.show('Updated collections', NotificationType.Success);
+      notificationManager.show('Updated collections', ENotificationType.Success);
     } catch (error) {
       if ((error as Error)?.message) {
         const _error = error as Error;
-        notificationManager.show(`Error: ${_error.message}`, NotificationType.Error, 10000);
+        notificationManager.show(`Error: ${_error.message}`, ENotificationType.Error, 10000);
       }
       loadingManager.remove(loadingInstance);
     }

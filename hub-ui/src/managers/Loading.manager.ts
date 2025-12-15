@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { v6 } from "uuid";
-import { StoreApi, UseBoundStore } from "zustand";
-import { Loading, SessionState } from "@/stores/session/types";
+import { v6 } from 'uuid';
+import { StoreApi, UseBoundStore } from 'zustand';
+import { SessionState, TLoading } from '@/stores/session/types';
 
 class LoadingManager {
   private store: UseBoundStore<StoreApi<SessionState>>;
@@ -14,12 +14,12 @@ class LoadingManager {
     this.store = store;
   }
 
-  private createUUID(): Loading["id"] {
+  private createUUID(): TLoading['id'] {
     return v6();
   }
 
-  add(message: Loading["message"], type: Loading["type"]): Loading["id"] {
-    const loadingInstance: Loading = {
+  add(message: TLoading['message'], type: TLoading['type']): TLoading['id'] {
+    const loadingInstance: TLoading = {
       id: this.createUUID(),
       type,
       message,
@@ -30,25 +30,17 @@ class LoadingManager {
     return loadingInstance.id;
   }
 
-  remove(id: Loading["id"]): null {
+  remove(id: TLoading['id']): null {
     this.store.getState().removeLoadingInstance(id);
 
     return null;
   }
 
-  has({
-    message,
-    type,
-  }: {
-    message?: Loading["message"];
-    type?: Loading["type"];
-  }): boolean {
+  has({ message, type }: { message?: TLoading['message']; type?: TLoading['type'] }): boolean {
     const loadingInstances = this.store.getState().loadingInstances;
 
     if (message) {
-      return loadingInstances.some((instance) =>
-        instance.message.includes(message),
-      );
+      return loadingInstances.some((instance) => instance.message.includes(message));
     }
 
     if (type) {
