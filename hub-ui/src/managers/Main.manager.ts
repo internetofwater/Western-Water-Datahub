@@ -842,11 +842,11 @@ class MainManager {
     }
 
     const bbox = this.getBBox(collectionId);
-    const from = options?.from ?? null;
-    const to = options?.to ?? null;
+    const from = options?.from ?? this.store.getState().from;
+    const to = options?.to ?? this.store.getState().to;
     const parameters =
       options?.parameterNames ??
-      this.store.getState().layers.find((parameter) => parameter.collectionId === collectionId)
+      this.store.getState().parameters.find((parameter) => parameter.collectionId === collectionId)
         ?.parameters ??
       [];
 
@@ -988,6 +988,9 @@ class MainManager {
         selectedCollections.length === 0 || selectedCollections.includes(collection.id)
     );
 
+    const from = this.store.getState().from;
+    const to = this.store.getState().to;
+
     const chunkSize = 5;
     for (let i = 0; i < filteredCollections.length; i += chunkSize) {
       const chunk = filteredCollections.slice(i, i + chunkSize);
@@ -1007,9 +1010,18 @@ class MainManager {
 
           const layer = this.getLayer({ collectionId });
 
+          const parameters =
+            this.store
+              .getState()
+              .parameters.find((parameter) => parameter.collectionId === collectionId)
+              ?.parameters ?? [];
+
           if (layer) {
             this.store.getState().updateLayer({
               ...layer,
+              parameters,
+              from,
+              to,
               visible: true,
               loaded: true,
             });

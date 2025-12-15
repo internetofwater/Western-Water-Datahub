@@ -40,7 +40,7 @@ dayjs.extend(isSameOrBefore);
 
 type Props = {
   collectionId: ICollection['id'];
-  locationIds: (string | number)[];
+  locationIds: string[];
   open?: boolean;
 };
 

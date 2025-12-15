@@ -101,6 +101,10 @@ export type MainState = {
   geographyFilter: TGeographyFilter | null;
   setGeographyFilter: (geographyFilter: MainState['geographyFilter']) => void;
   hasGeographyFilter: () => boolean;
+  from: string | null;
+  setFrom: (from: MainState['from']) => void;
+  to: string | null;
+  setTo: (to: MainState['to']) => void;
 } & ICollectionSlice &
   ILayerSlice &
   ILocationSlice &

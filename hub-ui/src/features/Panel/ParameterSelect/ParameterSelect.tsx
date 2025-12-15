@@ -17,13 +17,15 @@ const ParameterSelect: React.FC<Props> = (props) => {
   const collections = useMainStore((state) => state.collections);
   const selectedCollections = useMainStore((state) => state.selectedCollections);
   const parameters =
-    useMainStore((state) => state.layers).find((layer) => layer.collectionId === collectionId)
-      ?.parameters ?? [];
+    useMainStore((state) => state.parameters).find(
+      (parameter) => parameter.collectionId === collectionId
+    )?.parameters ?? [];
 
-  const addLayerParameter = useMainStore((state) => state.addLayerParameter);
-  const removeLayerParameter = useMainStore((state) => state.removeLayerParameter);
-  const hasLayerParameter = useMainStore((state) => state.hasLayerParameter);
+  const addParameter = useMainStore((state) => state.addParameter);
+  const removeParameter = useMainStore((state) => state.removeParameter);
+  const hasParameter = useMainStore((state) => state.hasParameter);
 
+  const [localParameters, setLocalParameters] = useState(parameters);
   const [name, setName] = useState<string>('Parameters');
   const [data, setData] = useState<ComboboxData>([]);
 
@@ -56,15 +58,21 @@ const ParameterSelect: React.FC<Props> = (props) => {
     setData(data);
   }, [collections, selectedCollections]);
 
-  const handleChange = (parameters: string[]) => {
-    for (const parameter of parameters) {
-      if (hasLayerParameter({ collectionId }, parameter)) {
-        removeLayerParameter({ collectionId }, parameter);
+  useEffect(() => {
+    for (const parameter of localParameters) {
+      if (hasParameter(collectionId, parameter)) {
+        removeParameter(collectionId, parameter);
       } else {
-        addLayerParameter({ collectionId }, parameter);
+        addParameter(collectionId, parameter);
       }
     }
-  };
+
+    parameters.forEach((parameter) => {
+      if (!localParameters.includes(parameter) && hasParameter(collectionId, parameter)) {
+        removeParameter(collectionId, parameter);
+      }
+    });
+  }, [localParameters]);
 
   const showParameterSelect = (collectionId: ICollection['id']) => {
     const collection = mainManager.getCollection(collectionId);
@@ -86,8 +94,8 @@ const ParameterSelect: React.FC<Props> = (props) => {
           label={name}
           placeholder="Select..."
           data={data}
-          value={parameters}
-          onChange={handleChange}
+          value={localParameters}
+          onChange={setLocalParameters}
           disabled={data.length === 0}
           searchable
           multiple

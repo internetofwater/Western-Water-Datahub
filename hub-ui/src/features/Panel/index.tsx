@@ -15,6 +15,7 @@ import notificationManager from '@/managers/Notification.init';
 import useMainStore from '@/stores/main';
 import { ELoadingType, ENotificationType } from '@/stores/session/types';
 import Controls from './Controls';
+import { DateSelect } from './DateSelect';
 import ParameterSelect from './ParameterSelect';
 
 const Panel: React.FC = () => {
@@ -46,6 +47,7 @@ const Panel: React.FC = () => {
         <Stack gap="lg" px="xl" pb="xl" justify="center">
           <Header />
           <Filters />
+          <DateSelect />
           <ParameterSelect />
           <Controls />
         </Stack>

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import dayjs from 'dayjs';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { createCollectionSlice } from '@/stores/main/slices/collections';
@@ -34,7 +35,16 @@ const useMainStore = create<MainState>()(
         state.geographyFilter = filter;
       }),
     hasGeographyFilter: () => Boolean(get().geographyFilter),
-
+    from: dayjs().subtract(1, 'week').format('YYYY-MM-DD'),
+    setFrom: (from) =>
+      set((state) => {
+        state.from = from;
+      }),
+    to: dayjs().format('YYYY-MM-DD'),
+    setTo: (to) =>
+      set((state) => {
+        state.to = to;
+      }),
     ...createCollectionSlice(set, get, store),
     ...createLayerSlice(set, get, store),
     ...createLocationSlice(set, get, store),

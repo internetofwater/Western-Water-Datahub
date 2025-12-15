@@ -11,6 +11,7 @@ import { StringIdentifierCollections } from '@/consts/collections';
 import { Parameter } from '@/features/Popup';
 import { Chart } from '@/features/Popup/Chart';
 import styles from '@/features/Popup/Popup.module.css';
+import useMainStore from '@/stores/main';
 import { TLocation } from '@/stores/main/types';
 import { getIdStore } from '@/utils/getIdStore';
 import { Table } from '../Table';
@@ -39,6 +40,9 @@ export const Location: React.FC<Props> = (props) => {
   const [tab, setTab] = useState<'chart' | 'table'>('chart');
   const [id, setId] = useState<string>();
 
+  const from = useMainStore((state) => state.from);
+  const to = useMainStore((state) => state.to);
+
   useEffect(() => {
     if (parameters.length === 0) {
       setTab('table');
@@ -63,8 +67,8 @@ export const Location: React.FC<Props> = (props) => {
             locationId={id}
             parameters={parameters.map((parameter) => parameter.id)}
             title={datasetName}
-            from={null}
-            to={null}
+            from={from}
+            to={to}
           />
         )}
       </Box>
