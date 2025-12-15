@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import WarningManager from '@/managers/Warning.manager';
-import useSessionStore from '@/stores/session';
+import WarningManager from "@/managers/Warning.manager";
+import useSessionStore from "@/stores/session";
 
 const warningManager = new WarningManager(useSessionStore);
 

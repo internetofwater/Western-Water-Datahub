@@ -3,22 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { DatasourceCollectionType } from '@/consts/collections';
-import { ICollection } from '@/services/edr.service';
+import { DatasourceCollectionType } from "@/consts/collections";
+import { ICollection } from "@/services/edr.service";
 
 // This is non-exhaustive, reflects currently supported types
 export enum CollectionType {
-  EDR = 'edr',
-  EDRGrid = 'edr-grid',
-  Features = 'features',
-  Unknown = 'unknown',
-  Map = 'map',
+  EDR = "edr",
+  EDRGrid = "edr-grid",
+  Features = "features",
+  Unknown = "unknown",
+  Map = "map",
 }
 
 export const isEdr = (collection: ICollection): boolean => {
   return (
     collection.data_queries &&
-    Object.keys(collection.data_queries).some((query) => query === 'locations')
+    Object.keys(collection.data_queries).some((query) => query === "locations")
   );
 };
 
@@ -29,20 +29,23 @@ export const isEdrGrid = (collection: ICollection): boolean => {
 
   const queries = Object.keys(collection.data_queries);
   return (
-    queries.every((query) => query !== 'locations') && queries.some((query) => query === 'cube')
+    queries.every((query) => query !== "locations") &&
+    queries.some((query) => query === "cube")
   );
 };
 
 export const isMap = (collection: ICollection): boolean => {
-  return collection.links.some((link) => link.rel.includes('map') && link.type === 'image/png');
+  return collection.links.some(
+    (link) => link.rel.includes("map") && link.type === "image/png",
+  );
 };
 
 export const isFeatures = (collection: ICollection): boolean => {
-  return Boolean(collection?.itemType) && collection.itemType === 'feature';
+  return Boolean(collection?.itemType) && collection.itemType === "feature";
 };
 
 export const getCollectionTypeDefaults = (
-  collectionId: ICollection['id']
+  collectionId: ICollection["id"],
 ): CollectionType | undefined => {
   if (DatasourceCollectionType[CollectionType.EDRGrid].includes(collectionId)) {
     return CollectionType.EDRGrid;
@@ -50,7 +53,9 @@ export const getCollectionTypeDefaults = (
   if (DatasourceCollectionType[CollectionType.EDR].includes(collectionId)) {
     return CollectionType.EDR;
   }
-  if (DatasourceCollectionType[CollectionType.Features].includes(collectionId)) {
+  if (
+    DatasourceCollectionType[CollectionType.Features].includes(collectionId)
+  ) {
     return CollectionType.Features;
   }
 };

@@ -754,6 +754,12 @@ class MainManager {
 
           this.map.on('click', lineLayerId, this.getClickEventHandler(lineLayerId, collectionId));
 
+          this.map.on('click', pointLayerId, this.getClickEventHandler(fillLayerId, collectionId));
+
+          this.map.on('click', fillLayerId, this.getClickEventHandler(fillLayerId, collectionId));
+
+          this.map.on('click', lineLayerId, this.getClickEventHandler(fillLayerId, collectionId));
+
           this.map.on(
             'mouseenter',
             [pointLayerId, fillLayerId, lineLayerId],

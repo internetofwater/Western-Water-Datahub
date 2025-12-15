@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { BBox, Feature } from 'geojson';
-import { ICollection } from '@/services/edr.service';
-import { TLocation } from '@/stores/main/types';
+import { BBox, Feature } from "geojson";
+import { ICollection } from "@/services/edr.service";
+import { TLocation } from "@/stores/main/types";
 
 export const getDatetime = (
   from: string | null | undefined,
-  to: string | null | undefined
+  to: string | null | undefined,
 ): string | null => {
   if (from && to) {
     return `${from}/${to}`;
@@ -22,58 +22,60 @@ export const getDatetime = (
 };
 
 export const buildLocationUrl = (
-  collectionId: ICollection['id'],
-  locationId: TLocation['id'],
+  collectionId: ICollection["id"],
+  locationId: TLocation["id"],
   parameters: string[],
   from: string | null,
   to: string | null,
   csv: boolean = false,
-  format: boolean = true
+  format: boolean = true,
 ): string => {
   const url = new URL(
-    `${import.meta.env.VITE_AWO_SOURCE}/collections/${collectionId}/locations/${locationId}`
+    `${import.meta.env.VITE_AWO_SOURCE}/collections/${collectionId}/locations/${locationId}`,
   );
 
   if (format) {
-    url.searchParams.set('f', csv ? 'csv' : 'json');
+    url.searchParams.set("f", csv ? "csv" : "json");
   }
 
   if (parameters.length > 0) {
-    url.searchParams.set('parameter-name', parameters.join(','));
+    url.searchParams.set("parameter-name", parameters.join(","));
   }
 
   const datetime = getDatetime(from, to);
 
   if (datetime) {
-    url.searchParams.set('datetime', datetime);
+    url.searchParams.set("datetime", datetime);
   }
 
   return url.toString();
 };
 
 export const buildItemUrl = (
-  collectionId: ICollection['id'],
-  locationId: TLocation['id'],
-  format: null | 'csv' | 'json' | 'kml' | 'shp' = null
+  collectionId: ICollection["id"],
+  locationId: TLocation["id"],
+  format: null | "csv" | "json" | "kml" | "shp" = null,
 ): string => {
   const url = new URL(
-    `${import.meta.env.VITE_AWO_SOURCE}/collections/${collectionId}/items/${locationId}`
+    `${import.meta.env.VITE_AWO_SOURCE}/collections/${collectionId}/items/${locationId}`,
   );
 
   if (format && format.length) {
-    url.searchParams.set('f', format);
+    url.searchParams.set("f", format);
   }
   return url.toString();
 };
 
 export const buildItemsUrl = (
-  collectionId: ICollection['id'],
-  format: null | 'csv' | 'json' | 'kml' | 'shp' = null
+  collectionId: ICollection["id"],
+  format: null | "csv" | "json" | "kml" | "shp" = null,
 ): string => {
-  const url = new URL(`${import.meta.env.VITE_AWO_SOURCE}/collections/${collectionId}/items`);
+  const url = new URL(
+    `${import.meta.env.VITE_AWO_SOURCE}/collections/${collectionId}/items`,
+  );
 
   if (format && format.length) {
-    url.searchParams.set('f', format);
+    url.searchParams.set("f", format);
   }
   return url.toString();
 };
@@ -90,33 +92,35 @@ const normalizeBBox = (bbox: BBox) => {
 };
 
 export const buildCubeUrl = (
-  collectionId: ICollection['id'],
+  collectionId: ICollection["id"],
   feature: Feature,
   parameters: string[],
   from: string | null,
   to: string | null,
   csv: boolean = false,
-  format: boolean = true
+  format: boolean = true,
 ): string => {
   if (!feature.bbox) {
-    return '';
+    return "";
   }
 
-  const url = new URL(`${import.meta.env.VITE_AWO_SOURCE}/collections/${collectionId}/cube`);
-  url.searchParams.set('bbox', normalizeBBox(feature.bbox).join(','));
+  const url = new URL(
+    `${import.meta.env.VITE_AWO_SOURCE}/collections/${collectionId}/cube`,
+  );
+  url.searchParams.set("bbox", normalizeBBox(feature.bbox).join(","));
 
   if (format) {
-    url.searchParams.set('f', csv ? 'csv' : 'json');
+    url.searchParams.set("f", csv ? "csv" : "json");
   }
 
   if (parameters.length > 0) {
-    url.searchParams.set('parameter-name', parameters.join(','));
+    url.searchParams.set("parameter-name", parameters.join(","));
   }
 
   const datetime = getDatetime(from, to);
 
   if (datetime) {
-    url.searchParams.set('datetime', datetime);
+    url.searchParams.set("datetime", datetime);
   }
 
   return url.toString();

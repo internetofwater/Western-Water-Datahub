@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { StateCreator } from 'zustand';
-import { SessionState, Warning } from '@/stores/session/types';
+import { StateCreator } from "zustand";
+import { SessionState, Warning } from "@/stores/session/types";
 
 export interface WarningsSlice {
   warnings: Warning[];
@@ -14,7 +14,7 @@ export interface WarningsSlice {
 
 export const createWarningsSlice: StateCreator<
   SessionState,
-  [['zustand/immer', never]],
+  [["zustand/immer", never]],
   [],
   WarningsSlice
 > = (set, _get) => ({

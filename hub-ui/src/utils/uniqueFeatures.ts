@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GeoJSONFeature } from 'mapbox-gl';
+import { GeoJSONFeature } from "mapbox-gl";
 
 export const getUniqueFeatures = (
   features: GeoJSONFeature[],
-  comparatorProperty: string
+  comparatorProperty: string,
 ): GeoJSONFeature[] => {
   const uniqueIds = new Set();
   const uniqueFeatures = [];

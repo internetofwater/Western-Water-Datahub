@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ComboboxData } from '@mantine/core';
-import { ICollection } from '@/services/edr.service';
-import { TLocation } from '@/stores/main/types';
+import { ComboboxData } from "@mantine/core";
+import { ICollection } from "@/services/edr.service";
+import { TLocation } from "@/stores/main/types";
 
 export const getParameterNameOptions = (
-  parameterNames: ICollection['parameter_names']
+  parameterNames: ICollection["parameter_names"],
 ): ComboboxData => {
   return Object.values(parameterNames)
     .map((parameterNameEntry) => {
@@ -22,7 +22,10 @@ export const getParameterNameOptions = (
     .sort((a, b) => a.label.localeCompare(b.label));
 };
 
-export const getDatetime = (from: string | null, to: string | null): string | null => {
+export const getDatetime = (
+  from: string | null,
+  to: string | null,
+): string | null => {
   if (from && to) {
     return `${from}/${to}`;
   } else if (from) {
@@ -34,25 +37,25 @@ export const getDatetime = (from: string | null, to: string | null): string | nu
 };
 
 export const buildUrl = (
-  collectionId: ICollection['id'],
-  locationId: TLocation['id'],
+  collectionId: ICollection["id"],
+  locationId: TLocation["id"],
   parameters: string[],
   from: string | null,
   to: string | null,
-  csv: boolean = false
+  csv: boolean = false,
 ): string => {
-  const format = csv ? 'csv' : 'json';
+  const format = csv ? "csv" : "json";
 
   const url = new URL(
-    `https://api.wwdh.internetofwater.app/collections/${collectionId}/locations/${locationId}?f=${format}`
+    `https://api.wwdh.internetofwater.app/collections/${collectionId}/locations/${locationId}?f=${format}`,
   );
 
-  url.searchParams.set('parameter-name', parameters.join(','));
+  url.searchParams.set("parameter-name", parameters.join(","));
 
   const datetime = getDatetime(from, to);
 
   if (datetime) {
-    url.searchParams.set('datetime', datetime);
+    url.searchParams.set("datetime", datetime);
   }
 
   return url.toString();

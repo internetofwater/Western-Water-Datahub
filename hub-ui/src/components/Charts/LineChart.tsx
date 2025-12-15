@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useMemo } from 'react';
-import ReactEChartsCore from 'echarts-for-react/lib/core';
-import { LineChart as _LineChart } from 'echarts/charts';
+import { useMemo } from "react";
+import ReactEChartsCore from "echarts-for-react/lib/core";
+import { LineChart as _LineChart } from "echarts/charts";
 import {
   DatasetComponent,
   GridComponent,
@@ -13,14 +13,14 @@ import {
   TitleComponent,
   ToolboxComponent,
   TooltipComponent,
-} from 'echarts/components';
-import * as echarts from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import styles from '@/components/Charts/Charts.module.css';
-import { EChartsSeries, PrettyLabel } from '@/components/Charts/types';
-import { coverageJSONToSeries } from '@/components/Charts/utils';
-import { CoverageCollection, CoverageJSON } from '@/services/edr.service';
-import { isCoverageCollection } from '@/utils/isTypeObject';
+} from "echarts/components";
+import * as echarts from "echarts/core";
+import { CanvasRenderer } from "echarts/renderers";
+import styles from "@/components/Charts/Charts.module.css";
+import { EChartsSeries, PrettyLabel } from "@/components/Charts/types";
+import { coverageJSONToSeries } from "@/components/Charts/utils";
+import { CoverageCollection, CoverageJSON } from "@/services/edr.service";
+import { isCoverageCollection } from "@/utils/isTypeObject";
 
 echarts.use([
   TitleComponent,
@@ -39,7 +39,7 @@ type Props = {
   legend?: boolean;
   filename?: string;
   prettyLabels?: PrettyLabel[];
-  theme?: 'light' | 'dark';
+  theme?: "light" | "dark";
   legendEntries?: string[];
 };
 
@@ -50,7 +50,7 @@ const LineChart = (props: Props) => {
     legend = false,
     filename,
     prettyLabels = [],
-    theme = 'light',
+    theme = "light",
     legendEntries = [],
   } = props;
 
@@ -68,15 +68,16 @@ const LineChart = (props: Props) => {
         stack: entry.stack,
         data: entry.data,
         name:
-          prettyLabels.find((prettyLabel) => prettyLabel.parameter === entry.name)?.label ??
-          entry.name,
+          prettyLabels.find(
+            (prettyLabel) => prettyLabel.parameter === entry.name,
+          )?.label ?? entry.name,
       })) as EChartsSeries[];
     }
 
     return {
       title: title ? { text: title } : undefined,
       tooltip: {
-        trigger: 'axis',
+        trigger: "axis",
       },
       legend: legend
         ? {
@@ -84,31 +85,31 @@ const LineChart = (props: Props) => {
               prettyLabels.length > 0
                 ? prettyLabels.map((prettyLabel) => prettyLabel.label)
                 : legendEntries,
-            top: 'bottom',
+            top: "bottom",
           }
         : undefined,
       toolbox: {
         feature: {
           saveAsImage: {
             show: true,
-            type: 'png',
-            name: filename ? filename : title ? title : 'line-chart',
+            type: "png",
+            name: filename ? filename : title ? title : "line-chart",
           },
         },
       },
       grid: {
-        left: '10%',
-        right: '4%',
-        top: '12%',
-        bottom: '20%',
+        left: "10%",
+        right: "4%",
+        top: "12%",
+        bottom: "20%",
       },
       xAxis: {
-        type: 'category',
+        type: "category",
         boundaryGap: false,
         data: dates,
       },
       yAxis: {
-        type: 'value',
+        type: "value",
       },
       series,
     };
@@ -118,9 +119,9 @@ const LineChart = (props: Props) => {
     <ReactEChartsCore
       className={styles.smoothTransition}
       style={{
-        height: '100%',
-        width: '98%',
-        marginLeft: '8px',
+        height: "100%",
+        width: "98%",
+        marginLeft: "8px",
       }}
       echarts={echarts}
       option={option}

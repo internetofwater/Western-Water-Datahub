@@ -44,7 +44,10 @@ export const Grid: React.FC<Props> = (props) => {
           times.every((time) => dayjs(time).isValid())
         ) {
           setTimes(
-            times.map((time) => ({ value: time, label: dayjs(time).format('MM/DD/YYYY h:mm A') }))
+            times.map((time) => ({
+              value: time,
+              label: dayjs(time).format('MM/DD/YYYY h:mm A'),
+            }))
           );
         }
       } else if (typeof feature.properties === 'string') {
@@ -60,7 +63,10 @@ export const Grid: React.FC<Props> = (props) => {
           times.every((time) => dayjs(time).isValid())
         ) {
           setTimes(
-            times.map((time) => ({ value: time, label: dayjs(time).format('MM/DD/YYYY h:mm A') }))
+            times.map((time) => ({
+              value: time,
+              label: dayjs(time).format('MM/DD/YYYY h:mm A'),
+            }))
           );
         }
       }
