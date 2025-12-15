@@ -3,14 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Box, Slider, Text } from '@mantine/core';
-import styles from '@/features/Legend/Legend.module.css';
-import { TLayer } from '@/stores/main/types';
+import { Box, Slider, Text } from "@mantine/core";
+import styles from "@/features/Legend/Legend.module.css";
+import { TLayer } from "@/stores/main/types";
 
 type Props = {
-  id: TLayer['id'];
-  opacity: TLayer['opacity'];
-  handleOpacityChange: (opacity: TLayer['opacity'], layerId: TLayer['id']) => void;
+  id: TLayer["id"];
+  opacity: TLayer["opacity"];
+  handleOpacityChange: (
+    opacity: TLayer["opacity"],
+    layerId: TLayer["id"],
+  ) => void;
 };
 
 export const OpacitySlider: React.FC<Props> = (props) => {

@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Feature } from 'geojson';
-import { Box, Button, Group, Tooltip } from '@mantine/core';
-import Select from '@/components/Select';
-import styles from '@/features/Popup/Popup.module.css';
-import { TLocation as LocationType } from '@/stores/main/types';
-import { Table } from '../Table';
+import { Feature } from "geojson";
+import { Box, Button, Group, Tooltip } from "@mantine/core";
+import Select from "@/components/Select";
+import styles from "@/features/Popup/Popup.module.css";
+import { TLocation as LocationType } from "@/stores/main/types";
+import { Table } from "../Table";
 
 type Props = {
   location: LocationType;
@@ -19,7 +19,13 @@ type Props = {
 };
 
 export const Item: React.FC<Props> = (props) => {
-  const { location, locations, feature, handleLocationChange, handleLinkClick } = props;
+  const {
+    location,
+    locations,
+    feature,
+    handleLocationChange,
+    handleLinkClick,
+  } = props;
 
   return (
     <>

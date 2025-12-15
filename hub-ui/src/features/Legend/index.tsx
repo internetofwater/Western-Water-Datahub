@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Fragment, useEffect } from 'react';
-import { Box, Divider, Stack } from '@mantine/core';
-import { Entry } from '@/features/Legend/Entry';
-import styles from '@/features/Legend/Legend.module.css';
-import mainManager from '@/managers/Main.init';
-import useMainStore from '@/stores/main';
-import { TLayer } from '@/stores/main/types';
-import useSessionStore from '@/stores/session';
-import { EOverlay } from '@/stores/session/types';
+import { Fragment, useEffect } from "react";
+import { Box, Divider, Stack } from "@mantine/core";
+import { Entry } from "@/features/Legend/Entry";
+import styles from "@/features/Legend/Legend.module.css";
+import mainManager from "@/managers/Main.init";
+import useMainStore from "@/stores/main";
+import { TLayer } from "@/stores/main/types";
+import useSessionStore from "@/stores/session";
+import { EOverlay } from "@/stores/session/types";
 
 const Legend: React.FC = () => {
   const layers = useMainStore((state) => state.layers);
@@ -19,7 +19,7 @@ const Legend: React.FC = () => {
   const overlay = useSessionStore((state) => state.overlay);
   const setOverlay = useSessionStore((state) => state.setOverlay);
 
-  const handleColorChange = (color: TLayer['color'], layerId: TLayer['id']) => {
+  const handleColorChange = (color: TLayer["color"], layerId: TLayer["id"]) => {
     const layer = mainManager.getLayer({ layerId });
 
     if (layer) {
@@ -28,12 +28,12 @@ const Legend: React.FC = () => {
         color,
         layer.visible,
         layer.opacity,
-        layer.paletteDefinition
+        layer.paletteDefinition,
       );
     }
   };
 
-  const handleVisibilityChange = (visible: boolean, layerId: TLayer['id']) => {
+  const handleVisibilityChange = (visible: boolean, layerId: TLayer["id"]) => {
     const layer = mainManager.getLayer({ layerId });
 
     if (layer) {
@@ -42,12 +42,12 @@ const Legend: React.FC = () => {
         layer.color,
         visible,
         layer.opacity,
-        layer.paletteDefinition
+        layer.paletteDefinition,
       );
     }
   };
 
-  const handleOpacityChange = (opacity: number, layerId: TLayer['id']) => {
+  const handleOpacityChange = (opacity: number, layerId: TLayer["id"]) => {
     const layer = mainManager.getLayer({ layerId });
 
     if (layer) {
@@ -56,7 +56,7 @@ const Legend: React.FC = () => {
         layer.color,
         layer.visible,
         opacity,
-        layer.paletteDefinition
+        layer.paletteDefinition,
       );
     }
   };
@@ -68,7 +68,10 @@ const Legend: React.FC = () => {
   });
 
   return (
-    <Stack gap="var(--default-spacing)" className={`${styles.container} ${styles.legendWrapper}`}>
+    <Stack
+      gap="var(--default-spacing)"
+      className={`${styles.container} ${styles.legendWrapper}`}
+    >
       <Box className={styles.legendContainer}>
         {layers.map((layer, index) => (
           <Fragment key={`legend-entry-${layer.id}`}>

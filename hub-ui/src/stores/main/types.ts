@@ -3,22 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Feature, FeatureCollection, Polygon } from 'geojson';
-import { ColorSpecification, PropertyValueSpecification } from 'mapbox-gl';
-import { Properties } from '@/components/Map/types';
-import { ICollection } from '@/services/edr.service';
-import { PaletteDefinition } from '@/utils/colors/types';
-import { ICollectionSlice } from './slices/collections';
-import { ILayerSlice } from './slices/layers';
-import { ILocationSlice } from './slices/locations';
-import { IParameterSlice } from './slices/parameters';
+import { Feature, FeatureCollection, Polygon } from "geojson";
+import { ColorSpecification, PropertyValueSpecification } from "mapbox-gl";
+import { Properties } from "@/components/Map/types";
+import { ICollection } from "@/services/edr.service";
+import { PaletteDefinition } from "@/utils/colors/types";
+import { ICollectionSlice } from "./slices/collections";
+import { ILayerSlice } from "./slices/layers";
+import { ILocationSlice } from "./slices/locations";
+import { IParameterSlice } from "./slices/parameters";
 
 export type ColorValueHex = `#${string}`;
 
 enum ESpatialSelectionType {
-  Drawn = 'custom-drawn-polygon',
-  Selected = 'select-existing-polygons',
-  Upload = 'custom-upload-shape',
+  Drawn = "custom-drawn-polygon",
+  Selected = "select-existing-polygons",
+  Upload = "custom-upload-shape",
 }
 
 interface ISpatialSelectionBase {
@@ -47,10 +47,10 @@ export type TSpatialSelection =
   | ISpatialSelectionSelected;
 
 export enum EDatasourceType {
-  Point = 'point',
-  Line = 'line',
-  Polygon = 'polygon',
-  Raster = 'raster',
+  Point = "point",
+  Line = "line",
+  Polygon = "polygon",
+  Raster = "raster",
 }
 
 // Allows for basic string colors (hex, rgba etc) or an expression
@@ -58,7 +58,7 @@ export type TColor = PropertyValueSpecification<ColorSpecification>;
 
 export type TLayer = {
   id: string; // uuid
-  collectionId: ICollection['id'];
+  collectionId: ICollection["id"];
   color: TColor;
   parameters: string[];
   from: string | null;
@@ -72,12 +72,12 @@ export type TLayer = {
 
 export type TLocation = {
   id: string; // location/{this}
-  collectionId: ICollection['id'];
+  collectionId: ICollection["id"];
 };
 
 export type TGeographyFilter = {
   itemId: string;
-  collectionId: ICollection['id'];
+  collectionId: ICollection["id"];
   feature: Feature<Polygon>;
 };
 
@@ -87,24 +87,26 @@ export type TCategory = {
 };
 
 export type TParameter = {
-  collectionId: ICollection['id'];
+  collectionId: ICollection["id"];
   parameters: string[];
 };
 
 export type MainState = {
   provider: string | null;
-  setProvider: (provider: MainState['provider']) => void;
+  setProvider: (provider: MainState["provider"]) => void;
   category: TCategory | null;
-  setCategory: (category: MainState['category']) => void;
+  setCategory: (category: MainState["category"]) => void;
   selectedCollections: string[];
-  setSelectedCollections: (collection: MainState['selectedCollections']) => void;
+  setSelectedCollections: (
+    collection: MainState["selectedCollections"],
+  ) => void;
   geographyFilter: TGeographyFilter | null;
-  setGeographyFilter: (geographyFilter: MainState['geographyFilter']) => void;
+  setGeographyFilter: (geographyFilter: MainState["geographyFilter"]) => void;
   hasGeographyFilter: () => boolean;
   from: string | null;
-  setFrom: (from: MainState['from']) => void;
+  setFrom: (from: MainState["from"]) => void;
   to: string | null;
-  setTo: (to: MainState['to']) => void;
+  setTo: (to: MainState["to"]) => void;
 } & ICollectionSlice &
   ILayerSlice &
   ILocationSlice &

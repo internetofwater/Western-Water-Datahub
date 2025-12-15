@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Group, Stack, Text } from '@mantine/core';
-import Circle from '@/assets/Circle';
-import Line from '@/assets/Line';
-import Square from '@/assets/Square';
-import styles from '@/features/Legend/Legend.module.css';
-import { LegendEntry } from '@/stores/session/types';
+import { Group, Stack, Text } from "@mantine/core";
+import Circle from "@/assets/Circle";
+import Line from "@/assets/Line";
+import Square from "@/assets/Square";
+import styles from "@/features/Legend/Legend.module.css";
+import { LegendEntry } from "@/stores/session/types";
 
 type Props = {
-  color: LegendEntry['color'];
+  color: LegendEntry["color"];
 };
 
 export const Shapes: React.FC<Props> = (props) => {

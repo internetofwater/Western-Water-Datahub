@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Box, Notification, Stack } from '@mantine/core';
-import styles from '@/features/Notifications/Notifications.module.css';
-import notificationManager from '@/managers/Notification.init';
-import useSessionStore from '@/stores/session';
-import { ENotificationType } from '@/stores/session/types';
+import { Box, Notification, Stack } from "@mantine/core";
+import styles from "@/features/Notifications/Notifications.module.css";
+import notificationManager from "@/managers/Notification.init";
+import useSessionStore from "@/stores/session";
+import { ENotificationType } from "@/stores/session/types";
 
 const Notifications: React.FC = () => {
   const notifications = useSessionStore((state) => state.notifications);
@@ -15,9 +15,9 @@ const Notifications: React.FC = () => {
   const getColor = (type: ENotificationType) => {
     switch (type) {
       case ENotificationType.Error:
-        return 'red';
+        return "red";
       case ENotificationType.Success:
-        return 'green';
+        return "green";
       case ENotificationType.Info:
       default:
         return undefined;

@@ -3,22 +3,34 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from 'react';
-import { ComboboxData, Group, Loader, Stack, Text, Title, VisuallyHidden } from '@mantine/core';
-import Info from '@/assets/Info';
-import Select from '@/components/Select';
-import Tooltip from '@/components/Tooltip';
-import { DEFAULT_FILL_OPACITY } from '@/features/Map/consts';
-import styles from '@/features/Panel/Panel.module.css';
-import { useLoading } from '@/hooks/useLoading';
-import mainManager from '@/managers/Main.init';
-import useMainStore from '@/stores/main';
-import { MainState } from '@/stores/main/types';
-import { getRandomHexColor } from '@/utils/hexColor';
+import { useEffect, useState } from "react";
+import {
+  ComboboxData,
+  Group,
+  Loader,
+  Stack,
+  Text,
+  Title,
+  VisuallyHidden,
+} from "@mantine/core";
+import Info from "@/assets/Info";
+import Select from "@/components/Select";
+import Tooltip from "@/components/Tooltip";
+import { DEFAULT_FILL_OPACITY } from "@/features/Map/consts";
+import styles from "@/features/Panel/Panel.module.css";
+import { useLoading } from "@/hooks/useLoading";
+import mainManager from "@/managers/Main.init";
+import useMainStore from "@/stores/main";
+import { MainState } from "@/stores/main/types";
+import { getRandomHexColor } from "@/utils/hexColor";
 
 export const Collection: React.FC = () => {
-  const selectedCollections = useMainStore((state) => state.selectedCollections);
-  const setSelectedCollections = useMainStore((state) => state.setSelectedCollections);
+  const selectedCollections = useMainStore(
+    (state) => state.selectedCollections,
+  );
+  const setSelectedCollections = useMainStore(
+    (state) => state.setSelectedCollections,
+  );
 
   const layers = useMainStore((state) => state.layers);
   const addLayer = useMainStore((state) => state.addLayer);
@@ -42,7 +54,11 @@ export const Collection: React.FC = () => {
       .sort((a, b) => a.label.localeCompare(b.label));
 
     // TODO: update this for array
-    if (!collections.some((_collection) => selectedCollections.includes(_collection.id))) {
+    if (
+      !collections.some((_collection) =>
+        selectedCollections.includes(_collection.id),
+      )
+    ) {
       setSelectedCollections([]);
     }
 
@@ -75,7 +91,10 @@ export const Collection: React.FC = () => {
     });
   }, [selectedCollections]);
 
-  const getDescription = (provider: MainState['provider'], category: MainState['category']) => {
+  const getDescription = (
+    provider: MainState["provider"],
+    category: MainState["category"],
+  ) => {
     if (provider && category) {
       return `Showing data sources available from provider: ${provider}, about category: ${category.label}`;
     } else if (provider) {
@@ -92,7 +111,8 @@ export const Collection: React.FC = () => {
       <Text size="sm">Select a data source to add locations from.</Text>
       <br />
       <Text size="sm">
-        Locations connect scientific measurements to a geographic point on the map.
+        Locations connect scientific measurements to a geographic point on the
+        map.
       </Text>
     </>
   );

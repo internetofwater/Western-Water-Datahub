@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useState } from 'react';
-import { Feature } from 'geojson';
-import { Box, Button, Group, Tooltip } from '@mantine/core';
-import Select from '@/components/Select';
-import { StringIdentifierCollections } from '@/consts/collections';
-import { Parameter } from '@/features/Popup';
-import { Chart } from '@/features/Popup/Chart';
-import styles from '@/features/Popup/Popup.module.css';
-import useMainStore from '@/stores/main';
-import { TLocation } from '@/stores/main/types';
-import { getIdStore } from '@/utils/getIdStore';
-import { Table } from '../Table';
+import { useEffect, useState } from "react";
+import { Feature } from "geojson";
+import { Box, Button, Group, Tooltip } from "@mantine/core";
+import Select from "@/components/Select";
+import { StringIdentifierCollections } from "@/consts/collections";
+import { Parameter } from "@/features/Popup";
+import { Chart } from "@/features/Popup/Chart";
+import styles from "@/features/Popup/Popup.module.css";
+import useMainStore from "@/stores/main";
+import { TLocation } from "@/stores/main/types";
+import { getIdStore } from "@/utils/getIdStore";
+import { Table } from "../Table";
 
 type Props = {
   location: TLocation;
@@ -37,7 +37,7 @@ export const Location: React.FC<Props> = (props) => {
     handleLinkClick,
   } = props;
 
-  const [tab, setTab] = useState<'chart' | 'table'>('chart');
+  const [tab, setTab] = useState<"chart" | "table">("chart");
   const [id, setId] = useState<string>();
 
   const from = useMainStore((state) => state.from);
@@ -45,7 +45,7 @@ export const Location: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (parameters.length === 0) {
-      setTab('table');
+      setTab("table");
     }
   }, [parameters]);
 
@@ -60,7 +60,7 @@ export const Location: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Box style={{ display: tab === 'chart' ? 'block' : 'none' }}>
+      <Box style={{ display: tab === "chart" ? "block" : "none" }}>
         {datasetName.length > 0 && parameters.length > 0 && id && (
           <Chart
             collectionId={location.collectionId}
@@ -72,7 +72,10 @@ export const Location: React.FC<Props> = (props) => {
           />
         )}
       </Box>
-      <Box style={{ display: tab === 'table' ? 'block' : 'none' }} className={styles.tableWrapper}>
+      <Box
+        style={{ display: tab === "table" ? "block" : "none" }}
+        className={styles.tableWrapper}
+      >
         {feature && <Table size="xs" properties={feature.properties} />}
       </Box>
       <Group
@@ -94,7 +97,7 @@ export const Location: React.FC<Props> = (props) => {
             />
           )}
           {parameters.length > 0 ? (
-            <Button size="xs" onClick={() => setTab('chart')}>
+            <Button size="xs" onClick={() => setTab("chart")}>
               Chart
             </Button>
           ) : (
@@ -105,7 +108,7 @@ export const Location: React.FC<Props> = (props) => {
             </Tooltip>
           )}
 
-          <Button size="xs" onClick={() => setTab('table')}>
+          <Button size="xs" onClick={() => setTab("table")}>
             Properties
           </Button>
         </Group>

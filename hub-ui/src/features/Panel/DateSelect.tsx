@@ -1,12 +1,17 @@
-import dayjs from 'dayjs';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import { Group, Stack, Text, Title, VisuallyHidden } from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
-import Info from '@/assets/Info';
-import Tooltip from '@/components/Tooltip';
-import styles from '@/features/Panel/Panel.module.css';
-import useMainStore from '@/stores/main';
-import { DatePreset, getSimplePresetDates } from '@/utils/dates';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import { Group, Stack, Text, Title, VisuallyHidden } from "@mantine/core";
+import { DatePickerInput } from "@mantine/dates";
+import Info from "@/assets/Info";
+import Tooltip from "@/components/Tooltip";
+import styles from "@/features/Panel/Panel.module.css";
+import useMainStore from "@/stores/main";
+import { DatePreset, getSimplePresetDates } from "@/utils/dates";
 
 dayjs.extend(isSameOrBefore);
 
@@ -16,15 +21,16 @@ export const DateSelect: React.FC = () => {
   const to = useMainStore((state) => state.to);
   const setTo = useMainStore((state) => state.setTo);
 
-  const isValidRange = from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
+  const isValidRange =
+    from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
 
   const helpText = (
     <>
       <Text size="sm">Select the date range to apply to all collections.</Text>
       <br />
       <Text size="sm">
-        This date range will serve as the default range used to create charts or fetch data for
-        gridded collections.
+        This date range will serve as the default range used to create charts or
+        fetch data for gridded collections.
       </Text>
     </>
   );
@@ -56,7 +62,7 @@ export const DateSelect: React.FC = () => {
             DatePreset.FifteenYears,
             DatePreset.ThirtyYears,
           ])}
-          error={isValidRange ? false : 'Invalid date range'}
+          error={isValidRange ? false : "Invalid date range"}
         />
         <DatePickerInput
           label="To"
@@ -73,7 +79,7 @@ export const DateSelect: React.FC = () => {
             DatePreset.FifteenYears,
             DatePreset.ThirtyYears,
           ])}
-          error={isValidRange ? false : 'Invalid date range'}
+          error={isValidRange ? false : "Invalid date range"}
         />
       </Group>
     </Stack>
