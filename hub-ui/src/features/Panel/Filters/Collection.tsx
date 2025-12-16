@@ -8,22 +8,14 @@ import { ComboboxData, Group, Loader, Stack, Text, Title, VisuallyHidden } from 
 import Info from '@/assets/Info';
 import Select from '@/components/Select';
 import Tooltip from '@/components/Tooltip';
-import { DEFAULT_FILL_OPACITY } from '@/features/Map/consts';
 import styles from '@/features/Panel/Panel.module.css';
 import { useLoading } from '@/hooks/useLoading';
-import mainManager from '@/managers/Main.init';
 import useMainStore from '@/stores/main';
 import { MainState } from '@/stores/main/types';
-import { getRandomHexColor } from '@/utils/hexColor';
 
 export const Collection: React.FC = () => {
   const selectedCollections = useMainStore((state) => state.selectedCollections);
   const setSelectedCollections = useMainStore((state) => state.setSelectedCollections);
-
-  const layers = useMainStore((state) => state.layers);
-  const addLayer = useMainStore((state) => state.addLayer);
-  const hasLayer = useMainStore((state) => state.hasLayer);
-  const removeLayer = useMainStore((state) => state.removeLayer);
 
   const provider = useMainStore((state) => state.provider);
   const category = useMainStore((state) => state.category);
@@ -49,31 +41,31 @@ export const Collection: React.FC = () => {
     setCollectionOptions(collectionOptions);
   }, [collections]);
 
-  useEffect(() => {
-    layers.forEach((layer) => {
-      if (!selectedCollections.includes(layer.collectionId)) {
-        removeLayer(layer.id);
-      }
-    });
-    selectedCollections.forEach((collectionId) => {
-      if (!hasLayer({ collectionId })) {
-        // TODO: move to manager, add nuances
-        addLayer({
-          id: mainManager.createUUID(),
-          collectionId,
-          color: getRandomHexColor(),
-          from: null,
-          to: null,
-          parameters: [],
-          position: layers.length + 1,
-          opacity: DEFAULT_FILL_OPACITY,
-          paletteDefinition: null,
-          visible: false,
-          loaded: false,
-        });
-      }
-    });
-  }, [selectedCollections]);
+  // useEffect(() => {
+  //   layers.forEach((layer) => {
+  //     if (!selectedCollections.includes(layer.collectionId)) {
+  //       removeLayer(layer.id);
+  //     }
+  //   });
+  //   selectedCollections.forEach((collectionId) => {
+  //     if (!hasLayer({ collectionId })) {
+  //       // TODO: move to manager, add nuances
+  //       addLayer({
+  //         id: mainManager.createUUID(),
+  //         collectionId,
+  //         color: getRandomHexColor(),
+  //         from: null,
+  //         to: null,
+  //         parameters: [],
+  //         position: layers.length + 1,
+  //         opacity: DEFAULT_FILL_OPACITY,
+  //         paletteDefinition: null,
+  //         visible: false,
+  //         loaded: false,
+  //       });
+  //     }
+  //   });
+  // }, [selectedCollections]);
 
   const getDescription = (provider: MainState['provider'], category: MainState['category']) => {
     if (provider && category) {

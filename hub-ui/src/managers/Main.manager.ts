@@ -34,7 +34,7 @@ import {
   StringIdentifierCollections,
 } from '@/consts/collections';
 import { getDefaultGeoJSON } from '@/consts/geojson';
-import { DEFAULT_BBOX, GeographyFilterSources } from '@/features/Map/consts';
+import { DEFAULT_BBOX, DEFAULT_FILL_OPACITY, GeographyFilterSources } from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/sources';
 import {
   getFillLayerDefinition,
@@ -51,6 +51,7 @@ import { CollectionType, getCollectionType, isEdrGrid } from '@/utils/collection
 import { createDynamicStepExpression, isSamePalette } from '@/utils/colors';
 import { isValidColorBrewerIndex, PaletteDefinition } from '@/utils/colors/types';
 import { getIdStore } from '@/utils/getIdStore';
+import { getRandomHexColor } from '@/utils/hexColor';
 import { getRasterLayerSpecification } from '@/utils/layerDefinitions';
 import { getNextLink } from './Main.utils';
 import notificationManager from './Notification.init';
@@ -979,6 +980,55 @@ class MainManager {
     }
   }
 
+  public async deleteLayer(collectionId: ICollection['id']) {
+    let layers = this.store
+      .getState()
+      .layers.filter((_layer) => _layer.collectionId !== collectionId);
+    const locations = this.store
+      .getState()
+      .locations.filter((location) => location.collectionId !== collectionId);
+
+    layers = layers
+      .sort((a, b) => a.position - b.position)
+      .map((l, index) => ({ ...l, position: index + 1 }));
+
+    if (this.map) {
+      const layerIds = Object.values(this.getLocationsLayerIds(collectionId));
+      for (const layerId of layerIds) {
+        if (this.map.getLayer(layerId)) {
+          this.map.removeLayer(layerId);
+        }
+      }
+
+      const sourceId = this.getSourceId(collectionId);
+
+      if (this.map.getSource(sourceId)) {
+        this.map.removeSource(sourceId);
+      }
+    }
+
+    console.log('I did get called', layers, locations, collectionId);
+
+    this.store.getState().setLayers(layers);
+    this.store.getState().setLocations(locations);
+  }
+
+  public cleanLayers(selectedCollections: string[]) {
+    const layers = this.store.getState().layers;
+
+    console.log('I AM HERE', layers, selectedCollections);
+    let count = 0;
+    for (const layer of layers) {
+      if (!selectedCollections.some((collectionId) => collectionId === layer.collectionId)) {
+        this.deleteLayer(layer.collectionId);
+      } else {
+        count += 1;
+      }
+    }
+
+    return count;
+  }
+
   /**
    *
    * @function
@@ -997,6 +1047,8 @@ class MainManager {
     const from = this.store.getState().from;
     const to = this.store.getState().to;
 
+    let count = this.cleanLayers(selectedCollections);
+
     const chunkSize = 5;
     for (let i = 0; i < filteredCollections.length; i += chunkSize) {
       const chunk = filteredCollections.slice(i, i + chunkSize);
@@ -1004,15 +1056,6 @@ class MainManager {
       await Promise.all(
         chunk.map(async (collection) => {
           const collectionId = collection.id;
-
-          this.addSource(collectionId);
-          this.addLayer(collectionId);
-          await this.addData(collectionId, {
-            // TODO: determine if these need to be included
-            // filterFeatures: drawnShapes,
-            // signal,
-            // noFetch: collectionType === CollectionType.EDRGrid && layer.parameters.length === 0,
-          });
 
           const layer = this.getLayer({ collectionId });
 
@@ -1023,6 +1066,7 @@ class MainManager {
               ?.parameters ?? [];
 
           if (layer) {
+            console.log('I opted to updated', layer);
             this.store.getState().updateLayer({
               ...layer,
               parameters,
@@ -1031,7 +1075,32 @@ class MainManager {
               visible: true,
               loaded: true,
             });
+          } else {
+            console.log('I opted to add', layer);
+            this.store.getState().addLayer({
+              id: this.createUUID(),
+              collectionId,
+              color: getRandomHexColor(),
+              parameters,
+              from,
+              to,
+              position: count + 1,
+              opacity: DEFAULT_FILL_OPACITY,
+              paletteDefinition: null,
+              visible: true,
+              loaded: true,
+            });
+            count += 1;
           }
+
+          this.addSource(collectionId);
+          this.addLayer(collectionId);
+          await this.addData(collectionId, {
+            // TODO: determine if these need to be included
+            // filterFeatures: drawnShapes,
+            // signal,
+            // noFetch: collectionType === CollectionType.EDRGrid && layer.parameters.length === 0,
+          });
         })
       );
     }

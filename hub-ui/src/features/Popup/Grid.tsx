@@ -10,12 +10,13 @@ import { Box, Button, Divider, Group, ScrollArea, Stack, Text, Tooltip } from '@
 import Select from '@/components/Select';
 import { Parameter } from '@/features/Popup';
 import styles from '@/features/Popup/Popup.module.css';
-import { TLocation as LocationType } from '@/stores/main/types';
+import { TLocation as LocationType, TLayer } from '@/stores/main/types';
 
 type Props = {
   location: LocationType;
   locations: LocationType[];
   feature: Feature;
+  layer: TLayer;
   datasetName: string;
   parameters: Parameter[];
   handleLocationChange: (id: string | null) => void;

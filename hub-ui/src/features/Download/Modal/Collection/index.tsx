@@ -5,7 +5,7 @@
 
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Anchor,
   Box,
@@ -29,11 +29,9 @@ import styles from '@/features/Download/Download.module.css';
 import { Chart } from '@/features/Download/Modal/Collection/Chart';
 import { CSV } from '@/features/Download/Modal/Collection/CSV';
 import { buildUrl, getParameterNameOptions } from '@/features/Download/Modal/utils';
-import loadingManager from '@/managers/Loading.init';
-import notificationManager from '@/managers/Notification.init';
+import mainManager from '@/managers/Main.init';
 import { ICollection } from '@/services/edr.service';
-import wwdhService from '@/services/init/wwdh.init';
-import { ELoadingType, ENotificationType } from '@/stores/session/types';
+import useMainStore from '@/stores/main';
 import { DatePreset, getSimplePresetDates } from '@/utils/dates';
 
 dayjs.extend(isSameOrBefore);
@@ -51,61 +49,27 @@ const Collection: React.FC<Props> = (props) => {
 
   const [opened, { toggle }] = useDisclosure(open);
 
+  const from = useMainStore((state) => state.from);
+  const to = useMainStore((state) => state.to);
+  const layer = useMainStore((state) => state.layers).find(
+    (layer) => layer.collectionId === collectionId
+  );
+
   const [collection, setCollection] = useState<ICollection>();
   const [parameterNameOptions, setParameterNameOptions] = useState<ComboboxData>();
-  const [selectedParameters, setSelectedParameters] = useState<string[]>([]);
-  const [from, setFrom] = useState<string | null>(dayjs().subtract(1, 'week').format('YYYY-MM-DD'));
-  const [to, setTo] = useState<string | null>(dayjs().format('YYYY-MM-DD'));
+  const [localParameters, setLocalParameters] = useState<string[]>(layer?.parameters ?? []);
+  const [localFrom, setLocalFrom] = useState<string | null>(from);
+  const [localTo, setLocalTo] = useState<string | null>(to);
   const [renderedCount, setRenderedCount] = useState(0);
   const [startDownload, setStartDownload] = useState<number>();
 
-  const controller = useRef<AbortController>(null);
-  const isMounted = useRef(true);
-  const loadingInstance = useRef<string>(null);
-
-  const getBasinOptions = async () => {
-    loadingInstance.current = loadingManager.add(
-      `Fetching data for collection: ${collectionId}`,
-      ELoadingType.Data
-    );
-    try {
-      controller.current = new AbortController();
-
-      const collection = await wwdhService.getCollection(collectionId, {
-        signal: controller.current.signal,
-      });
-
-      if (isMounted.current) {
-        setCollection(collection);
-        loadingManager.remove(loadingInstance.current);
-      }
-    } catch (error) {
-      if (
-        (error as Error)?.name === 'AbortError' ||
-        (typeof error === 'string' && error === 'Component unmount')
-      ) {
-        console.log('Fetch request canceled');
-      } else if ((error as Error)?.message) {
-        notificationManager.show(
-          `Error: ${(error as Error)?.message}`,
-          ENotificationType.Error,
-          10000
-        );
-      }
-      loadingManager.remove(loadingInstance.current);
-    }
-  };
-
   useEffect(() => {
-    isMounted.current = true;
-    void getBasinOptions();
-    return () => {
-      isMounted.current = false;
-      if (controller.current) {
-        controller.current.abort('Component unmount');
-      }
-    };
-  }, []);
+    const collection = mainManager.getCollection(collectionId);
+
+    if (collection) {
+      setCollection(collection);
+    }
+  }, [collectionId]);
 
   useEffect(() => {
     if (!collection) {
@@ -117,9 +81,10 @@ const Collection: React.FC<Props> = (props) => {
     setParameterNameOptions(parameterNameOptions);
   }, [collection]);
 
-  const isValidRange = from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
-  const isParameterSelectionUnderLimit = selectedParameters.length <= PARAMETER_LIMIT;
-  const areParametersSelected = selectedParameters.length > 0;
+  const isValidRange =
+    localFrom && localTo ? dayjs(localFrom).isSameOrBefore(dayjs(localTo)) : true;
+  const isParameterSelectionUnderLimit = localParameters.length <= PARAMETER_LIMIT;
+  const areParametersSelected = localParameters.length > 0;
 
   const parameterHelpText = (
     <>
@@ -136,9 +101,9 @@ const Collection: React.FC<Props> = (props) => {
   )?.href;
 
   return (
-    <Box>
+    <>
       {collection && (
-        <Box p="lg">
+        <Box p="var(--default-spacing)">
           <Group justify="space-between" mb="sm">
             {alternateLink ? (
               <Anchor href={alternateLink} target="_blank">
@@ -151,8 +116,14 @@ const Collection: React.FC<Props> = (props) => {
           </Group>
           <Collapse in={opened}>
             <Divider />
-            <Stack mt="sm">
-              <Group justify="space-between" align="flex-start" grow mb="lg">
+            <Stack mt="sm" gap="calc(var(--default-spacing) * 2)">
+              <Group
+                justify="space-between"
+                align="flex-start"
+                grow
+                gap="var(--default-spacing)"
+                mb="lg"
+              >
                 {parameterNameOptions && (
                   <>
                     <MultiSelect
@@ -171,14 +142,14 @@ const Collection: React.FC<Props> = (props) => {
                       description="Select 1-10 parameters"
                       placeholder="Select..."
                       data={parameterNameOptions}
-                      value={selectedParameters}
-                      onChange={setSelectedParameters}
+                      value={localParameters}
+                      onChange={setLocalParameters}
                       searchable
                       clearable
                       error={
                         isParameterSelectionUnderLimit
                           ? false
-                          : `Please remove ${selectedParameters.length - PARAMETER_LIMIT} parameter${selectedParameters.length - PARAMETER_LIMIT > 1 ? 's' : ''}`
+                          : `Please remove ${localParameters.length - PARAMETER_LIMIT} parameter${localParameters.length - PARAMETER_LIMIT > 1 ? 's' : ''}`
                       }
                     />
                     <VisuallyHidden>{parameterHelpText}</VisuallyHidden>
@@ -190,8 +161,8 @@ const Collection: React.FC<Props> = (props) => {
                     description="Provide an optional date range"
                     className={styles.datePicker}
                     placeholder="Pick start date"
-                    value={from}
-                    onChange={setFrom}
+                    value={localFrom}
+                    onChange={setLocalFrom}
                     clearable
                     presets={getSimplePresetDates([
                       DatePreset.OneYear,
@@ -206,8 +177,8 @@ const Collection: React.FC<Props> = (props) => {
                     label="To"
                     className={styles.datePicker}
                     placeholder="Pick end date"
-                    value={to}
-                    onChange={setTo}
+                    value={localTo}
+                    onChange={setLocalTo}
                     clearable
                     presets={getSimplePresetDates([
                       DatePreset.OneYear,
@@ -232,10 +203,19 @@ const Collection: React.FC<Props> = (props) => {
 
               {startDownload &&
                 locationIds.slice(0, renderedCount + 1).map((locationId) => {
-                  const url = buildUrl(collectionId, locationId, selectedParameters, from, to);
+                  const url = buildUrl(
+                    collectionId,
+                    locationId,
+                    localParameters,
+                    localFrom,
+                    localTo
+                  );
 
                   return (
-                    <Fragment key={`collection-download-${collectionId}-${locationId}`}>
+                    <Stack
+                      gap="calc(var(--default-spacing) / 2)"
+                      key={`collection-download-${collectionId}-${locationId}`}
+                    >
                       <Group gap="xs">
                         <Text>Location:</Text>
                         <Anchor
@@ -249,9 +229,9 @@ const Collection: React.FC<Props> = (props) => {
                         instanceId={startDownload}
                         collectionId={collectionId}
                         locationId={locationId}
-                        parameters={selectedParameters}
-                        from={from}
-                        to={to}
+                        parameters={localParameters}
+                        from={localFrom}
+                        to={localTo}
                         onData={() => setRenderedCount((count) => count + 1)}
                       />
                       <Group grow gap="sm">
@@ -259,22 +239,22 @@ const Collection: React.FC<Props> = (props) => {
                           instanceId={startDownload}
                           collectionId={collectionId}
                           locationId={locationId}
-                          parameters={selectedParameters}
-                          from={from}
-                          to={to}
+                          parameters={localParameters}
+                          from={localFrom}
+                          to={localTo}
                         />
                         <Box className={styles.copyInputWrapper}>
                           <CopyInput url={url} />
                         </Box>
                       </Group>
-                    </Fragment>
+                    </Stack>
                   );
                 })}
             </Stack>
           </Collapse>
         </Box>
       )}
-    </Box>
+    </>
   );
 };
 

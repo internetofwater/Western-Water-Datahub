@@ -14,7 +14,7 @@ import { Location } from '@/features/Popup/Location';
 import styles from '@/features/Popup/Popup.module.css';
 import mainManager from '@/managers/Main.init';
 import useMainStore from '@/stores/main';
-import { TLocation } from '@/stores/main/types';
+import { TLayer, TLocation } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
 import { CollectionType, getCollectionType } from '@/utils/collection';
 import { getIdStore } from '@/utils/getIdStore';
@@ -39,6 +39,7 @@ const Popup: React.FC<Props> = (props) => {
   const [feature, setFeature] = useState<Feature>();
   const [collectionType, setCollectionType] = useState<CollectionType>(CollectionType.Unknown);
 
+  const [layer, setLayer] = useState<TLayer | null>(null);
   const [datasetName, setDatasetName] = useState<string>('');
   const [parameters, setParameters] = useState<Parameter[]>([]);
 
@@ -91,6 +92,13 @@ const Popup: React.FC<Props> = (props) => {
   }, [location]);
 
   useEffect(() => {
+    const newLayer = mainManager.getLayer({ collectionId: location.collectionId });
+    if (newLayer) {
+      setLayer(newLayer);
+    }
+  }, [location]);
+
+  useEffect(() => {
     if (feature && StringIdentifierCollections.includes(location.collectionId)) {
       const id = getIdStore(feature);
       if (id) {
@@ -115,6 +123,10 @@ const Popup: React.FC<Props> = (props) => {
     }
   };
 
+  if (!layer) {
+    return null;
+  }
+
   return (
     <Stack gap={0} className={styles.popupWrapper}>
       <Header id={id} name={datasetName} collectionType={collectionType} />
@@ -123,6 +135,7 @@ const Popup: React.FC<Props> = (props) => {
         <Location
           location={location}
           locations={locations}
+          layer={layer}
           feature={feature}
           datasetName={datasetName}
           parameters={parameters}
@@ -134,6 +147,7 @@ const Popup: React.FC<Props> = (props) => {
         <Grid
           location={location}
           locations={locations}
+          layer={layer}
           feature={feature}
           datasetName={datasetName}
           parameters={parameters}
