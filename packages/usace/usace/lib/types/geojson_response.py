@@ -35,7 +35,7 @@ class TimeseriesParameter(BaseModel):
 
         url = f"https://water.usace.army.mil/cda/reporting/providers/{office.lower()}/timeseries?name={self.tsid}&begin={start_date}&end={end_date}"
         result = await RedisCache().get_or_fetch_json(url)
-        assert result
+        assert result, f"{url} did not return any results"
         return ResultCollection(**result)
 
     async def fill_results(self, office: str, start_date: str, end_date: str):

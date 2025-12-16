@@ -368,10 +368,10 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
         param = Parameter(
             type="Parameter",
             unit=Unit(symbol=datastream.unit),
-            id=datastream.tsid,
+            id=datastream.label,
             observedProperty=ObservedProperty(
                 label={"en": datastream.parameter},
-                id=datastream.tsid,
+                id=datastream.label,
                 description={"en": datastream.unit_long_name},
             ),
         )
@@ -410,7 +410,7 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                 ],
             ),
             ranges={
-                datastream.tsid: NdArrayFloat(
+                datastream.label: NdArrayFloat(
                     shape=[len(datastream.results.values)],
                     values=list[float | None](values),
                     axisNames=["t"],
@@ -432,7 +432,7 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                 longitude, latitude = loc.geometry.coordinates
                 cov = self._generate_coverage(param, longitude, latitude)
                 coverages.append(cov)
-                parameters[param.tsid] = self._generate_parameter(param)
+                parameters[param.label] = self._generate_parameter(param)
 
         covCol = CoverageCollection(
             coverages=coverages,
