@@ -68,7 +68,11 @@ class GeojsonProperties(BaseModel):
     # be able to field be them since they won't be considered
     # to be queryables and will otherwise be interpreted as arbitrary
     # kwargs
-    averages: Optional[dict] = None
+
+    # this is specified as a json since we need to be able to
+    # use it for ?property filters and pygeoapi by default reads in
+    # those properties to filter by as strings
+    hasResopsAverages: Optional[str] = "false"
     nidId: Optional[str] = None
 
     # allow setting arbitrary fields to allow

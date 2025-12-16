@@ -101,6 +101,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                         if avg_date == today:
                             data = static_properties["averages"][avg_date]
                             setattr(feature.properties, "averages", data)
+                            setattr(feature.properties, "hasResopsAverages", "true")
                             break
                 else:
                     setattr(feature.properties, prop, static_properties[prop])
