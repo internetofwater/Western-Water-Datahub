@@ -29,6 +29,8 @@ from typing import Optional, assert_never, cast
 
 type longitudeAndLatitude = tuple[float, float]
 
+MAGIC_UPSTREAM_DATE_SIGNIFYING_STILL_IN_SERVICE = "2100-01-01"
+
 
 class LocationCollection(LocationCollectionProtocolWithEDR):
     """A wrapper class containing locations and methods to filter them"""
@@ -50,7 +52,6 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         location_indices_to_remove = set()
 
         parsed_date = parse_date(datetime_)
-        MAGIC_UPSTREAM_DATE_SIGNIFYING_STILL_IN_SERVICE = "2100-01-01"
 
         if isinstance(parsed_date, tuple) and len(parsed_date) == 2:
             startQuery, endQuery = parsed_date

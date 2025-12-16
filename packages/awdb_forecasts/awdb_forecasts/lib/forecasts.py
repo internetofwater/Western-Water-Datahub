@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 from typing import Optional
+from awdb_com.locations import MAGIC_UPSTREAM_DATE_SIGNIFYING_STILL_IN_SERVICE
 from com.cache import RedisCache
 from com.helpers import await_
 from awdb_com.types import ForecastDataDTO
@@ -35,10 +36,27 @@ class ForecastResultCollection:
         station_triplets_comma_separated = ",".join(station_triplets)
         assert element_code
         url = f"https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/forecasts?elements={element_code}&stationTriplets={station_triplets_comma_separated}"
+        if not datetime_filter:
+            datetime_filter = (
+                f"1960-01-01/{MAGIC_UPSTREAM_DATE_SIGNIFYING_STILL_IN_SERVICE}"
+            )
+
+        parsedDate = datetime_filter.split("/")
+        if isinstance(parsedDate, str):
+            url += f"&beginPublicationDate={parsedDate}"
+        elif isinstance(parsedDate, list):
+            assert len(parsedDate) == 2
+            if ".." in parsedDate:
+                raise ValueError(
+                    "Cannot filter AWDB by an undefined temporal range with .."
+                )
+            url += f"&beginPublicationDate={parsedDate[0]}&endPublicationDate={parsedDate[1]}"
+        else:
+            raise ValueError(f"Got unexpected datetime filter {datetime_filter}")
         result = await_(self.cache.get_or_fetch_json(url, force_fetch=force_fetch))
         assert "error" not in result, result
 
-        assert result
+        assert result, f"Got no data for {url}"
         tripletToForecast: dict[str, list[ForecastDataDTO]] = {}
         for res in result:
             tripletToForecast[res.get("stationTriplet")] = [

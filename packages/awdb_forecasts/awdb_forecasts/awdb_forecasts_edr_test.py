@@ -7,5 +7,7 @@ from awdb_forecasts.awdb_forecasts_edr import AwdbForecastsEDRProvider
 def test_specific_location():
     topOfAlaskaID15896000 = "15896000"
     p = AwdbForecastsEDRProvider()
-    out = p.locations(location_id=topOfAlaskaID15896000)
+    out = p.locations(
+        location_id=topOfAlaskaID15896000, datetime_="2022-01-01/2022-01-10"
+    )
     assert out
