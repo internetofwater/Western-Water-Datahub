@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useState } from 'react';
-import { ExpressionSpecification } from 'mapbox-gl';
-import mainManager from '@/managers/Main.init';
-import { TLayer } from '@/stores/main/types';
-import { createColorRange } from '@/utils/colors';
-import { PaletteDefinition } from '@/utils/colors/types';
-import { getLabel } from '@/utils/parameters';
-import { Gradient } from './Gradient';
+import { useEffect, useState } from "react";
+import { ExpressionSpecification } from "mapbox-gl";
+import mainManager from "@/managers/Main.init";
+import { TLayer } from "@/stores/main/types";
+import { createColorRange } from "@/utils/colors";
+import { PaletteDefinition } from "@/utils/colors/types";
+import { getLabel } from "@/utils/parameters";
+import { Gradient } from "./Gradient";
 
 type Props = {
-  collectionId: TLayer['collectionId'];
+  collectionId: TLayer["collectionId"];
   color: ExpressionSpecification;
   paletteDefinition: PaletteDefinition;
 };
@@ -21,9 +21,11 @@ type Props = {
 export const DetailedGradient: React.FC<Props> = (props) => {
   const { collectionId, color, paletteDefinition } = props;
 
-  const [label, setLabel] = useState<string>(paletteDefinition?.parameter ?? '');
-  const [left, setLeft] = useState('Less');
-  const [right, setRight] = useState('More');
+  const [label, setLabel] = useState<string>(
+    paletteDefinition?.parameter ?? "",
+  );
+  const [left, setLeft] = useState("Less");
+  const [right, setRight] = useState("More");
 
   useEffect(() => {
     // Get values from expression, example:
@@ -42,13 +44,13 @@ export const DetailedGradient: React.FC<Props> = (props) => {
     // ];
 
     const min = color[3];
-    if (min && typeof min === 'number') {
+    if (min && typeof min === "number") {
       const left = `< ${min.toFixed(2)}`;
       setLeft(left);
     }
 
     const max = color[color.length - 2];
-    if (max && typeof max === 'number') {
+    if (max && typeof max === "number") {
       const right = `>= ${max.toFixed(2)}`;
       setRight(right);
     }
@@ -68,7 +70,10 @@ export const DetailedGradient: React.FC<Props> = (props) => {
   return (
     <Gradient
       label={label}
-      colors={createColorRange(paletteDefinition.count, paletteDefinition.palette)}
+      colors={createColorRange(
+        paletteDefinition.count,
+        paletteDefinition.palette,
+      )}
       left={left}
       right={right}
     />

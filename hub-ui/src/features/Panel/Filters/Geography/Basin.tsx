@@ -3,22 +3,26 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useRef, useState } from 'react';
-import { FeatureCollection, Polygon } from 'geojson';
-import { ComboboxData, Select, Skeleton } from '@mantine/core';
-import { SourceId } from '@/features/Map/sources';
-import { formatOptions } from '@/features/Panel/Filters/utils';
-import loadingManager from '@/managers/Loading.init';
-import mainManager from '@/managers/Main.init';
-import notificationManager from '@/managers/Notification.init';
-import geoconnexService from '@/services/init/geoconnex.init';
-import useMainStore from '@/stores/main';
-import { ELoadingType, ENotificationType } from '@/stores/session/types';
-import { Huc02BasinProperties, Huc02Field } from '@/types/huc02';
+import { useEffect, useRef, useState } from "react";
+import { FeatureCollection, Polygon } from "geojson";
+import { ComboboxData, Select, Skeleton } from "@mantine/core";
+import { SourceId } from "@/features/Map/sources";
+import { formatOptions } from "@/features/Panel/Filters/utils";
+import loadingManager from "@/managers/Loading.init";
+import mainManager from "@/managers/Main.init";
+import notificationManager from "@/managers/Notification.init";
+import geoconnexService from "@/services/init/geoconnex.init";
+import useMainStore from "@/stores/main";
+import { ELoadingType, ENotificationType } from "@/stores/session/types";
+import { Huc02BasinProperties, Huc02Field } from "@/types/huc02";
 
 export const Basin: React.FC = () => {
-  const geographyFilterCollectionId = useMainStore((state) => state.geographyFilter?.collectionId);
-  const geographyFilterItemId = useMainStore((state) => state.geographyFilter?.itemId);
+  const geographyFilterCollectionId = useMainStore(
+    (state) => state.geographyFilter?.collectionId,
+  );
+  const geographyFilterItemId = useMainStore(
+    (state) => state.geographyFilter?.itemId,
+  );
 
   const [basinOptions, setBasinOptions] = useState<ComboboxData>([]);
 
@@ -27,8 +31,8 @@ export const Basin: React.FC = () => {
 
   const getBasinOptions = async () => {
     const loadingInstance = loadingManager.add(
-      'Fetching basin dropdown options',
-      ELoadingType.Data
+      "Fetching basin dropdown options",
+      ELoadingType.Data,
     );
 
     try {
@@ -47,7 +51,7 @@ export const Basin: React.FC = () => {
         const basinOptions = formatOptions(
           basinFeatureCollection.features,
           (feature) => String(feature.id),
-          (feature) => String(feature?.properties?.[Huc02Field.Name])
+          (feature) => String(feature?.properties?.[Huc02Field.Name]),
         );
 
         if (isMounted.current) {
@@ -57,13 +61,16 @@ export const Basin: React.FC = () => {
       }
     } catch (error) {
       if (
-        (error as Error)?.name === 'AbortError' ||
-        (typeof error === 'string' && error === 'Component unmount')
+        (error as Error)?.name === "AbortError" ||
+        (typeof error === "string" && error === "Component unmount")
       ) {
-        console.log('Fetch request canceled');
+        console.log("Fetch request canceled");
       } else if ((error as Error)?.message) {
         const _error = error as Error;
-        notificationManager.show(`Error: ${_error.message}`, ENotificationType.Error);
+        notificationManager.show(
+          `Error: ${_error.message}`,
+          ENotificationType.Error,
+        );
       }
       loadingManager.remove(loadingInstance);
     }
@@ -75,7 +82,7 @@ export const Basin: React.FC = () => {
     return () => {
       isMounted.current = false;
       if (controller.current) {
-        controller.current.abort('Component unmount');
+        controller.current.abort("Component unmount");
       }
     };
   }, []);
@@ -83,17 +90,23 @@ export const Basin: React.FC = () => {
   const handleChange = async (itemId: string | null) => {
     if (itemId) {
       const loadingInstance = loadingManager.add(
-        'Adding basin geography filter',
-        ELoadingType.Geography
+        "Adding basin geography filter",
+        ELoadingType.Geography,
       );
       try {
         await mainManager.updateGeographyFilter(SourceId.Huc02, itemId);
         loadingManager.remove(loadingInstance);
-        notificationManager.show('Updated geography filter', ENotificationType.Success);
+        notificationManager.show(
+          "Updated geography filter",
+          ENotificationType.Success,
+        );
       } catch (error) {
         if ((error as Error)?.message) {
           const _error = error as Error;
-          notificationManager.show(`Error: ${_error.message}`, ENotificationType.Error);
+          notificationManager.show(
+            `Error: ${_error.message}`,
+            ENotificationType.Error,
+          );
         }
         loadingManager.remove(loadingInstance);
       }
@@ -116,7 +129,8 @@ export const Basin: React.FC = () => {
         placeholder="Select..."
         data={basinOptions}
         value={
-          geographyFilterCollectionId === SourceId.Huc02 && geographyFilterItemId
+          geographyFilterCollectionId === SourceId.Huc02 &&
+          geographyFilterItemId
             ? geographyFilterItemId
             : undefined
         }

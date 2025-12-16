@@ -82,7 +82,11 @@ const Popup: React.FC<Props> = (props) => {
 
       const parameters = paramObjects
         .filter((object) => object.type === 'Parameter' && allParameters.includes(object.id))
-        .map((object) => ({ id: object.id, name: object.name, unit: getParameterUnit(object) }));
+        .map((object) => ({
+          id: object.id,
+          name: object.name,
+          unit: getParameterUnit(object),
+        }));
 
       setParameters(parameters);
 

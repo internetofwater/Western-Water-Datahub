@@ -3,47 +3,63 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useState } from 'react';
-import { ExpressionSpecification } from 'mapbox-gl';
-import { ColorInput, Group, Stack, Switch, Text } from '@mantine/core';
-import styles from '@/features/Legend/Legend.module.css';
-import mainManager from '@/managers/Main.init';
-import { TLayer } from '@/stores/main/types';
-import { CollectionType, getCollectionType } from '@/utils/collection';
-import { DetailedGradient } from '../Color/DetailedGradient';
-import { Grid } from './Grid';
-import { OpacitySlider } from './OpacitySlider';
-import { Shapes } from './Shapes';
+import { useEffect, useState } from "react";
+import { ExpressionSpecification } from "mapbox-gl";
+import { ColorInput, Group, Stack, Switch, Text } from "@mantine/core";
+import styles from "@/features/Legend/Legend.module.css";
+import mainManager from "@/managers/Main.init";
+import { TLayer } from "@/stores/main/types";
+import { CollectionType, getCollectionType } from "@/utils/collection";
+import { DetailedGradient } from "../Color/DetailedGradient";
+import { Grid } from "./Grid";
+import { OpacitySlider } from "./OpacitySlider";
+import { Shapes } from "./Shapes";
 
 type Props = {
   layer: TLayer;
-  handleColorChange: (color: TLayer['color'], layerId: TLayer['id']) => void;
-  handleVisibilityChange: (visible: boolean, layerId: TLayer['id']) => void;
-  handleOpacityChange: (opacity: TLayer['opacity'], layerId: TLayer['id']) => void;
+  handleColorChange: (color: TLayer["color"], layerId: TLayer["id"]) => void;
+  handleVisibilityChange: (visible: boolean, layerId: TLayer["id"]) => void;
+  handleOpacityChange: (
+    opacity: TLayer["opacity"],
+    layerId: TLayer["id"],
+  ) => void;
 };
 
 export const Entry: React.FC<Props> = (props) => {
-  const { layer, handleColorChange, handleVisibilityChange, handleOpacityChange } = props;
+  const {
+    layer,
+    handleColorChange,
+    handleVisibilityChange,
+    handleOpacityChange,
+  } = props;
 
-  const [collectionType, setCollectionType] = useState<CollectionType>(CollectionType.Unknown);
-  const [title, setTitle] = useState('');
+  const [collectionType, setCollectionType] = useState<CollectionType>(
+    CollectionType.Unknown,
+  );
+  const [title, setTitle] = useState("");
 
   useEffect(() => {
     const collection = mainManager.getCollection(layer.collectionId);
 
     if (collection) {
-      setTitle(collection?.title ?? '');
+      setTitle(collection?.title ?? "");
       const collectionType = getCollectionType(collection);
       setCollectionType(collectionType);
     }
   }, [layer]);
 
-  const showColors = [CollectionType.EDR, CollectionType.EDRGrid, CollectionType.Features].includes(
-    collectionType
+  const showColors = [
+    CollectionType.EDR,
+    CollectionType.EDRGrid,
+    CollectionType.Features,
+  ].includes(collectionType);
+  const showShapes = [CollectionType.EDR, CollectionType.Features].includes(
+    collectionType,
   );
-  const showShapes = [CollectionType.EDR, CollectionType.Features].includes(collectionType);
   const showGrid = [CollectionType.EDRGrid].includes(collectionType);
-  const showOpacity = [CollectionType.EDRGrid, CollectionType.Map].includes(collectionType);
+  const showOpacity = [CollectionType.EDRGrid, CollectionType.Map].includes(
+    collectionType,
+  );
 
   return (
     <Stack w="100%" gap="xs" className={styles.legendEntry}>
@@ -58,7 +74,7 @@ export const Entry: React.FC<Props> = (props) => {
         />
       )}
 
-      {layer.paletteDefinition && typeof layer.color !== 'string' ? (
+      {layer.paletteDefinition && typeof layer.color !== "string" ? (
         <>
           <DetailedGradient
             collectionId={layer.collectionId}
@@ -71,11 +87,13 @@ export const Entry: React.FC<Props> = (props) => {
             onLabel="VISIBLE"
             offLabel="HIDDEN"
             checked={layer.visible}
-            onChange={(event) => handleVisibilityChange(event.target.checked, layer.id)}
+            onChange={(event) =>
+              handleVisibilityChange(event.target.checked, layer.id)
+            }
           />
         </>
       ) : (
-        typeof layer.color === 'string' && (
+        typeof layer.color === "string" && (
           <Group w="100%" justify="space-between" align="flex-start">
             <Stack justify="flex-start">
               {showColors && (
@@ -97,7 +115,9 @@ export const Entry: React.FC<Props> = (props) => {
                 onLabel="VISIBLE"
                 offLabel="HIDDEN"
                 checked={layer.visible}
-                onChange={(event) => handleVisibilityChange(event.target.checked, layer.id)}
+                onChange={(event) =>
+                  handleVisibilityChange(event.target.checked, layer.id)
+                }
               />
             </Stack>
             {showShapes && <Shapes color={layer.color} />}

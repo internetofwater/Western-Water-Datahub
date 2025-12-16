@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useState } from 'react';
-import { GeoJsonProperties } from 'geojson';
-import { Table as TableComponent, Text, TextInput } from '@mantine/core';
-import styles from '@/features/Popup/Popup.module.css';
+import { useEffect, useState } from "react";
+import { GeoJsonProperties } from "geojson";
+import { Table as TableComponent, Text, TextInput } from "@mantine/core";
+import styles from "@/features/Popup/Popup.module.css";
 
 type Props = {
   properties: GeoJsonProperties;
@@ -15,10 +15,11 @@ type Props = {
 };
 
 export const Table: React.FC<Props> = (props) => {
-  const { properties, size = 'sm', search = false } = props;
+  const { properties, size = "sm", search = false } = props;
 
-  const [filteredProperties, setFilteredProperties] = useState<GeoJsonProperties>(properties);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredProperties, setFilteredProperties] =
+    useState<GeoJsonProperties>(properties);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (searchTerm.length === 0) {
@@ -29,8 +30,9 @@ export const Table: React.FC<Props> = (props) => {
     const filtered = Object.fromEntries(
       Object.entries(properties ?? {}).filter(
         ([key, value]) =>
-          key.toLowerCase().includes(lower) || String(value).toLowerCase().includes(lower)
-      )
+          key.toLowerCase().includes(lower) ||
+          String(value).toLowerCase().includes(lower),
+      ),
     );
 
     setFilteredProperties(filtered);
@@ -79,7 +81,9 @@ export const Table: React.FC<Props> = (props) => {
               </TableComponent.Td>
               <TableComponent.Td>
                 <Text size={size} lineClamp={2}>
-                  {typeof value === 'object' ? JSON.stringify(value, null, 2) : value}
+                  {typeof value === "object"
+                    ? JSON.stringify(value, null, 2)
+                    : value}
                 </Text>
               </TableComponent.Td>
             </TableComponent.Tr>

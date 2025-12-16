@@ -1,5 +1,10 @@
-import Geography from '.';
-import { Group, Radio } from '@mantine/core';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import Geography from ".";
+import { Group, Radio } from "@mantine/core";
 
 type Props = {
   geography: Geography;
@@ -8,16 +13,16 @@ type Props = {
 
 const geographies: Array<{ value: Geography; label: string }> = [
   {
-    value: 'region',
-    label: 'Region',
+    value: "region",
+    label: "Region",
   },
   {
-    value: 'basin',
-    label: 'Basin',
+    value: "basin",
+    label: "Basin",
   },
   {
-    value: 'state',
-    label: 'State',
+    value: "state",
+    label: "State",
   },
 ];
 

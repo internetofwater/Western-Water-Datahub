@@ -3,67 +3,69 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ColorSpecification, PropertyValueSpecification } from 'mapbox-gl';
+import { ColorSpecification, PropertyValueSpecification } from "mapbox-gl";
 
 export enum FriendlyColorBrewerPalettes {
-  BlueGreen = 'BuGn',
-  BluePurple = 'BuPu',
-  GreenBlue = 'GnBu',
-  OrangeRed = 'OrRd',
-  PurpleBlue = 'PuBu',
-  PurpleBlueGreen = 'PuBuGn',
-  PurpleRed = 'PuRd',
-  RedPurple = 'RdPu',
-  YellowGreen = 'YlGn',
-  YellowGreenBlue = 'YlGnBu',
-  YellowOrangeBrown = 'YlOrBr',
-  YellowOrangeRed = 'YlOrRd',
-  Blues = 'Blues',
-  Greens = 'Greens',
-  Greys = 'Greys',
-  Oranges = 'Oranges',
-  Purples = 'Purples',
-  Reds = 'Reds',
+  BlueGreen = "BuGn",
+  BluePurple = "BuPu",
+  GreenBlue = "GnBu",
+  OrangeRed = "OrRd",
+  PurpleBlue = "PuBu",
+  PurpleBlueGreen = "PuBuGn",
+  PurpleRed = "PuRd",
+  RedPurple = "RdPu",
+  YellowGreen = "YlGn",
+  YellowGreenBlue = "YlGnBu",
+  YellowOrangeBrown = "YlOrBr",
+  YellowOrangeRed = "YlOrRd",
+  Blues = "Blues",
+  Greens = "Greens",
+  Greys = "Greys",
+  Oranges = "Oranges",
+  Purples = "Purples",
+  Reds = "Reds",
 }
 
-export const getPaletteLabel = (palette: FriendlyColorBrewerPalettes): string => {
+export const getPaletteLabel = (
+  palette: FriendlyColorBrewerPalettes,
+): string => {
   switch (palette) {
     case FriendlyColorBrewerPalettes.BlueGreen:
-      return 'Blue-Green';
+      return "Blue-Green";
     case FriendlyColorBrewerPalettes.BluePurple:
-      return 'Blue-Purple';
+      return "Blue-Purple";
     case FriendlyColorBrewerPalettes.GreenBlue:
-      return 'Green-Blue';
+      return "Green-Blue";
     case FriendlyColorBrewerPalettes.OrangeRed:
-      return 'Orange-Red';
+      return "Orange-Red";
     case FriendlyColorBrewerPalettes.PurpleBlue:
-      return 'Purple-Blue';
+      return "Purple-Blue";
     case FriendlyColorBrewerPalettes.PurpleBlueGreen:
-      return 'Purple-Blue-Green';
+      return "Purple-Blue-Green";
     case FriendlyColorBrewerPalettes.PurpleRed:
-      return 'Purple-Red';
+      return "Purple-Red";
     case FriendlyColorBrewerPalettes.RedPurple:
-      return 'Red-Purple';
+      return "Red-Purple";
     case FriendlyColorBrewerPalettes.YellowGreen:
-      return 'Yellow-Green';
+      return "Yellow-Green";
     case FriendlyColorBrewerPalettes.YellowGreenBlue:
-      return 'Yellow-Green-Blue';
+      return "Yellow-Green-Blue";
     case FriendlyColorBrewerPalettes.YellowOrangeBrown:
-      return 'Yellow-Orange-Brown';
+      return "Yellow-Orange-Brown";
     case FriendlyColorBrewerPalettes.YellowOrangeRed:
-      return 'Yellow-Orange-Red';
+      return "Yellow-Orange-Red";
     case FriendlyColorBrewerPalettes.Blues:
-      return 'Blues';
+      return "Blues";
     case FriendlyColorBrewerPalettes.Greens:
-      return 'Greens';
+      return "Greens";
     case FriendlyColorBrewerPalettes.Greys:
-      return 'Greys';
+      return "Greys";
     case FriendlyColorBrewerPalettes.Oranges:
-      return 'Oranges';
+      return "Oranges";
     case FriendlyColorBrewerPalettes.Purples:
-      return 'Purples';
+      return "Purples";
     case FriendlyColorBrewerPalettes.Reds:
-      return 'Reds';
+      return "Reds";
     default:
       return palette; // fallback to raw code if unknown
   }
@@ -73,7 +75,9 @@ export type ColorBrewerIndex = 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export const validColorBrewerIndex = [3, 4, 5, 6, 7, 8, 9];
 
-export const isValidColorBrewerIndex = (index: number): index is ColorBrewerIndex => {
+export const isValidColorBrewerIndex = (
+  index: number,
+): index is ColorBrewerIndex => {
   return validColorBrewerIndex.includes(index);
 };
 
@@ -87,7 +91,7 @@ export type ValidThresholdArray =
   | [number, number, number, number, number, number, number, number, number];
 
 export const isValidThresholdArray = (
-  threshholds: number[]
+  threshholds: number[],
 ): threshholds is ValidThresholdArray => {
   return validColorBrewerIndex.includes(threshholds.length);
 };

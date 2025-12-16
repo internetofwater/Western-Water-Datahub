@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Box, Text } from '@mantine/core';
-import styles from '@/features/Panel/Panel.module.css';
+import { Box, Text } from "@mantine/core";
+import styles from "@/features/Panel/Panel.module.css";
 
 type Props = {
   label: string;
@@ -18,7 +18,8 @@ export const Gradient: React.FC<Props> = (props) => {
 
   const stepLength = 100 / colors.length;
   const coloration = colors.map(
-    (color, index) => `${color} ${stepLength * index}% ${stepLength * (index + 1)}%`
+    (color, index) =>
+      `${color} ${stepLength * index}% ${stepLength * (index + 1)}%`,
   );
 
   return (
@@ -27,7 +28,7 @@ export const Gradient: React.FC<Props> = (props) => {
       <Box
         className={styles.gradient}
         style={{
-          background: `linear-gradient(to right, ${coloration.join(', ')})`,
+          background: `linear-gradient(to right, ${coloration.join(", ")})`,
         }}
       />
       <Box className={styles.gradientLabelContainer}>

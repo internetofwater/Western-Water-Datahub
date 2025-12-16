@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Button, Text, Tooltip } from '@mantine/core';
-import useMainStore from '@/stores/main';
-import useSessionStore from '@/stores/session';
-import { EModal as ModalEnum } from '@/stores/session/types';
+import { Button, Text, Tooltip } from "@mantine/core";
+import useMainStore from "@/stores/main";
+import useSessionStore from "@/stores/session";
+import { EModal as ModalEnum } from "@/stores/session/types";
 
 const Download: React.FC = () => {
   const locations = useMainStore((state) => state.locations);
@@ -20,7 +20,8 @@ const Download: React.FC = () => {
       <Text size="sm">Curate data requests for selected requests.</Text>
       <br />
       <Text size="sm">
-        Select parameters and an optional timeframe for locations across all displayed collections.
+        Select parameters and an optional timeframe for locations across all
+        displayed collections.
       </Text>
     </>
   );
@@ -32,7 +33,7 @@ const Download: React.FC = () => {
           <Tooltip label={helpDownloadText}>
             <Button onClick={() => setOpenModal(ModalEnum.Download)}>
               Explore {locations.length} selected Location
-              {locations.length !== 1 ? 's' : ''}
+              {locations.length !== 1 ? "s" : ""}
             </Button>
           </Tooltip>
           <Tooltip label="Deselect all selected locations">

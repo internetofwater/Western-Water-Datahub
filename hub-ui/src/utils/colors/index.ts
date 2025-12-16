@@ -3,18 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import colorbrewer from 'colorbrewer';
-import { Feature, Geometry } from 'geojson';
-import { ExpressionSpecification } from 'mapbox-gl';
-import { TLayer } from '@/stores/main/types';
+import colorbrewer from "colorbrewer";
+import { Feature, Geometry } from "geojson";
+import { ExpressionSpecification } from "mapbox-gl";
+import { TLayer } from "@/stores/main/types";
 import {
   ColorBrewerIndex,
   FriendlyColorBrewerPalettes,
   validColorBrewerIndex,
   ValidThresholdArray,
-} from '@/utils/colors/types';
+} from "@/utils/colors/types";
 
-export const createColorRange = (count: number, scheme: FriendlyColorBrewerPalettes): string[] => {
+export const createColorRange = (
+  count: number,
+  scheme: FriendlyColorBrewerPalettes,
+): string[] => {
   if (!validColorBrewerIndex.includes(count)) {
     throw new Error(`Palette "${scheme}" does not support ${count} colors`);
   }
@@ -25,7 +28,10 @@ export const createColorRange = (count: number, scheme: FriendlyColorBrewerPalet
   return palette;
 };
 
-export const getGradient = (groups: number, palette: FriendlyColorBrewerPalettes) => {
+export const getGradient = (
+  groups: number,
+  palette: FriendlyColorBrewerPalettes,
+) => {
   return createColorRange(groups, palette);
 };
 
@@ -33,13 +39,13 @@ const formatStepExpression = (
   property: string,
   palette: FriendlyColorBrewerPalettes,
   values: number[],
-  index: number = 0
+  index: number = 0,
 ): ExpressionSpecification => {
   const colorRange = createColorRange(values.length + 1, palette);
 
   const expression: ExpressionSpecification = [
-    'step',
-    ['number', ['at', index, ['get', property]], 0],
+    "step",
+    ["number", ["at", index, ["get", property]], 0],
     colorRange[0], // Default Color
   ];
 
@@ -52,7 +58,7 @@ const formatStepExpression = (
 
 export const groupData = (data: number[], numGroups: number): number[] => {
   if (numGroups < 1) {
-    throw new Error('Number of groups must be at least 1.');
+    throw new Error("Number of groups must be at least 1.");
   }
 
   const sorted = [...data].sort((a, b) => a - b);
@@ -75,14 +81,16 @@ export const createDynamicStepExpression = <T>(
   property: keyof T,
   palette: FriendlyColorBrewerPalettes,
   groups: number,
-  index: number = 0
+  index: number = 0,
 ): ExpressionSpecification => {
   const data = features.flatMap((feature) => {
     if (Array.isArray(feature.properties[property])) {
       const value = Number(feature.properties[property][index] ?? 0);
 
       if (isNaN(value)) {
-        throw new Error(`Invalid number detected in property: ${String(property)}`);
+        throw new Error(
+          `Invalid number detected in property: ${String(property)}`,
+        );
       }
 
       return value;
@@ -93,7 +101,9 @@ export const createDynamicStepExpression = <T>(
 
   const thresholds = groupData(data, groups);
 
-  const uniqueSortedThresholds = Array.from(new Set(thresholds)).sort((a, b) => a - b);
+  const uniqueSortedThresholds = Array.from(new Set(thresholds)).sort(
+    (a, b) => a - b,
+  );
 
   // If we lost thresholds due to duplicates, adjust groups accordingly
 
@@ -112,7 +122,12 @@ export const createDynamicStepExpression = <T>(
     uniqueSortedThresholds[2] = temp + 1;
   }
 
-  const expression = formatStepExpression(String(property), palette, uniqueSortedThresholds, index);
+  const expression = formatStepExpression(
+    String(property),
+    palette,
+    uniqueSortedThresholds,
+    index,
+  );
 
   return expression;
 };
@@ -120,7 +135,7 @@ export const createDynamicStepExpression = <T>(
 export const createStaticStepExpression = (
   property: string,
   palette: FriendlyColorBrewerPalettes,
-  thresholds: ValidThresholdArray
+  thresholds: ValidThresholdArray,
 ): ExpressionSpecification => {
   const expression = formatStepExpression(property, palette, thresholds);
 
@@ -128,22 +143,26 @@ export const createStaticStepExpression = (
 };
 
 export const isSamePalette = (
-  paletteA: TLayer['paletteDefinition'],
-  paletteB: TLayer['paletteDefinition']
+  paletteA: TLayer["paletteDefinition"],
+  paletteB: TLayer["paletteDefinition"],
 ): boolean => {
   return Boolean(
     (!paletteA && !paletteB) ||
-      (paletteA &&
-        paletteB &&
-        paletteA.count === paletteB.count &&
-        paletteA.palette === paletteB.palette &&
-        paletteA.parameter === paletteB.parameter)
+    (paletteA &&
+      paletteB &&
+      paletteA.count === paletteB.count &&
+      paletteA.palette === paletteB.palette &&
+      paletteA.parameter === paletteB.parameter),
   );
 };
 
-export const isValidPalette = (palette: TLayer['paletteDefinition']): boolean => {
+export const isValidPalette = (
+  palette: TLayer["paletteDefinition"],
+): boolean => {
   return Boolean(
     !palette ||
-      (!isNaN(palette.count) && palette.palette.length > 0 && palette.parameter.length > 0)
+    (!isNaN(palette.count) &&
+      palette.palette.length > 0 &&
+      palette.parameter.length > 0),
   );
 };

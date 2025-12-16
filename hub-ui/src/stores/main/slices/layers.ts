@@ -3,42 +3,45 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { StateCreator } from 'zustand';
-import { MainState, TLayer } from '@/stores/main/types';
+import { StateCreator } from "zustand";
+import { MainState, TLayer } from "@/stores/main/types";
 
 export interface ILayerSlice {
   layers: TLayer[];
   setLayers: (layers: TLayer[]) => void;
   addLayer: (layer: TLayer) => void;
-  removeLayer: (layerId: TLayer['id']) => void;
+  removeLayer: (layerId: TLayer["id"]) => void;
   updateLayer: (layer: TLayer) => void;
-  hasLayer: (options: { layerId?: TLayer['id']; collectionId?: TLayer['collectionId'] }) => boolean;
-  updateLayerPosition: (id: TLayer['id'], newPosition: number) => void;
+  hasLayer: (options: {
+    layerId?: TLayer["id"];
+    collectionId?: TLayer["collectionId"];
+  }) => boolean;
+  updateLayerPosition: (id: TLayer["id"], newPosition: number) => void;
 
   setLayerParameters: (
-    target: { layerId?: TLayer['id']; collectionId?: TLayer['collectionId'] },
-    parameters: string[]
+    target: { layerId?: TLayer["id"]; collectionId?: TLayer["collectionId"] },
+    parameters: string[],
   ) => void;
 
   addLayerParameter: (
-    target: { layerId?: TLayer['id']; collectionId?: TLayer['collectionId'] },
-    parameter: string
+    target: { layerId?: TLayer["id"]; collectionId?: TLayer["collectionId"] },
+    parameter: string,
   ) => void;
 
   removeLayerParameter: (
-    target: { layerId?: TLayer['id']; collectionId?: TLayer['collectionId'] },
-    parameter: string
+    target: { layerId?: TLayer["id"]; collectionId?: TLayer["collectionId"] },
+    parameter: string,
   ) => void;
 
   hasLayerParameter: (
-    target: { layerId?: TLayer['id']; collectionId?: TLayer['collectionId'] },
-    parameter: string
+    target: { layerId?: TLayer["id"]; collectionId?: TLayer["collectionId"] },
+    parameter: string,
   ) => boolean;
 }
 
 export const createLayerSlice: StateCreator<
   MainState,
-  [['zustand/immer', never]],
+  [["zustand/immer", never]],
   [],
   ILayerSlice
 > = (set, get) => ({
@@ -56,7 +59,9 @@ export const createLayerSlice: StateCreator<
     })),
   updateLayer: (updatedLayer) =>
     set((state) => ({
-      layers: state.layers.map((layer) => (layer.id === updatedLayer.id ? updatedLayer : layer)),
+      layers: state.layers.map((layer) =>
+        layer.id === updatedLayer.id ? updatedLayer : layer,
+      ),
     })),
   hasLayer: ({ layerId, collectionId }) => {
     if (layerId) {
@@ -82,7 +87,11 @@ export const createLayerSlice: StateCreator<
       // Shift other layers to avoid duplicate positions
       layers.forEach((l) => {
         if (l.id !== id) {
-          if (oldPosition < newPosition && l.position > oldPosition && l.position <= newPosition) {
+          if (
+            oldPosition < newPosition &&
+            l.position > oldPosition &&
+            l.position <= newPosition
+          ) {
             l.position -= 1;
           } else if (
             oldPosition > newPosition &&
@@ -147,7 +156,7 @@ export const createLayerSlice: StateCreator<
 
 const findLayer = (
   layers: TLayer[],
-  target: { layerId?: TLayer['id']; collectionId?: TLayer['collectionId'] }
+  target: { layerId?: TLayer["id"]; collectionId?: TLayer["collectionId"] },
 ): number[] => {
   if (target.layerId) {
     const idx = layers.findIndex((l) => l.collectionId === target.layerId);

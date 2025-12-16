@@ -3,52 +3,71 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useState } from 'react';
-import { ComboboxData, ComboboxItem, Group, Stack, Text, Title, Tooltip } from '@mantine/core';
-import Palette from '@/assets/Palette';
-import Button from '@/components/Button';
-import IconButton from '@/components/IconButton';
-import PopoverComponent from '@/components/Popover';
-import Select from '@/components/Select';
-import { Variant } from '@/components/types';
-import { Gradient } from '@/features/Panel/Layers/Layer/Color/Gradient';
-import styles from '@/features/Panel/Panel.module.css';
-import { Layer } from '@/stores/main/types';
-import { createColorRange, isSamePalette, isValidPalette } from '@/utils/colors';
+import { useEffect, useState } from "react";
+import {
+  ComboboxData,
+  ComboboxItem,
+  Group,
+  Stack,
+  Text,
+  Title,
+  Tooltip,
+} from "@mantine/core";
+import Palette from "@/assets/Palette";
+import Button from "@/components/Button";
+import IconButton from "@/components/IconButton";
+import PopoverComponent from "@/components/Popover";
+import Select from "@/components/Select";
+import { Variant } from "@/components/types";
+import { Gradient } from "@/features/Panel/Layers/Layer/Color/Gradient";
+import styles from "@/features/Panel/Panel.module.css";
+import { Layer } from "@/stores/main/types";
+import {
+  createColorRange,
+  isSamePalette,
+  isValidPalette,
+} from "@/utils/colors";
 import {
   ColorBrewerIndex,
   FriendlyColorBrewerPalettes,
   getPaletteLabel,
   isValidColorBrewerIndex,
   validColorBrewerIndex,
-} from '@/utils/colors/types';
+} from "@/utils/colors/types";
 
 // C:\Users\jsalman\source\ArizonaWaterObservatory\ui\src\features\Panel\Layers\Layer\Color\Popover.tsx
 
 type Props = {
-  paletteDefinition: Layer['paletteDefinition'];
-  handleChange: (paletteDefinition: Layer['paletteDefinition']) => void;
+  paletteDefinition: Layer["paletteDefinition"];
+  handleChange: (paletteDefinition: Layer["paletteDefinition"]) => void;
   parameters: string[];
   parameterOptions: ComboboxData;
 };
 
 export const Popover: React.FC<Props> = (props) => {
-  const { parameters, parameterOptions, paletteDefinition, handleChange } = props;
+  const { parameters, parameterOptions, paletteDefinition, handleChange } =
+    props;
 
   const [show, setShow] = useState(false);
 
   const [palette, setPalette] = useState<FriendlyColorBrewerPalettes | null>(
-    paletteDefinition?.palette ?? null
+    paletteDefinition?.palette ?? null,
   );
   const [colors, setColors] = useState<string[]>([]);
 
-  const [parameter, setParameter] = useState<string | null>(paletteDefinition?.parameter ?? null);
-  const [count, setCount] = useState<ColorBrewerIndex | null>(paletteDefinition?.count ?? null);
+  const [parameter, setParameter] = useState<string | null>(
+    paletteDefinition?.parameter ?? null,
+  );
+  const [count, setCount] = useState<ColorBrewerIndex | null>(
+    paletteDefinition?.count ?? null,
+  );
   const [data, setData] = useState<ComboboxData>(
-    parameterOptions.filter((option) => parameters.includes((option as ComboboxItem).value))
+    parameterOptions.filter((option) =>
+      parameters.includes((option as ComboboxItem).value),
+    ),
   );
 
-  const [label, setLabel] = useState(paletteDefinition?.parameter ?? '');
+  const [label, setLabel] = useState(paletteDefinition?.parameter ?? "");
 
   useEffect(() => {
     if (count === null || palette === null) {
@@ -67,7 +86,7 @@ export const Popover: React.FC<Props> = (props) => {
 
   useEffect(() => {
     const data = parameterOptions.filter((option) =>
-      parameters.includes((option as ComboboxItem).value)
+      parameters.includes((option as ComboboxItem).value),
     );
 
     setData(data);
@@ -78,7 +97,9 @@ export const Popover: React.FC<Props> = (props) => {
       return;
     }
 
-    const option = data.find((option) => (option as ComboboxItem).value === parameter);
+    const option = data.find(
+      (option) => (option as ComboboxItem).value === parameter,
+    );
 
     if (option) {
       setLabel((option as ComboboxItem).label);
@@ -126,10 +147,10 @@ export const Popover: React.FC<Props> = (props) => {
 
   const isValid = Boolean(
     count &&
-      parameter &&
-      palette &&
-      isValidPalette({ count, parameter, palette, index: 1 }) &&
-      parameters.includes(parameter)
+    parameter &&
+    palette &&
+    isValidPalette({ count, parameter, palette, index: 1 }) &&
+    parameters.includes(parameter),
   );
   const noParameters = parameters.length === 0;
 
@@ -142,7 +163,11 @@ export const Popover: React.FC<Props> = (props) => {
       shadow="md"
       target={
         <Tooltip
-          label={noParameters ? 'No parameters selected' : 'Create a dynamic visualization.'}
+          label={
+            noParameters
+              ? "No parameters selected"
+              : "Create a dynamic visualization."
+          }
           disabled={show}
         >
           <IconButton
@@ -180,7 +205,9 @@ export const Popover: React.FC<Props> = (props) => {
                 size="xs"
                 label="Parameters"
                 placeholder="Select the parameter to visualize"
-                defaultValue={data.length > 0 ? (data[0] as ComboboxItem)?.value : undefined}
+                defaultValue={
+                  data.length > 0 ? (data[0] as ComboboxItem)?.value : undefined
+                }
                 value={parameter}
                 data={data}
                 onChange={handleParameterChange}
@@ -191,17 +218,26 @@ export const Popover: React.FC<Props> = (props) => {
                 placeholder="Select the color palette to apply"
                 defaultValue={Object.values(FriendlyColorBrewerPalettes)[0]}
                 value={palette}
-                data={Object.values(FriendlyColorBrewerPalettes).map((palette) => ({
-                  value: palette,
-                  label: getPaletteLabel(palette),
-                }))}
+                data={Object.values(FriendlyColorBrewerPalettes).map(
+                  (palette) => ({
+                    value: palette,
+                    label: getPaletteLabel(palette),
+                  }),
+                )}
                 onChange={handlePaletteChange}
               />
             </Stack>
             {parameter && colors.length > 0 ? (
-              <Gradient label={label} colors={colors} left="Less" right="More" />
+              <Gradient
+                label={label}
+                colors={colors}
+                left="Less"
+                right="More"
+              />
             ) : (
-              <Text size="xs">Please select parameter, count, and palette.</Text>
+              <Text size="xs">
+                Please select parameter, count, and palette.
+              </Text>
             )}
           </Group>
           <Group mt="md" justify="center">
@@ -217,7 +253,11 @@ export const Popover: React.FC<Props> = (props) => {
               </Button>
             </Tooltip>
             <Tooltip label="Undo palette changes">
-              <Button size="xs" variant={Variant.Tertiary} onClick={() => handleCancel()}>
+              <Button
+                size="xs"
+                variant={Variant.Tertiary}
+                onClick={() => handleCancel()}
+              >
                 Cancel
               </Button>
             </Tooltip>
@@ -227,8 +267,13 @@ export const Popover: React.FC<Props> = (props) => {
             palette &&
             isValidPalette({ count, parameter, palette, index: 1 }) &&
             !isSamePalette(
-              { count, parameter, palette, index: paletteDefinition?.index || 0 },
-              paletteDefinition
+              {
+                count,
+                parameter,
+                palette,
+                index: paletteDefinition?.index || 0,
+              },
+              paletteDefinition,
             ) && (
               <Text size="xs" c="red">
                 Unsaved changes!
