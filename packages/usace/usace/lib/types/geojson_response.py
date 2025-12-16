@@ -63,6 +63,14 @@ class GeojsonProperties(BaseModel):
     timeseries: Optional[list[TimeseriesParameter]] = None
     name: Optional[str] = None
 
+    ### fields i have merged in
+    # we have to set these here otherwise pygeoapi won't
+    # be able to field be them since they won't be considered
+    # to be queryables and will otherwise be interpreted as arbitrary
+    # kwargs
+    averages: Optional[dict] = None
+    nidId: Optional[str] = None
+
     # allow setting arbitrary fields to allow
     # for merging the static metadata
     model_config = ConfigDict(extra="allow")
