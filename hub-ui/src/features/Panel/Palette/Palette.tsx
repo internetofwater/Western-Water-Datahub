@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   ActionIcon,
   Button,
@@ -14,17 +14,21 @@ import {
   Stack,
   Text,
   Title,
-} from '@mantine/core';
-import Info from '@/assets/Info';
-import PaletteIcon from '@/assets/Palette';
-import Select from '@/components/Select';
-import Tooltip from '@/components/Tooltip';
-import { Gradient } from '@/features/Panel/Palette/Gradient';
-import styles from '@/features/Panel/Panel.module.css';
-import mainManager from '@/managers/Main.init';
-import { ICollection } from '@/services/edr.service';
-import useMainStore from '@/stores/main';
-import { createColorRange, isSamePalette, isValidPalette } from '@/utils/colors';
+} from "@mantine/core";
+import Info from "@/assets/Info";
+import PaletteIcon from "@/assets/Palette";
+import Select from "@/components/Select";
+import Tooltip from "@/components/Tooltip";
+import { Gradient } from "@/features/Panel/Palette/Gradient";
+import styles from "@/features/Panel/Panel.module.css";
+import mainManager from "@/managers/Main.init";
+import { ICollection } from "@/services/edr.service";
+import useMainStore from "@/stores/main";
+import {
+  createColorRange,
+  isSamePalette,
+  isValidPalette,
+} from "@/utils/colors";
 import {
   ColorBrewerIndex,
   FriendlyColorBrewerPalettes,
@@ -32,11 +36,11 @@ import {
   isValidColorBrewerIndex,
   PaletteDefinition,
   validColorBrewerIndex,
-} from '@/utils/colors/types';
-import { getParameterUnit } from '@/utils/parameters';
+} from "@/utils/colors/types";
+import { getParameterUnit } from "@/utils/parameters";
 
 type Props = {
-  collectionId: ICollection['id'];
+  collectionId: ICollection["id"];
 };
 
 export const Palette: React.FC<Props> = (props) => {
@@ -48,16 +52,19 @@ export const Palette: React.FC<Props> = (props) => {
 
   const [show, setShow] = useState(false);
 
-  const [palette, setPalette] = useState<FriendlyColorBrewerPalettes | null>(null);
+  const [palette, setPalette] = useState<FriendlyColorBrewerPalettes | null>(
+    null,
+  );
   const [colors, setColors] = useState<string[]>([]);
 
   const [parameter, setParameter] = useState<string | null>(null);
   const [parameters, setParameters] = useState<string[]>([]);
-  const [paletteDefinition, setPaletteDefinition] = useState<PaletteDefinition | null>(null);
+  const [paletteDefinition, setPaletteDefinition] =
+    useState<PaletteDefinition | null>(null);
   const [count, setCount] = useState<ColorBrewerIndex | null>(null);
   const [data, setData] = useState<ComboboxData>([]);
 
-  const [label, setLabel] = useState('');
+  const [label, setLabel] = useState("");
 
   useEffect(() => {
     const collection = mainManager.getCollection(collectionId);
@@ -81,15 +88,18 @@ export const Palette: React.FC<Props> = (props) => {
 
   useEffect(() => {
     const parameters =
-      collectionParameters.find((parameter) => parameter.collectionId === collectionId)
-        ?.parameters ?? [];
+      collectionParameters.find(
+        (parameter) => parameter.collectionId === collectionId,
+      )?.parameters ?? [];
 
     setParameters(parameters);
   }, [collectionParameters]);
 
   useEffect(() => {
     const paletteDefinition =
-      collectionPalettes.find((palette) => palette.collectionId === collectionId)?.palette ?? null;
+      collectionPalettes.find(
+        (palette) => palette.collectionId === collectionId,
+      )?.palette ?? null;
 
     setPaletteDefinition(paletteDefinition);
   }, [collectionPalettes]);
@@ -114,7 +124,9 @@ export const Palette: React.FC<Props> = (props) => {
       return;
     }
 
-    const option = data.find((option) => (option as ComboboxItem).value === parameter);
+    const option = data.find(
+      (option) => (option as ComboboxItem).value === parameter,
+    );
 
     if (option) {
       setLabel((option as ComboboxItem).label);
@@ -128,7 +140,10 @@ export const Palette: React.FC<Props> = (props) => {
     if (!paletteDefinition) {
       setColors([]);
     } else if (paletteDefinition.count && paletteDefinition.palette) {
-      const colors = createColorRange(paletteDefinition.count, paletteDefinition.palette);
+      const colors = createColorRange(
+        paletteDefinition.count,
+        paletteDefinition.palette,
+      );
       setColors(colors);
     }
   }, [paletteDefinition]);
@@ -169,27 +184,36 @@ export const Palette: React.FC<Props> = (props) => {
 
   const isValid = Boolean(
     count &&
-      parameter &&
-      palette &&
-      isValidPalette({ count, parameter, palette, index: 1 }) &&
-      parameters.includes(parameter)
+    parameter &&
+    palette &&
+    isValidPalette({ count, parameter, palette, index: 1 }) &&
+    parameters.includes(parameter),
   );
   const noParameters = parameters.length === 0;
 
   return (
-    <Popover opened={show} onChange={setShow} closeOnClickOutside={false} shadow="md">
+    <Popover
+      opened={show}
+      onChange={setShow}
+      closeOnClickOutside={false}
+      shadow="md"
+    >
       <Group gap="var(--default-spacing)">
         <Tooltip
           multiline
           label={
             <Text size="sm">
-              This collection supports visualization of a selected parameter. Configure the
-              visualization in this menu and use the date selector on the map view different dates.
+              This collection supports visualization of a selected parameter.
+              Configure the visualization in this menu and use the date selector
+              on the map view different dates.
             </Text>
           }
           disabled={show}
         >
-          <Group className={styles.filterTitleWrapper} gap="calc(var(--default-spacing) / 4)">
+          <Group
+            className={styles.filterTitleWrapper}
+            gap="calc(var(--default-spacing) / 4)"
+          >
             <Text size="sm" fw={700}>
               Dynamic Visualization
             </Text>
@@ -199,7 +223,11 @@ export const Palette: React.FC<Props> = (props) => {
 
         <Popover.Target>
           <Tooltip
-            label={noParameters ? 'No parameters selected' : 'Create a dynamic visualization.'}
+            label={
+              noParameters
+                ? "No parameters selected"
+                : "Create a dynamic visualization."
+            }
             disabled={show}
           >
             <ActionIcon
@@ -237,7 +265,9 @@ export const Palette: React.FC<Props> = (props) => {
                 size="xs"
                 label="Parameters"
                 placeholder="Select the parameter to visualize"
-                defaultValue={data.length > 0 ? (data[0] as ComboboxItem)?.value : undefined}
+                defaultValue={
+                  data.length > 0 ? (data[0] as ComboboxItem)?.value : undefined
+                }
                 value={parameter}
                 data={data}
                 onChange={handleParameterChange}
@@ -248,17 +278,26 @@ export const Palette: React.FC<Props> = (props) => {
                 placeholder="Select the color palette to apply"
                 defaultValue={Object.values(FriendlyColorBrewerPalettes)[0]}
                 value={palette}
-                data={Object.values(FriendlyColorBrewerPalettes).map((palette) => ({
-                  value: palette,
-                  label: getPaletteLabel(palette),
-                }))}
+                data={Object.values(FriendlyColorBrewerPalettes).map(
+                  (palette) => ({
+                    value: palette,
+                    label: getPaletteLabel(palette),
+                  }),
+                )}
                 onChange={handlePaletteChange}
               />
             </Stack>
             {parameter && colors.length > 0 ? (
-              <Gradient label={label} colors={colors} left="Less" right="More" />
+              <Gradient
+                label={label}
+                colors={colors}
+                left="Less"
+                right="More"
+              />
             ) : (
-              <Text size="xs">Please select parameter, count, and palette.</Text>
+              <Text size="xs">
+                Please select parameter, count, and palette.
+              </Text>
             )}
           </Group>
           <Group mt="md" justify="center">
@@ -283,8 +322,13 @@ export const Palette: React.FC<Props> = (props) => {
             palette &&
             isValidPalette({ count, parameter, palette, index: 1 }) &&
             !isSamePalette(
-              { count, parameter, palette, index: paletteDefinition?.index || 0 },
-              paletteDefinition
+              {
+                count,
+                parameter,
+                palette,
+                index: paletteDefinition?.index || 0,
+              },
+              paletteDefinition,
             ) && (
               <Text size="xs" c="red">
                 Unsaved changes!

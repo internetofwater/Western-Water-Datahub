@@ -1,13 +1,18 @@
-import { useEffect, useState } from 'react';
-import { ActionIcon, Group, Popover, Stack, Text, Title } from '@mantine/core';
-import Info from '@/assets/Info';
-import OrderIcon from '@/assets/Order';
-import Tooltip from '@/components/Tooltip';
-import { Entry } from '@/features/Order/Entry';
-import styles from '@/features/Order/Order.module.css';
-import useMainStore from '@/stores/main';
-import useSessionStore from '@/stores/session';
-import { EOverlay } from '@/stores/session/types';
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+import { useEffect, useState } from "react";
+import { ActionIcon, Group, Popover, Stack, Text, Title } from "@mantine/core";
+import Info from "@/assets/Info";
+import OrderIcon from "@/assets/Order";
+import Tooltip from "@/components/Tooltip";
+import { Entry } from "@/features/Order/Entry";
+import styles from "@/features/Order/Order.module.css";
+import useMainStore from "@/stores/main";
+import useSessionStore from "@/stores/session";
+import { EOverlay } from "@/stores/session/types";
 
 const Order: React.FC = () => {
   const layers = useMainStore((state) => state.layers);
@@ -30,9 +35,13 @@ const Order: React.FC = () => {
 
   const helpText = (
     <>
-      <Text size="sm">Layers are drawn onto the map in the order listed below.</Text>
+      <Text size="sm">
+        Layers are drawn onto the map in the order listed below.
+      </Text>
       <br />
-      <Text size="sm">Use the arrow buttons to move layers up or down in the draw order.</Text>
+      <Text size="sm">
+        Use the arrow buttons to move layers up or down in the draw order.
+      </Text>
     </>
   );
 
@@ -41,7 +50,12 @@ const Order: React.FC = () => {
   }
 
   return (
-    <Popover opened={show} onChange={setShow} position="bottom-start" closeOnClickOutside={false}>
+    <Popover
+      opened={show}
+      onChange={setShow}
+      position="bottom-start"
+      closeOnClickOutside={false}
+    >
       <Popover.Target>
         <Tooltip label="Reorder layer" disabled={show}>
           <ActionIcon autoContrast size="lg" onClick={() => handleShow(!show)}>

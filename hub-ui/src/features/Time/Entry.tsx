@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
-import { useEffect, useRef, useState } from 'react';
-import { Map } from 'mapbox-gl';
-import { ComboboxData, Loader, Text } from '@mantine/core';
-import Select from '@/components/Select';
-import { useMap } from '@/contexts/MapContexts';
-import { MAP_ID } from '@/features/Map/config';
-import { getDates } from '@/features/Time/utils';
-import loadingManager from '@/managers/Loading.init';
-import mainManager from '@/managers/Main.init';
-import notificationManager from '@/managers/Notification.init';
-import { TLayer } from '@/stores/main/types';
-import { ELoadingType, ENotificationType } from '@/stores/session/types';
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import { useEffect, useRef, useState } from "react";
+import { Map } from "mapbox-gl";
+import { ComboboxData, Loader, Text } from "@mantine/core";
+import Select from "@/components/Select";
+import { useMap } from "@/contexts/MapContexts";
+import { MAP_ID } from "@/features/Map/config";
+import { getDates } from "@/features/Time/utils";
+import loadingManager from "@/managers/Loading.init";
+import mainManager from "@/managers/Main.init";
+import notificationManager from "@/managers/Notification.init";
+import { TLayer } from "@/stores/main/types";
+import { ELoadingType, ENotificationType } from "@/stores/session/types";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -32,7 +32,7 @@ export const Entry: React.FC<Props> = (props) => {
   const [data, setData] = useState<ComboboxData>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState("");
 
   const { map } = useMap(MAP_ID);
 
@@ -40,14 +40,17 @@ export const Entry: React.FC<Props> = (props) => {
   const isMounted = useRef(true);
 
   const handleDatesFetch = async (map: Map, layer: TLayer) => {
-    const loadingInstance = loadingManager.add(`Retrieving dates`, ELoadingType.Data);
+    const loadingInstance = loadingManager.add(
+      `Retrieving dates`,
+      ELoadingType.Data,
+    );
     setIsLoading(true);
     try {
       const dates = await getDates(map, layer.collectionId);
 
       const data: ComboboxData = dates.map((date, index) => ({
         value: String(index),
-        label: dayjs(date).format('MM/DD/YYYY h:mm A'),
+        label: dayjs(date).format("MM/DD/YYYY h:mm A"),
       }));
 
       if (isMounted.current) {
@@ -55,9 +58,13 @@ export const Entry: React.FC<Props> = (props) => {
       }
     } catch (err) {
       const error = err as Error;
-      if ((error?.message ?? '').length > 0 && error?.name !== 'AbortError') {
-        notificationManager.show((err as Error)?.message, ENotificationType.Error, 10000);
-      } else if (typeof err === 'string') {
+      if ((error?.message ?? "").length > 0 && error?.name !== "AbortError") {
+        notificationManager.show(
+          (err as Error)?.message,
+          ENotificationType.Error,
+          10000,
+        );
+      } else if (typeof err === "string") {
         notificationManager.show(err, ENotificationType.Error, 10000);
       }
     } finally {
@@ -75,7 +82,7 @@ export const Entry: React.FC<Props> = (props) => {
 
     const loadingInstance = loadingManager.add(
       `Updating coloration for ${title}`,
-      ELoadingType.Data
+      ELoadingType.Data,
     );
 
     try {
@@ -93,9 +100,13 @@ export const Entry: React.FC<Props> = (props) => {
       });
     } catch (err) {
       const error = err as Error;
-      if ((error?.message ?? '').length > 0 && error?.name !== 'AbortError') {
-        notificationManager.show((err as Error)?.message, ENotificationType.Error, 10000);
-      } else if (typeof err === 'string') {
+      if ((error?.message ?? "").length > 0 && error?.name !== "AbortError") {
+        notificationManager.show(
+          (err as Error)?.message,
+          ENotificationType.Error,
+          10000,
+        );
+      } else if (typeof err === "string") {
         notificationManager.show(err, ENotificationType.Error, 10000);
       }
     } finally {
@@ -108,7 +119,7 @@ export const Entry: React.FC<Props> = (props) => {
     return () => {
       isMounted.current = false;
       if (controller.current) {
-        controller.current.abort('Component unmount');
+        controller.current.abort("Component unmount");
       }
     };
   }, []);

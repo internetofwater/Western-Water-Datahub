@@ -3,40 +3,46 @@
  * SPDX-License-Identifier: MIT
  */
 
-import dayjs from 'dayjs';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import { useEffect, useRef, useState } from 'react';
-import { Button, Text } from '@mantine/core';
-import Tooltip from '@/components/Tooltip';
-import { CollectionRestrictions, RestrictionType } from '@/consts/collections';
-import { useLoading } from '@/hooks/useLoading';
-import loadingManager from '@/managers/Loading.init';
-import mainManager from '@/managers/Main.init';
-import notificationManager from '@/managers/Notification.init';
-import useMainStore from '@/stores/main';
-import useSessionStore from '@/stores/session';
-import { ELoadingType, ENotificationType, ETool } from '@/stores/session/types';
-import { CollectionType, getCollectionType } from '@/utils/collection';
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import { useEffect, useRef, useState } from "react";
+import { Button, Text } from "@mantine/core";
+import Tooltip from "@/components/Tooltip";
+import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
+import { useLoading } from "@/hooks/useLoading";
+import loadingManager from "@/managers/Loading.init";
+import mainManager from "@/managers/Main.init";
+import notificationManager from "@/managers/Notification.init";
+import useMainStore from "@/stores/main";
+import useSessionStore from "@/stores/session";
+import { ELoadingType, ENotificationType, ETool } from "@/stores/session/types";
+import { CollectionType, getCollectionType } from "@/utils/collection";
 
 dayjs.extend(isSameOrBefore);
 
 export const ShowLocations: React.FC = () => {
-  const selectedCollections = useMainStore((state) => state.selectedCollections);
+  const selectedCollections = useMainStore(
+    (state) => state.selectedCollections,
+  );
   const from = useMainStore((state) => state.from);
   const to = useMainStore((state) => state.to);
   const setOpenTools = useSessionStore((state) => state.setOpenTools);
-  const geographyFilterItemId = useMainStore((state) => state.geographyFilter?.itemId);
+  const geographyFilterItemId = useMainStore(
+    (state) => state.geographyFilter?.itemId,
+  );
 
   const parameters = useMainStore((state) => state.parameters);
 
-  const { isLoadingGeography, isFetchingCollections, isFetchingLocations } = useLoading();
+  const { isLoadingGeography, isFetchingCollections, isFetchingLocations } =
+    useLoading();
 
   const isFirstTime = useRef(true);
 
   const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
-    const isLoading = isLoadingGeography || isFetchingCollections || isFetchingLocations;
+    const isLoading =
+      isLoadingGeography || isFetchingCollections || isFetchingLocations;
     const noCollectionsSelected = selectedCollections.length === 0;
 
     const hasFrom = Boolean(from);
@@ -51,7 +57,7 @@ export const ShowLocations: React.FC = () => {
 
     const validRange = bothValid ? df!.isSameOrBefore(dt!) : true;
 
-    const diffDays = bothValid && validRange ? dt!.diff(df!, 'day') : null;
+    const diffDays = bothValid && validRange ? dt!.diff(df!, "day") : null;
 
     const checkCollectionRestictions = (collectionId: string): boolean => {
       const collection = mainManager.getCollection(collectionId);
@@ -65,11 +71,15 @@ export const ShowLocations: React.FC = () => {
       }
 
       const collectionType = getCollectionType(collection);
-      const collectionParameters = parameters.find((p) => p.collectionId === collectionId);
+      const collectionParameters = parameters.find(
+        (p) => p.collectionId === collectionId,
+      );
 
       // Parameter restriction
       let isInvalidParameter = false;
-      const parameterRestriction = restrictions.find((r) => r.type === RestrictionType.Parameter);
+      const parameterRestriction = restrictions.find(
+        (r) => r.type === RestrictionType.Parameter,
+      );
       if (parameterRestriction && parameterRestriction.count > 0) {
         isInvalidParameter =
           !collectionParameters ||
@@ -77,15 +87,21 @@ export const ShowLocations: React.FC = () => {
       }
 
       let isInvalidDate = false;
-      const daysRestiction = restrictions.find((r) => r.type === RestrictionType.Day);
+      const daysRestiction = restrictions.find(
+        (r) => r.type === RestrictionType.Day,
+      );
       if (daysRestiction && daysRestiction.days > 0) {
         isInvalidDate =
-          !bothValid || !validRange || (diffDays !== null && diffDays > daysRestiction.days);
+          !bothValid ||
+          !validRange ||
+          (diffDays !== null && diffDays > daysRestiction.days);
       }
 
       // Geography filter restriction
       let isInvalidGeographyFilter = false;
-      const geoRestriction = restrictions.find((r) => r.type === RestrictionType.GeographyFilter);
+      const geoRestriction = restrictions.find(
+        (r) => r.type === RestrictionType.GeographyFilter,
+      );
       if (geoRestriction) {
         isInvalidGeographyFilter = !geographyFilterItemId;
       }
@@ -96,7 +112,10 @@ export const ShowLocations: React.FC = () => {
         (!collectionParameters || collectionParameters.parameters.length === 0);
 
       return (
-        isInvalidParameter || isInvalidDate || isInvalidGeographyFilter || isEdrGridMissingParam
+        isInvalidParameter ||
+        isInvalidDate ||
+        isInvalidGeographyFilter ||
+        isEdrGridMissingParam
       );
     };
 
@@ -109,7 +128,10 @@ export const ShowLocations: React.FC = () => {
       selectedCollections.some((id) => checkCollectionRestictions(id));
 
     const nextDisabled =
-      isLoading || noCollectionsSelected || orderingDisabled || anyCollectionDisables;
+      isLoading ||
+      noCollectionsSelected ||
+      orderingDisabled ||
+      anyCollectionDisables;
 
     setIsDisabled(nextDisabled);
   }, [
@@ -157,7 +179,10 @@ export const ShowLocations: React.FC = () => {
   // }, [isLoadingGeography, isFetchingCollections, isFetchingLocations, selectedCollections]);
 
   const addData = async () => {
-    const loadingInstance = loadingManager.add('Fetching Locations', ELoadingType.Locations);
+    const loadingInstance = loadingManager.add(
+      "Fetching Locations",
+      ELoadingType.Locations,
+    );
     try {
       await mainManager.createLayer();
       loadingManager.remove(loadingInstance);
@@ -165,11 +190,15 @@ export const ShowLocations: React.FC = () => {
         isFirstTime.current = false;
         setOpenTools(ETool.Legend, true);
       }
-      notificationManager.show('Done fetching data', ENotificationType.Success);
+      notificationManager.show("Done fetching data", ENotificationType.Success);
     } catch (error) {
       if ((error as Error)?.message) {
         const _error = error as Error;
-        notificationManager.show(`Error: ${_error.message}`, ENotificationType.Error, 10000);
+        notificationManager.show(
+          `Error: ${_error.message}`,
+          ENotificationType.Error,
+          10000,
+        );
       }
       loadingManager.remove(loadingInstance);
     }
@@ -177,23 +206,23 @@ export const ShowLocations: React.FC = () => {
 
   const getLabel = () => {
     if (isLoadingGeography) {
-      return 'Please wait for geography filter to load';
+      return "Please wait for geography filter to load";
     }
 
     if (isFetchingCollections) {
-      return 'Please wait for collections request to complete';
+      return "Please wait for collections request to complete";
     }
 
     if (isFetchingLocations) {
-      return 'Please wait for locations request to complete';
+      return "Please wait for locations request to complete";
     }
 
     if (selectedCollections.length === 0) {
-      return 'Please select at least one collection';
+      return "Please select at least one collection";
     }
 
     if (isDisabled) {
-      return 'Please correct the issues above.';
+      return "Please correct the issues above.";
     }
 
     return (
@@ -201,18 +230,22 @@ export const ShowLocations: React.FC = () => {
         <Text size="sm">Show locations for all selected collections.</Text>
         <br />
         <Text size="sm">
-          Access scientific measurements, place names, and other data points through location shapes
-          on the map.
+          Access scientific measurements, place names, and other data points
+          through location shapes on the map.
         </Text>
       </>
     );
 
-    ('');
+    ("");
   };
 
   return (
     <Tooltip multiline label={getLabel()}>
-      <Button disabled={isDisabled} data-disabled={isDisabled} onClick={() => void addData()}>
+      <Button
+        disabled={isDisabled}
+        data-disabled={isDisabled}
+        onClick={() => void addData()}
+      >
         Show Locations
       </Button>
     </Tooltip>
