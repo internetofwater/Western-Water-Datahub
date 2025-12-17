@@ -46,6 +46,7 @@
     "react-router-dom": "^7.6.2",
     "uuid": "^11.1.0",
     "wellknown": "^0.5.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zustand": "^5.0.7"
   },
   "devDependencies": {
