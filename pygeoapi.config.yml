@@ -51,7 +51,7 @@ metadata:
 resources:
   rise-edr:
     type: collection
-    title: USBR Reclamation Information Sharing Environment (RISE) 
+    title: USBR Reclamation Information Sharing Environment (RISE)
     description: contains data from reservoirs and associated projects from the USBR. This collection is a proxy of the RISE API into the OGC API EDR format.
     provider-name:
       - BOR
@@ -212,7 +212,7 @@ resources:
         title_field: name
     link:
       - type: application/html
-        rel: canonical 
+        rel: canonical
         title: Data source
         href: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
       - type: application/html
@@ -277,7 +277,7 @@ resources:
   noaa-cqpf-6-hours:
     <<: *default-qpf
     title: NOAA Weather Prediction Center Cumulative Quantitative Precipitation Forecast 6 Hours
-    description: consists of layers that represent forecasted cumulative QPF for 6 hours from now. 
+    description: consists of layers that represent forecasted cumulative QPF for 6 hours from now.
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/7
@@ -354,7 +354,7 @@ resources:
   nohrsc-swe:
     type: collection
     title: NOAA National Operational Hydrologic Remote Sensing Center Snow Water Forecast
-    description: contains forecasts for the water equivalent of snow across the US 
+    description: contains forecasts for the water equivalent of snow across the US
     provider-name:
       - NOHRSC
       - NOAA
@@ -404,7 +404,7 @@ resources:
         href: https://www.nohrsc.noaa.gov/nsa/
       - type: application/html
         rel: documentation
-        title: Documentation 
+        title: Documentation
         href: https://www.weather.gov/gis/cloudgiswebservices
     extents: *default-extent
     providers:
@@ -414,7 +414,7 @@ resources:
   # nohrsd-saswb:
   #   <<: *default-qpf
   #   title: NOAA National Operational Hydrologic Remote Sensing Center Snow Analysis Water Boundary
-  #   description: 
+  #   description:
   #   providers:
   #     - <<: *default-feature-qpf
   #       data: https://mapservices.weather.noaa.gov/raster/rest/services/snow/NOHRSC_Snow_Analysis/MapServer/5
@@ -444,7 +444,7 @@ resources:
   noaa-temp-6-10-day:
     type: collection
     title: NOAA Climate Prediction Center 6-10 Day Temperature Forecast
-    description: consists of layers which each represent a forecasted temperature for 6-10 days from now. Forecasts are given as relative percentages and are represented as above, near, or below normal. 
+    description: consists of layers which each represent a forecasted temperature for 6-10 days from now. Forecasts are given as relative percentages and are represented as above, near, or below normal.
     provider-name:
       - CPC
       - NOAA
@@ -469,7 +469,7 @@ resources:
   noaa-precip-6-10-day:
     type: collection
     title: NOAA Climate Prediction Center 6-10 Day Precipitation Forecast
-    description: consists of layers which each represent a forecasted chance for precipitation for 6-10 days from now. Forecasts are given as relative percentages and are represented as above, near, or below normal. 
+    description: consists of layers which each represent a forecasted chance for precipitation for 6-10 days from now. Forecasts are given as relative percentages and are represented as above, near, or below normal.
     provider-name:
       - CPC
       - NOAA
@@ -662,7 +662,7 @@ resources:
     links:
       - type: application/html
         title: Documentation
-        rel: documentation 
+        rel: documentation
         href: https://www.doi.gov/employees/reorg/unified-regional-boundaries
     providers:
       - type: feature
@@ -727,7 +727,7 @@ resources:
   resops-edr:
     type: collection
     title: ResOpsUS 30 Year Storage Info for USACE Reservoirs
-    description: contains data on all reservoirs maintained by the US Army Corps of Engineers (USACE) present within the ResOpsUS dataset. Each feature includes the 30 year averages for storage levels on each day. This data is historical and spans until 2020. Each feature is identified according to the National Inventory of Dams (NID) ID. 
+    description: contains data on all reservoirs maintained by the US Army Corps of Engineers (USACE) present within the ResOpsUS dataset. Each feature includes the 30 year averages for storage levels on each day. This data is historical and spans until 2020. Each feature is identified according to the National Inventory of Dams (NID) ID.
     hidden: True
     provider-name:
       - DERIVED
