@@ -51,8 +51,8 @@ metadata:
 resources:
   rise-edr:
     type: collection
-    title: Reclamation Information Sharing Environment
-    description: USBR Information Sharing Environment (RISE) EDR
+    title: USBR Reclamation Information Sharing Environment (RISE) 
+    description: contains data from reservoirs and associated projects from the USBR. This collection is a proxy of the RISE API into the OGC API EDR format.
     provider-name:
       - BOR
       - USBR
@@ -63,8 +63,7 @@ resources:
     templates:
       path: pygeoapi-deployment/templates/jsonld/rise-edr
     links:
-      - &default-link
-        type: application/html
+      - type: application/html
         rel: canonical
         title: data source
         href: https://data.usbr.gov/
@@ -87,8 +86,8 @@ resources:
 
   snotel-edr:
     type: collection
-    title: Snow Telemetry Network
-    description: USDA Snow Telemetry Network (SNOTEL) EDR
+    title: Snowpack Telemetry Network (SNOTEL)
+    description: is an automated system of snowpack and related climate sensors primarily in mountainous regions in the Western United States which aims to collect data like snow water equivalent, accumulated precipitation, and air temperature. This is a proxy of the SNOTEL API into the OGC API EDR format.
     provider-name:
       - DOA
       - USDA
@@ -101,8 +100,16 @@ resources:
     templates:
       path: pygeoapi-deployment/templates/jsonld/snotel
     links:
-      - <<: *default-link
-        href: https://www.nrcs.usda.gov/wps/portal/wcc/home/aboutUs/monitoringPrograms/automatedSnowMonitoring/
+      - type: application/html
+        rel: documentation
+        title: documentation
+        href: https://www.nrcs.usda.gov/wps/portal/wcc/home/aboutus/monitoringprograms/automatedsnowmonitoring/
+        hreflang: en-us
+      - type: application/html
+        rel: canonical
+        title: data source
+        href: https://wcc.sc.egov.usda.gov/awdbrestapi/swagger-ui/index.html
+        hreflang: en-us
     extents:
       spatial:
         bbox: [-164.92472, 32.92342, -103.78758, 70.28062]
@@ -115,39 +122,10 @@ resources:
         name: snotel.snotel.SnotelProvider
         data: https://wcc.sc.egov.usda.gov/
 
-  # usgs-sta:
-  #   type: collection
-  #   title: United States Geologic Survey Streamgages
-  #   description: USGS Streamgages API EDR
-  #   provider-name:
-  #     - GS
-  #     - USGS
-  #     - WMA
-  #   keywords:
-  #     - EDR
-  #     - SensorThings
-  #     - USGS
-  #   links:
-  #     - <<: *default-link
-  #       href: https://labs.waterdata.usgs.gov
-  #   extents: &default-extent
-  #     spatial:
-  #       bbox: [-170, 15, -51, 72]
-  #       crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-  #   providers:
-  #     - type: edr
-  #       name: SensorThingsEDR
-  #       data: https://labs.waterdata.usgs.gov/sta/v1.1/
-  #     - type: feature
-  #       name: SensorThings
-  #       data: https://labs.waterdata.usgs.gov/sta/v1.1/
-  #       entity: Things
-  #       title_field: name
-
   awdb-forecasts-edr:
     type: collection
-    title: Air and Water Database Forecasts
-    description: USDA Air and Water Database Forecasts (AWDB) EDR
+    title: Air and Water Database (AWDB) Forecasts
+    description: provides predictions for climate and water supply conditions. This is a proxy of the AWDB API into the OGC API EDR format. This collection uses the same endpoint as SNOTEL but includes only forecasts
     provider-name:
       - DOA
       - USDA
@@ -167,21 +145,41 @@ resources:
         data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
         title_field: name
     links:
-      - <<: *default-link
-        href: https://www.nrcs.usda.gov/wps/portal/wcc/home/aboutUs/monitoringPrograms/automatedSnowMonitoring
+      - type: application/html
+        rel: documentation
+        title: Documentation
+        href: https://www.nrcs.usda.gov/wps/portal/wcc/home/aboutUs/monitoringPrograms/automatedSnowMonitoring/
+        hreflang: en-US
+      - type: application/html
+        rel: canonical
+        title: Data source
+        href: https://wcc.sc.egov.usda.gov/awdbRestApi/swagger-ui/index.html
+        hreflang: en-US
     templates:
       path: pygeoapi-deployment/templates/jsonld/snotel
 
   snotel-huc06-means:
     type: collection
     title: Snotel Snow Water Equivalent Aggregated by HUC06
-    description: The average snow water equivalent; each feature contains one average for each HUC06 watershed; these averages are relative to the 30 year average
+    description: provides snow water equivalent data from SNOTEL aggregated by HUC06 watershed. Each feature contains one average for the entire HUC06; these averages are relative to the 30 year average.
     provider-name:
       - DOA
       - USDA
       - NRCS
     keywords:
       - open data
+      - snotel
+    links:
+      - type: application/html
+        rel: documentation
+        title: Documentation
+        href: https://www.nrcs.usda.gov/wps/portal/wcc/home/aboutUs/monitoringPrograms/automatedSnowMonitoring/
+        hreflang: en-US
+      - type: application/html
+        rel: canonical
+        title: Data source
+        href: https://wcc.sc.egov.usda.gov/awdbRestApi/swagger-ui/index.html
+        hreflang: en-US
     extents: *default-extent
     providers:
       - type: feature
@@ -192,8 +190,8 @@ resources:
 
   usace-edr:
     type: collection
-    title: US Army Corps of Engineers Access2Water
-    description: USACE Access2Water (A2W) API EDR
+    title: US Army Corps of Engineers Access2Water API
+    description: provides a subset of the USACE Corps Water Management System (CWMS) API specifically focused on water control management data. This is a proxy of the CWMS API into the OGC API EDR format.
     provider-name:
       - DOA
       - USACE
@@ -212,20 +210,28 @@ resources:
         data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
         entity: Observation
         title_field: name
-    links:
-      - <<: *default-link
-        href: https://water.sec.usace.army.mil/cda/reporting/providers/projects?fmt=geojson
+    link:
+      - type: application/html
+        rel: canonical 
+        title: Data source
+        href: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
+      - type: application/html
+        rel: documentation
+        title: Documentation
+        href: https://water.usace.army.mil/
 
   noaa-qpf-day-1: &default-qpf
     type: collection
-    title: Quantitative Precipitation Forecast Day 1
-    description: NOAA Quantitative Precipitation Forecast (QPF) 24 Hours Day 1
+    title: NOAA Weather Prediction Center Quantitative Precipitation Forecast Day 1
+    description: consists of layers that represent forecasted QPFs for 24 hours from now. Quantitative Precipitation Forecasts, or QPFs, depict the amount of liquid precipitation expected to fall in a defined period of time. In the case of snow or ice, QPF represents the amount of liquid that will be measured when the precipitation is melted. QPF 24 Hours Day 1 is for the 24 hour time period starting at the valid date/time.
     provider-name:
       - WPC
       - NOAA
     keywords: [NOAA, QPF]
     links:
-      - <<: *default-link
+      - type: application/html
+        rel: canonical
+        title: Canonical
         href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
     extents: *default-extent
     providers:
@@ -238,82 +244,84 @@ resources:
 
   noaa-qpf-day-2:
     <<: *default-qpf
-    title: Quantitative Precipitation Forecast Day 2
-    description: NOAA Quantitative Precipitation Forecast (QPF) 24 Hours Day 2
+    title: NOAA Weather Prediction Center Quantitative Precipitation Forecast Day 2
+    description: consists of layers that represent forecasted QPFs for 48 hours from now. Quantitative Precipitation Forecasts, or QPFs, depict the amount of liquid precipitation expected to fall in a defined period of time. In the case of snow or ice, QPF represents the amount of liquid that will be measured when the precipitation is melted. QPF 24 Hours Day 2 is for a 24 hours time period starting at the valid date/time for day 2 (which is 24 hours past day 1).
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/2
 
   noaa-qpf-day-3:
     <<: *default-qpf
-    title: Quantitative Precipitation Forecast Day 3
-    description: NOAA Quantitative Precipitation Forecast (QPF) 24 Hours Day 3
+    title: NOAA Weather Prediction Center Quantitative Precipitation Forecast Day 3
+    description: consists of layers that represent forecasted QPFs for 72 hours from now. Quantitative Precipitation Forecasts, or QPFs, depict the amount of liquid precipitation expected to fall in a defined period of time. In the case of snow or ice, QPF represents the amount of liquid that will be measured when the precipitation is melted. QPF 24 Hours Day 3 is for a 24 hours time period starting at the valid date/time for day 3 (which is 48 hours past day 1).
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/3
 
   noaa-qpf-day-4-5:
     <<: *default-qpf
-    title: Quantitative Precipitation Forecast Day 4-5
-    description: NOAA Quantitative Precipitation Forecast (QPF) 48 Hours Day 4-5
+    title: NOAA Weather Prediction Center Quantitative Precipitation Forecast Day 4-5
+    description: consists of layers that represent forecasted QPFs for 72 hours from now. Quantitative Precipitation Forecasts, or QPFs, depict the amount of liquid precipitation expected to fall in a defined period of time. In the case of snow or ice, QPF represents the amount of liquid that will be measured when the precipitation is melted. QPF 48 Hours Day 4-5 is for a 48 hour time period starting at valid date/time for days 4-5 (which is 72 hours past day 1).
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/4
 
   noaa-qpf-day-6-7:
     <<: *default-qpf
-    title: Quantitative Precipitation Forecast Day 6-7
-    description: NOAA Quantitative Precipitation Forecast (QPF) 48 Hour Day 6-7
+    title: NOAA Weather Prediction Center Quantitative Precipitation Forecast Day 6-7
+    description: consists of layers that represent forecasted QPFs for 72 hours from now. Quantitative Precipitation Forecasts, or QPFs, depict the amount of liquid precipitation expected to fall in a defined period of time. In the case of snow or ice, QPF represents the amount of liquid that will be measured when the precipitation is melted. QPF 48 Hours Day 6-7 is for a 48 hour time period starting at valid date/time for days 6-7 (which is 120 hours past day 1).
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/5
 
   noaa-cqpf-6-hours:
     <<: *default-qpf
-    title: Cumulative Quantitative Precipitation Forecast 6 Hours
-    description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 6 Hours Day 1
+    title: NOAA Weather Prediction Center Cumulative Quantitative Precipitation Forecast 6 Hours
+    description: consists of layers that represent forecasted cumulative QPF for 6 hours from now. 
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/7
 
   noaa-cqpf-48-hours:
     <<: *default-qpf
-    title: Cumulative Quantitative Precipitation Forecast 48 Hours
-    description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 48 Hours Day 1-2
+    title: NOAA Weather Prediction Center Cumulative Quantitative Precipitation Forecast 48 Hours
+    description: consists of layers that represent forecasted cumulative QPF for 48 hours from now.
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/8
 
   noaa-cqpf-72-hours:
     <<: *default-qpf
-    title: Cumulative Quantitative Precipitation Forecast 72 Hours
-    description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 72 Hours Day 1-3
+    title: NOAA Weather Prediction Center Cumulative Quantitative Precipitation Forecast 72 Hours
+    description: consists of layers that represent forecasted cumulative QPF for 72 hours from now.
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/9
 
   noaa-cqpf-120-hours:
     <<: *default-qpf
-    title: Cumulative Quantitative Precipitation Forecast 120 Hours
-    description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 120 Hours Day 1-5
+    title: NOAA Weather Prediction Center Cumulative Quantitative Precipitation Forecast 120 Hours
+    description: consists of layers that represent forecasted cumulative QPF for 120 hours from now.
     providers:
       - <<: *default-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/10
 
   noaa-cqpf-168-hours:
     <<: *default-qpf
-    title: Cumulative Quantitative Precipitation Forecast 168 Hours
-    description: NOAA Quantitative Precipitation Forecast (QPF) Cumulative 168 Hours Day 1-7
+    title: NOAA Weather Prediction Center Cumulative Quantitative Precipitation Forecast 168 Hours
+    description: consists of layers that represent forecasted cumulative QPF for 168 hours from now.
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/11
 
   noaa-4-inch-snow:
     <<: *default-qpf
-    title: Probability of >4 inches of snow
-    description: NOAA Probability of at least 4 inches of snow in next 24 hours
+    title: NOAA Weather Prediction Center Probability of >4 inches of snow
+    description: consists of layers which each represent the probability of at least 4 inches of snowfall within 24 hours from now in a given area.
     links:
-      - <<: *default-link
+      - type: application/html
+        rel: canonical
+        title: Canonical
         href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer
     providers:
       - <<: *default-feature-qpf
@@ -321,32 +329,32 @@ resources:
 
   noaa-8-inch-snow:
     <<: *default-qpf
-    title: Probability of >8 inches of snow
-    description: NOAA Probability of at least 8 inches of snow in next 24 hours
+    title: NOAA Weather Prediction Center Probability of >8 inches of snow
+    description: consists of layers which each represent the probability of at least 8 inches of snowfall within 24 hours from now in a given area.
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/2
 
   noaa-12-inch-snow:
     <<: *default-qpf
-    title: Probability of >12 inches of snow
-    description: NOAA Probability of at least 12 inches of snow in next 24 hours
+    title: NOAA Weather Prediction Center Probability of >12 inches of snow
+    description: consists of layers which each represent the probability of at least 12 inches of snowfall within 24 hours from now in a given area.
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/3
 
-  noaa-0.25-inch-icing: &default-wpc
+  noaa-0.25-inch-icing:
     <<: *default-qpf
-    title: Probability of >0.25 inches of icing
-    description: NOAA Probability of at least 0.25 inches of icing in next 24 hours
+    title: NOAA Probability of >0.25 inches of icing
+    description: consists of layers which each represent the probability of at least 0.25 inches of icing within 24 hours from now in a given area.
     providers:
       - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_prob_winter_precip/MapServer/4
 
   nohrsc-swe:
     type: collection
-    title: Snow Water Forecast
-    description: NOAA NOHRSC Snow Water Forecast
+    title: NOAA National Operational Hydrologic Remote Sensing Center Snow Water Forecast
+    description: contains forecasts for the water equivalent of snow across the US 
     provider-name:
       - NOHRSC
       - NOAA
@@ -354,9 +362,14 @@ resources:
       - nohrsc
       - snow water equivalent
     links:
-      - <<: *default-link
-        title: information
+      - type: application/html
+        rel: documentation
+        title: Documentation
         href: https://www.nohrsc.noaa.gov/nsa/
+      - type: application/html
+        rel: canonical
+        title: Canonical
+        href: https://mapservices.weather.noaa.gov/raster/services/snow/NOHRSC_Snow_Analysis/MapServer/WMSServer
     extents:
       spatial:
         bbox: [-130.516667, 24.1, -62.25273100000001, 58.240301]
@@ -376,8 +389,8 @@ resources:
 
   nohrsc-sd:
     type: collection
-    title: Snow Depth Forecast
-    description: NOAA NOHRSC Snow Depth Forecast
+    title: NOAA National Operational Hydrologic Remote Sensing Center Snow Depth Forecast
+    description: contains forecasts for the depth of snow across the US
     provider-name:
       - NOHRSC
       - NOAA
@@ -385,32 +398,39 @@ resources:
       - nohrsc
       - snow depth
     links:
-      - <<: *default-link
-        title: information
+      - type: application/html
+        rel: canonical
+        title: Canonical
         href: https://www.nohrsc.noaa.gov/nsa/
+      - type: application/html
+        rel: documentation
+        title: Documentation 
+        href: https://www.weather.gov/gis/cloudgiswebservices
     extents: *default-extent
     providers:
       - <<: *default-wms
         data: https://mapservices.weather.noaa.gov/raster/services/snow/NOHRSC_Snow_Analysis/MapServer/WMSServer
 
-  nohrsd-saswb:
-    <<: *default-qpf
-    title: Snow Analysis Water Boundary
-    description: NOAA NOHRSC Snow Analysis Snow Water Boundary
-    providers:
-      - <<: *default-feature-qpf
-        data: https://mapservices.weather.noaa.gov/raster/rest/services/snow/NOHRSC_Snow_Analysis/MapServer/5
+  # nohrsd-saswb:
+  #   <<: *default-qpf
+  #   title: NOAA National Operational Hydrologic Remote Sensing Center Snow Analysis Water Boundary
+  #   description: 
+  #   providers:
+  #     - <<: *default-feature-qpf
+  #       data: https://mapservices.weather.noaa.gov/raster/rest/services/snow/NOHRSC_Snow_Analysis/MapServer/5
 
   noaa-rfc:
     type: collection
-    title: River Forecast Center Seasonal Forecasts
-    description: NOAA River Forecast Center Forecasts
+    title: NOAA River Forecast Center Seasonal Forecasts
+    description: aggregates water supply forecast data from all regional NOAA river forecast centers into one dataset.
     provider-name:
       - RFC
       - NOAA
     keywords: [NOAA]
     links:
-      - <<: *default-link
+      - type: application/html
+        rel: documentation
+        title: Documentation
         href: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
     extents: *default-extent
     templates:
@@ -423,14 +443,20 @@ resources:
 
   noaa-temp-6-10-day:
     type: collection
-    title: 6-10 Day Temperature Forecast
-    description: NOAA 6-10 Day Temperature Forecast
+    title: NOAA Climate Prediction Center 6-10 Day Temperature Forecast
+    description: consists of layers which each represent a forecasted temperature for 6-10 days from now. Forecasts are given as relative percentages and are represented as above, near, or below normal. 
     provider-name:
       - CPC
       - NOAA
     keywords: [NOAA, temperature]
     links:
-      - <<: *default-link
+      - type: application/html
+        rel: documentation
+        title: Documentation
+        href: https://www.cpc.ncep.noaa.gov/
+      - type: application/html
+        rel: canonical
+        title: Data Source
         href: https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/0
     extents: *default-extent
     providers:
@@ -442,15 +468,21 @@ resources:
 
   noaa-precip-6-10-day:
     type: collection
-    title: 6-10 Day Precipitation Forecast
-    description: NOAA 6-10 Day Precipitation Forecast
+    title: NOAA Climate Prediction Center 6-10 Day Precipitation Forecast
+    description: consists of layers which each represent a forecasted chance for precipitation for 6-10 days from now. Forecasts are given as relative percentages and are represented as above, near, or below normal. 
     provider-name:
       - CPC
       - NOAA
     keywords: [NOAA, temperature]
     links:
-      - <<: *default-link
+      - type: application/html
+        rel: canonical
+        title: Canonical
         href: https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/1
+      - type: application/html
+        rel: documentation
+        title: Documentation
+        href: https://www.cpc.ncep.noaa.gov/
     extents: *default-extent
     providers:
       - <<: *default-feature-qpf
@@ -465,8 +497,8 @@ resources:
 
   us-current-drought-monitor:
     type: collection
-    title: Current Drought Monitor
-    description: US Drought Monitor current drought intensity from the National Drought Mitigation Center
+    title: National Drought Mitigation Center Current Drought Monitor
+    description: contains data on current drought conditions across the US. Each feature represents a category of drought intensity.
     provider-name:
       - NDMC
       - NOAA
@@ -474,7 +506,9 @@ resources:
       - USDA
     keywords: ["drought"]
     links:
-      - <<: *default-link
+      - type: application/html
+        rel: documentation
+        title: documentation
         href: https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
     extents: *default-extent
     providers:
@@ -491,8 +525,8 @@ resources:
 
   us-historical-drought-monitor:
     type: collection
-    title: Historical Drought Monitor
-    description: US Drought Monitor drought intensity from the National Drought Mitigation Center
+    title: National Drought Mitigation Center Historical Drought Monitor
+    description: contains historical drought intensity data across the United States.
     provider-name:
       - NDMC
       - NOAA
@@ -500,7 +534,9 @@ resources:
       - USDA
     keywords: ["drought"]
     links:
-      - <<: *default-link
+      - type: application/html
+        rel: documentation
+        title: Documentation
         href: https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/US_Drought_Intensity_v1/FeatureServer/2
     extents: *default-extent
     providers:
@@ -518,7 +554,7 @@ resources:
   usgs-prism:
     type: collection
     title: Parameter-elevation Regressions on Independent Slopes Model (PRISM)
-    description: PRISM Monthly Climate Data for the Continental United States
+    description: provides a raster for high-resolution spatial climate data, including precipitation, temperature, and other climate variables, derived by combining point-based weather observations with digital elevation and other geographic information.
     hidden: True
     provider-name:
       - GS
@@ -529,9 +565,14 @@ resources:
       - precipitation
     extents: *default-extent
     links:
-      - <<: *default-link
-        title: information
+      - type: application/html
+        rel: documentation
+        title: Documentation
         href: https://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/prism_v2
+      - type: application/html
+        rel: canonical
+        title: Data source
+        href: https://usgs.osn.mghpcc.org/mdmf/gdp/PRISM_v2.zarr
     providers:
       - type: edr
         name: xarray-edr
@@ -548,8 +589,8 @@ resources:
 
   resviz-edr:
     type: collection
-    title: Reservoir drought conditions
-    description: USBR Reservoir drought conditions
+    title: USBR Reservoir Drought Conditions (resviz)
+    description: contains current and average drought conditions for USBR reservoirs dervied from the USBR resviz endpoint
     hidden: True
     provider-name:
       - DERIVED
@@ -561,7 +602,9 @@ resources:
         bbox: [-123.60518, 28.4667, -95.875, 48.8283]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     links:
-      - <<: *default-link
+      - type: application/html
+        rel: canonical
+        title: Canonical
         href: https://data.usbr.gov/rise/rise-resviz/data
     providers:
       - type: edr
@@ -606,18 +649,20 @@ resources:
 
   doi-regions:
     type: collection
-    title: Unified Interior Regional Boundaries
-    description: DOI Unified Interior Regional Boundaries
+    title: DOI Unified Interior Regional Boundaries
+    description: contains the boundaries for each of the regions in the US Department of the Interior
     provider-name:
       - BOR
       - USBR
+      - DOI
     keywords:
       - doi
       - boundaries
     extents: *default-extent
     links:
-      - <<: *default-link
-        title: information
+      - type: application/html
+        title: Documentation
+        rel: documentation 
         href: https://www.doi.gov/employees/reorg/unified-regional-boundaries
     providers:
       - type: feature
@@ -631,14 +676,20 @@ resources:
 
   noaa-river-stage-forecast-day-1: &default-river-stage
     type: collection
-    title: River Stage Forecast Day 1
-    description: NOAA River Stage Forecast 24 Hours / 1 day from now
+    title: NOAA National Water Prediction Service River Stage Forecast Day 1
+    description: contains forecasts for the stage of rivers across the US one day from now, including floods or low water thresholds.
     provider-name:
       - NOAA
       - RFC
     keywords: [NOAA, riv_gauges]
     links:
-      - <<: *default-link
+      - type: application/html
+        rel: documentation
+        title: Documentation
+        href: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer
+      - type: application/html
+        rel: canonical
+        title: Data Source
         href: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer
     extents: *default-extent
     providers:
@@ -651,32 +702,32 @@ resources:
 
   noaa-river-stage-forecast-day-2:
     <<: *default-river-stage
-    title: River Stage Forecast Day 2
-    description: NOAA River Stage Forecast 48 hours / 2 days from now
+    title: NOAA National Water Prediction Service River Stage Forecast Day 2
+    description: contains forecasts for the stage of rivers across the US 2 days from now, including floods or low water thresholds.
     providers:
       - <<: *default-feature-river-stage
         data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/2
 
   noaa-river-stage-forecast-day-3:
     <<: *default-river-stage
-    title: River Stage Forecast Day 3
-    description: NOAA River Stage Forecast 72 hours / 3 days from now
+    title: NOAA National Water Prediction Service River Stage Forecast Day 3
+    description: contains forecasts for the stage of rivers across the US 3 days from now, including floods or low water thresholds.
     providers:
       - <<: *default-feature-river-stage
         data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/3
 
   noaa-river-stage-forecast-day-10:
     <<: *default-river-stage
-    title: River Stage Forecast Day 10
-    description: NOAA River Stage Forecast 240 hours / 10 days from now
+    title: NOAA National Water Prediction Service River Stage Forecast Day 10
+    description: contains forecasts for the stage of rivers across the US 10 days from now, including floods or low water thresholds.
     providers:
       - <<: *default-feature-river-stage
         data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/10
 
   resops-edr:
     type: collection
-    title: ResOpsUS 30 Year Reservoir Storage Info
-    description: Aggregated storage data of USACE dams in the ResOpsUS reservoir dataset identified according to the national inventory of dams (NID) ID.
+    title: ResOpsUS 30 Year Storage Info for USACE Reservoirs
+    description: contains data on all reservoirs maintained by the US Army Corps of Engineers (USACE) present within the ResOpsUS dataset. Each feature includes the 30 year averages for storage levels on each day. This data is historical and spans until 2020. Each feature is identified according to the National Inventory of Dams (NID) ID. 
     hidden: True
     provider-name:
       - DERIVED
@@ -685,7 +736,10 @@ resources:
       - ResOpsUS
       - USACE
     links:
-      - <<: *default-link
+      - type: link
+        rel: canonical
+        title: Data Source
+        href: https://www.nature.com/articles/s41597-022-01134-7
     extents:
       spatial:
         bbox: [-164.92472, 32.92342, -103.78758, 70.28062]
