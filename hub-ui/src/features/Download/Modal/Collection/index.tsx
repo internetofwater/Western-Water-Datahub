@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import dayjs from 'dayjs';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import { useEffect, useState } from 'react';
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import { useEffect, useState } from "react";
 import {
   Anchor,
   Box,
@@ -19,25 +19,28 @@ import {
   Text,
   Title,
   VisuallyHidden,
-} from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
-import { useDisclosure } from '@mantine/hooks';
-import Info from '@/assets/Info';
-import CopyInput from '@/components/CopyInput';
-import Tooltip from '@/components/Tooltip';
-import styles from '@/features/Download/Download.module.css';
-import { Chart } from '@/features/Download/Modal/Collection/Chart';
-import { CSV } from '@/features/Download/Modal/Collection/CSV';
-import { buildUrl, getParameterNameOptions } from '@/features/Download/Modal/utils';
-import mainManager from '@/managers/Main.init';
-import { ICollection } from '@/services/edr.service';
-import useMainStore from '@/stores/main';
-import { DatePreset, getSimplePresetDates } from '@/utils/dates';
+} from "@mantine/core";
+import { DatePickerInput } from "@mantine/dates";
+import { useDisclosure } from "@mantine/hooks";
+import Info from "@/assets/Info";
+import CopyInput from "@/components/CopyInput";
+import Tooltip from "@/components/Tooltip";
+import styles from "@/features/Download/Download.module.css";
+import { Chart } from "@/features/Download/Modal/Collection/Chart";
+import { CSV } from "@/features/Download/Modal/Collection/CSV";
+import {
+  buildUrl,
+  getParameterNameOptions,
+} from "@/features/Download/Modal/utils";
+import mainManager from "@/managers/Main.init";
+import { ICollection } from "@/services/edr.service";
+import useMainStore from "@/stores/main";
+import { DatePreset, getSimplePresetDates } from "@/utils/dates";
 
 dayjs.extend(isSameOrBefore);
 
 type Props = {
-  collectionId: ICollection['id'];
+  collectionId: ICollection["id"];
   locationIds: string[];
   open?: boolean;
 };
@@ -52,12 +55,15 @@ const Collection: React.FC<Props> = (props) => {
   const from = useMainStore((state) => state.from);
   const to = useMainStore((state) => state.to);
   const layer = useMainStore((state) => state.layers).find(
-    (layer) => layer.collectionId === collectionId
+    (layer) => layer.collectionId === collectionId,
   );
 
   const [collection, setCollection] = useState<ICollection>();
-  const [parameterNameOptions, setParameterNameOptions] = useState<ComboboxData>();
-  const [localParameters, setLocalParameters] = useState<string[]>(layer?.parameters ?? []);
+  const [parameterNameOptions, setParameterNameOptions] =
+    useState<ComboboxData>();
+  const [localParameters, setLocalParameters] = useState<string[]>(
+    layer?.parameters ?? [],
+  );
   const [localFrom, setLocalFrom] = useState<string | null>(from);
   const [localTo, setLocalTo] = useState<string | null>(to);
   const [renderedCount, setRenderedCount] = useState(0);
@@ -76,28 +82,36 @@ const Collection: React.FC<Props> = (props) => {
       return;
     }
 
-    const parameterNameOptions = getParameterNameOptions(collection.parameter_names);
+    const parameterNameOptions = getParameterNameOptions(
+      collection.parameter_names,
+    );
 
     setParameterNameOptions(parameterNameOptions);
   }, [collection]);
 
   const isValidRange =
-    localFrom && localTo ? dayjs(localFrom).isSameOrBefore(dayjs(localTo)) : true;
-  const isParameterSelectionUnderLimit = localParameters.length <= PARAMETER_LIMIT;
+    localFrom && localTo
+      ? dayjs(localFrom).isSameOrBefore(dayjs(localTo))
+      : true;
+  const isParameterSelectionUnderLimit =
+    localParameters.length <= PARAMETER_LIMIT;
   const areParametersSelected = localParameters.length > 0;
 
   const parameterHelpText = (
     <>
       <Text size="sm">
-        Parameters are scientific measurements that may be available at a location.
+        Parameters are scientific measurements that may be available at a
+        location.
       </Text>
       <br />
-      <Text size="sm">These measurements are connected to an individual time and date.</Text>
+      <Text size="sm">
+        These measurements are connected to an individual time and date.
+      </Text>
     </>
   );
 
   const alternateLink = collection?.links?.find(
-    (link) => link.rel === 'alternate' && link.type === 'text/html'
+    (link) => link.rel === "alternate" && link.type === "text/html",
   )?.href;
 
   return (
@@ -112,7 +126,7 @@ const Collection: React.FC<Props> = (props) => {
             ) : (
               <Title order={3}>{collection.title}</Title>
             )}
-            <Button onClick={toggle}>{opened ? 'Hide' : 'Show'}</Button>
+            <Button onClick={toggle}>{opened ? "Hide" : "Show"}</Button>
           </Group>
           <Collapse in={opened}>
             <Divider />
@@ -131,7 +145,10 @@ const Collection: React.FC<Props> = (props) => {
                       className={styles.parameterNameSelect}
                       label={
                         <Tooltip multiline label={parameterHelpText}>
-                          <Group className={styles.parameterLabelWrapper} gap="xs">
+                          <Group
+                            className={styles.parameterLabelWrapper}
+                            gap="xs"
+                          >
                             <Text component="label" size="sm">
                               Parameters&nbsp;<span>*</span>
                             </Text>
@@ -149,7 +166,7 @@ const Collection: React.FC<Props> = (props) => {
                       error={
                         isParameterSelectionUnderLimit
                           ? false
-                          : `Please remove ${localParameters.length - PARAMETER_LIMIT} parameter${localParameters.length - PARAMETER_LIMIT > 1 ? 's' : ''}`
+                          : `Please remove ${localParameters.length - PARAMETER_LIMIT} parameter${localParameters.length - PARAMETER_LIMIT > 1 ? "s" : ""}`
                       }
                     />
                     <VisuallyHidden>{parameterHelpText}</VisuallyHidden>
@@ -171,7 +188,7 @@ const Collection: React.FC<Props> = (props) => {
                       DatePreset.FifteenYears,
                       DatePreset.ThirtyYears,
                     ])}
-                    error={isValidRange ? false : 'Invalid date range'}
+                    error={isValidRange ? false : "Invalid date range"}
                   />
                   <DatePickerInput
                     label="To"
@@ -187,12 +204,14 @@ const Collection: React.FC<Props> = (props) => {
                       DatePreset.FifteenYears,
                       DatePreset.ThirtyYears,
                     ])}
-                    error={isValidRange ? false : 'Invalid date range'}
+                    error={isValidRange ? false : "Invalid date range"}
                   />
                 </Stack>
                 <Button
                   disabled={
-                    !isValidRange || !isParameterSelectionUnderLimit || !areParametersSelected
+                    !isValidRange ||
+                    !isParameterSelectionUnderLimit ||
+                    !areParametersSelected
                   }
                   className={styles.goButton}
                   onClick={() => setStartDownload(Date.now())}
@@ -208,7 +227,7 @@ const Collection: React.FC<Props> = (props) => {
                     locationId,
                     localParameters,
                     localFrom,
-                    localTo
+                    localTo,
                   );
 
                   return (

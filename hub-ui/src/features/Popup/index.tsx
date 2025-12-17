@@ -3,22 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useState } from 'react';
-import { Feature } from 'geojson';
-import { Stack } from '@mantine/core';
-import { StringIdentifierCollections } from '@/consts/collections';
-import { Grid } from '@/features/Popup/Grid';
-import { Header } from '@/features/Popup/Header';
-import { Item } from '@/features/Popup/Item';
-import { Location } from '@/features/Popup/Location';
-import styles from '@/features/Popup/Popup.module.css';
-import mainManager from '@/managers/Main.init';
-import useMainStore from '@/stores/main';
-import { TLayer, TLocation } from '@/stores/main/types';
-import useSessionStore from '@/stores/session';
-import { CollectionType, getCollectionType } from '@/utils/collection';
-import { getIdStore } from '@/utils/getIdStore';
-import { getParameterUnit } from '@/utils/parameters';
+import { useEffect, useState } from "react";
+import { Feature } from "geojson";
+import { Stack } from "@mantine/core";
+import { StringIdentifierCollections } from "@/consts/collections";
+import { Grid } from "@/features/Popup/Grid";
+import { Header } from "@/features/Popup/Header";
+import { Item } from "@/features/Popup/Item";
+import { Location } from "@/features/Popup/Location";
+import styles from "@/features/Popup/Popup.module.css";
+import mainManager from "@/managers/Main.init";
+import useMainStore from "@/stores/main";
+import { TLayer, TLocation } from "@/stores/main/types";
+import useSessionStore from "@/stores/session";
+import { CollectionType, getCollectionType } from "@/utils/collection";
+import { getIdStore } from "@/utils/getIdStore";
+import { getParameterUnit } from "@/utils/parameters";
 
 export type Parameter = {
   name: string;
@@ -37,10 +37,12 @@ const Popup: React.FC<Props> = (props) => {
 
   const [location, setLocation] = useState<TLocation>(locations[0]);
   const [feature, setFeature] = useState<Feature>();
-  const [collectionType, setCollectionType] = useState<CollectionType>(CollectionType.Unknown);
+  const [collectionType, setCollectionType] = useState<CollectionType>(
+    CollectionType.Unknown,
+  );
 
   const [layer, setLayer] = useState<TLayer | null>(null);
-  const [datasetName, setDatasetName] = useState<string>('');
+  const [datasetName, setDatasetName] = useState<string>("");
   const [parameters, setParameters] = useState<Parameter[]>([]);
 
   const [id, setId] = useState<string>(location.id);
@@ -48,7 +50,7 @@ const Popup: React.FC<Props> = (props) => {
   const setLinkLocation = useSessionStore((state) => state.setLinkLocation);
   const allParameters =
     useMainStore((state) => state.layers).find(
-      (layer) => layer.collectionId === location.collectionId
+      (layer) => layer.collectionId === location.collectionId,
     )?.parameters ?? [];
   // const setOverlay = useSessionStore((state) => state.setOverlay);
 
@@ -60,12 +62,17 @@ const Popup: React.FC<Props> = (props) => {
   }, [locations]);
 
   useEffect(() => {
-    if (feature && (feature.id === location.id || getIdStore(feature) === location.id)) {
+    if (
+      feature &&
+      (feature.id === location.id || getIdStore(feature) === location.id)
+    ) {
       return;
     }
 
     const newFeature = features.find(
-      (feature) => String(feature.id) === location.id || getIdStore(feature) === location.id
+      (feature) =>
+        String(feature.id) === location.id ||
+        getIdStore(feature) === location.id,
     );
 
     if (newFeature) {
@@ -77,11 +84,14 @@ const Popup: React.FC<Props> = (props) => {
     const newDataset = mainManager.getCollection(location.collectionId);
 
     if (newDataset) {
-      setDatasetName(newDataset.title ?? '');
+      setDatasetName(newDataset.title ?? "");
       const paramObjects = Object.values(newDataset?.parameter_names ?? {});
 
       const parameters = paramObjects
-        .filter((object) => object.type === 'Parameter' && allParameters.includes(object.id))
+        .filter(
+          (object) =>
+            object.type === "Parameter" && allParameters.includes(object.id),
+        )
         .map((object) => ({
           id: object.id,
           name: object.name,
@@ -96,14 +106,19 @@ const Popup: React.FC<Props> = (props) => {
   }, [location]);
 
   useEffect(() => {
-    const newLayer = mainManager.getLayer({ collectionId: location.collectionId });
+    const newLayer = mainManager.getLayer({
+      collectionId: location.collectionId,
+    });
     if (newLayer) {
       setLayer(newLayer);
     }
   }, [location]);
 
   useEffect(() => {
-    if (feature && StringIdentifierCollections.includes(location.collectionId)) {
+    if (
+      feature &&
+      StringIdentifierCollections.includes(location.collectionId)
+    ) {
       const id = getIdStore(feature);
       if (id) {
         setId(id);
@@ -135,30 +150,34 @@ const Popup: React.FC<Props> = (props) => {
     <Stack gap={0} className={styles.popupWrapper}>
       <Header id={id} name={datasetName} collectionType={collectionType} />
 
-      {collectionType === CollectionType.EDR && feature && datasetName.length > 0 && (
-        <Location
-          location={location}
-          locations={locations}
-          layer={layer}
-          feature={feature}
-          datasetName={datasetName}
-          parameters={parameters}
-          handleLocationChange={handleLocationChange}
-          handleLinkClick={handleLinkClick}
-        />
-      )}
-      {collectionType === CollectionType.EDRGrid && feature && datasetName.length > 0 && (
-        <Grid
-          location={location}
-          locations={locations}
-          layer={layer}
-          feature={feature}
-          datasetName={datasetName}
-          parameters={parameters}
-          handleLocationChange={handleLocationChange}
-          handleLinkClick={handleLinkClick}
-        />
-      )}
+      {collectionType === CollectionType.EDR &&
+        feature &&
+        datasetName.length > 0 && (
+          <Location
+            location={location}
+            locations={locations}
+            layer={layer}
+            feature={feature}
+            datasetName={datasetName}
+            parameters={parameters}
+            handleLocationChange={handleLocationChange}
+            handleLinkClick={handleLinkClick}
+          />
+        )}
+      {collectionType === CollectionType.EDRGrid &&
+        feature &&
+        datasetName.length > 0 && (
+          <Grid
+            location={location}
+            locations={locations}
+            layer={layer}
+            feature={feature}
+            datasetName={datasetName}
+            parameters={parameters}
+            handleLocationChange={handleLocationChange}
+            handleLinkClick={handleLinkClick}
+          />
+        )}
       {collectionType === CollectionType.Features && feature && (
         <Item
           location={location}
