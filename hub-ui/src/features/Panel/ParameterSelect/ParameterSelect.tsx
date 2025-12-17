@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { ActionIcon, ComboboxData, Group, Text } from '@mantine/core';
 import Delete from '@/assets/Delete';
 import Select from '@/components/Select';
+import { CollectionRestrictions, RestrictionType } from '@/consts/collections';
 import mainManager from '@/managers/Main.init';
 import { ICollection } from '@/services/edr.service';
 import useMainStore from '@/stores/main';
@@ -37,6 +38,8 @@ const ParameterSelect: React.FC<Props> = (props) => {
 
   const removePalette = useMainStore((state) => state.removePalette);
 
+  const [parameterLimit, setParameterLimit] = useState<number>();
+  const [collectionType, setCollectionType] = useState(CollectionType.Unknown);
   const [localParameters, setLocalParameters] = useState(parameters);
   const [name, setName] = useState<string>('Parameters');
   const [data, setData] = useState<ComboboxData>([]);
@@ -48,6 +51,9 @@ const ParameterSelect: React.FC<Props> = (props) => {
       // TODO: show notification of error
       return;
     }
+
+    const collectionType = getCollectionType(collection);
+    setCollectionType(collectionType);
 
     if (collection.title) {
       setName(collection.title);
@@ -69,6 +75,20 @@ const ParameterSelect: React.FC<Props> = (props) => {
 
     setData(data);
   }, [collections, selectedCollections]);
+
+  useEffect(() => {
+    const restrictions = CollectionRestrictions[collectionId];
+
+    if (restrictions && restrictions.length > 0) {
+      const parameterLimitRestriction = restrictions.find(
+        (restriction) => restriction.type === RestrictionType.Parameter
+      );
+
+      if (parameterLimitRestriction && parameterLimitRestriction.count > 0) {
+        setParameterLimit(parameterLimitRestriction.count);
+      }
+    }
+  }, [collectionId]);
 
   useEffect(() => {
     for (const parameter of localParameters) {
@@ -114,6 +134,34 @@ const ParameterSelect: React.FC<Props> = (props) => {
     removePalette(collectionId);
   };
 
+  /**
+   * This layer is a grid type which requires at least one selected parameter
+   *
+   * @constant
+   */
+  const isMissingParameters =
+    collectionType === CollectionType.EDRGrid && localParameters.length === 0;
+  /**
+   * There is a parameter count limit on for this dataset and we have exceeded it
+   *
+   * @constant
+   */
+  const isParameterSelectionOverLimit = parameterLimit
+    ? localParameters.length > parameterLimit
+    : false;
+
+  const getParameterError = () => {
+    if (parameterLimit && isParameterSelectionOverLimit) {
+      return `Please remove ${localParameters.length - parameterLimit} parameter${localParameters.length - parameterLimit > 1 ? 's' : ''}`;
+    }
+
+    if (isMissingParameters) {
+      return 'Please select at least one parameter.';
+    }
+
+    return false;
+  };
+
   return (
     <>
       {showParameterSelect(collectionId) && data.length > 0 ? (
@@ -124,7 +172,9 @@ const ParameterSelect: React.FC<Props> = (props) => {
           data={data}
           value={localParameters}
           onChange={setLocalParameters}
+          error={getParameterError()}
           disabled={data.length === 0}
+          withAsterisk={collectionType === CollectionType.EDRGrid}
           searchable
           multiple
           clearable

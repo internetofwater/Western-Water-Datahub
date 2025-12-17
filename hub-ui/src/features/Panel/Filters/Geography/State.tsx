@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { FeatureCollection, Polygon } from 'geojson';
 import { ComboboxData, Select, Skeleton } from '@mantine/core';
+import { CollectionRestrictions, RestrictionType } from '@/consts/collections';
 import { ValidStates } from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/sources';
 import { formatOptions } from '@/features/Panel/Filters/utils';
@@ -21,7 +22,10 @@ export const State: React.FC = () => {
   const geographyFilterCollectionId = useMainStore((state) => state.geographyFilter?.collectionId);
   const geographyFilterItemId = useMainStore((state) => state.geographyFilter?.itemId);
 
+  const selectedCollections = useMainStore((state) => state.selectedCollections);
+
   const [stateOptions, setStateOptions] = useState<ComboboxData>([]);
+  const [isRequired, setIsRequired] = useState(false);
 
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
@@ -83,6 +87,28 @@ export const State: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    let noRestrictions = true;
+
+    selectedCollections.forEach((collectionId) => {
+      const restrictions = CollectionRestrictions[collectionId];
+
+      if (restrictions && restrictions.length > 0) {
+        const geoRestriction = restrictions.find(
+          (restriction) => restriction.type === RestrictionType.GeographyFilter
+        );
+
+        if (geoRestriction) {
+          setIsRequired(true);
+          noRestrictions = false;
+        }
+      }
+    });
+    if (noRestrictions) {
+      setIsRequired(false);
+    }
+  }, [selectedCollections]);
+
   const handleChange = async (itemId: string | null) => {
     if (itemId) {
       const loadingInstance = loadingManager.add(
@@ -107,6 +133,14 @@ export const State: React.FC = () => {
     mainManager.removeGeographyFilter();
   };
 
+  const getError = () => {
+    if (isRequired && !(geographyFilterCollectionId === SourceId.States && geographyFilterItemId)) {
+      return 'Please select a geographic filter';
+    }
+
+    return undefined;
+  };
+
   return (
     <Skeleton
       height={55} // Default dimensions of select
@@ -127,6 +161,8 @@ export const State: React.FC = () => {
         onClear={() => handleClear()}
         searchable
         clearable
+        error={getError()}
+        withAsterisk={isRequired}
       />
     </Skeleton>
   );

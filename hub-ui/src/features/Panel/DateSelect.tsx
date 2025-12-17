@@ -5,10 +5,12 @@
 
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { useEffect, useMemo, useState } from 'react';
 import { Group, Stack, Text, Title, VisuallyHidden } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import Info from '@/assets/Info';
 import Tooltip from '@/components/Tooltip';
+import { CollectionRestrictions, RestrictionType } from '@/consts/collections';
 import styles from '@/features/Panel/Panel.module.css';
 import useMainStore from '@/stores/main';
 import { DatePreset, getSimplePresetDates } from '@/utils/dates';
@@ -21,7 +23,94 @@ export const DateSelect: React.FC = () => {
   const to = useMainStore((state) => state.to);
   const setTo = useMainStore((state) => state.setTo);
 
-  const isValidRange = from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
+  const selectedCollections = useMainStore((state) => state.selectedCollections);
+  const [daysLimit, setDaysLimit] = useState<number>(0);
+  const [error, setError] = useState<string>();
+
+  useEffect(() => {
+    let minLimit = Infinity;
+
+    for (const collectionId of selectedCollections) {
+      const restrictions = CollectionRestrictions[collectionId];
+      if (!restrictions?.length) {
+        continue;
+      }
+
+      const daysRestriction = restrictions.find((r) => r.type === RestrictionType.Day);
+
+      if (daysRestriction) {
+        minLimit = Math.min(minLimit, daysRestriction.days);
+      }
+    }
+
+    setDaysLimit(minLimit === Infinity ? 0 : minLimit);
+  }, [selectedCollections]);
+
+  /**
+   * Helpers
+   */
+  const fromValid = useMemo(() => (from ? dayjs(from).isValid() : false), [from]);
+  const toValid = useMemo(() => (to ? dayjs(to).isValid() : false), [to]);
+
+  const bothExistAndValid = fromValid && toValid;
+
+  // Rule #1: When both exist, from must be <= to.
+  const isOrdered = useMemo(() => {
+    if (!bothExistAndValid) {
+      return true;
+    } // only enforce ordering when both exist
+    return dayjs(from).isSameOrBefore(dayjs(to));
+  }, [bothExistAndValid, from, to]);
+
+  /**
+   * Choose diff semantics:
+   * - Exclusive: Jan 1 → Jan 1 = 0 (use this if "under the limit" means strictly less than the max span)
+   * - Inclusive: Jan 1 → Jan 1 = 1 (use this if ranges count both endpoints)
+   *
+   * Toggle INCLUSIVE_SEMANTICS to match product spec.
+   */
+  const INCLUSIVE_SEMANTICS = false;
+
+  const diffDays = useMemo(() => {
+    if (!bothExistAndValid || !isOrdered) {
+      return null;
+    } // only meaningful when ordered and both valid
+    const base = dayjs(to).diff(dayjs(from), 'day');
+    return INCLUSIVE_SEMANTICS ? base + 1 : base;
+  }, [bothExistAndValid, isOrdered, from, to, INCLUSIVE_SEMANTICS]);
+
+  /**
+   * Validation per your rules:
+   * - If daysLimit > 0: require both dates valid & ordered & diff under limit.
+   * - Always enforce ordering when both exist.
+   */
+  useEffect(() => {
+    // If a limit exists, we REQUIRE both dates to be present and valid.
+    if (daysLimit > 0) {
+      if (!from || !to || !fromValid || !toValid) {
+        setError('Start and end dates are required');
+        return;
+      }
+      if (!isOrdered) {
+        setError('Invalid date range');
+        return;
+      }
+      if (diffDays !== null && diffDays > daysLimit) {
+        setError(`${diffDays - daysLimit} day(s) over limit`);
+        return;
+      }
+      setError(undefined);
+      return;
+    }
+
+    // No limit: only enforce ordering when both exist & valid.
+    if (bothExistAndValid && !isOrdered) {
+      setError('Invalid date range');
+      return;
+    }
+
+    setError(undefined);
+  }, [daysLimit, from, to, fromValid, toValid, bothExistAndValid, isOrdered, diffDays]);
 
   const helpText = (
     <>
@@ -55,6 +144,7 @@ export const DateSelect: React.FC = () => {
           value={from}
           onChange={setFrom}
           clearable
+          withAsterisk={daysLimit > 0}
           presets={getSimplePresetDates([
             DatePreset.OneYear,
             DatePreset.FiveYears,
@@ -62,7 +152,7 @@ export const DateSelect: React.FC = () => {
             DatePreset.FifteenYears,
             DatePreset.ThirtyYears,
           ])}
-          error={isValidRange ? false : 'Invalid date range'}
+          error={error}
         />
         <DatePickerInput
           size="xs"
@@ -73,6 +163,7 @@ export const DateSelect: React.FC = () => {
           value={to}
           onChange={setTo}
           clearable
+          withAsterisk={daysLimit > 0}
           presets={getSimplePresetDates([
             DatePreset.OneYear,
             DatePreset.FiveYears,
@@ -80,7 +171,7 @@ export const DateSelect: React.FC = () => {
             DatePreset.FifteenYears,
             DatePreset.ThirtyYears,
           ])}
-          error={isValidRange ? false : 'Invalid date range'}
+          error={error}
         />
       </Group>
     </Stack>
