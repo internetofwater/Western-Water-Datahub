@@ -391,7 +391,13 @@ class MainManager {
     const geographyFilter = this.store.getState().geographyFilter;
 
     if (geographyFilter) {
-      return this.filterByGeometryType(featureCollection, geographyFilter.feature);
+      return this.filterByGeometryType(
+        featureCollection,
+        turf.simplify(geographyFilter.feature, {
+          tolerance: 0.05,
+          mutate: false,
+        })
+      );
     }
 
     return featureCollection;
@@ -665,14 +671,14 @@ class MainManager {
 
   private getBBox(collectionId: ICollection['id']): BBox {
     // TODO: update
-    const drawnShapes: Feature[] = [];
+    const filterFeature = this.store.getState().geographyFilter?.feature;
 
-    if (drawnShapes.length === 0) {
+    if (!filterFeature) {
       this.checkCollectionBBoxRestrictions(collectionId, turf.area(turf.bboxPolygon(DEFAULT_BBOX)));
       return DEFAULT_BBOX;
     }
 
-    const featureCollection = turf.featureCollection(drawnShapes);
+    const featureCollection = turf.featureCollection([filterFeature]);
 
     const userBBox = turf.bbox(featureCollection);
 
@@ -682,7 +688,7 @@ class MainManager {
   }
 
   public async styleLayer(
-    collectionId: ICollection['id'],
+    layer: TLayer,
     paletteDefinition: PaletteDefinition,
     { features, signal }: StyleOptions<{ [paletteDefinition.parameter]: number }>
   ) {
@@ -694,7 +700,7 @@ class MainManager {
       features ??
       (
         await this.getFeatures<Geometry, { [paletteDefinition.parameter]: number }>(
-          collectionId,
+          layer.collectionId,
           signal
         )
       ).features;
@@ -708,7 +714,9 @@ class MainManager {
       index
     );
 
-    const { pointLayerId, fillLayerId, lineLayerId } = this.getLocationsLayerIds(collectionId);
+    const { pointLayerId, fillLayerId, lineLayerId } = this.getLocationsLayerIds(
+      layer.collectionId
+    );
 
     if (this.map.getLayer(pointLayerId)) {
       this.map.setPaintProperty(pointLayerId, 'circle-color', expression);
@@ -719,6 +727,12 @@ class MainManager {
     if (this.map.getLayer(lineLayerId)) {
       this.map.setPaintProperty(lineLayerId, 'line-color', expression);
     }
+
+    this.store.getState().updateLayer({
+      ...layer,
+      color: expression,
+      paletteDefinition,
+    });
 
     return expression;
   }
@@ -887,17 +901,19 @@ class MainManager {
       }
 
       (filtered as any) = undefined;
+
       next = getNextLink(page);
     } while (next);
 
+    const layer = this.getLayer({ collectionId });
     // TODO: Add this after figuring out pattern
-    // if (layer.paletteDefinition) {
-    //   const features = aggregate.features as Feature<
-    //     Geometry,
-    //     { [layer.paletteDefinition.parameter]: number }
-    //   >[];
-    //   this.styleLayer(layer, layer.paletteDefinition, { features, signal: options?.signal });
-    // }
+    if (layer && layer.paletteDefinition) {
+      const features = aggregate.features as Feature<
+        Geometry,
+        { [layer.paletteDefinition.parameter]: number }
+      >[];
+      this.styleLayer(layer, layer.paletteDefinition, { features, signal: options?.signal });
+    }
 
     (aggregate as any) = undefined;
 
@@ -1007,8 +1023,6 @@ class MainManager {
       }
     }
 
-    console.log('I did get called', layers, locations, collectionId);
-
     this.store.getState().setLayers(layers);
     this.store.getState().setLocations(locations);
   }
@@ -1016,7 +1030,6 @@ class MainManager {
   public cleanLayers(selectedCollections: string[]) {
     const layers = this.store.getState().layers;
 
-    console.log('I AM HERE', layers, selectedCollections);
     let count = 0;
     for (const layer of layers) {
       if (!selectedCollections.some((collectionId) => collectionId === layer.collectionId)) {
@@ -1065,18 +1078,43 @@ class MainManager {
               .parameters.find((parameter) => parameter.collectionId === collectionId)
               ?.parameters ?? [];
 
+          const paletteDefinition =
+            this.store.getState().palettes.find((palette) => palette.collectionId === collectionId)
+              ?.palette ?? null;
+
           if (layer) {
-            console.log('I opted to updated', layer);
+            let color = layer.color;
+
+            // The user has removed the previous paletteDefinition but color is still a data expression
+            if (this.map && paletteDefinition === null && typeof layer.color !== 'string') {
+              const { pointLayerId, fillLayerId, lineLayerId } = this.getLocationsLayerIds(
+                layer.collectionId
+              );
+
+              color = getRandomHexColor();
+
+              if (this.map.getLayer(pointLayerId)) {
+                this.map.setPaintProperty(pointLayerId, 'circle-color', color);
+              }
+              if (this.map.getLayer(fillLayerId)) {
+                this.map.setPaintProperty(fillLayerId, 'fill-color', color);
+              }
+              if (this.map.getLayer(lineLayerId)) {
+                this.map.setPaintProperty(lineLayerId, 'line-color', color);
+              }
+            }
+
             this.store.getState().updateLayer({
               ...layer,
               parameters,
               from,
               to,
+              color,
+              paletteDefinition,
               visible: true,
               loaded: true,
             });
           } else {
-            console.log('I opted to add', layer);
             this.store.getState().addLayer({
               id: this.createUUID(),
               collectionId,
@@ -1086,7 +1124,7 @@ class MainManager {
               to,
               position: count + 1,
               opacity: DEFAULT_FILL_OPACITY,
-              paletteDefinition: null,
+              paletteDefinition,
               visible: true,
               loaded: true,
             });
@@ -1095,15 +1133,12 @@ class MainManager {
 
           this.addSource(collectionId);
           this.addLayer(collectionId);
-          await this.addData(collectionId, {
-            // TODO: determine if these need to be included
-            // filterFeatures: drawnShapes,
-            // signal,
-            // noFetch: collectionType === CollectionType.EDRGrid && layer.parameters.length === 0,
-          });
+          await this.addData(collectionId);
         })
       );
     }
+
+    this.reorderLayers();
   }
 
   /**
@@ -1151,7 +1186,6 @@ class MainManager {
         this.map.addSource(sourceId, {
           type: 'geojson',
           data: turf.featureCollection([feature]),
-          cluster: true,
         });
       } else {
         source.setData(turf.featureCollection([feature]));
@@ -1330,6 +1364,30 @@ class MainManager {
     this.store.getState().setSelectedCollections([]);
   }
 
+  public reorderLayers() {
+    if (!this.map) {
+      return;
+    }
+
+    const layers = [...this.store.getState().layers].sort((a, b) => a.position - b.position);
+    let lastLayer = '';
+    for (const layer of layers) {
+      const { rasterLayerId, fillLayerId, lineLayerId, pointLayerId } = this.getLocationsLayerIds(
+        layer.collectionId
+      );
+
+      // Intentional ordering of sub-layers
+      for (const layerId of [pointLayerId, lineLayerId, fillLayerId, rasterLayerId]) {
+        if (this.map.getLayer(layerId)) {
+          if (lastLayer.length > 0) {
+            this.map.moveLayer(layerId, lastLayer);
+          }
+          lastLayer = layerId;
+        }
+      }
+    }
+  }
+
   public async updateLayer(
     layer: TLayer,
     color: TLayer['color'],
@@ -1385,7 +1443,7 @@ class MainManager {
 
     let correctedPaletteDefinition = paletteDefinition;
     if (paletteChanged && paletteDefinition) {
-      const expression = await this.styleLayer(layer.collectionId, paletteDefinition, {
+      const expression = await this.styleLayer(layer, paletteDefinition, {
         updateStore: false,
       });
       if (expression) {

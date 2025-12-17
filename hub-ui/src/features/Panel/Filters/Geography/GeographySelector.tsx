@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Geography from ".";
-import { Group, Radio } from "@mantine/core";
+import Geography from '.';
+import { Group, Radio } from '@mantine/core';
 
 type Props = {
   geography: Geography;
@@ -13,16 +13,16 @@ type Props = {
 
 const geographies: Array<{ value: Geography; label: string }> = [
   {
-    value: "region",
-    label: "Region",
+    value: 'region',
+    label: 'Region',
   },
   {
-    value: "basin",
-    label: "Basin",
+    value: 'basin',
+    label: 'Basin',
   },
   {
-    value: "state",
-    label: "State",
+    value: 'state',
+    label: 'State',
   },
 ];
 
@@ -30,7 +30,7 @@ export const GeographySelector: React.FC<Props> = (props) => {
   const { geography, onChange } = props;
 
   return (
-    <Radio.Group name="geographySelector" value={geography} onChange={onChange}>
+    <Radio.Group size="xs" name="geographySelector" value={geography} onChange={onChange}>
       <Group mt="xs">
         {geographies.map((option) => (
           <Radio

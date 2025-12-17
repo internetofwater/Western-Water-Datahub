@@ -3,10 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Category } from "@/features/Panel/Filters/Category";
-import { Collection } from "@/features/Panel/Filters/Collection";
-import Geography from "@/features/Panel/Filters/Geography";
-// import { Provider } from "@/features/Panel/Filters/Provider";
+import { Category } from '@/features/Panel/Filters/Category';
+import { Collection } from '@/features/Panel/Filters/Collection';
 
 const Filters: React.FC = () => {
   return (
@@ -14,7 +12,6 @@ const Filters: React.FC = () => {
       {/* <Provider /> */}
       <Category />
       <Collection />
-      <Geography />
     </>
   );
 };

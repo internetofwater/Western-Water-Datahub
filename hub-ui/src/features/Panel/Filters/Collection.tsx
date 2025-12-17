@@ -94,7 +94,7 @@ export const Collection: React.FC = () => {
       {/* TODO */}
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
-          <Title order={2} size="h3">
+          <Title order={2} size="h4">
             Filter by Collection
           </Title>
           <Info />
@@ -102,6 +102,7 @@ export const Collection: React.FC = () => {
       </Tooltip>
       <VisuallyHidden>{helpText}</VisuallyHidden>
       <Select
+        size="sm"
         label="Collection"
         multiple
         description={getDescription(provider, category)}

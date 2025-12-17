@@ -24,7 +24,8 @@ type Props = {
 };
 
 export const Grid: React.FC<Props> = (props) => {
-  const { location, locations, feature, parameters, handleLocationChange, handleLinkClick } = props;
+  const { location, locations, feature, layer, parameters, handleLocationChange, handleLinkClick } =
+    props;
 
   const [times, setTimes] = useState<{ value: string; label: string }[]>([]);
   const [time, setTime] = useState<{ value: string; label: string }>();
@@ -74,15 +75,15 @@ export const Grid: React.FC<Props> = (props) => {
     }
   }, [feature]);
 
-  // useEffect(() => {
-  //   if (times.length === 0 || times.some((timeObj) => timeObj.value === time?.value)) {
-  //     return;
-  //   }
+  useEffect(() => {
+    if (times.length === 0 || times.some((timeObj) => timeObj.value === time?.value)) {
+      return;
+    }
 
-  //   const index = layer.paletteDefinition?.index ?? 0;
+    const index = layer.paletteDefinition?.index ?? 0;
 
-  //   setTime(times[index]);
-  // }, [times]);
+    setTime(times[index]);
+  }, [times, layer]);
 
   useEffect(() => {
     const timeIndex = times.findIndex((timeObj) => timeObj.value === time?.value);

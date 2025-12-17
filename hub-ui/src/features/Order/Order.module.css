@@ -1,0 +1,14 @@
+.container {
+  width: 19em;
+}
+
+.entry {
+  width: 100%;
+  border-top: 1px solid var(--mantine-color-default-border);
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.title > svg {
+  width: 18px;
+  height: auto;
+}

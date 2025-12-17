@@ -3,37 +3,42 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from "react";
-import { ComboboxData, Text } from "@mantine/core";
-import Select from "@/components/Select";
-import mainManager from "@/managers/Main.init";
-import { ICollection } from "@/services/edr.service";
-import useMainStore from "@/stores/main";
-import { CollectionType, getCollectionType } from "@/utils/collection";
-import { getParameterUnit } from "@/utils/parameters";
+import { useEffect, useState } from 'react';
+import { ActionIcon, ComboboxData, Group, Text } from '@mantine/core';
+import Delete from '@/assets/Delete';
+import Select from '@/components/Select';
+import mainManager from '@/managers/Main.init';
+import { ICollection } from '@/services/edr.service';
+import useMainStore from '@/stores/main';
+import { CollectionType, getCollectionType } from '@/utils/collection';
+import { getParameterUnit } from '@/utils/parameters';
+import { Palette } from '../Palette/Palette';
 
 type Props = {
-  collectionId: ICollection["id"];
+  collectionId: ICollection['id'];
 };
 
 const ParameterSelect: React.FC<Props> = (props) => {
   const { collectionId } = props;
 
   const collections = useMainStore((state) => state.collections);
-  const selectedCollections = useMainStore(
-    (state) => state.selectedCollections,
-  );
+  const selectedCollections = useMainStore((state) => state.selectedCollections);
   const parameters =
     useMainStore((state) => state.parameters).find(
-      (parameter) => parameter.collectionId === collectionId,
+      (parameter) => parameter.collectionId === collectionId
     )?.parameters ?? [];
+  const palette =
+    useMainStore((state) => state.palettes).find((palette) => palette.collectionId === collectionId)
+      ?.palette ?? null;
 
   const addParameter = useMainStore((state) => state.addParameter);
   const removeParameter = useMainStore((state) => state.removeParameter);
   const hasParameter = useMainStore((state) => state.hasParameter);
 
+  const removePalette = useMainStore((state) => state.removePalette);
+
   const [localParameters, setLocalParameters] = useState(parameters);
-  const [name, setName] = useState<string>("Parameters");
+  const [name, setName] = useState<string>('Parameters');
   const [data, setData] = useState<ComboboxData>([]);
 
   useEffect(() => {
@@ -75,27 +80,38 @@ const ParameterSelect: React.FC<Props> = (props) => {
     }
 
     parameters.forEach((parameter) => {
-      if (
-        !localParameters.includes(parameter) &&
-        hasParameter(collectionId, parameter)
-      ) {
+      if (!localParameters.includes(parameter) && hasParameter(collectionId, parameter)) {
         removeParameter(collectionId, parameter);
       }
     });
   }, [localParameters]);
 
-  const showParameterSelect = (collectionId: ICollection["id"]) => {
+  const showParameterSelect = (collectionId: ICollection['id']) => {
     const collection = mainManager.getCollection(collectionId);
 
     if (collection) {
       const collectionType = getCollectionType(collection);
 
-      return [CollectionType.EDR, CollectionType.EDRGrid].includes(
-        collectionType,
-      );
+      return [CollectionType.EDR, CollectionType.EDRGrid].includes(collectionType);
     }
 
     return false;
+  };
+
+  const showPalette = (collectionId: ICollection['id']) => {
+    const collection = mainManager.getCollection(collectionId);
+
+    if (collection) {
+      const collectionType = getCollectionType(collection);
+
+      return CollectionType.EDRGrid === collectionType;
+    }
+
+    return false;
+  };
+
+  const handlePaletteClear = () => {
+    removePalette(collectionId);
   };
 
   return (
@@ -115,6 +131,18 @@ const ParameterSelect: React.FC<Props> = (props) => {
         />
       ) : (
         <Text>This collection does not include parameters.</Text>
+      )}
+      {showPalette(collectionId) && (
+        <Group
+          gap="var(--default-spacing)"
+          mt="var(--default-spacing)"
+          mb="calc(var(--default-spacing) * 2)"
+        >
+          <Palette collectionId={collectionId} />
+          <ActionIcon disabled={!palette} data-disabled={!palette} onClick={handlePaletteClear}>
+            <Delete />
+          </ActionIcon>
+        </Group>
       )}
     </>
   );
