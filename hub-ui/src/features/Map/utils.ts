@@ -3,11 +3,32 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ExpressionSpecification, LayerSpecification } from "mapbox-gl";
+import {
+  ExpressionSpecification,
+  FilterSpecification,
+  LayerSpecification,
+} from "mapbox-gl";
 import { LayerType } from "@/components/Map/types";
 import { idStoreProperty } from "@/consts/collections";
 import { TLayer, TLocation } from "@/stores/main/types";
 import { DEFAULT_FILL_OPACITY } from "./consts";
+
+export const getDefaultFilter = (
+  type: LayerType,
+): FilterSpecification | undefined => {
+  switch (type) {
+    case LayerType.Circle:
+      return ["==", ["geometry-type"], "Point"];
+    case LayerType.Line:
+      return [
+        "any",
+        ["==", ["geometry-type"], "Polygon"],
+        ["==", ["geometry-type"], "LineString"],
+      ];
+    case LayerType.Fill:
+      return ["==", ["geometry-type"], "Polygon"];
+  }
+};
 
 export const getPointLayerDefinition = (
   layerId: string,
@@ -18,7 +39,7 @@ export const getPointLayerDefinition = (
     id: layerId,
     type: LayerType.Circle,
     source: sourceId,
-    filter: ["==", ["geometry-type"], "Point"],
+    filter: getDefaultFilter(LayerType.Circle),
     paint: {
       "circle-radius": 6,
       "circle-color": color,
@@ -36,11 +57,7 @@ export const getLineLayerDefinition = (
     id: layerId,
     type: LayerType.Line,
     source: sourceId,
-    filter: [
-      "any",
-      ["==", ["geometry-type"], "Polygon"],
-      ["==", ["geometry-type"], "LineString"],
-    ],
+    filter: getDefaultFilter(LayerType.Line),
     layout: {
       "line-cap": "round",
       "line-join": "round",
@@ -62,7 +79,7 @@ export const getFillLayerDefinition = (
     id: layerId,
     type: LayerType.Fill,
     source: sourceId,
-    filter: ["==", ["geometry-type"], "Polygon"],
+    filter: getDefaultFilter(LayerType.Fill),
     paint: {
       "fill-opacity": DEFAULT_FILL_OPACITY,
       "fill-color": color,
@@ -88,10 +105,15 @@ export const getSelectedColor = (
 
 export const getFilter = (
   locationIds: Array<TLocation["id"]>,
+  type: LayerType,
 ): ExpressionSpecification => {
   return [
-    "in",
-    ["to-string", ["coalesce", ["get", idStoreProperty], ["id"]]],
-    ["literal", locationIds],
+    "all",
+    getDefaultFilter(type),
+    [
+      "in",
+      ["to-string", ["coalesce", ["get", idStoreProperty], ["id"]]],
+      ["literal", locationIds],
+    ],
   ];
 };

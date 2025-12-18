@@ -58,7 +58,11 @@ const Order: React.FC = () => {
     >
       <Popover.Target>
         <Tooltip label="Reorder layer" disabled={show}>
-          <ActionIcon autoContrast size="lg" onClick={() => handleShow(!show)}>
+          <ActionIcon
+            className={styles.orderButton}
+            size="lg"
+            onClick={() => handleShow(!show)}
+          >
             <OrderIcon />
           </ActionIcon>
         </Tooltip>

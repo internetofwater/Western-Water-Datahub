@@ -445,39 +445,6 @@ class MainManager {
     return featureCollection;
   }
 
-  /**
-   *
-   * @function
-   */
-  private async addLocationSource(
-    collectionId: ICollection["id"],
-  ): Promise<string> {
-    const sourceId = this.getSourceId(collectionId);
-    if (this.map) {
-      const parameters = this.store.getState().parameters;
-
-      const selectedParameters =
-        parameters.find((parameter) => parameter.collectionId === collectionId)
-          ?.parameters ?? [];
-
-      const data = await this.fetchLocations(collectionId, selectedParameters);
-      const geographyFilteredData = this.filterLocations(data);
-
-      const source = this.map.getSource(sourceId) as GeoJSONSource;
-      if (!source) {
-        this.map.addSource(sourceId, {
-          type: "geojson",
-          data: geographyFilteredData,
-          generateId: true,
-        });
-      } else {
-        source.setData(geographyFilteredData);
-      }
-    }
-
-    return sourceId;
-  }
-
   public getUniqueIds(
     features: GeoJSONFeature[],
     collectionId: ICollection["id"],
@@ -548,7 +515,7 @@ class MainManager {
       if (features && features.length > 0) {
         const uniqueFeatures = this.getUniqueIds(features, collectionId);
         const html = `
-            <span style="color:black;">
+            <span>
               <strong>${name}</strong><br/>
               ${uniqueFeatures.map((locationId) => `<strong>${upperLabel} Id: </strong>${locationId}`).join("<br/>")}
               <div style="margin-top: 16px;display:flex;flex-direction:column;justify-content:center;align-items:center">
@@ -1044,6 +1011,12 @@ class MainManager {
     }
 
     (aggregate as any) = undefined;
+    if (layer) {
+      this.store.getState().updateLayer({
+        ...layer,
+        loaded: true,
+      });
+    }
 
     return sourceId;
   }
@@ -1220,9 +1193,9 @@ class MainManager {
               .palettes.find((palette) => palette.collectionId === collectionId)
               ?.palette ?? null;
 
+          const collectionType = getCollectionType(collection);
           if (layer) {
             let color = layer.color;
-
             // The user has removed the previous paletteDefinition but color is still a data expression
             if (
               this.map &&
@@ -1253,7 +1226,7 @@ class MainManager {
               color,
               paletteDefinition,
               visible: true,
-              loaded: true,
+              loaded: collectionType === CollectionType.Map,
             });
           } else {
             this.store.getState().addLayer({
@@ -1267,7 +1240,7 @@ class MainManager {
               opacity: DEFAULT_FILL_OPACITY,
               paletteDefinition,
               visible: true,
-              loaded: true,
+              loaded: collectionType === CollectionType.Map,
             });
             count += 1;
           }

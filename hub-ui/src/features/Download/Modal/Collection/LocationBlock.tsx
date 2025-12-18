@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { Checkbox, NumberInput, Pagination, Stack } from "@mantine/core";
+import styles from "@/features/Download/Download.module.css";
 import { ICollection } from "@/services/edr.service";
 import { TLocation } from "@/stores/main/types";
 import { chunk } from "@/utils/chunk";
@@ -87,6 +88,7 @@ export const LocationBlock: React.FC<Props> = (props) => {
       {currentChunk.map((locationId) => (
         <Checkbox
           size="xs"
+          className={`${linkLocation && linkLocation.collectionId === collectionId && locationId === String(linkLocation.id) ? styles.checkboxHighlight : ""}`}
           key={`${collectionId}-location-select-${locationId}`}
           label={locationId}
           checked={selectedLocations.includes(locationId)}

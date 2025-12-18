@@ -238,7 +238,7 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
     <Paper
       ref={ref}
       shadow="xl"
-      className={`${styles.locationWrapper} ${linkLocation && linkLocation.id === String(location?.id) ? styles.highlightLocation : ""}`}
+      className={`${styles.locationWrapper} ${linkLocation && linkLocation.collectionId === collection.id && linkLocation.id === String(location?.id) ? styles.locationHighlight : styles.locationStandard}`}
     >
       <Stack gap="xs">
         <Group justify="space-between">

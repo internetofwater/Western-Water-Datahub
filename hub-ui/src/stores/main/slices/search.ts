@@ -8,15 +8,15 @@ import { ICollection } from "@/services/edr.service";
 import { MainState, TSearch } from "@/stores/main/types";
 
 export interface ISearchSlice {
-  searchTerms: TSearch[];
-  setSearchTerms: (searchTerms: TSearch[]) => void;
-  addSearchTerm: (
+  searches: TSearch[];
+  setSearches: (searches: TSearch[]) => void;
+  addSearch: (
     collectionId: ICollection["id"],
     searchTerm: string,
     matchedLocations: string[],
   ) => void;
-  removeSearchTerm: (collectionId: ICollection["id"]) => void;
-  hasSearchTerm: (collectionId: ICollection["id"]) => boolean;
+  removeSearch: (collectionId: ICollection["id"]) => void;
+  hasSearch: (collectionId: ICollection["id"]) => boolean;
 }
 
 export const createSearchSlice: StateCreator<
@@ -25,19 +25,19 @@ export const createSearchSlice: StateCreator<
   [],
   ISearchSlice
 > = (set, get) => ({
-  searchTerms: [],
-  setSearchTerms: (searchTerms) =>
+  searches: [],
+  setSearches: (searches) =>
     set((state) => {
-      state.searchTerms = searchTerms;
+      state.searches = searches;
     }),
-  addSearchTerm: (collectionId, searchTerm, matchedLocations) =>
+  addSearch: (collectionId, searchTerm, matchedLocations) =>
     set((state) => {
-      const index = state.searchTerms.findIndex(
+      const index = state.searches.findIndex(
         (p) => p.collectionId === collectionId,
       );
 
       if (index === -1) {
-        state.searchTerms.push({
+        state.searches.push({
           collectionId,
           searchTerm,
           matchedLocations,
@@ -46,19 +46,19 @@ export const createSearchSlice: StateCreator<
         return;
       }
 
-      state.searchTerms[index] = {
+      state.searches[index] = {
         collectionId,
         searchTerm,
         matchedLocations,
       };
     }),
-  removeSearchTerm: (collectionId) =>
+  removeSearch: (collectionId) =>
     set((state) => {
-      state.searchTerms = state.searchTerms.filter(
+      state.searches = state.searches.filter(
         (p) => p.collectionId !== collectionId,
       );
     }),
-  hasSearchTerm: (collectionId) => {
-    return get().searchTerms.some((p) => p.collectionId === collectionId);
+  hasSearch: (collectionId) => {
+    return get().searches.some((p) => p.collectionId === collectionId);
   },
 });

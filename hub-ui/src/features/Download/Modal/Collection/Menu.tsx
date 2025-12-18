@@ -6,6 +6,7 @@
 import { Button, Divider, Stack, Text, TextInput } from "@mantine/core";
 import styles from "@/features/Download/Download.module.css";
 import { ICollection } from "@/services/edr.service";
+import { TLocation } from "@/stores/main/types";
 import { LocationBlock } from "./LocationBlock";
 
 type Props = {
@@ -18,6 +19,7 @@ type Props = {
   searchTerm: string;
   onSearchTermChange: (searchTerm: string) => void;
   onClear: () => void;
+  linkLocation?: TLocation | null;
 };
 
 export const Menu: React.FC<Props> = (props) => {
@@ -31,6 +33,7 @@ export const Menu: React.FC<Props> = (props) => {
     searchTerm,
     onSearchTermChange,
     onClear,
+    linkLocation = null,
   } = props;
 
   return (
@@ -64,6 +67,7 @@ export const Menu: React.FC<Props> = (props) => {
             selectedLocations={selectedLocations}
             addLocation={addLocation}
             removeLocation={removeLocation}
+            linkLocation={linkLocation}
           />
           {mapLocations.length > 0 && allLocations.length > 0 && <Divider />}
           {allLocations.length > 0 && (
@@ -77,6 +81,7 @@ export const Menu: React.FC<Props> = (props) => {
             selectedLocations={selectedLocations}
             addLocation={addLocation}
             removeLocation={removeLocation}
+            linkLocation={linkLocation}
           />
         </>
       ) : (

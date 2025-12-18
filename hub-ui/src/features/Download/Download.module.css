@@ -10,9 +10,14 @@
 .chartWrapper {
   height: 300px;
 }
+
 .chartNoData {
   width: 100%;
   height: 95%;
+}
+
+.checkboxHighlight {
+  color: var(--usbr-canyon-gold);
 }
 
 .copyInputWrapper {
@@ -59,9 +64,16 @@
   border-left: 1px solid var(--mantine-color-default-border);
 }
 
+.locationHighlight {
+  border: 1px solid var(--usbr-canyon-gold);
+}
+
+.locationStandard {
+  border: 1px solid var(--mantine-color-default-border);
+}
+
 .locationWrapper {
   padding: var(--default-spacing);
-  border: 1px solid var(--mantine-color-default-border);
 }
 
 .parameterNameSelect {

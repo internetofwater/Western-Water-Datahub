@@ -7,12 +7,16 @@ import { useEffect, useRef, useState } from "react";
 import Map from "@/components/Map";
 import { basemaps } from "@/components/Map/consts";
 import CustomControl from "@/components/Map/tools/CustomControl";
-import { BasemapId } from "@/components/Map/types";
+import { BasemapId, LayerType } from "@/components/Map/types";
 import { useMap } from "@/contexts/MapContexts";
 import { layerDefinitions, MAP_ID } from "@/features/Map/config";
 import { sourceConfigs } from "@/features/Map/sources";
 import { MapButton as Legend } from "@/features/Map/Tools/Legend/Button";
-import { getFilter, getSelectedColor } from "@/features/Map/utils";
+import {
+  getDefaultFilter,
+  getFilter,
+  getSelectedColor,
+} from "@/features/Map/utils";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import { TLocation } from "@/stores/main/types";
@@ -42,7 +46,7 @@ const MainMap: React.FC<Props> = (props) => {
   const layers = useMainStore((state) => state.layers);
   const locations = useMainStore((state) => state.locations);
   const collections = useMainStore((state) => state.collections);
-  const searches = useMainStore((state) => state.searchTerms);
+  const searches = useMainStore((state) => state.searches);
 
   const loadingInstances = useSessionStore((state) => state.loadingInstances);
 
@@ -184,25 +188,36 @@ const MainMap: React.FC<Props> = (props) => {
     layers.forEach((layer) => {
       const { pointLayerId, lineLayerId, fillLayerId } =
         mainManager.getLocationsLayerIds(layer.collectionId);
-      const search = searches.find((search) => search.collectionId);
+      const search = searches.find(
+        (search) => search.collectionId === layer.collectionId,
+      );
 
       if (!search) {
         if (map.getFilter(pointLayerId)) {
-          map.setFilter(pointLayerId, null);
+          map.setFilter(pointLayerId, getDefaultFilter(LayerType.Circle));
         }
         if (map.getFilter(lineLayerId)) {
-          map.setFilter(lineLayerId, null);
+          map.setFilter(lineLayerId, getDefaultFilter(LayerType.Line));
         }
         if (map.getFilter(fillLayerId)) {
-          map.setFilter(fillLayerId, null);
+          map.setFilter(fillLayerId, getDefaultFilter(LayerType.Fill));
         }
 
         return;
       }
 
-      map.setFilter(pointLayerId, getFilter(search.matchedLocations));
-      map.setFilter(lineLayerId, getFilter(search.matchedLocations));
-      map.setFilter(fillLayerId, getFilter(search.matchedLocations));
+      map.setFilter(
+        pointLayerId,
+        getFilter(search.matchedLocations, LayerType.Circle),
+      );
+      map.setFilter(
+        lineLayerId,
+        getFilter(search.matchedLocations, LayerType.Line),
+      );
+      map.setFilter(
+        fillLayerId,
+        getFilter(search.matchedLocations, LayerType.Fill),
+      );
     });
   }, [searches]);
 

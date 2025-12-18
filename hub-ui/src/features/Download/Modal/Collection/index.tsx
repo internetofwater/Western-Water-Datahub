@@ -21,6 +21,7 @@ import { StringIdentifierCollections } from "@/consts/collections";
 import { useLocations } from "@/hooks/useLocations";
 import mainManager from "@/managers/Main.init";
 import { ICollection } from "@/services/edr.service";
+import useMainStore from "@/stores/main";
 import { TLayer } from "@/stores/main/types";
 import useSessionStore from "@/stores/session";
 import { getIdStore } from "@/utils/getIdStore";
@@ -41,6 +42,7 @@ const Collection: React.FC<Props> = (props) => {
   const [opened, { toggle }] = useDisclosure(open);
 
   const linkLocation = useSessionStore((state) => state.linkLocation);
+  const searches = useMainStore((state) => state.searches);
 
   const { selectedLocations: mapLocations, otherLocations } =
     useLocations(layer);
@@ -49,6 +51,16 @@ const Collection: React.FC<Props> = (props) => {
 
   const [locations, setLocations] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+
+  useEffect(() => {
+    const search = searches.find(
+      (search) => search.collectionId === layer.collectionId,
+    );
+
+    if (search) {
+      setSearchTerm(search.searchTerm);
+    }
+  }, [searches]);
 
   useEffect(() => {
     if (linkLocation && linkLocation.collectionId === layer.collectionId) {
@@ -132,6 +144,7 @@ const Collection: React.FC<Props> = (props) => {
                 searchTerm={searchTerm}
                 onSearchTermChange={handleSearchTermChange}
                 onClear={handleClear}
+                linkLocation={linkLocation}
               />
               <LayerBlock
                 layer={layer}
@@ -143,6 +156,7 @@ const Collection: React.FC<Props> = (props) => {
                     locations.includes(getId(feature)),
                   ),
                 ]}
+                linkLocation={linkLocation}
               />
             </Group>
           </Collapse>

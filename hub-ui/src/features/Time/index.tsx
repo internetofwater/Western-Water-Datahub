@@ -54,7 +54,11 @@ const Time: React.FC<Props> = (props) => {
     >
       <Popover.Target>
         <Tooltip label="Change visualized dates." disabled={show}>
-          <ActionIcon size="lg" onClick={() => handleShow(!show)}>
+          <ActionIcon
+            className={styles.timesButton}
+            size="lg"
+            onClick={() => handleShow(!show)}
+          >
             <Calendar />
           </ActionIcon>
         </Tooltip>

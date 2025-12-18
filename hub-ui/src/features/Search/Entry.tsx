@@ -26,15 +26,15 @@ export const Entry: React.FC<Props> = (props) => {
 
   const { selectedLocations, otherLocations } = useLocations(layer);
 
-  const search = useMainStore((state) => state.searchTerms).find(
+  const search = useMainStore((state) => state.searches).find(
     (search) => search.collectionId === layer.collectionId,
   ) ?? {
     collectionId: layer.collectionId,
     searchTerm: "",
     matchedLocations: [],
   };
-  const addSearchTerm = useMainStore((state) => state.addSearchTerm);
-  const removeSearchTerm = useMainStore((state) => state.removeSearchTerm);
+  const addSearchTerm = useMainStore((state) => state.addSearch);
+  const removeSearchTerm = useMainStore((state) => state.removeSearch);
 
   useEffect(() => {
     const collection = mainManager.getCollection(layer.collectionId);
@@ -59,6 +59,7 @@ export const Entry: React.FC<Props> = (props) => {
   const handleChange = (searchTerm: string) => {
     if (searchTerm.length === 0) {
       removeSearchTerm(layer.collectionId);
+      return;
     }
 
     const matchedLocations = [...selectedLocations, ...otherLocations]

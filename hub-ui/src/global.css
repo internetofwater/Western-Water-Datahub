@@ -4,6 +4,11 @@
  */
 
 :root {
+  --usbr-spillway-blue: #0081a1;
+  --usbr-red-rocks: #a23737;
+  --usbr-canyon-gold: #c2850c;
+  --usbr-warning: #fff5ee;
+
   --default-spacing: 8px;
 }
 
@@ -35,4 +40,37 @@
   :root {
     font-size: 10px;
   }
+}
+
+div.mapboxgl-popup-content {
+  padding: var(--default-spacing);
+  color: var(--mantine-color-text);
+  background-color: var(--mantine-color-body);
+}
+
+button.mapboxgl-popup-close-button {
+  font-size: 1.875rem;
+  right: 0px;
+  top: var(--default-spacing);
+  color: var(--mantine-color-text);
+}
+
+div.mapboxgl-popup-anchor-left div.mapboxgl-popup-tip {
+  border-right-color: var(--mantine-color-body);
+}
+
+div.mapboxgl-popup-anchor-top div.mapboxgl-popup-tip,
+div.mapboxgl-popup-anchor-top-left div.mapboxgl-popup-tip,
+div.mapboxgl-popup-anchor-top-right div.mapboxgl-popup-tip {
+  border-bottom-color: var(--mantine-color-body);
+}
+
+div.mapboxgl-popup-anchor-bottom div.mapboxgl-popup-tip,
+div.mapboxgl-popup-anchor-bottom-left div.mapboxgl-popup-tip,
+div.mapboxgl-popup-anchor-bottom-right div.mapboxgl-popup-tip {
+  border-top-color: var(--mantine-color-body);
+}
+
+div.mapboxgl-popup-anchor-right div.mapboxgl-popup-tip {
+  border-left-color: var(--mantine-color-body);
 }

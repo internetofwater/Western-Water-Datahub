@@ -17,10 +17,12 @@ import { CollectionType, getCollectionType } from "@/utils/collection";
 import { Entry } from "./Entry";
 
 const Search: React.FC = () => {
-  const layers = useMainStore((state) => state.layers).filter((layer) =>
-    [CollectionType.EDR, CollectionType.Features].includes(
-      getCollectionType(mainManager.getCollection(layer.collectionId)!),
-    ),
+  const layers = useMainStore((state) => state.layers).filter(
+    (layer) =>
+      layer.loaded &&
+      [CollectionType.EDR, CollectionType.Features].includes(
+        getCollectionType(mainManager.getCollection(layer.collectionId)!),
+      ),
   );
 
   const overlay = useSessionStore((state) => state.overlay);
@@ -58,7 +60,11 @@ const Search: React.FC = () => {
     >
       <Popover.Target>
         <Tooltip label="Search collections" disabled={show}>
-          <ActionIcon autoContrast size="lg" onClick={() => handleShow(!show)}>
+          <ActionIcon
+            className={styles.searchButton}
+            size="lg"
+            onClick={() => handleShow(!show)}
+          >
             <SearchIcon />
           </ActionIcon>
         </Tooltip>
