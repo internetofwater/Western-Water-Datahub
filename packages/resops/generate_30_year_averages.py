@@ -7,6 +7,10 @@
 from datetime import datetime
 import json
 from pathlib import Path
+import aiohttp
+import aiohttp.client_exceptions
+from com.cache import RedisCache
+from com.helpers import await_
 import pandas as pd
 import pathlib
 import geopandas as gpd
@@ -190,5 +194,19 @@ for i in sorted(indices_to_drop, reverse=True):
 print(
     f"Filtered down to {len(reservoirToDayOfMonthAndValues)} dams not affiliated with BOR or USACE"
 )
+
+cache = RedisCache()
+for reservoir in reservoirToDayOfMonthAndValues:
+    url = f"https://nid.sec.usace.army.mil/api/dams/{reservoir}/inventory"
+    try:
+        data = await_(cache.get_or_fetch_json(url))
+    except aiohttp.client_exceptions.ClientResponseError as e:
+        if e.status == 404:
+            print("Got 404 for reservoir", reservoir)
+            continue
+        raise e
+    print("Got nid data for reservoir", reservoir)
+    reservoirToDayOfMonthAndValues[reservoir]["joinedNidMetadata"] = data
+
 with open("30_year_averages_by_nid_id_filtered_out_bor_usace.json", "w") as f:
     f.write(json.dumps(reservoirToDayOfMonthAndValues, indent=4))
