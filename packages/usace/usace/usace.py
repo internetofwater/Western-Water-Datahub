@@ -56,9 +56,7 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         skip_geometry: Optional[bool] = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        collection = LocationCollection()
-        if itemId:
-            collection.drop_all_locations_but_id(itemId)
+        collection = LocationCollection(itemId=itemId)
         if bbox:
             collection.drop_all_locations_outside_bounding_box(bbox)
         if offset:

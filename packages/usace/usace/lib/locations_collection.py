@@ -56,7 +56,7 @@ with metadata_path.open() as f:
 class LocationCollection(LocationCollectionProtocolWithEDR):
     locations: list[Feature]
 
-    def __init__(self):
+    def __init__(self, itemId: Optional[str] = None):
         self.cache = RedisCache()
         url = "https://water.sec.usace.army.mil/cda/reporting/providers/projects?fmt=geojson"
 
@@ -67,9 +67,13 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                 "features": orjson.loads(res),
             }
         )
+        features_to_keep = []
+
         for feature in fc.features:
             assert feature.properties
             feature.id = str(feature.properties.location_code)
+            if itemId and feature.id != itemId:
+                continue
             feature.properties.name = feature.properties.public_name
 
             nidid = feature.properties.aliases.get("NIDID")
@@ -91,7 +95,9 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                     raise RuntimeError(f"Duplicate USACE property: {prop}")
                 setattr(feature.properties, prop, static_properties[prop])
 
-        self.locations = fc.features
+            features_to_keep.append(feature)
+
+        self.locations = features_to_keep
 
     def to_geojson(
         self,
