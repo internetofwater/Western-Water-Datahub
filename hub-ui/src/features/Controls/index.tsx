@@ -9,6 +9,7 @@ import Download from "@/features/Download";
 import Info from "@/features/Info";
 import useMainStore from "@/stores/main";
 import Order from "../Order";
+import Search from "../Search";
 import Time from "../Time";
 
 const Controls: React.FC = () => {
@@ -27,6 +28,7 @@ const Controls: React.FC = () => {
         <Info />
         {paletteLayers.length > 0 && <Time layers={paletteLayers} />}
         <Order />
+        <Search />
       </Stack>
       <Download />
     </Group>

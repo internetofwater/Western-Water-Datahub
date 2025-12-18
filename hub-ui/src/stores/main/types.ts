@@ -13,6 +13,7 @@ import { ILayerSlice } from "./slices/layers";
 import { ILocationSlice } from "./slices/locations";
 import { IPaletteSlice } from "./slices/palettes";
 import { IParameterSlice } from "./slices/parameters";
+import { ISearchSlice } from "./slices/search";
 
 export type ColorValueHex = `#${string}`;
 
@@ -97,6 +98,11 @@ export type TPalette = {
   palette: PaletteDefinition;
 };
 
+export type TSearch = {
+  collectionId: ICollection["id"];
+  searchTerm: string;
+};
+
 export type MainState = {
   provider: string | null;
   setProvider: (provider: MainState["provider"]) => void;
@@ -117,4 +123,5 @@ export type MainState = {
   ILayerSlice &
   ILocationSlice &
   IPaletteSlice &
-  IParameterSlice;
+  IParameterSlice &
+  ISearchSlice;

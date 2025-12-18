@@ -48,8 +48,9 @@ const Time: React.FC<Props> = (props) => {
     <Popover
       opened={show}
       onChange={setShow}
-      position="bottom-start"
+      position="right-start"
       closeOnClickOutside={false}
+      keepMounted
     >
       <Popover.Target>
         <Tooltip label="Change visualized dates." disabled={show}>

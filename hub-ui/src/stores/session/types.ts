@@ -67,6 +67,7 @@ export enum EOverlay {
   Download = "download",
   Date = "date",
   Order = "order",
+  Search = "search",
 }
 
 export type LegendEntry = {

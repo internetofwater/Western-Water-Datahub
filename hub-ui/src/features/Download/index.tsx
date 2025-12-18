@@ -4,11 +4,12 @@
  */
 
 import { useEffect, useState } from "react";
-import { Button, Text, Tooltip } from "@mantine/core";
+import { Button, Text } from "@mantine/core";
+import Tooltip from "@/components/Tooltip";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import useSessionStore from "@/stores/session";
-import { EOverlay, EModal as ModalEnum } from "@/stores/session/types";
+import { EOverlay } from "@/stores/session/types";
 import { CollectionType, getCollectionType } from "@/utils/collection";
 
 const Download: React.FC = () => {
@@ -55,7 +56,7 @@ const Download: React.FC = () => {
     <>
       {hasLayers && (
         <>
-          <Tooltip label={helpDownloadText}>
+          <Tooltip multiline label={helpDownloadText}>
             <Button
               disabled={!isEnabled}
               data-disabled={!isEnabled}

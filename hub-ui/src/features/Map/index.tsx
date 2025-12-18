@@ -12,7 +12,7 @@ import { useMap } from "@/contexts/MapContexts";
 import { layerDefinitions, MAP_ID } from "@/features/Map/config";
 import { sourceConfigs } from "@/features/Map/sources";
 import { MapButton as Legend } from "@/features/Map/Tools/Legend/Button";
-import { getSelectedColor } from "@/features/Map/utils";
+import { getFilter, getSelectedColor } from "@/features/Map/utils";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import { TLocation } from "@/stores/main/types";
@@ -42,6 +42,7 @@ const MainMap: React.FC<Props> = (props) => {
   const layers = useMainStore((state) => state.layers);
   const locations = useMainStore((state) => state.locations);
   const collections = useMainStore((state) => state.collections);
+  const searches = useMainStore((state) => state.searchTerms);
 
   const loadingInstances = useSessionStore((state) => state.loadingInstances);
 
@@ -174,6 +175,36 @@ const MainMap: React.FC<Props> = (props) => {
       }
     });
   }, [layers]);
+
+  useEffect(() => {
+    if (!map) {
+      return;
+    }
+
+    layers.forEach((layer) => {
+      const { pointLayerId, lineLayerId, fillLayerId } =
+        mainManager.getLocationsLayerIds(layer.collectionId);
+      const search = searches.find((search) => search.collectionId);
+
+      if (!search) {
+        if (map.getFilter(pointLayerId)) {
+          map.setFilter(pointLayerId, null);
+        }
+        if (map.getFilter(lineLayerId)) {
+          map.setFilter(lineLayerId, null);
+        }
+        if (map.getFilter(fillLayerId)) {
+          map.setFilter(fillLayerId, null);
+        }
+
+        return;
+      }
+
+      map.setFilter(pointLayerId, getFilter(search.matchedLocations));
+      map.setFilter(lineLayerId, getFilter(search.matchedLocations));
+      map.setFilter(fillLayerId, getFilter(search.matchedLocations));
+    });
+  }, [searches]);
 
   //   TODO: uncomment when basemap selector is implemented
   //   useEffect(() => {

@@ -12,6 +12,7 @@ import { MainState } from "@/stores/main/types";
 import { createLayerSlice } from "./slices/layers";
 import { createPalettesSlice } from "./slices/palettes";
 import { createParametersSlice } from "./slices/parameters";
+import { createSearchSlice } from "./slices/search";
 
 const useMainStore = create<MainState>()(
   immer((set, get, store) => ({
@@ -51,6 +52,7 @@ const useMainStore = create<MainState>()(
     ...createLocationSlice(set, get, store),
     ...createPalettesSlice(set, get, store),
     ...createParametersSlice(set, get, store),
+    ...createSearchSlice(set, get, store),
   })),
 );
 

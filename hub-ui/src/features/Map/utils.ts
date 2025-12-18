@@ -85,3 +85,13 @@ export const getSelectedColor = (
     originalColor,
   ];
 };
+
+export const getFilter = (
+  locationIds: Array<TLocation["id"]>,
+): ExpressionSpecification => {
+  return [
+    "in",
+    ["to-string", ["coalesce", ["get", idStoreProperty], ["id"]]],
+    ["literal", locationIds],
+  ];
+};

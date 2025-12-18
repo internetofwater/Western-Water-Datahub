@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ActionIcon, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Text } from "@mantine/core";
 import Help from "@/assets/Help";
+import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Info/Info.module.css";
 import useSessionStore from "@/stores/session";
 import { EHelpTab, EModal } from "@/stores/session/types";
@@ -24,7 +25,7 @@ const Info: React.FC = () => {
   const helpText = <Text size="sm">{help}</Text>;
 
   return (
-    <Tooltip label={helpText}>
+    <Tooltip multiline label={helpText}>
       <ActionIcon
         aria-label={help}
         size="lg"
