@@ -3,14 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Fragment, useEffect, useState } from 'react';
-import { ActionIcon, Button, Divider, Popover, Stack, Text, Title, Tooltip } from '@mantine/core';
-import Calendar from '@/assets/Calendar';
-import { Entry } from '@/features/Time/Entry';
-import styles from '@/features/Time/Time.module.css';
-import { TLayer } from '@/stores/main/types';
-import useSessionStore from '@/stores/session';
-import { EOverlay } from '@/stores/session/types';
+import { Fragment, useEffect, useState } from "react";
+import {
+  ActionIcon,
+  Button,
+  Divider,
+  Popover,
+  Stack,
+  Text,
+  Title,
+  Tooltip,
+} from "@mantine/core";
+import Calendar from "@/assets/Calendar";
+import { Entry } from "@/features/Time/Entry";
+import styles from "@/features/Time/Time.module.css";
+import { TLayer } from "@/stores/main/types";
+import useSessionStore from "@/stores/session";
+import { EOverlay } from "@/stores/session/types";
 
 type Props = {
   layers: TLayer[];
@@ -36,7 +45,12 @@ const Time: React.FC<Props> = (props) => {
   }, [overlay]);
 
   return (
-    <Popover opened={show} onChange={setShow} position="bottom-start" closeOnClickOutside={false}>
+    <Popover
+      opened={show}
+      onChange={setShow}
+      position="bottom-start"
+      closeOnClickOutside={false}
+    >
       <Popover.Target>
         <Tooltip label="Change visualized dates." disabled={show}>
           <ActionIcon size="lg" onClick={() => handleShow(!show)}>

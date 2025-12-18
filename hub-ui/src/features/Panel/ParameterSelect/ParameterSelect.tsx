@@ -3,34 +3,37 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from 'react';
-import { ActionIcon, ComboboxData, Group, Text } from '@mantine/core';
-import Delete from '@/assets/Delete';
-import Select from '@/components/Select';
-import { CollectionRestrictions, RestrictionType } from '@/consts/collections';
-import mainManager from '@/managers/Main.init';
-import { ICollection } from '@/services/edr.service';
-import useMainStore from '@/stores/main';
-import { CollectionType, getCollectionType } from '@/utils/collection';
-import { getParameterUnit } from '@/utils/parameters';
-import { Palette } from '../Palette/Palette';
+import { useEffect, useState } from "react";
+import { ActionIcon, ComboboxData, Group, Text } from "@mantine/core";
+import Delete from "@/assets/Delete";
+import Select from "@/components/Select";
+import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
+import mainManager from "@/managers/Main.init";
+import { ICollection } from "@/services/edr.service";
+import useMainStore from "@/stores/main";
+import { CollectionType, getCollectionType } from "@/utils/collection";
+import { getParameterUnit } from "@/utils/parameters";
+import { Palette } from "../Palette/Palette";
 
 type Props = {
-  collectionId: ICollection['id'];
+  collectionId: ICollection["id"];
 };
 
 const ParameterSelect: React.FC<Props> = (props) => {
   const { collectionId } = props;
 
   const collections = useMainStore((state) => state.collections);
-  const selectedCollections = useMainStore((state) => state.selectedCollections);
+  const selectedCollections = useMainStore(
+    (state) => state.selectedCollections,
+  );
   const parameters =
     useMainStore((state) => state.parameters).find(
-      (parameter) => parameter.collectionId === collectionId
+      (parameter) => parameter.collectionId === collectionId,
     )?.parameters ?? [];
   const palette =
-    useMainStore((state) => state.palettes).find((palette) => palette.collectionId === collectionId)
-      ?.palette ?? null;
+    useMainStore((state) => state.palettes).find(
+      (palette) => palette.collectionId === collectionId,
+    )?.palette ?? null;
 
   const addParameter = useMainStore((state) => state.addParameter);
   const removeParameter = useMainStore((state) => state.removeParameter);
@@ -41,7 +44,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
   const [parameterLimit, setParameterLimit] = useState<number>();
   const [collectionType, setCollectionType] = useState(CollectionType.Unknown);
   const [localParameters, setLocalParameters] = useState(parameters);
-  const [name, setName] = useState<string>('Parameters');
+  const [name, setName] = useState<string>("Parameters");
   const [data, setData] = useState<ComboboxData>([]);
 
   useEffect(() => {
@@ -81,7 +84,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
 
     if (restrictions && restrictions.length > 0) {
       const parameterLimitRestriction = restrictions.find(
-        (restriction) => restriction.type === RestrictionType.Parameter
+        (restriction) => restriction.type === RestrictionType.Parameter,
       );
 
       if (parameterLimitRestriction && parameterLimitRestriction.count > 0) {
@@ -100,25 +103,30 @@ const ParameterSelect: React.FC<Props> = (props) => {
     }
 
     parameters.forEach((parameter) => {
-      if (!localParameters.includes(parameter) && hasParameter(collectionId, parameter)) {
+      if (
+        !localParameters.includes(parameter) &&
+        hasParameter(collectionId, parameter)
+      ) {
         removeParameter(collectionId, parameter);
       }
     });
   }, [localParameters]);
 
-  const showParameterSelect = (collectionId: ICollection['id']) => {
+  const showParameterSelect = (collectionId: ICollection["id"]) => {
     const collection = mainManager.getCollection(collectionId);
 
     if (collection) {
       const collectionType = getCollectionType(collection);
 
-      return [CollectionType.EDR, CollectionType.EDRGrid].includes(collectionType);
+      return [CollectionType.EDR, CollectionType.EDRGrid].includes(
+        collectionType,
+      );
     }
 
     return false;
   };
 
-  const showPalette = (collectionId: ICollection['id']) => {
+  const showPalette = (collectionId: ICollection["id"]) => {
     const collection = mainManager.getCollection(collectionId);
 
     if (collection) {
@@ -152,11 +160,11 @@ const ParameterSelect: React.FC<Props> = (props) => {
 
   const getParameterError = () => {
     if (parameterLimit && isParameterSelectionOverLimit) {
-      return `Please remove ${localParameters.length - parameterLimit} parameter${localParameters.length - parameterLimit > 1 ? 's' : ''}`;
+      return `Please remove ${localParameters.length - parameterLimit} parameter${localParameters.length - parameterLimit > 1 ? "s" : ""}`;
     }
 
     if (isMissingParameters) {
-      return 'Please select at least one parameter.';
+      return "Please select at least one parameter.";
     }
 
     return false;
@@ -189,7 +197,11 @@ const ParameterSelect: React.FC<Props> = (props) => {
           mb="calc(var(--default-spacing) * 2)"
         >
           <Palette collectionId={collectionId} />
-          <ActionIcon disabled={!palette} data-disabled={!palette} onClick={handlePaletteClear}>
+          <ActionIcon
+            disabled={!palette}
+            data-disabled={!palette}
+            onClick={handlePaletteClear}
+          >
             <Delete />
           </ActionIcon>
         </Group>

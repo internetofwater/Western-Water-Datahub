@@ -3,15 +3,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from 'react';
-import { Stack } from '@mantine/core';
-import mainManager from '@/managers/Main.init';
-import useMainStore from '@/stores/main';
-import { CollectionType, getCollectionType } from '@/utils/collection';
-import { Palette } from './Palette';
+import { useEffect, useState } from "react";
+import { Stack } from "@mantine/core";
+import mainManager from "@/managers/Main.init";
+import useMainStore from "@/stores/main";
+import { CollectionType, getCollectionType } from "@/utils/collection";
+import { Palette } from "./Palette";
 
 const PaletteWrapper: React.FC = () => {
-  const selectedCollections = useMainStore((state) => state.selectedCollections);
+  const selectedCollections = useMainStore(
+    (state) => state.selectedCollections,
+  );
 
   const [gridCollections, setGridCollections] = useState<string[]>([]);
 
@@ -39,7 +41,10 @@ const PaletteWrapper: React.FC = () => {
   return (
     <Stack gap={0}>
       {gridCollections.map((collectionId) => (
-        <Palette key={`parameter-select-${collectionId}`} collectionId={collectionId} />
+        <Palette
+          key={`parameter-select-${collectionId}`}
+          collectionId={collectionId}
+        />
       ))}
     </Stack>
   );

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ILink } from '@ogcapi-js/shared';
+import { ILink } from "@ogcapi-js/shared";
 import {
   Feature,
   FeatureCollection,
@@ -11,8 +11,8 @@ import {
   Geometry,
   MultiPolygon,
   Polygon,
-} from 'geojson';
-import { TLayer } from '@/stores/main/types';
+} from "geojson";
+import { TLayer } from "@/stores/main/types";
 
 export type SourceOptions = {
   filterFeatures?: Feature<Polygon | MultiPolygon>[];
@@ -21,7 +21,7 @@ export type SourceOptions = {
   from?: string | null;
   to?: string | null;
   noFetch?: boolean;
-  paletteDefinition?: TLayer['paletteDefinition'];
+  paletteDefinition?: TLayer["paletteDefinition"];
 };
 
 export type StyleOptions<T extends GeoJsonProperties> = {

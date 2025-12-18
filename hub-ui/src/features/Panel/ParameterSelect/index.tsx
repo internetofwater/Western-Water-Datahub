@@ -3,27 +3,36 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Fragment } from 'react';
-import { Divider, Group, Stack, Text, Title, VisuallyHidden } from '@mantine/core';
-import Info from '@/assets/Info';
-import Tooltip from '@/components/Tooltip';
-import styles from '@/features/Panel/Panel.module.css';
-import useMainStore from '@/stores/main';
-import ParameterSelect from './ParameterSelect';
+import { Fragment } from "react";
+import {
+  Divider,
+  Group,
+  Stack,
+  Text,
+  Title,
+  VisuallyHidden,
+} from "@mantine/core";
+import Info from "@/assets/Info";
+import Tooltip from "@/components/Tooltip";
+import styles from "@/features/Panel/Panel.module.css";
+import useMainStore from "@/stores/main";
+import ParameterSelect from "./ParameterSelect";
 
 const ParameterSelectWrapper: React.FC = () => {
-  const selectedCollections = useMainStore((state) => state.selectedCollections);
+  const selectedCollections = useMainStore(
+    (state) => state.selectedCollections,
+  );
 
   const helpText = (
     <>
       <Text size="sm">
-        Parameters are scientific measurements contained by collections that are associated with
-        specific locations and times.
+        Parameters are scientific measurements contained by collections that are
+        associated with specific locations and times.
       </Text>
       <br />
       <Text size="sm">
-        Selecting one or more parameters will show locations on the map that contain at least one
-        measurement for that parameter.
+        Selecting one or more parameters will show locations on the map that
+        contain at least one measurement for that parameter.
       </Text>
     </>
   );

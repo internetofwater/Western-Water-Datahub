@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-import dayjs from 'dayjs';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import { useEffect, useMemo, useState } from 'react';
-import { Group, Stack, Text, Title, VisuallyHidden } from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
-import Info from '@/assets/Info';
-import Tooltip from '@/components/Tooltip';
-import { CollectionRestrictions, RestrictionType } from '@/consts/collections';
-import styles from '@/features/Panel/Panel.module.css';
-import useMainStore from '@/stores/main';
-import { DatePreset, getSimplePresetDates } from '@/utils/dates';
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import { useEffect, useMemo, useState } from "react";
+import { Group, Stack, Text, Title, VisuallyHidden } from "@mantine/core";
+import { DatePickerInput } from "@mantine/dates";
+import Info from "@/assets/Info";
+import Tooltip from "@/components/Tooltip";
+import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
+import styles from "@/features/Panel/Panel.module.css";
+import useMainStore from "@/stores/main";
+import { DatePreset, getSimplePresetDates } from "@/utils/dates";
 
 dayjs.extend(isSameOrBefore);
 
@@ -23,7 +23,9 @@ export const DateSelect: React.FC = () => {
   const to = useMainStore((state) => state.to);
   const setTo = useMainStore((state) => state.setTo);
 
-  const selectedCollections = useMainStore((state) => state.selectedCollections);
+  const selectedCollections = useMainStore(
+    (state) => state.selectedCollections,
+  );
   const [daysLimit, setDaysLimit] = useState<number>(0);
   const [error, setError] = useState<string>();
 
@@ -36,7 +38,9 @@ export const DateSelect: React.FC = () => {
         continue;
       }
 
-      const daysRestriction = restrictions.find((r) => r.type === RestrictionType.Day);
+      const daysRestriction = restrictions.find(
+        (r) => r.type === RestrictionType.Day,
+      );
 
       if (daysRestriction) {
         minLimit = Math.min(minLimit, daysRestriction.days);
@@ -49,7 +53,10 @@ export const DateSelect: React.FC = () => {
   /**
    * Helpers
    */
-  const fromValid = useMemo(() => (from ? dayjs(from).isValid() : false), [from]);
+  const fromValid = useMemo(
+    () => (from ? dayjs(from).isValid() : false),
+    [from],
+  );
   const toValid = useMemo(() => (to ? dayjs(to).isValid() : false), [to]);
 
   const bothExistAndValid = fromValid && toValid;
@@ -75,7 +82,7 @@ export const DateSelect: React.FC = () => {
     if (!bothExistAndValid || !isOrdered) {
       return null;
     } // only meaningful when ordered and both valid
-    const base = dayjs(to).diff(dayjs(from), 'day');
+    const base = dayjs(to).diff(dayjs(from), "day");
     return INCLUSIVE_SEMANTICS ? base + 1 : base;
   }, [bothExistAndValid, isOrdered, from, to, INCLUSIVE_SEMANTICS]);
 
@@ -88,11 +95,11 @@ export const DateSelect: React.FC = () => {
     // If a limit exists, we REQUIRE both dates to be present and valid.
     if (daysLimit > 0) {
       if (!from || !to || !fromValid || !toValid) {
-        setError('Start and end dates are required');
+        setError("Start and end dates are required");
         return;
       }
       if (!isOrdered) {
-        setError('Invalid date range');
+        setError("Invalid date range");
         return;
       }
       if (diffDays !== null && diffDays > daysLimit) {
@@ -105,20 +112,29 @@ export const DateSelect: React.FC = () => {
 
     // No limit: only enforce ordering when both exist & valid.
     if (bothExistAndValid && !isOrdered) {
-      setError('Invalid date range');
+      setError("Invalid date range");
       return;
     }
 
     setError(undefined);
-  }, [daysLimit, from, to, fromValid, toValid, bothExistAndValid, isOrdered, diffDays]);
+  }, [
+    daysLimit,
+    from,
+    to,
+    fromValid,
+    toValid,
+    bothExistAndValid,
+    isOrdered,
+    diffDays,
+  ]);
 
   const helpText = (
     <>
       <Text size="sm">Select the date range to apply to all collections.</Text>
       <br />
       <Text size="sm">
-        This date range will serve as the default range used to create charts or fetch data for
-        gridded collections.
+        This date range will serve as the default range used to create charts or
+        fetch data for gridded collections.
       </Text>
     </>
   );
