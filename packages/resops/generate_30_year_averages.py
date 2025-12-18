@@ -54,17 +54,6 @@ assert attributes.exists()
 
 data_dict = pd.read_csv(attributes)
 
-# filter out dams with agency code not equal to ACE or DUKE somewhere
-# this is since our integration we only care about adding the averages to the usace
-# reservoirs
-usace_stations = data_dict[
-    data_dict["AGENCY_CODE"].str.contains("DUKE")
-    | data_dict["AGENCY_CODE"].str.contains("ACE")
-]
-
-assert len(usace_stations) < len(data_dict)
-
-print(f"Filtered ResOpsUS to {len(usace_stations)} USACE affiliated dams.")
 
 # The time_series_all folder contains individual CSV files for each dam that contain all the direct observations.
 # Raw time series folder is not used since it contains the same dam from multiple sources; we can just use the one canonical one
@@ -85,7 +74,7 @@ with open(grandNidMapper, "r") as f:
 
 unmappedIds: list[str] = []
 
-for _, station in usace_stations.iterrows():
+for _, station in data_dict.iterrows():
     grand_id = station["DAM_ID"]
 
     associatedNidId = GRAND_ID_TO_NID.get(str(grand_id))
@@ -182,4 +171,24 @@ print(
 )
 
 with open("30_year_averages_by_nid_id.json", "w") as f:
+    f.write(json.dumps(reservoirToDayOfMonthAndValues, indent=4))
+
+# in the wwdh project we already have a separate API for BOR and USACE dams
+# as such we don't want to include them in our dataset and have duplicates
+# between collections.
+reservoirs_to_drop_to_prevent_duplicates = ["BOR", "ACE", "DUKE"]
+indices_to_drop: set[str] = set()
+for res in reservoirToDayOfMonthAndValues:
+    for agency in reservoirs_to_drop_to_prevent_duplicates:
+        if agency in reservoirToDayOfMonthAndValues[res]["agencyCode"]:
+            indices_to_drop.add(res)
+            break
+
+for i in sorted(indices_to_drop, reverse=True):
+    del reservoirToDayOfMonthAndValues[i]
+
+print(
+    f"Filtered down to {len(reservoirToDayOfMonthAndValues)} dams not affiliated with BOR or USACE"
+)
+with open("30_year_averages_by_nid_id_filtered_out_bor_usace.json", "w") as f:
     f.write(json.dumps(reservoirToDayOfMonthAndValues, indent=4))
