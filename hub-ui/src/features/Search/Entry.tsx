@@ -76,6 +76,7 @@ export const Entry: React.FC<Props> = (props) => {
       <TextInput
         value={search.searchTerm}
         onChange={(event) => handleChange(event.currentTarget.value)}
+        placeholder="Search across location properties"
       />
     </Stack>
   );

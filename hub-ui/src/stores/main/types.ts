@@ -101,6 +101,7 @@ export type TPalette = {
 export type TSearch = {
   collectionId: ICollection["id"];
   searchTerm: string;
+  matchedLocations: string[];
 };
 
 export type MainState = {

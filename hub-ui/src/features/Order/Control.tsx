@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ActionIcon, Stack, Tooltip } from "@mantine/core";
+import { ActionIcon, Stack } from "@mantine/core";
 import CircleDown from "@/assets/CircleDown";
 import CircleUp from "@/assets/CircleUp";
+import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Order/Order.module.css";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";

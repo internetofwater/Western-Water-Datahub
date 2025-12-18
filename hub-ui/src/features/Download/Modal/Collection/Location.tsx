@@ -15,12 +15,12 @@ import {
   Paper,
   Stack,
   Text,
-  Tooltip,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import Code from "@/components/Code";
 import CopyInput from "@/components/CopyInput";
+import Tooltip from "@/components/Tooltip";
 import { StringIdentifierCollections } from "@/consts/collections";
 import styles from "@/features/Download/Download.module.css";
 import { Chart } from "@/features/Popup/Chart";

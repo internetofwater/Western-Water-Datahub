@@ -12,11 +12,11 @@ import {
   MultiSelect,
   Stack,
   Text,
-  Tooltip,
   VisuallyHidden,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import Info from "@/assets/Info";
+import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Download/Download.module.css";
 import { DatePreset, getSimplePresetDates } from "@/utils/dates";
 
