@@ -4,7 +4,7 @@
  */
 
 export const chunk = <T>(array: T[], size: number): T[][] => {
-  if (!array.length) {
+  if (array.length === 0 || size === 0) {
     return [];
   }
   const head = array.slice(0, size);

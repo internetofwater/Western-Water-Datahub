@@ -16,6 +16,7 @@ import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import { TLayer, TLocation } from "@/stores/main/types";
 import useSessionStore from "@/stores/session";
+import { EOverlay } from "@/stores/session/types";
 import { CollectionType, getCollectionType } from "@/utils/collection";
 import { getIdStore } from "@/utils/getIdStore";
 import { getParameterUnit } from "@/utils/parameters";
@@ -52,7 +53,7 @@ const Popup: React.FC<Props> = (props) => {
     useMainStore((state) => state.layers).find(
       (layer) => layer.collectionId === location.collectionId,
     )?.parameters ?? [];
-  // const setOverlay = useSessionStore((state) => state.setOverlay);
+  const setOverlay = useSessionStore((state) => state.setOverlay);
 
   useEffect(() => {
     const location = locations[0];
@@ -132,7 +133,7 @@ const Popup: React.FC<Props> = (props) => {
 
   const handleLinkClick = () => {
     setLinkLocation(location);
-    // setOverlay(Overlay.Links);
+    setOverlay(EOverlay.Download);
   };
 
   const handleLocationChange = (id: string | null) => {

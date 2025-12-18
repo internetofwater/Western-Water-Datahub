@@ -3,6 +3,31 @@
  * SPDX-License-Identifier: MIT
  */
 
+.allLocationsInput {
+  width: 82%;
+}
+
+.chartWrapper {
+  height: 300px;
+}
+.chartNoData {
+  width: 100%;
+  height: 95%;
+}
+
+.copyInputWrapper {
+  width: 84%;
+  max-width: 100%;
+}
+.csvButton {
+  max-width: 10em;
+  margin-left: auto;
+}
+
+.datePicker {
+  min-width: 11em;
+}
+
 .downloadButtonWrapper {
   position: absolute;
   top: var(--default-spacing);
@@ -14,26 +39,33 @@
   margin-right: var(--default-spacing);
 }
 
-.parameterNameSelect {
-  min-width: 24em;
-}
-
-.chartWrapper {
-  height: 300px;
-}
-.chartNoData {
-  width: 100%;
-  height: 95%;
-}
-
 .goButton {
   margin-top: 3.15em;
   max-width: 6em;
 }
 
-.csvButton {
-  max-width: 10em;
-  margin-left: auto;
+.menu {
+  width: 19%;
+  max-width: 19%;
+  padding-top: var(--default-spacing);
+}
+
+.locationBlockWrapper {
+  width: 80%;
+  max-width: 80%;
+  height: -webkit-fill-available;
+  padding-top: var(--default-spacing);
+  padding-left: var(--default-spacing);
+  border-left: 1px solid var(--mantine-color-default-border);
+}
+
+.locationWrapper {
+  padding: var(--default-spacing);
+  border: 1px solid var(--mantine-color-default-border);
+}
+
+.parameterNameSelect {
+  min-width: 24em;
 }
 
 .parameterLabelWrapper > svg {
@@ -42,15 +74,6 @@
 }
 .parameterLabelWrapper > label > span {
   color: red;
-}
-
-.copyInputWrapper {
-  width: 84%;
-  max-width: 100%;
-}
-
-.datePicker {
-  min-width: 11em;
 }
 
 @media screen and (max-width: 816px) {

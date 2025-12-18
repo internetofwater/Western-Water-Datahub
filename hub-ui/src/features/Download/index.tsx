@@ -3,37 +3,65 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { useEffect, useState } from "react";
 import { Button, Text, Tooltip } from "@mantine/core";
+import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import useSessionStore from "@/stores/session";
-import { EModal as ModalEnum } from "@/stores/session/types";
+import { EOverlay, EModal as ModalEnum } from "@/stores/session/types";
+import { CollectionType, getCollectionType } from "@/utils/collection";
 
 const Download: React.FC = () => {
-  const locations = useMainStore((state) => state.locations);
+  const layers = useMainStore((state) => state.layers);
   const setLocations = useMainStore((state) => state.setLocations);
-  const setOpenModal = useSessionStore((state) => state.setOpenModal);
+  const setOverlay = useSessionStore((state) => state.setOverlay);
 
-  const hasLocations = locations.length > 0;
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  const hasLayers = layers.length > 0;
 
   const helpDownloadText = (
     <>
-      <Text size="sm">Curate data requests for selected requests.</Text>
+      <Text size="sm">
+        Explore locations in greater detail. Find request urls, search
+        locations, and download data.
+      </Text>
       <br />
       <Text size="sm">
-        Select parameters and an optional timeframe for locations across all
-        displayed collections.
+        At least one layer must have viable locations and parameters selected.
       </Text>
     </>
   );
 
+  useEffect(() => {
+    const isEnabled = layers.some((layer) => {
+      const datasource = mainManager.getCollection(layer.collectionId);
+      if (datasource) {
+        const collectionType = getCollectionType(datasource);
+        if (collectionType === CollectionType.Features) {
+          return true;
+        } else if (
+          [CollectionType.EDR, CollectionType.EDRGrid].includes(collectionType)
+        ) {
+          return layer.parameters.length > 0;
+        }
+      }
+      return false;
+    });
+    setIsEnabled(isEnabled);
+  }, [layers]);
+
   return (
     <>
-      {hasLocations && (
+      {hasLayers && (
         <>
           <Tooltip label={helpDownloadText}>
-            <Button onClick={() => setOpenModal(ModalEnum.Download)}>
-              Explore {locations.length} selected Location
-              {locations.length !== 1 ? "s" : ""}
+            <Button
+              disabled={!isEnabled}
+              data-disabled={!isEnabled}
+              onClick={() => setOverlay(EOverlay.Download)}
+            >
+              Download
             </Button>
           </Tooltip>
           <Tooltip label="Deselect all selected locations">

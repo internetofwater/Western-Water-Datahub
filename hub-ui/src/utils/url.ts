@@ -21,6 +21,21 @@ export const getDatetime = (
   return null;
 };
 
+export const buildLocationsUrl = (
+  collectionId: ICollection["id"],
+  parameters: string[],
+): string => {
+  const url = new URL(
+    `${import.meta.env.VITE_WWDH_UNCACHE_SOURCE}/collections/${collectionId}/locations`,
+  );
+
+  if (parameters.length > 0) {
+    url.searchParams.set("parameter-name", parameters.join(","));
+  }
+
+  return url.toString();
+};
+
 export const buildLocationUrl = (
   collectionId: ICollection["id"],
   locationId: TLocation["id"],
@@ -31,7 +46,7 @@ export const buildLocationUrl = (
   format: boolean = true,
 ): string => {
   const url = new URL(
-    `${import.meta.env.VITE_AWO_SOURCE}/collections/${collectionId}/locations/${locationId}`,
+    `${import.meta.env.VITE_WWDH_UNCACHE_SOURCE}/collections/${collectionId}/locations/${locationId}`,
   );
 
   if (format) {
@@ -57,7 +72,7 @@ export const buildItemUrl = (
   format: null | "csv" | "json" | "kml" | "shp" = null,
 ): string => {
   const url = new URL(
-    `${import.meta.env.VITE_AWO_SOURCE}/collections/${collectionId}/items/${locationId}`,
+    `${import.meta.env.VITE_WWDH_UNCACHE_SOURCE}/collections/${collectionId}/items/${locationId}`,
   );
 
   if (format && format.length) {
@@ -71,7 +86,7 @@ export const buildItemsUrl = (
   format: null | "csv" | "json" | "kml" | "shp" = null,
 ): string => {
   const url = new URL(
-    `${import.meta.env.VITE_AWO_SOURCE}/collections/${collectionId}/items`,
+    `${import.meta.env.VITE_WWDH_UNCACHE_SOURCE}/collections/${collectionId}/items`,
   );
 
   if (format && format.length) {
@@ -105,7 +120,7 @@ export const buildCubeUrl = (
   }
 
   const url = new URL(
-    `${import.meta.env.VITE_AWO_SOURCE}/collections/${collectionId}/cube`,
+    `${import.meta.env.VITE_WWDH_UNCACHE_SOURCE}/collections/${collectionId}/cube`,
   );
   url.searchParams.set("bbox", normalizeBBox(feature.bbox).join(","));
 
