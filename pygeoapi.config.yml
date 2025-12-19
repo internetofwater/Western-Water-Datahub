@@ -195,7 +195,6 @@ resources:
     provider-name:
       - DOA
       - USACE
-      - NRCS
     keywords:
       - open data
     templates:
@@ -411,10 +410,11 @@ resources:
       - <<: *default-wms
         data: https://mapservices.weather.noaa.gov/raster/services/snow/NOHRSC_Snow_Analysis/MapServer/WMSServer
 
+  ## As of December 19 2025 this collection contains no items and thus is commented out
   # nohrsd-saswb:
   #   <<: *default-qpf
   #   title: NOAA National Operational Hydrologic Remote Sensing Center Snow Analysis Water Boundary
-  #   description:
+  #   description: defines the geographic boundaries of water features used in NOAA's snow analysis to mask out lakes, rivers, and other water bodies where snow cover estimates are not applicable.
   #   providers:
   #     - <<: *default-feature-qpf
   #       data: https://mapservices.weather.noaa.gov/raster/rest/services/snow/NOHRSC_Snow_Analysis/MapServer/5
