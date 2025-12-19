@@ -184,10 +184,10 @@ export const Palette: React.FC<Props> = (props) => {
 
   const isValid = Boolean(
     count &&
-    parameter &&
-    palette &&
-    isValidPalette({ count, parameter, palette, index: 1 }) &&
-    parameters.includes(parameter),
+      parameter &&
+      palette &&
+      isValidPalette({ count, parameter, palette, index: 1 }) &&
+      parameters.includes(parameter),
   );
   const noParameters = parameters.length === 0;
 
@@ -196,6 +196,7 @@ export const Palette: React.FC<Props> = (props) => {
       opened={show}
       onChange={setShow}
       closeOnClickOutside={false}
+      position="right"
       shadow="md"
     >
       <Group gap="var(--default-spacing)">
@@ -234,6 +235,7 @@ export const Palette: React.FC<Props> = (props) => {
               disabled={noParameters}
               data-disabled={noParameters}
               onClick={() => setShow(!show)}
+              className={styles.actionButton}
             >
               <PaletteIcon />
             </ActionIcon>

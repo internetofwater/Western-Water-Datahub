@@ -20,6 +20,7 @@ import {
   LngLatBoundsLike,
   Map,
   MapMouseEvent,
+  MapTouchEvent,
   Popup,
   RasterTileSource,
 } from "mapbox-gl";
@@ -474,10 +475,10 @@ class MainManager {
     return Array.from(uniques).sort();
   }
 
-  private getClickEventHandler(
+  private getClickEventHandler<T extends MapMouseEvent | MapTouchEvent>(
     mapLayerId: string,
     collectionId: ICollection["id"],
-  ): (e: MapMouseEvent) => void {
+  ): (e: T) => void {
     return (e) => {
       e.originalEvent.preventDefault();
 
@@ -671,26 +672,25 @@ class MainManager {
   }
 
   private validateBBox(bbox: BBox, collectionId: ICollection["id"]) {
-    // TODO: update
     const userBBox = turf.bboxPolygon(bbox);
-    const AZBBox = turf.bboxPolygon(DEFAULT_BBOX);
+    const fullBBox = turf.bboxPolygon(DEFAULT_BBOX);
 
     const userBBoxArea = turf.area(userBBox);
-    const AZBBoxArea = turf.area(AZBBox);
+    const fullBBoxArea = turf.area(fullBBox);
 
-    // Valid bbox should touch the AZ bbox, not contain it fully, and be smaller than the size limit
+    // Valid bbox should touch the full bbox, not contain it fully, and be smaller than the size limit
     // Certain collections have additional size restrictions due to large datasets
     // Throw errors to stop process and provide feedback to user
     this.checkCollectionBBoxRestrictions(collectionId, userBBoxArea);
 
-    const intersectsAZ = turf.booleanIntersects(userBBox, AZBBox);
-    const containsAZ = turf.booleanContains(userBBox, AZBBox);
-    const smaller = userBBoxArea <= AZBBoxArea;
+    const intersectsFull = turf.booleanIntersects(userBBox, fullBBox);
+    const containsFull = turf.booleanContains(userBBox, fullBBox);
+    const smaller = userBBoxArea <= fullBBoxArea;
 
-    if (!intersectsAZ) {
+    if (!intersectsFull) {
       throw new Error("Target area not connected to Arizona.");
     }
-    if (containsAZ) {
+    if (containsFull) {
       throw new Error("Target area can not contain Arizona.");
     }
     if (!smaller) {
@@ -698,8 +698,7 @@ class MainManager {
     }
   }
 
-  private getBBox(collectionId: ICollection["id"]): BBox {
-    // TODO: update
+  public getBBox(collectionId: ICollection["id"]): BBox {
     const filterFeature = this.store.getState().geographyFilter?.feature;
 
     if (!filterFeature) {
@@ -783,102 +782,107 @@ class MainManager {
 
     const { pointLayerId, fillLayerId, lineLayerId } =
       this.getLocationsLayerIds(collectionId);
-    if (layer && this.map) {
+    const collection = this.getCollection(collectionId);
+    if (layer && collection && this.map) {
+      const collectionType = getCollectionType(collection);
       const color = layer.color;
       if (
         !this.map.getLayer(pointLayerId) &&
         !this.map.getLayer(lineLayerId) &&
         !this.map.getLayer(pointLayerId)
       ) {
-        const collection = this.getCollection(collectionId);
-        if (collection) {
-          const sourceId = this.getSourceId(collectionId);
-          const collectionType = getCollectionType(collection);
+        const sourceId = this.getSourceId(collectionId);
 
-          const { upperLabel, lowerLabel } = this.getLabels(collectionType);
-          this.map.addLayer(
-            getFillLayerDefinition(fillLayerId, sourceId, color),
-          );
-          this.map.addLayer(
-            getLineLayerDefinition(lineLayerId, sourceId, color),
-          );
-          this.map.addLayer(
-            getPointLayerDefinition(pointLayerId, sourceId, color),
-          );
+        const { upperLabel, lowerLabel } = this.getLabels(collectionType);
+        this.map.addLayer(getFillLayerDefinition(fillLayerId, sourceId, color));
+        this.map.addLayer(getLineLayerDefinition(lineLayerId, sourceId, color));
+        this.map.addLayer(
+          getPointLayerDefinition(pointLayerId, sourceId, color),
+        );
 
-          this.map.on(
-            "click",
-            pointLayerId,
-            this.getClickEventHandler(pointLayerId, collectionId),
-          );
+        this.map.on(
+          "click",
+          pointLayerId,
+          this.getClickEventHandler<MapMouseEvent>(pointLayerId, collectionId),
+        );
 
-          this.map.on(
-            "click",
-            fillLayerId,
-            this.getClickEventHandler(fillLayerId, collectionId),
-          );
+        this.map.on(
+          "click",
+          fillLayerId,
+          this.getClickEventHandler<MapMouseEvent>(fillLayerId, collectionId),
+        );
 
-          this.map.on(
-            "click",
-            lineLayerId,
-            this.getClickEventHandler(lineLayerId, collectionId),
-          );
+        this.map.on(
+          "click",
+          lineLayerId,
+          this.getClickEventHandler<MapMouseEvent>(lineLayerId, collectionId),
+        );
 
-          this.map.on(
-            "click",
-            pointLayerId,
-            this.getClickEventHandler(fillLayerId, collectionId),
-          );
+        this.map.on(
+          "touchend",
+          pointLayerId,
+          this.getClickEventHandler<MapTouchEvent>(pointLayerId, collectionId),
+        );
 
-          this.map.on(
-            "click",
-            fillLayerId,
-            this.getClickEventHandler(fillLayerId, collectionId),
-          );
+        this.map.on(
+          "touchend",
+          fillLayerId,
+          this.getClickEventHandler<MapTouchEvent>(fillLayerId, collectionId),
+        );
 
-          this.map.on(
-            "click",
-            lineLayerId,
-            this.getClickEventHandler(fillLayerId, collectionId),
-          );
+        this.map.on(
+          "touchend",
+          lineLayerId,
+          this.getClickEventHandler<MapTouchEvent>(lineLayerId, collectionId),
+        );
 
-          this.map.on(
-            "mouseenter",
-            [pointLayerId, fillLayerId, lineLayerId],
-            this.getHoverEventHandler(
-              collection.title ?? "",
-              collectionId,
-              upperLabel,
-              lowerLabel,
-            ),
+        this.map.on(
+          "mouseenter",
+          [pointLayerId, fillLayerId, lineLayerId],
+          this.getHoverEventHandler(
+            collection.title ?? "",
+            collectionId,
+            upperLabel,
+            lowerLabel,
+          ),
+        );
+        this.map.on(
+          "mousemove",
+          [pointLayerId, fillLayerId, lineLayerId],
+          this.getHoverEventHandler(
+            collection.title ?? "",
+            collectionId,
+            upperLabel,
+            lowerLabel,
+          ),
+        );
+        this.map.on(
+          "mouseleave",
+          [pointLayerId, fillLayerId, lineLayerId],
+          () => {
+            this.map!.getCanvas().style.cursor = "";
+            this.hoverPopup!.remove();
+          },
+        );
+
+        if (geographyFilter && collectionType !== CollectionType.EDRGrid) {
+          const geoFilterLayerId = this.getFilterLayerId(
+            geographyFilter.collectionId,
           );
-          this.map.on(
-            "mousemove",
-            [pointLayerId, fillLayerId, lineLayerId],
-            this.getHoverEventHandler(
-              collection.title ?? "",
-              collectionId,
-              upperLabel,
-              lowerLabel,
-            ),
+          for (const layerId of [fillLayerId, lineLayerId, pointLayerId]) {
+            this.map.moveLayer(geoFilterLayerId, layerId);
+          }
+        } else if (
+          geographyFilter &&
+          collectionType === CollectionType.EDRGrid
+        ) {
+          const geoFilterLayerId = this.getFilterLayerId(
+            geographyFilter.collectionId,
           );
-          this.map.on(
-            "mouseleave",
-            [pointLayerId, fillLayerId, lineLayerId],
-            () => {
-              this.map!.getCanvas().style.cursor = "";
-              this.hoverPopup!.remove();
-            },
-          );
+          for (const layerId of [fillLayerId, lineLayerId, pointLayerId]) {
+            this.map.moveLayer(layerId, geoFilterLayerId);
+          }
         }
-      }
-      if (geographyFilter) {
-        const geoFilterLayerId = this.getFilterLayerId(
-          geographyFilter.collectionId,
-        );
-        [fillLayerId, lineLayerId, pointLayerId].forEach((layerId) =>
-          this.map!.moveLayer(geoFilterLayerId, layerId),
-        );
       }
     }
   }
@@ -1106,6 +1110,17 @@ class MainManager {
     const locations = this.store
       .getState()
       .locations.filter((location) => location.collectionId !== collectionId);
+    const parameters = this.store
+      .getState()
+      .parameters.filter(
+        (parameter) => parameter.collectionId !== collectionId,
+      );
+    const searches = this.store
+      .getState()
+      .searches.filter((search) => search.collectionId !== collectionId);
+    const palettes = this.store
+      .getState()
+      .palettes.filter((palette) => palette.collectionId !== collectionId);
 
     layers = layers
       .sort((a, b) => a.position - b.position)
@@ -1128,6 +1143,9 @@ class MainManager {
 
     this.store.getState().setLayers(layers);
     this.store.getState().setLocations(locations);
+    this.store.getState().setParameters(parameters);
+    this.store.getState().setSearches(searches);
+    this.store.getState().setPalettes(palettes);
   }
 
   public cleanLayers(selectedCollections: string[]) {
@@ -1440,49 +1458,33 @@ class MainManager {
     this.store.getState().setGeographyFilter(null);
   }
 
-  private clearLocationLayers(): void {
+  private removeAllLayers(): void {
     if (!this.map) {
       return;
     }
 
-    const originalCollections = this.store.getState().originalCollections;
+    const layers = this.store.getState().layers;
 
-    for (const collection of originalCollections) {
-      const layerIds = Object.values(this.getLocationsLayerIds(collection.id));
-      for (const layerId of layerIds) {
-        if (this.map.getLayer(layerId)) {
-          this.map.removeLayer(layerId);
-        }
-      }
-    }
-  }
-
-  private clearLocationSources(): void {
-    if (!this.map) {
-      return;
-    }
-
-    const originalCollections = this.store.getState().originalCollections;
-
-    for (const collection of originalCollections) {
-      const sourceId = this.getSourceId(collection.id);
-      if (this.map.getSource(sourceId)) {
-        this.map.removeSource(sourceId);
-      }
+    for (const layer of layers) {
+      this.deleteLayer(layer.collectionId);
     }
   }
 
   public clearAllData(): void {
     this.store.getState().setLocations([]);
 
-    this.clearLocationLayers();
-    this.clearLocationSources();
+    this.removeAllLayers();
 
     this.removeGeographyFilter();
 
     this.store.getState().setProvider(null);
     this.store.getState().setCategory(null);
     this.store.getState().setSelectedCollections([]);
+    const today = dayjs();
+    this.store
+      .getState()
+      .setFrom(today.subtract(1, "week").format("YYYY-MM-DD"));
+    this.store.getState().setTo(today.format("YYYY-MM-DD"));
   }
 
   public reorderLayers() {

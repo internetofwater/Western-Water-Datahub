@@ -32,6 +32,8 @@ const useSessionStore = create<SessionState>()(
     setLinkLocation: (linkLocation) => set({ linkLocation }),
     helpTab: EHelpTab.About,
     setHelpTab: (helpTab) => set({ helpTab }),
+    colorScheme: "dark",
+    setColorScheme: (colorScheme) => set({ colorScheme }),
     ...createLoadingSlice(set, get, store),
     ...createNotificationsSlice(set, get, store),
     ...createWarningsSlice(set, get, store),

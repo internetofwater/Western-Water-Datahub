@@ -6,6 +6,7 @@
 import { createTheme } from "@mantine/core";
 
 export const theme = createTheme({
+  cursorType: "pointer",
   fontFamily: "Arial, Helvetica, sans-serif",
   headings: {
     fontFamily: "Arial, Helvetica, sans-serif",

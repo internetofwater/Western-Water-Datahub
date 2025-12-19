@@ -6,16 +6,15 @@
 import { useEffect, useRef, useState } from "react";
 import Map from "@/components/Map";
 import { basemaps } from "@/components/Map/consts";
-import CustomControl from "@/components/Map/tools/CustomControl";
 import { BasemapId, LayerType } from "@/components/Map/types";
 import { useMap } from "@/contexts/MapContexts";
 import { layerDefinitions, MAP_ID } from "@/features/Map/config";
 import { sourceConfigs } from "@/features/Map/sources";
-import { MapButton as Legend } from "@/features/Map/Tools/Legend/Button";
 import {
   getDefaultFilter,
   getFilter,
   getSelectedColor,
+  getSortKey,
 } from "@/features/Map/utils";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
@@ -123,6 +122,11 @@ const MainMap: React.FC<Props> = (props) => {
           "line-color",
           getSelectedColor(locationIds, color),
         );
+        map.setLayoutProperty(
+          lineLayerId,
+          "line-sort-key",
+          getSortKey(locationIds),
+        );
       }
     });
   }, [locations]);
@@ -155,6 +159,7 @@ const MainMap: React.FC<Props> = (props) => {
       if (!layerPopupListeners.current[layer.id]) {
         map.on("dblclick", [pointLayerId, lineLayerId, fillLayerId], (e) => {
           const features = e.features;
+
           if (features && features.length > 0) {
             hoverPopup.remove();
 
@@ -162,14 +167,17 @@ const MainMap: React.FC<Props> = (props) => {
               features,
               layer.collectionId,
             );
+
             const locations: TLocation[] = uniqueFeatures.map((id) => ({
               id,
               collectionId: layer.collectionId,
             }));
 
-            locations.forEach((location) =>
-              useMainStore.getState().addLocation(location),
-            );
+            locations.forEach((location) => {
+              if (!useMainStore.getState().hasLocation(location.id)) {
+                useMainStore.getState().addLocation(location);
+              }
+            });
 
             showGraphPopup(locations, map, e, root, container, persistentPopup);
           }
@@ -273,12 +281,6 @@ const MainMap: React.FC<Props> = (props) => {
           scaleControl: true,
           navigationControl: true,
         }}
-        customControls={[
-          {
-            control: new CustomControl(<Legend />),
-            position: "top-right",
-          },
-        ]}
       />
     </>
   );

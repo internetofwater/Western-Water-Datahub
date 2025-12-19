@@ -6,16 +6,7 @@
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { Feature } from "geojson";
-import {
-  Button,
-  Group,
-  NumberInput,
-  Pagination,
-  Stack,
-  Text,
-} from "@mantine/core";
-import CopyInput from "@/components/CopyInput";
-import Tooltip from "@/components/Tooltip";
+import { Group, NumberInput, Pagination, Stack, Text } from "@mantine/core";
 import { StringIdentifierCollections } from "@/consts/collections";
 import styles from "@/features/Download/Download.module.css";
 import loadingManager from "@/managers/Loading.init";
@@ -25,31 +16,36 @@ import { ICollection } from "@/services/edr.service";
 import { TLayer, TLocation } from "@/stores/main/types";
 import { ELoadingType, ENotificationType } from "@/stores/session/types";
 import { chunk } from "@/utils/chunk";
-import { CollectionType, getCollectionType } from "@/utils/collection";
+import { CollectionType } from "@/utils/collection";
 import { createEmptyCsv } from "@/utils/csv";
 import { getIdStore } from "@/utils/getIdStore";
-import { buildLocationsUrl, buildLocationUrl } from "@/utils/url";
+import { buildCubeUrl, buildLocationsUrl, buildLocationUrl } from "@/utils/url";
 import { Grid } from "./Grid";
+import { Header } from "./Header";
 import { Item } from "./Item";
 import { Location } from "./Location";
 
 type Props = {
   locations: Feature[];
+  collection: ICollection;
+  collectionType: CollectionType;
   layer: TLayer;
   linkLocation?: TLocation | null;
 };
 
 export const LayerBlock: React.FC<Props> = (props) => {
-  const { locations, layer, linkLocation = null } = props;
+  const {
+    locations,
+    collection,
+    collectionType,
+    layer,
+    linkLocation = null,
+  } = props;
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [chunkedLocations, setChunkedLocations] = useState<Feature[][]>([]);
   const [currentChunk, setCurrentChunk] = useState<Feature[]>([]);
-  const [collection, setCollection] = useState<ICollection>();
-  const [collectionType, setCollectionType] = useState<CollectionType>(
-    CollectionType.Unknown,
-  );
   const [url, setUrl] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
@@ -76,19 +72,24 @@ export const LayerBlock: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    const collection = mainManager.getCollection(layer.collectionId);
-
-    if (collection) {
-      const url = buildLocationsUrl(collection.id, layer.parameters);
-
-      setUrl(url);
-
-      setCollection(collection);
-      const collectionType = getCollectionType(collection);
-
-      setCollectionType(collectionType);
+    let url = "";
+    if (collectionType === CollectionType.EDR) {
+      url = buildLocationsUrl(collection.id, layer.parameters);
+    } else if (collectionType === CollectionType.EDRGrid) {
+      const bbox = mainManager.getBBox(collection.id);
+      url = buildCubeUrl(
+        collection.id,
+        bbox,
+        layer.parameters,
+        layer.from,
+        layer.to,
+        false,
+        true,
+      );
     }
-  }, [layer]);
+
+    setUrl(url);
+  }, [collection, collectionType]);
 
   useEffect(() => {
     const chunkedLocations = chunk(locations, pageSize);
@@ -173,6 +174,17 @@ export const LayerBlock: React.FC<Props> = (props) => {
     }
   };
 
+  const getLabel = () => {
+    switch (collectionType) {
+      case CollectionType.EDR:
+        return "location";
+      case CollectionType.EDRGrid:
+        return "grid";
+      default:
+        return "item";
+    }
+  };
+
   const getCSV = async (locationId: string) => {
     if (!collection) {
       return;
@@ -189,7 +201,7 @@ export const LayerBlock: React.FC<Props> = (props) => {
     );
 
     const loadingInstance = loadingManager.add(
-      `Generating csv for location: ${locationId}`,
+      `Generating csv for ${getLabel()}: ${locationId}`,
       ELoadingType.Data,
     );
     try {
@@ -212,7 +224,7 @@ export const LayerBlock: React.FC<Props> = (props) => {
       let objectUrl = "";
       if (res.status === 204) {
         notificationManager.show(
-          `No data found for location: ${locationId} with the current parameter and date range selection.`,
+          `No data found for ${getLabel()}: ${locationId} with the current parameter and date range selection.`,
           ENotificationType.Error,
           10000,
         );
@@ -231,7 +243,7 @@ export const LayerBlock: React.FC<Props> = (props) => {
       URL.revokeObjectURL(objectUrl);
       a.remove();
       notificationManager.show(
-        `CSV generated successfully for location: ${locationId}.`,
+        `CSV generated successfully for ${getLabel()}: ${locationId}.`,
         ENotificationType.Success,
         10000,
       );
@@ -256,40 +268,12 @@ export const LayerBlock: React.FC<Props> = (props) => {
       gap="var(--default-spacing)"
       className={styles.locationBlockWrapper}
     >
-      <Text size="xs" c="dimmed">
-        This is the link used to fetch all locations displayed on the map.
-        Select locations in the left-hand panel to interact with individual
-        locations, and view the location's properties, download paramater data
-        as a csv, or retrieve the request used to populate the chart.
-      </Text>
-      {collection && (
-        <Group justify="space-between" gap="var(--default-spacing)">
-          {url.length > 0 && (
-            <CopyInput
-              size="sm"
-              url={url}
-              className={styles.allLocationsInput}
-            />
-          )}
-          <Tooltip
-            label={
-              isLoading
-                ? "Please wait for download to finish."
-                : "Download the parameter data for all selected locations in CSV format."
-            }
-            multiline
-          >
-            <Button
-              size="md"
-              disabled={isLoading}
-              data-disabled={isLoading}
-              onClick={() => void handleGetAllCSV()}
-            >
-              Get All CSV's
-            </Button>
-          </Tooltip>
-        </Group>
-      )}
+      <Header
+        url={url}
+        isLoading={isLoading}
+        collectionType={collectionType}
+        onGetAllCSV={handleGetAllCSV}
+      />
       {currentChunk.length === 0 && (
         <Text fw={700} m="auto">
           Select locations from the menu on the left

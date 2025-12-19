@@ -20,7 +20,7 @@ export const Reset: React.FC = () => {
   const { isLoadingGeography, isFetchingCollections, isFetchingLocations } =
     useLoading();
 
-  const { map } = useMap(MAP_ID);
+  const { map, persistentPopup } = useMap(MAP_ID);
 
   useEffect(() => {
     if (!map) {
@@ -68,12 +68,21 @@ export const Reset: React.FC = () => {
     isLoadingGeography ||
     !(hasLocationsLoaded || hasGeographyFilter());
 
+  const handleClick = () => {
+    // User has a popup open that may not be relevant any longer
+    if (persistentPopup && persistentPopup.isOpen()) {
+      persistentPopup.remove();
+    }
+
+    mainManager.clearAllData();
+  };
+
   return (
     <Tooltip label={getLabel()}>
       <Button
         disabled={isDisabled}
         data-disabled={isDisabled}
-        onClick={() => mainManager.clearAllData()}
+        onClick={handleClick}
         color="red-rocks"
       >
         Reset

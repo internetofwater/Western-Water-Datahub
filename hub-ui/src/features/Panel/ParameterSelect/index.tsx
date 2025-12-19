@@ -51,7 +51,7 @@ const ParameterSelectWrapper: React.FC = () => {
       {selectedCollections.length > 0 ? (
         selectedCollections.map((collectionId, index) => (
           <Fragment key={`parameter-select-${collectionId}`}>
-            {index > 0 && <Divider my="calc(var(--default-spacing) / 2)" />}
+            {index > 0 && <Divider my="var(--default-spacing)" />}
             <ParameterSelect collectionId={collectionId} />
           </Fragment>
         ))

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { BBox, Feature } from "geojson";
+import { BBox } from "geojson";
 import { ICollection } from "@/services/edr.service";
 import { TLocation } from "@/stores/main/types";
 
@@ -108,21 +108,17 @@ const normalizeBBox = (bbox: BBox) => {
 
 export const buildCubeUrl = (
   collectionId: ICollection["id"],
-  feature: Feature,
+  bbox: BBox,
   parameters: string[],
   from: string | null,
   to: string | null,
   csv: boolean = false,
   format: boolean = true,
 ): string => {
-  if (!feature.bbox) {
-    return "";
-  }
-
   const url = new URL(
     `${import.meta.env.VITE_WWDH_UNCACHE_SOURCE}/collections/${collectionId}/cube`,
   );
-  url.searchParams.set("bbox", normalizeBBox(feature.bbox).join(","));
+  url.searchParams.set("bbox", normalizeBBox(bbox).join(","));
 
   if (format) {
     url.searchParams.set("f", csv ? "csv" : "json");

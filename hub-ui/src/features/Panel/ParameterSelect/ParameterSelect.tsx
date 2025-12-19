@@ -8,12 +8,13 @@ import { ActionIcon, ComboboxData, Group, Text } from "@mantine/core";
 import Delete from "@/assets/Delete";
 import Select from "@/components/Select";
 import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
+import { Palette } from "@/features/Panel/Palette/Palette";
+import styles from "@/features/Panel/Panel.module.css";
 import mainManager from "@/managers/Main.init";
 import { ICollection } from "@/services/edr.service";
 import useMainStore from "@/stores/main";
 import { CollectionType, getCollectionType } from "@/utils/collection";
 import { getParameterUnit } from "@/utils/parameters";
-import { Palette } from "../Palette/Palette";
 
 type Props = {
   collectionId: ICollection["id"];
@@ -191,16 +192,14 @@ const ParameterSelect: React.FC<Props> = (props) => {
         <Text>This collection does not include parameters.</Text>
       )}
       {showPalette(collectionId) && (
-        <Group
-          gap="var(--default-spacing)"
-          mt="var(--default-spacing)"
-          mb="calc(var(--default-spacing) * 2)"
-        >
+        <Group gap="var(--default-spacing)" mt="var(--default-spacing)">
           <Palette collectionId={collectionId} />
           <ActionIcon
             disabled={!palette}
             data-disabled={!palette}
             onClick={handlePaletteClear}
+            className={styles.actionButton}
+            color="red-rocks"
           >
             <Delete />
           </ActionIcon>

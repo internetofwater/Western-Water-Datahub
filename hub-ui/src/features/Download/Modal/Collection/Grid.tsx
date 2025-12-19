@@ -51,9 +51,13 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const [to, setTo] = useState<string | null>(layer.to);
 
   useEffect(() => {
+    if (!location.bbox) {
+      return;
+    }
+
     const url = buildCubeUrl(
       collection.id,
-      location,
+      location.bbox,
       layer.parameters,
       from,
       to,
@@ -63,7 +67,7 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
     const codeUrl = buildCubeUrl(
       collection.id,
-      location,
+      location.bbox,
       layer.parameters,
       from,
       to,

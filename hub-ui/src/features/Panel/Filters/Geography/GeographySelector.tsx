@@ -5,6 +5,7 @@
 
 import Geography from ".";
 import { Group, Radio } from "@mantine/core";
+import styles from "@/features/Panel/Panel.module.css";
 
 type Props = {
   geography: Geography;
@@ -40,6 +41,10 @@ export const GeographySelector: React.FC<Props> = (props) => {
         {geographies.map((option) => (
           <Radio
             key={`geography-selector-${option.value}`}
+            classNames={{
+              body: styles.radioBody,
+              label: styles.radioLabel,
+            }}
             value={option.value}
             label={option.label}
           />

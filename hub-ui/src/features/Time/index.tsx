@@ -17,16 +17,18 @@ import {
 import Calendar from "@/assets/Calendar";
 import { Entry } from "@/features/Time/Entry";
 import styles from "@/features/Time/Time.module.css";
-import { TLayer } from "@/stores/main/types";
+import useMainStore from "@/stores/main";
 import useSessionStore from "@/stores/session";
 import { EOverlay } from "@/stores/session/types";
 
-type Props = {
-  layers: TLayer[];
-};
-
-const Time: React.FC<Props> = (props) => {
-  const { layers } = props;
+const Time: React.FC = () => {
+  // Get all layers that have loaded and have a defined palette
+  const layers = useMainStore((state) => state.layers).filter(
+    (layer) =>
+      layer.loaded &&
+      layer.paletteDefinition &&
+      layer.paletteDefinition !== null,
+  );
 
   const overlay = useSessionStore((state) => state.overlay);
   const setOverlay = useSessionStore((state) => state.setOverlay);
@@ -43,6 +45,10 @@ const Time: React.FC<Props> = (props) => {
       setShow(false);
     }
   }, [overlay]);
+
+  if (layers.length === 0) {
+    return null;
+  }
 
   return (
     <Popover

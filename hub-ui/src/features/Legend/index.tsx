@@ -3,8 +3,18 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Fragment, useEffect } from "react";
-import { Box, Divider, Stack } from "@mantine/core";
+import { Fragment, useEffect, useState } from "react";
+import {
+  ActionIcon,
+  Box,
+  Divider,
+  Popover,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
+import LegendIcon from "@/assets/Legend";
+import Tooltip from "@/components/Tooltip";
 import { Entry } from "@/features/Legend/Entry";
 import styles from "@/features/Legend/Legend.module.css";
 import mainManager from "@/managers/Main.init";
@@ -18,6 +28,8 @@ const Legend: React.FC = () => {
 
   const overlay = useSessionStore((state) => state.overlay);
   const setOverlay = useSessionStore((state) => state.setOverlay);
+
+  const [show, setShow] = useState(false);
 
   const handleColorChange = (color: TLayer["color"], layerId: TLayer["id"]) => {
     const layer = mainManager.getLayer({ layerId });
@@ -61,31 +73,63 @@ const Legend: React.FC = () => {
     }
   };
 
+  const handleShow = (show: boolean) => {
+    setOverlay(show ? EOverlay.Legend : null);
+    setShow(show);
+  };
+
   useEffect(() => {
-    if (overlay === EOverlay.Legend && layers.length === 0) {
-      setOverlay(null);
+    if (overlay !== EOverlay.Legend) {
+      setShow(false);
+    } else {
+      setShow(true);
     }
-  });
+  }, [overlay]);
 
   return (
-    <Stack
-      gap="var(--default-spacing)"
-      className={`${styles.container} ${styles.legendWrapper}`}
+    <Popover
+      opened={show}
+      onChange={setShow}
+      closeOnClickOutside={false}
+      position="left-start"
+      shadow="md"
     >
-      <Box className={styles.legendContainer}>
-        {layers.map((layer, index) => (
-          <Fragment key={`legend-entry-${layer.id}`}>
-            <Entry
-              layer={layer}
-              handleColorChange={handleColorChange}
-              handleVisibilityChange={handleVisibilityChange}
-              handleOpacityChange={handleOpacityChange}
-            />
-            {index < layers.length - 1 && <Divider />}
-          </Fragment>
-        ))}
-      </Box>
-    </Stack>
+      <Popover.Target>
+        <Tooltip label="Show legend" disabled={show}>
+          <ActionIcon
+            className={styles.legendButton}
+            size="lg"
+            onClick={() => handleShow(!show)}
+          >
+            <LegendIcon />
+          </ActionIcon>
+        </Tooltip>
+      </Popover.Target>
+      <Popover.Dropdown>
+        <Stack
+          gap="var(--default-spacing)"
+          className={`${styles.container} ${styles.legendWrapper}`}
+        >
+          <Title order={3} className={styles.mapToolTitle}>
+            Legend
+          </Title>
+          <Box className={styles.legendContainer}>
+            {layers.length === 0 && <Text size="sm">No data visible</Text>}
+            {layers.map((layer, index) => (
+              <Fragment key={`legend-entry-${layer.id}`}>
+                <Entry
+                  layer={layer}
+                  handleColorChange={handleColorChange}
+                  handleVisibilityChange={handleVisibilityChange}
+                  handleOpacityChange={handleOpacityChange}
+                />
+                {index < layers.length - 1 && <Divider />}
+              </Fragment>
+            ))}
+          </Box>
+        </Stack>
+      </Popover.Dropdown>
+    </Popover>
   );
 };
 

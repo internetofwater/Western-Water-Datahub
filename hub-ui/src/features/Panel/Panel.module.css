@@ -2,6 +2,10 @@
  * Copyright 2025 Lincoln Institute of Land Policy
  * SPDX-License-Identifier: MIT
  */
+.actionButton:not(:disabled) svg {
+  fill: var(--mantine-color-white);
+}
+
 .gradientContainer {
   width: 100%;
   margin: 0 auto;
@@ -30,6 +34,14 @@
 
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.radioBody {
+  align-items: center;
+}
+
+.radioLabel {
+  padding-left: calc(var(--default-spacing) / 2);
 }
 
 .title {

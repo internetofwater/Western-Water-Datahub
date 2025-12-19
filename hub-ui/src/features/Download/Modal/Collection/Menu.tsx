@@ -7,10 +7,12 @@ import { Button, Divider, Stack, Text, TextInput } from "@mantine/core";
 import styles from "@/features/Download/Download.module.css";
 import { ICollection } from "@/services/edr.service";
 import { TLocation } from "@/stores/main/types";
+import { CollectionType } from "@/utils/collection";
 import { LocationBlock } from "./LocationBlock";
 
 type Props = {
   collectionId: ICollection["id"];
+  collectionType: CollectionType;
   mapLocations: string[];
   otherLocations: string[];
   selectedLocations: string[];
@@ -25,6 +27,7 @@ type Props = {
 export const Menu: React.FC<Props> = (props) => {
   const {
     collectionId,
+    collectionType,
     mapLocations,
     otherLocations: allLocations,
     selectedLocations,
@@ -35,6 +38,17 @@ export const Menu: React.FC<Props> = (props) => {
     onClear,
     linkLocation = null,
   } = props;
+
+  const getLabel = () => {
+    switch (collectionType) {
+      case CollectionType.EDR:
+        return "Location";
+      case CollectionType.EDRGrid:
+        return "Grid";
+      default:
+        return "Item";
+    }
+  };
 
   return (
     <Stack className={styles.menu} gap="var(--default-spacing)">
@@ -58,11 +72,12 @@ export const Menu: React.FC<Props> = (props) => {
         <>
           {mapLocations.length > 0 && (
             <Text size="sm" fw={700}>
-              Selected Locations
+              Selected {getLabel()}s
             </Text>
           )}
           <LocationBlock
             collectionId={collectionId}
+            collectionType={collectionType}
             locations={mapLocations}
             selectedLocations={selectedLocations}
             addLocation={addLocation}
@@ -72,11 +87,13 @@ export const Menu: React.FC<Props> = (props) => {
           {mapLocations.length > 0 && allLocations.length > 0 && <Divider />}
           {allLocations.length > 0 && (
             <Text size="sm" fw={700}>
-              {mapLocations.length > 0 && "Other "}Locations
+              {mapLocations.length > 0 && "Other "}
+              {getLabel()}s
             </Text>
           )}
           <LocationBlock
             collectionId={collectionId}
+            collectionType={collectionType}
             locations={allLocations}
             selectedLocations={selectedLocations}
             addLocation={addLocation}
@@ -86,7 +103,7 @@ export const Menu: React.FC<Props> = (props) => {
         </>
       ) : (
         <Text size="sm" fw={700}>
-          No Locations
+          No {getLabel()}s
         </Text>
       )}
     </Stack>

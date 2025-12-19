@@ -3,8 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-.allLocationsInput {
+.partialWidth {
   width: 82%;
+}
+.fullWidth {
+  width: 100%;
 }
 
 .chartWrapper {
@@ -24,6 +27,11 @@
   width: 84%;
   max-width: 100%;
 }
+
+.collectionWrapper:not(:first-child) {
+  border-top: 1px solid var(--mantine-color-default-border);
+}
+
 .csvButton {
   max-width: 10em;
   margin-left: auto;

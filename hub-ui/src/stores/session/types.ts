@@ -96,6 +96,8 @@ export type SessionState = {
   setLinkLocation: (linkLocation: SessionState["linkLocation"]) => void;
   helpTab: EHelpTab;
   setHelpTab: (helpTab: SessionState["helpTab"]) => void;
+  colorScheme: "dark" | "light";
+  setColorScheme: (colorScheme: SessionState["colorScheme"]) => void;
 } & LoadingSlice &
   NotificationsSlice &
   WarningsSlice;

@@ -9,9 +9,11 @@ import styles from "@/features/Download/Download.module.css";
 import { ICollection } from "@/services/edr.service";
 import { TLocation } from "@/stores/main/types";
 import { chunk } from "@/utils/chunk";
+import { CollectionType } from "@/utils/collection";
 
 type Props = {
   collectionId: ICollection["id"];
+  collectionType: CollectionType;
   locations: string[];
   selectedLocations: string[];
   addLocation: (location: string) => void;
@@ -21,6 +23,7 @@ type Props = {
 export const LocationBlock: React.FC<Props> = (props) => {
   const {
     collectionId,
+    collectionType,
     locations,
     selectedLocations,
     addLocation,
@@ -83,6 +86,19 @@ export const LocationBlock: React.FC<Props> = (props) => {
     }
   };
 
+  const getLabel = () => {
+    switch (collectionType) {
+      case CollectionType.EDR:
+        return "Location";
+      case CollectionType.EDRGrid:
+        return "Grid";
+      default:
+        return "Item";
+    }
+  };
+
+  console.log("collectionType", collectionType);
+
   return (
     <Stack component="section" gap="var(--default-spacing)">
       {currentChunk.map((locationId) => (
@@ -102,7 +118,7 @@ export const LocationBlock: React.FC<Props> = (props) => {
         <>
           <NumberInput
             size="xs"
-            label="Locations per page"
+            label={`${getLabel()}s per page`}
             value={pageSize}
             onChange={(value) => handlePageSizeChange(Number(value))}
             min={1}

@@ -117,3 +117,18 @@ export const getFilter = (
     ],
   ];
 };
+
+export const getSortKey = (
+  locationIds: Array<TLocation["id"]>,
+): ExpressionSpecification => {
+  return [
+    "case",
+    [
+      "in",
+      ["to-string", ["coalesce", ["get", idStoreProperty], ["id"]]],
+      ["literal", locationIds],
+    ],
+    1,
+    0,
+  ];
+};

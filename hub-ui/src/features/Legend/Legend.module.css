@@ -19,6 +19,10 @@
   width: 350px;
 }
 
+.legendButton svg {
+  fill: var(--mantine-color-white);
+}
+
 .legendWrapper > * {
   padding-left: var(--default-spacing);
   padding-right: calc(var(--default-spacing) * 2);
