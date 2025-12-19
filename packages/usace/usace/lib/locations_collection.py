@@ -99,8 +99,14 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                     today = datetime.now(timezone.utc).strftime("2020-%m-%d")
                     for avg_date in static_properties[prop]:
                         if avg_date == today:
-                            data = static_properties["averages"][avg_date]
-                            setattr(feature.properties, "averages", data)
+                            averages_data: dict = static_properties["averages"][
+                                avg_date
+                            ]
+                            for average_type, average_value in averages_data.items():
+                                assert average_type not in feature.properties, (
+                                    f"Duplicate property {average_type} when trying to add averages to USACE feature"
+                                )
+                                setattr(feature.properties, average_type, average_value)
                             setattr(feature.properties, "hasResopsAverages", "true")
                             break
                 else:
