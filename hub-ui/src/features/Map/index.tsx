@@ -6,15 +6,20 @@
 import { useEffect, useRef, useState } from "react";
 import Map from "@/components/Map";
 import { basemaps } from "@/components/Map/consts";
-import CustomControl from "@/components/Map/tools/CustomControl";
-import { BasemapId } from "@/components/Map/types";
+import { BasemapId, LayerType } from "@/components/Map/types";
 import { useMap } from "@/contexts/MapContexts";
 import { layerDefinitions, MAP_ID } from "@/features/Map/config";
 import { sourceConfigs } from "@/features/Map/sources";
-import { MapButton as Legend } from "@/features/Map/Tools/Legend/Button";
-import { getSelectedColor } from "@/features/Map/utils";
+import {
+  getDefaultFilter,
+  getFilter,
+  getSelectedColor,
+  getSortKey,
+} from "@/features/Map/utils";
+import { showGraphPopup } from "@/features/Popup/utils";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
+import { TLocation } from "@/stores/main/types";
 import useSessionStore from "@/stores/session";
 import { groupLocationIdsByCollection } from "@/utils/groupLocationsByCollection";
 
@@ -37,17 +42,20 @@ type Props = {
 const MainMap: React.FC<Props> = (props) => {
   const { accessToken } = props;
 
+  const layers = useMainStore((state) => state.layers);
   const locations = useMainStore((state) => state.locations);
   const collections = useMainStore((state) => state.collections);
+  const searches = useMainStore((state) => state.searches);
 
   const loadingInstances = useSessionStore((state) => state.loadingInstances);
 
   const [shouldResize, setShouldResize] = useState(false);
 
-  const { map, hoverPopup } = useMap(MAP_ID);
+  const { map, hoverPopup, persistentPopup, root, container } = useMap(MAP_ID);
 
   const isMounted = useRef(true);
   const initialMapLoad = useRef(true);
+  const layerPopupListeners = useRef<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     return () => {
@@ -99,6 +107,7 @@ const MainMap: React.FC<Props> = (props) => {
 
       const locationIds = locationsByCollection[collection.id] ?? [];
       let color;
+
       if (map.getLayer(pointLayerId)) {
         color = map.getPaintProperty(pointLayerId, "circle-color") as string;
         map.setPaintProperty(
@@ -112,6 +121,11 @@ const MainMap: React.FC<Props> = (props) => {
           lineLayerId,
           "line-color",
           getSelectedColor(locationIds, color),
+        );
+        map.setLayoutProperty(
+          lineLayerId,
+          "line-sort-key",
+          getSortKey(locationIds),
         );
       }
     });
@@ -128,6 +142,92 @@ const MainMap: React.FC<Props> = (props) => {
 
     map.resize();
   }, [shouldResize]);
+
+  useEffect(() => {
+    if (!map || !persistentPopup || !hoverPopup || !root || !container) {
+      return;
+    }
+
+    const allIds: string[] = [];
+    layers.forEach((layer) => {
+      const { pointLayerId, lineLayerId, fillLayerId } =
+        mainManager.getLocationsLayerIds(layer.collectionId);
+
+      allIds.push(pointLayerId);
+      allIds.push(lineLayerId);
+      allIds.push(fillLayerId);
+      if (!layerPopupListeners.current[layer.id]) {
+        map.on("dblclick", [pointLayerId, lineLayerId, fillLayerId], (e) => {
+          const features = e.features;
+
+          if (features && features.length > 0) {
+            hoverPopup.remove();
+
+            const uniqueFeatures = mainManager.getUniqueIds(
+              features,
+              layer.collectionId,
+            );
+
+            const locations: TLocation[] = uniqueFeatures.map((id) => ({
+              id,
+              collectionId: layer.collectionId,
+            }));
+
+            locations.forEach((location) => {
+              if (!useMainStore.getState().hasLocation(location.id)) {
+                useMainStore.getState().addLocation(location);
+              }
+            });
+
+            showGraphPopup(locations, map, e, root, container, persistentPopup);
+          }
+        });
+
+        layerPopupListeners.current[layer.id] = true;
+      }
+    });
+  }, [layers]);
+
+  useEffect(() => {
+    if (!map) {
+      return;
+    }
+
+    layers.forEach((layer) => {
+      const { pointLayerId, lineLayerId, fillLayerId } =
+        mainManager.getLocationsLayerIds(layer.collectionId);
+      const search = searches.find(
+        (search) => search.collectionId === layer.collectionId,
+      );
+
+      if (!search) {
+        if (map.getFilter(pointLayerId)) {
+          map.setFilter(pointLayerId, getDefaultFilter(LayerType.Circle));
+        }
+        if (map.getFilter(lineLayerId)) {
+          map.setFilter(lineLayerId, getDefaultFilter(LayerType.Line));
+        }
+        if (map.getFilter(fillLayerId)) {
+          map.setFilter(fillLayerId, getDefaultFilter(LayerType.Fill));
+        }
+
+        return;
+      }
+
+      map.setFilter(
+        pointLayerId,
+        getFilter(search.matchedLocations, LayerType.Circle),
+      );
+      map.setFilter(
+        lineLayerId,
+        getFilter(search.matchedLocations, LayerType.Line),
+      );
+      map.setFilter(
+        fillLayerId,
+        getFilter(search.matchedLocations, LayerType.Fill),
+      );
+    });
+  }, [searches]);
 
   //   TODO: uncomment when basemap selector is implemented
   //   useEffect(() => {
@@ -181,12 +281,6 @@ const MainMap: React.FC<Props> = (props) => {
           scaleControl: true,
           navigationControl: true,
         }}
-        customControls={[
-          {
-            control: new CustomControl(<Legend />),
-            position: "top-right",
-          },
-        ]}
       />
     </>
   );

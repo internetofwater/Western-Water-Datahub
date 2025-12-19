@@ -8,7 +8,7 @@ import "@testing-library/jest-dom";
 import { vi } from "vitest";
 import { StoreApi, UseBoundStore } from "zustand";
 import useSessionStore from "@/stores/session";
-import { NotificationType, SessionState } from "@/stores/session/types";
+import { ENotificationType, SessionState } from "@/stores/session/types";
 import NotificationManager from "../Notification.manager";
 
 describe("NotificationManager", () => {
@@ -31,7 +31,7 @@ describe("NotificationManager", () => {
   test("should show a notification and add it to the store", () => {
     const id = notificationManager.show(
       "Test message",
-      NotificationType.Info,
+      ENotificationType.Info,
       1000,
     );
 
@@ -45,7 +45,11 @@ describe("NotificationManager", () => {
   });
 
   test("should hide a notification and remove it from the store", () => {
-    const id = notificationManager.show("Hide me", NotificationType.Info, 1000);
+    const id = notificationManager.show(
+      "Hide me",
+      ENotificationType.Info,
+      1000,
+    );
 
     notificationManager.hide(id);
 
@@ -58,7 +62,7 @@ describe("NotificationManager", () => {
 
     const id = notificationManager.show(
       "Pause me",
-      NotificationType.Info,
+      ENotificationType.Info,
       3000,
     );
     vi.advanceTimersByTime(1000);
@@ -82,7 +86,7 @@ describe("NotificationManager", () => {
   test("should auto-remove notification after duration", () => {
     vi.useFakeTimers();
 
-    notificationManager.show("Auto remove", NotificationType.Info, 1000);
+    notificationManager.show("Auto remove", ENotificationType.Info, 1000);
 
     vi.advanceTimersByTime(1000);
 

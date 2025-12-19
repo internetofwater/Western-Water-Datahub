@@ -4,10 +4,9 @@
  */
 
 import { Box } from "@mantine/core";
-import LegendTool from "@/features/Map/Tools/Legend";
 import styles from "@/features/Map/Tools/Tools.module.css";
 import useSessionStore from "@/stores/session";
-import { Tools } from "@/stores/session/types";
+import { ETool } from "@/stores/session/types";
 
 const MapTools: React.FC = () => {
   const tools = useSessionStore((state) => state.tools);
@@ -16,9 +15,9 @@ const MapTools: React.FC = () => {
     <Box className={`${styles.mapToolsContainer} ${styles.right}`}>
       <Box
         component="span"
-        style={{ display: tools[Tools.Legend] ? "block" : "none" }}
+        style={{ display: tools[ETool.Legend] ? "block" : "none" }}
       >
-        <LegendTool />
+        <></>
       </Box>
     </Box>
   );

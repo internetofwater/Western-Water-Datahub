@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FeatureCollection, Polygon } from "geojson";
 import { ComboboxData, Select, Skeleton } from "@mantine/core";
+import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
 import { SourceId } from "@/features/Map/sources";
 import { formatOptions } from "@/features/Panel/Filters/utils";
 import loadingManager from "@/managers/Loading.init";
@@ -13,7 +14,7 @@ import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import geoconnexService from "@/services/init/geoconnex.init";
 import useMainStore from "@/stores/main";
-import { LoadingType, NotificationType } from "@/stores/session/types";
+import { ELoadingType, ENotificationType } from "@/stores/session/types";
 import { Huc02BasinProperties, Huc02Field } from "@/types/huc02";
 
 export const Basin: React.FC = () => {
@@ -24,7 +25,12 @@ export const Basin: React.FC = () => {
     (state) => state.geographyFilter?.itemId,
   );
 
+  const selectedCollections = useMainStore(
+    (state) => state.selectedCollections,
+  );
+
   const [basinOptions, setBasinOptions] = useState<ComboboxData>([]);
+  const [isRequired, setIsRequired] = useState(false);
 
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
@@ -32,7 +38,7 @@ export const Basin: React.FC = () => {
   const getBasinOptions = async () => {
     const loadingInstance = loadingManager.add(
       "Fetching basin dropdown options",
-      LoadingType.Data,
+      ELoadingType.Data,
     );
 
     try {
@@ -69,7 +75,7 @@ export const Basin: React.FC = () => {
         const _error = error as Error;
         notificationManager.show(
           `Error: ${_error.message}`,
-          NotificationType.Error,
+          ENotificationType.Error,
         );
       }
       loadingManager.remove(loadingInstance);
@@ -87,25 +93,47 @@ export const Basin: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    let noRestrictions = true;
+
+    selectedCollections.forEach((collectionId) => {
+      const restrictions = CollectionRestrictions[collectionId];
+
+      if (restrictions && restrictions.length > 0) {
+        const geoRestriction = restrictions.find(
+          (restriction) => restriction.type === RestrictionType.GeographyFilter,
+        );
+
+        if (geoRestriction) {
+          setIsRequired(true);
+          noRestrictions = false;
+        }
+      }
+    });
+    if (noRestrictions) {
+      setIsRequired(false);
+    }
+  }, [selectedCollections]);
+
   const handleChange = async (itemId: string | null) => {
     if (itemId) {
       const loadingInstance = loadingManager.add(
         "Adding basin geography filter",
-        LoadingType.Geography,
+        ELoadingType.Geography,
       );
       try {
         await mainManager.updateGeographyFilter(SourceId.Huc02, itemId);
         loadingManager.remove(loadingInstance);
         notificationManager.show(
           "Updated geography filter",
-          NotificationType.Success,
+          ENotificationType.Success,
         );
       } catch (error) {
         if ((error as Error)?.message) {
           const _error = error as Error;
           notificationManager.show(
             `Error: ${_error.message}`,
-            NotificationType.Error,
+            ENotificationType.Error,
           );
         }
         loadingManager.remove(loadingInstance);
@@ -117,6 +145,17 @@ export const Basin: React.FC = () => {
     mainManager.removeGeographyFilter();
   };
 
+  const getError = () => {
+    if (
+      isRequired &&
+      !(geographyFilterCollectionId === SourceId.Huc02 && geographyFilterItemId)
+    ) {
+      return "Please select a geographic filter";
+    }
+
+    return undefined;
+  };
+
   return (
     <Skeleton
       height={55} // Default dimensions of select
@@ -124,7 +163,7 @@ export const Basin: React.FC = () => {
     >
       <Select
         key={`basin-select-${geographyFilterCollectionId}`}
-        size="sm"
+        size="xs"
         label="Basin"
         placeholder="Select..."
         data={basinOptions}
@@ -138,6 +177,8 @@ export const Basin: React.FC = () => {
         onClear={() => handleClear()}
         searchable
         clearable
+        error={getError()}
+        withAsterisk={isRequired}
       />
     </Skeleton>
   );

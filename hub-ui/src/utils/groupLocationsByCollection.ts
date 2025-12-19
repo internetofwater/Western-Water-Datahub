@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Location } from "@/stores/main/types";
+import { TLocation } from "@/stores/main/types";
 
 export const groupLocationIdsByCollection = (
-  locations: Location[],
-): Record<Location["collectionId"], Array<Location["id"]>> => {
+  locations: TLocation[],
+): Record<TLocation["collectionId"], Array<TLocation["id"]>> => {
   return locations.reduce(
     (acc, location) => {
       const { collectionId, id } = location;
@@ -17,6 +17,6 @@ export const groupLocationIdsByCollection = (
       acc[collectionId].push(id);
       return acc;
     },
-    {} as Record<Location["collectionId"], Array<Location["id"]>>,
+    {} as Record<TLocation["collectionId"], Array<TLocation["id"]>>,
   );
 };

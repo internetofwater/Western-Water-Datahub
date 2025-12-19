@@ -8,13 +8,13 @@ import {
   ComboboxData,
   Group,
   Loader,
-  Select,
   Stack,
   Text,
   Title,
   VisuallyHidden,
 } from "@mantine/core";
 import Info from "@/assets/Info";
+import Select from "@/components/Select";
 import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Panel/Panel.module.css";
 import { useLoading } from "@/hooks/useLoading";
@@ -22,8 +22,12 @@ import useMainStore from "@/stores/main";
 import { MainState } from "@/stores/main/types";
 
 export const Collection: React.FC = () => {
-  const collection = useMainStore((state) => state.collection);
-  const setCollection = useMainStore((state) => state.setCollection);
+  const selectedCollections = useMainStore(
+    (state) => state.selectedCollections,
+  );
+  const setSelectedCollections = useMainStore(
+    (state) => state.setSelectedCollections,
+  );
 
   const provider = useMainStore((state) => state.provider);
   const category = useMainStore((state) => state.category);
@@ -41,12 +45,43 @@ export const Collection: React.FC = () => {
       }))
       .sort((a, b) => a.label.localeCompare(b.label));
 
-    if (!collections.some((_collection) => _collection.id === collection)) {
-      setCollection(null);
+    // TODO: update this for array
+    if (
+      !collections.some((_collection) =>
+        selectedCollections.includes(_collection.id),
+      )
+    ) {
+      setSelectedCollections([]);
     }
 
     setCollectionOptions(collectionOptions);
   }, [collections]);
+
+  // useEffect(() => {
+  //   layers.forEach((layer) => {
+  //     if (!selectedCollections.includes(layer.collectionId)) {
+  //       removeLayer(layer.id);
+  //     }
+  //   });
+  //   selectedCollections.forEach((collectionId) => {
+  //     if (!hasLayer({ collectionId })) {
+  //       // TODO: move to manager, add nuances
+  //       addLayer({
+  //         id: mainManager.createUUID(),
+  //         collectionId,
+  //         color: getRandomHexColor(),
+  //         from: null,
+  //         to: null,
+  //         parameters: [],
+  //         position: layers.length + 1,
+  //         opacity: DEFAULT_FILL_OPACITY,
+  //         paletteDefinition: null,
+  //         visible: false,
+  //         loaded: false,
+  //       });
+  //     }
+  //   });
+  // }, [selectedCollections]);
 
   const getDescription = (
     provider: MainState["provider"],
@@ -79,7 +114,7 @@ export const Collection: React.FC = () => {
       {/* TODO */}
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
-          <Title order={2} size="h3">
+          <Title order={2} size="h4">
             Filter by Collection
           </Title>
           <Info />
@@ -89,14 +124,14 @@ export const Collection: React.FC = () => {
       <Select
         size="sm"
         label="Collection"
+        multiple
         description={getDescription(provider, category)}
         placeholder="Select..."
         data={collectionOptions}
-        value={collection}
-        onChange={setCollection}
+        value={selectedCollections}
+        onChange={setSelectedCollections}
         disabled={isFetchingCollections}
-        searchable
-        clearable
+        withAsterisk
       />
       {isFetchingCollections && (
         <Group>

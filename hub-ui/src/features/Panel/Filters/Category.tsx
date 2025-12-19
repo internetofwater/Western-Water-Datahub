@@ -21,7 +21,7 @@ import loadingManager from "@/managers/Loading.init";
 import notificationManager from "@/managers/Notification.init";
 import wwdhService from "@/services/init/wwdh.init";
 import useMainStore from "@/stores/main";
-import { LoadingType, NotificationType } from "@/stores/session/types";
+import { ELoadingType, ENotificationType } from "@/stores/session/types";
 
 export const Category: React.FC = () => {
   const category = useMainStore((state) => state.category);
@@ -38,7 +38,7 @@ export const Category: React.FC = () => {
   const getCategoryOptions = async () => {
     const loadingInstance = loadingManager.add(
       "Fetching category dropdown options",
-      LoadingType.Data,
+      ELoadingType.Data,
     );
 
     try {
@@ -88,7 +88,7 @@ export const Category: React.FC = () => {
         const _error = error as Error;
         notificationManager.show(
           `Error: ${_error.message}`,
-          NotificationType.Error,
+          ENotificationType.Error,
           10000,
         );
       }
@@ -134,7 +134,7 @@ export const Category: React.FC = () => {
     <Stack gap={0}>
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
-          <Title order={2} size="h3">
+          <Title order={2} size="h4">
             Filter by Data Category
           </Title>
           <Info />
@@ -142,7 +142,7 @@ export const Category: React.FC = () => {
       </Tooltip>
       <VisuallyHidden>{helpText}</VisuallyHidden>
       <Select
-        size="sm"
+        size="xs"
         label="Category"
         description={
           provider
