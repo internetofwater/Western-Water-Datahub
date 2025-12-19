@@ -11,9 +11,9 @@ import { StringIdentifierCollections } from "@/consts/collections";
 import { Parameter } from "@/features/Popup";
 import { Chart } from "@/features/Popup/Chart";
 import styles from "@/features/Popup/Popup.module.css";
+import { Table } from "@/features/Table";
 import { TLayer, TLocation } from "@/stores/main/types";
 import { getIdStore } from "@/utils/getIdStore";
-import { Table } from "../Table";
 
 type Props = {
   location: TLocation;

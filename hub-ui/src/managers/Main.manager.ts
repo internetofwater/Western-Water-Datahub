@@ -46,6 +46,13 @@ import {
   getLineLayerDefinition,
   getPointLayerDefinition,
 } from "@/features/Map/utils";
+import { getNextLink } from "@/managers/Main.utils";
+import notificationManager from "@/managers/Notification.init";
+import {
+  ExtendedFeatureCollection,
+  SourceOptions,
+  StyleOptions,
+} from "@/managers/types";
 import { CoverageGridService } from "@/services/coverageGrid.service";
 import { ICollection } from "@/services/edr.service";
 import geoconnexService from "@/services/init/geoconnex.init";
@@ -65,13 +72,6 @@ import {
 import { getIdStore } from "@/utils/getIdStore";
 import { getRandomHexColor } from "@/utils/hexColor";
 import { getRasterLayerSpecification } from "@/utils/layerDefinitions";
-import { getNextLink } from "./Main.utils";
-import notificationManager from "./Notification.init";
-import {
-  ExtendedFeatureCollection,
-  SourceOptions,
-  StyleOptions,
-} from "./types";
 
 /**
  *

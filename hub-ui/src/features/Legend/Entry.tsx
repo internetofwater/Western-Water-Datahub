@@ -6,14 +6,14 @@
 import { useEffect, useState } from "react";
 import { ExpressionSpecification } from "mapbox-gl";
 import { ColorInput, Group, Stack, Switch, Text } from "@mantine/core";
+import { Grid } from "@/features/Legend/Grid";
 import styles from "@/features/Legend/Legend.module.css";
+import { OpacitySlider } from "@/features/Legend/OpacitySlider";
+import { Shapes } from "@/features/Legend/Shapes";
+import { DetailedGradient } from "@/features/Panel/Palette/DetailedGradient";
 import mainManager from "@/managers/Main.init";
 import { TLayer } from "@/stores/main/types";
 import { CollectionType, getCollectionType } from "@/utils/collection";
-import { DetailedGradient } from "../Panel/Palette/DetailedGradient";
-import { Grid } from "./Grid";
-import { OpacitySlider } from "./OpacitySlider";
-import { Shapes } from "./Shapes";
 
 type Props = {
   layer: TLayer;

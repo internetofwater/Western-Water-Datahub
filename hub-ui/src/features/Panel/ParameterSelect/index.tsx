@@ -15,8 +15,8 @@ import {
 import Info from "@/assets/Info";
 import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Panel/Panel.module.css";
+import ParameterSelect from "@/features/Panel/ParameterSelect/ParameterSelect";
 import useMainStore from "@/stores/main";
-import ParameterSelect from "./ParameterSelect";
 
 const ParameterSelectWrapper: React.FC = () => {
   const selectedCollections = useMainStore(

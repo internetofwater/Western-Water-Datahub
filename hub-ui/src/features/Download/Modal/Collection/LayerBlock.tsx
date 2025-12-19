@@ -9,6 +9,10 @@ import { Feature } from "geojson";
 import { Group, NumberInput, Pagination, Stack, Text } from "@mantine/core";
 import { StringIdentifierCollections } from "@/consts/collections";
 import styles from "@/features/Download/Download.module.css";
+import { Grid } from "@/features/Download/Modal/Collection/Grid";
+import { Header } from "@/features/Download/Modal/Collection/Header";
+import { Item } from "@/features/Download/Modal/Collection/Item";
+import { Location } from "@/features/Download/Modal/Collection/Location";
 import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
@@ -20,10 +24,6 @@ import { CollectionType } from "@/utils/collection";
 import { createEmptyCsv } from "@/utils/csv";
 import { getIdStore } from "@/utils/getIdStore";
 import { buildCubeUrl, buildLocationsUrl, buildLocationUrl } from "@/utils/url";
-import { Grid } from "./Grid";
-import { Header } from "./Header";
-import { Item } from "./Item";
-import { Location } from "./Location";
 
 type Props = {
   locations: Feature[];

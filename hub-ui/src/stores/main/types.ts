@@ -7,13 +7,13 @@ import { Feature, FeatureCollection, Polygon } from "geojson";
 import { ColorSpecification, PropertyValueSpecification } from "mapbox-gl";
 import { Properties } from "@/components/Map/types";
 import { ICollection } from "@/services/edr.service";
+import { ICollectionSlice } from "@/stores/main/slices/collections";
+import { ILayerSlice } from "@/stores/main/slices/layers";
+import { ILocationSlice } from "@/stores/main/slices/locations";
+import { IPaletteSlice } from "@/stores/main/slices/palettes";
+import { IParameterSlice } from "@/stores/main/slices/parameters";
+import { ISearchSlice } from "@/stores/main/slices/search";
 import { PaletteDefinition } from "@/utils/colors/types";
-import { ICollectionSlice } from "./slices/collections";
-import { ILayerSlice } from "./slices/layers";
-import { ILocationSlice } from "./slices/locations";
-import { IPaletteSlice } from "./slices/palettes";
-import { IParameterSlice } from "./slices/parameters";
-import { ISearchSlice } from "./slices/search";
 
 export type ColorValueHex = `#${string}`;
 

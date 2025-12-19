@@ -5,10 +5,10 @@
 
 import { useEffect, useState } from "react";
 import { Group, Text } from "@mantine/core";
+import { Control } from "@/features/Order/Control";
 import styles from "@/features/Order/Order.module.css";
 import mainManager from "@/managers/Main.init";
 import { TLayer } from "@/stores/main/types";
-import { Control } from "./Control";
 
 type Props = {
   layer: TLayer;

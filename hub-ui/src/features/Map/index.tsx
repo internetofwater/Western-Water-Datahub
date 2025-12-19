@@ -16,12 +16,12 @@ import {
   getSelectedColor,
   getSortKey,
 } from "@/features/Map/utils";
+import { showGraphPopup } from "@/features/Popup/utils";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import { TLocation } from "@/stores/main/types";
 import useSessionStore from "@/stores/session";
 import { groupLocationIdsByCollection } from "@/utils/groupLocationsByCollection";
-import { showGraphPopup } from "../Popup/utils";
 
 const INITIAL_CENTER: [number, number] = [-98.5795, 39.8282];
 const INITIAL_ZOOM = 4;

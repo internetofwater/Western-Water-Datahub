@@ -19,6 +19,8 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { StringIdentifierCollections } from "@/consts/collections";
 import styles from "@/features/Download/Download.module.css";
+import { LayerBlock } from "@/features/Download/Modal/Collection/LayerBlock";
+import { Menu } from "@/features/Download/Modal/Collection/Menu";
 import { useLocations } from "@/hooks/useLocations";
 import mainManager from "@/managers/Main.init";
 import { ICollection } from "@/services/edr.service";
@@ -28,8 +30,6 @@ import useSessionStore from "@/stores/session";
 import { CollectionType, getCollectionType } from "@/utils/collection";
 import { getIdStore } from "@/utils/getIdStore";
 import { hasSearchTerm } from "@/utils/searchFeatures";
-import { LayerBlock } from "./LayerBlock";
-import { Menu } from "./Menu";
 
 dayjs.extend(isSameOrBefore);
 

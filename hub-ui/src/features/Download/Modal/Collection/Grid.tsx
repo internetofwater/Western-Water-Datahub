@@ -21,11 +21,11 @@ import { useDisclosure } from "@mantine/hooks";
 import Code from "@/components/Code";
 import CopyInput from "@/components/CopyInput";
 import styles from "@/features/Download/Download.module.css";
+import { GeoJSON } from "@/features/Download/Modal/Collection/GeoJSON";
 import { Table } from "@/features/Table";
 import { ICollection } from "@/services/edr.service";
 import { TLayer, TLocation } from "@/stores/main/types";
 import { buildCubeUrl } from "@/utils/url";
-import { GeoJSON } from "./GeoJSON";
 
 dayjs.extend(isSameOrBefore);
 

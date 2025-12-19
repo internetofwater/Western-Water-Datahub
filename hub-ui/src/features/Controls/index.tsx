@@ -5,13 +5,13 @@
 
 import { Group, Stack } from "@mantine/core";
 import styles from "@/features/Controls/Controls.module.css";
+import DarkModeToggle from "@/features/Controls/DarkModeToggle";
 import Download from "@/features/Download";
 import Info from "@/features/Info";
 import Legend from "@/features/Legend";
 import Order from "@/features/Order";
 import Search from "@/features/Search";
 import Time from "@/features/Time";
-import DarkModeToggle from "./DarkModeToggle";
 
 const Controls: React.FC = () => {
   return (

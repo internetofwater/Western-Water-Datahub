@@ -8,13 +8,13 @@ import { ActionIcon, Group, Popover, Stack, Text, Title } from "@mantine/core";
 import Info from "@/assets/Info";
 import SearchIcon from "@/assets/Search";
 import Tooltip from "@/components/Tooltip";
+import { Entry } from "@/features/Search/Entry";
 import styles from "@/features/Search/Search.module.css";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import useSessionStore from "@/stores/session";
 import { EOverlay } from "@/stores/session/types";
 import { CollectionType, getCollectionType } from "@/utils/collection";
-import { Entry } from "./Entry";
 
 const Search: React.FC = () => {
   const layers = useMainStore((state) => state.layers).filter(

@@ -5,12 +5,12 @@
 
 import { useEffect, useState } from "react";
 import { ExpressionSpecification } from "mapbox-gl";
+import { Gradient } from "@/features/Panel/Palette/Gradient";
 import mainManager from "@/managers/Main.init";
 import { TLayer } from "@/stores/main/types";
 import { createColorRange } from "@/utils/colors";
 import { PaletteDefinition } from "@/utils/colors/types";
 import { getLabel } from "@/utils/parameters";
-import { Gradient } from "./Gradient";
 
 type Props = {
   collectionId: TLayer["collectionId"];

@@ -8,11 +8,11 @@ import { Box, Group, Stack, Title, VisuallyHidden } from "@mantine/core";
 import Info from "@/assets/Info";
 import Tooltip from "@/components/Tooltip";
 import { Basin } from "@/features/Panel/Filters/Geography/Basin";
+import { GeographySelector } from "@/features/Panel/Filters/Geography/GeographySelector";
 import { Region } from "@/features/Panel/Filters/Geography/Region";
 import { State } from "@/features/Panel/Filters/Geography/State";
 import styles from "@/features/Panel/Panel.module.css";
 import mainManager from "@/managers/Main.init";
-import { GeographySelector } from "./GeographySelector";
 
 type Geography = "region" | "basin" | "state";
 

@@ -5,9 +5,9 @@
 
 import { ReactNode } from "react";
 import { TLocation } from "@/stores/main/types";
-import { LoadingSlice } from "./slices/loading";
-import { NotificationsSlice } from "./slices/notifications";
-import { WarningsSlice } from "./slices/warning";
+import { LoadingSlice } from "@/stores/session/slices/loading";
+import { NotificationsSlice } from "@/stores/session/slices/notifications";
+import { WarningsSlice } from "@/stores/session/slices/warning";
 
 export enum ENotificationType {
   Success = "success",

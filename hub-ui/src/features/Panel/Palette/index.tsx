@@ -5,10 +5,10 @@
 
 import { useEffect, useState } from "react";
 import { Stack } from "@mantine/core";
+import { Palette } from "@/features/Panel/Palette/Palette";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import { CollectionType, getCollectionType } from "@/utils/collection";
-import { Palette } from "./Palette";
 
 const PaletteWrapper: React.FC = () => {
   const selectedCollections = useMainStore(

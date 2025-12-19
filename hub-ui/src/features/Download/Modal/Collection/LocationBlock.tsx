@@ -97,8 +97,6 @@ export const LocationBlock: React.FC<Props> = (props) => {
     }
   };
 
-  console.log("collectionType", collectionType);
-
   return (
     <Stack component="section" gap="var(--default-spacing)">
       {currentChunk.map((locationId) => (

@@ -10,8 +10,8 @@ import {
 } from "mapbox-gl";
 import { LayerType } from "@/components/Map/types";
 import { idStoreProperty } from "@/consts/collections";
+import { DEFAULT_FILL_OPACITY } from "@/features/Map/consts";
 import { TLayer, TLocation } from "@/stores/main/types";
-import { DEFAULT_FILL_OPACITY } from "./consts";
 
 export const getDefaultFilter = (
   type: LayerType,

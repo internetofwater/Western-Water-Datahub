@@ -7,8 +7,8 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { createLoadingSlice } from "@/stores/session/slices/loading";
 import { createNotificationsSlice } from "@/stores/session/slices/notifications";
+import { createWarningsSlice } from "@/stores/session/slices/warning";
 import { EHelpTab, ETool, SessionState } from "@/stores/session/types";
-import { createWarningsSlice } from "./slices/warning";
 
 const useSessionStore = create<SessionState>()(
   immer((set, get, store) => ({

@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Geography from ".";
 import { Group, Radio } from "@mantine/core";
+import Geography from "@/features/Panel/Filters/Geography";
 import styles from "@/features/Panel/Panel.module.css";
 
 type Props = {

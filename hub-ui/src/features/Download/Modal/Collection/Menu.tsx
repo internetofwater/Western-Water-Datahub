@@ -5,10 +5,10 @@
 
 import { Button, Divider, Stack, Text, TextInput } from "@mantine/core";
 import styles from "@/features/Download/Download.module.css";
+import { LocationBlock } from "@/features/Download/Modal/Collection/LocationBlock";
 import { ICollection } from "@/services/edr.service";
 import { TLocation } from "@/stores/main/types";
 import { CollectionType } from "@/utils/collection";
-import { LocationBlock } from "./LocationBlock";
 
 type Props = {
   collectionId: ICollection["id"];

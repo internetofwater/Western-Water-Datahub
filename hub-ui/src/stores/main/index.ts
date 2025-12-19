@@ -7,12 +7,12 @@ import dayjs from "dayjs";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { createCollectionSlice } from "@/stores/main/slices/collections";
+import { createLayerSlice } from "@/stores/main/slices/layers";
 import { createLocationSlice } from "@/stores/main/slices/locations";
+import { createPalettesSlice } from "@/stores/main/slices/palettes";
+import { createParametersSlice } from "@/stores/main/slices/parameters";
+import { createSearchSlice } from "@/stores/main/slices/search";
 import { MainState } from "@/stores/main/types";
-import { createLayerSlice } from "./slices/layers";
-import { createPalettesSlice } from "./slices/palettes";
-import { createParametersSlice } from "./slices/parameters";
-import { createSearchSlice } from "./slices/search";
 
 const useMainStore = create<MainState>()(
   immer((set, get, store) => ({

@@ -23,6 +23,7 @@ import CopyInput from "@/components/CopyInput";
 import Tooltip from "@/components/Tooltip";
 import { StringIdentifierCollections } from "@/consts/collections";
 import styles from "@/features/Download/Download.module.css";
+import { GeoJSON } from "@/features/Download/Modal/Collection/GeoJSON";
 import { Chart } from "@/features/Popup/Chart";
 import { Table } from "@/features/Table";
 import loadingManager from "@/managers/Loading.init";
@@ -34,7 +35,6 @@ import { ELoadingType, ENotificationType } from "@/stores/session/types";
 import { createEmptyCsv } from "@/utils/csv";
 import { getIdStore } from "@/utils/getIdStore";
 import { buildLocationUrl } from "@/utils/url";
-import { GeoJSON } from "./GeoJSON";
 
 dayjs.extend(isSameOrBefore);
 

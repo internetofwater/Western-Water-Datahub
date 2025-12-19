@@ -6,18 +6,18 @@
 import { useEffect } from "react";
 import { Paper, Stack } from "@mantine/core";
 import Loading from "@/features/Loading";
+import Controls from "@/features/Panel/Controls";
+import { DateSelect } from "@/features/Panel/DateSelect";
 import Filters from "@/features/Panel/Filters";
+import Geography from "@/features/Panel/Filters/Geography";
 import { Header } from "@/features/Panel/Header";
 import styles from "@/features/Panel/Panel.module.css";
+import ParameterSelect from "@/features/Panel/ParameterSelect";
 import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import useMainStore from "@/stores/main";
 import { ELoadingType, ENotificationType } from "@/stores/session/types";
-import Controls from "./Controls";
-import { DateSelect } from "./DateSelect";
-import Geography from "./Filters/Geography";
-import ParameterSelect from "./ParameterSelect";
 
 const Panel: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
