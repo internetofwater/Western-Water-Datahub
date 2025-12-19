@@ -54,9 +54,11 @@ class AwdbForecastsProvider(BaseProvider, OAFProviderProtocol):
         skip_geometry: Optional[bool] = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        # items/ returns all features, locations/ returns only features with timeseries, and thus forecasts
+        # typically items/ returns all features, locations/ returns only features with timeseries, and thus forecasts
+        # however, for the sake of clarity it is generally easiest with awdb forecasts to just filter to forecasts
+        # since it keeps it consistent and easier to reason about
         collection = ForecastLocationCollection(
-            only_stations_with_forecasts=False, itemId=itemId
+            only_stations_with_forecasts=True, itemId=itemId
         )
         if bbox:
             collection.drop_all_locations_outside_bounding_box(bbox)
