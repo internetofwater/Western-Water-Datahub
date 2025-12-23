@@ -9,9 +9,14 @@ echo "START /entrypoint.sh"
 
 set +e
 
-export PYGEOAPI_HOME=/opt/pygeoapi
-export PYGEOAPI_CONFIG="${PYGEOAPI_HOME}/pygeoapi.config.yml"
-export PYGEOAPI_OPENAPI="${PYGEOAPI_HOME}/pygeoapi.openapi.yml"
+export PYGEOAPI_HOME=/pygeoapi
+
+if [[ -z "$PYGEOAPI_CONFIG" ]]; then
+    export PYGEOAPI_CONFIG="${PYGEOAPI_HOME}/local.config.yml"
+fi
+if [[ -z "$PYGEOAPI_OPENAPI" ]]; then
+    export PYGEOAPI_OPENAPI="${PYGEOAPI_HOME}/local.openapi.yml"
+fi
 
 # gunicorn env settings with defaults
 SCRIPT_NAME=${SCRIPT_NAME:=/}
@@ -40,13 +45,27 @@ export -p > /opt/container.env
 # Workdir
 cd ${PYGEOAPI_HOME}
 
-echo "Trying to generate openapi.yml"
-pygeoapi openapi generate ${PYGEOAPI_CONFIG} --output-file ${PYGEOAPI_OPENAPI}
+if [[ ! -f "${PYGEOAPI_OPENAPI}" ]]; then
+    echo "openapi.yml not found, generating..."
+    pygeoapi openapi generate ${PYGEOAPI_CONFIG} --output-file ${PYGEOAPI_OPENAPI}
+    [[ $? -ne 0 ]] && error "openapi.yml could not be generated ERROR"
+else
+    echo "openapi.yml already exists, skipping generation"
+fi
 
-[[ $? -ne 0 ]] && error "openapi.yml could not be generated ERROR"
+start_gunicorn() {
+    # SCRIPT_NAME should not have value '/'
+    [[ "${SCRIPT_NAME}" = '/' ]] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"
 
-echo "openapi.yml generated continue to pygeoapi"
-
+    echo "Starting gunicorn name=${CONTAINER_NAME} on ${CONTAINER_HOST}:${CONTAINER_PORT} with ${WSGI_WORKERS} workers and SCRIPT_NAME=${SCRIPT_NAME}"
+    exec /venv/bin/gunicorn --workers ${WSGI_WORKERS} \
+        --worker-class=${WSGI_WORKER_CLASS} \
+        --timeout ${WSGI_WORKER_TIMEOUT} \
+        --name=${CONTAINER_NAME} \
+        --bind ${CONTAINER_HOST}:${CONTAINER_PORT} \
+        ${@} \
+        ${WSGI_APP}
+}
 
 # SCRIPT_NAME should not have value '/'
 [[ "${SCRIPT_NAME}" = '/' ]] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"
