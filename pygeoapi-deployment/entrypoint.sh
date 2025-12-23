@@ -37,23 +37,22 @@ function error() {
 	exit -1
 }
 
-# Start cron in background
-echo "Starting cron..."
-cron
-export -p > /opt/container.env
-
-# Workdir
-cd ${PYGEOAPI_HOME}
-
-if [[ ! -f "${PYGEOAPI_OPENAPI}" ]]; then
-    echo "openapi.yml not found, generating..."
-    pygeoapi openapi generate ${PYGEOAPI_CONFIG} --output-file ${PYGEOAPI_OPENAPI}
-    [[ $? -ne 0 ]] && error "openapi.yml could not be generated ERROR"
-else
-    echo "openapi.yml already exists, skipping generation"
-fi
+generate_openapi() {
+    # Workdir
+    cd ${PYGEOAPI_HOME}
+    # Generate openapi.yml if it does not exist
+    if [[ ! -f "${PYGEOAPI_OPENAPI}" ]]; then
+        echo "openapi.yml not found, generating..."
+        pygeoapi openapi generate ${PYGEOAPI_CONFIG} --output-file ${PYGEOAPI_OPENAPI}
+        [[ $? -ne 0 ]] && error "openapi.yml could not be generated ERROR"
+    else
+        echo "openapi.yml already exists, skipping generation"
+    fi
+}
 
 start_gunicorn() {
+    # Workdir
+    cd ${PYGEOAPI_HOME}
     # SCRIPT_NAME should not have value '/'
     [[ "${SCRIPT_NAME}" = '/' ]] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"
 
@@ -67,15 +66,37 @@ start_gunicorn() {
         ${WSGI_APP}
 }
 
-# SCRIPT_NAME should not have value '/'
-[[ "${SCRIPT_NAME}" = '/' ]] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"
+case ${entry_cmd} in
+    # Run pygeoapi server
+    run)
+        # Start
+        generate_openapi
+        start_gunicorn
+        ;;
 
-echo "Starting gunicorn name=${CONTAINER_NAME} on ${CONTAINER_HOST}:${CONTAINER_PORT} with ${WSGI_WORKERS} workers and SCRIPT_NAME=${SCRIPT_NAME}"
-exec gunicorn --workers ${WSGI_WORKERS} \
-    --worker-class=${WSGI_WORKER_CLASS} \
-    --timeout ${WSGI_WORKER_TIMEOUT} \
-    --name=${CONTAINER_NAME} \
-    --bind ${CONTAINER_HOST}:${CONTAINER_PORT} \
-    ${WSGI_APP}
+    # Run pygeoapi server with hot reload
+    run-with-hot-reload)
+        # Lock all Python files (for gunicorn hot reload), if running with user root
+        if [[ $(id -u) -eq 0 ]]
+        then
+            echo "Running pygeoapi as root"
+            find . -type f -name "*.py" | xargs chmod 0444
+        fi
+
+        # Start with hot reload options
+        generate_openapi
+        start_gunicorn --reload --reload-extra-file ${PYGEOAPI_CONFIG}
+        ;;
+
+    crawl-resviz)
+        echo "Crawling resviz layers into PostGIS"
+        exec resviz
+        ;;
+
+    *)
+        error "unknown command arg: must be run (default), run-with-hot-reload, or test"
+        ;;
+esac
+
 
 echo "END /entrypoint.sh"
