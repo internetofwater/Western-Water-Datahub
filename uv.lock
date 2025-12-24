@@ -814,7 +814,7 @@ requires-dist = [
     { name = "opentelemetry-instrumentation-aiohttp-client", specifier = ">=0.51b0" },
     { name = "opentelemetry-sdk", specifier = ">=1.30.0" },
     { name = "orjson", specifier = ">=3.10.15" },
-    { name = "pygeoapi", git = "https://github.com/internetofwater/pygeoapi.git?rev=wwdh" },
+    { name = "pygeoapi", git = "https://github.com/internetofwater/pygeoapi.git?rev=f963c5164bb2b41a5671aaa7dcdce4494d846b44" },
     { name = "redis", specifier = ">=5.2.1" },
     { name = "starlette", specifier = ">=0.46.0" },
     { name = "uvicorn", specifier = ">=0.34.0" },
@@ -1541,7 +1541,7 @@ wheels = [
 [[package]]
 name = "pygeoapi"
 version = "0.22.dev0"
-source = { git = "https://github.com/internetofwater/pygeoapi.git?rev=wwdh#516ece613e1b04f4a133c8432a0f820b94525fb7" }
+source = { git = "https://github.com/internetofwater/pygeoapi.git?rev=f963c5164bb2b41a5671aaa7dcdce4494d846b44#f963c5164bb2b41a5671aaa7dcdce4494d846b44" }
 dependencies = [
     { name = "babel" },
     { name = "click" },
