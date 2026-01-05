@@ -3,168 +3,142 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Fragment, useEffect } from "react";
-import { ColorInput, Divider, Group, Stack, Switch, Text } from "@mantine/core";
-import { useMap } from "@/contexts/MapContexts";
+import { Fragment, useEffect, useRef, useState } from "react";
+import {
+  ActionIcon,
+  Box,
+  Divider,
+  Popover,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
+import LegendIcon from "@/assets/Legend";
+import Tooltip from "@/components/Tooltip";
+import { Entry } from "@/features/Legend/Entry";
 import styles from "@/features/Legend/Legend.module.css";
-import { MAP_ID } from "@/features/Map/config";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
+import { TLayer } from "@/stores/main/types";
 import useSessionStore from "@/stores/session";
-import { SessionState } from "@/stores/session/types";
+import { EOverlay } from "@/stores/session/types";
 
 const Legend: React.FC = () => {
-  const { map } = useMap(MAP_ID);
+  const layers = useMainStore((state) => state.layers);
 
-  const legendEntries = useSessionStore((state) => state.legendEntries);
-  const setLegendEntries = useSessionStore((state) => state.setLegendEntries);
+  const overlay = useSessionStore((state) => state.overlay);
+  const setOverlay = useSessionStore((state) => state.setOverlay);
 
-  const originalCollections = useMainStore(
-    (state) => state.originalCollections,
-  );
+  const firstLayer = useRef(true);
 
-  useEffect(() => {
-    if (!map) {
-      return;
-    }
+  const [show, setShow] = useState(false);
 
-    map.on("styledata", () => {
-      const originalCollections = useMainStore.getState().originalCollections;
-      const legendEntries = useSessionStore.getState().legendEntries;
+  const handleColorChange = (color: TLayer["color"], layerId: TLayer["id"]) => {
+    const layer = mainManager.getLayer({ layerId });
 
-      const layers = map.getStyle().layers;
-      const newLegendEntries: SessionState["legendEntries"] = [];
-
-      layers.forEach((layer) => {
-        if (
-          layer.type === "circle" &&
-          originalCollections.some((collection) =>
-            Object.values(
-              mainManager.getLocationsLayerIds(collection.id),
-            ).includes(layer.id),
-          ) &&
-          layer.paint
-        ) {
-          const collection = originalCollections.find((collection) =>
-            Object.values(
-              mainManager.getLocationsLayerIds(collection.id),
-            ).includes(layer.id),
-          );
-          const color = layer.paint["circle-color"];
-          if (collection && typeof color === "string") {
-            newLegendEntries.push({
-              collectionId: collection.id,
-              color: color ?? "#000",
-              visible:
-                legendEntries.find(
-                  (entry) => entry.collectionId === collection.id,
-                )?.visible ?? true,
-            });
-          }
-        }
-      });
-
-      useSessionStore.getState().setLegendEntries(newLegendEntries);
-    });
-  }, [map]);
-
-  const getCollectionTitle = (collectionId: string) => {
-    const collection = originalCollections.find(
-      (collection) => collection.id === collectionId,
-    );
-
-    return collection?.title ?? collectionId;
-  };
-  const handleColorChange = (color: string, collectionId: string) => {
-    const { pointLayerId, lineLayerId, fillLayerId } =
-      mainManager.getLocationsLayerIds(collectionId);
-    if (map) {
-      map.setPaintProperty(pointLayerId, "circle-color", color);
-      map.setPaintProperty(lineLayerId, "line-color", color);
-      map.setPaintProperty(fillLayerId, "fill-color", color);
-    }
-
-    const oldEntry = legendEntries.filter(
-      (entry) => entry.collectionId === collectionId,
-    )[0];
-    const newLegendEntries = legendEntries.filter(
-      (entry) => entry.collectionId !== collectionId,
-    );
-
-    setLegendEntries([
-      ...newLegendEntries,
-      {
-        collectionId,
+    if (layer) {
+      void mainManager.updateLayer(
+        layer,
         color,
-        visible: oldEntry.visible,
-      },
-    ]);
-  };
-
-  const handleVisibilityChange = (visible: boolean, collectionId: string) => {
-    const oldEntry = legendEntries.filter(
-      (entry) => entry.collectionId === collectionId,
-    )[0];
-    const newLegendEntries = legendEntries.filter(
-      (entry) => entry.collectionId !== collectionId,
-    );
-
-    setLegendEntries([
-      ...newLegendEntries,
-      {
-        collectionId,
-        color: oldEntry.color,
-        visible,
-      },
-    ]);
-    const { pointLayerId, lineLayerId, fillLayerId } =
-      mainManager.getLocationsLayerIds(collectionId);
-    if (map) {
-      [pointLayerId, lineLayerId, fillLayerId].forEach((layerId) =>
-        map.setLayoutProperty(
-          layerId,
-          "visibility",
-          visible ? "visible" : "none",
-        ),
+        layer.visible,
+        layer.opacity,
+        layer.paletteDefinition,
       );
     }
   };
 
+  const handleVisibilityChange = (visible: boolean, layerId: TLayer["id"]) => {
+    const layer = mainManager.getLayer({ layerId });
+
+    if (layer) {
+      void mainManager.updateLayer(
+        layer,
+        layer.color,
+        visible,
+        layer.opacity,
+        layer.paletteDefinition,
+      );
+    }
+  };
+
+  const handleOpacityChange = (opacity: number, layerId: TLayer["id"]) => {
+    const layer = mainManager.getLayer({ layerId });
+
+    if (layer) {
+      void mainManager.updateLayer(
+        layer,
+        layer.color,
+        layer.visible,
+        opacity,
+        layer.paletteDefinition,
+      );
+    }
+  };
+
+  const handleShow = (show: boolean) => {
+    setOverlay(show ? EOverlay.Legend : null);
+    setShow(show);
+  };
+
+  useEffect(() => {
+    if (firstLayer.current && layers.length > 0) {
+      firstLayer.current = false;
+      setOverlay(EOverlay.Legend);
+    }
+  }, [layers]);
+
+  useEffect(() => {
+    if (overlay !== EOverlay.Legend) {
+      setShow(false);
+    } else {
+      setShow(true);
+    }
+  }, [overlay]);
+
   return (
-    <Stack>
-      {legendEntries
-        .sort((a, b) => a.collectionId.localeCompare(b.collectionId))
-        .map((entry, index) => (
-          <Fragment key={`legend-entry-${entry.collectionId}`}>
-            <Stack>
-              <Text>{getCollectionTitle(entry.collectionId)}</Text>
-              <Group justify="space-between" align="flex-end">
-                <ColorInput
-                  label="Locations"
-                  value={entry.color}
-                  onChange={(color) =>
-                    handleColorChange(color, entry.collectionId)
-                  }
-                  className={styles.colorPicker}
+    <Popover
+      opened={show}
+      onChange={setShow}
+      closeOnClickOutside={false}
+      position="left-start"
+      shadow="md"
+    >
+      <Popover.Target>
+        <Tooltip label="Show legend" disabled={show}>
+          <ActionIcon
+            className={styles.legendButton}
+            size="lg"
+            onClick={() => handleShow(!show)}
+          >
+            <LegendIcon />
+          </ActionIcon>
+        </Tooltip>
+      </Popover.Target>
+      <Popover.Dropdown>
+        <Stack
+          gap="var(--default-spacing)"
+          className={`${styles.container} ${styles.legendWrapper}`}
+        >
+          <Title order={3} className={styles.mapToolTitle}>
+            Legend
+          </Title>
+          <Box className={styles.legendContainer}>
+            {layers.length === 0 && <Text size="sm">No data visible</Text>}
+            {layers.map((layer, index) => (
+              <Fragment key={`legend-entry-${layer.id}`}>
+                <Entry
+                  layer={layer}
+                  handleColorChange={handleColorChange}
+                  handleVisibilityChange={handleVisibilityChange}
+                  handleOpacityChange={handleOpacityChange}
                 />
-                <Switch
-                  size="lg"
-                  onLabel="ON"
-                  offLabel="OFF"
-                  checked={entry.visible}
-                  onChange={(event) =>
-                    handleVisibilityChange(
-                      event.target.checked,
-                      entry.collectionId,
-                    )
-                  }
-                />
-              </Group>
-            </Stack>
-            {index < legendEntries.length - 1 && <Divider />}
-          </Fragment>
-        ))}
-    </Stack>
+                {index < layers.length - 1 && <Divider />}
+              </Fragment>
+            ))}
+          </Box>
+        </Stack>
+      </Popover.Dropdown>
+    </Popover>
   );
 };
 

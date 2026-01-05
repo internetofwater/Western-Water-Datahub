@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FeatureCollection, Polygon } from "geojson";
 import { ComboboxData, Select, Skeleton } from "@mantine/core";
+import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
 import { ValidStates } from "@/features/Map/consts";
 import { SourceId } from "@/features/Map/sources";
 import { formatOptions } from "@/features/Panel/Filters/utils";
@@ -14,7 +15,7 @@ import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import geoconnexService from "@/services/init/geoconnex.init";
 import useMainStore from "@/stores/main";
-import { LoadingType, NotificationType } from "@/stores/session/types";
+import { ELoadingType, ENotificationType } from "@/stores/session/types";
 import { StateField, StateProperties } from "@/types/state";
 
 export const State: React.FC = () => {
@@ -25,7 +26,12 @@ export const State: React.FC = () => {
     (state) => state.geographyFilter?.itemId,
   );
 
+  const selectedCollections = useMainStore(
+    (state) => state.selectedCollections,
+  );
+
   const [stateOptions, setStateOptions] = useState<ComboboxData>([]);
+  const [isRequired, setIsRequired] = useState(false);
 
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
@@ -33,7 +39,7 @@ export const State: React.FC = () => {
   const getStateOptions = async () => {
     const loadingInstance = loadingManager.add(
       "Fetching state dropdown options",
-      LoadingType.Data,
+      ELoadingType.Data,
     );
     try {
       controller.current = new AbortController();
@@ -72,7 +78,7 @@ export const State: React.FC = () => {
         const _error = error as Error;
         notificationManager.show(
           `Error: ${_error.message}`,
-          NotificationType.Error,
+          ENotificationType.Error,
           10000,
         );
       }
@@ -91,25 +97,47 @@ export const State: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    let noRestrictions = true;
+
+    selectedCollections.forEach((collectionId) => {
+      const restrictions = CollectionRestrictions[collectionId];
+
+      if (restrictions && restrictions.length > 0) {
+        const geoRestriction = restrictions.find(
+          (restriction) => restriction.type === RestrictionType.GeographyFilter,
+        );
+
+        if (geoRestriction) {
+          setIsRequired(true);
+          noRestrictions = false;
+        }
+      }
+    });
+    if (noRestrictions) {
+      setIsRequired(false);
+    }
+  }, [selectedCollections]);
+
   const handleChange = async (itemId: string | null) => {
     if (itemId) {
       const loadingInstance = loadingManager.add(
         "Adding state geography filter",
-        LoadingType.Geography,
+        ELoadingType.Geography,
       );
       try {
         await mainManager.updateGeographyFilter(SourceId.States, itemId);
         loadingManager.remove(loadingInstance);
         notificationManager.show(
           "Updated geography filter",
-          NotificationType.Success,
+          ENotificationType.Success,
         );
       } catch (error) {
         if ((error as Error)?.message) {
           const _error = error as Error;
           notificationManager.show(
             `Error: ${_error.message}`,
-            NotificationType.Error,
+            ENotificationType.Error,
             10000,
           );
         }
@@ -122,6 +150,19 @@ export const State: React.FC = () => {
     mainManager.removeGeographyFilter();
   };
 
+  const getError = () => {
+    if (
+      isRequired &&
+      !(
+        geographyFilterCollectionId === SourceId.States && geographyFilterItemId
+      )
+    ) {
+      return "Please select a geographic filter";
+    }
+
+    return undefined;
+  };
+
   return (
     <Skeleton
       height={55} // Default dimensions of select
@@ -129,7 +170,7 @@ export const State: React.FC = () => {
     >
       <Select
         key={`state-select-${geographyFilterCollectionId}`}
-        size="sm"
+        size="xs"
         label="State"
         placeholder="Select..."
         data={stateOptions}
@@ -143,6 +184,8 @@ export const State: React.FC = () => {
         onClear={() => handleClear()}
         searchable
         clearable
+        error={getError()}
+        withAsterisk={isRequired}
       />
     </Skeleton>
   );

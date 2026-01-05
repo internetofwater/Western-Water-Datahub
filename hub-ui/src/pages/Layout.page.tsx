@@ -4,8 +4,9 @@
  */
 
 import { Box, Group, Stack } from "@mantine/core";
-import Download from "@/features/Download";
+import Controls from "@/features/Controls";
 import DownloadModal from "@/features/Download/Modal";
+import InfoModal from "@/features/Info/Modal";
 import Loading from "@/features/Loading";
 import Map from "@/features/Map";
 import MapTools from "@/features/Map/Tools";
@@ -20,7 +21,7 @@ export const LayoutPage: React.FC = () => {
         <Group gap={0} align="flex-start" className={styles.primaryWrapper}>
           <Panel />
           <Stack gap={0} className={styles.right}>
-            <Download />
+            <Controls />
             <Map accessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN} />
             <Notifications />
           </Stack>
@@ -29,6 +30,7 @@ export const LayoutPage: React.FC = () => {
       </Stack>
       <MapTools />
       <DownloadModal />
+      <InfoModal />
     </Box>
   );
 };

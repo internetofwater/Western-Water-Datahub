@@ -33,6 +33,7 @@
     "@mapbox/mapbox-gl-sync-move": "^0.3.1",
     "@ogcapi-js/shared": "^1.1.1",
     "@turf/turf": "^7.2.0",
+    "colorbrewer": "^1.6.1",
     "dayjs": "^1.11.13",
     "echarts": "^5.6.0",
     "echarts-for-react": "^3.0.2",
@@ -45,6 +46,7 @@
     "react-router-dom": "^7.6.2",
     "uuid": "^11.1.0",
     "wellknown": "^0.5.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zustand": "^5.0.7"
   },
   "devDependencies": {
