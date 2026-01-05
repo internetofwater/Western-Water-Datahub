@@ -1,0 +1,88 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+.contact {
+    border: 1px solid var(--border);
+    margin: calc(var(--default-spacing) / 2);
+    padding: calc(var(--default-spacing) / 2);
+}
+
+.contactBody {
+    padding-top: calc(var(--default-spacing) / 2);
+    padding-right: calc(var(--default-spacing) / 4);
+    max-width: calc(75% - var(--default-spacing));
+}
+
+.contactImage {
+    fill: var(--mantine-color-text);
+    padding: calc(var(--default-spacing) * 0.75);
+    max-width: 25%;
+}
+
+.contactLink {
+    margin-top: var(--default-spacing);
+    white-space: nowrap;
+}
+
+.contactWrapper {
+    color: var(--mantine-color-text);
+}
+
+.faqAnswer {
+    margin-left: var(--default-spacing);
+}
+
+.faqBullets {
+    margin-left: calc(var(--default-spacing) * 2);
+    margin-right: calc(var(--default-spacing) * 2);
+}
+
+.glossaryWrapper {
+    width: calc(100% - 50px);
+}
+
+.modalBody {
+    width: 100%;
+    padding-left: calc(var(--default-spacing) * 2);
+    padding-right: calc(var(--default-spacing) * 2);
+    padding-bottom: calc(var(--default-spacing) * 2);
+}
+
+.modalHeader {
+    min-height: 1rem;
+    padding-bottom: 0;
+}
+
+.tabs {
+    width: 100%;
+}
+
+.tabsList {
+    position: sticky;
+    top: 0;
+    background: var(--mantine-color-body);
+}
+
+:where([data-mantine-color-scheme='dark']) {
+    .contactImage {
+        fill: #000;
+    }
+
+    .contactWrapper {
+        color: #000;
+        background-color: var(--mantine-color-gray-0);
+    }
+}
+
+:where([data-mantine-color-scheme='light']) {
+    .contactImage {
+        fill: #fff;
+    }
+
+    .contactWrapper {
+        color: #fff;
+        background-color: var(--mantine-color-dark-4);
+    }
+}

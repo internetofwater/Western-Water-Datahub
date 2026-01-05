@@ -27,6 +27,9 @@ class EDRProviderProtocol(Protocol):
         select_properties: Optional[list[str]] = None,
         crs: Optional[str] = None,
         format_: Optional[str] = None,
+        # not explicitly in the current stable EDR spec;
+        # seems to be going to be added in the future?
+        bbox: Optional[list] = None,
         **kwargs,
     ) -> CoverageCollectionDict | GeojsonFeatureCollectionDict | GeojsonFeatureDict: ...
 

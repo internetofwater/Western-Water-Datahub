@@ -12,9 +12,9 @@ import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { Basin } from '@/features/Header/Selectors/Basin';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import { State } from '@/features/Header/Selectors/State';
-import { BoundingGeographyLevel } from '@/lib/types';
+import { BoundingGeographyLevel } from '@/stores/main/types';
 import { BoundingGeography } from '@/features/Header/Selectors/BoundingGeography';
 
 const DarkModeToggle = dynamic(() => import('./DarkModeToggle'), {

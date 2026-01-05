@@ -4,10 +4,9 @@
  */
 
 import { ReservoirConfig } from '@/features/Map/types';
-import { Box } from '@mantine/core';
 import { GeoJsonProperties } from 'geojson';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
@@ -29,15 +28,13 @@ export const TeacupDiagram: React.FC<Props> = (props) => {
     const colorScheme = useMainStore((state) => state.colorScheme);
 
     return (
-        <Box style={{ flex: 1, minWidth: 0 }}>
-            <Graphic
-                reservoirProperties={reservoirProperties}
-                config={config}
-                showLabels={showLabels}
-                labels={labels}
-                listeners={listeners}
-                colorScheme={colorScheme}
-            />
-        </Box>
+        <Graphic
+            reservoirProperties={reservoirProperties}
+            config={config}
+            showLabels={showLabels}
+            labels={labels}
+            listeners={listeners}
+            colorScheme={colorScheme}
+        />
     );
 };

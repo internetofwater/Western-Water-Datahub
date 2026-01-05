@@ -29,19 +29,21 @@
     "schema:subjectOf": [
     {% for item in data["catalogItems"] if item["type"] == "CatalogItem" %}
     {
-        "@type": "Dataset",
+        "@type": "schema:Dataset",
         "schema:name": {{ item['attributes']['itemTitle'] | tojson }},
         "schema:description": {{ item['attributes']['itemDescription'] | tojson }},
         "schema:identifier": "{{ item['attributes']["_id"] }}",
         "schema:variableMeasured": {
-            "@type": "PropertyValue",
+            "@type": "schema:PropertyValue",
             "schema:name": "{{ item['attributes']['parameterName'] }}",
             "schema:unitText": "{{ item['attributes']['parameterUnit'] }}"
         },
         "schema:dateCreated": "{{ item['attributes']['createDate'] }}",
         "schema:dateUpdated": "{{ item['attributes']['updateDate'] }}",
         "schema:frequency": "{{ item['attributes']['updateFrequency']['updatefrequency'] }}",
+        {% if item['attributes']['temporalStartDate'] != None and item['attributes']['temporalEndDate'] != None %}
         "schema:temporalCoverage": "{{ item['attributes']['temporalStartDate'] }}/{{ item['attributes']['temporalEndDate'] }}",
+        {% endif %}
         "schema:provider": {
             "@type": "schema:GovernmentOrganization",
             "schema:url": "https://data.usbr.gov/rise-api",

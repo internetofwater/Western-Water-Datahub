@@ -12,16 +12,16 @@ import Square from '@/icons/Square';
 import { Gradient } from '@/features/Legend/Gradient';
 import styles from '@/features/Legend/Legend.module.css';
 import { getLayerName } from '@/features/Map/config';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import { Box, Divider, Group, Stack, Tooltip } from '@mantine/core';
-import { getTooltipContent } from './utils';
+import { getTooltipContent } from '@/features/Legend/utils';
 import Info from '@/icons/Info';
-import { Teacups } from './Teacups';
+import { Teacups } from '@/features/Legend/Teacups';
 
 const entries: Entry[] = [
     {
         id: LayerId.Snotel,
-        type: LayerType.Circle,
+        type: LayerType.Fill,
         items: [
             {
                 color: '#7b3294',
@@ -142,7 +142,7 @@ const Legend: React.FC = () => {
     const toggleableLayers = useMainStore((state) => state.toggleableLayers);
 
     return (
-        <Stack>
+        <Stack className={styles.wrapper}>
             <Teacups />
             <Divider />
             {entries
@@ -193,7 +193,9 @@ const Legend: React.FC = () => {
                                                 }
                                             >
                                                 <Line color={item.color} />
-                                                <div>{item.label}</div>
+                                                <div style={{ color: 'black' }}>
+                                                    {item.label}
+                                                </div>
                                             </div>
                                         </li>
                                     ))}
@@ -210,7 +212,9 @@ const Legend: React.FC = () => {
                                                 }
                                             >
                                                 <Circle color={item.color} />
-                                                <div>{item.label}</div>
+                                                <div style={{ color: 'black' }}>
+                                                    {item.label}
+                                                </div>
                                             </div>
                                         </li>
                                     ))}
@@ -226,8 +230,13 @@ const Legend: React.FC = () => {
                                                     styles.entryContainer
                                                 }
                                             >
-                                                <Square fill={item.color} />
-                                                <div>{item.label}</div>
+                                                <Square
+                                                    fill={item.color}
+                                                    stroke={item.color}
+                                                />
+                                                <div style={{ color: 'black' }}>
+                                                    {item.label}
+                                                </div>
                                             </div>
                                         </li>
                                     ))}

@@ -1,0 +1,80 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+.panel {
+    min-width: 31rem;
+    width: 31rem;
+    z-index: 2;
+}
+
+.root {
+    max-height: calc(100% - 13.125rem);
+    overflow-y: auto;
+}
+
+.content {
+    padding: 0px;
+}
+
+.control {
+    background: var(--mantine-color-body);
+    border-bottom: 1px solid var(--item-border-color);
+    border-top: 1px solid var(--item-border-color);
+}
+
+.sticky .control {
+    position: sticky;
+    z-index: 3;
+    top: 0;
+}
+
+/* .accordions {
+    width: 100%;
+    max-height: calc(100vh - 220px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-bottom: 1px solid var(--asu-color-tertiary);
+} */
+
+@media screen and (max-width: 899px) {
+    .mobileClose,
+    .mobileOpen {
+        display: block;
+    }
+
+    .panelClosed {
+        width: 100%;
+        max-width: unset;
+    }
+
+    .panelOpen {
+        width: 100%;
+    }
+
+    .panel {
+        position: absolute;
+        height: 90vh;
+        min-height: 90vh;
+        max-height: 90vh;
+        width: 95vw;
+        min-width: 95vw;
+        max-width: 95vw;
+        top: 5vh;
+        left: 2.5vw;
+        margin: auto;
+        padding: 16px;
+
+        border-radius: 4px;
+    }
+
+    .panelWrapper {
+        height: unset;
+        max-height: unset;
+    }
+
+    .toggleButton {
+        display: none;
+    }
+}

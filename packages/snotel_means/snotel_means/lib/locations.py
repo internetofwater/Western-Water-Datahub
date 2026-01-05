@@ -51,14 +51,14 @@ class SnowWaterEquivalentCollectionWithMetadata:
 
         self.stations = self._make_station_dict(averages, daily)
 
-    def get_averages_by_huc6(self) -> dict[str, float]:
+    def get_averages_by_huc6(self) -> dict[str, float | None]:
         """
         Get the average snow water equivalent for each huc6
         by getting the average for each station (Relative to 30 year average) in the huc6
         and then averaging those together. This essentially gives you a weighted average
         against the 30 year average
         """
-        huc6ToAvgList: dict[str, list[float]] = {}
+        huc6ToAvgList: dict[str, list[float | None]] = {}
 
         for station in self.stations.values():
             huc = station.metadata.huc
@@ -69,7 +69,10 @@ class SnowWaterEquivalentCollectionWithMetadata:
                 huc6ToAvgList[huc6] = []
 
             if station.snowWaterData.snow_water_equivalent_30_year_average == 0:
-                huc6ToAvgList[huc6].append(0)
+                # if the average is 0 we can't divide by it and
+                # thus must signify it is null; we have to use None instead of
+                # NaN since the latter is not JSON serializable
+                huc6ToAvgList[huc6].append(None)
             else:
                 snowWaterEquivalentRelativeTo30Year = (
                     station.snowWaterData.snow_water_equivalent_yesterday
@@ -78,9 +81,16 @@ class SnowWaterEquivalentCollectionWithMetadata:
                 )
                 huc6ToAvgList[huc6].append(snowWaterEquivalentRelativeTo30Year)
 
-        averagedAverages: dict[str, float] = {}
+        # it is possible for the average to be None if the entire huc6 has no data
+        averagedAverages: dict[str, float | None] = {}
         for huc6 in huc6ToAvgList:
-            averagedAverages[huc6] = sum(huc6ToAvgList[huc6]) / len(huc6ToAvgList[huc6])
+            # Since some hucs have no average, we want to skip them
+            huc06NonNullAvgs = [x for x in huc6ToAvgList[huc6] if x is not None]
+            averagedAverages[huc6] = (
+                (sum(huc06NonNullAvgs) / len(huc06NonNullAvgs))
+                if huc06NonNullAvgs
+                else None
+            )
 
         return averagedAverages
 

@@ -16,8 +16,8 @@ import geoconnexService from '@/services/init/geoconnex.init';
 import { FeatureCollection, Polygon } from 'geojson';
 import { formatOptions } from '@/features/Header/Selectors/utils';
 import { StateField, StateProperties } from '@/features/Map/types/state';
-import useMainStore from '@/lib/main';
-import { StateDefault } from '@/lib/consts';
+import useMainStore from '@/stores/main/main';
+import { StateDefault } from '@/stores/main/consts';
 
 export const State: React.FC = () => {
     const state = useMainStore((state) => state.state);

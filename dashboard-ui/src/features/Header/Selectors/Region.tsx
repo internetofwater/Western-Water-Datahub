@@ -6,7 +6,7 @@
 'use client';
 
 import { ComboboxData, Select, Skeleton } from '@mantine/core';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import { useEffect, useRef, useState } from 'react';
 import { formatOptions } from '@/features/Header/Selectors/utils';
 import esriService from '@/services/init/esri.init';
@@ -16,7 +16,7 @@ import { SourceDataEvent } from '@/features/Map/types';
 import { useMap } from '@/contexts/MapContexts';
 import styles from '@/features/Header/Header.module.css';
 import { RegionField } from '@/features/Map/types/region';
-import { RegionDefault } from '@/lib/consts';
+import { RegionDefault } from '@/stores/main/consts';
 
 /**
 

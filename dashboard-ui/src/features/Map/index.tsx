@@ -6,7 +6,7 @@
 'use client';
 
 import Map from '@/components/Map';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { layerDefinitions, sourceConfigs } from '@/features/Map/config';
 import {
     MAP_ID,
@@ -16,9 +16,10 @@ import {
     SourceId,
     ReservoirConfigs,
     ValidBasins,
+    LayerId,
 } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import {
     loadTeacups as loadImages,
     getReservoirConfig,
@@ -28,24 +29,28 @@ import {
     getReservoirFilter,
     getBoundingGeographyFilter,
     resetMap,
+    getDefaultGeoJSON,
+    getReservoirSymbolSize,
+    getReservoirSymbolSortKey,
+    getHighlightIcon,
 } from '@/features/Map/utils';
 import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
 import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
 import CustomControl from '@/components/Map/tools/CustomControl';
 import { basemaps } from '@/components/Map/consts';
 import { GeoJSONSource, LngLatLike, MapMouseEvent } from 'mapbox-gl';
-import { useReservoirData } from '@/app/hooks/useReservoirData';
-import { useSnotelData } from '@/app/hooks/useSnotelData';
+import { useReservoirData } from '@/hooks/useReservoirData';
 import { RegionField } from '@/features/Map/types/region';
 import {
     BasinDefault,
     RegionDefault,
     ReservoirDefault,
     StateDefault,
-} from '@/lib/consts';
-import { StateField } from './types/state';
-import { Huc02BasinField } from './types/basin';
-import { BoundingGeographyLevel } from '@/lib/types';
+} from '@/stores/main/consts';
+import { StateField } from '@/features/Map/types/state';
+import { Huc02BasinField } from '@/features/Map/types/basin';
+import { BoundingGeographyLevel } from '@/stores/main/types';
+import useSessionStore from '@/stores/session';
 
 type Props = {
     accessToken: string;
@@ -80,17 +85,35 @@ const MainMap: React.FC<Props> = (props) => {
         (state) => state.reservoirCollections
     );
 
+    const highlight = useSessionStore((state) => state.highlight);
+
+    const loadingInstances = useSessionStore((state) => state.loadingInstances);
+
+    const [shouldResize, setShouldResize] = useState(false);
+
     const isMounted = useRef(true);
 
     useReservoirData();
 
-    useSnotelData();
+    // useSnotelData();
 
     useEffect(() => {
         return () => {
             isMounted.current = false;
         };
     }, []);
+
+    useEffect(() => {
+        setShouldResize(loadingInstances.length > 0);
+    }, [loadingInstances]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        map.resize();
+    }, [shouldResize]);
 
     useEffect(() => {
         const resvizData = reservoirCollections?.[SourceId.ResvizEDRReservoirs];
@@ -125,69 +148,6 @@ const MainMap: React.FC<Props> = (props) => {
             (config) => config.connectedLayers
         );
 
-        // const handleRegionsClick = (e: MapMouseEvent) => {
-        //     const zoom = map.getZoom();
-        //     if (zoom > 6) {
-        //         return;
-        //     }
-
-        //     const features = map.queryRenderedFeatures(e.point, {
-        //         layers: [SubLayerId.RegionsFill],
-        //     });
-
-        //     if (features && features.length) {
-        //         const feature = features[0];
-
-        //         if (feature.properties) {
-        //             const region = feature.properties[
-        //                 RegionField.Name
-        //             ] as string;
-
-        //             if (region) {
-        //                 setRegion(region);
-        //             }
-        //         }
-        //     }
-        // };
-
-        // const handleBasinsClick = (e: MapMouseEvent) => {
-        //     const features = map.queryRenderedFeatures(e.point, {
-        //         layers: [SubLayerId.BasinsFill],
-        //     });
-
-        //     if (features && features.length) {
-        //         const feature = features[0];
-        //         if (feature.properties) {
-        //             const basin = feature.properties[
-        //                 Huc02BasinField.Id
-        //             ] as string;
-
-        //             if (basin) {
-        //                 setBasin(basin);
-        //             }
-        //         }
-        //     }
-        // };
-
-        // const handleStatesClick = (e: MapMouseEvent) => {
-        //     const features = map.queryRenderedFeatures(e.point, {
-        //         layers: [SubLayerId.StatesFill],
-        //     });
-
-        //     if (features && features.length) {
-        //         const feature = features[0];
-        //         if (feature.properties) {
-        //             const state = feature.properties[
-        //                 StateField.Acronym
-        //             ] as string;
-
-        //             if (state) {
-        //                 setState(state);
-        //             }
-        //         }
-        //     }
-        // };
-
         const handleReservoirsClick = (e: MapMouseEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: reservoirLayers,
@@ -215,48 +175,48 @@ const MainMap: React.FC<Props> = (props) => {
                         feature.id!
                     );
 
-                    if (feature.properties[config.regionConnectorProperty]) {
-                        const rawRegionProperty = String(
-                            feature.properties[config.regionConnectorProperty]
-                        );
-                        const regionProperty = rawRegionProperty.startsWith('[')
-                            ? (JSON.parse(rawRegionProperty) as string[])
-                            : rawRegionProperty;
+                    // if (feature.properties[config.regionConnectorProperty]) {
+                    //     const rawRegionProperty = String(
+                    //         feature.properties[config.regionConnectorProperty]
+                    //     );
+                    //     const regionProperty = rawRegionProperty.startsWith('[')
+                    //         ? (JSON.parse(rawRegionProperty) as string[])
+                    //         : rawRegionProperty;
 
-                        setRegion(
-                            Array.isArray(regionProperty)
-                                ? regionProperty[0]
-                                : regionProperty
-                        );
-                    }
-                    if (feature.properties[config.basinConnectorProperty]) {
-                        const rawBasinProperty = String(
-                            feature.properties[config.basinConnectorProperty]
-                        );
-                        const basinProperty = rawBasinProperty.startsWith('[')
-                            ? (JSON.parse(rawBasinProperty) as string[])
-                            : String(rawBasinProperty).slice(0, 2);
+                    //     setRegion(
+                    //         Array.isArray(regionProperty)
+                    //             ? regionProperty[0]
+                    //             : regionProperty
+                    //     );
+                    // }
+                    // if (feature.properties[config.basinConnectorProperty]) {
+                    //     const rawBasinProperty = String(
+                    //         feature.properties[config.basinConnectorProperty]
+                    //     );
+                    //     const basinProperty = rawBasinProperty.startsWith('[')
+                    //         ? (JSON.parse(rawBasinProperty) as string[])
+                    //         : String(rawBasinProperty).slice(0, 2);
 
-                        setBasin(
-                            Array.isArray(basinProperty)
-                                ? basinProperty[0]
-                                : basinProperty
-                        );
-                    }
-                    if (feature.properties[config.stateConnectorProperty]) {
-                        const rawStateProperty = String(
-                            feature.properties[config.stateConnectorProperty]
-                        );
-                        const stateProperty = rawStateProperty.startsWith('[')
-                            ? (JSON.parse(rawStateProperty) as string[])
-                            : rawStateProperty;
+                    //     setBasin(
+                    //         Array.isArray(basinProperty)
+                    //             ? basinProperty[0]
+                    //             : basinProperty
+                    //     );
+                    // }
+                    // if (feature.properties[config.stateConnectorProperty]) {
+                    //     const rawStateProperty = String(
+                    //         feature.properties[config.stateConnectorProperty]
+                    //     );
+                    //     const stateProperty = rawStateProperty.startsWith('[')
+                    //         ? (JSON.parse(rawStateProperty) as string[])
+                    //         : rawStateProperty;
 
-                        setState(
-                            Array.isArray(stateProperty)
-                                ? stateProperty[0]
-                                : stateProperty
-                        );
-                    }
+                    //     setState(
+                    //         Array.isArray(stateProperty)
+                    //             ? stateProperty[0]
+                    //             : stateProperty
+                    //     );
+                    // }
 
                     setReservoir({
                         identifier:
@@ -517,12 +477,61 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
+        const source = map.getSource(SourceId.Highlight) as GeoJSONSource;
+
+        if (!source) {
+            return;
+        }
+
+        if (highlight) {
+            const iconImageExpression = getHighlightIcon(highlight.config);
+            const iconSizeExpression = getReservoirSymbolSize(
+                highlight.config,
+                0.15
+            );
+            const symbolSortExpression = getReservoirSymbolSortKey(
+                highlight.config
+            );
+
+            map.setLayoutProperty(
+                LayerId.Highlight,
+                'icon-image',
+                iconImageExpression
+            );
+            map.setLayoutProperty(
+                LayerId.Highlight,
+                'icon-size',
+                iconSizeExpression
+            );
+            map.setLayoutProperty(
+                LayerId.Highlight,
+                'symbol-sort-key',
+                symbolSortExpression
+            );
+
+            map.setFilter(LayerId.Highlight, null);
+            source.setData({
+                type: 'FeatureCollection',
+                features: [highlight.feature],
+            });
+        } else {
+            // TODO, determine why the highlight is sticking
+            map.setFilter(LayerId.Highlight, ['==', ['id'], -1]);
+            source.setData(getDefaultGeoJSON());
+        }
+    }, [highlight]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
         // Copy over all existing layers and sources when changing basemaps
         const layers = map.getStyle().layers || [];
         const sources = map.getStyle().sources || {};
 
         const customLayers = layers.filter((layer) => {
-            return !layer.id.startsWith('mapbox');
+            return layer.id.startsWith('dash-');
         });
 
         const customSources = Object.entries(sources).filter(([id]) => {
@@ -542,6 +551,7 @@ const MainMap: React.FC<Props> = (props) => {
                 }
             }
         });
+
         map.setStyle(basemaps[basemap]);
     }, [basemap]);
 
@@ -561,7 +571,7 @@ const MainMap: React.FC<Props> = (props) => {
                     maxZoom: 20,
                 }}
                 controls={{
-                    scaleControl: true,
+                    // scaleControl: true,
                     navigationControl: true,
                 }}
                 customControls={[

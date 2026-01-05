@@ -3,72 +3,59 @@
  * SPDX-License-Identifier: MIT
  */
 
-.infoContainer {
-    width: 100%;
-    max-width: 100svw;
-    height: 328px; /* map container - header height = info container */
-    max-height: 328px;
-}
-
-.infoPanel {
-    width: 42%;
-    max-height: inherit;
-    overflow-y: auto;
-}
-
-.reservoirTitle {
-    max-width: 85%;
-}
-
-.infoChartGroup {
-    max-height: 268px;
+.chartWrapper {
+    height: 54%;
 }
 
 .chartContainer {
-    width: 100%;
-    max-width: 99%;
-    height: 88%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    min-height: 18.75rem;
 }
 
-.graphicContainer {
-    margin: auto;
+.graphicLegendColor {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 4px;
+}
+
+.graphicLegendDashWrapper {
+    width: 3rem;
+    display: flex;
+    justify-content: center;
+
+    .graphicLegendDash {
+        width: 100%;
+        height: 0.25rem;
+        border: none;
+        border-top: 0.25rem dashed;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
 }
 
 .graphicPanel {
-    width: 55%;
+    flex-direction: row;
 }
 
-.PDFViewer {
-    width: 100%;
+.infoGroup {
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.PDFViewer iframe {
-    height: 70vh;
-    width: 100%;
+.legendWrapper {
+    flex-direction: column;
 }
 
-.PDFButton {
-    width: 165px;
-    margin: 0 auto;
+.legend {
+    max-width: 20rem;
+    flex-direction: column;
 }
 
-.loaderGroup {
-    height: 70vh;
-    width: 100%;
-}
-
-.controlButton {
-    min-width: 105px;
+.metrics {
+    flex-direction: column;
 }
 
 .svg {
-    width: 100%;
-    min-width: 250px;
-    height: 100%;
-    max-height: 205px;
+    width: 32rem;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
@@ -77,63 +64,76 @@
     transform: scale(1.05);
 }
 
-.graphicLegendColor {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
+.row {
+    height: calc(48% - var(--default-spacing));
 }
 
-.graphicLegendText {
-    color: #000;
-}
-
-@media screen and (max-width: 1817px) {
-    .chartContainer {
-        height: 79%;
-    }
-}
-
-@media screen and (max-width: 992px) {
-    .infoContainer {
-        max-height: unset;
-        height: unset;
-        min-height: unset;
-    }
-}
-
-@media screen and (max-width: 689px) {
-    .svg {
-        max-height: 172px;
-    }
-}
-
-@media screen and (max-width: 568px) {
-    .infoContainer {
-        height: unset; /* map container - header height = info container */
-        max-height: unset;
-    }
-
-    .infoChartGroup {
-        max-height: unset;
-    }
-
+@media screen and (max-width: 1464px) {
+    /* .graphicPanel,
     .infoPanel {
-        width: 100%;
-    }
-
-    .infoPanel {
-        max-height: unset;
-    }
-
-    .svg {
-        max-height: unset;
-    }
+        width: calc(50% - (var(--default-spacing) / 2));
+    } */
 
     .graphicPanel {
+        flex-direction: column-reverse;
+    }
+
+    .legendWrapper,
+    .legend {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+@media screen and (max-width: 866px) {
+    .graphicPanel {
+        align-items: center;
+    }
+
+    .metrics {
+        flex-direction: row;
+    }
+
+    .graphicPanel,
+    .metrics {
         width: 100%;
     }
 
-    .infoChartGroup {
-        flex-direction: column-reverse;
+    .metricsGroup {
+        width: calc(50% - (var(--default-spacing) / 2));
+    }
+
+    .metricsWrapper {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 664px) {
+    .metrics {
+        flex-direction: column;
+    }
+
+    .metricsGroup {
+        width: unset;
+    }
+}
+
+:where([data-mantine-color-scheme='dark']) {
+    .graphicLegendText {
+        color: #000;
+    }
+
+    .legendPaper {
+        background-color: var(--mantine-color-gray-0);
+    }
+}
+
+:where([data-mantine-color-scheme='light']) {
+    .graphicLegendText {
+        color: #fff;
+    }
+
+    .legendPaper {
+        background-color: var(--mantine-color-dark-4);
     }
 }

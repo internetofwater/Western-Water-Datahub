@@ -143,7 +143,7 @@ def get_oaf_fields_from_pydantic_model(model: Type[BaseModel]) -> OAFFieldsMappi
     for fieldName in pydanticFields.keys():
         dataType: Literal["number", "string", "integer"]
 
-        aliasName = pydanticFields[fieldName].alias
+        aliasName: str | None = pydanticFields[fieldName].alias
         if aliasName:
             name = aliasName
         else:

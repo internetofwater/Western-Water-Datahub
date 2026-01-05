@@ -3,14 +3,36 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { LayerId, SubLayerId } from '../Map/consts';
+import { LayerId, SubLayerId } from '@/features/Map/consts';
+import { getGlossaryEntry } from '../Help/utils';
 
-export const getTooltipContent = (layerId: LayerId | SubLayerId) => {
+export const getTooltipContent = (
+    layerId: LayerId | SubLayerId | string
+): string => {
     switch (layerId) {
-        case LayerId.Snotel:
-            return 'Change in snowpack water content (SWE) in the HUC06 basin compared to the 30-year average';
-        case LayerId.NOAARiverForecast:
-            return 'Forecasted average change in flow for current season against the 30 year normal period';
+        case String(LayerId.Snotel):
+            return (
+                getGlossaryEntry(LayerId.Snotel)?.short ??
+                'The average snow water equivalent across each HUC06 basin relative to the 30 year average.'
+            );
+        case String(LayerId.NOAARiverForecast):
+            return (
+                getGlossaryEntry(LayerId.NOAARiverForecast)?.short ??
+                'Forecasted average change in flow for current season against the 30 year normal period.'
+            );
+        case 'capacity':
+            return (
+                getGlossaryEntry('capacity')?.short ?? 'Potential water storage'
+            );
+        case 'storage':
+            return (
+                getGlossaryEntry('storage')?.short ?? 'Current water storage'
+            );
+        case 'average':
+            return (
+                getGlossaryEntry('average')?.short ?? 'Current water storage'
+            );
+
         default:
             return '';
     }

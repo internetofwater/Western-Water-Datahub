@@ -47,7 +47,7 @@ from covjson_pydantic.coverage import Coverage, CoverageCollection
 
 LOGGER = logging.getLogger(__name__)
 
-metadata_path = pathlib.Path(__file__).parent.parent.parent / "usace_metadata.json"
+metadata_path = pathlib.Path(__file__).parent.parent / "usace_metadata.json"
 with metadata_path.open() as f:
     LOGGER.info(f"Loading static USACE metadata from {metadata_path}")
     USACE_STATIC_METADATA: dict = json.load(f)
@@ -56,7 +56,7 @@ with metadata_path.open() as f:
 class LocationCollection(LocationCollectionProtocolWithEDR):
     locations: list[Feature]
 
-    def __init__(self):
+    def __init__(self, itemId: Optional[str] = None):
         self.cache = RedisCache()
         url = "https://water.sec.usace.army.mil/cda/reporting/providers/projects?fmt=geojson"
 
@@ -67,9 +67,13 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                 "features": orjson.loads(res),
             }
         )
+        features_to_keep = []
+
         for feature in fc.features:
             assert feature.properties
             feature.id = str(feature.properties.location_code)
+            if itemId and feature.id != itemId:
+                continue
             feature.properties.name = feature.properties.public_name
 
             nidid = feature.properties.aliases.get("NIDID")
@@ -87,11 +91,34 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                 if prop in {"name", "state"}:
                     continue
                 # if there is some other type of duplicate we want to explicitly fail
-                if hasattr(feature.properties, prop):
+                if (
+                    hasattr(feature.properties, prop)
+                    and getattr(feature.properties, prop) is not None
+                ):
                     raise RuntimeError(f"Duplicate USACE property: {prop}")
-                setattr(feature.properties, prop, static_properties[prop])
+                if prop == "averages":
+                    # we explicitly set this to 2020- since the resopsus dataset
+                    # aggregates in the 30 year window ending on 2020 so it
+                    # needs to we effectively just compare the month and day
+                    today = datetime.now(timezone.utc).strftime("2020-%m-%d")
+                    for avg_date in static_properties[prop]:
+                        if avg_date == today:
+                            averages_data: dict = static_properties["averages"][
+                                avg_date
+                            ]
+                            for average_type, average_value in averages_data.items():
+                                assert average_type not in feature.properties, (
+                                    f"Duplicate property {average_type} when trying to add averages to USACE feature"
+                                )
+                                setattr(feature.properties, average_type, average_value)
+                            setattr(feature.properties, "hasResopsAverages", "true")
+                            break
+                else:
+                    setattr(feature.properties, prop, static_properties[prop])
 
-        self.locations = fc.features
+            features_to_keep.append(feature)
+
+        self.locations = features_to_keep
 
     def to_geojson(
         self,
@@ -105,9 +132,10 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         features_to_keep: list[geojson_pydantic.Feature] = []
 
         for feature in self.locations:
+            assert feature.id, f"Feature {feature} is missing id"
             serialized_feature = geojson_pydantic.Feature(
                 type="Feature",
-                id=feature.id,
+                id=int(feature.id),
                 properties=feature.properties.model_dump(),
                 geometry=geojson_pydantic.Point(
                     type="Point",
@@ -215,6 +243,17 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
     def drop_all_locations_but_id(self, location_id: str):
         self.locations = [loc for loc in self.locations if loc.id == location_id]
         assert len(self.locations) == 1
+
+    def drop_all_locations_without_parameters(self, parameters: list[str]):
+        locations_to_keep: list[Feature] = []
+        for loc in self.locations:
+            if not loc.properties.timeseries:
+                continue
+            for param in loc.properties.timeseries:
+                if param.tsid in parameters:
+                    locations_to_keep.append(loc)
+                    break
+        self.locations = locations_to_keep
 
     def get_fields(self) -> EDRFieldsMapping:
         """
@@ -356,10 +395,10 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
         param = Parameter(
             type="Parameter",
             unit=Unit(symbol=datastream.unit),
-            id=datastream.tsid,
+            id=datastream.label,
             observedProperty=ObservedProperty(
                 label={"en": datastream.parameter},
-                id=datastream.tsid,
+                id=datastream.label,
                 description={"en": datastream.unit_long_name},
             ),
         )
@@ -398,7 +437,7 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                 ],
             ),
             ranges={
-                datastream.tsid: NdArrayFloat(
+                datastream.label: NdArrayFloat(
                     shape=[len(datastream.results.values)],
                     values=list[float | None](values),
                     axisNames=["t"],
@@ -420,7 +459,7 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                 longitude, latitude = loc.geometry.coordinates
                 cov = self._generate_coverage(param, longitude, latitude)
                 coverages.append(cov)
-                parameters[param.tsid] = self._generate_parameter(param)
+                parameters[param.label] = self._generate_parameter(param)
 
         covCol = CoverageCollection(
             coverages=coverages,

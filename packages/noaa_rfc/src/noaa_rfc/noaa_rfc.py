@@ -55,6 +55,9 @@ class NOAARFCProvider(BaseProvider, OAFProviderProtocol):
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         collection = ForecastCollection()
 
+        if bbox:
+            collection.drop_all_locations_outside_bounding_box(bbox)
+
         if itemId:
             collection.drop_all_locations_but_id(itemId)
 

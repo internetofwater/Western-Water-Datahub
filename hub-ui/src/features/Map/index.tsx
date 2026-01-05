@@ -107,7 +107,6 @@ const MainMap: React.FC<Props> = (props) => {
 
       const locationIds = locationsByCollection[collection.id] ?? [];
       let color;
-
       if (map.getLayer(pointLayerId)) {
         color = map.getPaintProperty(pointLayerId, "circle-color") as string;
         map.setPaintProperty(

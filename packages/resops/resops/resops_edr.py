@@ -37,6 +37,7 @@ class ResOpsUSProviderEDR(BaseEDRProvider, EDRProviderProtocol):
         select_properties: Optional[list[str]] = None,
         crs: Optional[str] = None,
         format_: Optional[str] = None,
+        bbox: Optional[list] = None,
         limit: Optional[int] = None,
         **kwargs,
     ) -> CoverageCollectionDict | GeojsonFeatureCollectionDict | GeojsonFeatureDict:

@@ -55,6 +55,7 @@ type Props = {
     colorScheme: MantineColorScheme;
     svgRenderCallback?: () => void;
     graphicRef?: RefObject<SVGSVGElement | null>;
+    className?: string;
 };
 
 export const Graphic: React.FC<Props> = (props) => {
@@ -67,6 +68,7 @@ export const Graphic: React.FC<Props> = (props) => {
         colorScheme,
         listeners,
         svgRenderCallback: callback,
+        className = styles.svg,
     } = props;
 
     const _graphicRef = graphicRef ?? useRef<SVGSVGElement>(null);
@@ -480,7 +482,7 @@ export const Graphic: React.FC<Props> = (props) => {
         <svg
             data-testid="graphic-svg"
             viewBox={`-5 -10 ${labels ? 220 : 170} 127`}
-            className={styles.svg}
+            className={className}
             ref={_graphicRef}
         >
             <defs>

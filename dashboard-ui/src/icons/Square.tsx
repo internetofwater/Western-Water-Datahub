@@ -30,8 +30,9 @@ const FilledSquare: React.FC<Props> = (props) => {
                 width={width}
                 height={height}
                 fill={fill}
+                fillOpacity={stroke ? 0.5 : 1}
                 stroke={stroke ?? fill}
-                strokeWidth={2}
+                strokeWidth={6}
             />
         </svg>
     );

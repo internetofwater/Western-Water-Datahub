@@ -11,13 +11,12 @@ import {
     Stack,
     Switch,
     Text,
-    Divider,
 } from '@mantine/core';
 import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { RasterBaseLayers } from '@/features/Map/types';
 import { useState } from 'react';
-import useMainStore from '@/lib/main';
+import useMainStore from '@/stores/main/main';
 import {
     RasterVisibilityMap,
     updateBaseLayer,
@@ -25,8 +24,8 @@ import {
     updateNOAARFC,
     updateSnotel,
 } from '@/features/Controls/utils';
-import { ReservoirDateSelector } from '@/features/Controls/ReservoirDateSelector';
 import styles from '@/features/Controls/Controls.module.css';
+import { useLoading } from '@/hooks/useLoading';
 
 const RasterBaseLayerIconObj = [
     {
@@ -60,6 +59,8 @@ const Controls: React.FC = () => {
     );
 
     const { map } = useMap(MAP_ID);
+
+    const { isFetchingSnotel } = useLoading();
 
     const handleBaseLayerChange = (baseLayer: RasterBaseLayers) => {
         if (!map) {
@@ -119,14 +120,19 @@ const Controls: React.FC = () => {
         return RasterBaseLayers.None;
     };
 
+    // TODO: address through styling if bug occurs >1 place, assess if upgrade to next Mantine v
+    // Work around, Mantine bug applies data-disabled styling even when false
+    const snotelSwitchProps = isFetchingSnotel ? { 'data-disabled': true } : {};
+
     return (
-        <Stack>
+        <Stack className={styles.wrapper}>
             {map ? (
                 <>
-                    <Stack>
-                        <ReservoirDateSelector />
-                    </Stack>
-                    <Divider mx="xl" />
+                    {/* <ReservoirDateSelector />
+                    <Divider mx="xl" /> */}
+                    <Text size="md" fw={500}>
+                        Reference Data
+                    </Text>
                     <Switch
                         label="Show River Forecast Points (NOAA RFC)"
                         checked={toggleableLayers[LayerId.NOAARiverForecast]}
@@ -137,13 +143,15 @@ const Controls: React.FC = () => {
                         }
                     />
                     <Switch
-                        label="Show Snow Monitoring Points (NRCS SNOTEL)"
+                        label="Show Snow Water Equivalent Averages (NRCS SNOTEL)"
+                        disabled={isFetchingSnotel}
                         checked={toggleableLayers[LayerId.Snotel]}
                         onClick={() =>
                             handleSnotelChange(
                                 !toggleableLayers[LayerId.Snotel]
                             )
                         }
+                        {...snotelSwitchProps}
                     />
                     <Select
                         id="baseLayerSelector"
@@ -160,17 +168,19 @@ const Controls: React.FC = () => {
                             handleBaseLayerChange(_value as RasterBaseLayers)
                         }
                     />
-                    <Stack gap="xs">
-                        <Text size="sm">Base Layer Opacity</Text>
-                        <Slider
-                            min={0}
-                            max={1}
-                            step={0.05}
-                            value={baseLayerOpacity}
-                            onChange={handleBaseLayerOpacityChange}
-                            label={(value) => `${Math.round(value * 100)}%`}
-                        />
-                    </Stack>
+                    {getBaseLayerValue() !== RasterBaseLayers.None && (
+                        <Stack gap="xs">
+                            <Text size="sm">Base Layer Opacity</Text>
+                            <Slider
+                                min={0}
+                                max={1}
+                                step={0.05}
+                                value={baseLayerOpacity}
+                                onChange={handleBaseLayerOpacityChange}
+                                label={(value) => `${Math.round(value * 100)}%`}
+                            />
+                        </Stack>
+                    )}
                 </>
             ) : (
                 <Group justify="center" align="center">
