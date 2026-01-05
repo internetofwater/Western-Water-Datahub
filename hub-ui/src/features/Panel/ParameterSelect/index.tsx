@@ -42,7 +42,7 @@ const ParameterSelectWrapper: React.FC = () => {
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
           <Title order={2} size="h4">
-            Filter by Parameter
+            Filter Items by Parameter
           </Title>
           <Info />
         </Group>

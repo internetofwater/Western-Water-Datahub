@@ -88,7 +88,7 @@ export const Collection: React.FC = () => {
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
           <Title order={2} size="h4">
-            Filter by Collection
+            Selected Collections
           </Title>
           <Info />
         </Group>

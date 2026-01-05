@@ -135,7 +135,7 @@ export const Category: React.FC = () => {
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
           <Title order={2} size="h4">
-            Filter by Data Category
+            Filter Collections by Data Category
           </Title>
           <Info />
         </Group>
