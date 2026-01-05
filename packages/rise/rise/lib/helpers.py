@@ -68,7 +68,8 @@ def get_trailing_id(url: str) -> str:
 
 def getResultUrlFromCatalogUrl(url: str, datetime_: Optional[str]) -> str:
     """Create the result url given a catalog item url and the datetime we want to filter by"""
-    base = f"https://data.usbr.gov/rise/api/result?itemId={get_trailing_id(url)}"
+    OLDEST_TO_NEWEST = "asc"
+    base = f"https://data.usbr.gov/rise/api/result?order[dateTime]={OLDEST_TO_NEWEST}&itemId={get_trailing_id(url)}"
 
     if datetime_:
         parsed_date = datetime_.split("/")
