@@ -55,7 +55,12 @@ const Panel: React.FC = () => {
   return (
     <>
       <Paper className={styles.panelWrapper}>
-        <Stack gap="calc(var(--default-spacing) * 3)" px="xl" pb="xl" justify="center">
+        <Stack
+          gap="calc(var(--default-spacing) * 3)"
+          px="xl"
+          pb="xl"
+          justify="center"
+        >
           <Header />
           <Divider size="md" label="Collection-level Filters" />
           <Filters />
