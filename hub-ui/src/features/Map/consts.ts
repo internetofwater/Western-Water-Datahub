@@ -48,6 +48,7 @@ export const ValidStates = [
   "CA",
   "OR",
   "WA",
+  "WY",
 ];
 
 export const GeographyFilterSources = [

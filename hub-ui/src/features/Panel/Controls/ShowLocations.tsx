@@ -9,6 +9,8 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Text } from "@mantine/core";
 import Tooltip from "@/components/Tooltip";
 import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
+import { useMap } from "@/contexts/MapContexts";
+import { MAP_ID } from "@/features/Map/config";
 import { useLoading } from "@/hooks/useLoading";
 import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
@@ -39,6 +41,8 @@ export const ShowLocations: React.FC = () => {
   const isFirstTime = useRef(true);
 
   const [isDisabled, setIsDisabled] = useState(true);
+
+  const { persistentPopup } = useMap(MAP_ID);
 
   useEffect(() => {
     const isLoading =
@@ -179,6 +183,11 @@ export const ShowLocations: React.FC = () => {
   // }, [isLoadingGeography, isFetchingCollections, isFetchingLocations, selectedCollections]);
 
   const addData = async () => {
+    // User has a popup open that may not be relevant any longer
+    if (persistentPopup && persistentPopup.isOpen()) {
+      persistentPopup.remove();
+    }
+
     const loadingInstance = loadingManager.add(
       "Fetching Locations",
       ELoadingType.Locations,

@@ -41,11 +41,10 @@ export const Collection: React.FC = () => {
     const collectionOptions: ComboboxData = collections
       .map((collection) => ({
         value: collection.id,
-        label: collection.description ?? collection.id,
+        label: collection.title ?? collection.id,
       }))
       .sort((a, b) => a.label.localeCompare(b.label));
 
-    // TODO: update this for array
     if (
       !collections.some((_collection) =>
         selectedCollections.includes(_collection.id),
@@ -56,32 +55,6 @@ export const Collection: React.FC = () => {
 
     setCollectionOptions(collectionOptions);
   }, [collections]);
-
-  // useEffect(() => {
-  //   layers.forEach((layer) => {
-  //     if (!selectedCollections.includes(layer.collectionId)) {
-  //       removeLayer(layer.id);
-  //     }
-  //   });
-  //   selectedCollections.forEach((collectionId) => {
-  //     if (!hasLayer({ collectionId })) {
-  //       // TODO: move to manager, add nuances
-  //       addLayer({
-  //         id: mainManager.createUUID(),
-  //         collectionId,
-  //         color: getRandomHexColor(),
-  //         from: null,
-  //         to: null,
-  //         parameters: [],
-  //         position: layers.length + 1,
-  //         opacity: DEFAULT_FILL_OPACITY,
-  //         paletteDefinition: null,
-  //         visible: false,
-  //         loaded: false,
-  //       });
-  //     }
-  //   });
-  // }, [selectedCollections]);
 
   const getDescription = (
     provider: MainState["provider"],
