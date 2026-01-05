@@ -4,7 +4,7 @@
  */
 
 import { useEffect } from "react";
-import { Paper, Stack } from "@mantine/core";
+import { Divider, Paper, Stack } from "@mantine/core";
 import Loading from "@/features/Loading";
 import Controls from "@/features/Panel/Controls";
 import { DateSelect } from "@/features/Panel/DateSelect";
@@ -55,9 +55,15 @@ const Panel: React.FC = () => {
   return (
     <>
       <Paper className={styles.panelWrapper}>
-        <Stack gap="lg" px="xl" pb="xl" justify="center">
+        <Stack
+          gap="calc(var(--default-spacing) * 3)"
+          px="xl"
+          pb="xl"
+          justify="center"
+        >
           <Header />
           <Filters />
+          <Divider />
           <ParameterSelect />
           <Geography />
           <DateSelect />
