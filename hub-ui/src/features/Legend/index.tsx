@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   ActionIcon,
   Box,
@@ -28,6 +28,8 @@ const Legend: React.FC = () => {
 
   const overlay = useSessionStore((state) => state.overlay);
   const setOverlay = useSessionStore((state) => state.setOverlay);
+
+  const firstLayer = useRef(true);
 
   const [show, setShow] = useState(false);
 
@@ -77,6 +79,13 @@ const Legend: React.FC = () => {
     setOverlay(show ? EOverlay.Legend : null);
     setShow(show);
   };
+
+  useEffect(() => {
+    if (firstLayer.current && layers.length > 0) {
+      firstLayer.current = false;
+      setOverlay(EOverlay.Legend);
+    }
+  }, [layers]);
 
   useEffect(() => {
     if (overlay !== EOverlay.Legend) {

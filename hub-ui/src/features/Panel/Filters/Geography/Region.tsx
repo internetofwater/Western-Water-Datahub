@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { FeatureCollection, Polygon } from "geojson";
 import { ComboboxData, Select, Skeleton } from "@mantine/core";
 import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
+import { ValidRegions } from "@/features/Map/consts";
 import { SourceId } from "@/features/Map/sources";
 import { formatOptions } from "@/features/Panel/Filters/utils";
 import loadingManager from "@/managers/Loading.init";
@@ -55,7 +56,9 @@ export const Region: React.FC = () => {
 
       if (regionFeatureCollection.features.length) {
         const regionOptions = formatOptions(
-          regionFeatureCollection.features,
+          regionFeatureCollection.features.filter((feature) =>
+            ValidRegions.includes(String(feature.id)),
+          ),
           (feature) => String(feature.id),
           (feature) => String(feature?.properties?.[RegionField.Name]),
         );

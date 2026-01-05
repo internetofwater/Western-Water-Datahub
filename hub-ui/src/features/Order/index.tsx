@@ -36,11 +36,11 @@ const Order: React.FC = () => {
   const helpText = (
     <>
       <Text size="sm">
-        Layers are drawn onto the map in the order listed below.
+        Collections are drawn onto the map in the order listed below.
       </Text>
       <br />
       <Text size="sm">
-        Use the arrow buttons to move layers up or down in the draw order.
+        Use the arrow buttons to move collections up or down in the draw order.
       </Text>
     </>
   );
@@ -57,7 +57,7 @@ const Order: React.FC = () => {
       closeOnClickOutside={false}
     >
       <Popover.Target>
-        <Tooltip label="Reorder layer" disabled={show}>
+        <Tooltip label="Reorder collections" disabled={show}>
           <ActionIcon
             className={styles.orderButton}
             size="lg"
@@ -71,7 +71,7 @@ const Order: React.FC = () => {
         <Tooltip multiline label={helpText}>
           <Group className={styles.title} gap="xs" mb="var(--default-spacing)">
             <Title order={4} size="h5">
-              Layer Ordering
+              Collection Ordering
             </Title>
             <Info />
           </Group>
