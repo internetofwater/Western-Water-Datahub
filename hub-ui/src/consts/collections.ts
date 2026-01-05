@@ -11,14 +11,12 @@ export enum CollectionId {
   USACEEdr = "usace-edr",
   Streamgages = "usgs-sta",
   Prism = "usgs-prism",
+  AWDB = "awdb-forecasts-edr",
 
   NWMChannelRouting = "National_Water_Model_Channel_Routing_Output",
   NWMAssimilationSystem = "National_Water_Model_Land_Data_Assimilation_System_Output",
   NWMReachToReach = "National_Water_Data_Reach_to_Reach_Routing_Output",
   NWMLakeOutput = "National_Water_Model_Lakeout",
-
-  ArizonaWaterWells = "ArizonaWaterWells",
-  AWDB = "awdb-forecasts-edr",
 
   NOAARFC = "noaa-rfc",
 }
@@ -44,7 +42,6 @@ export const idStoreProperty = "id_store";
 // These feature collections have feature identifiers not compatible with Mapbox
 export const StringIdentifierCollections: string[] = [
   CollectionId.AWDB,
-  CollectionId.ArizonaWaterWells,
   CollectionId.NWMLakeOutput,
   CollectionId.Streamgages,
   CollectionId.SNOTELEdr,
@@ -104,13 +101,6 @@ export type Restiction =
   | GeographyFilterRestriction;
 
 export const CollectionRestrictions: Record<string, Restiction[]> = {
-  [CollectionId.ArizonaWaterWells]: [
-    {
-      type: RestrictionType.Size,
-      size: 83700000000,
-      message: "Draw a polygon that's roughly 1/4th of Arizona.",
-    },
-  ],
   [CollectionId.NWMAssimilationSystem]: [
     {
       type: RestrictionType.Size,
@@ -183,6 +173,41 @@ export const CollectionRestrictions: Record<string, Restiction[]> = {
     {
       type: RestrictionType.GeographyFilter,
       message: "Select a date range no greater than one year.",
+    },
+  ],
+  [CollectionId.RISEEdr]: [
+    {
+      type: RestrictionType.Day,
+      days: 7300,
+      message: "Select a date range no greater than twenty years.",
+    },
+  ],
+  [CollectionId.SNOTELEdr]: [
+    {
+      type: RestrictionType.Day,
+      days: 7300,
+      message: "Select a date range no greater than twenty years.",
+    },
+  ],
+  [CollectionId.USACEEdr]: [
+    {
+      type: RestrictionType.Day,
+      days: 7300,
+      message: "Select a date range no greater than twenty years.",
+    },
+  ],
+  [CollectionId.Streamgages]: [
+    {
+      type: RestrictionType.Day,
+      days: 7300,
+      message: "Select a date range no greater than twenty years.",
+    },
+  ],
+  [CollectionId.AWDB]: [
+    {
+      type: RestrictionType.Day,
+      days: 7300,
+      message: "Select a date range no greater than twenty years.",
     },
   ],
 };
