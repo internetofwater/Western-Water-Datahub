@@ -6,7 +6,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { StoreApi, UseBoundStore } from "zustand";
 import useSessionStore from "@/stores/session";
-import { LoadingType, SessionState } from "@/stores/session/types";
+import { ELoadingType, SessionState } from "@/stores/session/types";
 import LoadingManager from "../Loading.manager";
 
 describe("LoadingManager", () => {
@@ -24,7 +24,7 @@ describe("LoadingManager", () => {
   });
 
   test("should add a loading instance to the store", () => {
-    const id = loadingManager.add("Loading data...", LoadingType.Data);
+    const id = loadingManager.add("Loading data...", ELoadingType.Data);
     const loadingInstances = store.getState().loadingInstances;
 
     expect(loadingInstances.length).toBe(1);
@@ -34,7 +34,7 @@ describe("LoadingManager", () => {
   });
 
   test("should remove a loading instance from the store", () => {
-    const id = loadingManager.add("Removing...", LoadingType.Data);
+    const id = loadingManager.add("Removing...", ELoadingType.Data);
     loadingManager.remove(id);
 
     const loadingInstances = store.getState().loadingInstances;

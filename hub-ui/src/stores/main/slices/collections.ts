@@ -7,7 +7,7 @@ import { StateCreator } from "zustand";
 import { ICollection } from "@/services/edr.service";
 import { MainState } from "@/stores/main/types";
 
-interface CollectionSlice {
+export interface ICollectionSlice {
   collections: ICollection[];
   setCollections: (collections: ICollection[]) => void;
   originalCollections: ICollection[];
@@ -20,7 +20,7 @@ export const createCollectionSlice: StateCreator<
   MainState,
   [["zustand/immer", never]],
   [],
-  CollectionSlice
+  ICollectionSlice
 > = (set, get) => ({
   collections: [],
   setCollections: (collections) =>

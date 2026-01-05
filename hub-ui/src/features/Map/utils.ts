@@ -3,20 +3,43 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ExpressionSpecification, LayerSpecification } from "mapbox-gl";
+import {
+  ExpressionSpecification,
+  FilterSpecification,
+  LayerSpecification,
+} from "mapbox-gl";
 import { LayerType } from "@/components/Map/types";
-import { Location } from "@/stores/main/types";
+import { idStoreProperty } from "@/consts/collections";
+import { DEFAULT_FILL_OPACITY } from "@/features/Map/consts";
+import { TLayer, TLocation } from "@/stores/main/types";
+
+export const getDefaultFilter = (
+  type: LayerType,
+): FilterSpecification | undefined => {
+  switch (type) {
+    case LayerType.Circle:
+      return ["==", ["geometry-type"], "Point"];
+    case LayerType.Line:
+      return [
+        "any",
+        ["==", ["geometry-type"], "Polygon"],
+        ["==", ["geometry-type"], "LineString"],
+      ];
+    case LayerType.Fill:
+      return ["==", ["geometry-type"], "Polygon"];
+  }
+};
 
 export const getPointLayerDefinition = (
   layerId: string,
   sourceId: string,
-  color: string,
+  color: TLayer["color"],
 ): LayerSpecification => {
   return {
     id: layerId,
     type: LayerType.Circle,
     source: sourceId,
-    filter: ["==", ["geometry-type"], "Point"],
+    filter: getDefaultFilter(LayerType.Circle),
     paint: {
       "circle-radius": 6,
       "circle-color": color,
@@ -28,17 +51,13 @@ export const getPointLayerDefinition = (
 export const getLineLayerDefinition = (
   layerId: string,
   sourceId: string,
-  color: string = "#000",
+  color: TLayer["color"] = "#000",
 ): LayerSpecification => {
   return {
     id: layerId,
     type: LayerType.Line,
     source: sourceId,
-    filter: [
-      "any",
-      ["==", ["geometry-type"], "Polygon"],
-      ["==", ["geometry-type"], "LineString"],
-    ],
+    filter: getDefaultFilter(LayerType.Line),
     layout: {
       "line-cap": "round",
       "line-join": "round",
@@ -54,28 +73,62 @@ export const getLineLayerDefinition = (
 export const getFillLayerDefinition = (
   layerId: string,
   sourceId: string,
-  color: string = "#000",
+  color: TLayer["color"] = "#000",
 ): LayerSpecification => {
   return {
     id: layerId,
     type: LayerType.Fill,
     source: sourceId,
-    filter: ["==", ["geometry-type"], "Polygon"],
+    filter: getDefaultFilter(LayerType.Fill),
     paint: {
-      "fill-opacity": 0.7,
+      "fill-opacity": DEFAULT_FILL_OPACITY,
       "fill-color": color,
     },
   };
 };
 
 export const getSelectedColor = (
-  locationIds: Array<Location["id"]>,
-  originalColor: string = "#000",
+  locationIds: Array<TLocation["id"]>,
+  originalColor: TLayer["color"] = "#000",
 ): ExpressionSpecification => {
   return [
     "case",
-    ["in", ["id"], ["literal", locationIds]],
+    [
+      "in",
+      ["to-string", ["coalesce", ["get", idStoreProperty], ["id"]]],
+      ["literal", locationIds],
+    ],
     "#FFF",
     originalColor,
+  ];
+};
+
+export const getFilter = (
+  locationIds: Array<TLocation["id"]>,
+  type: LayerType,
+): ExpressionSpecification => {
+  return [
+    "all",
+    getDefaultFilter(type),
+    [
+      "in",
+      ["to-string", ["coalesce", ["get", idStoreProperty], ["id"]]],
+      ["literal", locationIds],
+    ],
+  ];
+};
+
+export const getSortKey = (
+  locationIds: Array<TLocation["id"]>,
+): ExpressionSpecification => {
+  return [
+    "case",
+    [
+      "in",
+      ["to-string", ["coalesce", ["get", idStoreProperty], ["id"]]],
+      ["literal", locationIds],
+    ],
+    1,
+    0,
   ];
 };

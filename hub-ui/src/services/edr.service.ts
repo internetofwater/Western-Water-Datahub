@@ -156,7 +156,8 @@ export interface IGetCorridorParams extends IDataQueryParams {
   ["height-units"]: string;
 }
 
-export type IGetLocationParams = Omit<IDataQueryParams, "z">;
+// Note bbox is not supported by most edr implementations
+export type IGetLocationParams = Omit<IDataQueryParams, "z"> & { bbox?: BBox };
 
 /**
  * Determines the return type based on the format.
@@ -351,7 +352,10 @@ export class EDRService extends Service {
    * - `crs`: Identifier (id) of the coordinate system to return data in list of valid crs identifiers for the chosen collection are defined in the metadata responses. If not supplied the coordinate reference system will default to WGS84.
    * - `f`: Format of the response.
    */
-  async getCube<T extends CoverageJSON | GeoJSON | string = CoverageJSON>(
+  async getCube<
+    T extends CoverageJSON | CoverageCollection | GeoJSON | string =
+      CoverageJSON,
+  >(
     collectionId: string,
     options: IServiceRequestOptions<IGetCubeParams> = {},
   ): Promise<T> {
@@ -441,8 +445,10 @@ export class EDRService extends Service {
   async getItems<T extends JSON | GeoJSON | string = GeoJSON>(
     collectionId: string,
     options: IServiceRequestOptions<IGetCollectionsParams> = DEFAULT_OPTIONS,
+    next?: string,
   ): Promise<T> {
-    const url: string = `${this.baseUrl}/collections/${collectionId}/items`;
+    const url: string =
+      next ?? `${this.baseUrl}/collections/${collectionId}/items`;
     const params = { ...options.params };
     const result: T = await request({
       url,
@@ -491,8 +497,10 @@ export class EDRService extends Service {
   async getLocations<T extends JSON | GeoJSON | string = GeoJSON>(
     collectionId: string,
     options: IServiceRequestOptions<IGetLocationParams> = DEFAULT_OPTIONS,
+    next?: string,
   ): Promise<T> {
-    const url: string = `${this.baseUrl}/collections/${collectionId}/locations`;
+    const url: string =
+      next ?? `${this.baseUrl}/collections/${collectionId}/locations`;
     const params = { ...options.params };
     const result: T = await request({
       url,
@@ -824,7 +832,7 @@ export interface IExtentTemporal {
   /**
    *
    */
-  interval: [string, string][];
+  interval: [string | null, string | null][];
 
   /**
    *
@@ -958,7 +966,7 @@ export interface ParameterName {
     };
   };
   unit: {
-    label: {
+    label?: {
       en: string;
     };
     symbol: {
@@ -1102,16 +1110,25 @@ export type CoverageCollection = {
   coverages: CoverageJSON[];
 };
 
+export type CoverageAxesSegments = {
+  start: number;
+  stop: number;
+  num: number;
+};
+export type CoverageAxesValues = {
+  values: (number | string)[];
+};
+
 export interface CoverageJSON {
   type: string;
   domain: {
     type: string;
     domainType: string;
+
     axes: {
-      [key: string]: {
-        values: (number | string)[];
-      };
+      [key: string]: CoverageAxesSegments | CoverageAxesValues;
     };
+
     referencing: {
       coordinates: string[];
       system: {
