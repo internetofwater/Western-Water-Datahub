@@ -112,7 +112,7 @@ export const LocationBlock: React.FC<Props> = (props) => {
         />
       ))}
 
-      {chunkedLocations.length > pageSize && (
+      {locations.length > pageSize && (
         <>
           <NumberInput
             size="xs"
