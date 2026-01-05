@@ -203,10 +203,10 @@ resources:
     providers:
       - type: edr
         name: usace.usace_edr.USACEEDRProvider
-        data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
+        data: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
       - type: feature
         name: usace.usace.USACEProvider
-        data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
+        data: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
         entity: Observation
         title_field: name
     link:
