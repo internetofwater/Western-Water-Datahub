@@ -7,6 +7,8 @@ from typing import Optional
 
 from typing import Dict
 
+import urllib.parse
+
 
 def get_reservoir_capacity_json_path():
     """
@@ -69,7 +71,11 @@ def get_trailing_id(url: str) -> str:
 def getResultUrlFromCatalogUrl(url: str, datetime_: Optional[str]) -> str:
     """Create the result url given a catalog item url and the datetime we want to filter by"""
     OLDEST_TO_NEWEST = "asc"
-    base = f"https://data.usbr.gov/rise/api/result?order[dateTime]={OLDEST_TO_NEWEST}&itemId={get_trailing_id(url)}"
+    # this param needs to be url encoded; if we don't
+    # do it here, the http client will do it later anyways,
+    # but it is helpful for clarity / debugging to do it here
+    orderParamEncoded = urllib.parse.quote("order[dateTime]")
+    base = f"https://data.usbr.gov/rise/api/result?{orderParamEncoded}={OLDEST_TO_NEWEST}&itemId={get_trailing_id(url)}"
 
     if datetime_:
         parsed_date = datetime_.split("/")
