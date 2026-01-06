@@ -9,7 +9,7 @@ echo "START /entrypoint.sh"
 
 set +e
 
-export PYGEOAPI_HOME=/pygeoapi
+export PYGEOAPI_HOME=/opt/pygeoapi
 
 if [[ -z "$PYGEOAPI_CONFIG" ]]; then
     export PYGEOAPI_CONFIG="${PYGEOAPI_HOME}/local.config.yml"
@@ -57,7 +57,7 @@ start_gunicorn() {
     [[ "${SCRIPT_NAME}" = '/' ]] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"
 
     echo "Starting gunicorn name=${CONTAINER_NAME} on ${CONTAINER_HOST}:${CONTAINER_PORT} with ${WSGI_WORKERS} workers and SCRIPT_NAME=${SCRIPT_NAME}"
-    exec /venv/bin/gunicorn --workers ${WSGI_WORKERS} \
+    exec gunicorn --workers ${WSGI_WORKERS} \
         --worker-class=${WSGI_WORKER_CLASS} \
         --timeout ${WSGI_WORKER_TIMEOUT} \
         --name=${CONTAINER_NAME} \
