@@ -18,7 +18,7 @@ import styles from "@/features/Loading/Loading.module.css";
 
 type Props = {
   loadingTexts: string[];
-  desktop: boolean;
+  desktop?: boolean;
 };
 
 export const Info: React.FC<PropsWithChildren<Props>> = (props) => {
@@ -29,7 +29,7 @@ export const Info: React.FC<PropsWithChildren<Props>> = (props) => {
       <HoverCardTarget>
         <Box
           w="100%"
-          className={`${styles.loadingBar} ${desktop ? styles.desktop : styles.mobile}`}
+          className={`${styles.loadingBar} ${desktop !== undefined ? (desktop ? styles.desktop : styles.mobile) : ""}`}
         >
           {children}
         </Box>

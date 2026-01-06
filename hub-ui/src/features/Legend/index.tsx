@@ -13,6 +13,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import LegendIcon from "@/assets/Legend";
 import Tooltip from "@/components/Tooltip";
 import { Entry } from "@/features/Legend/Entry";
@@ -28,6 +29,8 @@ const Legend: React.FC = () => {
 
   const overlay = useSessionStore((state) => state.overlay);
   const setOverlay = useSessionStore((state) => state.setOverlay);
+
+  const mobile = useMediaQuery("(max-width: 899px)");
 
   const firstLayer = useRef(true);
 
@@ -81,7 +84,7 @@ const Legend: React.FC = () => {
   };
 
   useEffect(() => {
-    if (firstLayer.current && layers.length > 0) {
+    if (!mobile && firstLayer.current && layers.length > 0) {
       firstLayer.current = false;
       setOverlay(EOverlay.Legend);
     }

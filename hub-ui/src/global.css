@@ -30,15 +30,21 @@
   }
 }
 
+@media screen and (max-width: 899px) {
+  :root {
+    font-size: 16px;
+  }
+}
+
 @media screen and (max-width: 768px) {
   :root {
-    font-size: 10px;
+    font-size: 14px;
   }
 }
 
 @media screen and (max-width: 600px) {
   :root {
-    font-size: 10px;
+    font-size: 12px;
   }
 }
 

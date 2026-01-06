@@ -26,7 +26,7 @@ export const LayoutPage: React.FC = () => {
             <Notifications />
           </Stack>
         </Group>
-        <Loading desktop />
+        <Loading />
       </Stack>
       <MapTools />
       <DownloadModal />

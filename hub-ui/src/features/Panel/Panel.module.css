@@ -2,8 +2,18 @@
  * Copyright 2025 Lincoln Institute of Land Policy
  * SPDX-License-Identifier: MIT
  */
+
+.actionButton svg {
+  width: 2rem;
+  height: auto;
+}
+
 .actionButton:not(:disabled) svg {
   fill: var(--mantine-color-white);
+}
+
+.geoStack {
+  min-height: 7.5rem;
 }
 
 .gradientContainer {
@@ -22,18 +32,28 @@
   justify-content: space-between;
 }
 
+.header {
+  position: sticky;
+  top: var(--default-spacing);
+  width: 100%;
+  background: var(--mantine-color-body);
+  z-index: 200;
+}
+
 .panelWrapper {
   height: 100%;
-  max-height: 99vh;
 
-  width: 400px;
-  min-width: 400px;
+  width: 25rem;
+  min-width: 25rem;
   max-width: 25%;
 
   margin: 0 auto;
 
   overflow-x: hidden;
   overflow-y: auto;
+
+  z-index: 199;
+  background: var(--mantine-color-body);
 }
 
 .radioBody {
@@ -48,15 +68,73 @@
   text-align: center;
 }
 
+.mobileClose {
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-left: unset;
+  margin-right: unset;
+  display: none;
+
+  fill: var(--mantine-color-text);
+  stroke: var(--mantine-color-text);
+}
+
 .filterTitleWrapper > svg {
-  width: 18px;
+  width: 1.125rem;
+  height: auto;
+}
+.mobileClose svg {
+  width: 2rem;
   height: auto;
 }
 
+.mobileOpen {
+  position: absolute;
+  left: var(--default-spacing);
+  top: var(--default-spacing);
+  margin-left: unset;
+  margin-right: unset;
+  display: none;
+  z-index: 1;
+}
+
+.selectStack {
+  min-height: 5rem;
+}
+
 @media screen and (max-width: 899px) {
+  .mobileClose,
+  .mobileOpen {
+    display: block;
+  }
+
+  .toggleButton {
+    display: none;
+  }
+
+  .panelOpen {
+    width: 100%;
+  }
+
+  .panelClosed {
+    width: 100%;
+    max-width: unset;
+  }
+
   .panelWrapper {
-    height: unset;
-    max-height: unset;
-    min-width: 100%;
+    position: absolute;
+    height: calc(100% - (var(--default-spacing) * 3));
+    min-height: calc(100% - (var(--default-spacing) * 3));
+    width: calc(100% - (var(--default-spacing) * 3));
+    min-width: calc(100% - (var(--default-spacing) * 3));
+    max-width: calc(100% - (var(--default-spacing) * 3));
+    margin: auto;
+
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
   }
 }
