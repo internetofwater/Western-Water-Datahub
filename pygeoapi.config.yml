@@ -589,8 +589,8 @@ resources:
 
   resviz-edr:
     type: collection
-    title: USBR Reservoir Drought Conditions (resviz)
-    description: contains current and average drought conditions for USBR reservoirs dervied from the USBR resviz endpoint
+    title: USBR Reservoir Storage Levels (resviz)
+    description: contains current and average storage levels for USBR reservoirs dervied from the USBR resviz endpoint
     hidden: True
     provider-name:
       - DERIVED
@@ -606,6 +606,10 @@ resources:
         rel: canonical
         title: Canonical
         href: https://data.usbr.gov/rise/rise-resviz/data
+      - type: application/html
+        rel: documentation
+        title: Documentation
+        href: https://data.usbr.gov/visualizations/reservoir-conditions/
     providers:
       - type: edr
         name: pgedr.PostgresEDRProvider
