@@ -34,7 +34,7 @@ const Geography: React.FC = () => {
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs" mb={-8}>
           <Title order={2} size="h4">
-            Filter Items by Geography
+            Filter by Geography
           </Title>
           <Info />
         </Group>
