@@ -34,10 +34,21 @@
 
 .header {
   position: sticky;
-  top: var(--default-spacing);
+  top: 0;
   width: 100%;
   background: var(--mantine-color-body);
   z-index: 200;
+}
+
+.panelUnderlay {
+  position: absolute;
+  width: 100dvw;
+  height: 100dvh;
+
+  z-index: 199;
+  background: #000;
+  opacity: 0.8;
+  pointer-events: none;
 }
 
 .panelWrapper {
@@ -71,7 +82,7 @@
 .mobileClose {
   position: absolute;
   right: 0;
-  top: 0;
+  top: var(--default-spacing);
   margin-left: unset;
   margin-right: unset;
   display: none;
@@ -123,18 +134,16 @@
   }
 
   .panelWrapper {
-    position: absolute;
-    height: calc(100% - (var(--default-spacing) * 3));
-    min-height: calc(100% - (var(--default-spacing) * 3));
-    width: calc(100% - (var(--default-spacing) * 3));
-    min-width: calc(100% - (var(--default-spacing) * 3));
-    max-width: calc(100% - (var(--default-spacing) * 3));
-    margin: auto;
-
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
+    position: fixed;
+    top: var(--default-spacing);
+    left: var(--default-spacing);
+    right: var(--default-spacing);
+    bottom: var(--default-spacing);
+    width: calc(100dvw - (var(--default-spacing) * 3));
+    min-width: calc(100dvw - (var(--default-spacing) * 3));
+    height: auto;
+    max-height: calc(100dvh - (var(--default-spacing) * 2));
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }

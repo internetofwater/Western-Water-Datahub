@@ -6,7 +6,6 @@
 import { useEffect, useState } from "react";
 import { Box, Divider, Stack } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import Loading from "@/features/Loading";
 import Controls from "@/features/Panel/Controls";
 import { DateSelect } from "@/features/Panel/DateSelect";
 import Filters from "@/features/Panel/Filters";
@@ -72,27 +71,29 @@ const Panel: React.FC = () => {
   }, [mobile, overlay]);
 
   return (
-    <Box
-      className={styles.panelWrapper}
-      style={{ display: isVisible ? "block" : "none" }}
-    >
-      <Stack
-        gap="calc(var(--default-spacing) * 3)"
-        px="xl"
-        py="xl"
-        justify="center"
-        className={styles.panelContent}
+    <>
+      {mobile && isVisible && <Box className={styles.panelUnderlay} />}
+      <Box
+        className={styles.panelWrapper}
+        style={{ display: isVisible ? "block" : "none" }}
       >
-        <Header />
-        <Filters />
-        <Divider />
-        <ParameterSelect />
-        <Geography />
-        <DateSelect />
-        <Controls />
-      </Stack>
-      <Loading desktop={false} />
-    </Box>
+        <Stack
+          gap="calc(var(--default-spacing) * 3)"
+          px="xl"
+          py="xl"
+          justify="center"
+          className={styles.panelContent}
+        >
+          <Header />
+          <Filters />
+          <Divider />
+          <ParameterSelect />
+          <Geography />
+          <DateSelect />
+          <Controls />
+        </Stack>
+      </Box>
+    </>
   );
 };
 
