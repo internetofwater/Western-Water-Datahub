@@ -12,6 +12,10 @@
   --default-spacing: 8px;
 }
 
+html {
+  overflow: hidden;
+}
+
 #map-container-main-map {
   width: 100%;
   height: 100%;
