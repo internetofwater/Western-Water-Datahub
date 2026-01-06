@@ -13,6 +13,7 @@ import {
   Button,
   Collapse,
   Divider,
+  Flex,
   Group,
   Title,
 } from "@mantine/core";
@@ -171,7 +172,7 @@ const Collection: React.FC<Props> = (props) => {
           </Group>
           <Collapse in={opened}>
             <Divider />
-            <Group w="100%" justify="space-between" align="flex-start" gap={0}>
+            <Flex className={styles.layerContent} gap={0}>
               <Menu
                 collectionId={layer.collectionId}
                 collectionType={collectionType}
@@ -203,7 +204,7 @@ const Collection: React.FC<Props> = (props) => {
                 ]}
                 linkLocation={linkLocation}
               />
-            </Group>
+            </Flex>
           </Collapse>
         </Box>
       )}

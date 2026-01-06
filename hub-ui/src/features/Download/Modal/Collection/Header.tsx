@@ -4,6 +4,7 @@
  */
 
 import { Button, Group, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import CopyInput from "@/components/CopyInput";
 import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Download/Download.module.css";
@@ -18,6 +19,8 @@ type Props = {
 
 export const Header: React.FC<Props> = (props) => {
   const { url, collectionType, isLoading, onGetAllCSV } = props;
+
+  const mobile = useMediaQuery("(max-width: 899px)");
 
   const getMessage = () => {
     switch (collectionType) {
@@ -40,7 +43,7 @@ export const Header: React.FC<Props> = (props) => {
           size="sm"
           url={url}
           className={
-            collectionType === CollectionType.EDR
+            !mobile && collectionType === CollectionType.EDR
               ? styles.partialWidth
               : styles.fullWidth
           }

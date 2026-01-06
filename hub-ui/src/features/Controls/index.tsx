@@ -36,7 +36,7 @@ const Controls: React.FC = () => {
         className={styles.left}
       >
         <Stack gap="var(--default-spacing)">
-          {mobile ? (
+          {mobile && (
             <ActionIcon
               aria-label="Use the application menu to find data"
               size="lg"
@@ -45,9 +45,8 @@ const Controls: React.FC = () => {
             >
               <Menu />
             </ActionIcon>
-          ) : (
-            <Info />
           )}
+          <Info />
           <Time />
           <Order />
           <Search />
