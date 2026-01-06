@@ -57,9 +57,9 @@ const Panel: React.FC = () => {
       <Paper className={styles.panelWrapper}>
         <Stack gap="calc(var(--default-spacing) * 3)" px="xl" pb="xl" justify="center">
           <Header />
-          <Divider size="md" label="Collection-level Filters" />
+          <Divider size="md" label="Find a Collection" />
           <Filters />
-          <Divider size="md" label="Item-level Filters" />
+          <Divider size="md" label="Refine your Search" />
           <ParameterSelect />
           <Geography />
           <DateSelect />
