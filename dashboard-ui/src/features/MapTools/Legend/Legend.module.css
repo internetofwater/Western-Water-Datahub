@@ -3,8 +3,23 @@
  * SPDX-License-Identifier: MIT
  */
 
+.actionIconRoot {
+    margin-right: var(--default-spacing);
+}
+
+.actionIcon {
+    stroke: var(--mantine-color-text);
+    fill: var(--mantine-color-text);
+}
+
+.actionIcon > svg {
+    width: 1.5rem;
+    height: auto;
+}
+
 .wrapper {
     padding: calc(var(--default-spacing) * 2);
+    max-width: 340px;
 }
 
 .gradientContainer {
@@ -38,14 +53,16 @@
 }
 
 .subListItem {
-    margin-left: var(--default-spacing);
-    margin-right: var(--default-spacing);
+    margin-left: calc(var(--default-spacing) / 4);
+    margin-right: calc(var(--default-spacing) / 4);
+    margin-top: calc(var(--default-spacing) / 2);
+    margin-bottom: calc(var(--default-spacing) / 2);
 }
 
 .listItemIconWrapper > svg {
     fill: var(--mantine-color-text);
     stroke: var(--mantine-color-text);
-    width: 18px;
+    width: 1rem;
     height: auto;
 }
 
@@ -57,7 +74,7 @@
 
     margin-bottom: var(--default-spacing);
 
-    background-color: var(--mantine-color-gray-4);
+    background-color: var(--mantine-color-gray-6);
     padding: 4px;
 }
 

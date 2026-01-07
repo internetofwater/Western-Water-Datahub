@@ -5,26 +5,24 @@
 
 import DashedLine from '@/icons/DashedLine';
 import Square from '@/icons/Square';
-import { Stack, Text, Image, Group, Box, Tooltip } from '@mantine/core';
+import { Stack, Text, Image, Group, Box, Tooltip, Title } from '@mantine/core';
 import {
     capacityFill,
     storageFill,
 } from '@/features/Reservior/TeacupDiagram/consts';
-import styles from '@/features/Legend/Legend.module.css';
+import styles from '@/features/MapTools/Legend/Legend.module.css';
 import Info from '@/icons/Info';
 import { getTooltipContent } from './utils';
 
 export const Teacups: React.FC = () => {
     return (
         <Stack>
-            <Text size="xl" fw={700}>
-                Reservoirs
-            </Text>
+            <Title order={4}>Reservoirs</Title>
             <Group>
                 <Image
                     src="/map-icons/teacup-65-50.png"
                     alt="Reservoir Teacup Icon"
-                    h={75}
+                    h={60}
                     w="auto"
                     fit="contain"
                 />
@@ -39,7 +37,7 @@ export const Teacups: React.FC = () => {
                                 width={20}
                                 height={20}
                             />
-                            <Text>Capacity</Text>
+                            <Text size="sm">Capacity</Text>
                             <Box
                                 component="span"
                                 className={styles.listItemIconWrapper}
@@ -54,7 +52,7 @@ export const Teacups: React.FC = () => {
                     >
                         <Group gap="xs" className={styles.teacupLegend}>
                             <Square fill={storageFill} width={20} height={20} />
-                            <Text>Storage</Text>
+                            <Text size="sm">Storage</Text>
                             <Box
                                 component="span"
                                 className={styles.listItemIconWrapper}
@@ -72,7 +70,7 @@ export const Teacups: React.FC = () => {
                             className={styles.thirtyYearAverageLegend}
                         >
                             <DashedLine />
-                            <Text>30-year Average</Text>
+                            <Text size="sm">30-year Average</Text>
                             <Box
                                 component="span"
                                 className={styles.listItemIconWrapper}

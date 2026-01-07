@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import styles from '@/features/Legend/Legend.module.css';
+import styles from '@/features/MapTools/Legend/Legend.module.css';
+import { Box, Group, Text } from '@mantine/core';
 
 type Props = {
     colors: string[];
@@ -20,19 +21,19 @@ export const Gradient: React.FC<Props> = (props) => {
     );
 
     return (
-        <div className={styles.gradientContainer}>
-            <div
+        <Box className={styles.gradientContainer}>
+            <Box
                 className={styles.gradient}
                 style={{
                     background: `linear-gradient(to right, ${coloration.join(
                         ', '
                     )})`,
                 }}
-            ></div>
-            <div className={styles.gradientLabelContainer}>
-                <span>{from}</span>
-                <span>{to}</span>
-            </div>
-        </div>
+            ></Box>
+            <Group justify="space-between">
+                <Text size="sm">{from}</Text>
+                <Text size="sm">{to}</Text>
+            </Group>
+        </Box>
     );
 };

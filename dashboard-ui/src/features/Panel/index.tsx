@@ -15,7 +15,6 @@ import {
 import { Header } from '@/features/Panel/Header';
 import styles from '@/features/Panel/Panel.module.css';
 import Reservoirs from '@/features/Reservoirs';
-import Legend from '@/features/Legend';
 import Controls from '@/features/Controls';
 import DarkModeToggle from '@/features/Header/DarkModeToggle';
 import Help from '@/features/Help';
@@ -24,10 +23,6 @@ const items = [
     {
         title: 'Reservoirs',
         content: <Reservoirs />,
-    },
-    {
-        title: 'Legend',
-        content: <Legend />,
     },
     {
         title: 'Controls',

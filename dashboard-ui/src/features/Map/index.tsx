@@ -34,9 +34,6 @@ import {
     getReservoirSymbolSortKey,
     getHighlightIcon,
 } from '@/features/Map/utils';
-import { MapButton as BasemapSelector } from '@/features/MapTools/BaseMap/MapButton';
-import { MapButton as Screenshot } from '@/features/MapTools/Screenshot/MapButton';
-import CustomControl from '@/components/Map/tools/CustomControl';
 import { basemaps } from '@/components/Map/consts';
 import { GeoJSONSource, LngLatLike, MapMouseEvent } from 'mapbox-gl';
 import { useReservoirData } from '@/hooks/useReservoirData';
@@ -574,19 +571,6 @@ const MainMap: React.FC<Props> = (props) => {
                     // scaleControl: true,
                     navigationControl: true,
                 }}
-                customControls={[
-                    {
-                        control: new CustomControl(
-                            (
-                                <>
-                                    <BasemapSelector />
-                                    <Screenshot />
-                                </>
-                            )
-                        ),
-                        position: 'top-right',
-                    },
-                ]}
             />
         </>
     );
