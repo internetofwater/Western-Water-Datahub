@@ -161,7 +161,7 @@ resources:
   snotel-huc06-means:
     type: collection
     title: Snotel Snow Water Equivalent Aggregated by HUC06
-    description: provides snow water equivalent data from SNOTEL aggregated by HUC06 watershed. Each feature contains one average for the entire HUC06; these averages are relative to the 30 year average.
+    description: provides snow water equivalent (swe) data from SNOTEL aggregated by HUC06 watershed. Each feature contains one average for the entire HUC06; this is calculated by taking the latest swe value, dividing it by the 30 year average swe value on for the same day, and multiplying it by 100.
     provider-name:
       - DOA
       - USDA
