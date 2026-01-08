@@ -209,7 +209,7 @@ resources:
         data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
         entity: Observation
         title_field: name
-    link:
+    links:
       - type: application/html
         rel: canonical
         title: Data source
