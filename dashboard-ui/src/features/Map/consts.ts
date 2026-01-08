@@ -168,7 +168,7 @@ export const RISEEDRReservoirSource =
  * @constant
  */
 export const ResVizEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/resviz-edr/locations';
+    'https://cache.wwdh.internetofwater.app/collections/resviz-edr/locations?parameter-name=Storage';
 
 /**
  *
