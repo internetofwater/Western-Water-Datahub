@@ -55,6 +55,19 @@
     width: 4.375rem;
 }
 
+.filterWrapper {
+    padding: calc(var(--default-spacing) * 2);
+}
+
+.filterIcon {
+    fill: var(--mantine-color-text);
+}
+
+.filterIcon svg {
+    width: 1.5rem;
+    height: auto;
+}
+
 @media screen and (max-width: 400px) {
     .nameColumn {
         width: 10rem;

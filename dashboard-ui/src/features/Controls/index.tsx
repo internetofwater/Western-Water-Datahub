@@ -128,11 +128,6 @@ const Controls: React.FC = () => {
         <Stack className={styles.wrapper}>
             {map ? (
                 <>
-                    {/* <ReservoirDateSelector />
-                    <Divider mx="xl" /> */}
-                    <Text size="md" fw={500}>
-                        Reference Data
-                    </Text>
                     <Switch
                         label="Show River Forecast Points (NOAA RFC)"
                         checked={toggleableLayers[LayerId.NOAARiverForecast]}

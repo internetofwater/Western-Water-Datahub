@@ -25,7 +25,7 @@ const items = [
         content: <Reservoirs />,
     },
     {
-        title: 'Controls',
+        title: 'Reference Data',
         content: <Controls />,
     },
 ];
@@ -36,6 +36,7 @@ const Panel: React.FC = () => {
             <Header />
             <Accordion
                 multiple
+                defaultValue={['Reservoirs']}
                 className={styles.sticky}
                 classNames={{
                     root: styles.root,

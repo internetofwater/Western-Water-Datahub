@@ -1,6 +1,6 @@
 /**
- * Copyright 2025 Lincoln Institute of Land Policy
- * SPDX-License-Identifier: Apache-2.0
+ * Copyright 2026 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
  */
 
 import { useEffect, useState } from 'react';
@@ -9,42 +9,53 @@ import { useDisclosure } from '@mantine/hooks';
 import { About } from '@/features/Help/About';
 import { FAQ } from '@/features/Help/FAQ';
 import { Glossary } from '@/features/Help/Glossary';
+import { Contact } from '@/features/Help/Contact';
 import styles from '@/features/Help/Help.module.css';
 import useSessionStore from '@/stores/session';
 import { HelpTab, Overlay } from '@/stores/session/types';
-import { Contact } from '@/features/Help/Contact';
 
 export const HELP_LOCAL_KEY = 'wwdh-show-help';
 
 const Help: React.FC = () => {
     const [opened, { open, close }] = useDisclosure(false);
 
-    const overlay = useSessionStore((store) => store.overlay);
-    const setOverlay = useSessionStore((store) => store.setOverlay);
-    const helpTab = useSessionStore((store) => store.helpTab);
-    const setHelpTab = useSessionStore((store) => store.setHelpTab);
+    const overlay = useSessionStore((s) => s.overlay);
+    const setOverlay = useSessionStore((s) => s.setOverlay);
+    const helpTab = useSessionStore((s) => s.helpTab);
+    const setHelpTab = useSessionStore((s) => s.setHelpTab);
 
-    // local state to trigger render cycle
     const [showHelp, setShowHelp] = useState(false);
-    // const onLoad = useRef(true)
+
+    // TODO: investigate issues with initial load
+    const [initialLoad, setInitialLoad] = useState(true);
 
     useEffect(() => {
-        if (overlay !== Overlay.Help) {
-            close();
-        } else if (!opened) {
-            open();
-        }
-    }, [overlay]);
+        const stored = localStorage.getItem(HELP_LOCAL_KEY);
 
-    useEffect(() => {
-        const showHelp = localStorage.getItem(HELP_LOCAL_KEY);
-        if (!showHelp || showHelp === 'true') {
+        const shouldShow = stored === null || stored === 'true';
+
+        if (shouldShow) {
             setOverlay(Overlay.Help);
             setShowHelp(true);
-        } else if (showHelp === 'false') {
+            open();
+        } else {
             setShowHelp(false);
         }
+
+        setInitialLoad(false);
     }, []);
+
+    useEffect(() => {
+        if (initialLoad) {
+            return;
+        }
+
+        if (overlay === Overlay.Help) {
+            open();
+        } else {
+            close();
+        }
+    }, [overlay]);
 
     const handleClick = () => {
         setHelpTab(HelpTab.About);
@@ -52,7 +63,14 @@ const Help: React.FC = () => {
     };
 
     const handleClose = () => {
-        setOverlay(null);
+        const stored = localStorage.getItem(HELP_LOCAL_KEY);
+        const shouldShow = stored === null || stored === 'true';
+
+        if (shouldShow) {
+            setOverlay(Overlay.Legend);
+        }
+
+        close();
     };
 
     return (
@@ -60,6 +78,7 @@ const Help: React.FC = () => {
             <Tooltip label="Access the about page.">
                 <Button onClick={handleClick}>About</Button>
             </Tooltip>
+
             <Modal
                 size="xl"
                 classNames={{ header: styles.modalHeader }}
@@ -95,7 +114,7 @@ const Help: React.FC = () => {
                     </Tabs.List>
 
                     <Tabs.Panel value={HelpTab.About}>
-                        <About showHelp={showHelp} />
+                        <About onClose={handleClose} showHelp={showHelp} />
                     </Tabs.Panel>
                     <Tabs.Panel value={HelpTab.Glossary}>
                         <Glossary />

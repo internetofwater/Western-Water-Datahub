@@ -3,22 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import DashedLine from '@/icons/DashedLine';
-import Square from '@/icons/Square';
-import { Stack, Text, Image, Group, Box, Tooltip, Title } from '@mantine/core';
-import {
-    capacityFill,
-    storageFill,
-} from '@/features/Reservior/TeacupDiagram/consts';
+import { Stack, Image, Group, Title, Text, Box } from '@mantine/core';
+import { Legend } from '@/features/Reservior/Info/Legend';
 import styles from '@/features/MapTools/Legend/Legend.module.css';
-import Info from '@/icons/Info';
-import { getTooltipContent } from './utils';
 
 export const Teacups: React.FC = () => {
     return (
-        <Stack>
+        <Stack gap="var(--default-spacing)">
             <Title order={4}>Reservoirs</Title>
-            <Group>
+            <Group gap="calc(var(--default-spacing) / 2)">
                 <Image
                     src="/map-icons/teacup-65-50.png"
                     alt="Reservoir Teacup Icon"
@@ -26,60 +19,34 @@ export const Teacups: React.FC = () => {
                     w="auto"
                     fit="contain"
                 />
-                <Stack>
-                    <Tooltip
-                        label={getTooltipContent('capacity')}
-                        position="top-start"
-                    >
-                        <Group gap="xs" className={styles.teacupLegend}>
-                            <Square
-                                fill={capacityFill}
-                                width={20}
-                                height={20}
-                            />
-                            <Text size="sm">Capacity</Text>
-                            <Box
-                                component="span"
-                                className={styles.listItemIconWrapper}
-                            >
-                                <Info />
-                            </Box>
-                        </Group>
-                    </Tooltip>
-                    <Tooltip
-                        label={getTooltipContent('storage')}
-                        position="top-start"
-                    >
-                        <Group gap="xs" className={styles.teacupLegend}>
-                            <Square fill={storageFill} width={20} height={20} />
-                            <Text size="sm">Storage</Text>
-                            <Box
-                                component="span"
-                                className={styles.listItemIconWrapper}
-                            >
-                                <Info />
-                            </Box>
-                        </Group>
-                    </Tooltip>
-                    <Tooltip
-                        label={getTooltipContent('average')}
-                        position="top-start"
-                    >
-                        <Group
-                            gap="xs"
-                            className={styles.thirtyYearAverageLegend}
-                        >
-                            <DashedLine />
-                            <Text size="sm">30-year Average</Text>
-                            <Box
-                                component="span"
-                                className={styles.listItemIconWrapper}
-                            >
-                                <Info />
-                            </Box>
-                        </Group>
-                    </Tooltip>
-                </Stack>
+                <Legend
+                    showSwitch={false}
+                    excludeEntries={['high-percentile', 'low-percentile']}
+                />
+            </Group>
+            <Group gap="calc(var(--default-spacing) / 2)">
+                <Box className={styles.iconBackground}>
+                    <Image
+                        src="/map-icons/default.png"
+                        alt="Reservoir default Icon"
+                        h={30}
+                        w="auto"
+                        fit="contain"
+                    />
+                </Box>
+                <Text size="sm">Zoom in to view this reservoir</Text>
+            </Group>
+            <Group gap="calc(var(--default-spacing) / 2)">
+                <Box className={styles.iconBackground}>
+                    <Image
+                        src="/map-icons/no-data.png"
+                        alt="Reservoir default Icon"
+                        h={30}
+                        w="auto"
+                        fit="contain"
+                    />
+                </Box>
+                <Text size="sm">This reservoir is missing data</Text>
             </Group>
         </Stack>
     );

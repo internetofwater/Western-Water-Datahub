@@ -41,24 +41,32 @@ const entries: Entry[] = [
         type: LayerType.Fill,
         items: [
             {
-                color: '#7b3294',
-                label: '<25',
+                color: '#ea3e3e',
+                label: '<50',
             },
             {
-                color: '#c2a5cf',
-                label: '>=25',
-            },
-            {
-                color: '#f7f7f7',
+                color: '#eab03e',
                 label: '>=50',
             },
             {
-                color: '#a6dba0',
-                label: '>=75',
+                color: '#eaea3e',
+                label: '>=70',
             },
             {
-                color: '#008837',
+                color: '#77ea3e',
                 label: '>=90',
+            },
+            {
+                color: '#94fde5',
+                label: '>=110',
+            },
+            {
+                color: '#3ebdea',
+                label: '>=130',
+            },
+            {
+                color: '#3e3efd',
+                label: '>=150',
             },
         ],
     },
@@ -164,7 +172,9 @@ const Legend: React.FC = () => {
     const [show, setShow] = useState(false);
 
     useEffect(() => {
-        if (overlay !== Overlay.Legend) {
+        if (overlay === Overlay.Legend) {
+            setShow(true);
+        } else {
             setShow(false);
         }
     }, [overlay]);

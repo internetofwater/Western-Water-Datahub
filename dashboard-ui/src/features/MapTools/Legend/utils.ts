@@ -29,8 +29,16 @@ export const getTooltipContent = (
                 getGlossaryEntry('storage')?.short ?? 'Current water storage'
             );
         case 'average':
+            return getGlossaryEntry('average')?.short ?? 'Help content missing';
+        case 'low-percentile':
             return (
-                getGlossaryEntry('average')?.short ?? 'Current water storage'
+                getGlossaryEntry('low-percentile')?.short ??
+                'Help content missing'
+            );
+        case 'high-percentile':
+            return (
+                getGlossaryEntry('high-percentile')?.short ??
+                'Help content missing'
             );
 
         default:

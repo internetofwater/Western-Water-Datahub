@@ -41,6 +41,11 @@
     justify-content: space-between;
 }
 
+.infoIcon > svg {
+    width: 1rem;
+    height: auto;
+}
+
 .legendWrapper {
     flex-direction: column;
 }
@@ -126,6 +131,11 @@
     .legendPaper {
         background-color: var(--mantine-color-gray-0);
     }
+
+    .infoIcon > svg {
+        fill: #000;
+        stroke: #000;
+    }
 }
 
 :where([data-mantine-color-scheme='light']) {
@@ -135,5 +145,10 @@
 
     .legendPaper {
         background-color: var(--mantine-color-dark-4);
+    }
+
+    .infoIcon > svg {
+        fill: #fff;
+        stroke: #fff;
     }
 }
