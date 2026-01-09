@@ -16,7 +16,7 @@ import { Chart as ChartJS } from 'chart.js';
 import {
     handleCreateChartImage,
     handleCreateDiagramImage,
-    handleCreateMapImage,
+    // handleCreateMapImage,
 } from '@/features/Reservior/PDF/utils';
 import useMainStore from '@/stores/main/main';
 import { GeoJsonProperties } from 'geojson';
@@ -34,8 +34,7 @@ type Props = {
 };
 
 const PDF: React.FC<Props> = (props) => {
-    const { accessToken, reservoirProperties, center, chartRef, config } =
-        props;
+    const { reservoirProperties, center, chartRef, config } = props;
 
     const [mapImage, setMapImage] = useState<Blob | null>(null);
     const [chartImage, setChartImage] = useState<Blob | null>(null);
@@ -51,16 +50,17 @@ const PDF: React.FC<Props> = (props) => {
         if (!map || !center) {
             return;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         let cancel = false;
         setMapImage(null);
 
-        void handleCreateMapImage(
-            map,
-            center,
-            accessToken,
-            cancel,
-            setMapImage
-        );
+        // void handleCreateMapImage(
+        //     map,
+        //     center,
+        //     accessToken,
+        //     cancel,
+        //     setMapImage
+        // );
 
         return () => {
             cancel = true;

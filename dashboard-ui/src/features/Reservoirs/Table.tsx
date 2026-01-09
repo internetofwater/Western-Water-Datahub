@@ -140,7 +140,7 @@ export const Table: React.FC<Props> = (props) => {
     };
 
     return (
-        <Stack className={styles.tableWrapper} mb={16}>
+        <Stack className={styles.tableWrapper} pb={16}>
             <TableComponent
                 striped
                 stickyHeader
@@ -185,13 +185,6 @@ export const Table: React.FC<Props> = (props) => {
                                 </Text>
                             </Stack>
                         </TableTh>
-                        {/* <TableTh className={styles.buttonColumn}>
-                            <Stack align="center" justify="center">
-                                <Text {...textProps} ta="center">
-                                    See More
-                                </Text>
-                            </Stack>
-                        </TableTh> */}
                     </TableTr>
                 </TableThead>
                 <TableTbody>
@@ -300,22 +293,6 @@ export const Table: React.FC<Props> = (props) => {
                                             </ActionIcon>
                                         </Group>
                                     </TableTd>
-                                    {/* <TableTd>
-                                        <Group justify="center" align="center">
-                                            <ActionIcon
-                                                onClick={() =>
-                                                    handleSeeMore(
-                                                        feature.properties
-                                                            .identifier,
-                                                        feature.properties
-                                                            .sourceId
-                                                    )
-                                                }
-                                            >
-                                                <Info />
-                                            </ActionIcon>
-                                        </Group>
-                                    </TableTd> */}
                                 </TableTr>
                             </Tooltip>
                         );

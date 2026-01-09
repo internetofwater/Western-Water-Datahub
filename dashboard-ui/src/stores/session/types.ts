@@ -23,9 +23,10 @@ export enum LoadingType {
 
 export enum Overlay {
     Basemap = 'basemap',
-    Screenshot = 'screenshot',
     Detail = 'detail',
     Help = 'help',
+    Legend = 'legend',
+    Screenshot = 'screenshot',
 }
 
 export type Notification = {

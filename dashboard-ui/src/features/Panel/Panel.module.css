@@ -5,7 +5,7 @@
 
 .panel {
     min-width: 31rem;
-    width: 31rem;
+    width: 3rem;
     z-index: 2;
 }
 
@@ -64,7 +64,7 @@
         top: 5vh;
         left: 2.5vw;
         margin: auto;
-        padding: 16px;
+        padding: calc(var(--default-spacing) * 2);
 
         border-radius: 4px;
     }
@@ -78,3 +78,13 @@
         display: none;
     }
 }
+
+:where([data-mantine-color-scheme='light']) div.mapboxgl-popup-content {
+    color: #000;
+}
+/* :where([data-mantine-color-scheme='dark']) .content {
+    background: var(--mantine-color-dark-6);
+}
+:where([data-mantine-color-scheme='light']) .content {
+    background: var(--mantine-color-gray-2);
+} */

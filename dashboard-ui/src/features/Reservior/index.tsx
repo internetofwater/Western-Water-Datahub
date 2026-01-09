@@ -27,11 +27,7 @@ import { Overlay } from '@/stores/session/types';
  * @component
  */
 const Reservoir: React.FC = () => {
-    const [opened, { open, close }] = useDisclosure(false, {
-        onClose: () => {
-            setOverlay(null);
-        },
-    });
+    const [opened, { open, close }] = useDisclosure(false);
 
     const reservoir = useMainStore((state) => state.reservoir);
     const reservoirCollections = useMainStore(
@@ -96,6 +92,14 @@ const Reservoir: React.FC = () => {
             open();
         }
     }, [overlay]);
+
+    useEffect(() => {
+        if (opened) {
+            setOverlay(Overlay.Detail);
+        } else {
+            setOverlay(null);
+        }
+    }, [opened]);
 
     if (!reservoirProperties || !config || !reservoirId) {
         return null;

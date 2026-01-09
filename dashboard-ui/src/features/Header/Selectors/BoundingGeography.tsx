@@ -83,11 +83,11 @@ export const BoundingGeography: React.FC = () => {
             data={[
                 {
                     value: BoundingGeographyLevel.Region,
-                    label: 'Region',
+                    label: 'DOI Region',
                 },
                 {
                     value: BoundingGeographyLevel.Basin,
-                    label: 'Basin',
+                    label: 'Basin (HUC02)',
                 },
                 {
                     value: BoundingGeographyLevel.State,

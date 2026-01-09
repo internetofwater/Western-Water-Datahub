@@ -6,16 +6,19 @@
 'use client';
 
 import {
+    ActionIcon,
     Box,
     Button,
-    Card,
-    CardSection,
     CloseButton,
     Group,
     Loader,
+    Popover,
+    PopoverDropdown,
+    PopoverTarget,
     Stack,
     TextInput,
     Title,
+    Tooltip,
 } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
 import { MAP_ID } from '@/features/Map/consts';
@@ -23,8 +26,9 @@ import { useMap } from '@/contexts/MapContexts';
 import { Map } from 'mapbox-gl';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Image from 'next/image';
-import useMainStore from '@/stores/main/main';
-import { Tools } from '@/stores/main/types';
+import ScreenshotIcon from '@/icons/Screenshot';
+import { Overlay } from '@/stores/session/types';
+import useSessionStore from '@/stores/session';
 
 /**
  *
@@ -35,7 +39,10 @@ const Screenshot: React.FC = () => {
     const [name, setName] = useState<string>('WWDH-Map');
     const [loading, setLoading] = useState<boolean>(false);
 
-    const setOpenTools = useMainStore((state) => state.setOpenTools);
+    const overlay = useSessionStore((state) => state.overlay);
+    const setOverlay = useSessionStore((state) => state.setOverlay);
+
+    const [show, setShow] = useState(false);
 
     const { map } = useMap(MAP_ID);
 
@@ -91,6 +98,12 @@ const Screenshot: React.FC = () => {
         };
     }, [map]);
 
+    useEffect(() => {
+        if (overlay !== Overlay.Screenshot) {
+            setShow(false);
+        }
+    }, [overlay]);
+
     const downloadImage = () => {
         const link = document.createElement('a');
         link.href = src;
@@ -98,20 +111,47 @@ const Screenshot: React.FC = () => {
         link.click();
     };
 
+    const handleShow = (show: boolean) => {
+        setOverlay(show ? Overlay.Screenshot : null);
+        setShow(show);
+    };
+
     return (
-        <Card withBorder shadow="sm" radius="md" padding="md">
-            <CardSection withBorder inheritPadding py="xs">
-                <Group justify="space-between">
+        <Popover
+            opened={show}
+            onChange={setShow}
+            closeOnClickOutside={false}
+            position="left-start"
+            shadow="md"
+        >
+            <PopoverTarget>
+                <Tooltip label="Show screenshot tool" disabled={show}>
+                    <ActionIcon
+                        classNames={{
+                            root: styles.actionIconRoot,
+                            icon: styles.actionIcon,
+                        }}
+                        size="lg"
+                        onClick={() => handleShow(!show)}
+                    >
+                        <ScreenshotIcon />
+                    </ActionIcon>
+                </Tooltip>
+            </PopoverTarget>
+            <PopoverDropdown>
+                <Group
+                    justify="space-between"
+                    mb="calc(var(--default-spacing) / 2)"
+                >
                     <Title order={3} className={styles.mapToolTitle}>
                         Screenshot
                     </Title>
                     <CloseButton
-                        onClick={() => setOpenTools(Tools.Print, false)}
+                        mr="-0.5rem"
+                        onClick={() => setOverlay(null)}
                         aria-label="Close Screenshot"
                     />
                 </Group>
-            </CardSection>
-            <CardSection inheritPadding py="md" className={styles.toolContent}>
                 {src.length > 0 ? (
                     <Stack>
                         {loading ? (
@@ -144,8 +184,8 @@ const Screenshot: React.FC = () => {
                 ) : (
                     <Loader color="#0183a1" type="dots" />
                 )}
-            </CardSection>
-        </Card>
+            </PopoverDropdown>
+        </Popover>
     );
 };
 

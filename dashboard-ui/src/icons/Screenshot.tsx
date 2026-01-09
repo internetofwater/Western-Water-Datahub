@@ -20,12 +20,12 @@ const Screenshot: React.FC = () => {
                 id="Page-1"
                 stroke="none"
                 strokeWidth="1"
-                fill="none"
+                fill="inherit"
                 fillRule="evenodd"
             >
                 <g
                     id="drop"
-                    fill="#000000"
+                    fill="inherit"
                     transform="translate(42.666667, 42.666667)"
                 >
                     <path

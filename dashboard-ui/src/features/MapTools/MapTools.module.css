@@ -2,50 +2,15 @@
  * Copyright 2025 Lincoln Institute of Land Policy
  * SPDX-License-Identifier: MIT
  */
-
-.mapToolsContainer {
-    grid-area: 1 / 1;
-    z-index: 2;
-    margin-top: 8px;
-    margin-bottom: 8px;
-    overflow: hidden;
-    max-height: 100%;
-    display: flex;
+.actionIcon {
+    stroke: var(--mantine-color-text);
+    fill: var(--mantine-color-text);
 }
 
-.mapToolsContainer > div {
-    height: fit-content;
-}
-
-.left {
-    margin-left: 49px;
-    justify-self: flex-start;
-}
-
-.left > *:not(:first-child) {
-    margin-left: 8px;
-}
-
-.right {
-    margin-right: 49px;
-    justify-self: flex-end;
-}
-
-.right > *:not(:first-child) {
-    margin-right: 8px;
-}
-
-.mapToolTitle {
-    text-align: center;
-}
-
-.capitalize {
-    text-transform: capitalize;
-}
-
-.basemapWrapper {
-    width: 300px;
-    --grid-gutter: calc(var(--default-spacing) * 2);
+.actionIcon > svg {
+    width: 100%;
+    height: auto;
+    padding: calc(var(--default-spacing) / 3);
 }
 
 .basemapSelector {
@@ -62,6 +27,55 @@
     text-transform: capitalize;
 }
 
+.basemapWrapper {
+    width: 300px;
+    --grid-gutter: calc(var(--default-spacing) * 2);
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.controlsContainer {
+    width: 215px;
+}
+
+.left {
+    margin-left: 49px;
+    justify-self: flex-start;
+}
+
+.left > *:not(:first-child) {
+    margin-left: 8px;
+}
+
+.mapToolsContainer {
+    grid-area: 1 / 1;
+    z-index: 2;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    max-height: 100%;
+    display: flex;
+}
+
+.mapToolsContainer > div {
+    height: fit-content;
+}
+/* 
+.mapToolTitle {
+    text-align: center;
+} */
+
+.right {
+    margin-right: var(--default-spacing);
+    justify-self: flex-end;
+}
+
+.right > *:not(:first-child) {
+    margin-right: 8px;
+}
+
 .screenshotLoaderContainer {
     width: 200px;
     height: 100px;
@@ -70,11 +84,10 @@
     align-items: center;
 }
 
-.controlsContainer {
-    width: 215px;
-}
-
 .toolContent {
     max-height: calc(100vh - 490px);
     overflow: auto;
+}
+
+.toolGroup {
 }
