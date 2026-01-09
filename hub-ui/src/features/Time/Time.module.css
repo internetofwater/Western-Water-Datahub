@@ -9,4 +9,6 @@
 
 .timesButton svg {
   fill: var(--mantine-color-white);
+  width: 2rem;
+  height: auto;
 }

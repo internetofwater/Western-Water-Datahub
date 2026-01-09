@@ -131,7 +131,7 @@ export const Category: React.FC = () => {
   );
 
   return (
-    <Stack gap={0}>
+    <Stack gap={0} className={styles.selectStack}>
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
           <Title order={2} size="h4">

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect } from "react";
-import { Divider, Paper, Stack } from "@mantine/core";
-import Loading from "@/features/Loading";
+import { useEffect, useState } from "react";
+import { Box, Divider, Stack } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import Controls from "@/features/Panel/Controls";
 import { DateSelect } from "@/features/Panel/DateSelect";
 import Filters from "@/features/Panel/Filters";
@@ -17,11 +17,21 @@ import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import useMainStore from "@/stores/main";
-import { ELoadingType, ENotificationType } from "@/stores/session/types";
+import useSessionStore from "@/stores/session";
+import {
+  ELoadingType,
+  ENotificationType,
+  EOverlay,
+} from "@/stores/session/types";
 
 const Panel: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
   const category = useMainStore((state) => state.category);
+  const overlay = useSessionStore((state) => state.overlay);
+
+  const mobile = useMediaQuery("(max-width: 899px)");
+
+  const [isVisible, setIsVisible] = useState(true);
 
   const getCollections = async () => {
     const loadingInstance = loadingManager.add(
@@ -52,14 +62,27 @@ const Panel: React.FC = () => {
     void getCollections();
   }, [provider, category]);
 
+  useEffect(() => {
+    if (!mobile) {
+      setIsVisible(true);
+      return;
+    }
+    setIsVisible(overlay === EOverlay.Controls);
+  }, [mobile, overlay]);
+
   return (
     <>
-      <Paper className={styles.panelWrapper}>
+      {mobile && isVisible && <Box className={styles.panelUnderlay} />}
+      <Box
+        className={styles.panelWrapper}
+        style={{ display: isVisible ? "block" : "none" }}
+      >
         <Stack
           gap="calc(var(--default-spacing) * 3)"
           px="xl"
-          pb="xl"
+          py="xl"
           justify="center"
+          className={styles.panelContent}
         >
           <Header />
           <Filters />
@@ -69,8 +92,7 @@ const Panel: React.FC = () => {
           <DateSelect />
           <Controls />
         </Stack>
-        <Loading desktop={false} />
-      </Paper>
+      </Box>
     </>
   );
 };

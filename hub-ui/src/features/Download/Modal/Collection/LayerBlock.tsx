@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { Feature } from "geojson";
 import { Group, NumberInput, Pagination, Stack, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { StringIdentifierCollections } from "@/consts/collections";
 import styles from "@/features/Download/Download.module.css";
 import { Grid } from "@/features/Download/Modal/Collection/Grid";
@@ -53,6 +54,8 @@ export const LayerBlock: React.FC<Props> = (props) => {
 
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
+
+  const mobile = useMediaQuery("(max-width: 899px)");
 
   const handlePageSizeChange = (pageSize: number) => {
     setPageSize(pageSize);
@@ -276,7 +279,7 @@ export const LayerBlock: React.FC<Props> = (props) => {
       />
       {currentChunk.length === 0 && (
         <Text fw={700} m="auto">
-          Select locations from the menu on the left
+          Select locations from the menu {mobile ? "above" : "on the left"}
         </Text>
       )}
       {collection &&

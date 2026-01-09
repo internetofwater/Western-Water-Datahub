@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { useEffect, useRef, useState } from "react";
 import { Button, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import Tooltip from "@/components/Tooltip";
 import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
 import { useMap } from "@/contexts/MapContexts";
@@ -28,15 +29,18 @@ export const ShowLocations: React.FC = () => {
   );
   const from = useMainStore((state) => state.from);
   const to = useMainStore((state) => state.to);
+  const parameters = useMainStore((state) => state.parameters);
   const setOpenTools = useSessionStore((state) => state.setOpenTools);
+  const setOverlay = useSessionStore((state) => state.setOverlay);
+
   const geographyFilterItemId = useMainStore(
     (state) => state.geographyFilter?.itemId,
   );
 
-  const parameters = useMainStore((state) => state.parameters);
-
   const { isLoadingGeography, isFetchingCollections, isFetchingLocations } =
     useLoading();
+
+  const mobile = useMediaQuery("(max-width: 899px)");
 
   const isFirstTime = useRef(true);
 
@@ -150,42 +154,14 @@ export const ShowLocations: React.FC = () => {
     mainManager,
   ]);
 
-  // useEffect(() => {
-  //   selectedCollections.forEach((collectionId) => {
-  //     const restrictions = CollectionRestrictions[collectionId];
-
-  //   });
-  // }, [selectedCollections, from, to]);
-
-  // useEffect(() => {
-  //   selectedCollections.forEach((collectionId) => {
-  //     const restrictions = CollectionRestrictions[collectionId];
-
-  //     if (restrictions && restrictions.length > 0) {
-  //       const geoRestriction = restrictions.find(
-  //         (restriction) => restriction.type === RestrictionType.GeographyFilter
-  //       );
-
-  //       if (geoRestriction) {
-  //         setIsDisabled(!geographyFilterItemId);
-  //       }
-  //     }
-  //   });
-  // }, [selectedCollections, geographyFilterItemId]);
-
-  // useEffect(() => {
-  //   setIsDisabled(
-  //     isLoadingGeography ||
-  //       isFetchingCollections ||
-  //       isFetchingLocations ||
-  //       selectedCollections.length === 0
-  //   );
-  // }, [isLoadingGeography, isFetchingCollections, isFetchingLocations, selectedCollections]);
-
   const addData = async () => {
     // User has a popup open that may not be relevant any longer
     if (persistentPopup && persistentPopup.isOpen()) {
       persistentPopup.remove();
+    }
+
+    if (mobile) {
+      setOverlay(null);
     }
 
     const loadingInstance = loadingManager.add(

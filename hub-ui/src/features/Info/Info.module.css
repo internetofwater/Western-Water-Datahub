@@ -5,6 +5,8 @@
 
 .infoButton svg[data-identifier="help-svg"] {
   fill: var(--mantine-color-white);
+  width: 2rem;
+  height: auto;
 }
 
 .tabList {

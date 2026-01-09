@@ -83,8 +83,7 @@ export const Collection: React.FC = () => {
   );
 
   return (
-    <Stack gap={0}>
-      {/* TODO */}
+    <Stack gap={0} className={styles.selectStack}>
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
           <Title order={2} size="h4">
