@@ -1,3 +1,6 @@
+# Copyright 2026 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
 from pathlib import Path
 import geopandas as gpd
 import pandas as pd
