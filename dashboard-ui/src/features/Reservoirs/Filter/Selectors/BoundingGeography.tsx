@@ -9,7 +9,7 @@ import { Group, Radio, RadioGroup } from '@mantine/core';
 import { useMap } from '@/contexts/MapContexts';
 import { LayerId, MAP_ID, SubLayerId } from '@/features/Map/consts';
 import { BoundingGeographyLevel } from '@/stores/main/types';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { useEffect } from 'react';
 import { useLoading } from '@/hooks/useLoading';
 import {
@@ -17,6 +17,7 @@ import {
     RegionDefault,
     StateDefault,
 } from '@/stores/main/consts';
+import styles from '@/features/Reservoirs/Reservoirs.module.css';
 
 export const BoundingGeometryVisibilityMap: {
     [key in BoundingGeographyLevel]: {
@@ -60,11 +61,11 @@ export const BoundingGeometryVisibilityMap: {
 const data = [
     {
         value: BoundingGeographyLevel.Region,
-        label: 'Region',
+        label: 'DOI Region',
     },
     {
         value: BoundingGeographyLevel.Basin,
-        label: 'Basin',
+        label: 'Basin (HUC02)',
     },
     {
         value: BoundingGeographyLevel.State,
@@ -124,6 +125,7 @@ export const BoundingGeography: React.FC = () => {
                 {data.map(({ value, label }) => (
                     <Radio
                         size="xs"
+                        classNames={{ label: styles.label }}
                         disabled={isFetchingReservoirs}
                         data-disabled={isFetchingReservoirs}
                         key={`radio-geobound-${label}`}

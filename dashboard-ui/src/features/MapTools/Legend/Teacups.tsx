@@ -10,7 +10,9 @@ import styles from '@/features/MapTools/Legend/Legend.module.css';
 export const Teacups: React.FC = () => {
     return (
         <Stack gap="var(--default-spacing)">
-            <Title order={4}>Reservoirs</Title>
+            <Title order={4} size="h5">
+                Reservoirs
+            </Title>
             <Group gap="calc(var(--default-spacing) / 2)">
                 <Image
                     src="/map-icons/teacup-65-50.png"
@@ -22,6 +24,7 @@ export const Teacups: React.FC = () => {
                 <Legend
                     showSwitch={false}
                     excludeEntries={['high-percentile', 'low-percentile']}
+                    textSize="xs"
                 />
             </Group>
             <Group gap="calc(var(--default-spacing) / 2)">
@@ -34,7 +37,7 @@ export const Teacups: React.FC = () => {
                         fit="contain"
                     />
                 </Box>
-                <Text size="sm">Zoom in to view this reservoir</Text>
+                <Text size="xs">Zoom in to view this reservoir</Text>
             </Group>
             <Group gap="calc(var(--default-spacing) / 2)">
                 <Box className={styles.iconBackground}>
@@ -46,7 +49,7 @@ export const Teacups: React.FC = () => {
                         fit="contain"
                     />
                 </Box>
-                <Text size="sm">This reservoir is missing data</Text>
+                <Text size="xs">This reservoir is missing data</Text>
             </Group>
         </Stack>
     );

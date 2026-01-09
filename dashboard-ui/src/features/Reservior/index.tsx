@@ -15,7 +15,7 @@ import {
 import { Chart } from '@/features/Reservior/Chart';
 import { Chart as ChartJS } from 'chart.js';
 import Info from '@/features/Reservior/Info';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { useDisclosure } from '@mantine/hooks';
 import { ReservoirDefault } from '@/stores/main/consts';
 import { GeoJsonProperties } from 'geojson';

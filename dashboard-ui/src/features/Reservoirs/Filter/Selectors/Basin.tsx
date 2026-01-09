@@ -6,7 +6,7 @@
 'use client';
 
 import { ComboboxData, Select, Skeleton } from '@mantine/core';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId, ValidBasins } from '@/features/Map/consts';
 import { useEffect, useRef, useState } from 'react';

@@ -16,7 +16,7 @@ import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { RasterBaseLayers } from '@/features/Map/types';
 import { useState } from 'react';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import {
     RasterVisibilityMap,
     updateBaseLayer,

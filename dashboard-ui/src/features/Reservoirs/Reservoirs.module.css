@@ -3,16 +3,42 @@
  * SPDX-License-Identifier: MIT
  */
 
-.table {
-    width: 100%;
+.buttonColumn {
+    width: 4.375rem;
+}
+
+.content {
+    padding: 0px;
+}
+
+.filterWrapper {
+    padding: calc(var(--default-spacing) * 2);
+}
+
+.filterIcon {
+    fill: var(--mantine-color-text);
+}
+
+.filterIcon svg {
+    width: 1.5rem;
+    height: auto;
+}
+
+.label {
+    padding-inline-start: calc(var(--default-spacing) / 2);
+    padding-inline-end: calc(var(--default-spacing) * 0.75);
 }
 
 .nameColumn {
     width: 14.15rem;
 }
 
-.content {
-    padding: 0px;
+.pageSizeInput {
+    width: 7.0625rem;
+}
+
+.rotate180 {
+    transform: rotate(180deg);
 }
 
 .row {
@@ -43,29 +69,8 @@
     margin-bottom: 0.25rem;
 }
 
-.rotate180 {
-    transform: rotate(180deg);
-}
-
-.pageSizeInput {
-    width: 7.0625rem;
-}
-
-.buttonColumn {
-    width: 4.375rem;
-}
-
-.filterWrapper {
-    padding: calc(var(--default-spacing) * 2);
-}
-
-.filterIcon {
-    fill: var(--mantine-color-text);
-}
-
-.filterIcon svg {
-    width: 1.5rem;
-    height: auto;
+.table {
+    width: 100%;
 }
 
 @media screen and (max-width: 400px) {

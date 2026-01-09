@@ -12,7 +12,7 @@ import Square from '@/icons/Square';
 import { Gradient } from '@/features/MapTools/Legend/Gradient';
 import styles from '@/features/MapTools/Legend/Legend.module.css';
 import { getLayerName } from '@/features/Map/config';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import {
     ActionIcon,
     Box,
@@ -236,7 +236,7 @@ const Legend: React.FC = () => {
                                     position="top-start"
                                 >
                                     <Group align="center" gap="xs">
-                                        <Title order={4} size="h5">
+                                        <Title order={4} size="h6">
                                             {getLayerName(entry.id)}
                                         </Title>
                                         <Box

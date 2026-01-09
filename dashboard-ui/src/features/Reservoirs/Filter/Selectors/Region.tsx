@@ -6,7 +6,7 @@
 'use client';
 
 import { ComboboxData, Select, Skeleton } from '@mantine/core';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { useEffect, useRef, useState } from 'react';
 import { formatOptions } from '@/features/Header/Selectors/utils';
 import esriService from '@/services/init/esri.init';

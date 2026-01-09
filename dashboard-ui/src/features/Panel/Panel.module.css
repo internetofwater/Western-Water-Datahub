@@ -6,7 +6,7 @@
 .panel {
     min-width: 31rem;
     width: 3rem;
-    z-index: 2;
+    z-index: 3;
 }
 
 .root {

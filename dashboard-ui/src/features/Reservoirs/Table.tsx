@@ -25,7 +25,7 @@ import { Feature, Point } from 'geojson';
 import { OrganizedProperties } from '@/features/Reservoirs/types';
 import { chunk } from '@/features/Reservoirs/utils';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import useSessionStore from '@/stores/session';
 import { getReservoirConfig } from '@/features/Map/utils';
 import MapSearch from '@/icons/MapSearch';
@@ -46,7 +46,7 @@ export const Table: React.FC<Props> = (props) => {
         Feature<Point, OrganizedProperties>[]
     >([]);
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(5);
 
     const { map } = useMap(MAP_ID);
 

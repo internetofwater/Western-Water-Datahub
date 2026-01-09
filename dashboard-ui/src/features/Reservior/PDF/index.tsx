@@ -18,7 +18,7 @@ import {
     handleCreateDiagramImage,
     // handleCreateMapImage,
 } from '@/features/Reservior/PDF/utils';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { GeoJsonProperties } from 'geojson';
 import { ReservoirConfig } from '@/features/Map/types';
 

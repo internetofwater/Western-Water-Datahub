@@ -11,7 +11,7 @@ import {
     ReservoirDefault,
     StateDefault,
 } from '@/stores/main/consts';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { Button } from '@mantine/core';
 import styles from '@/features/Header/Header.module.css';
 

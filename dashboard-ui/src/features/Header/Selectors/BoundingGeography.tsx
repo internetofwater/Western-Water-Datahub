@@ -9,7 +9,7 @@ import { Select } from '@mantine/core';
 import { useMap } from '@/contexts/MapContexts';
 import { LayerId, MAP_ID, SubLayerId } from '@/features/Map/consts';
 import { BoundingGeographyLevel } from '@/stores/main/types';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { useEffect } from 'react';
 
 export const BoundingGeometryVisibilityMap: {

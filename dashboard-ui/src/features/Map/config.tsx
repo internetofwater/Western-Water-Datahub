@@ -50,6 +50,7 @@ import { stateCenters } from '@/data/stateCenters';
 import { regionCenters } from '@/data/regionCenters';
 import { RegionField } from '@/features/Map/types/region';
 import useSessionStore from '@/stores/session';
+import useMainStore from '@/stores/main';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -1001,18 +1002,15 @@ export const getLayerMouseMoveFunction = (
                             feature,
                         });
                     }
-                    // showReservoirPopup(
-                    //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
-                    //     map,
-                    //     e,
-                    //     root,
-                    //     container,
-                    //     hoverPopup,
-                    //     false
-                    // );
                 };
             case SubLayerId.RegionsFill:
                 return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as
@@ -1038,6 +1036,12 @@ export const getLayerMouseMoveFunction = (
                 };
             case SubLayerId.BasinsFill:
                 return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as
@@ -1058,6 +1062,12 @@ export const getLayerMouseMoveFunction = (
                 };
             case SubLayerId.StatesFill:
                 return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as

@@ -19,7 +19,7 @@ import {
     LayerId,
 } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import {
     loadTeacups as loadImages,
     getReservoirConfig,
@@ -81,6 +81,7 @@ const MainMap: React.FC<Props> = (props) => {
     const reservoirCollections = useMainStore(
         (state) => state.reservoirCollections
     );
+    const showAllLabels = useMainStore((state) => state.showAllLabels);
 
     const highlight = useSessionStore((state) => state.highlight);
 
@@ -551,6 +552,50 @@ const MainMap: React.FC<Props> = (props) => {
 
         map.setStyle(basemaps[basemap]);
     }, [basemap]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        if (map.getLayer(SubLayerId.RegionLabels)) {
+            map.setPaintProperty(SubLayerId.RegionLabels, 'text-opacity', 0);
+        }
+        if (map.getLayer(SubLayerId.BasinLabels)) {
+            map.setPaintProperty(SubLayerId.BasinLabels, 'text-opacity', 0);
+        }
+        if (map.getLayer(SubLayerId.StateLabels)) {
+            map.setPaintProperty(SubLayerId.StateLabels, 'text-opacity', 0);
+        }
+
+        // case SubLayerId.RegionsFill:
+        // case SubLayerId.BasinsFill:
+        // case SubLayerId.StatesFill:
+        if (showAllLabels) {
+            if (
+                boundingGeographyLevel === BoundingGeographyLevel.Region &&
+                map.getLayer(SubLayerId.RegionLabels)
+            ) {
+                map.setPaintProperty(
+                    SubLayerId.RegionLabels,
+                    'text-opacity',
+                    1
+                );
+            }
+            if (
+                boundingGeographyLevel === BoundingGeographyLevel.Basin &&
+                map.getLayer(SubLayerId.BasinLabels)
+            ) {
+                map.setPaintProperty(SubLayerId.BasinLabels, 'text-opacity', 1);
+            }
+            if (
+                boundingGeographyLevel === BoundingGeographyLevel.State &&
+                map.getLayer(SubLayerId.StateLabels)
+            ) {
+                map.setPaintProperty(SubLayerId.StateLabels, 'text-opacity', 1);
+            }
+        }
+    }, [boundingGeographyLevel, showAllLabels]);
 
     return (
         <>

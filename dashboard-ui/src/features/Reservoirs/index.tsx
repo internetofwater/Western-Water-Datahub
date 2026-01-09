@@ -16,7 +16,7 @@ import { Table } from '@/features/Reservoirs/Table';
 import { getReservoirConfig } from '@/features/Map/utils';
 import { SourceId } from '@/features/Map/consts';
 import dayjs from 'dayjs';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import {
     BasinDefault,
     RegionDefault,

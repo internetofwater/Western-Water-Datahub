@@ -175,7 +175,7 @@ export const ResVizEDRReservoirSource =
  * @constant
  */
 export const RegionsSource =
-    'https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0';
+    'https://services1.arcgis.com/ixD30sld6F8MQ7V5/ArcGIS/rest/services/DOI_12_Unified_Regions_20180801/FeatureServer/0';
 
 /**
  *

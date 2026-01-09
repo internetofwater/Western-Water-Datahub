@@ -5,7 +5,7 @@
 
 import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import {
     CloseButton,
     Grid,

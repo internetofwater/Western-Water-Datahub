@@ -14,7 +14,7 @@ import {
 import { useColorScheme } from '@mantine/hooks';
 import styles from '@/features/Header/Header.module.css';
 import { useEffect } from 'react';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import Sun from '@/icons/Sun';
 import Moon from '@/icons/Moon';
 

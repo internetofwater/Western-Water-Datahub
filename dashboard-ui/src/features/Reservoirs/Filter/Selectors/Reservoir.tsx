@@ -6,7 +6,7 @@
 'use client';
 
 import { Select, Skeleton } from '@mantine/core';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { MAP_ID, SourceId, ReservoirConfigs } from '@/features/Map/consts';
 import { useEffect, useRef, useState } from 'react';
 import {

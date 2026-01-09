@@ -16,7 +16,7 @@ import geoconnexService from '@/services/init/geoconnex.init';
 import { FeatureCollection, Polygon } from 'geojson';
 import { formatOptions } from '@/features/Header/Selectors/utils';
 import { StateField, StateProperties } from '@/features/Map/types/state';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { StateDefault } from '@/stores/main/consts';
 import { useLoading } from '@/hooks/useLoading';
 
