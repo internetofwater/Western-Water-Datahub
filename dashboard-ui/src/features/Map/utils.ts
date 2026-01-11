@@ -553,45 +553,59 @@ export const getBoundingGeographyFilter = (
     // Normalize value into array
     const values = Array.isArray(value) ? value : [value];
 
-    // prop is scalar → check if prop == any value
+    // Handle basin HUC06 identifiers
+    if (property === 'basinConnectorProperty') {
+        const values = Array.isArray(value) ? value : [value];
+
+        const scalarMatches = [
+            'any',
+            ...values.map((v) => [
+                '==',
+                ['slice', ['to-string', prop], 0, 2],
+                v,
+            ]),
+        ];
+
+        const arrayMatches = [
+            'any',
+            ...values.map((v) => [
+                'in',
+                v,
+                ['slice', ['to-string', prop], 0, 2],
+            ]),
+        ];
+
+        const matchExpression = [
+            'case',
+            ['==', ['typeof', prop], 'array'],
+            arrayMatches,
+            [
+                'any',
+                ['==', ['typeof', prop], 'string'],
+                ['==', ['typeof', prop], 'number'],
+            ],
+            scalarMatches,
+            false,
+        ];
+        return ['all', getReservoirFilter(config), matchExpression];
+    }
+
     const scalarMatches = ['any', ...values.map((v) => ['==', prop, v])];
 
-    // prop is array → check if any value is in prop
     const arrayMatches = ['any', ...values.map((v) => ['in', v, prop])];
 
-    // Detect valid property types
-    const propIsValid = [
-        'any',
-        ['==', ['typeof', prop], 'string'],
-        ['==', ['typeof', prop], 'number'],
-        ['==', ['typeof', prop], 'array'],
-    ];
-
-    // Combined match logic
     const matchExpression = [
         'case',
-        propIsValid,
-        ['any', arrayMatches, scalarMatches],
+        ['==', ['typeof', prop], 'array'],
+        arrayMatches,
+        [
+            'any',
+            ['==', ['typeof', prop], 'string'],
+            ['==', ['typeof', prop], 'number'],
+        ],
+        scalarMatches,
         false,
     ];
-
-    // Special basinConnectorProperty logic
-    if (property === 'basinConnectorProperty') {
-        return [
-            'all',
-            getReservoirFilter(config),
-            [
-                'case',
-                propIsValid,
-                ['any', arrayMatches, scalarMatches],
-                [
-                    '==',
-                    ['slice', ['to-string', prop], 0, 2],
-                    ['to-string', value],
-                ],
-            ],
-        ];
-    }
 
     return ['all', getReservoirFilter(config), matchExpression];
 };

@@ -38,11 +38,7 @@ import { basemaps } from '@/components/Map/consts';
 import { GeoJSONSource, LngLatLike, MapMouseEvent } from 'mapbox-gl';
 import { useReservoirData } from '@/hooks/useReservoirData';
 import { RegionField } from '@/features/Map/types/region';
-import {
-    BasinDefault,
-    ReservoirDefault,
-    StateDefault,
-} from '@/stores/main/consts';
+import { ReservoirDefault, StateDefault } from '@/stores/main/consts';
 import { StateField } from '@/features/Map/types/state';
 import { Huc02BasinField } from '@/features/Map/types/basin';
 import { BoundingGeographyLevel } from '@/stores/main/types';
@@ -312,7 +308,7 @@ const MainMap: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
-        if (basin === BasinDefault) {
+        if (basin.length === 0) {
             // Unset Filter
             map.setFilter(SubLayerId.BasinsFill, [
                 'in',
@@ -334,14 +330,14 @@ const MainMap: React.FC<Props> = (props) => {
             }
         } else {
             map.setFilter(SubLayerId.BasinsFill, [
-                '==',
+                'in',
                 ['get', Huc02BasinField.Id],
-                basin,
+                ['literal', basin],
             ]);
             map.setFilter(SubLayerId.BasinsBoundary, [
-                '==',
+                'in',
                 ['get', Huc02BasinField.Id],
-                basin,
+                ['literal', basin],
             ]);
 
             if (boundingGeographyLevel === BoundingGeographyLevel.Basin) {
@@ -421,7 +417,7 @@ const MainMap: React.FC<Props> = (props) => {
                 });
                 if (!features.length) {
                     setRegion([]);
-                    setBasin(BasinDefault);
+                    setBasin([]);
                     setState(StateDefault);
                     setReservoir(ReservoirDefault);
                     resetMap(map);
@@ -598,6 +594,19 @@ const MainMap: React.FC<Props> = (props) => {
                 boundingGeographyLevel === BoundingGeographyLevel.Basin &&
                 map.getLayer(SubLayerId.BasinLabels)
             ) {
+                if (basin.length > 0) {
+                    map.setPaintProperty(
+                        SubLayerId.BasinLabels,
+                        'text-opacity',
+                        ['match', ['get', Huc02BasinField.Id], basin, 1, 0]
+                    );
+                } else {
+                    map.setPaintProperty(
+                        SubLayerId.BasinLabels,
+                        'text-opacity',
+                        1
+                    );
+                }
                 map.setPaintProperty(SubLayerId.BasinLabels, 'text-opacity', 1);
             }
             if (

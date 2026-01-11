@@ -106,7 +106,7 @@ export const BoundingGeography: React.FC = () => {
 
     const handleChange = (value: string) => {
         setRegion([]);
-        setBasin(BasinDefault);
+        setBasin([]);
         setState(StateDefault);
         setBoundingGeographyLevel(value as BoundingGeographyLevel);
     };

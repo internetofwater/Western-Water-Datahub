@@ -149,13 +149,5 @@ export const Region: React.FC = () => {
                 />
             )}
         </>
-        // <Skeleton
-        //     height={54} // Default dimensions of select
-        //     width={140}
-        //     visible={loading || regionOptions.length === 0}
-        //     className={styles.skeleton}
-        // >
-
-        // </Skeleton>
     );
 };

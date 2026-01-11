@@ -12,18 +12,14 @@ import {
     ReservoirCollections,
     Tools,
 } from '@/stores/main/types';
-import {
-    BasinDefault,
-    ReservoirDefault,
-    StateDefault,
-} from '@/stores/main/consts';
+import { ReservoirDefault, StateDefault } from '@/stores/main/consts';
 
 export interface MainState {
     // Selected Region filter
     region: string[];
     setRegion: (region: MainState['region']) => void;
     // Selected Basin
-    basin: string;
+    basin: string[];
     setBasin: (basin: MainState['basin']) => void;
     // Selected State
     state: string;
@@ -78,7 +74,7 @@ export interface MainState {
 const useMainStore = create<MainState>()((set) => ({
     region: [],
     setRegion: (region) => set({ region }),
-    basin: BasinDefault,
+    basin: [],
     setBasin: (basin) => set({ basin }),
     state: StateDefault,
     setState: (state) => set({ state }),

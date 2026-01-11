@@ -5,7 +5,7 @@
 
 'use client';
 
-import { ComboboxData, Select, Skeleton } from '@mantine/core';
+import { ComboboxData, MultiSelect, Skeleton } from '@mantine/core';
 import useMainStore from '@/stores/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId, ValidBasins } from '@/features/Map/consts';
@@ -20,7 +20,6 @@ import {
 } from '@/features/Map/types/basin';
 import { SourceDataEvent } from '@/features/Map/types';
 import { isSourceDataLoaded } from '@/features/Map/utils';
-import { BasinDefault } from '@/stores/main/consts';
 import { useLoading } from '@/hooks/useLoading';
 
 export const Basin: React.FC = () => {
@@ -76,7 +75,9 @@ export const Basin: React.FC = () => {
                     (feature) => String(feature.id),
                     (feature) =>
                         String(feature?.properties?.[Huc02BasinField.Name]),
-                    'All Basins'
+                    '',
+                    '',
+                    true
                 );
 
                 if (isMounted.current) {
@@ -111,31 +112,55 @@ export const Basin: React.FC = () => {
     }, []);
 
     return (
-        <Skeleton
-            height={54} // Default dimensions of select
-            width={140}
-            visible={loading || basinOptions.length === 0}
-            className={styles.skeleton}
-        >
-            <Select
-                size="xs"
-                disabled={isFetchingReservoirs}
-                id="basinSelector"
-                searchable
-                data={basinOptions}
-                value={basin}
-                aria-label="Select a Basin"
-                placeholder="Select a basin"
-                label="Filter by Geography"
-                onChange={(value) => {
-                    if (value) {
-                        setBasin(value);
-                    } else {
-                        setBasin(BasinDefault);
-                    }
-                }}
-                clearable
-            />
-        </Skeleton>
+        <>
+            {loading || basinOptions.length === 0 ? (
+                <Skeleton
+                    height={54} // Default dimensions of select
+                    width={155}
+                />
+            ) : (
+                <MultiSelect
+                    size="xs"
+                    id="basinSelector"
+                    className={styles.multiselect}
+                    disabled={isFetchingReservoirs}
+                    searchable
+                    data={basinOptions}
+                    value={basin}
+                    aria-label="Select a Basin"
+                    placeholder="Select a basin"
+                    label="Filter by Geography"
+                    onChange={(value: string[]) => {
+                        if (value) {
+                            setBasin(value);
+                        } else {
+                            setBasin([]);
+                        }
+                    }}
+                    clearable
+                />
+                // <MultiSelect
+                //     size="xs"
+                //     id="regionSelector"
+                //     className={styles.multiselect}
+                //     disabled={isFetchingReservoirs}
+                //     data={regionOptions}
+                //     value={region}
+                //     data-testid="region-select"
+                //     aria-label="Select a region"
+                //     placeholder="Select a region"
+                //     label="Filter by Region"
+                //     onChange={(value: string[]) => {
+                //         if (value) {
+                //             setRegion(value);
+                //         } else {
+                //             setRegion([]);
+                //         }
+                //     }}
+                //     searchable
+                //     clearable
+                // />
+            )}
+        </>
     );
 };

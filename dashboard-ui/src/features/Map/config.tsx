@@ -384,7 +384,7 @@ export const getLayerConfig = (
                 type: LayerType.Symbol,
                 source: SourceId.BasinCenters,
                 layout: {
-                    'text-field': ['get', 'name'],
+                    'text-field': ['get', Huc02BasinField.Name],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                     'text-size': 22,
                     'text-allow-overlap': true,
@@ -757,6 +757,12 @@ export const getLayerHoverFunction = (
                 };
             case SubLayerId.BasinsFill:
                 return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as
@@ -778,6 +784,12 @@ export const getLayerHoverFunction = (
                 };
             case SubLayerId.StatesFill:
                 return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as
@@ -940,6 +952,13 @@ export const getLayerCustomHoverExitFunction = (
             case SubLayerId.BasinsFill:
                 return () => {
                     map.getCanvas().style.cursor = '';
+
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     map.setPaintProperty(
                         SubLayerId.BasinLabels,
                         'text-opacity',
@@ -949,6 +968,13 @@ export const getLayerCustomHoverExitFunction = (
             case SubLayerId.StatesFill:
                 return () => {
                     map.getCanvas().style.cursor = '';
+
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     map.setPaintProperty(
                         SubLayerId.StateLabels,
                         'text-opacity',
