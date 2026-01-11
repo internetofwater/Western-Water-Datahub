@@ -10,7 +10,7 @@ import useMainStore from '@/stores/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId, ValidBasins } from '@/features/Map/consts';
 import { useEffect, useRef, useState } from 'react';
-import styles from '@/features/Header/Header.module.css';
+import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import geoconnexService from '@/services/init/geoconnex.init';
 import { formatOptions } from '@/features/Header/Selectors/utils';
 import { FeatureCollection, Polygon } from 'geojson';

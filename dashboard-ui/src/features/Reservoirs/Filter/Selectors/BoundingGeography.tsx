@@ -12,7 +12,6 @@ import { BoundingGeographyLevel } from '@/stores/main/types';
 import useMainStore from '@/stores/main';
 import { useEffect } from 'react';
 import { useLoading } from '@/hooks/useLoading';
-import { BasinDefault, StateDefault } from '@/stores/main/consts';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 
 export const BoundingGeometryVisibilityMap: {
@@ -107,7 +106,7 @@ export const BoundingGeography: React.FC = () => {
     const handleChange = (value: string) => {
         setRegion([]);
         setBasin([]);
-        setState(StateDefault);
+        setState([]);
         setBoundingGeographyLevel(value as BoundingGeographyLevel);
     };
 

@@ -38,7 +38,7 @@ import { basemaps } from '@/components/Map/consts';
 import { GeoJSONSource, LngLatLike, MapMouseEvent } from 'mapbox-gl';
 import { useReservoirData } from '@/hooks/useReservoirData';
 import { RegionField } from '@/features/Map/types/region';
-import { ReservoirDefault, StateDefault } from '@/stores/main/consts';
+import { ReservoirDefault } from '@/stores/main/consts';
 import { StateField } from '@/features/Map/types/state';
 import { Huc02BasinField } from '@/features/Map/types/basin';
 import { BoundingGeographyLevel } from '@/stores/main/types';
@@ -361,7 +361,7 @@ const MainMap: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
-        if (state === StateDefault) {
+        if (state.length === 0) {
             // Unset Filter
             map.setFilter(SubLayerId.StatesFill, null);
             map.setFilter(SubLayerId.StatesBoundary, null);
@@ -375,14 +375,14 @@ const MainMap: React.FC<Props> = (props) => {
             }
         } else {
             map.setFilter(SubLayerId.StatesFill, [
-                '==',
+                'in',
                 ['get', StateField.Acronym],
-                state,
+                ['literal', state],
             ]);
             map.setFilter(SubLayerId.StatesBoundary, [
-                '==',
+                'in',
                 ['get', StateField.Acronym],
-                state,
+                ['literal', state],
             ]);
 
             if (boundingGeographyLevel === BoundingGeographyLevel.State) {
@@ -418,7 +418,7 @@ const MainMap: React.FC<Props> = (props) => {
                 if (!features.length) {
                     setRegion([]);
                     setBasin([]);
-                    setState(StateDefault);
+                    setState([]);
                     setReservoir(ReservoirDefault);
                     resetMap(map);
                 }
@@ -568,9 +568,6 @@ const MainMap: React.FC<Props> = (props) => {
             map.setPaintProperty(SubLayerId.StateLabels, 'text-opacity', 0);
         }
 
-        // case SubLayerId.RegionsFill:
-        // case SubLayerId.BasinsFill:
-        // case SubLayerId.StatesFill:
         if (showAllLabels) {
             if (
                 boundingGeographyLevel === BoundingGeographyLevel.Region &&
@@ -607,16 +604,27 @@ const MainMap: React.FC<Props> = (props) => {
                         1
                     );
                 }
-                map.setPaintProperty(SubLayerId.BasinLabels, 'text-opacity', 1);
             }
             if (
                 boundingGeographyLevel === BoundingGeographyLevel.State &&
                 map.getLayer(SubLayerId.StateLabels)
             ) {
-                map.setPaintProperty(SubLayerId.StateLabels, 'text-opacity', 1);
+                if (state.length > 0) {
+                    map.setPaintProperty(
+                        SubLayerId.StateLabels,
+                        'text-opacity',
+                        ['match', ['get', StateField.Acronym], state, 1, 0]
+                    );
+                } else {
+                    map.setPaintProperty(
+                        SubLayerId.StateLabels,
+                        'text-opacity',
+                        1
+                    );
+                }
             }
         }
-    }, [boundingGeographyLevel, showAllLabels, region]);
+    }, [boundingGeographyLevel, showAllLabels, region, basin, state]);
 
     return (
         <>
