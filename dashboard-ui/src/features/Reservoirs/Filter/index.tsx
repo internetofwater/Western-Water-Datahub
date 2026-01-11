@@ -85,7 +85,7 @@ export const Filter: React.FC<Props> = (props) => {
             <Group
                 gap="var(--default-spacing)"
                 my="calc(var(--default-spacing) / 2)"
-                align="flex-end"
+                align="flex-start"
             >
                 <Box
                     style={{

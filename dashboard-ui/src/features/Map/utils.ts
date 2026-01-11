@@ -548,41 +548,52 @@ export const getBoundingGeographyFilter = (
     property: keyof ReservoirConfig,
     value: string | number | string[] | number[]
 ): FilterSpecification => {
+    const prop = ['get', config[property]];
+
+    // Normalize value into array
+    const values = Array.isArray(value) ? value : [value];
+
+    // prop is scalar → check if prop == any value
+    const scalarMatches = ['any', ...values.map((v) => ['==', prop, v])];
+
+    // prop is array → check if any value is in prop
+    const arrayMatches = ['any', ...values.map((v) => ['in', v, prop])];
+
+    // Detect valid property types
+    const propIsValid = [
+        'any',
+        ['==', ['typeof', prop], 'string'],
+        ['==', ['typeof', prop], 'number'],
+        ['==', ['typeof', prop], 'array'],
+    ];
+
+    // Combined match logic
+    const matchExpression = [
+        'case',
+        propIsValid,
+        ['any', arrayMatches, scalarMatches],
+        false,
+    ];
+
+    // Special basinConnectorProperty logic
     if (property === 'basinConnectorProperty') {
         return [
             'all',
             getReservoirFilter(config),
             [
                 'case',
-                [
-                    'any',
-                    ['==', ['typeof', ['get', config[property]]], 'literal'],
-                    ['==', ['typeof', ['get', config[property]]], 'array'],
-                ],
-                ['in', value, ['get', config[property]]],
+                propIsValid,
+                ['any', arrayMatches, scalarMatches],
                 [
                     '==',
-                    ['slice', ['to-string', ['get', config[property]]], 0, 2],
+                    ['slice', ['to-string', prop], 0, 2],
                     ['to-string', value],
                 ],
             ],
         ];
     }
 
-    return [
-        'all',
-        getReservoirFilter(config),
-        [
-            'case',
-            [
-                'any',
-                ['==', ['typeof', ['get', config[property]]], 'literal'],
-                ['==', ['typeof', ['get', config[property]]], 'array'],
-            ],
-            ['in', value, ['get', config[property]]],
-            ['==', ['get', config[property]], value],
-        ],
-    ];
+    return ['all', getReservoirFilter(config), matchExpression];
 };
 
 export const resetMap = (map: Map) => {

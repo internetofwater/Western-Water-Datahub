@@ -29,6 +29,11 @@
     padding-inline-end: calc(var(--default-spacing) * 0.75);
 }
 
+.multiselect {
+    width: 8.75rem;
+    max-width: 8.75rem;
+}
+
 .nameColumn {
     width: 14.15rem;
 }
@@ -67,6 +72,7 @@
 
 .sortOrderButton {
     margin-bottom: 0.25rem;
+    margin-top: 1.75rem;
 }
 
 .table {

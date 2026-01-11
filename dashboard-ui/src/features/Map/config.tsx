@@ -322,7 +322,7 @@ export const getLayerConfig = (
                 type: LayerType.Symbol,
                 source: SourceId.RegionCenters,
                 layout: {
-                    'text-field': ['get', 'name'],
+                    'text-field': ['get', RegionField.Name],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                     'text-size': 22,
                     'text-allow-overlap': true,
@@ -726,6 +726,12 @@ export const getLayerHoverFunction = (
                 };
             case SubLayerId.RegionsFill:
                 return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as
@@ -918,6 +924,13 @@ export const getLayerCustomHoverExitFunction = (
             case SubLayerId.RegionsFill:
                 return () => {
                     map.getCanvas().style.cursor = '';
+
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     map.setPaintProperty(
                         SubLayerId.RegionLabels,
                         'text-opacity',

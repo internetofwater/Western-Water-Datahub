@@ -40,7 +40,6 @@ import { useReservoirData } from '@/hooks/useReservoirData';
 import { RegionField } from '@/features/Map/types/region';
 import {
     BasinDefault,
-    RegionDefault,
     ReservoirDefault,
     StateDefault,
 } from '@/stores/main/consts';
@@ -263,7 +262,7 @@ const MainMap: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
-        if (region === RegionDefault) {
+        if (region.length === 0) {
             // Unset Filter
             map.setFilter(SubLayerId.RegionsFill, null);
             map.setFilter(SubLayerId.RegionsBoundary, null);
@@ -276,15 +275,20 @@ const MainMap: React.FC<Props> = (props) => {
                 });
             }
         } else {
+            // The region labels dont include the spaces in the source
             map.setFilter(SubLayerId.RegionsFill, [
-                '==',
+                'match',
                 ['get', RegionField.Name],
-                region,
+                region.map((reg) => reg.replaceAll(' - ', '-')),
+                true,
+                false,
             ]);
             map.setFilter(SubLayerId.RegionsBoundary, [
-                '==',
+                'match',
                 ['get', RegionField.Name],
-                region,
+                region.map((reg) => reg.replaceAll(' - ', '-')),
+                true,
+                false,
             ]);
 
             if (boundingGeographyLevel === BoundingGeographyLevel.Region) {
@@ -416,7 +420,7 @@ const MainMap: React.FC<Props> = (props) => {
                     layers: reservoirLayers,
                 });
                 if (!features.length) {
-                    setRegion(RegionDefault);
+                    setRegion([]);
                     setBasin(BasinDefault);
                     setState(StateDefault);
                     setReservoir(ReservoirDefault);
@@ -576,11 +580,19 @@ const MainMap: React.FC<Props> = (props) => {
                 boundingGeographyLevel === BoundingGeographyLevel.Region &&
                 map.getLayer(SubLayerId.RegionLabels)
             ) {
-                map.setPaintProperty(
-                    SubLayerId.RegionLabels,
-                    'text-opacity',
-                    1
-                );
+                if (region.length > 0) {
+                    map.setPaintProperty(
+                        SubLayerId.RegionLabels,
+                        'text-opacity',
+                        ['match', ['get', RegionField.Name], region, 1, 0]
+                    );
+                } else {
+                    map.setPaintProperty(
+                        SubLayerId.RegionLabels,
+                        'text-opacity',
+                        1
+                    );
+                }
             }
             if (
                 boundingGeographyLevel === BoundingGeographyLevel.Basin &&
@@ -595,7 +607,7 @@ const MainMap: React.FC<Props> = (props) => {
                 map.setPaintProperty(SubLayerId.StateLabels, 'text-opacity', 1);
             }
         }
-    }, [boundingGeographyLevel, showAllLabels]);
+    }, [boundingGeographyLevel, showAllLabels, region]);
 
     return (
         <>

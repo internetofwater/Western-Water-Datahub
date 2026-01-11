@@ -17,11 +17,7 @@ import { getReservoirConfig } from '@/features/Map/utils';
 import { SourceId } from '@/features/Map/consts';
 import dayjs from 'dayjs';
 import useMainStore from '@/stores/main';
-import {
-    BasinDefault,
-    RegionDefault,
-    StateDefault,
-} from '@/stores/main/consts';
+import { BasinDefault, StateDefault } from '@/stores/main/consts';
 
 const Reservoirs: React.FC = () => {
     const region = useMainStore((state) => state.region);
@@ -151,9 +147,9 @@ const Reservoirs: React.FC = () => {
             );
         }
 
-        if (region !== RegionDefault) {
-            filterFunctions.push(
-                (feature) => feature.properties.regionConnector === region
+        if (region.length > 0) {
+            filterFunctions.push((feature) =>
+                region.includes(feature.properties.regionConnector)
             );
         }
         if (basin !== BasinDefault) {
