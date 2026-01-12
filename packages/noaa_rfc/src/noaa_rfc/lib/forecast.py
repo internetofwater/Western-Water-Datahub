@@ -1,7 +1,10 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+import csv
 from datetime import date, datetime
+import logging
+from pathlib import Path
 import time
 from typing import Literal, Optional, cast
 from com.cache import RedisCache
@@ -20,6 +23,17 @@ from geojson_pydantic import Feature, FeatureCollection, Point
 from geojson_pydantic.types import Position2D
 from shapely.geometry.base import BaseGeometry
 from shapely.geometry import Point as ShapelyPoint
+
+LOGGER = logging.getLogger(__name__)
+
+NOAA_DOI_REGIONS: dict[str, dict] = {}
+metadata_path = Path(__file__).parent.parent / "noaa_rfc_stations_by_region.csv"
+with metadata_path.open() as f:
+    LOGGER.info(f"Loading static NOAA doi region metadata from {metadata_path}")
+    reader = csv.DictReader(f)
+    for row in reader:
+        noaa_id = row.pop("noaa_id")
+        NOAA_DOI_REGIONS[noaa_id] = row
 
 
 class ForecastData(BaseModel):
@@ -100,6 +114,11 @@ class ForecastDataSingle(BaseModel):
 
     dataset_link: Optional[str] = None
     image_plot_link: Optional[str] = None
+
+    # extra doi metadata not in the upstream API
+    # but inserted via the NOAA_DOI_REGIONS csv dict
+    doi_region_num: Optional[int] = None
+    doi_region_name: Optional[str] = None
 
     def extend_with_metadata(self):
         """
@@ -259,6 +278,17 @@ class ForecastCollection(LocationCollectionProtocol):
                 }
             )
 
+            doi_region_info = NOAA_DOI_REGIONS.get(forecast.espid)
+            doi_region_num: Optional[int] = (
+                doi_region_info.get("doi_region_num") if doi_region_info else None
+            )
+            doi_region_name: Optional[str] = (
+                doi_region_info.get("doi_region_name") if doi_region_info else None
+            )
+            if doi_region_num:
+                # ensure the region number is an integer so that it is consistent across collections
+                doi_region_num = int(doi_region_num)
+
             serialized_feature = Feature(
                 type="Feature",
                 id=forecast.espid,
@@ -273,6 +303,8 @@ class ForecastCollection(LocationCollectionProtocol):
                     "espbasin": forecast.espbasin,
                     "espsubbasin": forecast.espsubbasin,
                     "espid": forecast.espid,
+                    "doi_region_num": doi_region_num,
+                    "doi_region_name": doi_region_name,
                 },
                 geometry=Point(
                     coordinates=Position2D(forecast.esplngdd, forecast.esplatdd),
@@ -283,6 +315,7 @@ class ForecastCollection(LocationCollectionProtocol):
             )
             if properties:
                 fields_mapping = cast(OAFFieldsMapping, fields_mapping)
+
                 # narrow the FieldsMapping type here manually since properties is a query arg for oaf and thus we know that OAFFieldsMapping must be used
                 if not all_properties_found_in_feature(
                     serialized_feature, properties, fields_mapping
