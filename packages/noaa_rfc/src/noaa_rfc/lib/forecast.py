@@ -115,6 +115,11 @@ class ForecastDataSingle(BaseModel):
     dataset_link: Optional[str] = None
     image_plot_link: Optional[str] = None
 
+    # extra doi metadata not in the upstream API
+    # but inserted via the NOAA_DOI_REGIONS csv dict
+    doi_region_num: Optional[int] = None
+    doi_region_name: Optional[str] = None
+
     def extend_with_metadata(self):
         """
         Add plotting and datasets links to the metadata of the pydantic object in place
@@ -274,6 +279,15 @@ class ForecastCollection(LocationCollectionProtocol):
             )
 
             doi_region_info = NOAA_DOI_REGIONS.get(forecast.espid)
+            doi_region_num: Optional[int] = (
+                doi_region_info.get("doi_region_num") if doi_region_info else None
+            )
+            doi_region_name: Optional[str] = (
+                doi_region_info.get("doi_region_name") if doi_region_info else None
+            )
+            if doi_region_num:
+                # ensure the region number is an integer so that it is consistent across collections
+                doi_region_num = int(doi_region_num)
 
             serialized_feature = Feature(
                 type="Feature",
@@ -289,12 +303,8 @@ class ForecastCollection(LocationCollectionProtocol):
                     "espbasin": forecast.espbasin,
                     "espsubbasin": forecast.espsubbasin,
                     "espid": forecast.espid,
-                    "doi_region_num": doi_region_info.get("doi_region_num")
-                    if doi_region_info
-                    else None,
-                    "doi_region_name": doi_region_info.get("doi_region_name")
-                    if doi_region_info
-                    else None,
+                    "doi_region_num": doi_region_num,
+                    "doi_region_name": doi_region_name,
                 },
                 geometry=Point(
                     coordinates=Position2D(forecast.esplngdd, forecast.esplatdd),
@@ -305,6 +315,7 @@ class ForecastCollection(LocationCollectionProtocol):
             )
             if properties:
                 fields_mapping = cast(OAFFieldsMapping, fields_mapping)
+
                 # narrow the FieldsMapping type here manually since properties is a query arg for oaf and thus we know that OAFFieldsMapping must be used
                 if not all_properties_found_in_feature(
                     serialized_feature, properties, fields_mapping
