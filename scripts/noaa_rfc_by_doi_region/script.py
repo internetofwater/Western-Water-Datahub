@@ -81,7 +81,7 @@ df_final = df_final.sort_values("doi_region_name").reset_index(drop=True)
 # cast the region number to an integer so it is consistent across collections for sorting
 df_final["doi_region_num"] = pd.to_numeric(
     df_final["doi_region_num"], errors="coerce"
-).astype("Int64")
+).astype("Int64")  # type: ignore
 
 # --------------------------------------------------
 # 7. Save results
