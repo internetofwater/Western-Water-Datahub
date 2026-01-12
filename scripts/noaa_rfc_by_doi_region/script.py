@@ -87,9 +87,18 @@ df_final["doi_region_num"] = pd.to_numeric(
 # 7. Save results
 # --------------------------------------------------
 
-output_path = Path(__file__).parent / "noaa_rfc_stations_by_region.csv"
+output_path = (
+    Path(__file__).parent.parent.parent
+    / "packages"
+    / "noaa_rfc"
+    / "src"
+    / "noaa_rfc"
+    / "noaa_rfc_stations_by_region.csv"
+)
 
 df_final.to_csv(output_path, index=False)
 print(
-    "Saved full NOAA RFC stations table by DOI region to noaa_rfc_stations_by_region.csv"
+    "Saved full NOAA RFC stations table by DOI region to {}".format(
+        output_path.absolute()
+    )
 )
