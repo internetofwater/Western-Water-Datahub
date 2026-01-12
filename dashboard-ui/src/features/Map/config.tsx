@@ -267,8 +267,11 @@ export const getLayerColor = (
             return '#00F';
         case LayerId.States:
             return '#000';
+        case LayerId.RegionsReference:
+        case LayerId.BasinsReference:
+        case LayerId.StatesReference:
         default:
-            return '#FFF';
+            return '#ef5e25';
     }
 };
 
@@ -335,6 +338,22 @@ export const getLayerConfig = (
                     'text-halo-width': 2,
                 },
             };
+        case LayerId.RegionsReference:
+            return {
+                id: LayerId.RegionsReference,
+                type: LayerType.Line,
+                source: SourceId.Regions,
+                layout: {
+                    visibility: 'none',
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                },
+                paint: {
+                    'line-opacity': 1,
+                    'line-color': getLayerColor(LayerId.RegionsReference),
+                    'line-width': 3,
+                },
+            };
         case LayerId.Basins:
             return null;
         case SubLayerId.BasinsBoundary:
@@ -397,6 +416,28 @@ export const getLayerConfig = (
                     'text-halo-width': 2,
                 },
             };
+        case LayerId.BasinsReference:
+            return {
+                id: LayerId.BasinsReference,
+                type: LayerType.Line,
+                source: SourceId.Basins,
+                'source-layer': SourceId.Basins,
+                filter: [
+                    'in',
+                    ['get', Huc02BasinField.Id],
+                    ['literal', ValidBasins],
+                ],
+                layout: {
+                    visibility: 'none',
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                },
+                paint: {
+                    'line-opacity': 1,
+                    'line-color': getLayerColor(LayerId.BasinsReference),
+                    'line-width': 2,
+                },
+            };
         case LayerId.States:
             return null;
         case SubLayerId.StatesBoundary:
@@ -445,6 +486,22 @@ export const getLayerConfig = (
                     'text-opacity': 0,
                     'text-halo-color': '#000000',
                     'text-halo-width': 2,
+                },
+            };
+        case LayerId.StatesReference:
+            return {
+                id: LayerId.StatesReference,
+                type: LayerType.Line,
+                source: SourceId.States,
+                layout: {
+                    visibility: 'none',
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                },
+                paint: {
+                    'line-opacity': 1,
+                    'line-color': getLayerColor(LayerId.StatesReference),
+                    'line-width': 3,
                 },
             };
         case LayerId.RiseEDRReservoirs:
@@ -1375,6 +1432,24 @@ export const layerDefinitions: MainLayerDefinition[] = [
     {
         id: LayerId.NOAATempSixToTen,
         config: getLayerConfig(LayerId.NOAATempSixToTen),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.RegionsReference,
+        config: getLayerConfig(LayerId.RegionsReference),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.BasinsReference,
+        config: getLayerConfig(LayerId.BasinsReference),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.StatesReference,
+        config: getLayerConfig(LayerId.StatesReference),
         controllable: false,
         legend: false,
     },

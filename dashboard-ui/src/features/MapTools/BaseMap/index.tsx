@@ -91,7 +91,6 @@ export const Selector: React.FC = () => {
                             root: styles.actionIconRoot,
                             icon: styles.actionIcon,
                         }}
-                        size="lg"
                         onClick={() => handleShow(!show)}
                     >
                         <Basemap />

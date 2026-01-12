@@ -12,7 +12,7 @@ import {
     ReservoirCollections,
     Tools,
 } from '@/stores/main/types';
-import { ReservoirDefault, StateDefault } from '@/stores/main/consts';
+import { ReservoirDefault } from '@/stores/main/consts';
 
 export interface MainState {
     // Selected Region filter
@@ -22,7 +22,7 @@ export interface MainState {
     basin: string[];
     setBasin: (basin: MainState['basin']) => void;
     // Selected State
-    state: string;
+    state: string[];
     setState: (state: MainState['state']) => void;
     // Reservoir selected from table or map
     reservoir: Reservoir | null;
@@ -55,6 +55,9 @@ export interface MainState {
         [LayerId.USDroughtMonitor]: boolean;
         [LayerId.NOAAPrecipSixToTen]: boolean;
         [LayerId.NOAATempSixToTen]: boolean;
+        [LayerId.RegionsReference]: boolean;
+        [LayerId.BasinsReference]: boolean;
+        [LayerId.StatesReference]: boolean;
     };
     setToggleableLayers: (layer: string, visible: boolean) => void;
     // Selected date for reservoir data
@@ -76,7 +79,7 @@ const useMainStore = create<MainState>()((set) => ({
     setRegion: (region) => set({ region }),
     basin: [],
     setBasin: (basin) => set({ basin }),
-    state: StateDefault,
+    state: [],
     setState: (state) => set({ state }),
     reservoir: ReservoirDefault,
     setReservoir: (reservoir) => set({ reservoir }),
@@ -98,6 +101,9 @@ const useMainStore = create<MainState>()((set) => ({
         [LayerId.USDroughtMonitor]: true,
         [LayerId.NOAAPrecipSixToTen]: false,
         [LayerId.NOAATempSixToTen]: false,
+        [LayerId.RegionsReference]: false,
+        [LayerId.BasinsReference]: false,
+        [LayerId.StatesReference]: false,
     },
     setToggleableLayers: (layer, visible) =>
         set((state) => ({

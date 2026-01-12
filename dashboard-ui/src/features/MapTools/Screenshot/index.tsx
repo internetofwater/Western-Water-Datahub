@@ -131,7 +131,6 @@ const Screenshot: React.FC = () => {
                             root: styles.actionIconRoot,
                             icon: styles.actionIcon,
                         }}
-                        size="lg"
                         onClick={() => handleShow(!show)}
                     >
                         <ScreenshotIcon />
