@@ -8,7 +8,7 @@
 import { ComboboxData, MultiSelect, Skeleton } from '@mantine/core';
 import useMainStore from '@/stores/main';
 import { useEffect, useRef, useState } from 'react';
-import { formatOptions } from '@/features/Header/Selectors/utils';
+import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
 import esriService from '@/services/init/esri.init';
 import { MAP_ID, SourceId } from '@/features/Map/consts';
 import { isSourceDataLoaded } from '@/features/Map/utils';

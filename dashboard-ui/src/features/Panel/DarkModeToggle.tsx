@@ -12,7 +12,7 @@ import {
     useMantineColorScheme,
 } from '@mantine/core';
 import { useColorScheme } from '@mantine/hooks';
-import styles from '@/features/Header/Header.module.css';
+import styles from '@/features/Panel/Panel.module.css';
 import { useEffect } from 'react';
 import useMainStore from '@/stores/main';
 import Sun from '@/icons/Sun';

@@ -12,7 +12,7 @@ import { MAP_ID, SourceId, ValidBasins } from '@/features/Map/consts';
 import { useEffect, useRef, useState } from 'react';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import geoconnexService from '@/services/init/geoconnex.init';
-import { formatOptions } from '@/features/Header/Selectors/utils';
+import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
 import { FeatureCollection, Polygon } from 'geojson';
 import {
     Huc02BasinField,

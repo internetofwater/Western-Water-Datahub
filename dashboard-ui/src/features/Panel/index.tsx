@@ -16,7 +16,7 @@ import { Header } from '@/features/Panel/Header';
 import styles from '@/features/Panel/Panel.module.css';
 import Reservoirs from '@/features/Reservoirs';
 import Controls from '@/features/Controls';
-import DarkModeToggle from '@/features/Header/DarkModeToggle';
+import DarkModeToggle from '@/features/Panel/DarkModeToggle';
 import Help from '@/features/Help';
 
 const items = [

@@ -3,6 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
+.darkModeToggleContainer {
+    margin-left: auto;
+}
+
+.darkModeIcon {
+    width: 1rem;
+}
+
 .panel {
     min-width: 31rem;
     width: 3rem;
