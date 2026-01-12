@@ -273,6 +273,8 @@ class ForecastCollection(LocationCollectionProtocol):
                 }
             )
 
+            doi_region_info = NOAA_DOI_REGIONS.get(forecast.espid)
+
             serialized_feature = Feature(
                 type="Feature",
                 id=forecast.espid,
@@ -287,12 +289,12 @@ class ForecastCollection(LocationCollectionProtocol):
                     "espbasin": forecast.espbasin,
                     "espsubbasin": forecast.espsubbasin,
                     "espid": forecast.espid,
-                    "doi_region_num": NOAA_DOI_REGIONS[forecast.espid][
-                        "doi_region_num"
-                    ],
-                    "doi_region_name": NOAA_DOI_REGIONS[forecast.espid][
-                        "doi_region_name"
-                    ],
+                    "doi_region_num": doi_region_info.get("doi_region_num")
+                    if doi_region_info
+                    else None,
+                    "doi_region_name": doi_region_info.get("doi_region_name")
+                    if doi_region_info
+                    else None,
                 },
                 geometry=Point(
                     coordinates=Position2D(forecast.esplngdd, forecast.esplatdd),
