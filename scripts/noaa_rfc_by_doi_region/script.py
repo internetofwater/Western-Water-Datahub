@@ -47,13 +47,17 @@ print("Performing spatial join...")
 gdf_joined = gpd.sjoin(gdf_noaa, gdf_regions, how="left", predicate="within")
 
 # make REG_NAME renamed to DOI_REGION
-gdf_joined.rename(columns={"REG_NAME": "DOI_REGION"}, inplace=True)
+gdf_joined.rename(
+    columns={"REG_NAME": "doi_region_name", "REG_NUM": "doi_region_num"}, inplace=True
+)
 
 # --------------------------------------------------
 # 6. Rearrange columns: DOI_REGION first, espname second, then all NOAA properties
 # --------------------------------------------------
 # Start with DOI_REGION
-cols = ["DOI_REGION"] + [c for c in gdf_noaa.columns if c != "geometry"]
+cols = ["doi_region_name", "doi_region_num"] + [
+    c for c in gdf_noaa.columns if c != "geometry"
+]
 
 # Ensure espname is second column
 if "espname" in cols:
@@ -67,12 +71,17 @@ df_final = pd.DataFrame(gdf_joined[cols])
 df_final.drop(columns=["forecasts"], inplace=True)
 df_final.drop(columns=["latest_esppavg"], inplace=True)
 
-noaa_cols = [c for c in cols if c not in ["DOI_REGION"]]
+noaa_cols = [c for c in cols if c not in ["doi_region_name", "doi_region_num"]]
 rename_dict = {c: f"noaa_{c}" for c in noaa_cols}
 df_final = df_final.rename(columns=rename_dict)
 
 # Sort by REG_NAME
-df_final = df_final.sort_values("DOI_REGION").reset_index(drop=True)
+df_final = df_final.sort_values("doi_region_name").reset_index(drop=True)
+
+# cast the region number to an integer so it is consistent across collections for sorting
+df_final["doi_region_num"] = pd.to_numeric(
+    df_final["doi_region_num"], errors="coerce"
+).astype("Int64")  # type: ignore
 
 # --------------------------------------------------
 # 7. Save results
