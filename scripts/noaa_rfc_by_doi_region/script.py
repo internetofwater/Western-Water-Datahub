@@ -35,7 +35,7 @@ print(f"Loaded {len(gdf_regions)} DOI regions")
 # 4. Ensure CRS matches
 # --------------------------------------------------
 if gdf_noaa.crs != gdf_regions.crs:
-    gdf_noaa = gdf_noaa.to_crs(gdf_regions.crs)
+    gdf_noaa = gdf_noaa.to_crs(gdf_regions.crs)  # type: ignore
 
 # --------------------------------------------------
 # 5. Spatial join: assign each NOAA station to a DOI region
