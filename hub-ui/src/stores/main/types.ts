@@ -6,7 +6,7 @@
 import { Feature, FeatureCollection, Polygon } from "geojson";
 import { ColorSpecification, PropertyValueSpecification } from "mapbox-gl";
 import { Properties } from "@/components/Map/types";
-import { ICollection } from "@/services/edr.service";
+import { ICollection, ParameterGroup } from "@/services/edr.service";
 import { ICollectionSlice } from "@/stores/main/slices/collections";
 import { ILayerSlice } from "@/stores/main/slices/layers";
 import { ILocationSlice } from "@/stores/main/slices/locations";
@@ -109,6 +109,8 @@ export type MainState = {
   setProvider: (provider: MainState["provider"]) => void;
   category: TCategory | null;
   setCategory: (category: MainState["category"]) => void;
+  parameterGroups: ParameterGroup[];
+  setParameterGroups: (parameterGroups: MainState["parameterGroups"]) => void;
   selectedCollections: string[];
   setSelectedCollections: (
     collection: MainState["selectedCollections"],

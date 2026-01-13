@@ -26,6 +26,11 @@ const useMainStore = create<MainState>()(
       set((state) => {
         state.category = category;
       }),
+    parameterGroups: [],
+    setParameterGroups: (parameterGroups) =>
+      set((state) => {
+        state.parameterGroups = parameterGroups;
+      }),
     selectedCollections: [],
     setSelectedCollections: (selectedCollections) =>
       set((state) => {

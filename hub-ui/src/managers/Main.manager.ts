@@ -1287,9 +1287,15 @@ class MainManager {
         ...(category ? { "parameter-name": category.value } : {}),
       },
     });
+
     const originalCollections = this.store.getState().originalCollections;
     if (originalCollections.length === 0) {
       this.store.getState().setOriginalCollections(response.collections);
+    }
+
+    const parameterGroups = this.store.getState().parameterGroups;
+    if (parameterGroups.length === 0) {
+      this.store.getState().setParameterGroups(response.parameterGroups);
     }
 
     this.store.getState().setCollections(response.collections);

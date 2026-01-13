@@ -24,6 +24,8 @@ const ParameterSelect: React.FC<Props> = (props) => {
   const { collectionId } = props;
 
   const collections = useMainStore((state) => state.collections);
+  // const parameterGroups = useMainStore((state) => state.parameterGroups);
+  // const category = useMainStore((state) => state.category);
   const selectedCollections = useMainStore(
     (state) => state.selectedCollections,
   );
