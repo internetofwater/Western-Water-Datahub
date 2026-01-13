@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 [project]
-name = "iodh_integrations"
+name = "wwdh_integrations"
 version = "0.1.0"
 description = "Mappings from various hydrological data sources to a standardized OGC EDR API format"
 readme = "README.md"

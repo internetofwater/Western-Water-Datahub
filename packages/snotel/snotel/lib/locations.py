@@ -4,10 +4,12 @@
 from awdb_com.locations import LocationCollection
 from awdb_com.types import StationDTO
 from com.cache import RedisCache
+from com.env import TRACER
 from com.helpers import (
     EDRFieldsMapping,
     await_,
 )
+from com.otel import otel_trace
 from com.protocols.locations import LocationCollectionProtocolWithEDR
 from com.covjson import CoverageCollectionDict
 from snotel.lib.covjson_builder import CovjsonBuilder
@@ -19,6 +21,7 @@ type longitudeAndLatitude = tuple[float, float]
 class SnotelLocationCollection(LocationCollection, LocationCollectionProtocolWithEDR):
     """A wrapper class containing locations and methods to filter them"""
 
+    @otel_trace()
     def __init__(
         self,
         select_properties: Optional[list[str]] = None,
@@ -37,7 +40,8 @@ class SnotelLocationCollection(LocationCollection, LocationCollectionProtocolWit
         if select_properties:
             url += f"&elements={','.join(select_properties)}"
         result = await_(self.cache.get_or_fetch_json(url))
-        self.locations = [StationDTO.model_validate(res) for res in result]
+        with TRACER.start_span("pydantic_validation"):
+            self.locations = [StationDTO.model_validate(res) for res in result]
 
     def to_covjson(
         self,
