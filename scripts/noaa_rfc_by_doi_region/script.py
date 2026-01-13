@@ -9,7 +9,8 @@ import requests
 # --------------------------------------------------
 # 1. API endpoints
 # --------------------------------------------------
-NOAA_RFC_URL = "https://api.wwdh.internetofwater.app/collections/noaa-rfc/items?f=json"
+# use the local development server so that
+NOAA_RFC_URL = "http://localhost:5005/collections/noaa-rfc/items?f=json"
 DOI_REGIONS_URL = (
     "https://api.wwdh.internetofwater.app/collections/doi-regions/items?f=json"
 )
@@ -19,6 +20,11 @@ DOI_REGIONS_URL = (
 # --------------------------------------------------
 print("Loading NOAA RFC features...")
 gdf_noaa = gpd.read_file(NOAA_RFC_URL)
+
+# if we are hitting an API with the region info already set, we just remove it
+# so that we can do the spatial join and regenerate the region info
+gdf_noaa.drop(columns=["doi_region_name", "doi_region_num"], inplace=True)
+
 print(f"Loaded {len(gdf_noaa)} NOAA RFC stations")
 
 # --------------------------------------------------
