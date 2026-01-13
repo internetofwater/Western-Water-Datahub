@@ -84,9 +84,7 @@ def load(start, end):
     """Download and load drought CSVs into PostGIS using ogr2ogr."""
 
     today = date.today()
-    start_date = (
-        dateparse(start).date() if start else today - timedelta(days=2)
-    )
+    start_date = dateparse(start).date() if start else today - timedelta(days=2)
     end_date = dateparse(end).date() if end else today
 
     for dt in date_range(start_date, end_date):
