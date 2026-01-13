@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { ActionIcon, ComboboxData, Group, Text } from "@mantine/core";
+import { ActionIcon, ComboboxData, Group, Stack, Text } from "@mantine/core";
 import Delete from "@/assets/Delete";
 import Select from "@/components/Select";
 import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
@@ -189,7 +189,12 @@ const ParameterSelect: React.FC<Props> = (props) => {
           clearable
         />
       ) : (
-        <Text>This collection does not include parameters.</Text>
+        <Stack gap="var(--default-spacing)">
+          <Text size="sm">{name}</Text>
+          <Text size="xs" c="dimmed">
+            This collection does not include parameters.
+          </Text>
+        </Stack>
       )}
       {showPalette(collectionId) && (
         <Group gap="var(--default-spacing)" mt="var(--default-spacing)">

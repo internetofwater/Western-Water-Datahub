@@ -286,7 +286,7 @@ export const LayerBlock: React.FC<Props> = (props) => {
       />
       {currentChunk.length === 0 && (
         <Text fw={700} m="auto">
-          Select locations from the menu {mobile ? "above" : "on the left"}
+          Select {getLabel()}s from the menu {mobile ? "above" : "on the left"}
         </Text>
       )}
       {collection &&
