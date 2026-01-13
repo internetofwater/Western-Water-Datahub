@@ -231,18 +231,21 @@ const Controls: React.FC = () => {
                         label="Show DOI Region Boundaries"
                         onClick={handleRegionsReferenceChange}
                         toggleableLayers={toggleableLayers}
+                        links={false}
                     />
                     <Entry
                         layerId={LayerId.BasinsReference}
                         label="Show Basin (HUC06) Boundaries"
                         onClick={handleBasinsReferenceChange}
                         toggleableLayers={toggleableLayers}
+                        links={false}
                     />
                     <Entry
                         layerId={LayerId.StatesReference}
                         label="Show State Boundaries"
                         onClick={handleStatesReferenceChange}
                         toggleableLayers={toggleableLayers}
+                        links={false}
                     />
                 </>
             ) : (

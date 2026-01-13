@@ -15,9 +15,10 @@ type Props = {
     label: string;
     onClick: (visible: boolean) => void;
     toggleableLayers: MainState['toggleableLayers'];
+    links?: boolean;
 };
 export const Entry: React.FC<Props> = (props) => {
-    const { layerId, label, onClick, toggleableLayers } = props;
+    const { layerId, label, onClick, toggleableLayers, links = true } = props;
 
     return (
         <Stack gap="calc(var(--default-spacing) / 2)">
@@ -49,7 +50,7 @@ export const Entry: React.FC<Props> = (props) => {
                 checked={toggleableLayers[layerId]}
                 onClick={() => onClick(!toggleableLayers[layerId])}
             />
-            <Links collectionId={layerId} />
+            {links && <Links collectionId={layerId} />}
         </Stack>
     );
 };

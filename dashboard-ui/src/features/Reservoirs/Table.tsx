@@ -288,6 +288,10 @@ export const Table: React.FC<Props> = (props) => {
                                                 onClick={(e) =>
                                                     handleViewOnMap(e, feature)
                                                 }
+                                                classNames={{
+                                                    root: styles.actionIconRoot,
+                                                    icon: styles.actionIcon,
+                                                }}
                                             >
                                                 <MapSearch />
                                             </ActionIcon>
@@ -299,7 +303,12 @@ export const Table: React.FC<Props> = (props) => {
                     })}
                 </TableTbody>
             </TableComponent>
-            <Group justify="space-between" align="flex-end" mx={8}>
+            <Group
+                justify="space-between"
+                align="flex-end"
+                mx={8}
+                className={styles.pageControls}
+            >
                 <NumberInput
                     size="xs"
                     className={styles.pageSizeInput}

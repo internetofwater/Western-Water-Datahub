@@ -21,6 +21,7 @@ import {
     ScaleControlOptions,
     IControl,
     ControlPosition,
+    MapTouchEvent,
 } from 'mapbox-gl';
 import { Root } from 'react-dom/client';
 
@@ -89,13 +90,13 @@ export type SourceConfig = {
  *
  * @type
  */
-export type CustomListenerFunction = (
+export type CustomListenerFunction = <T extends MapMouseEvent | MapTouchEvent>(
     map: Map,
     hoverPopup: Popup,
     persistentPopup: Popup,
     root: Root,
     container: HTMLDivElement
-) => (e: MapMouseEvent) => void;
+) => (e: T) => void;
 
 /**
  * Defines the configuration for a layer in the map.

@@ -156,7 +156,7 @@ const Reservoirs: React.FC = () => {
                 basin.includes(feature.properties.basinConnector.slice(0, 2))
             );
         }
-        if (state.length === 0) {
+        if (state.length > 0) {
             filterFunctions.push((feature) =>
                 state.includes(feature.properties.stateConnector)
             );

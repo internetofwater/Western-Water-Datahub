@@ -8,6 +8,7 @@ import {
     AccordionControl,
     AccordionItem,
     AccordionPanel,
+    ActionIcon,
     Group,
     Paper,
     Title,
@@ -17,7 +18,12 @@ import styles from '@/features/Panel/Panel.module.css';
 import Reservoirs from '@/features/Reservoirs';
 import Controls from '@/features/Controls';
 import DarkModeToggle from '@/features/Panel/DarkModeToggle';
-import Help from '@/features/Help';
+import Help, { HELP_LOCAL_KEY } from '@/features/Help';
+import { useEffect, useRef, useState } from 'react';
+import X from '@/icons/X';
+import { useMediaQuery } from '@mantine/hooks';
+import useSessionStore from '@/stores/session';
+import { Overlay } from '@/stores/session/types';
 
 const items = [
     {
@@ -31,9 +37,55 @@ const items = [
 ];
 
 const Panel: React.FC = () => {
+    const overlay = useSessionStore((state) => state.overlay);
+    const setOverlay = useSessionStore((state) => state.setOverlay);
+
+    const [show, setShow] = useState(true);
+
+    const mobile = useMediaQuery('(max-width: 899px)');
+
+    const firstClose = useRef(true);
+
+    useEffect(() => {
+        if (!mobile) {
+            setShow(true);
+            return;
+        }
+
+        setShow(overlay === Overlay.Controls);
+    }, [mobile, overlay]);
+
+    const handleClick = () => {
+        const stored = localStorage.getItem(HELP_LOCAL_KEY);
+        const shouldShow = stored === null || stored === 'true';
+
+        if (firstClose.current && mobile && shouldShow) {
+            setOverlay(Overlay.Legend);
+        } else {
+            setOverlay(null);
+        }
+
+        firstClose.current = false;
+    };
+
     return (
-        <Paper className={styles.panel}>
+        <Paper
+            className={styles.panel}
+            style={{ display: show ? 'block' : 'none' }}
+        >
             <Header />
+            <ActionIcon
+                size="sm"
+                variant="transparent"
+                onClick={handleClick}
+                classNames={{
+                    root: styles.actionIconRoot,
+                    icon: styles.actionIcon,
+                }}
+                className={styles.mobileClose}
+            >
+                <X />
+            </ActionIcon>
             <Accordion
                 multiple
                 defaultValue={['Reservoirs']}

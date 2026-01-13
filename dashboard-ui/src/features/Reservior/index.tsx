@@ -21,6 +21,7 @@ import { ReservoirDefault } from '@/stores/main/consts';
 import { GeoJsonProperties } from 'geojson';
 import useSessionStore from '@/stores/session';
 import { Overlay } from '@/stores/session/types';
+import styles from '@/features/Reservior/Reservoir.module.css';
 
 /**
  *
@@ -109,17 +110,7 @@ const Reservoir: React.FC = () => {
         <Modal
             centered
             size="auto"
-            styles={{
-                content: {
-                    width: 'min(80vw, 1265px)',
-                    height: 800,
-                    maxWidth: 1265,
-                },
-                body: {
-                    height: 'min(80vh, 735px)',
-                    maxHeight: 735,
-                },
-            }}
+            classNames={{ content: styles.content, body: styles.body }}
             opened={opened}
             onClose={close}
             title={

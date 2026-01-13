@@ -3,6 +3,17 @@
  * SPDX-License-Identifier: MIT
  */
 
+.actionIcon {
+    stroke: var(--mantine-color-text);
+    fill: var(--mantine-color-text);
+}
+
+.actionIcon svg {
+    width: 2rem;
+    height: auto;
+    padding: 1px;
+}
+
 .buttonColumn {
     width: 4.375rem;
 }
@@ -77,6 +88,17 @@
 
 .table {
     width: 100%;
+}
+
+@media screen and (max-width: 899px) {
+    .filterWrapper {
+        padding: var(--default-spacing);
+    }
+
+    .pageControls {
+        padding-left: var(--default-spacing);
+        padding-right: var(--default-spacing);
+    }
 }
 
 @media screen and (max-width: 400px) {

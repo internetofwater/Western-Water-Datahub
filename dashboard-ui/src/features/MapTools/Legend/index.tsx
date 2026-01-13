@@ -34,6 +34,7 @@ import useSessionStore from '@/stores/session';
 import LegendIcon from '@/icons/Legend';
 import { useEffect, useState } from 'react';
 import { Overlay } from '@/stores/session/types';
+import { useMediaQuery } from '@mantine/hooks';
 
 const entries: Entry[] = [
     {
@@ -169,6 +170,8 @@ const Legend: React.FC = () => {
     const overlay = useSessionStore((state) => state.overlay);
     const setOverlay = useSessionStore((state) => state.setOverlay);
 
+    const mobile = useMediaQuery('(max-width: 899px)');
+
     const [show, setShow] = useState(false);
 
     useEffect(() => {
@@ -200,6 +203,7 @@ const Legend: React.FC = () => {
                             icon: styles.actionIcon,
                         }}
                         onClick={() => handleShow(!show)}
+                        size={mobile ? 'lg' : 'md'}
                     >
                         <LegendIcon />
                     </ActionIcon>

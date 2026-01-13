@@ -20,7 +20,6 @@ import {
     SubLayerId,
     LayerId,
     SourceId,
-    RISEEDRReservoirSource,
     RegionsSource,
     BaseLayerOpacity,
     ValidStates,
@@ -124,15 +123,15 @@ export const sourceConfigs: SourceConfig[] = [
             cluster: false,
         },
     },
-    {
-        id: SourceId.RiseEDRReservoirs,
-        type: Sources.GeoJSON,
-        definition: {
-            type: 'geojson',
-            data: RISEEDRReservoirSource,
-            filter: ['!=', ['get', '_id'], 3688],
-        },
-    },
+    // {
+    //     id: SourceId.RiseEDRReservoirs,
+    //     type: Sources.GeoJSON,
+    //     definition: {
+    //         type: 'geojson',
+    //         data: RISEEDRReservoirSource,
+    //         filter: ['!=', ['get', '_id'], 3688],
+    //     },
+    // },
     {
         id: SourceId.ResvizEDRReservoirs,
         type: Sources.GeoJSON,
@@ -504,33 +503,33 @@ export const getLayerConfig = (
                     'line-width': 3,
                 },
             };
-        case LayerId.RiseEDRReservoirs:
-            return {
-                id: LayerId.RiseEDRReservoirs,
-                type: LayerType.Symbol,
-                source: SourceId.RiseEDRReservoirs,
-                filter: getReservoirFilter(
-                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                ),
-                layout: getReservoirSymbolLayout(
-                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                ),
-            };
-        case SubLayerId.RiseEDRReservoirLabels:
-            return {
-                id: SubLayerId.RiseEDRReservoirLabels,
-                type: LayerType.Symbol,
-                source: SourceId.RiseEDRReservoirs,
-                filter: getReservoirFilter(
-                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                ),
-                layout: getReservoirLabelLayout(
-                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                ),
-                paint: getReservoirLabelPaint(
-                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                ),
-            };
+        // case LayerId.RiseEDRReservoirs:
+        //     return {
+        //         id: LayerId.RiseEDRReservoirs,
+        //         type: LayerType.Symbol,
+        //         source: SourceId.RiseEDRReservoirs,
+        //         filter: getReservoirFilter(
+        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
+        //         ),
+        //         layout: getReservoirSymbolLayout(
+        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
+        //         ),
+        //     };
+        // case SubLayerId.RiseEDRReservoirLabels:
+        //     return {
+        //         id: SubLayerId.RiseEDRReservoirLabels,
+        //         type: LayerType.Symbol,
+        //         source: SourceId.RiseEDRReservoirs,
+        //         filter: getReservoirFilter(
+        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
+        //         ),
+        //         layout: getReservoirLabelLayout(
+        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
+        //         ),
+        //         paint: getReservoirLabelPaint(
+        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
+        //         ),
+        //     };
         case LayerId.ResvizEDRReservoirs:
             return {
                 id: LayerId.ResvizEDRReservoirs,

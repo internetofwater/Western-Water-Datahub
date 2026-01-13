@@ -35,7 +35,12 @@ import {
     getHighlightIcon,
 } from '@/features/Map/utils';
 import { basemaps } from '@/components/Map/consts';
-import { GeoJSONSource, LngLatLike, MapMouseEvent } from 'mapbox-gl';
+import {
+    GeoJSONSource,
+    LngLatLike,
+    MapMouseEvent,
+    MapTouchEvent,
+} from 'mapbox-gl';
 import { useReservoirData } from '@/hooks/useReservoirData';
 import { RegionField } from '@/features/Map/types/region';
 import { ReservoirDefault } from '@/stores/main/consts';
@@ -141,7 +146,7 @@ const MainMap: React.FC<Props> = (props) => {
             (config) => config.connectedLayers
         );
 
-        const handleReservoirsClick = (e: MapMouseEvent) => {
+        const handleReservoirsClick = (e: MapMouseEvent | MapTouchEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: reservoirLayers,
             });
@@ -227,6 +232,7 @@ const MainMap: React.FC<Props> = (props) => {
         // map.on('click', SubLayerId.StatesFill, handleStatesClick);
 
         map.on('click', reservoirLayers, handleReservoirsClick);
+        map.on('touchend', reservoirLayers, handleReservoirsClick);
 
         loadImages(map);
         map.on('style.load', () => {
@@ -251,6 +257,7 @@ const MainMap: React.FC<Props> = (props) => {
             // map.off('click', SubLayerId.BasinsFill, handleBasinsClick);
             // map.off('click', SubLayerId.StatesFill, handleStatesClick);
             map.off('click', reservoirLayers, handleReservoirsClick);
+            map.off('touchend', reservoirLayers, handleReservoirsClick);
         };
     }, [map]);
 

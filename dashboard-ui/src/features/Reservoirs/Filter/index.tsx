@@ -86,6 +86,7 @@ export const Filter: React.FC<Props> = (props) => {
                 gap="var(--default-spacing)"
                 my="calc(var(--default-spacing) / 2)"
                 align="flex-start"
+                wrap="nowrap"
             >
                 <Box
                     style={{
@@ -129,6 +130,10 @@ export const Filter: React.FC<Props> = (props) => {
                     className={`${styles.sortOrderButton} ${
                         sortOrder === 'asc' ? styles.rotate180 : ''
                     }`}
+                    classNames={{
+                        root: styles.actionIconRoot,
+                        icon: styles.actionIcon,
+                    }}
                     onClick={() =>
                         handleSortOrderChange(
                             sortOrder === 'asc' ? 'desc' : 'asc'

@@ -29,6 +29,7 @@ import Image from 'next/image';
 import ScreenshotIcon from '@/icons/Screenshot';
 import { Overlay } from '@/stores/session/types';
 import useSessionStore from '@/stores/session';
+import { useMediaQuery } from '@mantine/hooks';
 
 /**
  *
@@ -41,6 +42,8 @@ const Screenshot: React.FC = () => {
 
     const overlay = useSessionStore((state) => state.overlay);
     const setOverlay = useSessionStore((state) => state.setOverlay);
+
+    const mobile = useMediaQuery('(max-width: 899px)');
 
     const [show, setShow] = useState(false);
 
@@ -132,6 +135,7 @@ const Screenshot: React.FC = () => {
                             icon: styles.actionIcon,
                         }}
                         onClick={() => handleShow(!show)}
+                        size={mobile ? 'lg' : 'md'}
                     >
                         <ScreenshotIcon />
                     </ActionIcon>

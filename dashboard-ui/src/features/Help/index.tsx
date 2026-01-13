@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from 'react';
 import { Button, Modal, Tabs, Text, Tooltip } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { About } from '@/features/Help/About';
 import { FAQ } from '@/features/Help/FAQ';
 import { Glossary } from '@/features/Help/Glossary';
@@ -19,15 +19,17 @@ export const HELP_LOCAL_KEY = 'wwdh-show-help';
 const Help: React.FC = () => {
     const [opened, { open, close }] = useDisclosure(false);
 
-    const overlay = useSessionStore((s) => s.overlay);
-    const setOverlay = useSessionStore((s) => s.setOverlay);
-    const helpTab = useSessionStore((s) => s.helpTab);
-    const setHelpTab = useSessionStore((s) => s.setHelpTab);
+    const overlay = useSessionStore((state) => state.overlay);
+    const setOverlay = useSessionStore((state) => state.setOverlay);
+    const helpTab = useSessionStore((state) => state.helpTab);
+    const setHelpTab = useSessionStore((state) => state.setHelpTab);
 
     const [showHelp, setShowHelp] = useState(false);
 
     // TODO: investigate issues with initial load
     const [initialLoad, setInitialLoad] = useState(true);
+
+    const mobile = useMediaQuery('(max-width: 899px)');
 
     useEffect(() => {
         const stored = localStorage.getItem(HELP_LOCAL_KEY);
@@ -39,6 +41,7 @@ const Help: React.FC = () => {
             setShowHelp(true);
             open();
         } else {
+            setOverlay(Overlay.Controls);
             setShowHelp(false);
         }
 
@@ -67,7 +70,11 @@ const Help: React.FC = () => {
         const shouldShow = stored === null || stored === 'true';
 
         if (shouldShow) {
-            setOverlay(Overlay.Legend);
+            if (mobile) {
+                setOverlay(Overlay.Controls);
+            } else {
+                setOverlay(Overlay.Legend);
+            }
         }
 
         close();

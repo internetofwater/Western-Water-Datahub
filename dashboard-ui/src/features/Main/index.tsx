@@ -29,9 +29,7 @@ const Main: React.FC<Props> = (props) => {
             <Panel />
             <Box className={styles.mapContainer}>
                 <Map accessToken={accessToken} />
-                <Box className={`${styles.container} ${styles.right}`}>
-                    <MapTools />
-                </Box>
+                <MapTools />
                 <Box
                     className={`${styles.container} ${styles.left} ${styles.bottom}`}
                 >
