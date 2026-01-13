@@ -62,6 +62,7 @@ const Panel: React.FC = () => {
         if (firstClose.current && mobile && shouldShow) {
             setOverlay(Overlay.Legend);
         } else {
+            console.log('tis i');
             setOverlay(null);
         }
 

@@ -94,13 +94,10 @@ const Reservoir: React.FC = () => {
         }
     }, [overlay]);
 
-    useEffect(() => {
-        if (opened) {
-            setOverlay(Overlay.Detail);
-        } else {
-            setOverlay(null);
-        }
-    }, [opened]);
+    const handleClose = () => {
+        close();
+        setOverlay(null);
+    };
 
     if (!reservoirProperties || !config || !reservoirId) {
         return null;
@@ -112,7 +109,7 @@ const Reservoir: React.FC = () => {
             size="auto"
             classNames={{ content: styles.content, body: styles.body }}
             opened={opened}
-            onClose={close}
+            onClose={handleClose}
             title={
                 <Title order={3}>
                     {String(reservoirProperties[config.labelProperty]) ?? ''}
