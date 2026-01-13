@@ -32,8 +32,15 @@ with metadata_path.open() as f:
     LOGGER.info(f"Loading static NOAA doi region metadata from {metadata_path}")
     reader = csv.DictReader(f)
     for row in reader:
+        # Skip rows where in_wwdh_backend_api is True
+        if row.get("in_wwdh_backend_api", "False").strip().lower() != "true":
+            continue
         noaa_id = row.pop("noaa_id")
-        NOAA_DOI_REGIONS[noaa_id] = row
+        # we don't need all the fields, so just grab the ones we need for the API
+        NOAA_DOI_REGIONS[noaa_id] = {
+            "doi_region_num": row.pop("doi_region_num"),
+            "doi_region_name": row.pop("doi_region_name"),
+        }
 
 
 class ForecastData(BaseModel):
