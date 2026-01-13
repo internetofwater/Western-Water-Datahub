@@ -23,6 +23,7 @@ from com.helpers import (
     await_,
     parse_z,
 )
+from com.otel import otel_trace
 from com.protocols.locations import LocationCollectionProtocolWithEDR
 import geojson_pydantic
 import orjson
@@ -56,17 +57,20 @@ with metadata_path.open() as f:
 class LocationCollection(LocationCollectionProtocolWithEDR):
     locations: list[Feature]
 
+    @otel_trace()
     def __init__(self, itemId: Optional[str] = None):
         self.cache = RedisCache()
         url = "https://water.sec.usace.army.mil/cda/reporting/providers/projects?fmt=geojson"
 
         res = await_(self.cache.get_or_fetch_response_text(url))
-        fc = FeatureCollection.model_validate(
-            {
-                "type": "FeatureCollection",
-                "features": orjson.loads(res),
-            }
-        )
+
+        with TRACER.start_span("pydantic_validation"):
+            fc = FeatureCollection.model_validate(
+                {
+                    "type": "FeatureCollection",
+                    "features": orjson.loads(res),
+                }
+            )
         features_to_keep = []
 
         for feature in fc.features:
@@ -120,6 +124,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
 
         self.locations = features_to_keep
 
+    @otel_trace()
     def to_geojson(
         self,
         itemsIDSingleFeature: bool = False,
@@ -232,6 +237,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
     def drop_outside_of_geometry(self, geometry):
         return self._filter_by_geometry(geometry)
 
+    @otel_trace()
     def to_covjson(
         self,
         fieldMapper: EDRFieldsMapping,

@@ -6,7 +6,7 @@ import logging
 from typing import Any, Coroutine, Literal, Optional, Tuple, Type, TypedDict
 from annotated_types import T
 from com.datetime import datetime_from_iso
-from com.env import iodh_event_loop
+from com.env import wwdh_event_loop
 from pydantic import BaseModel
 from rise.lib.types.helpers import ZType
 import datetime
@@ -38,7 +38,7 @@ def await_(coro: Coroutine[Any, Any, T]) -> T:
     """
     await an asyncio coroutine, ensuring it works even if an event loop is already running.
     """
-    return asyncio.run_coroutine_threadsafe(coro, loop=iodh_event_loop).result()
+    return asyncio.run_coroutine_threadsafe(coro, loop=wwdh_event_loop).result()
 
 
 def parse_z(z: str) -> Optional[Tuple[ZType, list[int]]]:
