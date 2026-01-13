@@ -24,7 +24,12 @@ import { chunk } from "@/utils/chunk";
 import { CollectionType } from "@/utils/collection";
 import { createEmptyCsv } from "@/utils/csv";
 import { getIdStore } from "@/utils/getIdStore";
-import { buildCubeUrl, buildLocationsUrl, buildLocationUrl } from "@/utils/url";
+import {
+  buildCubeUrl,
+  buildItemsUrl,
+  buildLocationsUrl,
+  buildLocationUrl,
+} from "@/utils/url";
 
 type Props = {
   locations: Feature[];
@@ -89,6 +94,8 @@ export const LayerBlock: React.FC<Props> = (props) => {
         false,
         true,
       );
+    } else if (collectionType === CollectionType.Features) {
+      url = buildItemsUrl(collection.id);
     }
 
     setUrl(url);
