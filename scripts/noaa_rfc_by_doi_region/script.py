@@ -205,21 +205,25 @@ output_path = (
 with open(Path(__file__).parent / "noaa_stations.html", "r") as f:
     noaa_station_list_in_water_supply_map = f.read()
 
-num_stations_in_map = len(noaa_station_list_in_water_supply_map.split("\n"))
+LENGTH_OF_LICENSE_HEADER = 5
+# remove the header and if there is a trailing space
+noaa_station_list_in_water_supply_map = noaa_station_list_in_water_supply_map.split(
+    "\n"
+)[LENGTH_OF_LICENSE_HEADER:-1]
+
+assert "<!--" not in noaa_station_list_in_water_supply_map[0]
+assert "Yuba" in noaa_station_list_in_water_supply_map[-1]
+
+num_stations_in_map = len(noaa_station_list_in_water_supply_map)
+assert num_stations_in_map == 468, num_stations_in_map
 num_stations_in_wwdh = len(df_final[df_final["in_wwdh_backend_api"]])
-num_stations_in_forecast_map_joined_from_esri = len(
-    df_final[df_final["in_noaa_western_water_supply_forecast_map"]]
+
+
+assert num_stations_in_map == num_stations_in_wwdh, (
+    f"{num_stations_in_map} != {num_stations_in_wwdh}"
 )
 
-assert (
-    num_stations_in_map
-    == num_stations_in_wwdh
-    == num_stations_in_forecast_map_joined_from_esri
-), (
-    f"{num_stations_in_map} != {num_stations_in_wwdh} != {num_stations_in_forecast_map_joined_from_esri}"
-)
-
-for station in noaa_station_list_in_water_supply_map.split("\n"):
+for station in noaa_station_list_in_water_supply_map:
     # get just the station name
     station_substr = station.split(">")[1].split("<")[0]
     # remove all special characters or stuff that is formatted differently in the html
@@ -252,7 +256,16 @@ for station in noaa_station_list_in_water_supply_map.split("\n"):
 # after completing our checks, we now know that the list of stations
 # in the supply forecast map is the same as the wwdh backend api
 df_final["in_noaa_western_water_supply_forecast_map"] = df_final["in_wwdh_backend_api"]
-
+num_stations_in_forecast_map_joined_from_esri = len(
+    df_final[df_final["in_noaa_western_water_supply_forecast_map"]]
+)
+assert (
+    num_stations_in_map
+    == num_stations_in_forecast_map_joined_from_esri
+    == num_stations_in_wwdh
+), (
+    f"{num_stations_in_map} != {num_stations_in_forecast_map_joined_from_esri} != {num_stations_in_wwdh}"
+)
 
 df_final.to_csv(output_path, index=False)
 print(
