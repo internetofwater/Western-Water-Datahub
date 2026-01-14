@@ -48,10 +48,10 @@ export const Header: React.FC = () => {
           fit="contain"
         />
 
-        <Title order={1} size="h3" className={styles.title}>
+        <Title order={1} size="h2" className={styles.title}>
           Western Water Data Hub
         </Title>
-        <Divider />
+        <Divider size="md" />
       </Stack>
     </Box>
   );

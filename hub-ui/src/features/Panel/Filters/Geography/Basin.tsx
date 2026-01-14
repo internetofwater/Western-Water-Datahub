@@ -163,7 +163,7 @@ export const Basin: React.FC = () => {
     >
       <Select
         key={`basin-select-${geographyFilterCollectionId}`}
-        size="xs"
+        size="sm"
         label="Basin"
         placeholder="Select..."
         data={basinOptions}

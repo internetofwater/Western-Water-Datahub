@@ -59,7 +59,10 @@ const Search: React.FC = () => {
       closeOnClickOutside={false}
     >
       <Popover.Target>
-        <Tooltip label="Search collections" disabled={show}>
+        <Tooltip
+          label="Search across features shown for this data source"
+          disabled={show}
+        >
           <ActionIcon
             className={styles.searchButton}
             size="lg"

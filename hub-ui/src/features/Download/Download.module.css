@@ -107,6 +107,10 @@
   color: red;
 }
 
+.parameterMessageWrapper {
+  padding: calc(var(--default-spacing) * 2);
+}
+
 @media screen and (max-width: 899px) {
   .datePicker {
     min-width: 100%;

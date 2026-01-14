@@ -1279,17 +1279,25 @@ class MainManager {
    */
   public async getCollections(): Promise<void> {
     const provider = this.store.getState().provider;
-    const category = this.store.getState().category;
+    const categories = this.store.getState().categories;
 
     const response = await wwdhService.getCollections({
       params: {
-        ...(provider ? { "provider-name": provider } : {}),
-        "parameter-name": category ? category.value : "*",
+        ...(provider.length > 0 ? { "provider-name": provider.join(",") } : {}),
+        ...(categories.length > 0
+          ? { "parameter-name": categories.join(",") }
+          : {}),
       },
     });
+
     const originalCollections = this.store.getState().originalCollections;
     if (originalCollections.length === 0) {
       this.store.getState().setOriginalCollections(response.collections);
+    }
+
+    const parameterGroups = this.store.getState().parameterGroups;
+    if (parameterGroups.length === 0) {
+      this.store.getState().setParameterGroups(response.parameterGroups);
     }
 
     this.store.getState().setCollections(response.collections);
@@ -1477,8 +1485,8 @@ class MainManager {
 
     this.removeGeographyFilter();
 
-    this.store.getState().setProvider(null);
-    this.store.getState().setCategory(null);
+    this.store.getState().setProvider([]);
+    this.store.getState().setCategories([]);
     this.store.getState().setSelectedCollections([]);
     const today = dayjs();
     this.store

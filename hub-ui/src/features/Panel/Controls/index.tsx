@@ -10,7 +10,12 @@ import { ShowLocations } from "@/features/Panel/Controls/ShowLocations";
 
 const Controls: React.FC = () => {
   return (
-    <Group className={styles.controlsWrapper} grow gap="sm">
+    <Group
+      className={styles.controlsWrapper}
+      grow
+      gap="sm"
+      mt="calc(var(--default-spacing) * 2)"
+    >
       <ShowLocations />
       <Reset />
     </Group>

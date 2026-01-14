@@ -4,16 +4,18 @@
  */
 
 import { useEffect, useState } from "react";
-import { ActionIcon, ComboboxData, Group, Text } from "@mantine/core";
+import { ActionIcon, ComboboxData, Group, Stack, Text } from "@mantine/core";
 import Delete from "@/assets/Delete";
 import Select from "@/components/Select";
 import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
-import { Palette } from "@/features/Panel/Palette/Palette";
 import styles from "@/features/Panel/Panel.module.css";
+import { Palette } from "@/features/Panel/Refine/Palette/Palette";
 import mainManager from "@/managers/Main.init";
 import { ICollection } from "@/services/edr.service";
 import useMainStore from "@/stores/main";
+import { MainState } from "@/stores/main/types";
 import { CollectionType, getCollectionType } from "@/utils/collection";
+import { getCategoryLabel } from "@/utils/label";
 import { getParameterUnit } from "@/utils/parameters";
 
 type Props = {
@@ -24,6 +26,8 @@ const ParameterSelect: React.FC<Props> = (props) => {
   const { collectionId } = props;
 
   const collections = useMainStore((state) => state.collections);
+  const parameterGroups = useMainStore((state) => state.parameterGroups);
+  const categories = useMainStore((state) => state.categories);
   const selectedCollections = useMainStore(
     (state) => state.selectedCollections,
   );
@@ -65,7 +69,22 @@ const ParameterSelect: React.FC<Props> = (props) => {
 
     const paramObjects = Object.values(collection?.parameter_names ?? {});
 
+    let categoryFilter: string[] = [];
+    if (categories.length > 0) {
+      const validGroups = parameterGroups.filter((group) =>
+        categories.includes(group.label),
+      );
+
+      categoryFilter = validGroups
+        .flatMap((group) => group.members?.[collectionId])
+        .filter(Boolean);
+    }
+
     const data: ComboboxData = paramObjects
+      .filter(
+        (object) =>
+          categoryFilter.length === 0 || categoryFilter.includes(object.id),
+      )
       .map((object) => {
         const unit = getParameterUnit(object);
 
@@ -78,7 +97,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
       .sort((a, b) => a.label.localeCompare(b.label));
 
     setData(data);
-  }, [collections, selectedCollections]);
+  }, [collections, selectedCollections, parameterGroups, categories]);
 
   useEffect(() => {
     const restrictions = CollectionRestrictions[collectionId];
@@ -143,6 +162,14 @@ const ParameterSelect: React.FC<Props> = (props) => {
     removePalette(collectionId);
   };
 
+  const getDescription = (categories: MainState["categories"]) => {
+    if (categories.length > 0) {
+      return `Showing parameters within ${getCategoryLabel(categories.length)}: ${categories.join(", ")}`;
+    }
+
+    return null;
+  };
+
   /**
    * This layer is a grid type which requires at least one selected parameter
    *
@@ -182,6 +209,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
           value={localParameters}
           onChange={setLocalParameters}
           error={getParameterError()}
+          description={getDescription(categories)}
           disabled={data.length === 0}
           withAsterisk={collectionType === CollectionType.EDRGrid}
           searchable
@@ -189,7 +217,12 @@ const ParameterSelect: React.FC<Props> = (props) => {
           clearable
         />
       ) : (
-        <Text>This collection does not include parameters.</Text>
+        <Stack gap="var(--default-spacing)">
+          <Text size="sm">{name}</Text>
+          <Text size="xs" c="dimmed">
+            This data source does not include parameters.
+          </Text>
+        </Stack>
       )}
       {showPalette(collectionId) && (
         <Group gap="var(--default-spacing)" mt="var(--default-spacing)">
