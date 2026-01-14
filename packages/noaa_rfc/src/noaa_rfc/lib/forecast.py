@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import csv
-from datetime import date, datetime
+from datetime import date
 import logging
 from pathlib import Path
 import time
@@ -220,6 +220,8 @@ class ForecastCollection(LocationCollectionProtocol):
         return serialized
 
     def __init__(self):
+        # we fetch the data in a format where there are 10+ parallel lists and then we want to pivot
+        # them so it is a list of forecasts where each forecast represents item[N] from each list.
         wide_forecasts = self._get_data()
 
         pivoted_forecasts: list[ForecastDataSingle] = []
@@ -347,22 +349,18 @@ class ForecastCollection(LocationCollectionProtocol):
             if not feature.properties or not feature.properties["forecasts"]:
                 continue
 
-            # if there is only one forecast we use that as the latest by default
-            if len(feature.properties["forecasts"]) == 1:
-                feature.properties["latest_esppavg"] = list(
-                    feature.properties["forecasts"].values()
-                )[0]["esppavg"]
-                continue
-
-            latestDate = max(
-                [
-                    datetime.strptime(forecast, "%Y-%m-%d")
-                    for forecast in feature.properties["forecasts"].keys()
-                ]
-            )
-            feature.properties["latest_esppavg"] = feature.properties["forecasts"][
-                latestDate.strftime("%Y-%m-%d")
-            ]["esppavg"]
+            # why the first forecast esppavg is considered to be the % normal
+            # i have no idea; this is not defined anywhere i can see
+            first_forecast_esppavg = list(feature.properties["forecasts"].values())[0][
+                "esppavg"
+            ]
+            if first_forecast_esppavg == 0:
+                # if the first forecast is 0 the % normal is considered to be null
+                # this is just an arbitrary quirk of how the map here: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
+                # defines the % normal and missing data;
+                feature.properties["percentage_normal"] = None
+            else:
+                feature.properties["percentage_normal"] = first_forecast_esppavg
 
         allFeatures = list(features.values())
         if itemsIDSingleFeature:
