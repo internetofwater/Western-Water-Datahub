@@ -20,6 +20,7 @@ import styles from "@/features/Panel/Panel.module.css";
 import { useLoading } from "@/hooks/useLoading";
 import useMainStore from "@/stores/main";
 import { MainState } from "@/stores/main/types";
+import { getCategoryLabel, getProviderLabel } from "@/utils/label";
 
 export const Collection: React.FC = () => {
   const selectedCollections = useMainStore(
@@ -77,12 +78,12 @@ export const Collection: React.FC = () => {
     provider: MainState["provider"],
     categories: MainState["categories"],
   ) => {
-    if (provider && categories.length > 0) {
-      return `Showing data sources available from provider: ${provider}, about category: ${categories.join(", ")}`;
-    } else if (provider) {
-      return `Showing data sources available from provider: ${provider}`;
+    if (provider.length > 0 && categories.length > 0) {
+      return `Showing data sources available from ${getProviderLabel(provider.length)}: ${provider.join(", ")}, in ${getCategoryLabel(categories.length)}: ${categories.join(", ")}`;
+    } else if (provider.length > 0) {
+      return `Showing data sources available from ${getProviderLabel(provider.length)}: ${provider.join(", ")}`;
     } else if (categories.length > 0) {
-      return `Showing data sources available about category: ${categories.join(", ")}`;
+      return `Showing data sources available in ${getCategoryLabel(categories.length)}: ${categories.join(", ")}`;
     }
 
     return null;
@@ -103,8 +104,8 @@ export const Collection: React.FC = () => {
     <Stack gap={0} className={styles.selectStack}>
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
-          <Title order={2} size="h4">
-            Filter by Collection
+          <Title order={3} size="h4">
+            Select a Data Source
           </Title>
           <Info />
         </Group>
@@ -112,7 +113,7 @@ export const Collection: React.FC = () => {
       <VisuallyHidden>{helpText}</VisuallyHidden>
       <Select
         size="sm"
-        label="Collection"
+        label="Data Source"
         multiple
         description={getDescription(provider, categories)}
         placeholder="Select..."
@@ -125,7 +126,7 @@ export const Collection: React.FC = () => {
       {isFetchingCollections && (
         <Group>
           <Loader color="blue" type="dots" />
-          <Text size="sm">Updating Collections</Text>
+          <Text size="sm">Updating Data Source(s)</Text>
         </Group>
       )}
     </Stack>

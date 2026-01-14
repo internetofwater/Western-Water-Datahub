@@ -16,7 +16,7 @@ import { MainState } from "@/stores/main/types";
 
 const useMainStore = create<MainState>()(
   immer((set, get, store) => ({
-    provider: null,
+    provider: [],
     setProvider: (provider) =>
       set((state) => {
         state.provider = provider;

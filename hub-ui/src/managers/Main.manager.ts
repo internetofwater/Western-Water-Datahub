@@ -1283,7 +1283,7 @@ class MainManager {
 
     const response = await wwdhService.getCollections({
       params: {
-        ...(provider ? { "provider-name": provider } : {}),
+        ...(provider.length > 0 ? { "provider-name": provider.join(",") } : {}),
         ...(categories.length > 0
           ? { "parameter-name": categories.join(",") }
           : {}),
@@ -1485,7 +1485,7 @@ class MainManager {
 
     this.removeGeographyFilter();
 
-    this.store.getState().setProvider(null);
+    this.store.getState().setProvider([]);
     this.store.getState().setCategories([]);
     this.store.getState().setSelectedCollections([]);
     const today = dayjs();

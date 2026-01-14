@@ -8,13 +8,14 @@ import { ActionIcon, ComboboxData, Group, Stack, Text } from "@mantine/core";
 import Delete from "@/assets/Delete";
 import Select from "@/components/Select";
 import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
-import { Palette } from "@/features/Panel/Palette/Palette";
 import styles from "@/features/Panel/Panel.module.css";
+import { Palette } from "@/features/Panel/Refine/Palette/Palette";
 import mainManager from "@/managers/Main.init";
 import { ICollection } from "@/services/edr.service";
 import useMainStore from "@/stores/main";
 import { MainState } from "@/stores/main/types";
 import { CollectionType, getCollectionType } from "@/utils/collection";
+import { getCategoryLabel } from "@/utils/label";
 import { getParameterUnit } from "@/utils/parameters";
 
 type Props = {
@@ -163,7 +164,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
 
   const getDescription = (categories: MainState["categories"]) => {
     if (categories.length > 0) {
-      return `Showing parameters within category: ${categories.join(", ")}`;
+      return `Showing parameters within ${getCategoryLabel(categories.length)}: ${categories.join(", ")}`;
     }
 
     return null;

@@ -105,7 +105,7 @@ export type TSearch = {
 };
 
 export type MainState = {
-  provider: string | null;
+  provider: string[];
   setProvider: (provider: MainState["provider"]) => void;
   categories: string[];
   setCategories: (categories: MainState["categories"]) => void;

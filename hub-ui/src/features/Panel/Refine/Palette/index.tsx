@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { Stack } from "@mantine/core";
-import { Palette } from "@/features/Panel/Palette/Palette";
+import { Palette } from "@/features/Panel/Refine/Palette/Palette";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import { CollectionType, getCollectionType } from "@/utils/collection";

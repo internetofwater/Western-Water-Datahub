@@ -195,7 +195,7 @@ export const ShowLocations: React.FC = () => {
     }
 
     if (isFetchingCollections) {
-      return "Please wait for collections request to complete";
+      return "Please wait for data sources request to complete";
     }
 
     if (isFetchingLocations) {
@@ -203,7 +203,7 @@ export const ShowLocations: React.FC = () => {
     }
 
     if (selectedCollections.length === 0) {
-      return "Please select at least one collection";
+      return "Please select at least one data source";
     }
 
     if (isDisabled) {
@@ -212,7 +212,7 @@ export const ShowLocations: React.FC = () => {
 
     return (
       <>
-        <Text size="sm">Show locations for all selected collections.</Text>
+        <Text size="sm">Show locations for all selected data sources.</Text>
         <br />
         <Text size="sm">
           Access scientific measurements, place names, and other data points

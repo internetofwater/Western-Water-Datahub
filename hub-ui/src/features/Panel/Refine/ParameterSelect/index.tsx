@@ -15,7 +15,7 @@ import {
 import Info from "@/assets/Info";
 import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Panel/Panel.module.css";
-import ParameterSelect from "@/features/Panel/ParameterSelect/ParameterSelect";
+import ParameterSelect from "@/features/Panel/Refine/ParameterSelect/ParameterSelect";
 import useMainStore from "@/stores/main";
 
 const ParameterSelectWrapper: React.FC = () => {

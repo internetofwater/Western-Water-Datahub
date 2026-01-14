@@ -22,6 +22,7 @@ import notificationManager from "@/managers/Notification.init";
 import wwdhService from "@/services/init/wwdh.init";
 import useMainStore from "@/stores/main";
 import { ELoadingType, ENotificationType } from "@/stores/session/types";
+import { getProviderLabel } from "@/utils/label";
 
 export const Category: React.FC = () => {
   const categories = useMainStore((state) => state.categories);
@@ -48,7 +49,9 @@ export const Category: React.FC = () => {
       const { parameterGroups } = await wwdhService.getCollections({
         params: {
           "parameter-name": "*",
-          ...(provider ? { "provider-name": provider } : {}),
+          ...(provider.length > 0
+            ? { "provider-name": provider.join(",") }
+            : {}),
         },
       });
 
@@ -121,13 +124,13 @@ export const Category: React.FC = () => {
   const helpText = (
     <>
       <Text size="sm">
-        Choose a data category to narrow down the available collections.
-        Categories group collection by type or theme (e.g., reservoir storage,
+        Choose a data category to narrow down the available data sources.
+        Categories group data sources by type or theme (e.g., reservoir storage,
         atmospheric measurements, water constituents).
       </Text>
       <br />
       <Text size="sm">
-        This helps you focus on collections relevant to a domain of interest.
+        This helps you focus on data sources relevant to a domain of interest.
       </Text>
     </>
   );
@@ -136,7 +139,7 @@ export const Category: React.FC = () => {
     <Stack gap={0} className={styles.selectStack}>
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
-          <Title order={2} size="h4">
+          <Title order={3} size="h4">
             Filter by Data Category
           </Title>
           <Info />
@@ -144,11 +147,11 @@ export const Category: React.FC = () => {
       </Tooltip>
       <VisuallyHidden>{helpText}</VisuallyHidden>
       <MultiSelect
-        size="xs"
+        size="sm"
         label="Category"
         description={
           provider
-            ? `Showing categories available for provider: ${provider}`
+            ? `Showing categories available for ${getProviderLabel(provider.length)}: ${provider.join(", ")}`
             : null
         }
         placeholder="Select..."

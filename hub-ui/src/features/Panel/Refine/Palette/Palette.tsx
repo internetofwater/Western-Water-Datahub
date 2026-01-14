@@ -20,8 +20,8 @@ import Info from "@/assets/Info";
 import PaletteIcon from "@/assets/Palette";
 import Select from "@/components/Select";
 import Tooltip from "@/components/Tooltip";
-import { Gradient } from "@/features/Panel/Palette/Gradient";
 import styles from "@/features/Panel/Panel.module.css";
+import { Gradient } from "@/features/Panel/Refine/Palette/Gradient";
 import mainManager from "@/managers/Main.init";
 import { ICollection } from "@/services/edr.service";
 import useMainStore from "@/stores/main";
@@ -187,10 +187,10 @@ export const Palette: React.FC<Props> = (props) => {
 
   const isValid = Boolean(
     count &&
-    parameter &&
-    palette &&
-    isValidPalette({ count, parameter, palette, index: 1 }) &&
-    parameters.includes(parameter),
+      parameter &&
+      palette &&
+      isValidPalette({ count, parameter, palette, index: 1 }) &&
+      parameters.includes(parameter),
   );
   const noParameters = parameters.length === 0;
 

@@ -7,12 +7,10 @@ import { useEffect, useState } from "react";
 import { Box, Divider, Stack } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import Controls from "@/features/Panel/Controls";
-import { DateSelect } from "@/features/Panel/DateSelect";
 import Filters from "@/features/Panel/Filters";
-import Geography from "@/features/Panel/Filters/Geography";
 import { Header } from "@/features/Panel/Header";
 import styles from "@/features/Panel/Panel.module.css";
-import ParameterSelect from "@/features/Panel/ParameterSelect";
+import Refine from "@/features/Panel/Refine";
 import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
@@ -25,8 +23,8 @@ import {
 } from "@/stores/session/types";
 
 const Panel: React.FC = () => {
-  const provider = useMainStore((state) => state.provider);
   const categories = useMainStore((state) => state.categories);
+  const provider = useMainStore((state) => state.provider);
   const overlay = useSessionStore((state) => state.overlay);
 
   const mobile = useMediaQuery("(max-width: 899px)");
@@ -78,7 +76,7 @@ const Panel: React.FC = () => {
         style={{ display: isVisible ? "block" : "none" }}
       >
         <Stack
-          gap="calc(var(--default-spacing) * 3)"
+          gap="calc(var(--default-spacing) * 1)"
           px="xl"
           py="xl"
           justify="center"
@@ -86,10 +84,8 @@ const Panel: React.FC = () => {
         >
           <Header />
           <Filters />
-          <Divider />
-          <ParameterSelect />
-          <Geography />
-          <DateSelect />
+          <Divider size="md" />
+          <Refine />
           <Controls />
         </Stack>
       </Box>
