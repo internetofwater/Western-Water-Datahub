@@ -211,8 +211,10 @@ noaa_station_list_in_water_supply_map = noaa_station_list_in_water_supply_map.sp
     "\n"
 )[LENGTH_OF_LICENSE_HEADER:-1]
 
-assert "<!--" not in noaa_station_list_in_water_supply_map[0]
-assert "Yuba" in noaa_station_list_in_water_supply_map[-1]
+assert "<!--" not in noaa_station_list_in_water_supply_map[0], (
+    "found html comment which should have been removed"
+)
+assert "Yuba" in noaa_station_list_in_water_supply_map[-1], "Expected Yuba to be last"
 
 num_stations_in_map = len(noaa_station_list_in_water_supply_map)
 assert num_stations_in_map == 468, num_stations_in_map
