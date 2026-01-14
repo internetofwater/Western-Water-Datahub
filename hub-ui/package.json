@@ -2,7 +2,7 @@
   "name": "hub-ui",
   "private": true,
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.1",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build",

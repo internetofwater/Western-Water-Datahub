@@ -24,9 +24,9 @@ export const LayoutPage: React.FC = () => {
             <Controls />
             <Map accessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN} />
             <Notifications />
+            <Loading />
           </Stack>
         </Group>
-        <Loading />
       </Stack>
       <MapTools />
       <DownloadModal />
