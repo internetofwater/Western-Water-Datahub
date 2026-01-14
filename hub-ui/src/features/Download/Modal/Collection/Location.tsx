@@ -311,6 +311,7 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
               className={styles.datePicker}
               placeholder="Pick start date"
               value={from}
+              valueFormat="MM/DD/YYYY"
               onChange={setFrom}
               clearable
               error={isValidRange ? false : "Invalid date range"}
@@ -321,6 +322,7 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
               className={styles.datePicker}
               placeholder="Pick end date"
               value={to}
+              valueFormat="MM/DD/YYYY"
               onChange={setTo}
               clearable
               error={isValidRange ? false : "Invalid date range"}
