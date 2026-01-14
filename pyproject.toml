@@ -19,7 +19,7 @@ dependencies = [
     "opentelemetry-sdk>=1.30.0",
     "opentelemetry-exporter-otlp>=1.30.0",
     "orjson>=3.10.15",
-    "pygeoapi @ git+https://github.com/internetofwater/pygeoapi.git@af755358195b92aec9eead015668ae3e849c56c9",
+    "pygeoapi @ git+https://github.com/internetofwater/pygeoapi.git@b63ae0f6b56ab221a8cff83a1369632c10a7d907",
     "msgspec>=0.19.0",
 ]
 

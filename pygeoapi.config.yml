@@ -582,6 +582,7 @@ resources:
           mimetype: application/zip
         options:
           s3:
+            asynchronous: ${S3_ASYNC:-false}
             anon: true
             requester_pays: false
             client_kwargs:
