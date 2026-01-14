@@ -187,10 +187,10 @@ export const Palette: React.FC<Props> = (props) => {
 
   const isValid = Boolean(
     count &&
-      parameter &&
-      palette &&
-      isValidPalette({ count, parameter, palette, index: 1 }) &&
-      parameters.includes(parameter),
+    parameter &&
+    palette &&
+    isValidPalette({ count, parameter, palette, index: 1 }) &&
+    parameters.includes(parameter),
   );
   const noParameters = parameters.length === 0;
 
