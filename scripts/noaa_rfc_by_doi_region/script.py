@@ -249,8 +249,8 @@ for station in noaa_station_list_in_water_supply_map:
         .str.replace(")", "")
         .str.contains(station_substr)
     )
-    assert contains.any(), (
-        f"{station_substr} not in df_final. Does one of the html tags have special characters?"
+    assert contains.sum() == 1, (
+        f"{station_substr} not in df_final or found a duplicate. Does one of the html tags have special characters?"
     )
 
 # after completing our checks, we now know that the list of stations
