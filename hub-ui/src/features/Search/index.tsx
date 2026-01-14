@@ -43,7 +43,10 @@ const Search: React.FC = () => {
 
   const helpText = (
     <>
-      <Text size="sm">placeholder.</Text>
+      <Text size="sm">
+        Search across the feature properties and values for each the data
+        sources listed below.
+      </Text>
     </>
   );
 
