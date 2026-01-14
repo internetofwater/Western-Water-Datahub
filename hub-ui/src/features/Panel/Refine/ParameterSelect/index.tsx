@@ -26,8 +26,8 @@ const ParameterSelectWrapper: React.FC = () => {
   const helpText = (
     <>
       <Text size="sm">
-        Parameters are scientific measurements contained by collections that are
-        associated with specific locations and times.
+        Parameters are scientific measurements, contained by data sources, that
+        are associated with specific locations and times.
       </Text>
       <br />
       <Text size="sm">
@@ -57,7 +57,7 @@ const ParameterSelectWrapper: React.FC = () => {
         ))
       ) : (
         <Text size="sm" c="dimmed">
-          Select at least one collection to show parameter selects.
+          Select at least one data source to show parameter selects.
         </Text>
       )}
     </Stack>

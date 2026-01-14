@@ -226,7 +226,7 @@ const Collection: React.FC<Props> = (props) => {
                 className={styles.parameterMessageWrapper}
               >
                 <Text fw={700}>
-                  Select at least one parameter for this collection to enable
+                  Select at least one parameter for this data source to enable
                   access to download functionality.
                 </Text>
               </Group>

@@ -33,14 +33,14 @@ const Panel: React.FC = () => {
 
   const getCollections = async () => {
     const loadingInstance = loadingManager.add(
-      "Updating collections",
+      "Updating data sources",
       ELoadingType.Collections,
     );
     try {
       await mainManager.getCollections();
       loadingManager.remove(loadingInstance);
       notificationManager.show(
-        "Updated collections",
+        "Updated data sources",
         ENotificationType.Success,
       );
     } catch (error) {

@@ -220,7 +220,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
         <Stack gap="var(--default-spacing)">
           <Text size="sm">{name}</Text>
           <Text size="xs" c="dimmed">
-            This collection does not include parameters.
+            This data source does not include parameters.
           </Text>
         </Stack>
       )}
