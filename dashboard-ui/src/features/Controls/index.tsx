@@ -3,20 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import {
-    Group,
-    Loader,
-    Select,
-    Slider,
-    Stack,
-    Switch,
-    Text,
-} from '@mantine/core';
+import { Group, Loader, Select, Slider, Stack, Text } from '@mantine/core';
 import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { RasterBaseLayers } from '@/features/Map/types';
-import { useState } from 'react';
-import useMainStore from '@/stores/main/main';
+import { useEffect, useRef, useState } from 'react';
+import useMainStore from '@/stores/main';
 import {
     RasterVisibilityMap,
     updateBaseLayer,
@@ -25,7 +17,8 @@ import {
     updateSnotel,
 } from '@/features/Controls/utils';
 import styles from '@/features/Controls/Controls.module.css';
-import { useLoading } from '@/hooks/useLoading';
+import { Links } from '@/features/Controls/Links';
+import { Entry } from '@/features/Controls/Entry';
 
 const RasterBaseLayerIconObj = [
     {
@@ -60,7 +53,15 @@ const Controls: React.FC = () => {
 
     const { map } = useMap(MAP_ID);
 
-    const { isFetchingSnotel } = useLoading();
+    const isMounted = useRef(true);
+
+    useEffect(() => {
+        isMounted.current = true;
+
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
 
     const handleBaseLayerChange = (baseLayer: RasterBaseLayers) => {
         if (!map) {
@@ -107,6 +108,51 @@ const Controls: React.FC = () => {
         // setShowSnotel(showSnotel);
     };
 
+    const handleRegionsReferenceChange = (showRegionsReference: boolean) => {
+        if (!map) {
+            return;
+        }
+        const visibility = showRegionsReference ? 'visible' : 'none';
+
+        map.setLayoutProperty(
+            LayerId.RegionsReference,
+            'visibility',
+            visibility
+        );
+
+        setToggleableLayers(LayerId.RegionsReference, showRegionsReference);
+    };
+
+    const handleBasinsReferenceChange = (showBasinsReference: boolean) => {
+        if (!map) {
+            return;
+        }
+        const visibility = showBasinsReference ? 'visible' : 'none';
+
+        map.setLayoutProperty(
+            LayerId.BasinsReference,
+            'visibility',
+            visibility
+        );
+
+        setToggleableLayers(LayerId.BasinsReference, showBasinsReference);
+    };
+
+    const handleStatesReferenceChange = (showStatesReference: boolean) => {
+        if (!map) {
+            return;
+        }
+        const visibility = showStatesReference ? 'visible' : 'none';
+
+        map.setLayoutProperty(
+            LayerId.StatesReference,
+            'visibility',
+            visibility
+        );
+
+        setToggleableLayers(LayerId.StatesReference, showStatesReference);
+    };
+
     const getBaseLayerValue = (): RasterBaseLayers => {
         if (toggleableLayers[RasterBaseLayers.Drought]) {
             return RasterBaseLayers.Drought;
@@ -122,47 +168,51 @@ const Controls: React.FC = () => {
 
     // TODO: address through styling if bug occurs >1 place, assess if upgrade to next Mantine v
     // Work around, Mantine bug applies data-disabled styling even when false
-    const snotelSwitchProps = isFetchingSnotel ? { 'data-disabled': true } : {};
+    // const snotelSwitchProps = isFetchingSnotel ? { 'data-disabled': true } : {};
 
     return (
-        <Stack className={styles.wrapper}>
+        <Stack
+            className={styles.wrapper}
+            gap="calc(var(--default-spacing) * 1.5)"
+        >
             {map ? (
                 <>
-                    <Switch
+                    <Entry
+                        layerId={LayerId.NOAARiverForecast}
                         label="Show River Forecast Points (NOAA RFC)"
-                        checked={toggleableLayers[LayerId.NOAARiverForecast]}
-                        onClick={() =>
-                            handleNOAARFCChange(
-                                !toggleableLayers[LayerId.NOAARiverForecast]
-                            )
-                        }
+                        onClick={handleNOAARFCChange}
+                        toggleableLayers={toggleableLayers}
                     />
-                    <Switch
+                    <Entry
+                        layerId={LayerId.Snotel}
                         label="Show Snow Water Equivalent Averages (NRCS SNOTEL)"
-                        disabled={isFetchingSnotel}
-                        checked={toggleableLayers[LayerId.Snotel]}
-                        onClick={() =>
-                            handleSnotelChange(
-                                !toggleableLayers[LayerId.Snotel]
-                            )
-                        }
-                        {...snotelSwitchProps}
+                        onClick={handleSnotelChange}
+                        toggleableLayers={toggleableLayers}
                     />
-                    <Select
-                        id="baseLayerSelector"
-                        data={RasterBaseLayerIconObj.map((obj) => ({
-                            value: obj.id,
-                            label: obj.friendlyName,
-                        }))}
-                        value={getBaseLayerValue()}
-                        aria-label="Select a Base Layer"
-                        placeholder="Select a Base Layer"
-                        label="Base Layer"
-                        className={styles.baseLayerSelector}
-                        onChange={(_value) =>
-                            handleBaseLayerChange(_value as RasterBaseLayers)
-                        }
-                    />
+
+                    <Stack gap="calc(var(--default-spacing) / 2)">
+                        <Select
+                            id="baseLayerSelector"
+                            data={RasterBaseLayerIconObj.map((obj) => ({
+                                value: obj.id,
+                                label: obj.friendlyName,
+                            }))}
+                            value={getBaseLayerValue()}
+                            aria-label="Select a Base Layer"
+                            placeholder="Select a Base Layer"
+                            label="Base Layer"
+                            className={styles.baseLayerSelector}
+                            onChange={(_value) =>
+                                handleBaseLayerChange(
+                                    _value as RasterBaseLayers
+                                )
+                            }
+                        />
+
+                        {getBaseLayerValue() !== RasterBaseLayers.None && (
+                            <Links collectionId={getBaseLayerValue()} />
+                        )}
+                    </Stack>
                     {getBaseLayerValue() !== RasterBaseLayers.None && (
                         <Stack gap="xs">
                             <Text size="sm">Base Layer Opacity</Text>
@@ -176,6 +226,27 @@ const Controls: React.FC = () => {
                             />
                         </Stack>
                     )}
+                    <Entry
+                        layerId={LayerId.RegionsReference}
+                        label="Show DOI Region Boundaries"
+                        onClick={handleRegionsReferenceChange}
+                        toggleableLayers={toggleableLayers}
+                        links={false}
+                    />
+                    <Entry
+                        layerId={LayerId.BasinsReference}
+                        label="Show Basin (HUC06) Boundaries"
+                        onClick={handleBasinsReferenceChange}
+                        toggleableLayers={toggleableLayers}
+                        links={false}
+                    />
+                    <Entry
+                        layerId={LayerId.StatesReference}
+                        label="Show State Boundaries"
+                        onClick={handleStatesReferenceChange}
+                        toggleableLayers={toggleableLayers}
+                        links={false}
+                    />
                 </>
             ) : (
                 <Group justify="center" align="center">

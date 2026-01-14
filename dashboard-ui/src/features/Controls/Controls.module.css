@@ -10,3 +10,10 @@
 .baseLayerSelector {
     max-width: 250px;
 }
+
+.labelIcon > svg {
+    fill: var(--mantine-color-text);
+    stroke: var(--mantine-color-text);
+    width: 1rem;
+    height: auto;
+}

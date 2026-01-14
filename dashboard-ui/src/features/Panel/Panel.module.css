@@ -3,10 +3,23 @@
  * SPDX-License-Identifier: MIT
  */
 
+.actionButton svg {
+    width: 2rem;
+    height: auto;
+}
+
+.darkModeToggleContainer {
+    margin-left: auto;
+}
+
+.darkModeIcon {
+    width: 1rem;
+}
+
 .panel {
     min-width: 31rem;
     width: 3rem;
-    z-index: 2;
+    z-index: 3;
 }
 
 .root {
@@ -30,15 +43,28 @@
     top: 0;
 }
 
-/* .accordions {
-    width: 100%;
-    max-height: calc(100vh - 220px);
-    overflow-x: hidden;
-    overflow-y: auto;
-    border-bottom: 1px solid var(--asu-color-tertiary);
-} */
+.mobileClose {
+    position: absolute;
+    right: var(--default-spacing);
+    top: var(--default-spacing);
+    margin-left: unset;
+    margin-right: unset;
+    display: none;
+
+    fill: var(--mantine-color-text);
+    stroke: var(--mantine-color-text);
+}
+
+.mobileClose svg {
+    width: 2rem;
+    height: auto;
+}
 
 @media screen and (max-width: 899px) {
+    .root {
+        max-height: unset;
+    }
+
     .mobileClose,
     .mobileOpen {
         display: block;
@@ -54,19 +80,17 @@
     }
 
     .panel {
-        position: absolute;
-        height: 90vh;
-        min-height: 90vh;
-        max-height: 90vh;
-        width: 95vw;
-        min-width: 95vw;
-        max-width: 95vw;
-        top: 5vh;
-        left: 2.5vw;
-        margin: auto;
-        padding: calc(var(--default-spacing) * 2);
-
-        border-radius: 4px;
+        position: fixed;
+        top: var(--default-spacing);
+        left: var(--default-spacing);
+        right: var(--default-spacing);
+        bottom: var(--default-spacing);
+        width: calc(100dvw - (var(--default-spacing) * 3));
+        min-width: calc(100dvw - (var(--default-spacing) * 3));
+        height: auto;
+        max-height: calc(100dvh - (var(--default-spacing) * 2));
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .panelWrapper {

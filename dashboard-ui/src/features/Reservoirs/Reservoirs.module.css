@@ -3,16 +3,58 @@
  * SPDX-License-Identifier: MIT
  */
 
-.table {
-    width: 100%;
+.actionIcon {
+    stroke: var(--mantine-color-text);
+    fill: var(--mantine-color-text);
+}
+
+.actionIcon svg {
+    width: 2rem;
+    height: auto;
+    padding: 1px;
+}
+
+.buttonColumn {
+    width: 4.375rem;
+}
+
+.content {
+    padding: 0px;
+}
+
+.filterWrapper {
+    padding: calc(var(--default-spacing) * 2);
+}
+
+.filterIcon {
+    fill: var(--mantine-color-text);
+}
+
+.filterIcon svg {
+    width: 1.5rem;
+    height: auto;
+}
+
+.label {
+    padding-inline-start: calc(var(--default-spacing) / 2);
+    padding-inline-end: calc(var(--default-spacing) * 0.75);
+}
+
+.multiselect {
+    width: 8.75rem;
+    max-width: 8.75rem;
 }
 
 .nameColumn {
     width: 14.15rem;
 }
 
-.content {
-    padding: 0px;
+.pageSizeInput {
+    width: 7.0625rem;
+}
+
+.rotate180 {
+    transform: rotate(180deg);
 }
 
 .row {
@@ -41,31 +83,22 @@
 
 .sortOrderButton {
     margin-bottom: 0.25rem;
+    margin-top: 1.75rem;
 }
 
-.rotate180 {
-    transform: rotate(180deg);
+.table {
+    width: 100%;
 }
 
-.pageSizeInput {
-    width: 7.0625rem;
-}
+@media screen and (max-width: 899px) {
+    .filterWrapper {
+        padding: var(--default-spacing);
+    }
 
-.buttonColumn {
-    width: 4.375rem;
-}
-
-.filterWrapper {
-    padding: calc(var(--default-spacing) * 2);
-}
-
-.filterIcon {
-    fill: var(--mantine-color-text);
-}
-
-.filterIcon svg {
-    width: 1.5rem;
-    height: auto;
+    .pageControls {
+        padding-left: var(--default-spacing);
+        padding-right: var(--default-spacing);
+    }
 }
 
 @media screen and (max-width: 400px) {

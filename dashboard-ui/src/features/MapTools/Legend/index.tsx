@@ -12,7 +12,7 @@ import Square from '@/icons/Square';
 import { Gradient } from '@/features/MapTools/Legend/Gradient';
 import styles from '@/features/MapTools/Legend/Legend.module.css';
 import { getLayerName } from '@/features/Map/config';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import {
     ActionIcon,
     Box,
@@ -34,6 +34,7 @@ import useSessionStore from '@/stores/session';
 import LegendIcon from '@/icons/Legend';
 import { useEffect, useState } from 'react';
 import { Overlay } from '@/stores/session/types';
+import { useMediaQuery } from '@mantine/hooks';
 
 const entries: Entry[] = [
     {
@@ -169,6 +170,8 @@ const Legend: React.FC = () => {
     const overlay = useSessionStore((state) => state.overlay);
     const setOverlay = useSessionStore((state) => state.setOverlay);
 
+    const mobile = useMediaQuery('(max-width: 899px)');
+
     const [show, setShow] = useState(false);
 
     useEffect(() => {
@@ -199,8 +202,8 @@ const Legend: React.FC = () => {
                             root: styles.actionIconRoot,
                             icon: styles.actionIcon,
                         }}
-                        size="lg"
                         onClick={() => handleShow(!show)}
+                        size={mobile ? 'lg' : 'md'}
                     >
                         <LegendIcon />
                     </ActionIcon>
@@ -236,7 +239,7 @@ const Legend: React.FC = () => {
                                     position="top-start"
                                 >
                                     <Group align="center" gap="xs">
-                                        <Title order={4} size="h5">
+                                        <Title order={4} size="h6">
                                             {getLayerName(entry.id)}
                                         </Title>
                                         <Box

@@ -7,10 +7,10 @@
     fill: var(--mantine-color-text);
 }
 
-.actionIcon > svg {
-    width: 100%;
+.actionIcon svg {
+    width: 2rem;
     height: auto;
-    padding: calc(var(--default-spacing) / 3);
+    padding: 1px;
 }
 
 .basemapSelector {
@@ -41,12 +41,17 @@
 }
 
 .left {
-    margin-left: 49px;
-    justify-self: flex-start;
+    position: absolute;
+    top: var(--default-spacing);
+    left: var(--default-spacing);
+    z-index: 1;
 }
 
-.left > *:not(:first-child) {
-    margin-left: 8px;
+.right {
+    position: absolute;
+    top: var(--default-spacing);
+    right: var(--default-spacing);
+    z-index: 1;
 }
 
 .mapToolsContainer {
@@ -66,15 +71,6 @@
 .mapToolTitle {
     text-align: center;
 } */
-
-.right {
-    margin-right: var(--default-spacing);
-    justify-self: flex-end;
-}
-
-.right > *:not(:first-child) {
-    margin-right: 8px;
-}
 
 .screenshotLoaderContainer {
     width: 200px;

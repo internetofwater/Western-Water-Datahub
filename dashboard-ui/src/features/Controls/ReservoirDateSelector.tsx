@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { Checkbox, Stack } from '@mantine/core';
 import { DateInput, DateValue } from '@mantine/dates';
 import dayjs from 'dayjs';

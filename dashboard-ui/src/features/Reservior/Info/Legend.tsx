@@ -25,6 +25,7 @@ type Props = {
     onChange?: (showLabels: boolean) => void;
     showSwitch?: boolean;
     excludeEntries?: string[];
+    textSize?: string;
 };
 
 type EntryType = {
@@ -43,6 +44,7 @@ export const Legend: React.FC<Props> = (props) => {
         onChange,
         showSwitch = true,
         excludeEntries = [],
+        textSize,
     } = props;
 
     const [internalShowLabels, setInternalShowLabels] = useState(false);
@@ -155,6 +157,7 @@ export const Legend: React.FC<Props> = (props) => {
                             dashed={entry?.dashed}
                             onMouseEnter={entry.onMouseEnter}
                             onMouseLeave={entry.onMouseLeave}
+                            textSize={textSize}
                         />
                     ))}
                 </Flex>

@@ -10,6 +10,7 @@ import {
     ScaleControl,
     FullscreenControl,
     NavigationControl,
+    MapTouchEvent,
 } from 'mapbox-gl';
 import {
     MainLayerDefinition,
@@ -252,6 +253,17 @@ export const addClickFunctions = (
                     container
                 )
             );
+            map.on(
+                'touchend',
+                layer.id,
+                layer.clickFunction<MapTouchEvent>(
+                    map,
+                    hoverPopup,
+                    persistentPopup,
+                    root,
+                    container
+                )
+            );
         }
         if ((layer?.subLayers ?? []).length > 0) {
             layer.subLayers!.forEach((subLayer) => {
@@ -260,6 +272,17 @@ export const addClickFunctions = (
                         'click',
                         subLayer.id,
                         subLayer.clickFunction(
+                            map,
+                            hoverPopup,
+                            persistentPopup,
+                            root,
+                            container
+                        )
+                    );
+                    map.on(
+                        'touchend',
+                        subLayer.id,
+                        subLayer.clickFunction<MapTouchEvent>(
                             map,
                             hoverPopup,
                             persistentPopup,

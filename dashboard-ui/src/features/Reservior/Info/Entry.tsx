@@ -18,6 +18,7 @@ type Props = {
     text: ReactNode;
     stroke?: string;
     dashed?: boolean;
+    textSize?: string;
 };
 
 export const Entry: React.FC<Props> = (props) => {
@@ -29,6 +30,7 @@ export const Entry: React.FC<Props> = (props) => {
         text,
         stroke = '#FFF',
         dashed = false,
+        textSize = 'sm',
     } = props;
 
     return (
@@ -61,7 +63,11 @@ export const Entry: React.FC<Props> = (props) => {
                     )}
                 </Box>
 
-                <Text size="sm" fw={700} className={styles.graphicLegendText}>
+                <Text
+                    size={textSize}
+                    fw={700}
+                    className={styles.graphicLegendText}
+                >
                     {text}
                 </Text>
                 <Box component="span" className={styles.infoIcon}>

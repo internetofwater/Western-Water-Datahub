@@ -15,12 +15,13 @@ import {
 import { Chart } from '@/features/Reservior/Chart';
 import { Chart as ChartJS } from 'chart.js';
 import Info from '@/features/Reservior/Info';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { useDisclosure } from '@mantine/hooks';
 import { ReservoirDefault } from '@/stores/main/consts';
 import { GeoJsonProperties } from 'geojson';
 import useSessionStore from '@/stores/session';
 import { Overlay } from '@/stores/session/types';
+import styles from '@/features/Reservior/Reservoir.module.css';
 
 /**
  *
@@ -93,13 +94,10 @@ const Reservoir: React.FC = () => {
         }
     }, [overlay]);
 
-    useEffect(() => {
-        if (opened) {
-            setOverlay(Overlay.Detail);
-        } else {
-            setOverlay(null);
-        }
-    }, [opened]);
+    const handleClose = () => {
+        close();
+        setOverlay(null);
+    };
 
     if (!reservoirProperties || !config || !reservoirId) {
         return null;
@@ -109,19 +107,9 @@ const Reservoir: React.FC = () => {
         <Modal
             centered
             size="auto"
-            styles={{
-                content: {
-                    width: 'min(80vw, 1265px)',
-                    height: 800,
-                    maxWidth: 1265,
-                },
-                body: {
-                    height: 'min(80vh, 735px)',
-                    maxHeight: 735,
-                },
-            }}
+            classNames={{ content: styles.content, body: styles.body }}
             opened={opened}
-            onClose={close}
+            onClose={handleClose}
             title={
                 <Title order={3}>
                     {String(reservoirProperties[config.labelProperty]) ?? ''}

@@ -27,7 +27,7 @@ export enum SourceId {
     ResvizEDRReservoirs = 'resviz-edr',
     USACEEDRReservoirs = 'usace-edr',
     SnowWater = 'snow-water',
-    USDroughtMonitor = 'us-drought-monitor',
+    USDroughtMonitor = 'us-current-drought-monitor',
     NOAAPrecipSixToTen = 'noaa-precip-6-10-day',
     NOAATempSixToTen = 'noaa-temp-6-10-day',
     NOAARiverForecast = 'noaa-rfc',
@@ -38,12 +38,16 @@ export enum SourceId {
 
 export enum LayerId {
     Regions = 'dash-regions-main',
+    RegionsReference = 'dash-regions-reference',
     Basins = 'dash-basins-main',
+    BasinsReference = 'dash-basins-reference',
     States = 'dash-states-main',
+    StatesReference = 'dash-states-reference',
+
     RiseEDRReservoirs = 'dash-rise-edr-reservoir-points',
     ResvizEDRReservoirs = 'dash-resviz-edr-reservoir-points',
     SnowWater = 'dash-snow-water',
-    USDroughtMonitor = 'dash-us-drought-monitor',
+    USDroughtMonitor = 'dash-us-current-drought-monitor',
     NOAAPrecipSixToTen = 'dash-noaa-precip-6-10-day',
     NOAATempSixToTen = 'dash-noaa-temp-6-10-day',
     NOAARiverForecast = 'dash-noaa-rfc',
@@ -56,12 +60,15 @@ export enum SubLayerId {
     RegionsBoundary = 'dash-regions-boundary',
     RegionsFill = 'dash-regions-fill',
     RegionLabels = 'dash-regions-labels',
+
     BasinsBoundary = 'dash-basins-boundary',
     BasinsFill = 'dash-basins-fill',
     BasinLabels = 'dash-basins-labels',
+
     StatesBoundary = 'dash-states-boundary',
     StatesFill = 'dash-states-fill',
     StateLabels = 'dash-states-labels',
+
     RiseEDRReservoirLabels = 'dash-rise-edr-reservoir-labels',
     ResvizEDRReservoirLabels = 'dash-resviz-edr-reservoir-labels',
     SnotelBoundary = 'dash-snotel-edr-boundary',
@@ -175,7 +182,7 @@ export const ResVizEDRReservoirSource =
  * @constant
  */
 export const RegionsSource =
-    'https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0';
+    'https://services1.arcgis.com/ixD30sld6F8MQ7V5/ArcGIS/rest/services/DOI_12_Unified_Regions_20180801/FeatureServer/0';
 
 /**
  *
@@ -221,10 +228,6 @@ export const ReservoirConfigs: ReservoirConfig[] = [
             LayerId.ResvizEDRReservoirs,
             SubLayerId.ResvizEDRReservoirLabels,
         ],
-
-        params: {
-            'parameter-name': 'Storage',
-        },
     },
 ];
 

@@ -23,6 +23,7 @@ export enum LoadingType {
 
 export enum Overlay {
     Basemap = 'basemap',
+    Controls = 'controls',
     Detail = 'detail',
     Help = 'help',
     Legend = 'legend',

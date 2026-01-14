@@ -5,7 +5,7 @@
 
 import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import {
     CloseButton,
     Grid,
@@ -26,6 +26,7 @@ import { useEffect, useRef, useState } from 'react';
 import Basemap from '@/icons/Basemap';
 import useSessionStore from '@/stores/session';
 import { Overlay } from '@/stores/session/types';
+import { useMediaQuery } from '@mantine/hooks';
 
 /**
  *
@@ -37,6 +38,8 @@ export const Selector: React.FC = () => {
 
     const overlay = useSessionStore((state) => state.overlay);
     const setOverlay = useSessionStore((state) => state.setOverlay);
+
+    const mobile = useMediaQuery('(max-width: 899px)');
 
     const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
@@ -91,8 +94,8 @@ export const Selector: React.FC = () => {
                             root: styles.actionIconRoot,
                             icon: styles.actionIcon,
                         }}
-                        size="lg"
                         onClick={() => handleShow(!show)}
+                        size={mobile ? 'lg' : 'md'}
                     >
                         <Basemap />
                     </ActionIcon>

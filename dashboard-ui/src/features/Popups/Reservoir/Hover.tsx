@@ -5,7 +5,7 @@
 
 import { ReservoirConfig } from '@/features/Map/types';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { Card, Stack, Title, Text, Group, Box } from '@mantine/core';
 import dayjs from 'dayjs';
 import { GeoJsonProperties } from 'geojson';
@@ -78,19 +78,28 @@ export const Hover: React.FC<Props> = (props) => {
                         <TextBlock w="100%">
                             <Group gap={4} justify="flex-start">
                                 <Text size="xs" fw={700}>
-                                    Capacity:
+                                    Storage:
                                 </Text>
                                 <Text size="xs">
-                                    {capacity.toLocaleString('en-US')}
+                                    {storage.toLocaleString('en-US')}
                                     &nbsp;acre-feet
                                 </Text>
                             </Group>
                             <Group gap={4} justify="flex-start">
                                 <Text size="xs" fw={700}>
-                                    Storage:
+                                    30-year Average:
                                 </Text>
                                 <Text size="xs">
-                                    {storage.toLocaleString('en-US')}
+                                    {average.toLocaleString('en-US')}
+                                    &nbsp;acre-feet
+                                </Text>
+                            </Group>
+                            <Group gap={4} justify="flex-start">
+                                <Text size="xs" fw={700}>
+                                    Capacity:
+                                </Text>
+                                <Text size="xs">
+                                    {capacity.toLocaleString('en-US')}
                                     &nbsp;acre-feet
                                 </Text>
                             </Group>
