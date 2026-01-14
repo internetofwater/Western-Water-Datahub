@@ -21,10 +21,10 @@ const useMainStore = create<MainState>()(
       set((state) => {
         state.provider = provider;
       }),
-    category: null,
-    setCategory: (category) =>
+    categories: [],
+    setCategories: (categories) =>
       set((state) => {
-        state.category = category;
+        state.categories = categories;
       }),
     parameterGroups: [],
     setParameterGroups: (parameterGroups) =>

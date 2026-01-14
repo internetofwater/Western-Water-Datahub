@@ -30,8 +30,9 @@ export const Collection: React.FC = () => {
   );
 
   const provider = useMainStore((state) => state.provider);
-  const category = useMainStore((state) => state.category);
+  const categories = useMainStore((state) => state.categories);
   const collections = useMainStore((state) => state.collections);
+  const parameterGroups = useMainStore((state) => state.parameterGroups);
 
   const [collectionOptions, setCollectionOptions] = useState<ComboboxData>([]);
 
@@ -56,16 +57,32 @@ export const Collection: React.FC = () => {
     setCollectionOptions(collectionOptions);
   }, [collections]);
 
+  useEffect(() => {
+    if (categories.length) {
+      const validGroups = parameterGroups.filter((group) =>
+        categories.includes(group.label),
+      );
+
+      const newSelectedCollections = selectedCollections.filter(
+        (collectionId) =>
+          validGroups.some(
+            (group) => (group.members?.[collectionId] ?? []).length > 0,
+          ),
+      );
+      setSelectedCollections(newSelectedCollections);
+    }
+  }, [categories]);
+
   const getDescription = (
     provider: MainState["provider"],
-    category: MainState["category"],
+    categories: MainState["categories"],
   ) => {
-    if (provider && category) {
-      return `Showing data sources available from provider: ${provider}, about category: ${category.label}`;
+    if (provider && categories.length > 0) {
+      return `Showing data sources available from provider: ${provider}, about category: ${categories.join(", ")}`;
     } else if (provider) {
       return `Showing data sources available from provider: ${provider}`;
-    } else if (category) {
-      return `Showing data sources available about category: ${category.label}`;
+    } else if (categories.length > 0) {
+      return `Showing data sources available about category: ${categories.join(", ")}`;
     }
 
     return null;
@@ -97,7 +114,7 @@ export const Collection: React.FC = () => {
         size="sm"
         label="Collection"
         multiple
-        description={getDescription(provider, category)}
+        description={getDescription(provider, categories)}
         placeholder="Select..."
         data={collectionOptions}
         value={selectedCollections}

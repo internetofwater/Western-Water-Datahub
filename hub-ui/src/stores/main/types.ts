@@ -107,8 +107,8 @@ export type TSearch = {
 export type MainState = {
   provider: string | null;
   setProvider: (provider: MainState["provider"]) => void;
-  category: TCategory | null;
-  setCategory: (category: MainState["category"]) => void;
+  categories: string[];
+  setCategories: (categories: MainState["categories"]) => void;
   parameterGroups: ParameterGroup[];
   setParameterGroups: (parameterGroups: MainState["parameterGroups"]) => void;
   selectedCollections: string[];

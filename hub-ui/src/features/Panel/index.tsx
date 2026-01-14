@@ -26,7 +26,7 @@ import {
 
 const Panel: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
-  const category = useMainStore((state) => state.category);
+  const categories = useMainStore((state) => state.categories);
   const overlay = useSessionStore((state) => state.overlay);
 
   const mobile = useMediaQuery("(max-width: 899px)");
@@ -60,7 +60,7 @@ const Panel: React.FC = () => {
 
   useEffect(() => {
     void getCollections();
-  }, [provider, category]);
+  }, [provider, categories]);
 
   useEffect(() => {
     if (!mobile) {

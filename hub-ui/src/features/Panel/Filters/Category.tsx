@@ -8,7 +8,7 @@ import {
   ComboboxData,
   Group,
   Loader,
-  Select,
+  MultiSelect,
   Stack,
   Text,
   Title,
@@ -24,8 +24,8 @@ import useMainStore from "@/stores/main";
 import { ELoadingType, ENotificationType } from "@/stores/session/types";
 
 export const Category: React.FC = () => {
-  const category = useMainStore((state) => state.category);
-  const setCategory = useMainStore((state) => state.setCategory);
+  const categories = useMainStore((state) => state.categories);
+  const setCategories = useMainStore((state) => state.setCategories);
 
   const provider = useMainStore((state) => state.provider);
 
@@ -68,10 +68,12 @@ export const Category: React.FC = () => {
       if (isMounted.current) {
         if (
           !parameterGroups.some(
-            (parameterGroup) => parameterGroup.label === category?.value,
+            (parameterGroup) =>
+              categories.length === 0 ||
+              categories.some((category) => parameterGroup.label === category),
           )
         ) {
-          setCategory(null);
+          setCategories([]);
         }
 
         loadingManager.remove(loadingInstance);
@@ -141,7 +143,7 @@ export const Category: React.FC = () => {
         </Group>
       </Tooltip>
       <VisuallyHidden>{helpText}</VisuallyHidden>
-      <Select
+      <MultiSelect
         size="xs"
         label="Category"
         description={
@@ -151,8 +153,8 @@ export const Category: React.FC = () => {
         }
         placeholder="Select..."
         data={categoryOptions}
-        value={category?.value}
-        onChange={(_value, option) => setCategory(option)}
+        value={categories}
+        onChange={setCategories}
         disabled={categoryOptions.length === 0 || isLoading}
         searchable
         clearable
