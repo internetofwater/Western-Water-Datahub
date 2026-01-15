@@ -30,7 +30,7 @@ const Geography: React.FC = () => {
   };
 
   return (
-    <Stack gap="xs">
+    <Stack gap="var(--default-spacing)" className={styles.geoStack}>
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs" mb={-8}>
           <Title order={2} size="h4">

@@ -4,6 +4,7 @@
 minimum_pre_commit_version: "2.9.0"
 ci:
   autoupdate_schedule: monthly
+  skip: [pygeoapi_config_validate]
 repos:
   - repo: meta
     hooks:
@@ -58,3 +59,12 @@ repos:
     hooks:
       - id: addlicense
         args: ["-s=only", -l, "MIT", -c, "Lincoln Institute of Land Policy"]
+
+  - repo: local
+    hooks:
+      - id: pygeoapi_config_validate
+        name: pygeoapi_config_validate
+        entry: uv run pygeoapi config validate --config pygeoapi.config.yml
+        language: system
+        types: [yaml]
+        pass_filenames: false

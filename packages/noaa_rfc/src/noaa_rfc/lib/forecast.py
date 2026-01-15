@@ -23,6 +23,7 @@ from geojson_pydantic import Feature, FeatureCollection, Point
 from geojson_pydantic.types import Position2D
 from shapely.geometry.base import BaseGeometry
 from shapely.geometry import Point as ShapelyPoint
+from pygeoapi.provider.base import ProviderItemNotFoundError, ProviderInvalidDataError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -364,10 +365,20 @@ class ForecastCollection(LocationCollectionProtocol):
 
         allFeatures = list(features.values())
         if itemsIDSingleFeature:
-            assert len(allFeatures) == 1, f"Expected 1 feature, got {len(features)}"
-            return cast(
-                GeojsonFeatureDict, allFeatures[0].model_dump(exclude_unset=True)
-            )
+            match len(allFeatures):
+                case 0:
+                    raise ProviderItemNotFoundError(
+                        "Filter resulted in 0 features after filtering; no feature with the associated id was found"
+                    )
+                case 1:
+                    return cast(
+                        GeojsonFeatureDict,
+                        allFeatures[0].model_dump(exclude_unset=True),
+                    )
+                case _:
+                    raise ProviderInvalidDataError(
+                        f"Expected at most 1 feature, got {len(features)} features: {features}"
+                    )
 
         if sortby:
             sort_by_properties_in_place(allFeatures, sortby)

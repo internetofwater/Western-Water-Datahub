@@ -15,7 +15,7 @@ import {
 import Info from "@/assets/Info";
 import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Panel/Panel.module.css";
-import ParameterSelect from "@/features/Panel/ParameterSelect/ParameterSelect";
+import ParameterSelect from "@/features/Panel/Refine/ParameterSelect/ParameterSelect";
 import useMainStore from "@/stores/main";
 
 const ParameterSelectWrapper: React.FC = () => {
@@ -26,8 +26,8 @@ const ParameterSelectWrapper: React.FC = () => {
   const helpText = (
     <>
       <Text size="sm">
-        Parameters are scientific measurements contained by collections that are
-        associated with specific locations and times.
+        Parameters are scientific measurements, contained by data sources, that
+        are associated with specific locations and times.
       </Text>
       <br />
       <Text size="sm">
@@ -38,7 +38,7 @@ const ParameterSelectWrapper: React.FC = () => {
   );
 
   return (
-    <Stack gap={0}>
+    <Stack gap={0} className={styles.selectStack}>
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
           <Title order={2} size="h4">
@@ -57,7 +57,7 @@ const ParameterSelectWrapper: React.FC = () => {
         ))
       ) : (
         <Text size="sm" c="dimmed">
-          Select at least one collection to show parameter selects.
+          Select at least one data source to show parameter selects.
         </Text>
       )}
     </Stack>

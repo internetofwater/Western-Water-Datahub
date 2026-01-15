@@ -74,3 +74,9 @@
 [data-mantine-color-scheme="light"] .button svg[data-identifier="check-svg"] {
   stroke: var(--mantine-color-black);
 }
+
+@media screen and (max-width: 899px) {
+  .text {
+    max-width: 70%;
+  }
+}

@@ -170,7 +170,7 @@ export const State: React.FC = () => {
     >
       <Select
         key={`state-select-${geographyFilterCollectionId}`}
-        size="xs"
+        size="sm"
         label="State"
         placeholder="Select..."
         data={stateOptions}
