@@ -161,7 +161,7 @@ resources:
   snotel-huc06-means:
     type: collection
     title: Snotel Snow Water Equivalent Aggregated by HUC06
-    description: provides snow water equivalent data from SNOTEL aggregated by HUC06 watershed. Each feature contains one average for the entire HUC06; these averages are relative to the 30 year average.
+    description: provides snow water equivalent (swe) data from SNOTEL aggregated by HUC06 watershed. Each feature contains one average for the entire HUC06; this is calculated by taking the latest swe value, dividing it by the 30 year average swe value on for the same day, and multiplying it by 100.
     provider-name:
       - DOA
       - USDA
@@ -203,13 +203,13 @@ resources:
     providers:
       - type: edr
         name: usace.usace_edr.USACEEDRProvider
-        data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
+        data: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
       - type: feature
         name: usace.usace.USACEProvider
-        data: https://wcc.sc.egov.usda.gov/awdbRestApi/v3/api-docs
+        data: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
         entity: Observation
         title_field: name
-    link:
+    links:
       - type: application/html
         rel: canonical
         title: Data source
@@ -582,6 +582,7 @@ resources:
           mimetype: application/zip
         options:
           s3:
+            asynchronous: ${S3_ASYNC:-false}
             anon: true
             requester_pays: false
             client_kwargs:

@@ -1,7 +1,10 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from datetime import date, datetime
+import csv
+from datetime import date
+import logging
+from pathlib import Path
 import time
 from typing import Literal, Optional, cast
 from com.cache import RedisCache
@@ -20,6 +23,24 @@ from geojson_pydantic import Feature, FeatureCollection, Point
 from geojson_pydantic.types import Position2D
 from shapely.geometry.base import BaseGeometry
 from shapely.geometry import Point as ShapelyPoint
+
+LOGGER = logging.getLogger(__name__)
+
+NOAA_DOI_REGIONS: dict[str, dict] = {}
+metadata_path = Path(__file__).parent.parent / "noaa_rfc_stations_by_region.csv"
+with metadata_path.open() as f:
+    LOGGER.info(f"Loading static NOAA doi region metadata from {metadata_path}")
+    reader = csv.DictReader(f)
+    for row in reader:
+        # Skip rows where in_wwdh_backend_api is True
+        if row.get("in_wwdh_backend_api", "False").strip().lower() != "true":
+            continue
+        noaa_id = row.pop("noaa_id")
+        # we don't need all the fields, so just grab the ones we need for the API
+        NOAA_DOI_REGIONS[noaa_id] = {
+            "doi_region_num": row.pop("doi_region_num"),
+            "doi_region_name": row.pop("doi_region_name"),
+        }
 
 
 class ForecastData(BaseModel):
@@ -101,6 +122,11 @@ class ForecastDataSingle(BaseModel):
     dataset_link: Optional[str] = None
     image_plot_link: Optional[str] = None
 
+    # extra doi metadata not in the upstream API
+    # but inserted via the NOAA_DOI_REGIONS csv dict
+    doi_region_num: Optional[int] = None
+    doi_region_name: Optional[str] = None
+
     def extend_with_metadata(self):
         """
         Add plotting and datasets links to the metadata of the pydantic object in place
@@ -169,15 +195,13 @@ class ForecastCollection(LocationCollectionProtocol):
             "src_az": f"https://www.cbrfc.noaa.gov/wsup/graph/espcond_data.py?fdate={cb_fdate_az}&area=CB&qpfdays=0&otype=json&ts={ts}",
             "src_ab_latest": f"https://www.cbrfc.noaa.gov/wsup/graph/espcond_data.py?fdate={fdate_latest}&area=AB&qpfdays=1&otype=json&ts={ts}",
             "src_ab_end": f"https://www.cbrfc.noaa.gov/wsup/graph/espcond_data.py?fdate={ab_fdate_end}&area=AB&qpfdays=1&otype=json&ts={ts}",
-            # NOTE: this is commented out since the upstream API appears to be failing; this is out of our control
-            # it should be uncommented in the future when the API is back up
+            # NOTE: this was previously commented out since the upstream API appears to be failing; this is out of our control
             # you can go to an endpoint like https://www.cbrfc.noaa.gov/wsup/graph/espcond_data.py?fdate=LATEST&area=MB&qpfdays=1&otype=json&ts=81636.83333333333
             # to check if it is back up
-            # "src_wg_latest": f"https://www.cbrfc.noaa.gov/wsup/graph/espcond_data.py?fdate={fdate_latest}&area=WG&qpfdays=0&otype=json&ts={ts}",
+            "src_wg_latest": f"https://www.cbrfc.noaa.gov/wsup/graph/espcond_data.py?fdate={fdate_latest}&area=WG&qpfdays=0&otype=json&ts={ts}",
             "src_wg_end": f"https://www.cbrfc.noaa.gov/wsup/graph/espcond_data.py?fdate={wg_fdate_end}&area=WG&qpfdays=0&otype=json&ts={ts}",
-            # NOTE: this is commented out since the upstream API appears to be failing; this is out of our control;
-            # it should be uncommented in the future when the API is back up
-            # "src_mb_latest": f"https://www.cbrfc.noaa.gov/wsup/graph/espcond_data.py?fdate={fdate_latest}&area=MB&qpfdays=1&otype=json&ts={ts}",
+            # NOTE: this was previously commented out since the upstream API appears to be failing; this is out of our control;
+            "src_mb_latest": f"https://www.cbrfc.noaa.gov/wsup/graph/espcond_data.py?fdate={fdate_latest}&area=MB&qpfdays=1&otype=json&ts={ts}",
             "src_cn_latest": f"https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_data_cnrfc.py?&ts={ts}",
             "src_nw_latest": f"https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_data_nwrfc.py?&ts={ts}",
         }
@@ -196,6 +220,8 @@ class ForecastCollection(LocationCollectionProtocol):
         return serialized
 
     def __init__(self):
+        # we fetch the data in a format where there are 10+ parallel lists and then we want to pivot
+        # them so it is a list of forecasts where each forecast represents item[N] from each list.
         wide_forecasts = self._get_data()
 
         pivoted_forecasts: list[ForecastDataSingle] = []
@@ -259,6 +285,17 @@ class ForecastCollection(LocationCollectionProtocol):
                 }
             )
 
+            doi_region_info = NOAA_DOI_REGIONS.get(forecast.espid)
+            doi_region_num: Optional[int] = (
+                doi_region_info.get("doi_region_num") if doi_region_info else None
+            )
+            doi_region_name: Optional[str] = (
+                doi_region_info.get("doi_region_name") if doi_region_info else None
+            )
+            if doi_region_num:
+                # ensure the region number is an integer so that it is consistent across collections
+                doi_region_num = int(doi_region_num)
+
             serialized_feature = Feature(
                 type="Feature",
                 id=forecast.espid,
@@ -273,6 +310,8 @@ class ForecastCollection(LocationCollectionProtocol):
                     "espbasin": forecast.espbasin,
                     "espsubbasin": forecast.espsubbasin,
                     "espid": forecast.espid,
+                    "doi_region_num": doi_region_num,
+                    "doi_region_name": doi_region_name,
                 },
                 geometry=Point(
                     coordinates=Position2D(forecast.esplngdd, forecast.esplatdd),
@@ -283,6 +322,7 @@ class ForecastCollection(LocationCollectionProtocol):
             )
             if properties:
                 fields_mapping = cast(OAFFieldsMapping, fields_mapping)
+
                 # narrow the FieldsMapping type here manually since properties is a query arg for oaf and thus we know that OAFFieldsMapping must be used
                 if not all_properties_found_in_feature(
                     serialized_feature, properties, fields_mapping
@@ -309,22 +349,18 @@ class ForecastCollection(LocationCollectionProtocol):
             if not feature.properties or not feature.properties["forecasts"]:
                 continue
 
-            # if there is only one forecast we use that as the latest by default
-            if len(feature.properties["forecasts"]) == 1:
-                feature.properties["latest_esppavg"] = list(
-                    feature.properties["forecasts"].values()
-                )[0]["esppavg"]
-                continue
-
-            latestDate = max(
-                [
-                    datetime.strptime(forecast, "%Y-%m-%d")
-                    for forecast in feature.properties["forecasts"].keys()
-                ]
-            )
-            feature.properties["latest_esppavg"] = feature.properties["forecasts"][
-                latestDate.strftime("%Y-%m-%d")
-            ]["esppavg"]
+            # why the first forecast esppavg is considered to be the % normal
+            # i have no idea; this is not defined anywhere i can see
+            first_forecast_esppavg = list(feature.properties["forecasts"].values())[0][
+                "esppavg"
+            ]
+            if first_forecast_esppavg == 0:
+                # if the first forecast is 0 the % normal is considered to be null
+                # this is just an arbitrary quirk of how the map here: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
+                # defines the % normal and missing data;
+                feature.properties["percentage_normal"] = None
+            else:
+                feature.properties["percentage_normal"] = first_forecast_esppavg
 
         allFeatures = list(features.values())
         if itemsIDSingleFeature:
