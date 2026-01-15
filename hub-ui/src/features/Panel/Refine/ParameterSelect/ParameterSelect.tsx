@@ -3,8 +3,16 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from "react";
-import { ActionIcon, ComboboxData, Group, Stack, Text } from "@mantine/core";
+import { Fragment, useEffect, useState } from "react";
+import {
+  ActionIcon,
+  Anchor,
+  ComboboxData,
+  Divider,
+  Group,
+  Stack,
+  Text,
+} from "@mantine/core";
 import Delete from "@/assets/Delete";
 import Select from "@/components/Select";
 import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
@@ -52,6 +60,10 @@ const ParameterSelect: React.FC<Props> = (props) => {
   const [name, setName] = useState<string>("Parameters");
   const [data, setData] = useState<ComboboxData>([]);
 
+  const [collectionLink, setCollectionLink] = useState("");
+  const [sourceLink, setSourceLink] = useState("");
+  const [documentationLink, setDocumentationLink] = useState("");
+
   useEffect(() => {
     const collection = mainManager.getCollection(collectionId);
 
@@ -66,6 +78,19 @@ const ParameterSelect: React.FC<Props> = (props) => {
     if (collection.title) {
       setName(collection.title);
     }
+
+    const collectionLink =
+      collection.links.find(
+        (link) => link.rel === "alternate" && link.type === "text/html",
+      )?.href ?? "";
+    const sourceLink =
+      collection.links.find((link) => link.rel === "canonical")?.href ?? "";
+    const documentationLink =
+      collection.links.find((link) => link.rel === "documentation")?.href ?? "";
+
+    setCollectionLink(collectionLink);
+    setSourceLink(sourceLink);
+    setDocumentationLink(documentationLink);
 
     const paramObjects = Object.values(collection?.parameter_names ?? {});
 
@@ -198,6 +223,20 @@ const ParameterSelect: React.FC<Props> = (props) => {
     return false;
   };
 
+  const links = [
+    { label: "API", href: collectionLink, title: "This dataset in the API" },
+    {
+      label: "Source",
+      href: sourceLink,
+      title: "Original source of pre-transformed data",
+    },
+    {
+      label: "Methodology",
+      href: documentationLink,
+      title: "The methodology of the original source data",
+    },
+  ].filter((link) => link.href?.length > 0);
+
   return (
     <>
       {showParameterSelect(collectionId) && data.length > 0 ? (
@@ -220,7 +259,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
         <Stack gap="var(--default-spacing)">
           <Text size="sm">{name}</Text>
           <Text size="xs" c="dimmed">
-            This data source does not include parameters.
+            This data source is not a timeseries dataset.
           </Text>
         </Stack>
       )}
@@ -238,6 +277,20 @@ const ParameterSelect: React.FC<Props> = (props) => {
           </ActionIcon>
         </Group>
       )}
+      <Group
+        align="center"
+        gap="calc(var(--default-spacing) / 2)"
+        mt="var(--default-spacing)"
+      >
+        {links.map(({ label, href, title }, index) => (
+          <Fragment key={`pm-select-${collectionId}-link-${label}`}>
+            {index > 0 && <Divider orientation="vertical" />}
+            <Anchor size="xs" target="_blank" href={href} title={title}>
+              {label}
+            </Anchor>
+          </Fragment>
+        ))}
+      </Group>
     </>
   );
 };
