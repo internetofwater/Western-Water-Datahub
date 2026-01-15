@@ -31,3 +31,6 @@ cyclo:
 clean:
 	rm -rf .venv/
 	rm -rf .pytest_cache/
+
+check_conf:
+	uv run pygeoapi config validate --config pygeoapi.config.yml
