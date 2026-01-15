@@ -933,14 +933,17 @@ export const getLayerHoverFunction = (
                             const title = feature.properties[
                                 'espname'
                             ] as string;
-                            const average = Number(
+                            const percentNormal = Number(
                                 feature.properties['percentage_normal']
-                            ).toFixed(1);
+                            );
+                            const average = !isNaN(percentNormal)
+                                ? `${percentNormal.toFixed(1)}%`
+                                : 'No Data';
 
                             const html = `
                             <div>
                               <strong>${title}</strong><br/>
-                              <p>Percent Normal: ${average}%</p>
+                              <p>Percent Normal: ${average}</p>
                               <p style="margin: 0 auto;"}>Click to learn more</p>
                             </div>
                             `;
@@ -1250,14 +1253,17 @@ export const getLayerMouseMoveFunction = (
                             const title = feature.properties[
                                 'espname'
                             ] as string;
-                            const average = Number(
+                            const percentNormal = Number(
                                 feature.properties['percentage_normal']
-                            ).toFixed(1);
+                            );
+                            const average = !isNaN(percentNormal)
+                                ? `${percentNormal.toFixed(1)}%`
+                                : 'No Data';
 
                             const html = `
                                 <div>
                                   <strong>${title}</strong><br/>
-                                  <p>Percent Normal: ${average}%</p>
+                                  <p>Percent Normal: ${average}</p>
                                   <p style="margin: 0 auto;"}>Click to learn more</p>
                                 </div>
                                 `;
