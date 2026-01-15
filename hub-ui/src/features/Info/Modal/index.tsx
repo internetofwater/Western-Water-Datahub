@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Modal as ModalComponent, Tabs, Title } from "@mantine/core";
+import { Modal as ModalComponent, Tabs } from "@mantine/core";
 import styles from "@/features/Info/Info.module.css";
 import { About } from "@/features/Info/Modal/About";
 import { FAQ } from "@/features/Info/Modal/FAQ";
@@ -34,11 +34,6 @@ const Modal: React.FC = () => {
   return (
     <ModalComponent
       size="xl"
-      title={
-        <Title order={3} size="h4">
-          Help
-        </Title>
-      }
       closeButtonProps={{ "aria-label": "Close information modal" }}
       opened={openModal === ModalEnum.Help}
       onClose={() => setOpenModal(null)}

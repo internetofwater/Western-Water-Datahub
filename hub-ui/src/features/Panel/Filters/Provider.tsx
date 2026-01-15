@@ -4,8 +4,9 @@
  */
 
 import {
+  ComboboxData,
   Group,
-  Select,
+  MultiSelect,
   Stack,
   Text,
   Title,
@@ -15,6 +16,53 @@ import Info from "@/assets/Info";
 import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Panel/Panel.module.css";
 import useMainStore from "@/stores/main";
+
+const options: ComboboxData = [
+  // {
+  //   label: "(DOA) Department of Administration",
+  //   value: "DOA",
+  // },
+  {
+    label: "(DOI) Department of the Interior",
+    value: "DOI",
+  },
+  {
+    label: "(NDMC) National Drought Mitigation Center",
+    value: "NDMC",
+  },
+  {
+    label: "(NOAA) National Oceanic and Atmospheric Administration",
+    value: "NOAA",
+  },
+  {
+    label: "(NOHRSC) National Operational Hydrologic Remote Sensing Center",
+    value: "NOHRSC",
+  },
+  {
+    label: "(NRCS) Natural Resources Conservation Service",
+    value: "NRCS",
+  },
+  {
+    label: "(USACE) U.S. Army Corps of Engineers",
+    value: "USACE",
+  },
+  {
+    label: "(USBR) U.S. Bureau of Reclamation",
+    value: "USBR",
+  },
+  {
+    label: "(USDA) U.S. Department of Agriculture",
+    value: "USDA",
+  },
+  {
+    label: "(USGS) U.S. Geological Survey",
+    value: "USGS",
+  },
+  {
+    label: "(WPC) Weather Prediction Center",
+    value: "WPC",
+  },
+];
 
 export const Provider: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
@@ -38,18 +86,18 @@ export const Provider: React.FC = () => {
       {/* TODO */}
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
-          <Title order={2} size="h3">
+          <Title order={3} size="h4">
             Filter by Data Provider
           </Title>
           <Info />
         </Group>
       </Tooltip>
       <VisuallyHidden>{helpText}</VisuallyHidden>
-      <Select
+      <MultiSelect
         size="sm"
         label="Data Provider"
         placeholder="Select..."
-        data={["USACE", "USDA", "USBR", "USGS"]}
+        data={options}
         value={provider}
         onChange={setProvider}
         searchable

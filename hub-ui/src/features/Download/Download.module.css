@@ -63,6 +63,13 @@
   padding-top: var(--default-spacing);
 }
 
+.layerContent {
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
 .locationBlockWrapper {
   width: 80%;
   max-width: 80%;
@@ -74,6 +81,10 @@
 
 .locationHighlight {
   border: 1px solid var(--usbr-canyon-gold);
+}
+
+.locationList {
+  flex-direction: column;
 }
 
 .locationStandard {
@@ -94,6 +105,41 @@
 }
 .parameterLabelWrapper > label > span {
   color: red;
+}
+
+.parameterMessageWrapper {
+  padding: calc(var(--default-spacing) * 2);
+}
+
+@media screen and (max-width: 899px) {
+  .datePicker {
+    min-width: 100%;
+  }
+
+  .menu {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .layerContent {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .locationList {
+    flex-direction: row;
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .locationBlockWrapper {
+    width: 100%;
+    max-width: 100%;
+    margin-top: var(--default-spacing);
+    border-left: unset;
+    border-top: 1px solid var(--mantine-color-default-border);
+    padding-left: unset;
+  }
 }
 
 @media screen and (max-width: 816px) {

@@ -3,17 +3,27 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from "react";
-import { ActionIcon, ComboboxData, Group, Text } from "@mantine/core";
+import { Fragment, useEffect, useState } from "react";
+import {
+  ActionIcon,
+  Anchor,
+  ComboboxData,
+  Divider,
+  Group,
+  Stack,
+  Text,
+} from "@mantine/core";
 import Delete from "@/assets/Delete";
 import Select from "@/components/Select";
 import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
-import { Palette } from "@/features/Panel/Palette/Palette";
 import styles from "@/features/Panel/Panel.module.css";
+import { Palette } from "@/features/Panel/Refine/Palette/Palette";
 import mainManager from "@/managers/Main.init";
 import { ICollection } from "@/services/edr.service";
 import useMainStore from "@/stores/main";
+import { MainState } from "@/stores/main/types";
 import { CollectionType, getCollectionType } from "@/utils/collection";
+import { getCategoryLabel } from "@/utils/label";
 import { getParameterUnit } from "@/utils/parameters";
 
 type Props = {
@@ -24,6 +34,8 @@ const ParameterSelect: React.FC<Props> = (props) => {
   const { collectionId } = props;
 
   const collections = useMainStore((state) => state.collections);
+  const parameterGroups = useMainStore((state) => state.parameterGroups);
+  const categories = useMainStore((state) => state.categories);
   const selectedCollections = useMainStore(
     (state) => state.selectedCollections,
   );
@@ -48,6 +60,10 @@ const ParameterSelect: React.FC<Props> = (props) => {
   const [name, setName] = useState<string>("Parameters");
   const [data, setData] = useState<ComboboxData>([]);
 
+  const [collectionLink, setCollectionLink] = useState("");
+  const [sourceLink, setSourceLink] = useState("");
+  const [documentationLink, setDocumentationLink] = useState("");
+
   useEffect(() => {
     const collection = mainManager.getCollection(collectionId);
 
@@ -63,9 +79,37 @@ const ParameterSelect: React.FC<Props> = (props) => {
       setName(collection.title);
     }
 
+    const collectionLink =
+      collection.links.find(
+        (link) => link.rel === "alternate" && link.type === "text/html",
+      )?.href ?? "";
+    const sourceLink =
+      collection.links.find((link) => link.rel === "canonical")?.href ?? "";
+    const documentationLink =
+      collection.links.find((link) => link.rel === "documentation")?.href ?? "";
+
+    setCollectionLink(collectionLink);
+    setSourceLink(sourceLink);
+    setDocumentationLink(documentationLink);
+
     const paramObjects = Object.values(collection?.parameter_names ?? {});
 
+    let categoryFilter: string[] = [];
+    if (categories.length > 0) {
+      const validGroups = parameterGroups.filter((group) =>
+        categories.includes(group.label),
+      );
+
+      categoryFilter = validGroups
+        .flatMap((group) => group.members?.[collectionId])
+        .filter(Boolean);
+    }
+
     const data: ComboboxData = paramObjects
+      .filter(
+        (object) =>
+          categoryFilter.length === 0 || categoryFilter.includes(object.id),
+      )
       .map((object) => {
         const unit = getParameterUnit(object);
 
@@ -78,7 +122,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
       .sort((a, b) => a.label.localeCompare(b.label));
 
     setData(data);
-  }, [collections, selectedCollections]);
+  }, [collections, selectedCollections, parameterGroups, categories]);
 
   useEffect(() => {
     const restrictions = CollectionRestrictions[collectionId];
@@ -143,6 +187,14 @@ const ParameterSelect: React.FC<Props> = (props) => {
     removePalette(collectionId);
   };
 
+  const getDescription = (categories: MainState["categories"]) => {
+    if (categories.length > 0) {
+      return `Showing parameters within ${getCategoryLabel(categories.length)}: ${categories.join(", ")}`;
+    }
+
+    return null;
+  };
+
   /**
    * This layer is a grid type which requires at least one selected parameter
    *
@@ -171,6 +223,20 @@ const ParameterSelect: React.FC<Props> = (props) => {
     return false;
   };
 
+  const links = [
+    { label: "API", href: collectionLink, title: "This dataset in the API" },
+    {
+      label: "Source",
+      href: sourceLink,
+      title: "Original source of pre-transformed data",
+    },
+    {
+      label: "Methodology",
+      href: documentationLink,
+      title: "The methodology of the original source data",
+    },
+  ].filter((link) => link.href?.length > 0);
+
   return (
     <>
       {showParameterSelect(collectionId) && data.length > 0 ? (
@@ -182,6 +248,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
           value={localParameters}
           onChange={setLocalParameters}
           error={getParameterError()}
+          description={getDescription(categories)}
           disabled={data.length === 0}
           withAsterisk={collectionType === CollectionType.EDRGrid}
           searchable
@@ -189,7 +256,12 @@ const ParameterSelect: React.FC<Props> = (props) => {
           clearable
         />
       ) : (
-        <Text>This collection does not include parameters.</Text>
+        <Stack gap="var(--default-spacing)">
+          <Text size="sm">{name}</Text>
+          <Text size="xs" c="dimmed">
+            This data source is not a timeseries dataset.
+          </Text>
+        </Stack>
       )}
       {showPalette(collectionId) && (
         <Group gap="var(--default-spacing)" mt="var(--default-spacing)">
@@ -205,6 +277,20 @@ const ParameterSelect: React.FC<Props> = (props) => {
           </ActionIcon>
         </Group>
       )}
+      <Group
+        align="center"
+        gap="calc(var(--default-spacing) / 2)"
+        mt="var(--default-spacing)"
+      >
+        {links.map(({ label, href, title }, index) => (
+          <Fragment key={`pm-select-${collectionId}-link-${label}`}>
+            {index > 0 && <Divider orientation="vertical" />}
+            <Anchor size="xs" target="_blank" href={href} title={title}>
+              {label}
+            </Anchor>
+          </Fragment>
+        ))}
+      </Group>
     </>
   );
 };

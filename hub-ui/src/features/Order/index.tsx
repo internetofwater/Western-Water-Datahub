@@ -36,11 +36,11 @@ const Order: React.FC = () => {
   const helpText = (
     <>
       <Text size="sm">
-        Collections are drawn onto the map in the order listed below.
+        Data sources are drawn onto the map in the order listed below.
       </Text>
       <br />
       <Text size="sm">
-        Use the arrow buttons to move collections up or down in the draw order.
+        Use the arrow buttons to move data sources up or down in the draw order.
       </Text>
     </>
   );
@@ -57,7 +57,7 @@ const Order: React.FC = () => {
       closeOnClickOutside={false}
     >
       <Popover.Target>
-        <Tooltip label="Reorder collections" disabled={show}>
+        <Tooltip label="Reorder data source layers on the map" disabled={show}>
           <ActionIcon
             className={styles.orderButton}
             size="lg"

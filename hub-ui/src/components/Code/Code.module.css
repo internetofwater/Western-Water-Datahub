@@ -101,3 +101,9 @@
     background: var(--mantine-color-gray-2);
   }
 }
+
+@media screen and (max-width: 899px) {
+  .text {
+    max-width: 70%;
+  }
+}

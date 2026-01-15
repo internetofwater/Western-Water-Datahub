@@ -46,7 +46,7 @@ export const Chart: React.FC<Props> = (props) => {
 
   const fetchData = async () => {
     loadingInstance.current = loadingManager.add(
-      `Fetching chart data for location: ${locationId}, of collection: ${collectionId}`,
+      `Fetching chart data for location: ${locationId}, from data source: ${collectionId}`,
       ELoadingType.Data,
     );
     try {
