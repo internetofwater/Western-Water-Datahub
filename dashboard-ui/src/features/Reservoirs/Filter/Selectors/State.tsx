@@ -5,19 +5,18 @@
 
 'use client';
 
-import { ComboboxData, Select, Skeleton } from '@mantine/core';
+import { ComboboxData, MultiSelect, Skeleton } from '@mantine/core';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId, ValidStates } from '@/features/Map/consts';
 import { useEffect, useRef, useState } from 'react';
-import styles from '@/features/Header/Header.module.css';
+import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import { SourceDataEvent } from '@/features/Map/types';
 import { isSourceDataLoaded } from '@/features/Map/utils';
 import geoconnexService from '@/services/init/geoconnex.init';
 import { FeatureCollection, Polygon } from 'geojson';
-import { formatOptions } from '@/features/Header/Selectors/utils';
+import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
 import { StateField, StateProperties } from '@/features/Map/types/state';
-import useMainStore from '@/stores/main/main';
-import { StateDefault } from '@/stores/main/consts';
+import useMainStore from '@/stores/main';
 import { useLoading } from '@/hooks/useLoading';
 
 export const State: React.FC = () => {
@@ -76,7 +75,9 @@ export const State: React.FC = () => {
                     (feature) =>
                         String(feature?.properties?.[StateField.Acronym]),
                     (feature) => String(feature?.properties?.[StateField.Name]),
-                    'All States'
+                    '',
+                    '',
+                    true
                 );
 
                 if (isMounted.current) {
@@ -110,31 +111,34 @@ export const State: React.FC = () => {
     }, []);
 
     return (
-        <Skeleton
-            height={54} // Default dimensions of select
-            width={140}
-            visible={loading || stateOptions.length === 0}
-            className={styles.skeleton}
-        >
-            <Select
-                size="xs"
-                id="stateSelector"
-                disabled={isFetchingReservoirs}
-                searchable
-                data={stateOptions}
-                value={state}
-                aria-label="Select a State"
-                placeholder="Select a State"
-                label="Filter by State"
-                onChange={(_value) => {
-                    if (_value) {
-                        setState(_value);
-                    } else {
-                        setState(StateDefault);
-                    }
-                }}
-                clearable
-            />
-        </Skeleton>
+        <>
+            {loading || stateOptions.length === 0 ? (
+                <Skeleton
+                    height={54} // Default dimensions of select
+                    width={155}
+                />
+            ) : (
+                <MultiSelect
+                    size="xs"
+                    id="stateSelector"
+                    className={styles.multiselect}
+                    disabled={isFetchingReservoirs}
+                    data={stateOptions}
+                    value={state}
+                    aria-label="Select a State"
+                    placeholder="Select a State"
+                    label="Filter by State"
+                    onChange={(_value) => {
+                        if (_value) {
+                            setState(_value);
+                        } else {
+                            setState([]);
+                        }
+                    }}
+                    searchable
+                    clearable
+                />
+            )}
+        </>
     );
 };

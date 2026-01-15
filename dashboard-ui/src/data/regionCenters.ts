@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { RegionField } from '@/features/Map/types/region';
 import { FeatureCollection, Point } from 'geojson';
 
 export const regionCenters: FeatureCollection<Point> = {
@@ -11,8 +12,8 @@ export const regionCenters: FeatureCollection<Point> = {
         {
             type: 'Feature',
             properties: {
-                REG_NUM: 5,
-                name: 'Missouri Basin',
+                [RegionField.RegNum]: 5,
+                [RegionField.Name]: 'Missouri Basin',
             },
             geometry: {
                 type: 'Point',
@@ -22,8 +23,8 @@ export const regionCenters: FeatureCollection<Point> = {
         {
             type: 'Feature',
             properties: {
-                REG_NUM: 6,
-                name: 'Arkansas - Rio Grande - Texas Gulf',
+                [RegionField.RegNum]: 6,
+                [RegionField.Name]: 'Arkansas - Rio Grande - Texas Gulf',
             },
             geometry: {
                 type: 'Point',
@@ -33,8 +34,8 @@ export const regionCenters: FeatureCollection<Point> = {
         {
             type: 'Feature',
             properties: {
-                REG_NUM: 7,
-                name: 'Upper Colorado Basin',
+                [RegionField.RegNum]: 7,
+                [RegionField.Name]: 'Upper Colorado Basin',
             },
             geometry: {
                 type: 'Point',
@@ -44,8 +45,8 @@ export const regionCenters: FeatureCollection<Point> = {
         {
             type: 'Feature',
             properties: {
-                REG_NUM: 8,
-                name: 'Lower Colorado Basin',
+                [RegionField.RegNum]: 8,
+                [RegionField.Name]: 'Lower Colorado Basin',
             },
             geometry: {
                 type: 'Point',
@@ -55,8 +56,8 @@ export const regionCenters: FeatureCollection<Point> = {
         {
             type: 'Feature',
             properties: {
-                REG_NUM: 9,
-                name: 'Columbia - Pacific Northwest',
+                [RegionField.RegNum]: 9,
+                [RegionField.Name]: 'Columbia - Pacific Northwest',
             },
             geometry: {
                 type: 'Point',
@@ -66,8 +67,8 @@ export const regionCenters: FeatureCollection<Point> = {
         {
             type: 'Feature',
             properties: {
-                REG_NUM: 10,
-                name: 'California - Great Basin',
+                [RegionField.RegNum]: 10,
+                [RegionField.Name]: 'California - Great Basin',
             },
             geometry: {
                 type: 'Point',

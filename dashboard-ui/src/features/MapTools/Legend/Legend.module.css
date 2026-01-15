@@ -1,0 +1,112 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+.actionIcon {
+    stroke: var(--mantine-color-text);
+    fill: var(--mantine-color-text);
+}
+
+.actionIcon > svg {
+    width: 100%;
+    height: auto;
+}
+
+.iconBackground {
+    background-color: var(--mantine-color-gray-6);
+    padding: calc(var(--default-spacing) / 2);
+    border-radius: 4px;
+}
+
+.wrapper {
+    display: flex;
+    max-width: 18.25rem;
+}
+
+.gradientContainer {
+    min-width: 12.5rem;
+    width: 100%;
+}
+
+.gradient {
+    width: 100%;
+    height: 2.1875rem;
+    border: 1px solid #000;
+}
+
+.gradientLabelContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.entryContainer {
+    min-width: 2.8125rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.listItem,
+.subListItem {
+    list-style: none;
+}
+
+.subListItem {
+    margin-left: calc(var(--default-spacing) / 4);
+    margin-right: calc(var(--default-spacing) / 4);
+    margin-top: calc(var(--default-spacing) / 2);
+    margin-bottom: calc(var(--default-spacing) / 2);
+}
+
+.listItemIconWrapper > svg {
+    fill: var(--mantine-color-text);
+    stroke: var(--mantine-color-text);
+    width: 1rem;
+    height: auto;
+}
+
+.list {
+    width: fit-content;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    margin-bottom: var(--default-spacing);
+
+    background-color: var(--mantine-color-gray-6);
+    padding: calc(var(--default-spacing) / 2);
+    border-radius: 4px;
+}
+
+.title {
+    text-align: center;
+}
+
+.capacityLegend {
+    min-width: none;
+}
+
+.storageLegend {
+    min-width: none;
+}
+
+.thirtyYearAverageLegend {
+    min-width: 190px;
+}
+
+.thirtyYearAverageLegend > svg {
+    width: 40px;
+}
+
+.hiddenLegend {
+    display: block;
+    width: 19.875rem;
+    background-color: var(--mantine-color-body);
+    padding: var(--default-spacing);
+
+    .wrapper {
+        max-width: unset;
+    }
+}

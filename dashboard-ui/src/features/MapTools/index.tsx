@@ -3,10 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import useMainStore from '@/stores/main/main';
-import { Selector } from '@/features/MapTools/BaseMap';
 import { lazy } from 'react';
-import { Tools } from '@/stores/main/types';
+import { Stack } from '@mantine/core';
+import styles from '@/features/MapTools/MapTools.module.css';
+import { Selector } from '@/features/MapTools/BaseMap';
+import Legend from '@/features/MapTools/Legend';
+import { MobilePanelButton } from '@/features/MapTools/MobilePanelButton';
 
 const Screenshot = lazy(() => import('./Screenshot'));
 
@@ -15,12 +17,16 @@ const Screenshot = lazy(() => import('./Screenshot'));
  * @component
  */
 export const MapTools: React.FC = () => {
-    const tools = useMainStore((state) => state.tools);
-
     return (
         <>
-            {tools[Tools.BasemapSelector] && <Selector />}
-            {tools[Tools.Print] && <Screenshot />}
+            <Stack gap="var(--default-spacing)" className={styles.left}>
+                <MobilePanelButton />
+            </Stack>
+            <Stack gap="var(--default-spacing)" className={styles.right}>
+                <Legend />
+                <Selector />
+                <Screenshot />
+            </Stack>
         </>
     );
 };

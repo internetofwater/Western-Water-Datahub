@@ -6,16 +6,14 @@
 import { useState } from 'react';
 import { Box, Button, Checkbox, Group, Stack, Text } from '@mantine/core';
 import { HELP_LOCAL_KEY } from '@/features/Help';
-import useSessionStore from '@/stores/session';
 
 type Props = {
     showHelp: boolean;
+    onClose: () => void;
 };
 
 export const About: React.FC<Props> = (props) => {
-    const { showHelp } = props;
-
-    const setOverlay = useSessionStore((state) => state.setOverlay);
+    const { showHelp, onClose } = props;
 
     const [showHelpAgain, setShowHelpAgain] = useState(showHelp);
 
@@ -50,7 +48,7 @@ export const About: React.FC<Props> = (props) => {
                 </Text>
             </Box>
             <Group justify="space-between">
-                <Button size="sm" onClick={() => setOverlay(null)}>
+                <Button size="sm" onClick={onClose}>
                     Continue
                 </Button>
                 <Checkbox
