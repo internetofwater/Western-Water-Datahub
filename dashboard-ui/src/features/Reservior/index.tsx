@@ -34,6 +34,7 @@ const Reservoir: React.FC = () => {
     const reservoirCollections = useMainStore(
         (state) => state.reservoirCollections
     );
+
     const overlay = useSessionStore((store) => store.overlay);
     const setOverlay = useSessionStore((store) => store.setOverlay);
 
