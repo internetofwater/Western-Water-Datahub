@@ -8,7 +8,7 @@ import { Info } from "@/features/Loading/Info";
 import useSessionStore from "@/stores/session";
 
 type Props = {
-  desktop: boolean;
+  desktop?: boolean;
 };
 
 const Loading: React.FC<Props> = (props) => {

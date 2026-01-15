@@ -47,7 +47,7 @@ export const FileDownload: React.FC<Props> = (props) => {
     >
       <Popover.Target>
         <Tooltip
-          label="Download this collection in GIS format."
+          label="Download this data source in GIS format."
           disabled={show}
         >
           <ActionIcon

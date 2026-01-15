@@ -48,7 +48,7 @@ export const Reset: React.FC = () => {
     }
 
     if (isFetchingCollections) {
-      return "Please wait for collections request to complete";
+      return "Please wait for data sources request to complete";
     }
 
     if (isFetchingLocations) {

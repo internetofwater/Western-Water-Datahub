@@ -16,15 +16,20 @@ import { MainState } from "@/stores/main/types";
 
 const useMainStore = create<MainState>()(
   immer((set, get, store) => ({
-    provider: null,
+    provider: [],
     setProvider: (provider) =>
       set((state) => {
         state.provider = provider;
       }),
-    category: null,
-    setCategory: (category) =>
+    categories: [],
+    setCategories: (categories) =>
       set((state) => {
-        state.category = category;
+        state.categories = categories;
+      }),
+    parameterGroups: [],
+    setParameterGroups: (parameterGroups) =>
+      set((state) => {
+        state.parameterGroups = parameterGroups;
       }),
     selectedCollections: [],
     setSelectedCollections: (selectedCollections) =>

@@ -3,36 +3,44 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect } from "react";
-import { Divider, Paper, Stack } from "@mantine/core";
-import Loading from "@/features/Loading";
+import { useEffect, useState } from "react";
+import { Box, Divider, Stack } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import Controls from "@/features/Panel/Controls";
-import { DateSelect } from "@/features/Panel/DateSelect";
 import Filters from "@/features/Panel/Filters";
-import Geography from "@/features/Panel/Filters/Geography";
 import { Header } from "@/features/Panel/Header";
 import styles from "@/features/Panel/Panel.module.css";
-import ParameterSelect from "@/features/Panel/ParameterSelect";
+import Refine from "@/features/Panel/Refine";
 import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import useMainStore from "@/stores/main";
-import { ELoadingType, ENotificationType } from "@/stores/session/types";
+import useSessionStore from "@/stores/session";
+import {
+  ELoadingType,
+  ENotificationType,
+  EOverlay,
+} from "@/stores/session/types";
 
 const Panel: React.FC = () => {
+  const categories = useMainStore((state) => state.categories);
   const provider = useMainStore((state) => state.provider);
-  const category = useMainStore((state) => state.category);
+  const overlay = useSessionStore((state) => state.overlay);
+
+  const mobile = useMediaQuery("(max-width: 899px)");
+
+  const [isVisible, setIsVisible] = useState(true);
 
   const getCollections = async () => {
     const loadingInstance = loadingManager.add(
-      "Updating collections",
+      "Updating data sources",
       ELoadingType.Collections,
     );
     try {
       await mainManager.getCollections();
       loadingManager.remove(loadingInstance);
       notificationManager.show(
-        "Updated collections",
+        "Updated data sources",
         ENotificationType.Success,
       );
     } catch (error) {
@@ -50,27 +58,37 @@ const Panel: React.FC = () => {
 
   useEffect(() => {
     void getCollections();
-  }, [provider, category]);
+  }, [provider, categories]);
+
+  useEffect(() => {
+    if (!mobile) {
+      setIsVisible(true);
+      return;
+    }
+    setIsVisible(overlay === EOverlay.Controls);
+  }, [mobile, overlay]);
 
   return (
     <>
-      <Paper className={styles.panelWrapper}>
+      {mobile && isVisible && <Box className={styles.panelUnderlay} />}
+      <Box
+        className={styles.panelWrapper}
+        style={{ display: isVisible ? "block" : "none" }}
+      >
         <Stack
-          gap="calc(var(--default-spacing) * 3)"
+          gap="calc(var(--default-spacing) * 1)"
           px="xl"
-          pb="xl"
+          py="xl"
           justify="center"
+          className={styles.panelContent}
         >
           <Header />
           <Filters />
-          <Divider />
-          <ParameterSelect />
-          <Geography />
-          <DateSelect />
+          <Divider size="md" />
+          <Refine />
           <Controls />
         </Stack>
-        <Loading desktop={false} />
-      </Paper>
+      </Box>
     </>
   );
 };

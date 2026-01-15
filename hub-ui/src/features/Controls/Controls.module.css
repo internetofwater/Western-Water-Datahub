@@ -20,3 +20,9 @@
   right: var(--default-spacing);
   z-index: 1;
 }
+
+.menuButton svg {
+  fill: var(--mantine-color-white);
+  width: 2rem;
+  height: auto;
+}
