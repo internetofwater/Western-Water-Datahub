@@ -82,6 +82,7 @@ const Reservoir: React.FC = () => {
                     setReservoirProperties(properties);
                 }
                 open();
+                setOverlay(Overlay.Detail);
             }
         }
     }, [reservoir]);

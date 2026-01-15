@@ -66,6 +66,10 @@ const entries: Entry[] = [
         type: LayerType.Circle,
         items: [
             {
+                color: '#fff',
+                label: 'No Data',
+            },
+            {
                 color: '#a30000',
                 label: '<25',
             },
