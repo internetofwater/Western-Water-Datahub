@@ -27,9 +27,11 @@ import { Map } from 'mapbox-gl';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Image from 'next/image';
 import ScreenshotIcon from '@/icons/Screenshot';
-import { Overlay } from '@/stores/session/types';
+import { NotificationType, Overlay } from '@/stores/session/types';
 import useSessionStore from '@/stores/session';
 import { useMediaQuery } from '@mantine/hooks';
+import { toJpeg } from 'html-to-image';
+import notificationManager from '@/managers/Notification.init';
 
 /**
  *
@@ -107,11 +109,36 @@ const Screenshot: React.FC = () => {
         }
     }, [overlay]);
 
-    const downloadImage = () => {
-        const link = document.createElement('a');
-        link.href = src;
-        link.download = name + '.jpg';
-        link.click();
+    const downloadDataUrl = (dataUrl: string, filename: string) => {
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    };
+
+    const downloadImage = async () => {
+        try {
+            downloadDataUrl(src, `${name}.jpg`);
+
+            const legend = document.getElementById('legend');
+            if (!legend) return;
+
+            // ensure it's rendered
+            await new Promise(requestAnimationFrame);
+
+            const dataUrl = await toJpeg(legend, {
+                style: { display: 'block' },
+            });
+            downloadDataUrl(dataUrl, `${name}-legend.jpg`);
+        } catch (err) {
+            notificationManager.show(
+                (err as Error).message,
+                NotificationType.Error,
+                10000
+            );
+        }
     };
 
     const handleShow = (show: boolean) => {
@@ -126,6 +153,7 @@ const Screenshot: React.FC = () => {
             closeOnClickOutside={false}
             position="left-start"
             shadow="md"
+            zIndex={99999}
         >
             <PopoverTarget>
                 <Tooltip label="Show screenshot tool" disabled={show}>
@@ -178,7 +206,7 @@ const Screenshot: React.FC = () => {
                         />
                         <Button
                             variant="default"
-                            onClick={downloadImage}
+                            onClick={() => void downloadImage()}
                             disabled={loading}
                         >
                             Download

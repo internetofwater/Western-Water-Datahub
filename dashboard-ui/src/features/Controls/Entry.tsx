@@ -6,7 +6,7 @@
 import { Box, Group, Stack, Switch, Tooltip, Text } from '@mantine/core';
 import { getTooltipContent } from '@/features/MapTools/Legend/utils';
 import Info from '@/icons/Info';
-import { Links } from './Links';
+import { Links } from '@/features/Controls/Links';
 import styles from '@/features/Controls/Controls.module.css';
 import { MainState } from '@/stores/main';
 

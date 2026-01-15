@@ -4,7 +4,7 @@
  */
 
 import { LayerId, SubLayerId } from '@/features/Map/consts';
-import { getGlossaryEntry } from '../../Help/utils';
+import { getGlossaryEntry } from '@/features/Help/utils';
 
 export const getTooltipContent = (
     layerId: LayerId | SubLayerId | string

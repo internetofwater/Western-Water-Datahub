@@ -17,7 +17,7 @@ import {
     handleStorageLeave,
 } from '@/features/Reservior/TeacupDiagram/listeners';
 import styles from '@/features/Reservior/Reservoir.module.css';
-import { Entry } from './Entry';
+import { Entry } from '@/features/Reservior/Info/Entry';
 import { ReactNode, useState } from 'react';
 
 type Props = {

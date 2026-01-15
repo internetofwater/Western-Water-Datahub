@@ -6,8 +6,8 @@
 import { ReactNode } from 'react';
 import { Anchor, Text } from '@mantine/core';
 import GitHub from '@/icons/logos/Github';
-import { LayerId } from '../Map/consts';
-import { getLayerName } from '../Map/config';
+import { LayerId } from '@/features/Map/consts';
+import { getLayerName } from '@/features/Map/config';
 
 const description = {
     size: 'md',

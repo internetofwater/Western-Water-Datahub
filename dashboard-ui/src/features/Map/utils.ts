@@ -488,7 +488,6 @@ export const appendResvizDataProperties = async (
             String(id),
             {
                 params: {
-                    f: 'json',
                     limit: 1,
                     ...(reservoirDate ? { datetime: reservoirDate } : {}),
                 },
