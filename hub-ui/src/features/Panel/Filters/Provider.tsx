@@ -18,10 +18,10 @@ import styles from "@/features/Panel/Panel.module.css";
 import useMainStore from "@/stores/main";
 
 const options: ComboboxData = [
-  {
-    label: "(DOA) Department of Administration",
-    value: "DOA",
-  },
+  // {
+  //   label: "(DOA) Department of Administration",
+  //   value: "DOA",
+  // },
   {
     label: "(DOI) Department of the Interior",
     value: "DOI",
