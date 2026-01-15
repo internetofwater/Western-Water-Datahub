@@ -429,9 +429,13 @@ resources:
     keywords: [NOAA]
     links:
       - type: application/html
+        rel: canonical
+        title: Data Source
+        href: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
+      - type: application/html
         rel: documentation
         title: Documentation
-        href: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
+        href: https://www.cbrfc.noaa.gov/wsup/graph/west/map/help.html
     extents: *default-extent
     templates:
       path: pygeoapi-deployment/templates/jsonld/noaa_rfc
@@ -507,9 +511,13 @@ resources:
     keywords: ["drought"]
     links:
       - type: application/html
-        rel: documentation
-        title: documentation
+        rel: canonical
+        title: Canonical
         href: https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
+      - type: application/html
+        rel: documentation
+        title: Documentation
+        href: https://droughtmonitor.unl.edu/About/AbouttheData.aspx
     extents: *default-extent
     providers:
       - <<: *default-feature-qpf
@@ -537,6 +545,10 @@ resources:
       - type: application/html
         rel: documentation
         title: Documentation
+        href: https://droughtmonitor.unl.edu/About/AbouttheData.aspx
+      - type: application/html
+        rel: canonical
+        title: Canonical
         href: https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/US_Drought_Intensity_v1/FeatureServer/2
     extents: *default-extent
     providers:
