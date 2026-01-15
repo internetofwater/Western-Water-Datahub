@@ -302,7 +302,7 @@ resources:
     title: NOAA Weather Prediction Center Cumulative Quantitative Precipitation Forecast 120 Hours
     description: consists of layers that represent forecasted cumulative QPF for 120 hours from now.
     providers:
-      - <<: *default-qpf
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/10
 
   noaa-cqpf-168-hours:
