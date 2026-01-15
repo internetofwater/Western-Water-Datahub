@@ -267,10 +267,13 @@ export const getLayerColor = (
         case LayerId.States:
             return '#000';
         case LayerId.RegionsReference:
-        case LayerId.BasinsReference:
-        case LayerId.StatesReference:
-        default:
             return '#ef5e25';
+        case LayerId.BasinsReference:
+            return '#54278f';
+        case LayerId.StatesReference:
+            return '#34a37e';
+        default:
+            return '#fff';
     }
 };
 
@@ -623,22 +626,24 @@ export const getLayerConfig = (
                     'circle-stroke-color': '#000',
                     'circle-color': [
                         'step',
-                        ['get', 'latest_esppavg'],
-                        '#d73027',
+                        ['coalesce', ['get', 'percentage_normal'], -1], // Not all points have pct norm, show white to match source
+                        '#fff',
+                        0,
+                        '#a30000',
                         25,
-                        '#f46d43',
+                        '#fb0000',
                         50,
-                        '#fdae61',
+                        '#fd9400',
                         75,
-                        '#fee090',
+                        '#e8ec08',
                         90,
-                        '#e0f3f8',
+                        '#20ee00',
                         110,
-                        '#abd9e9',
+                        '#1eeae8',
                         125,
-                        '#74add1',
+                        '#1084e7',
                         150,
-                        '#4575b4',
+                        '#0000fe',
                     ],
                 },
                 layout: {
@@ -929,8 +934,9 @@ export const getLayerHoverFunction = (
                                 'espname'
                             ] as string;
                             const average = Number(
-                                feature.properties['latest_esppavg']
+                                feature.properties['percentage_normal']
                             ).toFixed(1);
+
                             const html = `
                             <div>
                               <strong>${title}</strong><br/>
@@ -1245,8 +1251,9 @@ export const getLayerMouseMoveFunction = (
                                 'espname'
                             ] as string;
                             const average = Number(
-                                feature.properties['latest_esppavg']
+                                feature.properties['percentage_normal']
                             ).toFixed(1);
+
                             const html = `
                                 <div>
                                   <strong>${title}</strong><br/>
@@ -1357,6 +1364,7 @@ export const getLayerClickFunction = (
                             const datasetLink = feature.properties[
                                 'dataset_link'
                             ] as string;
+
                             const html = `
                                 <div style="color:black;width:400px;">
                                     <a href="${datasetLink}" target="_blank">

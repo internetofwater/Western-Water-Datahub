@@ -6,9 +6,9 @@
 import { lazy } from 'react';
 import { Stack } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
-import { Selector } from './BaseMap';
-import Legend from './Legend';
-import { MobilePanelButton } from './MobilePanelButton';
+import { Selector } from '@/features/MapTools/BaseMap';
+import Legend from '@/features/MapTools/Legend';
+import { MobilePanelButton } from '@/features/MapTools/MobilePanelButton';
 
 const Screenshot = lazy(() => import('./Screenshot'));
 

@@ -4,17 +4,10 @@
  */
 
 import { LayerType } from '@/components/Map/types';
-import { LayerId } from '@/features/Map/consts';
-
-export type Id =
-    | LayerId.Snotel
-    | LayerId.NOAARiverForecast
-    | LayerId.USDroughtMonitor
-    | LayerId.NOAAPrecipSixToTen
-    | LayerId.NOAATempSixToTen;
+import { MainState } from '@/stores/main';
 
 export type Entry = {
-    id: Id;
+    id: keyof MainState['toggleableLayers'];
     type: LayerType;
     items?: { color: string; label: string }[];
     colors?: string[];

@@ -20,6 +20,7 @@
 }
 
 .wrapper {
+    display: flex;
     max-width: 18.25rem;
 }
 
@@ -97,4 +98,15 @@
 
 .thirtyYearAverageLegend > svg {
     width: 40px;
+}
+
+.hiddenLegend {
+    display: block;
+    width: 19.875rem;
+    background-color: var(--mantine-color-body);
+    padding: var(--default-spacing);
+
+    .wrapper {
+        max-width: unset;
+    }
 }
