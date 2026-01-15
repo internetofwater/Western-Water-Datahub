@@ -59,7 +59,12 @@ repos:
     hooks:
       - id: addlicense
         args: ["-s=only", -l, "MIT", -c, "Lincoln Institute of Land Policy"]
-
+  - repo: https://github.com/cgs-earth/pygeoapi-precommit-hooks
+    rev: 8a6f4115ae87309f0ab44bdffbb2c91d909ad525
+    hooks:
+      - id: pygeoapi_resources_have_links
+        args: ["pygeoapi.config.yml"]
+        pass_filenames: false
   - repo: local
     hooks:
       - id: pygeoapi_config_validate
