@@ -62,6 +62,12 @@ resources:
       - USBR
     templates:
       path: pygeoapi-deployment/templates/jsonld/rise-edr
+    links:
+      - type: application/html
+        rel: canonical
+        title: data source
+        href: https://data.usbr.gov/
+        hreflang: en-US
     extents:
       spatial:
         bbox: [-123.60518, 28.4667, -95.875, 48.8283]
