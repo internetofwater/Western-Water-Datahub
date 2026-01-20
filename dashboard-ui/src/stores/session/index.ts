@@ -7,7 +7,7 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { createLoadingSlice } from '@/stores/session/slices/loading';
 import { createNotificationsSlice } from '@/stores/session/slices/notifications';
-import { HelpTab, SessionState } from '@/stores/session/types';
+import { HelpTab, Overlay, SessionState } from '@/stores/session/types';
 
 const useSessionStore = create<SessionState>()(
     immer((set, get, store) => ({
@@ -15,7 +15,7 @@ const useSessionStore = create<SessionState>()(
         setLegendEntries: (legendEntries) => set({ legendEntries }),
         downloadModalOpen: false,
         setDownloadModalOpen: (downloadModalOpen) => set({ downloadModalOpen }),
-        overlay: null,
+        overlay: Overlay.Controls,
         setOverlay: (overlay) => set({ overlay }),
         highlight: null,
         setHighlight: (hoverFeature) => set({ highlight: hoverFeature }),

@@ -19,13 +19,19 @@ import { ReservoirConfig } from '@/features/Map/types';
  * @param {Map} map - The Mapbox map instance.
  * @returns {Promise<Blob | null>} - A promise that resolves to a Blob representing the map image, or null if the image creation fails.
  */
-const createMapImage = (map: Map): Promise<Blob | null> => {
-    return new Promise(function (resolve) {
-        map.once('render', function () {
+const createMapImage = <T extends boolean>(
+    map: Map,
+    width: number,
+    height: number,
+    toBlob: T
+): Promise<T extends true ? Blob | null : string> => {
+    return new Promise((resolve) => {
+        map.once('render', () => {
             const canvas = map.getCanvas();
+
             const newCanvas = document.createElement('canvas');
-            newCanvas.width = 1600;
-            newCanvas.height = 900;
+            newCanvas.width = width;
+            newCanvas.height = height;
             const context = newCanvas.getContext('2d');
             if (context) {
                 context.drawImage(
@@ -35,15 +41,22 @@ const createMapImage = (map: Map): Promise<Blob | null> => {
                     newCanvas.width,
                     newCanvas.height
                 );
-                newCanvas.toBlob((blob) => {
-                    if (blob) {
-                        resolve(blob);
-                    }
-                });
+                if (toBlob) {
+                    newCanvas.toBlob((blob) => {
+                        resolve(blob as T extends true ? Blob | null : string);
+                    });
+                } else {
+                    resolve(
+                        newCanvas.toDataURL() as T extends true
+                            ? Blob | null
+                            : string
+                    );
+                }
+            } else {
+                resolve(null as T extends true ? Blob | null : string);
             }
         });
-        /* trigger render */
-        map.setBearing(map.getBearing());
+        map.setBearing(map.getBearing()); // trigger render
     });
 };
 
@@ -62,24 +75,21 @@ const duplicateMapInstance = (
     center: LngLatLike,
     accessToken: string,
     aspectRatio: [number, number]
-): Map => {
+): { map: Map; container: HTMLDivElement } => {
     const container = document.createElement('div');
     container.style.width = `${aspectRatio[0]}px`;
     container.style.height = `${aspectRatio[1]}px`;
-    container.style.maxWidth = `${aspectRatio[0]}px`;
-    container.style.maxHeight = `${aspectRatio[1]}px`;
-
+    document.body.appendChild(container);
     const newMap = new Map({
-        container: container,
+        accessToken,
+        container,
+        center,
         style: originalMap.getStyle(),
-        center: center,
         zoom: originalMap.getZoom(),
         bearing: originalMap.getBearing(),
         pitch: originalMap.getPitch(),
-        accessToken: accessToken,
     });
-
-    return newMap;
+    return { map: newMap, container };
 };
 
 /**
@@ -90,17 +100,22 @@ const duplicateMapInstance = (
  * @param {boolean} cancel - A flag indicating the calling component has unmounted.
  * @param {Dispatch<SetStateAction<Blob | null>>} setMapImage - A state setter function for the map image.
  */
-const handleMapLoad = async (
+const handleMapLoad = <T extends boolean>(
     map: Map,
-    cancel: boolean,
-    setMapImage: Dispatch<SetStateAction<Blob | null>>
-) => {
-    const data = await createMapImage(map);
-    if (!cancel) {
-        setMapImage(data);
-        // Delete new map instance
-        map.remove();
-    }
+    container: HTMLDivElement,
+    width: number,
+    height: number,
+    toBlob: T,
+    updateMapImage: (src: T extends true ? Blob | null : string) => void,
+    updateLoading: (loading: boolean) => void
+): void => {
+    void createMapImage(map, width, height, toBlob).then((data) => {
+        updateMapImage(data as T extends true ? Blob | null : string);
+
+        map.remove(); // removes WebGL + listeners
+        container.remove(); // removes DOM node → prevents memory leak
+        updateLoading(false);
+    });
 };
 
 /**
@@ -111,19 +126,35 @@ const handleMapLoad = async (
  * @param {LngLatLike} center - The center coordinates for the new map.
  * @param {string} accessToken - The Mapbox access token.
  * @param {boolean} cancel - A flag indicating the calling component has unmounted.
- * @param {Dispatch<SetStateAction<Blob | null>>} setMapImage - A state setter function for the map image.
+ * @param {Dispatch<SetStateAction<T | null>>} setMapImage - A state setter function for the map image.
  */
-export const handleCreateMapImage = (
+export const handleCreateMapImage = <T extends boolean>(
     map: Map,
     center: LngLatLike,
     accessToken: string,
-    cancel: boolean,
-    setMapImage: Dispatch<SetStateAction<Blob | null>>
-) => {
-    const newMap = duplicateMapInstance(map, center, accessToken, [1600, 900]);
+    width: number,
+    height: number,
+    toBlob: T,
+    updateMapImage: (src: T extends true ? Blob | null : string) => void,
+    updateLoading: (loading: boolean) => void
+): void => {
+    const { map: newMap, container } = duplicateMapInstance(
+        map,
+        center,
+        accessToken,
+        [width, height]
+    );
     loadImages(newMap);
     newMap.once('load', () => {
-        void handleMapLoad(newMap, cancel, setMapImage);
+        handleMapLoad(
+            newMap,
+            container,
+            width,
+            height,
+            toBlob,
+            updateMapImage,
+            updateLoading
+        );
     });
 };
 

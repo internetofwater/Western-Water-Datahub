@@ -15,28 +15,26 @@ import {
 import { Chart } from '@/features/Reservior/Chart';
 import { Chart as ChartJS } from 'chart.js';
 import Info from '@/features/Reservior/Info';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { useDisclosure } from '@mantine/hooks';
 import { ReservoirDefault } from '@/stores/main/consts';
 import { GeoJsonProperties } from 'geojson';
 import useSessionStore from '@/stores/session';
 import { Overlay } from '@/stores/session/types';
+import styles from '@/features/Reservior/Reservoir.module.css';
 
 /**
  *
  * @component
  */
 const Reservoir: React.FC = () => {
-    const [opened, { open, close }] = useDisclosure(false, {
-        onClose: () => {
-            setOverlay(null);
-        },
-    });
+    const [opened, { open, close }] = useDisclosure(false);
 
     const reservoir = useMainStore((state) => state.reservoir);
     const reservoirCollections = useMainStore(
         (state) => state.reservoirCollections
     );
+
     const overlay = useSessionStore((store) => store.overlay);
     const setOverlay = useSessionStore((store) => store.setOverlay);
 
@@ -85,6 +83,7 @@ const Reservoir: React.FC = () => {
                     setReservoirProperties(properties);
                 }
                 open();
+                setOverlay(Overlay.Detail);
             }
         }
     }, [reservoir]);
@@ -97,6 +96,11 @@ const Reservoir: React.FC = () => {
         }
     }, [overlay]);
 
+    const handleClose = () => {
+        close();
+        setOverlay(null);
+    };
+
     if (!reservoirProperties || !config || !reservoirId) {
         return null;
     }
@@ -105,19 +109,9 @@ const Reservoir: React.FC = () => {
         <Modal
             centered
             size="auto"
-            styles={{
-                content: {
-                    width: 'min(80vw, 1265px)',
-                    height: 800,
-                    maxWidth: 1265,
-                },
-                body: {
-                    height: 'min(80vh, 735px)',
-                    maxHeight: 735,
-                },
-            }}
+            classNames={{ content: styles.content, body: styles.body }}
             opened={opened}
-            onClose={close}
+            onClose={handleClose}
             title={
                 <Title order={3}>
                     {String(reservoirProperties[config.labelProperty]) ?? ''}

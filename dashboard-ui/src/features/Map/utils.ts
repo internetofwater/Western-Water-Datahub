@@ -488,7 +488,6 @@ export const appendResvizDataProperties = async (
             String(id),
             {
                 params: {
-                    f: 'json',
                     limit: 1,
                     ...(reservoirDate ? { datetime: reservoirDate } : {}),
                 },
@@ -548,41 +547,66 @@ export const getBoundingGeographyFilter = (
     property: keyof ReservoirConfig,
     value: string | number | string[] | number[]
 ): FilterSpecification => {
-    if (property === 'basinConnectorProperty') {
-        return [
-            'all',
-            getReservoirFilter(config),
-            [
-                'case',
-                [
-                    'any',
-                    ['==', ['typeof', ['get', config[property]]], 'literal'],
-                    ['==', ['typeof', ['get', config[property]]], 'array'],
-                ],
-                ['in', value, ['get', config[property]]],
-                [
-                    '==',
-                    ['slice', ['to-string', ['get', config[property]]], 0, 2],
-                    ['to-string', value],
-                ],
-            ],
-        ];
-    }
+    const prop = ['get', config[property]];
 
-    return [
-        'all',
-        getReservoirFilter(config),
-        [
+    // Normalize value into array
+    const values = Array.isArray(value) ? value : [value];
+
+    // Handle basin HUC06 identifiers
+    if (property === 'basinConnectorProperty') {
+        const values = Array.isArray(value) ? value : [value];
+
+        const scalarMatches = [
+            'any',
+            ...values.map((v) => [
+                '==',
+                ['slice', ['to-string', prop], 0, 2],
+                v,
+            ]),
+        ];
+
+        const arrayMatches = [
+            'any',
+            ...values.map((v) => [
+                'in',
+                v,
+                ['slice', ['to-string', prop], 0, 2],
+            ]),
+        ];
+
+        const matchExpression = [
             'case',
+            ['==', ['typeof', prop], 'array'],
+            arrayMatches,
             [
                 'any',
-                ['==', ['typeof', ['get', config[property]]], 'literal'],
-                ['==', ['typeof', ['get', config[property]]], 'array'],
+                ['==', ['typeof', prop], 'string'],
+                ['==', ['typeof', prop], 'number'],
             ],
-            ['in', value, ['get', config[property]]],
-            ['==', ['get', config[property]], value],
+            scalarMatches,
+            false,
+        ];
+        return ['all', getReservoirFilter(config), matchExpression];
+    }
+
+    const scalarMatches = ['any', ...values.map((v) => ['==', prop, v])];
+
+    const arrayMatches = ['any', ...values.map((v) => ['in', v, prop])];
+
+    const matchExpression = [
+        'case',
+        ['==', ['typeof', prop], 'array'],
+        arrayMatches,
+        [
+            'any',
+            ['==', ['typeof', prop], 'string'],
+            ['==', ['typeof', prop], 'number'],
         ],
+        scalarMatches,
+        false,
     ];
+
+    return ['all', getReservoirFilter(config), matchExpression];
 };
 
 export const resetMap = (map: Map) => {

@@ -6,7 +6,7 @@
 import { useEffect, useRef } from 'react';
 import wwdhService from '@/services/init/wwdh.init';
 import { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { ReservoirConfigs, SourceId } from '@/features/Map/consts';
 import { appendResvizDataProperties } from '@/features/Map/utils';
 import { ReservoirCollections } from '@/stores/main/types';

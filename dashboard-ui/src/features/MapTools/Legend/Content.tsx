@@ -1,145 +1,38 @@
 /**
- * Copyright 2025 Lincoln Institute of Land Policy
+ * Copyright 2026 Lincoln Institute of Land Policy
  * SPDX-License-Identifier: MIT
  */
 
-import { Entry } from '@/features/Legend/types';
-import { LayerId } from '@/features/Map/consts';
+import { Entry } from '@/features/MapTools/Legend/types';
 import { LayerType } from '@/components/Map/types';
 import Line from '@/icons/Line';
 import Circle from '@/icons/Circle';
 import Square from '@/icons/Square';
-import { Gradient } from '@/features/Legend/Gradient';
-import styles from '@/features/Legend/Legend.module.css';
+import { Gradient } from '@/features/MapTools/Legend/Gradient';
+import styles from '@/features/MapTools/Legend/Legend.module.css';
 import { getLayerName } from '@/features/Map/config';
-import useMainStore from '@/stores/main/main';
-import { Box, Divider, Group, Stack, Tooltip } from '@mantine/core';
-import { getTooltipContent } from '@/features/Legend/utils';
+import { MainState } from '@/stores/main';
+import {
+    Box,
+    Divider,
+    Group,
+    Stack,
+    Text,
+    Title,
+    Tooltip,
+} from '@mantine/core';
+import { getTooltipContent } from '@/features/MapTools/Legend/utils';
 import Info from '@/icons/Info';
-import { Teacups } from '@/features/Legend/Teacups';
+import { Teacups } from '@/features/MapTools/Legend/Teacups';
+import { LayerId } from '@/features/Map/consts';
 
-const entries: Entry[] = [
-    {
-        id: LayerId.Snotel,
-        type: LayerType.Fill,
-        items: [
-            {
-                color: '#7b3294',
-                label: '<25',
-            },
-            {
-                color: '#c2a5cf',
-                label: '>=25',
-            },
-            {
-                color: '#f7f7f7',
-                label: '>=50',
-            },
-            {
-                color: '#a6dba0',
-                label: '>=75',
-            },
-            {
-                color: '#008837',
-                label: '>=90',
-            },
-        ],
-    },
-    {
-        id: LayerId.NOAARiverForecast,
-        type: LayerType.Circle,
-        items: [
-            {
-                color: '#d73027',
-                label: '<25',
-            },
-            {
-                color: '#f46d43',
-                label: '>=25',
-            },
-            {
-                color: '#fdae61',
-                label: '>=50',
-            },
-            {
-                color: '#fee090',
-                label: '>=75',
-            },
-            {
-                color: '#e0f3f8',
-                label: '>=90',
-            },
-            {
-                color: '#abd9e9',
-                label: '>=110',
-            },
-            {
-                color: '#74add1',
-                label: '>=125',
-            },
-            {
-                color: '#4575b4',
-                label: '>=150',
-            },
-        ],
-    },
-    {
-        id: LayerId.USDroughtMonitor,
-        type: LayerType.Raster,
-        colors: ['#fefe00', '#fed27e', '#fea900', '#e50000', '#720000'],
-        from: 'Dry',
-        to: 'Exceptional',
-    },
-    {
-        id: LayerId.NOAAPrecipSixToTen,
-        type: LayerType.Raster,
-        colors: [
-            '#4F2F2F',
-            '#804000',
-            '#934639',
-            '#9B5031',
-            '#BB6D33',
-            '#D8A74F',
-            '#F0D493',
-            '#A0A0A0',
-            '#B3D9AB',
-            '#95CE7F',
-            '#48B430',
-            '#009620',
-            '#007814',
-            '#28600A',
-            '#285300',
-        ],
-        from: 'Below, 90%',
-        to: 'Above, 90%',
-    },
-    {
-        id: LayerId.NOAATempSixToTen,
-        type: LayerType.Raster,
-        colors: [
-            '#221852',
-            '#2E216F',
-            '#005DA1',
-            '#389FDC',
-            '#77B5E2',
-            '#A0C0DF',
-            '#BFCBE4',
-            '#A0A0A0',
-            '#E7B168',
-            '#E38B4B',
-            '#DA5731',
-            '#C93B1A',
-            '#B32E05',
-            '#912600',
-            '#702100',
-        ],
-        from: 'Below, 90%',
-        to: 'Above, 90%',
-    },
-];
+type Props = {
+    entries: Entry[];
+    toggleableLayers: MainState['toggleableLayers'];
+};
 
-const Legend: React.FC = () => {
-    const toggleableLayers = useMainStore((state) => state.toggleableLayers);
+export const Content: React.FC<Props> = (props) => {
+    const { entries, toggleableLayers } = props;
 
     return (
         <Stack className={styles.wrapper}>
@@ -158,7 +51,9 @@ const Legend: React.FC = () => {
                             position="top-start"
                         >
                             <Group align="center" gap="xs">
-                                <h4>{getLayerName(entry.id)}</h4>
+                                <Title order={4} size="h6">
+                                    {getLayerName(entry.id)}
+                                </Title>
                                 <Box
                                     component="span"
                                     style={{
@@ -193,9 +88,14 @@ const Legend: React.FC = () => {
                                                 }
                                             >
                                                 <Line color={item.color} />
-                                                <div style={{ color: 'black' }}>
+                                                <Text
+                                                    size="xs"
+                                                    style={{
+                                                        color: 'black',
+                                                    }}
+                                                >
                                                     {item.label}
-                                                </div>
+                                                </Text>
                                             </div>
                                         </li>
                                     ))}
@@ -212,9 +112,14 @@ const Legend: React.FC = () => {
                                                 }
                                             >
                                                 <Circle color={item.color} />
-                                                <div style={{ color: 'black' }}>
+                                                <Text
+                                                    size="xs"
+                                                    style={{
+                                                        color: 'black',
+                                                    }}
+                                                >
                                                     {item.label}
-                                                </div>
+                                                </Text>
                                             </div>
                                         </li>
                                     ))}
@@ -233,10 +138,17 @@ const Legend: React.FC = () => {
                                                 <Square
                                                     fill={item.color}
                                                     stroke={item.color}
+                                                    height={25}
+                                                    width={25}
                                                 />
-                                                <div style={{ color: 'black' }}>
+                                                <Text
+                                                    size="xs"
+                                                    style={{
+                                                        color: 'black',
+                                                    }}
+                                                >
                                                     {item.label}
-                                                </div>
+                                                </Text>
                                             </div>
                                         </li>
                                     ))}
@@ -255,8 +167,36 @@ const Legend: React.FC = () => {
                         )}
                     </li>
                 ))}
+            {toggleableLayers[LayerId.RegionsReference] && (
+                <Group gap="calc(var(--default-spacing) / 2)">
+                    <Box className={styles.iconBackground}>
+                        <Line color="#ef5e25" />
+                    </Box>
+                    <Title order={4} size="h6">
+                        DOI Region Boundaries
+                    </Title>
+                </Group>
+            )}
+            {toggleableLayers[LayerId.BasinsReference] && (
+                <Group gap="calc(var(--default-spacing) / 2)">
+                    <Box className={styles.iconBackground}>
+                        <Line color="#54278f" />
+                    </Box>
+                    <Title order={4} size="h6">
+                        Basin (HUC02) Boundaries
+                    </Title>
+                </Group>
+            )}
+            {toggleableLayers[LayerId.StatesReference] && (
+                <Group gap="calc(var(--default-spacing) / 2)">
+                    <Box className={styles.iconBackground}>
+                        <Line color="#34a37e" />
+                    </Box>
+                    <Title order={4} size="h6">
+                        State Boundaries
+                    </Title>
+                </Group>
+            )}
         </Stack>
     );
 };
-
-export default Legend;
