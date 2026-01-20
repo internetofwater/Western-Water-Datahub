@@ -12,7 +12,7 @@ from pygeoapi.provider.base_edr import BaseEDRProvider
 from com.covjson import CoverageCollectionDict
 from snotel.lib.locations import SnotelLocationCollection
 from snotel.lib.parameters import ParametersCollection
-from pygeoapi.provider.base import ProviderQueryError
+from pygeoapi.provider.base import ProviderItemNotFoundError, ProviderQueryError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -53,6 +53,11 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         collection = SnotelLocationCollection(select_properties)
         if location_id:
             collection.drop_all_locations_but_id(location_id)
+
+        if len(collection.locations) == 0:
+            raise ProviderItemNotFoundError(
+                f"Location {location_id} not found in SNOTEL collection"
+            )
 
         if bbox:
             collection.drop_all_locations_outside_bounding_box(bbox)

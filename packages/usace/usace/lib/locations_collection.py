@@ -45,6 +45,7 @@ from covjson_pydantic.reference_system import (
     ReferenceSystem,
 )
 from covjson_pydantic.coverage import Coverage, CoverageCollection
+from pygeoapi.provider.base import ProviderItemNotFoundError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -170,8 +171,17 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
             sort_by_properties_in_place(features_to_keep, sortby)
 
         if itemsIDSingleFeature:
-            assert len(self.locations) == 1
-            return cast(GeojsonFeatureDict, features_to_keep[0].model_dump())
+            match len(self.locations):
+                case 1:
+                    return cast(GeojsonFeatureDict, features_to_keep[0].model_dump())
+                case 0:
+                    raise ProviderItemNotFoundError(
+                        "No items found after filtering by ID"
+                    )
+                case _:
+                    raise RuntimeError(
+                        f"{len(self.locations)} items found after filtering by a single ID"
+                    )
         return cast(
             GeojsonFeatureCollectionDict,
             geojson_pydantic.FeatureCollection(
@@ -248,7 +258,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
 
     def drop_all_locations_but_id(self, location_id: str):
         self.locations = [loc for loc in self.locations if loc.id == location_id]
-        assert len(self.locations) == 1
+        assert len(self.locations) <= 1
 
     def drop_all_locations_without_parameters(self, parameters: list[str]):
         locations_to_keep: list[Feature] = []

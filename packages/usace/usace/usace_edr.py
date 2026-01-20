@@ -12,7 +12,7 @@ from com.otel import otel_trace
 from com.protocols.providers import EDRProviderProtocol
 from pygeoapi.provider.base_edr import BaseEDRProvider
 from com.covjson import CoverageCollectionDict
-from pygeoapi.provider.base import ProviderQueryError
+from pygeoapi.provider.base import ProviderItemNotFoundError, ProviderQueryError
 from usace.lib.locations_collection import LocationCollection
 from usace.lib.param_helpers import get_upstream_ids_of_select_properties
 
@@ -57,6 +57,11 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         collection = LocationCollection()
         if location_id:
             collection.drop_all_locations_but_id(location_id)
+
+        if len(collection.locations) == 0:
+            raise ProviderItemNotFoundError(
+                f"Location {location_id} not found in USACE collection"
+            )
 
         if bbox:
             collection.drop_all_locations_outside_bounding_box(bbox)

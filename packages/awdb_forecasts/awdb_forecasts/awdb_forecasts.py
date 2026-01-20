@@ -17,6 +17,7 @@ from com.geojson.helpers import (
 )
 from com.cache import RedisCache
 from awdb_com.types import StationDTO
+from pygeoapi.provider.base import ProviderItemNotFoundError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -78,6 +79,11 @@ class AwdbForecastsProvider(BaseProvider, OAFProviderProtocol):
                 "features": [],
                 "numberMatched": len(collection.locations),
             }
+
+        if len(collection.locations) == 0:
+            raise ProviderItemNotFoundError(
+                f"No features found with id '{itemId}' in awdb forecasts collection"
+            )
 
         return collection.to_geojson(
             itemsIDSingleFeature=itemId is not None,
