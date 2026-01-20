@@ -137,7 +137,8 @@ class RISECache(RedisCache):
         except aiohttp.client_exceptions.ClientResponseError as e:
             if e.status == 404:
                 raise ProviderItemNotFoundError(
-                    f"{itemId} not found in RISE API; Got message from RISE: '{e.message}'"
+                    # if we aren't filtering by an item id just say "Data" in a general way in the error
+                    f"{f'Item "{itemId}"' if itemId else 'Data'} not found in RISE API after querying url {base_url}; Got message from RISE: '{e.message}'"
                 )
             raise e
 
