@@ -17,6 +17,7 @@ from com.geojson.helpers import (
 from com.cache import RedisCache
 from snotel.lib.locations import SnotelLocationCollection
 from awdb_com.types import StationDTO
+from pygeoapi.provider.base import ProviderItemNotFoundError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -55,6 +56,10 @@ class SnotelProvider(BaseProvider, OAFProviderProtocol):
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         collection = SnotelLocationCollection(itemId=itemId)
+        if len(collection.locations) == 0:
+            raise ProviderItemNotFoundError(
+                f"Item {itemId} not found in Snotel collection"
+            )
         if bbox:
             collection.drop_all_locations_outside_bounding_box(bbox)
 

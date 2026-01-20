@@ -37,6 +37,7 @@ repos:
     rev: "v4.0.0-alpha.8"
     hooks:
       - id: prettier
+        args: ["--ignore-unknown"]
         exclude: "dashboard-ui/.*"
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.

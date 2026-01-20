@@ -6,6 +6,7 @@ import logging
 import math
 from typing import Optional
 from urllib.parse import urlparse
+import aiohttp.client_exceptions
 from com.helpers import EDRFieldsMapping, await_
 from rise.custom_types import JsonPayload, Url
 import aiohttp
@@ -14,6 +15,7 @@ from datetime import timedelta
 from com.cache import RedisCache
 from com.env import TRACER
 from rise.lib.helpers import merge_pages
+from pygeoapi.provider.base import ProviderItemNotFoundError
 
 HEADERS = {"accept": "application/vnd.api+json"}
 
@@ -128,7 +130,16 @@ class RISECache(RedisCache):
                 assert isinstance(prop, str)
                 base_url += f"parameterId%5B%5D={prop}&"
             base_url = base_url.removesuffix("&")
-        return await_(self.get_or_fetch_all_pages(base_url, force_fetch=force_fetch))
+        try:
+            return await_(
+                self.get_or_fetch_all_pages(base_url, force_fetch=force_fetch)
+            )
+        except aiohttp.client_exceptions.ClientResponseError as e:
+            if e.status == 404:
+                raise ProviderItemNotFoundError(
+                    f"{itemId} not found in RISE API; Got message from RISE: '{e.message}'"
+                )
+            raise e
 
     async def get_or_fetch_all_results(
         self, catalogItemToResultUrl: dict[str, str]
