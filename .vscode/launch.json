@@ -2,16 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python Debugger: Starlette",
+      "name": "Python Debugger: Flask",
       "type": "debugpy",
       "request": "launch",
-      "module": "uvicorn",
-      "args": ["pygeoapi.starlette_app:APP", "--reload", "--port", "5005"],
+      "module": "flask",
       "env": {
+        "FLASK_APP": "pygeoapi.flask_app:APP",
+        "FLASK_ENV": "development",
         "PYGEOAPI_CONFIG": "${workspaceFolder}/pygeoapi.config.yml",
         "PYGEOAPI_OPENAPI": "${workspaceFolder}/local.openapi.yml"
       },
-      "autoStartBrowser": true
+      "args": ["run", "--host=127.0.0.1", "--port=5005"],
+      "jinja": true
     }
   ]
 }
