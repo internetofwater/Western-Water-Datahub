@@ -203,17 +203,17 @@ resources:
     providers:
       - type: edr
         name: usace.usace_edr.USACEEDRProvider
-        data: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
+        data: https://water.usace.army.mil/cda/reporting/l
       - type: feature
         name: usace.usace.USACEProvider
-        data: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
+        data: https://water.usace.army.mil/cda/reporting/
         entity: Observation
         title_field: name
     links:
       - type: application/html
         rel: canonical
         title: Data source
-        href: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
+        href: https://water.usace.army.mil/cda/reporting/
       - type: application/html
         rel: documentation
         title: Documentation
