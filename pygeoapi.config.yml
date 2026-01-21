@@ -203,7 +203,7 @@ resources:
     providers:
       - type: edr
         name: usace.usace_edr.USACEEDRProvider
-        data: https://water.usace.army.mil/cda/reporting/l
+        data: https://water.usace.army.mil/cda/reporting/
       - type: feature
         name: usace.usace.USACEProvider
         data: https://water.usace.army.mil/cda/reporting/
@@ -213,6 +213,9 @@ resources:
       - type: application/html
         rel: canonical
         title: Data source
+        # NOTE: this is distinct from https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
+        # it appears that access2water is a transformed version of the main CWMS API and it
+        # has a different, and unfortunately slightly less robust, openapi spec.
         href: https://water.usace.army.mil/cda/reporting/
       - type: application/html
         rel: documentation
