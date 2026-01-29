@@ -8,7 +8,9 @@ services:
     build:
       context: .
       dockerfile: pygeoapi-deployment/Dockerfile
-    command: ["crawl-resviz"]
+    # uncomment if you wamt to crawl resviz instead of
+    # launching the main API server
+    # command: ["crawl-resviz"]
     ports:
       - 5005:80
     env_file:

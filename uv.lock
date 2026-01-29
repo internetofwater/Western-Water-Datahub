@@ -1295,7 +1295,7 @@ wheels = [
 [[package]]
 name = "pgedr"
 version = "0.2.dev0"
-source = { git = "https://github.com/internetofwater/pg_edr.git#9607e6bfd1e2d4784c73df5777b42155db2d55b7" }
+source = { git = "https://github.com/internetofwater/pg_edr.git?rev=e4800acd0884fbc2514bfad66cd57aa5f3791d3c#e4800acd0884fbc2514bfad66cd57aa5f3791d3c" }
 dependencies = [
     { name = "cryptography" },
     { name = "geoalchemy2" },
@@ -1303,8 +1303,6 @@ dependencies = [
     { name = "pydantic" },
     { name = "pygeoapi" },
     { name = "pymysql" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
 ]
 
 [[package]]
@@ -1857,7 +1855,7 @@ dependencies = [
 requires-dist = [
     { name = "gdal", specifier = "==3.6.4" },
     { name = "geoalchemy2", specifier = ">=0.17.1" },
-    { name = "pgedr", git = "https://github.com/internetofwater/pg_edr.git" },
+    { name = "pgedr", git = "https://github.com/internetofwater/pg_edr.git?rev=e4800acd0884fbc2514bfad66cd57aa5f3791d3c" },
     { name = "psycopg2", specifier = ">=2.9.10" },
 ]
 
@@ -2221,7 +2219,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 deployment = [
     { name = "gevent" },
-    { name = "gunicorn" },
+    { name = "gunicorn", specifier = "<24" },
     { name = "s3fs", specifier = "<=2023.6.0" },
     { name = "xarray" },
     { name = "zarr", specifier = "<3" },
