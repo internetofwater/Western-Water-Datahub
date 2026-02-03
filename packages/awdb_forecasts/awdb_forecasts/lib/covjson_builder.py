@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 from datetime import datetime, timezone
+import logging
 from typing import Optional, cast
 from awdb_forecasts.lib.forecasts import ForecastResultCollection
 from com.helpers import EDRFieldsMapping
@@ -18,6 +19,8 @@ from covjson_pydantic.reference_system import (
 )
 from awdb_com.types import ForecastDataDTO
 from com.covjson import CoverageCollectionDict
+
+logger = logging.getLogger(__name__)
 
 
 class CovjsonBuilder(CovjsonBuilderProtocol):
@@ -58,7 +61,17 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
 
         longitude, latitude = self.triplesToGeometry[triple]
         assert datastream.elementCode
-        edr_field = self.fieldsMapper[datastream.elementCode]
+        edr_field = self.fieldsMapper.get(datastream.elementCode)
+        if not edr_field:
+            logger.warning(
+                f"Found unknown EDR field {datastream.elementCode}; failling back to generic info"
+            )
+            edr_field = {
+                "title": datastream.elementCode,
+                "type": "string",
+                "description": "No description available; parameter was not listed in the upstream source API",
+                "x-ogc-unit": "unknown",
+            }
         parameterName = f"{edr_field['title']} {datastream.forecastPeriod}"
 
         probabilities = list(datastream.forecastValues.keys())
