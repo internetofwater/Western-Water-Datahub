@@ -64,7 +64,7 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
         edr_field = self.fieldsMapper.get(datastream.elementCode)
         if not edr_field:
             logger.warning(
-                f"Found unknown EDR field {datastream.elementCode}; failling back to generic info"
+                f"Found unknown EDR field {datastream.elementCode}; falling back to generic info"
             )
             edr_field = {
                 "title": datastream.elementCode,
