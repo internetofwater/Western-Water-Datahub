@@ -3,6 +3,44 @@
  * SPDX-License-Identifier: MIT
  */
 
+.partialWidth {
+  width: 82%;
+}
+.fullWidth {
+  width: 100%;
+}
+
+.chartWrapper {
+  height: 300px;
+}
+
+.chartNoData {
+  width: 100%;
+  height: 95%;
+}
+
+.checkboxHighlight {
+  color: var(--usbr-canyon-gold);
+}
+
+.copyInputWrapper {
+  width: 84%;
+  max-width: 100%;
+}
+
+.collectionWrapper:not(:first-child) {
+  border-top: 1px solid var(--mantine-color-default-border);
+}
+
+.csvButton {
+  max-width: 10em;
+  margin-left: auto;
+}
+
+.datePicker {
+  min-width: 11em;
+}
+
 .downloadButtonWrapper {
   position: absolute;
   top: var(--default-spacing);
@@ -14,26 +52,51 @@
   margin-right: var(--default-spacing);
 }
 
-.parameterNameSelect {
-  min-width: 24em;
-}
-
-.chartWrapper {
-  height: 300px;
-}
-.chartNoData {
-  width: 100%;
-  height: 95%;
-}
-
 .goButton {
   margin-top: 3.15em;
-  max-width: 5em;
+  max-width: 6em;
 }
 
-.csvButton {
-  max-width: 10em;
-  margin-left: auto;
+.menu {
+  width: 19%;
+  max-width: 19%;
+  padding-top: var(--default-spacing);
+}
+
+.layerContent {
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.locationBlockWrapper {
+  width: 80%;
+  max-width: 80%;
+  height: -webkit-fill-available;
+  padding-top: var(--default-spacing);
+  padding-left: var(--default-spacing);
+  border-left: 1px solid var(--mantine-color-default-border);
+}
+
+.locationHighlight {
+  border: 1px solid var(--usbr-canyon-gold);
+}
+
+.locationList {
+  flex-direction: column;
+}
+
+.locationStandard {
+  border: 1px solid var(--mantine-color-default-border);
+}
+
+.locationWrapper {
+  padding: var(--default-spacing);
+}
+
+.parameterNameSelect {
+  min-width: 24em;
 }
 
 .parameterLabelWrapper > svg {
@@ -44,13 +107,39 @@
   color: red;
 }
 
-.copyInputWrapper {
-  width: 84%;
-  max-width: 100%;
+.parameterMessageWrapper {
+  padding: calc(var(--default-spacing) * 2);
 }
 
-.datePicker {
-  min-width: 11em;
+@media screen and (max-width: 899px) {
+  .datePicker {
+    min-width: 100%;
+  }
+
+  .menu {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .layerContent {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .locationList {
+    flex-direction: row;
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .locationBlockWrapper {
+    width: 100%;
+    max-width: 100%;
+    margin-top: var(--default-spacing);
+    border-left: unset;
+    border-top: 1px solid var(--mantine-color-default-border);
+    padding-left: unset;
+  }
 }
 
 @media screen and (max-width: 816px) {

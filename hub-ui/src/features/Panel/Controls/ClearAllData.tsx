@@ -4,7 +4,8 @@
  */
 
 import { useEffect, useState } from "react";
-import { Button, Tooltip } from "@mantine/core";
+import { Button } from "@mantine/core";
+import Tooltip from "@/components/Tooltip";
 import { useMap } from "@/contexts/MapContexts";
 import { MAP_ID } from "@/features/Map/config";
 import { useLoading } from "@/hooks/useLoading";
@@ -19,7 +20,7 @@ export const Reset: React.FC = () => {
   const { isLoadingGeography, isFetchingCollections, isFetchingLocations } =
     useLoading();
 
-  const { map } = useMap(MAP_ID);
+  const { map, persistentPopup } = useMap(MAP_ID);
 
   useEffect(() => {
     if (!map) {
@@ -47,7 +48,7 @@ export const Reset: React.FC = () => {
     }
 
     if (isFetchingCollections) {
-      return "Please wait for collections request to complete";
+      return "Please wait for data sources request to complete";
     }
 
     if (isFetchingLocations) {
@@ -57,28 +58,35 @@ export const Reset: React.FC = () => {
     if (!hasLocationsLoaded && !hasGeographyFilter()) {
       return "No locations or geography to clear";
     }
+
+    return "Clear all map data and selections in the side panel.";
+  };
+
+  const isDisabled =
+    isFetchingCollections ||
+    isFetchingLocations ||
+    isLoadingGeography ||
+    !(hasLocationsLoaded || hasGeographyFilter());
+
+  const handleClick = () => {
+    // User has a popup open that may not be relevant any longer
+    if (persistentPopup && persistentPopup.isOpen()) {
+      persistentPopup.remove();
+    }
+
+    mainManager.clearAllData();
   };
 
   return (
-    <>
-      {!isFetchingCollections &&
-      !isFetchingLocations &&
-      !isLoadingGeography &&
-      (hasLocationsLoaded || hasGeographyFilter()) ? (
-        <Button onClick={() => mainManager.clearAllData()} color="red-rocks">
-          Reset
-        </Button>
-      ) : (
-        <Tooltip label={getLabel()}>
-          <Button
-            data-disabled
-            onClick={(event) => event.preventDefault()}
-            color="red-rocks"
-          >
-            Reset
-          </Button>
-        </Tooltip>
-      )}
-    </>
+    <Tooltip label={getLabel()}>
+      <Button
+        disabled={isDisabled}
+        data-disabled={isDisabled}
+        onClick={handleClick}
+        color="red-rocks"
+      >
+        Reset
+      </Button>
+    </Tooltip>
   );
 };

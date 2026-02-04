@@ -3,7 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export enum NotificationType {
+import { ReactNode } from "react";
+import { TLocation } from "@/stores/main/types";
+import { LoadingSlice } from "@/stores/session/slices/loading";
+import { NotificationsSlice } from "@/stores/session/slices/notifications";
+import { WarningsSlice } from "@/stores/session/slices/warning";
+
+export enum ENotificationType {
   Success = "success",
   Error = "error",
   Info = "info",
@@ -19,29 +25,51 @@ export enum NotificationType {
  *
  * @enum
  */
-export enum LoadingType {
+export enum ELoadingType {
   Locations = "locations",
   Collections = "collections",
   Geography = "geography",
   Data = "data",
 }
 
-export enum Tools {
+export enum ETool {
   Legend = "legend",
 }
 
-export type Notification = {
+export enum EModal {
+  Download = "download",
+  Help = "help",
+}
+
+export enum EHelpTab {
+  About = "about",
+  FAQ = "FAQ",
+  Glossary = "glossary",
+}
+
+export type TNotification = {
   id: string;
   message: string;
-  type: NotificationType;
+  type: ENotificationType;
   visible: boolean;
 };
 
-export type Loading = {
+export type TLoading = {
   id: string;
-  type: LoadingType;
+  type: ELoadingType;
   message: string;
 };
+
+export enum EOverlay {
+  Legend = "legend",
+  Info = "info",
+  Warning = "warning",
+  Download = "download",
+  Date = "date",
+  Order = "order",
+  Search = "search",
+  Controls = "controls",
+}
 
 export type LegendEntry = {
   collectionId: string;
@@ -49,22 +77,28 @@ export type LegendEntry = {
   visible: boolean;
 };
 
+export type Warning = {
+  id: string;
+  content: ReactNode;
+};
+
 export type SessionState = {
   legendEntries: LegendEntry[];
   setLegendEntries: (legendEntries: SessionState["legendEntries"]) => void;
-  downloadModalOpen: boolean;
-  setDownloadModalOpen: (
-    downloadModalOpen: SessionState["downloadModalOpen"],
-  ) => void;
+  openModal: EModal | null;
+  setOpenModal: (openModal: SessionState["openModal"]) => void;
+  overlay: EOverlay | null;
+  setOverlay: (overlay: SessionState["overlay"]) => void;
   tools: {
-    [Tools.Legend]: boolean;
+    [ETool.Legend]: boolean;
   };
-  setOpenTools: (tool: Tools, open: boolean) => void;
-  loadingInstances: Loading[];
-  addLoadingInstance: (loadingInstance: Loading) => void;
-  removeLoadingInstance: (id: string) => void;
-  hasLoadingInstance: (text: string) => boolean;
-  notifications: Notification[];
-  addNotification: (notification: Notification) => void;
-  removeNotification: (id: string) => void;
-};
+  setOpenTools: (tool: ETool, open: boolean) => void;
+  linkLocation: TLocation | null;
+  setLinkLocation: (linkLocation: SessionState["linkLocation"]) => void;
+  helpTab: EHelpTab;
+  setHelpTab: (helpTab: SessionState["helpTab"]) => void;
+  colorScheme: "dark" | "light";
+  setColorScheme: (colorScheme: SessionState["colorScheme"]) => void;
+} & LoadingSlice &
+  NotificationsSlice &
+  WarningsSlice;

@@ -7,7 +7,11 @@ from typing import ClassVar, Optional
 from com.helpers import await_
 from com.otel import otel_trace
 from com.protocols.providers import EDRProviderProtocol
-from pygeoapi.provider.base import ProviderQueryError, ProviderNoDataError
+from pygeoapi.provider.base import (
+    ProviderQueryError,
+    ProviderNoDataError,
+    ProviderItemNotFoundError,
+)
 from pygeoapi.provider.base_edr import BaseEDRProvider
 from rise.lib.covjson.covjson import CovJSONBuilder
 from rise.lib.location import LocationResponse
@@ -78,7 +82,7 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             response.drop_all_locations_but_id(str(location_id_as_int))
 
         if len(response.locations) == 0:
-            raise ProviderNoDataError()
+            raise ProviderItemNotFoundError(f"Location with id {location_id} not found")
 
         # FROM SPEC: If a location id is not defined the API SHALL return a GeoJSON features array of valid location identifiers,
         if not any([crs, datetime_, location_id]) or format_ == "geojson":

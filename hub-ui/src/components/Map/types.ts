@@ -276,6 +276,7 @@ export enum LayerType {
   Circle = "circle",
   Fill = "fill",
   FillExtrusion = "fill-extrusion",
+  Raster = "raster",
 }
 
 export type Properties = Record<string, string | number | string[] | number[]>;

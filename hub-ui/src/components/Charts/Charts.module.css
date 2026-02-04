@@ -1,0 +1,11 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.smoothTransition > div:first-child,
+.smoothTransition > div:first-child > canvas {
+  transition:
+    width 0.3s ease,
+    height 0.3s ease;
+}

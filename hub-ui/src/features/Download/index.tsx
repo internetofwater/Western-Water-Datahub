@@ -3,34 +3,77 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Box, Button } from "@mantine/core";
-import styles from "@/features/Download/Download.module.css";
+import { useEffect, useState } from "react";
+import { Button, Text } from "@mantine/core";
+import Tooltip from "@/components/Tooltip";
+import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import useSessionStore from "@/stores/session";
+import { EOverlay } from "@/stores/session/types";
+import { CollectionType, getCollectionType } from "@/utils/collection";
 
 const Download: React.FC = () => {
-  const locations = useMainStore((state) => state.locations);
+  const layers = useMainStore((state) => state.layers);
   const setLocations = useMainStore((state) => state.setLocations);
-  const setDownloadModalOpen = useSessionStore(
-    (state) => state.setDownloadModalOpen,
+  const setOverlay = useSessionStore((state) => state.setOverlay);
+
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  const hasLayers = layers.length > 0;
+
+  const helpDownloadText = (
+    <>
+      <Text size="sm">
+        Explore locations in greater detail. Find request urls, search
+        locations, and download data.
+      </Text>
+      <br />
+      <Text size="sm">
+        At least one data source must have viable locations and parameters
+        selected.
+      </Text>
+    </>
   );
 
-  const hasLocations = locations.length > 0;
+  useEffect(() => {
+    const isEnabled = layers.some((layer) => {
+      const datasource = mainManager.getCollection(layer.collectionId);
+      if (datasource) {
+        const collectionType = getCollectionType(datasource);
+        if (collectionType === CollectionType.Features) {
+          return true;
+        } else if (
+          [CollectionType.EDR, CollectionType.EDRGrid].includes(collectionType)
+        ) {
+          return layer.parameters.length > 0;
+        }
+      }
+      return false;
+    });
+    setIsEnabled(isEnabled);
+  }, [layers]);
 
   return (
-    <Box className={styles.downloadButtonWrapper}>
-      {hasLocations && (
+    <>
+      {hasLayers && (
         <>
-          <Button onClick={() => setDownloadModalOpen(true)}>
-            Download {locations.length} Location
-            {locations.length !== 1 ? "s" : ""}
-          </Button>
-          <Button onClick={() => setLocations([])} color="red-rocks">
-            Clear selection
-          </Button>
+          <Tooltip multiline label={helpDownloadText}>
+            <Button
+              disabled={!isEnabled}
+              data-disabled={!isEnabled}
+              onClick={() => setOverlay(EOverlay.Download)}
+            >
+              Download
+            </Button>
+          </Tooltip>
+          <Tooltip label="Deselect all selected locations">
+            <Button onClick={() => setLocations([])} color="red-rocks">
+              Clear selection
+            </Button>
+          </Tooltip>
         </>
       )}
-    </Box>
+    </>
   );
 };
 

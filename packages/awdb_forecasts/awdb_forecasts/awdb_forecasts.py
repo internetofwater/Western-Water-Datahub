@@ -17,6 +17,7 @@ from com.geojson.helpers import (
 )
 from com.cache import RedisCache
 from awdb_com.types import StationDTO
+from pygeoapi.provider.base import ProviderItemNotFoundError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -54,9 +55,11 @@ class AwdbForecastsProvider(BaseProvider, OAFProviderProtocol):
         skip_geometry: Optional[bool] = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        # items/ returns all features, locations/ returns only features with timeseries, and thus forecasts
+        # typically items/ returns all features, locations/ returns only features with timeseries, and thus forecasts
+        # however, for the sake of clarity it is generally easiest with awdb forecasts to just filter to forecasts
+        # since it keeps it consistent and easier to reason about
         collection = ForecastLocationCollection(
-            only_stations_with_forecasts=False, itemId=itemId
+            only_stations_with_forecasts=True, itemId=itemId
         )
         if bbox:
             collection.drop_all_locations_outside_bounding_box(bbox)
@@ -76,6 +79,11 @@ class AwdbForecastsProvider(BaseProvider, OAFProviderProtocol):
                 "features": [],
                 "numberMatched": len(collection.locations),
             }
+
+        if len(collection.locations) == 0:
+            raise ProviderItemNotFoundError(
+                f"No features found with id '{itemId}' in awdb forecasts collection"
+            )
 
         return collection.to_geojson(
             itemsIDSingleFeature=itemId is not None,

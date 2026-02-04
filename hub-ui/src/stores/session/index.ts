@@ -5,18 +5,26 @@
 
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { SessionState, Tools } from "@/stores/session/types";
-import { createLoadingSlice } from "./slices/loading";
-import { createNotificationsSlice } from "./slices/notifications";
+import { createLoadingSlice } from "@/stores/session/slices/loading";
+import { createNotificationsSlice } from "@/stores/session/slices/notifications";
+import { createWarningsSlice } from "@/stores/session/slices/warning";
+import {
+  EHelpTab,
+  EOverlay,
+  ETool,
+  SessionState,
+} from "@/stores/session/types";
 
 const useSessionStore = create<SessionState>()(
   immer((set, get, store) => ({
     legendEntries: [],
     setLegendEntries: (legendEntries) => set({ legendEntries }),
-    downloadModalOpen: false,
-    setDownloadModalOpen: (downloadModalOpen) => set({ downloadModalOpen }),
+    openModal: null,
+    setOpenModal: (openModal) => set({ openModal }),
+    overlay: EOverlay.Controls,
+    setOverlay: (overlay) => set({ overlay }),
     tools: {
-      [Tools.Legend]: false,
+      [ETool.Legend]: false,
     },
     setOpenTools: (tool, open) =>
       set((state) => ({
@@ -25,8 +33,15 @@ const useSessionStore = create<SessionState>()(
           [tool]: open,
         },
       })),
+    linkLocation: null,
+    setLinkLocation: (linkLocation) => set({ linkLocation }),
+    helpTab: EHelpTab.About,
+    setHelpTab: (helpTab) => set({ helpTab }),
+    colorScheme: "dark",
+    setColorScheme: (colorScheme) => set({ colorScheme }),
     ...createLoadingSlice(set, get, store),
     ...createNotificationsSlice(set, get, store),
+    ...createWarningsSlice(set, get, store),
   })),
 );
 

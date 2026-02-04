@@ -7,7 +7,7 @@ import { GeoJsonProperties } from "geojson";
 import { Series } from "@/components/Charts/types";
 import notificationManager from "@/managers/Notification.init";
 import { CoverageCollection, CoverageJSON } from "@/services/edr.service";
-import { NotificationType } from "@/stores/session/types";
+import { ENotificationType } from "@/stores/session/types";
 import { isCoverageCollection } from "@/utils/clarifyObject";
 
 export const aggregateProperties = <T extends GeoJsonProperties>(
@@ -54,13 +54,13 @@ export const coverageJSONToSeries = (
     : coverage.ranges;
 
   const dates = isCoverageCollection(coverage)
-    ? coverage.coverages[0]?.domain.axes.t.values
-    : coverage.domain.axes.t.values;
+    ? (coverage.coverages[0]?.domain.axes.t as { values: string[] }).values
+    : (coverage.domain.axes.t as { values: string[] }).values;
 
   if (!ranges || !dates) {
     notificationManager.show(
       "Missing ranges or date axis in coverage data",
-      NotificationType.Error,
+      ENotificationType.Error,
       10000,
     );
     return [];

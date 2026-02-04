@@ -6,9 +6,9 @@
 import { v6 } from "uuid";
 import { StoreApi, UseBoundStore } from "zustand";
 import {
-  Notification,
-  NotificationType,
+  ENotificationType,
   SessionState,
+  TNotification,
 } from "@/stores/session/types";
 
 type Timer = {
@@ -26,24 +26,24 @@ class NotificationManager {
     this.timers = new Map<string, Timer>();
   }
 
-  private createUUID(): Notification["id"] {
+  private createUUID(): TNotification["id"] {
     return v6();
   }
 
-  private get(id: Notification["id"]): Timer | undefined {
+  private get(id: TNotification["id"]): Timer | undefined {
     return this.timers.get(id);
   }
 
-  private add(id: Notification["id"], timer: Timer) {
+  private add(id: TNotification["id"], timer: Timer) {
     this.timers.set(id, timer);
   }
 
-  private remove(id: Notification["id"]) {
+  private remove(id: TNotification["id"]) {
     this.timers.delete(id);
   }
 
   private startTimer(
-    id: Notification["id"],
+    id: TNotification["id"],
     duration: number,
   ): ReturnType<typeof setTimeout> {
     return setTimeout(() => {
@@ -54,9 +54,9 @@ class NotificationManager {
 
   show(
     message: string,
-    type: NotificationType = NotificationType.Info,
+    type: ENotificationType = ENotificationType.Info,
     duration: number = 3000,
-  ): Notification["id"] {
+  ): TNotification["id"] {
     const id = this.createUUID();
 
     this.store.getState().addNotification({

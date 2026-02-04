@@ -20,7 +20,6 @@ import {
     SubLayerId,
     LayerId,
     SourceId,
-    RISEEDRReservoirSource,
     RegionsSource,
     BaseLayerOpacity,
     ValidStates,
@@ -50,6 +49,7 @@ import { stateCenters } from '@/data/stateCenters';
 import { regionCenters } from '@/data/regionCenters';
 import { RegionField } from '@/features/Map/types/region';
 import useSessionStore from '@/stores/session';
+import useMainStore from '@/stores/main';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -123,15 +123,15 @@ export const sourceConfigs: SourceConfig[] = [
             cluster: false,
         },
     },
-    {
-        id: SourceId.RiseEDRReservoirs,
-        type: Sources.GeoJSON,
-        definition: {
-            type: 'geojson',
-            data: RISEEDRReservoirSource,
-            filter: ['!=', ['get', '_id'], 3688],
-        },
-    },
+    // {
+    //     id: SourceId.RiseEDRReservoirs,
+    //     type: Sources.GeoJSON,
+    //     definition: {
+    //         type: 'geojson',
+    //         data: RISEEDRReservoirSource,
+    //         filter: ['!=', ['get', '_id'], 3688],
+    //     },
+    // },
     {
         id: SourceId.ResvizEDRReservoirs,
         type: Sources.GeoJSON,
@@ -266,8 +266,14 @@ export const getLayerColor = (
             return '#00F';
         case LayerId.States:
             return '#000';
+        case LayerId.RegionsReference:
+            return '#ef5e25';
+        case LayerId.BasinsReference:
+            return '#54278f';
+        case LayerId.StatesReference:
+            return '#34a37e';
         default:
-            return '#FFF';
+            return '#fff';
     }
 };
 
@@ -321,7 +327,7 @@ export const getLayerConfig = (
                 type: LayerType.Symbol,
                 source: SourceId.RegionCenters,
                 layout: {
-                    'text-field': ['get', 'name'],
+                    'text-field': ['get', RegionField.Name],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                     'text-size': 22,
                     'text-allow-overlap': true,
@@ -332,6 +338,22 @@ export const getLayerConfig = (
                     'text-opacity': 0,
                     'text-halo-color': '#000000',
                     'text-halo-width': 2,
+                },
+            };
+        case LayerId.RegionsReference:
+            return {
+                id: LayerId.RegionsReference,
+                type: LayerType.Line,
+                source: SourceId.Regions,
+                layout: {
+                    visibility: 'none',
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                },
+                paint: {
+                    'line-opacity': 1,
+                    'line-color': getLayerColor(LayerId.RegionsReference),
+                    'line-width': 3,
                 },
             };
         case LayerId.Basins:
@@ -383,7 +405,7 @@ export const getLayerConfig = (
                 type: LayerType.Symbol,
                 source: SourceId.BasinCenters,
                 layout: {
-                    'text-field': ['get', 'name'],
+                    'text-field': ['get', Huc02BasinField.Name],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                     'text-size': 22,
                     'text-allow-overlap': true,
@@ -394,6 +416,28 @@ export const getLayerConfig = (
                     'text-opacity': 0,
                     'text-halo-color': '#000000',
                     'text-halo-width': 2,
+                },
+            };
+        case LayerId.BasinsReference:
+            return {
+                id: LayerId.BasinsReference,
+                type: LayerType.Line,
+                source: SourceId.Basins,
+                'source-layer': SourceId.Basins,
+                filter: [
+                    'in',
+                    ['get', Huc02BasinField.Id],
+                    ['literal', ValidBasins],
+                ],
+                layout: {
+                    visibility: 'none',
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                },
+                paint: {
+                    'line-opacity': 1,
+                    'line-color': getLayerColor(LayerId.BasinsReference),
+                    'line-width': 2,
                 },
             };
         case LayerId.States:
@@ -446,33 +490,49 @@ export const getLayerConfig = (
                     'text-halo-width': 2,
                 },
             };
-        case LayerId.RiseEDRReservoirs:
+        case LayerId.StatesReference:
             return {
-                id: LayerId.RiseEDRReservoirs,
-                type: LayerType.Symbol,
-                source: SourceId.RiseEDRReservoirs,
-                filter: getReservoirFilter(
-                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                ),
-                layout: getReservoirSymbolLayout(
-                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                ),
+                id: LayerId.StatesReference,
+                type: LayerType.Line,
+                source: SourceId.States,
+                layout: {
+                    visibility: 'none',
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                },
+                paint: {
+                    'line-opacity': 1,
+                    'line-color': getLayerColor(LayerId.StatesReference),
+                    'line-width': 3,
+                },
             };
-        case SubLayerId.RiseEDRReservoirLabels:
-            return {
-                id: SubLayerId.RiseEDRReservoirLabels,
-                type: LayerType.Symbol,
-                source: SourceId.RiseEDRReservoirs,
-                filter: getReservoirFilter(
-                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                ),
-                layout: getReservoirLabelLayout(
-                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                ),
-                paint: getReservoirLabelPaint(
-                    getReservoirConfig(SourceId.RiseEDRReservoirs)!
-                ),
-            };
+        // case LayerId.RiseEDRReservoirs:
+        //     return {
+        //         id: LayerId.RiseEDRReservoirs,
+        //         type: LayerType.Symbol,
+        //         source: SourceId.RiseEDRReservoirs,
+        //         filter: getReservoirFilter(
+        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
+        //         ),
+        //         layout: getReservoirSymbolLayout(
+        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
+        //         ),
+        //     };
+        // case SubLayerId.RiseEDRReservoirLabels:
+        //     return {
+        //         id: SubLayerId.RiseEDRReservoirLabels,
+        //         type: LayerType.Symbol,
+        //         source: SourceId.RiseEDRReservoirs,
+        //         filter: getReservoirFilter(
+        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
+        //         ),
+        //         layout: getReservoirLabelLayout(
+        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
+        //         ),
+        //         paint: getReservoirLabelPaint(
+        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
+        //         ),
+        //     };
         case LayerId.ResvizEDRReservoirs:
             return {
                 id: LayerId.ResvizEDRReservoirs,
@@ -566,22 +626,24 @@ export const getLayerConfig = (
                     'circle-stroke-color': '#000',
                     'circle-color': [
                         'step',
-                        ['get', 'latest_esppavg'],
-                        '#d73027',
+                        ['coalesce', ['get', 'percentage_normal'], -1], // Not all points have pct norm, show white to match source
+                        '#fff',
+                        0,
+                        '#a30000',
                         25,
-                        '#f46d43',
+                        '#fb0000',
                         50,
-                        '#fdae61',
+                        '#fd9400',
                         75,
-                        '#fee090',
+                        '#e8ec08',
                         90,
-                        '#e0f3f8',
+                        '#20ee00',
                         110,
-                        '#abd9e9',
+                        '#1eeae8',
                         125,
-                        '#74add1',
+                        '#1084e7',
                         150,
-                        '#4575b4',
+                        '#0000fe',
                     ],
                 },
                 layout: {
@@ -616,17 +678,19 @@ export const getLayerConfig = (
                             ],
                             -1,
                         ],
-                        '#fff',
-                        0,
-                        '#7b3294',
-                        25,
-                        '#c2a5cf',
+                        '#ea3e3e',
                         50,
-                        '#f7f7f7',
-                        75,
-                        '#a6dba0',
+                        '#eab03e',
+                        70,
+                        '#eaea3e',
                         90,
-                        '#008837',
+                        '#77ea3e',
+                        110,
+                        '#94fde5',
+                        130,
+                        '#3ebdea',
+                        150,
+                        '#3e3efd',
                     ],
                     'line-width': 3,
                 },
@@ -651,17 +715,19 @@ export const getLayerConfig = (
                             ],
                             -1,
                         ],
-                        '#fff',
-                        0,
-                        '#7b3294',
-                        25,
-                        '#c2a5cf',
+                        '#ea3e3e',
                         50,
-                        '#f7f7f7',
-                        75,
-                        '#a6dba0',
+                        '#eab03e',
+                        70,
+                        '#eaea3e',
                         90,
-                        '#008837',
+                        '#77ea3e',
+                        110,
+                        '#94fde5',
+                        130,
+                        '#3ebdea',
+                        150,
+                        '#3e3efd',
                     ],
                     'fill-opacity': 0.5,
                 },
@@ -721,6 +787,12 @@ export const getLayerHoverFunction = (
                 };
             case SubLayerId.RegionsFill:
                 return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as
@@ -746,6 +818,12 @@ export const getLayerHoverFunction = (
                 };
             case SubLayerId.BasinsFill:
                 return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as
@@ -767,6 +845,12 @@ export const getLayerHoverFunction = (
                 };
             case SubLayerId.StatesFill:
                 return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as
@@ -849,13 +933,17 @@ export const getLayerHoverFunction = (
                             const title = feature.properties[
                                 'espname'
                             ] as string;
-                            const average = Number(
-                                feature.properties['latest_esppavg']
-                            ).toFixed(1);
+                            const percentNormal = Number(
+                                feature.properties['percentage_normal']
+                            );
+                            const average = !isNaN(percentNormal)
+                                ? `${percentNormal.toFixed(1)}%`
+                                : 'No Data';
+
                             const html = `
                             <div>
                               <strong>${title}</strong><br/>
-                              <p>Percent Normal: ${average}%</p>
+                              <p>Percent Normal: ${average}</p>
                               <p style="margin: 0 auto;"}>Click to learn more</p>
                             </div>
                             `;
@@ -913,6 +1001,13 @@ export const getLayerCustomHoverExitFunction = (
             case SubLayerId.RegionsFill:
                 return () => {
                     map.getCanvas().style.cursor = '';
+
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     map.setPaintProperty(
                         SubLayerId.RegionLabels,
                         'text-opacity',
@@ -922,6 +1017,13 @@ export const getLayerCustomHoverExitFunction = (
             case SubLayerId.BasinsFill:
                 return () => {
                     map.getCanvas().style.cursor = '';
+
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     map.setPaintProperty(
                         SubLayerId.BasinLabels,
                         'text-opacity',
@@ -931,6 +1033,13 @@ export const getLayerCustomHoverExitFunction = (
             case SubLayerId.StatesFill:
                 return () => {
                     map.getCanvas().style.cursor = '';
+
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     map.setPaintProperty(
                         SubLayerId.StateLabels,
                         'text-opacity',
@@ -997,18 +1106,15 @@ export const getLayerMouseMoveFunction = (
                             feature,
                         });
                     }
-                    // showReservoirPopup(
-                    //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
-                    //     map,
-                    //     e,
-                    //     root,
-                    //     container,
-                    //     hoverPopup,
-                    //     false
-                    // );
                 };
             case SubLayerId.RegionsFill:
                 return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as
@@ -1034,6 +1140,12 @@ export const getLayerMouseMoveFunction = (
                 };
             case SubLayerId.BasinsFill:
                 return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as
@@ -1054,6 +1166,12 @@ export const getLayerMouseMoveFunction = (
                 };
             case SubLayerId.StatesFill:
                 return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as
@@ -1135,13 +1253,17 @@ export const getLayerMouseMoveFunction = (
                             const title = feature.properties[
                                 'espname'
                             ] as string;
-                            const average = Number(
-                                feature.properties['latest_esppavg']
-                            ).toFixed(1);
+                            const percentNormal = Number(
+                                feature.properties['percentage_normal']
+                            );
+                            const average = !isNaN(percentNormal)
+                                ? `${percentNormal.toFixed(1)}%`
+                                : 'No Data';
+
                             const html = `
                                 <div>
                                   <strong>${title}</strong><br/>
-                                  <p>Percent Normal: ${average}%</p>
+                                  <p>Percent Normal: ${average}</p>
                                   <p style="margin: 0 auto;"}>Click to learn more</p>
                                 </div>
                                 `;
@@ -1248,6 +1370,7 @@ export const getLayerClickFunction = (
                             const datasetLink = feature.properties[
                                 'dataset_link'
                             ] as string;
+
                             const html = `
                                 <div style="color:black;width:400px;">
                                     <a href="${datasetLink}" target="_blank">
@@ -1322,6 +1445,24 @@ export const layerDefinitions: MainLayerDefinition[] = [
     {
         id: LayerId.NOAATempSixToTen,
         config: getLayerConfig(LayerId.NOAATempSixToTen),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.RegionsReference,
+        config: getLayerConfig(LayerId.RegionsReference),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.BasinsReference,
+        config: getLayerConfig(LayerId.BasinsReference),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.StatesReference,
+        config: getLayerConfig(LayerId.StatesReference),
         controllable: false,
         legend: false,
     },

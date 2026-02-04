@@ -23,6 +23,7 @@ from com.helpers import (
     await_,
     parse_z,
 )
+from com.otel import otel_trace
 from com.protocols.locations import LocationCollectionProtocolWithEDR
 import geojson_pydantic
 import orjson
@@ -44,6 +45,7 @@ from covjson_pydantic.reference_system import (
     ReferenceSystem,
 )
 from covjson_pydantic.coverage import Coverage, CoverageCollection
+from pygeoapi.provider.base import ProviderItemNotFoundError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -56,20 +58,27 @@ with metadata_path.open() as f:
 class LocationCollection(LocationCollectionProtocolWithEDR):
     locations: list[Feature]
 
-    def __init__(self):
+    @otel_trace()
+    def __init__(self, itemId: Optional[str] = None):
         self.cache = RedisCache()
         url = "https://water.sec.usace.army.mil/cda/reporting/providers/projects?fmt=geojson"
 
         res = await_(self.cache.get_or_fetch_response_text(url))
-        fc = FeatureCollection.model_validate(
-            {
-                "type": "FeatureCollection",
-                "features": orjson.loads(res),
-            }
-        )
+
+        with TRACER.start_span("pydantic_validation"):
+            fc = FeatureCollection.model_validate(
+                {
+                    "type": "FeatureCollection",
+                    "features": orjson.loads(res),
+                }
+            )
+        features_to_keep = []
+
         for feature in fc.features:
             assert feature.properties
             feature.id = str(feature.properties.location_code)
+            if itemId and feature.id != itemId:
+                continue
             feature.properties.name = feature.properties.public_name
 
             nidid = feature.properties.aliases.get("NIDID")
@@ -99,15 +108,24 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                     today = datetime.now(timezone.utc).strftime("2020-%m-%d")
                     for avg_date in static_properties[prop]:
                         if avg_date == today:
-                            data = static_properties["averages"][avg_date]
-                            setattr(feature.properties, "averages", data)
+                            averages_data: dict = static_properties["averages"][
+                                avg_date
+                            ]
+                            for average_type, average_value in averages_data.items():
+                                assert average_type not in feature.properties, (
+                                    f"Duplicate property {average_type} when trying to add averages to USACE feature"
+                                )
+                                setattr(feature.properties, average_type, average_value)
                             setattr(feature.properties, "hasResopsAverages", "true")
                             break
                 else:
                     setattr(feature.properties, prop, static_properties[prop])
 
-        self.locations = fc.features
+            features_to_keep.append(feature)
 
+        self.locations = features_to_keep
+
+    @otel_trace()
     def to_geojson(
         self,
         itemsIDSingleFeature: bool = False,
@@ -153,8 +171,17 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
             sort_by_properties_in_place(features_to_keep, sortby)
 
         if itemsIDSingleFeature:
-            assert len(self.locations) == 1
-            return cast(GeojsonFeatureDict, features_to_keep[0].model_dump())
+            match len(self.locations):
+                case 1:
+                    return cast(GeojsonFeatureDict, features_to_keep[0].model_dump())
+                case 0:
+                    raise ProviderItemNotFoundError(
+                        "No items found after filtering by ID"
+                    )
+                case _:
+                    raise RuntimeError(
+                        f"{len(self.locations)} items found after filtering by a single ID"
+                    )
         return cast(
             GeojsonFeatureCollectionDict,
             geojson_pydantic.FeatureCollection(
@@ -220,6 +247,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
     def drop_outside_of_geometry(self, geometry):
         return self._filter_by_geometry(geometry)
 
+    @otel_trace()
     def to_covjson(
         self,
         fieldMapper: EDRFieldsMapping,
@@ -230,7 +258,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
 
     def drop_all_locations_but_id(self, location_id: str):
         self.locations = [loc for loc in self.locations if loc.id == location_id]
-        assert len(self.locations) == 1
+        assert len(self.locations) <= 1
 
     def drop_all_locations_without_parameters(self, parameters: list[str]):
         locations_to_keep: list[Feature] = []

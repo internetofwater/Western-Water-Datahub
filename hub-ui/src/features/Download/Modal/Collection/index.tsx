@@ -5,287 +5,236 @@
 
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { Feature } from "geojson";
 import {
   Anchor,
   Box,
   Button,
   Collapse,
-  ComboboxData,
   Divider,
+  Flex,
   Group,
-  MultiSelect,
-  Stack,
   Text,
   Title,
-  VisuallyHidden,
 } from "@mantine/core";
-import { DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
-import Info from "@/assets/Info";
-import CopyInput from "@/components/CopyInput";
-import Tooltip from "@/components/Tooltip";
+import { StringIdentifierCollections } from "@/consts/collections";
 import styles from "@/features/Download/Download.module.css";
-import { Chart } from "@/features/Download/Modal/Collection/Chart";
-import { CSV } from "@/features/Download/Modal/Collection/CSV";
-import {
-  buildUrl,
-  getParameterNameOptions,
-} from "@/features/Download/Modal/utils";
-import loadingManager from "@/managers/Loading.init";
-import notificationManager from "@/managers/Notification.init";
+import { LayerBlock } from "@/features/Download/Modal/Collection/LayerBlock";
+import { Menu } from "@/features/Download/Modal/Collection/Menu";
+import { useLocations } from "@/hooks/useLocations";
+import mainManager from "@/managers/Main.init";
 import { ICollection } from "@/services/edr.service";
-import wwdhService from "@/services/init/wwdh.init";
-import { LoadingType, NotificationType } from "@/stores/session/types";
+import useMainStore from "@/stores/main";
+import { TLayer } from "@/stores/main/types";
+import useSessionStore from "@/stores/session";
+import { CollectionType, getCollectionType } from "@/utils/collection";
+import { getIdStore } from "@/utils/getIdStore";
+import { hasSearchTerm } from "@/utils/searchFeatures";
 
 dayjs.extend(isSameOrBefore);
 
 type Props = {
-  collectionId: ICollection["id"];
-  locationIds: (string | number)[];
+  layer: TLayer;
   open?: boolean;
 };
 
-const PARAMETER_LIMIT = 10;
-
 const Collection: React.FC<Props> = (props) => {
-  const { collectionId, locationIds, open = false } = props;
+  const { layer, open = false } = props;
 
   const [opened, { toggle }] = useDisclosure(open);
 
+  const linkLocation = useSessionStore((state) => state.linkLocation);
+  const searches = useMainStore((state) => state.searches);
+
+  const { selectedLocations: mapLocations, otherLocations } =
+    useLocations(layer);
+
   const [collection, setCollection] = useState<ICollection>();
-  const [parameterNameOptions, setParameterNameOptions] =
-    useState<ComboboxData>();
-  const [selectedParameters, setSelectedParameters] = useState<string[]>([]);
-  const [from, setFrom] = useState<string | null>(
-    dayjs().subtract(1, "week").format("YYYY-MM-DD"),
+  const [collectionType, setCollectionType] = useState<CollectionType>(
+    CollectionType.Unknown,
   );
-  const [to, setTo] = useState<string | null>(dayjs().format("YYYY-MM-DD"));
-  const [renderedCount, setRenderedCount] = useState(0);
-  const [startDownload, setStartDownload] = useState<number>();
 
-  const controller = useRef<AbortController>(null);
-  const isMounted = useRef(true);
-  const loadingInstance = useRef<string>(null);
+  const [collectionLink, setCollectionLink] = useState("");
+  const [sourceLink, setSourceLink] = useState("");
+  const [documentationLink, setDocumentationLink] = useState("");
 
-  const getBasinOptions = async () => {
-    loadingInstance.current = loadingManager.add(
-      `Fetching data for collection: ${collectionId}`,
-      LoadingType.Data,
+  const [locations, setLocations] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const [hasParameters, setHasParameters] = useState(false);
+
+  useEffect(() => {
+    const search = searches.find(
+      (search) => search.collectionId === layer.collectionId,
     );
-    try {
-      controller.current = new AbortController();
 
-      const collection = await wwdhService.getCollection(collectionId, {
-        signal: controller.current.signal,
-      });
+    if (search) {
+      setSearchTerm(search.searchTerm);
+    }
+  }, [searches]);
 
-      if (isMounted.current) {
-        setCollection(collection);
-        loadingManager.remove(loadingInstance.current);
-      }
-    } catch (error) {
-      if (
-        (error as Error)?.name === "AbortError" ||
-        (typeof error === "string" && error === "Component unmount")
-      ) {
-        console.log("Fetch request canceled");
-      } else if ((error as Error)?.message) {
-        notificationManager.show(
-          `Error: ${(error as Error)?.message}`,
-          NotificationType.Error,
-          10000,
-        );
-      }
-      loadingManager.remove(loadingInstance.current);
+  useEffect(() => {
+    if (linkLocation && linkLocation.collectionId === layer.collectionId) {
+      setLocations([...locations, linkLocation.id]);
+    }
+  }, [linkLocation]);
+
+  useEffect(() => {
+    const collection = mainManager.getCollection(layer.collectionId);
+
+    if (collection) {
+      const collectionType = getCollectionType(collection);
+
+      const collectionLink =
+        collection.links.find(
+          (link) => link.rel === "alternate" && link.type === "text/html",
+        )?.href ?? "";
+      const sourceLink =
+        collection.links.find((link) => link.rel === "canonical")?.href ?? "";
+      const documentationLink =
+        collection.links.find((link) => link.rel === "documentation")?.href ??
+        "";
+
+      setCollectionLink(collectionLink);
+      setSourceLink(sourceLink);
+      setDocumentationLink(documentationLink);
+
+      setCollectionType(collectionType);
+      setCollection(collection);
+    }
+  }, [layer.collectionId]);
+
+  useEffect(() => {
+    if (collectionType === CollectionType.Features) {
+      setHasParameters(true);
+    } else if (
+      [CollectionType.EDR, CollectionType.EDRGrid].includes(collectionType)
+    ) {
+      setHasParameters(layer.parameters.length > 0);
+    }
+  }, [layer, collectionType]);
+
+  const addLocation = (locationId: string) => {
+    if (!locations.some((location) => location === locationId)) {
+      setLocations([...locations, locationId]);
     }
   };
 
-  useEffect(() => {
-    isMounted.current = true;
-    void getBasinOptions();
-    return () => {
-      isMounted.current = false;
-      if (controller.current) {
-        controller.current.abort("Component unmount");
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!collection) {
-      return;
-    }
-
-    const parameterNameOptions = getParameterNameOptions(
-      collection.parameter_names,
+  const removeLocation = (locationId: string) => {
+    const filteredLocations = locations.filter(
+      (location) => location !== locationId,
     );
+    setLocations(filteredLocations);
+  };
 
-    setParameterNameOptions(parameterNameOptions);
-  }, [collection]);
+  const handleSearchTermChange = (searchTerm: string) => {
+    setSearchTerm(searchTerm);
+  };
 
-  const isValidRange =
-    from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
-  const isParameterSelectionUnderLimit =
-    selectedParameters.length <= PARAMETER_LIMIT;
-  const areParametersSelected = selectedParameters.length > 0;
+  const handleClear = () => {
+    setLocations([]);
+  };
 
-  const parameterHelpText = (
-    <>
-      <Text size="sm">
-        Parameters are scientific measurements that may be available at a
-        location.
-      </Text>
-      <br />
-      <Text size="sm">
-        These measurements are connected to an individual time and date.
-      </Text>
-    </>
+  const links = [
+    { label: "API", href: collectionLink, title: "This dataset in the API" },
+    {
+      label: "Source",
+      href: sourceLink,
+      title: "Original source of pre-transformed data",
+    },
+    {
+      label: "Methodology",
+      href: documentationLink,
+      title: "The methodology of the original source data",
+    },
+  ].filter((link) => link.href?.length > 0);
+
+  const isStringIdentifierCollection = StringIdentifierCollections.includes(
+    layer.collectionId,
   );
 
-  const alternateLink = collection?.links?.find(
-    (link) => link.rel === "alternate" && link.type === "text/html",
-  )?.href;
+  const getId = (feature: Feature) => {
+    if (isStringIdentifierCollection) {
+      return getIdStore(feature) ?? String(feature.id);
+    }
+
+    return String(feature.id);
+  };
 
   return (
-    <Box>
+    <>
       {collection && (
-        <Box p="lg">
+        <Box p="var(--default-spacing)" className={styles.collectionWrapper}>
           <Group justify="space-between" mb="sm">
-            {alternateLink ? (
-              <Anchor href={alternateLink} target="_blank">
-                <Title order={3}>{collection.title}</Title>
-              </Anchor>
-            ) : (
-              <Title order={3}>{collection.title}</Title>
-            )}
-            <Button onClick={toggle}>{opened ? "Hide" : "Show"}</Button>
+            <Title order={3}>{collection.title}</Title>
+            <Group align="center" gap="var(--default-spacing)">
+              {links.map(({ label, href, title }, index) => (
+                <Fragment key={`${collection.id}-link-${label}`}>
+                  {index > 0 && <Divider orientation="vertical" />}
+                  <Anchor target="_blank" href={href} title={title}>
+                    {label}
+                  </Anchor>
+                </Fragment>
+              ))}
+              <Button onClick={toggle} ml="calc(var(--default-spacing) * 2)">
+                {opened ? "Hide" : "Show"}
+              </Button>
+            </Group>
           </Group>
           <Collapse in={opened}>
             <Divider />
-            <Stack mt="sm">
-              <Group justify="space-between" align="flex-start" grow mb="lg">
-                {parameterNameOptions && (
-                  <>
-                    <MultiSelect
-                      size="sm"
-                      className={styles.parameterNameSelect}
-                      label={
-                        <Tooltip multiline label={parameterHelpText}>
-                          <Group
-                            className={styles.parameterLabelWrapper}
-                            gap="xs"
-                          >
-                            <Text component="label" size="sm">
-                              Parameters&nbsp;<span>*</span>
-                            </Text>
-                            <Info />
-                          </Group>
-                        </Tooltip>
-                      }
-                      description="Select 1-10 parameters"
-                      placeholder="Select..."
-                      data={parameterNameOptions}
-                      value={selectedParameters}
-                      onChange={setSelectedParameters}
-                      searchable
-                      clearable
-                      error={
-                        isParameterSelectionUnderLimit
-                          ? false
-                          : `Please remove ${selectedParameters.length - PARAMETER_LIMIT} parameter${selectedParameters.length - PARAMETER_LIMIT > 1 ? "s" : ""}`
-                      }
-                    />
-                    <VisuallyHidden>{parameterHelpText}</VisuallyHidden>
-                  </>
-                )}
-                <Stack gap="xs" p={0}>
-                  <DatePickerInput
-                    label="From"
-                    description="Provide an optional date range"
-                    className={styles.datePicker}
-                    placeholder="Pick start date"
-                    value={from}
-                    onChange={setFrom}
-                    clearable
-                    error={isValidRange ? false : "Invalid date range"}
-                  />
-                  <DatePickerInput
-                    label="To"
-                    className={styles.datePicker}
-                    placeholder="Pick end date"
-                    value={to}
-                    onChange={setTo}
-                    clearable
-                    error={isValidRange ? false : "Invalid date range"}
-                  />
-                </Stack>
-                <Button
-                  disabled={
-                    !isValidRange ||
-                    !isParameterSelectionUnderLimit ||
-                    !areParametersSelected
-                  }
-                  className={styles.goButton}
-                  onClick={() => setStartDownload(Date.now())}
-                >
-                  Go
-                </Button>
+            {hasParameters ? (
+              <Flex className={styles.layerContent} gap={0}>
+                <Menu
+                  collectionId={layer.collectionId}
+                  collectionType={collectionType}
+                  mapLocations={mapLocations
+                    .filter((feature) => hasSearchTerm(searchTerm, feature))
+                    .map((feature) => getId(feature))}
+                  otherLocations={otherLocations
+                    .filter((feature) => hasSearchTerm(searchTerm, feature))
+                    .map((feature) => getId(feature))}
+                  selectedLocations={locations}
+                  addLocation={addLocation}
+                  removeLocation={removeLocation}
+                  searchTerm={searchTerm}
+                  onSearchTermChange={handleSearchTermChange}
+                  onClear={handleClear}
+                  linkLocation={linkLocation}
+                />
+                <LayerBlock
+                  layer={layer}
+                  collection={collection}
+                  collectionType={collectionType}
+                  locations={[
+                    ...mapLocations.filter((feature) =>
+                      locations.includes(getId(feature)),
+                    ),
+                    ...otherLocations.filter((feature) =>
+                      locations.includes(getId(feature)),
+                    ),
+                  ]}
+                  linkLocation={linkLocation}
+                />
+              </Flex>
+            ) : (
+              <Group
+                justify="center"
+                align="center"
+                className={styles.parameterMessageWrapper}
+              >
+                <Text fw={700}>
+                  Select at least one parameter for this data source to enable
+                  access to download functionality.
+                </Text>
               </Group>
-
-              {startDownload &&
-                locationIds.slice(0, renderedCount + 1).map((locationId) => {
-                  const url = buildUrl(
-                    collectionId,
-                    locationId,
-                    selectedParameters,
-                    from,
-                    to,
-                  );
-
-                  return (
-                    <Fragment
-                      key={`collection-download-${collectionId}-${locationId}`}
-                    >
-                      <Group gap="xs">
-                        <Text>Location:</Text>
-                        <Anchor
-                          href={`${collection.data_queries.locations?.link?.href}/${locationId}`}
-                          target="_blank"
-                        >
-                          {locationId}
-                        </Anchor>
-                      </Group>
-                      <Chart
-                        instanceId={startDownload}
-                        collectionId={collectionId}
-                        locationId={locationId}
-                        parameters={selectedParameters}
-                        from={from}
-                        to={to}
-                        onData={() => setRenderedCount((count) => count + 1)}
-                      />
-                      <Group grow gap="sm">
-                        <CSV
-                          instanceId={startDownload}
-                          collectionId={collectionId}
-                          locationId={locationId}
-                          parameters={selectedParameters}
-                          from={from}
-                          to={to}
-                        />
-                        <Box className={styles.copyInputWrapper}>
-                          <CopyInput url={url} />
-                        </Box>
-                      </Group>
-                    </Fragment>
-                  );
-                })}
-            </Stack>
+            )}
           </Collapse>
         </Box>
       )}
-    </Box>
+    </>
   );
 };
 

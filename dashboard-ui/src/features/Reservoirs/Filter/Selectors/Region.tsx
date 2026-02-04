@@ -5,19 +5,22 @@
 
 'use client';
 
-import { ComboboxData, Select, Skeleton } from '@mantine/core';
-import useMainStore from '@/stores/main/main';
+import { ComboboxData, MultiSelect, Skeleton } from '@mantine/core';
+import useMainStore from '@/stores/main';
 import { useEffect, useRef, useState } from 'react';
-import { formatOptions } from '@/features/Header/Selectors/utils';
+import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
 import esriService from '@/services/init/esri.init';
 import { MAP_ID, SourceId } from '@/features/Map/consts';
 import { isSourceDataLoaded } from '@/features/Map/utils';
 import { SourceDataEvent } from '@/features/Map/types';
 import { useMap } from '@/contexts/MapContexts';
-import styles from '@/features/Header/Header.module.css';
+import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import { RegionField } from '@/features/Map/types/region';
-import { RegionDefault } from '@/stores/main/consts';
 import { useLoading } from '@/hooks/useLoading';
+
+const fixLabel = (label: string) => {
+    return label.replaceAll('-', ' - ');
+};
 
 /**
 
@@ -73,10 +76,16 @@ export const Region: React.FC = () => {
                         )
                     ),
                     (feature) =>
-                        String(feature?.properties?.[RegionField.Name]),
+                        fixLabel(
+                            String(feature?.properties?.[RegionField.Name])
+                        ),
                     (feature) =>
-                        String(feature?.properties?.[RegionField.Name]),
-                    'All Regions'
+                        fixLabel(
+                            String(feature?.properties?.[RegionField.Name])
+                        ),
+                    '',
+                    '',
+                    true
                 );
 
                 if (isMounted.current) {
@@ -110,32 +119,35 @@ export const Region: React.FC = () => {
     }, []);
 
     return (
-        <Skeleton
-            height={54} // Default dimensions of select
-            width={140}
-            visible={loading || regionOptions.length === 0}
-            className={styles.skeleton}
-        >
-            <Select
-                size="xs"
-                id="regionSelector"
-                disabled={isFetchingReservoirs}
-                searchable
-                data={regionOptions}
-                value={region}
-                data-testid="region-select"
-                aria-label="Select a region"
-                placeholder="Select a region"
-                label="Filter by Region"
-                onChange={(value) => {
-                    if (value) {
-                        setRegion(value);
-                    } else {
-                        setRegion(RegionDefault);
-                    }
-                }}
-                clearable
-            />
-        </Skeleton>
+        <>
+            {loading || regionOptions.length === 0 ? (
+                <Skeleton
+                    height={54} // Default dimensions of select
+                    width={155}
+                />
+            ) : (
+                <MultiSelect
+                    size="xs"
+                    id="regionSelector"
+                    className={styles.multiselect}
+                    disabled={isFetchingReservoirs}
+                    data={regionOptions}
+                    value={region}
+                    data-testid="region-select"
+                    aria-label="Select a region"
+                    placeholder="Select a region"
+                    label="Filter by Region"
+                    onChange={(value: string[]) => {
+                        if (value) {
+                            setRegion(value);
+                        } else {
+                            setRegion([]);
+                        }
+                    }}
+                    searchable
+                    clearable
+                />
+            )}
+        </>
     );
 };

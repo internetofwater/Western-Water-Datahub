@@ -4,7 +4,7 @@
 [project]
 name = "com"
 version = "0.1.0"
-description = "All common code shared between the various IODH integrations"
+description = "All common code shared between the various WWDH integrations"
 readme = "README.md"
 authors = [
     { name = "Colton Loftus", email = "70598503+C-Loftus@users.noreply.github.com" }

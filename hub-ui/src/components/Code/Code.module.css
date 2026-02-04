@@ -1,0 +1,109 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.input {
+  --input-height: calc(2.625rem * 1);
+  padding-left: calc(var(--input-height) / 3);
+  border: calc(0.0625rem * var(--mantine-scale)) solid var(--input-border);
+  border-radius: var(--mantine-radius-default);
+}
+
+.xs {
+  --input-height: 1.875rem;
+  font-size: 0.75rem;
+}
+
+.sm {
+  --input-height: 2.25rem;
+  font-size: 0.875rem;
+}
+
+.md {
+  --input-height: 2.625rem;
+  font-size: 1rem;
+}
+
+.lg {
+  --input-height: 3rem;
+  font-size: 1.125rem;
+}
+
+.xl {
+  --input-height: 3.375rem;
+  font-size: 1.25rem;
+}
+
+.code {
+  max-width: 90%;
+  flex-shrink: 1;
+  border-radius: 8px;
+  font-family: monospace;
+  overflow-x: auto;
+  line-height: 1em;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  overflow-y: hidden;
+  color: var(--mantine-color-text);
+}
+
+.buttonWrapper {
+  margin-left: auto;
+}
+
+.button svg {
+  padding-top: 0.1875rem;
+  margin: 0.0625rem;
+}
+
+.button svg[data-identifier="code-copy-svg"] {
+  fill: var(--mantine-color-text);
+}
+
+.button svg[data-identifier="check-svg"] {
+  stroke: var(--mantine-color-text);
+}
+
+.button.xs svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.button.sm svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.button.md svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.button.lg svg {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.button.xl svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+[data-mantine-color-scheme="dark"] {
+  .input {
+    background: var(--mantine-color-gray-7);
+  }
+}
+
+[data-mantine-color-scheme="light"] {
+  .input {
+    background: var(--mantine-color-gray-2);
+  }
+}
+
+@media screen and (max-width: 899px) {
+  .text {
+    max-width: 70%;
+  }
+}

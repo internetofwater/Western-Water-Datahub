@@ -8,7 +8,7 @@ import {
   ComboboxData,
   Group,
   Loader,
-  Select,
+  MultiSelect,
   Stack,
   Text,
   Title,
@@ -21,11 +21,12 @@ import loadingManager from "@/managers/Loading.init";
 import notificationManager from "@/managers/Notification.init";
 import wwdhService from "@/services/init/wwdh.init";
 import useMainStore from "@/stores/main";
-import { LoadingType, NotificationType } from "@/stores/session/types";
+import { ELoadingType, ENotificationType } from "@/stores/session/types";
+import { getProviderLabel } from "@/utils/label";
 
 export const Category: React.FC = () => {
-  const category = useMainStore((state) => state.category);
-  const setCategory = useMainStore((state) => state.setCategory);
+  const categories = useMainStore((state) => state.categories);
+  const setCategories = useMainStore((state) => state.setCategories);
 
   const provider = useMainStore((state) => state.provider);
 
@@ -38,7 +39,7 @@ export const Category: React.FC = () => {
   const getCategoryOptions = async () => {
     const loadingInstance = loadingManager.add(
       "Fetching category dropdown options",
-      LoadingType.Data,
+      ELoadingType.Data,
     );
 
     try {
@@ -48,7 +49,9 @@ export const Category: React.FC = () => {
       const { parameterGroups } = await wwdhService.getCollections({
         params: {
           "parameter-name": "*",
-          ...(provider ? { "provider-name": provider } : {}),
+          ...(provider.length > 0
+            ? { "provider-name": provider.join(",") }
+            : {}),
         },
       });
 
@@ -68,10 +71,12 @@ export const Category: React.FC = () => {
       if (isMounted.current) {
         if (
           !parameterGroups.some(
-            (parameterGroup) => parameterGroup.label === category?.value,
+            (parameterGroup) =>
+              categories.length === 0 ||
+              categories.some((category) => parameterGroup.label === category),
           )
         ) {
-          setCategory(null);
+          setCategories([]);
         }
 
         loadingManager.remove(loadingInstance);
@@ -88,7 +93,7 @@ export const Category: React.FC = () => {
         const _error = error as Error;
         notificationManager.show(
           `Error: ${_error.message}`,
-          NotificationType.Error,
+          ENotificationType.Error,
           10000,
         );
       }
@@ -119,40 +124,40 @@ export const Category: React.FC = () => {
   const helpText = (
     <>
       <Text size="sm">
-        Choose a data category to narrow down the available collections.
-        Categories group collection by type or theme (e.g., reservoir storage,
+        Choose a data category to narrow down the available data sources.
+        Categories group data sources by type or theme (e.g., reservoir storage,
         atmospheric measurements, water constituents).
       </Text>
       <br />
       <Text size="sm">
-        This helps you focus on collections relevant to a domain of interest.
+        This helps you focus on data sources relevant to a domain of interest.
       </Text>
     </>
   );
 
   return (
-    <Stack gap={0}>
+    <Stack gap={0} className={styles.selectStack}>
       <Tooltip multiline label={helpText}>
         <Group className={styles.filterTitleWrapper} gap="xs">
-          <Title order={2} size="h3">
+          <Title order={3} size="h4">
             Filter by Data Category
           </Title>
           <Info />
         </Group>
       </Tooltip>
       <VisuallyHidden>{helpText}</VisuallyHidden>
-      <Select
+      <MultiSelect
         size="sm"
         label="Category"
         description={
           provider
-            ? `Showing categories available for provider: ${provider}`
+            ? `Showing categories available for ${getProviderLabel(provider.length)}: ${provider.join(", ")}`
             : null
         }
         placeholder="Select..."
         data={categoryOptions}
-        value={category?.value}
-        onChange={(_value, option) => setCategory(option)}
+        value={categories}
+        onChange={setCategories}
         disabled={categoryOptions.length === 0 || isLoading}
         searchable
         clearable

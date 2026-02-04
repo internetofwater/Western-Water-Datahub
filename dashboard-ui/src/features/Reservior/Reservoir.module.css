@@ -3,12 +3,24 @@
  * SPDX-License-Identifier: MIT
  */
 
+.body {
+    height: min(80vh, 735px);
+    max-height: 735px;
+}
+
 .chartWrapper {
     height: 54%;
 }
 
 .chartContainer {
     min-height: 18.75rem;
+}
+
+.content {
+    width: min(80vw, 1265px);
+    height: 800px;
+    max-width: 1265px;
+    overflow-x: hidden;
 }
 
 .graphicLegendColor {
@@ -39,6 +51,11 @@
 .infoGroup {
     flex-direction: column;
     justify-content: space-between;
+}
+
+.infoIcon > svg {
+    width: 1rem;
+    height: auto;
 }
 
 .legendWrapper {
@@ -85,6 +102,24 @@
     }
 }
 
+@media screen and (max-width: 899px) {
+    .content {
+        width: calc(100dvw - (var(--default-spacing) * 3));
+        min-width: calc(100dvw - (var(--default-spacing) * 3));
+        height: auto;
+        max-height: calc(100dvh - (var(--default-spacing) * 2));
+    }
+
+    .body {
+        height: auto;
+        max-height: calc(100dvh - (var(--default-spacing) * 2));
+    }
+
+    .svg {
+        width: 30rem;
+    }
+}
+
 @media screen and (max-width: 866px) {
     .graphicPanel {
         align-items: center;
@@ -126,6 +161,11 @@
     .legendPaper {
         background-color: var(--mantine-color-gray-0);
     }
+
+    .infoIcon > svg {
+        fill: #000;
+        stroke: #000;
+    }
 }
 
 :where([data-mantine-color-scheme='light']) {
@@ -135,5 +175,10 @@
 
     .legendPaper {
         background-color: var(--mantine-color-dark-4);
+    }
+
+    .infoIcon > svg {
+        fill: #fff;
+        stroke: #fff;
     }
 }

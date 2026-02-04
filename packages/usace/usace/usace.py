@@ -9,7 +9,7 @@ import aiohttp.client_exceptions
 from com.helpers import get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
 from com.protocols.providers import OAFProviderProtocol
-from pygeoapi.provider.base import BaseProvider
+from pygeoapi.provider.base import BaseProvider, ProviderItemNotFoundError
 from pygeoapi.util import crs_transform
 from com.geojson.helpers import (
     GeojsonFeatureDict,
@@ -56,9 +56,7 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
         skip_geometry: Optional[bool] = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        collection = LocationCollection()
-        if itemId:
-            collection.drop_all_locations_but_id(itemId)
+        collection = LocationCollection(itemId=itemId)
         if bbox:
             collection.drop_all_locations_outside_bounding_box(bbox)
         if offset:
@@ -76,6 +74,11 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
                 "features": [],
                 "numberMatched": len(collection.locations),
             }
+
+        if len(collection.locations) == 0:
+            raise ProviderItemNotFoundError(
+                f"Item {itemId} not found in USACE collection"
+            )
 
         return collection.to_geojson(
             itemsIDSingleFeature=itemId is not None,

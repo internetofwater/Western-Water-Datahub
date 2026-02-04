@@ -12,12 +12,13 @@
 }
 
 .text {
-  max-width: 80%;
+  max-width: 90%;
   flex-shrink: 1;
   min-width: 0;
   overflow: hidden;
   display: block;
   margin-left: 8px;
+  white-space: nowrap;
 }
 
 .buttonWrapper {
@@ -25,10 +26,33 @@
 }
 
 .button svg {
-  width: 32px;
-  height: 32px;
-  padding-top: 3px;
-  margin: 1px;
+  padding-top: 0.1875rem;
+  margin: 0.0625rem;
+}
+
+.button.xs svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.button.sm svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.button.md svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.button.lg svg {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.button.xl svg {
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
 [data-mantine-color-scheme="dark"]
@@ -49,4 +73,10 @@
 
 [data-mantine-color-scheme="light"] .button svg[data-identifier="check-svg"] {
   stroke: var(--mantine-color-black);
+}
+
+@media screen and (max-width: 899px) {
+  .text {
+    max-width: 70%;
+  }
 }

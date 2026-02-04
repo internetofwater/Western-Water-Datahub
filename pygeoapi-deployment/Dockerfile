@@ -12,8 +12,7 @@ ARG DEB_PACKAGES="\
     gdal-bin \
     libgdal-dev \
     git \
-    build-essential \
-    cron"
+    build-essential"
 
 WORKDIR /opt/pygeoapi
 
@@ -35,12 +34,7 @@ COPY packages /opt/pygeoapi/packages/
 RUN uv sync --all-packages --inexact 
 
 COPY pygeoapi-deployment/ /opt/pygeoapi/pygeoapi-deployment/
-COPY pygeoapi.config.yml /opt/pygeoapi/pygeoapi.config.yml
-
-RUN cp /opt/pygeoapi/packages/resviz/resviz.crontab /etc/cron.d/resviz-cron && \
-    chmod 0644 /etc/cron.d/resviz-cron && \
-    crontab /etc/cron.d/resviz-cron && \
-    touch /var/log/resviz-cron.log
+COPY pygeoapi.config.yml /opt/pygeoapi/local.config.yml
 
 # Set up environment
 ENV PATH="/opt/pygeoapi/.venv/bin:$PATH"

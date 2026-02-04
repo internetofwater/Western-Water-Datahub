@@ -6,6 +6,8 @@
 import { useEffect, useRef, useState } from "react";
 import { FeatureCollection, Polygon } from "geojson";
 import { ComboboxData, Select, Skeleton } from "@mantine/core";
+import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
+import { ValidRegions } from "@/features/Map/consts";
 import { SourceId } from "@/features/Map/sources";
 import { formatOptions } from "@/features/Panel/Filters/utils";
 import loadingManager from "@/managers/Loading.init";
@@ -13,7 +15,7 @@ import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import wwdhService from "@/services/init/wwdh.init";
 import useMainStore from "@/stores/main";
-import { LoadingType, NotificationType } from "@/stores/session/types";
+import { ELoadingType, ENotificationType } from "@/stores/session/types";
 import { RegionField, RegionProperties } from "@/types/region";
 
 export const Region: React.FC = () => {
@@ -24,7 +26,12 @@ export const Region: React.FC = () => {
     (state) => state.geographyFilter?.itemId,
   );
 
+  const selectedCollections = useMainStore(
+    (state) => state.selectedCollections,
+  );
+
   const [regionOptions, setRegionOptions] = useState<ComboboxData>([]);
+  const [isRequired, setIsRequired] = useState(false);
 
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
@@ -32,7 +39,7 @@ export const Region: React.FC = () => {
   const getRegionOptions = async () => {
     const loadingInstance = loadingManager.add(
       "Fetching region dropdown options",
-      LoadingType.Data,
+      ELoadingType.Data,
     );
 
     try {
@@ -48,15 +55,17 @@ export const Region: React.FC = () => {
       });
 
       if (regionFeatureCollection.features.length) {
-        const basinOptions = formatOptions(
-          regionFeatureCollection.features,
+        const regionOptions = formatOptions(
+          regionFeatureCollection.features.filter((feature) =>
+            ValidRegions.includes(String(feature.id)),
+          ),
           (feature) => String(feature.id),
           (feature) => String(feature?.properties?.[RegionField.Name]),
         );
 
         if (isMounted.current) {
           loadingManager.remove(loadingInstance);
-          setRegionOptions(basinOptions);
+          setRegionOptions(regionOptions);
         }
       }
     } catch (error) {
@@ -69,7 +78,7 @@ export const Region: React.FC = () => {
         const _error = error as Error;
         notificationManager.show(
           `Error: ${_error.message}`,
-          NotificationType.Error,
+          ENotificationType.Error,
           10000,
         );
       }
@@ -87,25 +96,47 @@ export const Region: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    let noRestrictions = true;
+
+    selectedCollections.forEach((collectionId) => {
+      const restrictions = CollectionRestrictions[collectionId];
+
+      if (restrictions && restrictions.length > 0) {
+        const geoRestriction = restrictions.find(
+          (restriction) => restriction.type === RestrictionType.GeographyFilter,
+        );
+
+        if (geoRestriction) {
+          setIsRequired(true);
+          noRestrictions = false;
+        }
+      }
+    });
+    if (noRestrictions) {
+      setIsRequired(false);
+    }
+  }, [selectedCollections]);
+
   const handleChange = async (itemId: string | null) => {
     if (itemId) {
       const loadingInstance = loadingManager.add(
         "Adding region geography filter",
-        LoadingType.Geography,
+        ELoadingType.Geography,
       );
       try {
         await mainManager.updateGeographyFilter(SourceId.DoiRegions, itemId);
         loadingManager.remove(loadingInstance);
         notificationManager.show(
           "Updated geography filter",
-          NotificationType.Success,
+          ENotificationType.Success,
         );
       } catch (error) {
         if ((error as Error)?.message) {
           const _error = error as Error;
           notificationManager.show(
             `Error: ${_error.message}`,
-            NotificationType.Error,
+            ENotificationType.Error,
             10000,
           );
         }
@@ -116,6 +147,20 @@ export const Region: React.FC = () => {
 
   const handleClear = () => {
     mainManager.removeGeographyFilter();
+  };
+
+  const getError = () => {
+    if (
+      isRequired &&
+      !(
+        geographyFilterCollectionId === SourceId.DoiRegions &&
+        geographyFilterItemId
+      )
+    ) {
+      return "Please select a geographic filter";
+    }
+
+    return undefined;
   };
 
   return (
@@ -139,6 +184,8 @@ export const Region: React.FC = () => {
         onClear={() => handleClear()}
         searchable
         clearable
+        error={getError()}
+        withAsterisk={isRequired}
       />
     </Skeleton>
   );

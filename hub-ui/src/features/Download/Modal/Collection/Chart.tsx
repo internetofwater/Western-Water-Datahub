@@ -16,13 +16,13 @@ import {
   ICollection,
 } from "@/services/edr.service";
 import wwdhService from "@/services/init/wwdh.init";
-import { Location } from "@/stores/main/types";
-import { LoadingType, NotificationType } from "@/stores/session/types";
+import { TLocation } from "@/stores/main/types";
+import { ELoadingType, ENotificationType } from "@/stores/session/types";
 
 type Props = {
   instanceId: number;
   collectionId: ICollection["id"];
-  locationId: Location["id"];
+  locationId: TLocation["id"];
   parameters: string[];
   from: string | null;
   to: string | null;
@@ -46,8 +46,8 @@ export const Chart: React.FC<Props> = (props) => {
 
   const fetchData = async () => {
     loadingInstance.current = loadingManager.add(
-      `Fetching chart data for location: ${locationId}, of collection: ${collectionId}`,
-      LoadingType.Data,
+      `Fetching chart data for location: ${locationId}, from data source: ${collectionId}`,
+      ELoadingType.Data,
     );
     try {
       controller.current = new AbortController();
@@ -81,7 +81,7 @@ export const Chart: React.FC<Props> = (props) => {
         const _error = error as Error;
         notificationManager.show(
           `Error: ${_error.message}`,
-          NotificationType.Error,
+          ENotificationType.Error,
           10000,
         );
         setError(_error.message);

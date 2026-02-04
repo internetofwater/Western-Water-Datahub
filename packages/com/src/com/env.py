@@ -33,7 +33,7 @@ def init_otel():
     _otel_initialized = True
 
     resource = Resource(
-        attributes={"service.name": os.getenv("OTEL_SERVICE_NAME", "iodh")}
+        attributes={"service.name": os.getenv("OTEL_SERVICE_NAME", "wwdh")}
     )
     provider = TracerProvider(resource=resource)
     COLLECTOR_ENDPOINT = os.environ.get("COLLECTOR_ENDPOINT", "127.0.0.1")
@@ -58,12 +58,12 @@ def init_otel():
 init_otel()
 requests.packages.urllib3.util.connection.HAS_IPV6 = False  # type: ignore
 
-TRACER = trace.get_tracer(os.environ.get("OTEL_TRACER_NAME", "iodh_tracer"))
+TRACER = trace.get_tracer(os.environ.get("OTEL_TRACER_NAME", "wwdh_tracer"))
 
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 
-iodh_event_loop = asyncio.new_event_loop()
+wwdh_event_loop = asyncio.new_event_loop()
 
 
 def loop_forever():
@@ -71,12 +71,12 @@ def loop_forever():
     Start a shared event loop so we can run async code across providers
     """
     try:
-        iodh_event_loop.run_forever()
+        asyncio.set_event_loop(wwdh_event_loop)
+        wwdh_event_loop.run_forever()
     finally:
-        iodh_event_loop.run_until_complete(iodh_event_loop.shutdown_asyncgens())
-        iodh_event_loop.close()
+        wwdh_event_loop.run_until_complete(wwdh_event_loop.shutdown_asyncgens())
+        wwdh_event_loop.close()
 
 
-loop_thread = threading.Thread(target=loop_forever)
-loop_thread.daemon = True
+loop_thread = threading.Thread(target=loop_forever, daemon=True)
 loop_thread.start()
