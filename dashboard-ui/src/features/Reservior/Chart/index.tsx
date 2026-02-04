@@ -23,7 +23,7 @@ import {
 } from '@mantine/core';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { Chart as ChartJS, ChartData } from 'chart.js';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { ReservoirConfig } from '@/features/Map/types';
 
 type Props = {

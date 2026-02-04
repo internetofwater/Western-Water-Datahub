@@ -23,10 +23,10 @@ SCRIPT_NAME=${SCRIPT_NAME:=/}
 CONTAINER_NAME=${CONTAINER_NAME:=pygeoapi}
 CONTAINER_HOST=${CONTAINER_HOST:=0.0.0.0}
 CONTAINER_PORT=${CONTAINER_PORT:=80}
-WSGI_APP=${WSGI_APP:=pygeoapi.starlette_app:APP}
+WSGI_APP=${WSGI_APP:=pygeoapi.flask_app:APP}
 WSGI_WORKERS=${WSGI_WORKERS:=4}
 WSGI_WORKER_TIMEOUT=${WSGI_WORKER_TIMEOUT:=6000}
-WSGI_WORKER_CLASS=${WSGI_WORKER_CLASS:=uvicorn.workers.UvicornH11Worker}
+WSGI_WORKER_CLASS=${WSGI_WORKER_CLASS:=gevent}
 
 # What to invoke: default is to run gunicorn server
 entry_cmd=${1:-run}

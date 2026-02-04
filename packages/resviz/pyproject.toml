@@ -18,7 +18,8 @@ dependencies = [
 package = true
 
 [tool.uv.sources]
-pgedr = { git = "https://github.com/internetofwater/pg_edr.git" }
+# pin to pgedr version before area and cube introduction until we upgrade to latest pygeoapi version; otherwise we will have version conflicts
+pgedr = { git = "https://github.com/internetofwater/pg_edr.git", rev="e4800acd0884fbc2514bfad66cd57aa5f3791d3c" }
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]

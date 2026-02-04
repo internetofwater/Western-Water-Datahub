@@ -16,10 +16,13 @@ export const formatOptions = (
     getLabelProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
     defaultLabel: string = 'All',
     defaultValue: string = 'all',
+    noDefault: boolean = false,
     source?: string
 ): ItemWithSource[] => {
     const options = new Map<string, ItemWithSource>();
-    options.set('all', { value: defaultValue, label: defaultLabel });
+    if (!noDefault) {
+        options.set('all', { value: defaultValue, label: defaultLabel });
+    }
     features.forEach((feature) => {
         if (feature.properties) {
             // Value and label must be a string

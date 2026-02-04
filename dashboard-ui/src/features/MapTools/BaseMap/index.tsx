@@ -5,10 +5,8 @@
 
 import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import {
-    Card,
-    CardSection,
     CloseButton,
     Grid,
     GridCol,
@@ -17,10 +15,18 @@ import {
     Text,
     Paper,
     Title,
+    ActionIcon,
+    Popover,
+    PopoverDropdown,
+    PopoverTarget,
+    Tooltip,
 } from '@mantine/core';
 import styles from '@/features/MapTools/MapTools.module.css';
-import { Tools } from '@/stores/main/types';
 import { useEffect, useRef, useState } from 'react';
+import Basemap from '@/icons/Basemap';
+import useSessionStore from '@/stores/session';
+import { Overlay } from '@/stores/session/types';
+import { useMediaQuery } from '@mantine/hooks';
 
 /**
  *
@@ -29,9 +35,15 @@ import { useEffect, useRef, useState } from 'react';
 export const Selector: React.FC = () => {
     const basemap = useMainStore((state) => state.basemap);
     const setBasemap = useMainStore((state) => state.setBasemap);
-    const setOpenTools = useMainStore((state) => state.setOpenTools);
+
+    const overlay = useSessionStore((state) => state.overlay);
+    const setOverlay = useSessionStore((state) => state.setOverlay);
+
+    const mobile = useMediaQuery('(max-width: 899px)');
 
     const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+    const [show, setShow] = useState(false);
 
     const [isLocked, setIsLocked] = useState(false);
 
@@ -56,28 +68,53 @@ export const Selector: React.FC = () => {
         };
     }, []);
 
+    useEffect(() => {
+        if (overlay !== Overlay.Basemap) {
+            setShow(false);
+        }
+    }, [overlay]);
+
+    const handleShow = (show: boolean) => {
+        setOverlay(show ? Overlay.Basemap : null);
+        setShow(show);
+    };
+
     return (
-        <Card
-            withBorder
-            shadow="sm"
-            radius="md"
-            padding="md"
-            className={styles.basemapSelectorContainer}
+        <Popover
+            opened={show}
+            onChange={setShow}
+            closeOnClickOutside={false}
+            position="left-start"
+            shadow="md"
         >
-            <CardSection withBorder inheritPadding py="xs">
-                <Group justify="space-between">
+            <PopoverTarget>
+                <Tooltip label="Show basemap selector" disabled={show}>
+                    <ActionIcon
+                        classNames={{
+                            root: styles.actionIconRoot,
+                            icon: styles.actionIcon,
+                        }}
+                        onClick={() => handleShow(!show)}
+                        size={mobile ? 'lg' : 'md'}
+                    >
+                        <Basemap />
+                    </ActionIcon>
+                </Tooltip>
+            </PopoverTarget>
+            <PopoverDropdown>
+                <Group
+                    justify="space-between"
+                    mb="calc(var(--default-spacing) / 2)"
+                >
                     <Title order={3} className={styles.mapToolTitle}>
                         Basemaps
                     </Title>
                     <CloseButton
-                        onClick={() =>
-                            setOpenTools(Tools.BasemapSelector, false)
-                        }
-                        aria-label="Close Basemaps"
+                        mr="-0.5rem"
+                        onClick={() => setOverlay(null)}
+                        aria-label="Close basemap selector"
                     />
                 </Group>
-            </CardSection>
-            <CardSection inheritPadding py="md" className={styles.toolContent}>
                 <Grid className={styles.basemapWrapper} gutter="sm">
                     {Object.keys(basemaps)
                         .filter((key) =>
@@ -141,6 +178,7 @@ export const Selector: React.FC = () => {
                                             mb={0}
                                             size="sm"
                                             className={styles.capitalize}
+                                            c="black"
                                         >
                                             {basemapId.replace(/-/g, ' ')}
                                         </Text>
@@ -149,7 +187,7 @@ export const Selector: React.FC = () => {
                             );
                         })}
                 </Grid>
-            </CardSection>
-        </Card>
+            </PopoverDropdown>
+        </Popover>
     );
 };

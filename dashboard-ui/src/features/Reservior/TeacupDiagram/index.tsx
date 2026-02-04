@@ -6,7 +6,7 @@
 import { ReservoirConfig } from '@/features/Map/types';
 import { GeoJsonProperties } from 'geojson';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;

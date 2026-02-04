@@ -4,7 +4,7 @@
  */
 
 import Screenshot from '@/icons/Screenshot';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import { Tools } from '@/stores/main/types';
 
 /**

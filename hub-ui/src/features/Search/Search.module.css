@@ -16,9 +16,11 @@
 
 .searchButton svg {
   fill: var(--mantine-color-white);
+  width: 2rem;
+  height: auto;
 }
 
-.title > svg {
-  width: 18px;
+.title svg {
+  width: 1.125rem;
   height: auto;
 }

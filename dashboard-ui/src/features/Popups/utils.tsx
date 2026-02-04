@@ -7,7 +7,7 @@ import { Feature, Point } from 'geojson';
 import { ReservoirConfig } from '@/features/Map/types';
 import { MantineProvider } from '@mantine/core';
 import { ReservoirPopup } from '@/features/Popups/Reservoirs';
-import { Map, MapMouseEvent, Popup } from 'mapbox-gl';
+import { Map, MapMouseEvent, MapTouchEvent, Popup } from 'mapbox-gl';
 import { Root } from 'react-dom/client';
 import { getReservoirIdentifier } from '@/features/Map/utils';
 import { SnotelProperties, SnotelField } from '@/features/Map/types/snotel';
@@ -16,7 +16,7 @@ import { SnotelPopup } from '@/features/Popups/Snotel';
 export const showReservoirPopup = (
     config: ReservoirConfig,
     map: Map,
-    e: MapMouseEvent,
+    e: MapMouseEvent | MapTouchEvent,
     root: Root,
     container: HTMLDivElement,
     hoverPopup: Popup,

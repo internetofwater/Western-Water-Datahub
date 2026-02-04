@@ -4,6 +4,7 @@
 minimum_pre_commit_version: "2.9.0"
 ci:
   autoupdate_schedule: monthly
+  skip: [pygeoapi_config_validate]
 repos:
   - repo: meta
     hooks:
@@ -16,7 +17,7 @@ repos:
         language: fail
         types: [symlink]
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.5.5
+    rev: v1.5.6
     hooks:
       - id: forbid-crlf
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -39,7 +40,7 @@ repos:
         exclude: "dashboard-ui/.*"
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.14.10
+    rev: v0.14.14
     hooks:
       # Run the linter.
       - id: ruff
@@ -47,7 +48,7 @@ repos:
       - id: ruff-format
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
-    rev: 0.9.21
+    rev: 0.9.28
     hooks:
       # Update the uv lockfile
       - id: uv-lock
@@ -58,3 +59,17 @@ repos:
     hooks:
       - id: addlicense
         args: ["-s=only", -l, "MIT", -c, "Lincoln Institute of Land Policy"]
+  - repo: https://github.com/cgs-earth/pygeoapi-precommit-hooks
+    rev: b199db292e9cb042df31475f1aab8171c0512dbd
+    hooks:
+      - id: pygeoapi_resources_have_links
+        args: ["pygeoapi.config.yml"]
+        pass_filenames: false
+  - repo: local
+    hooks:
+      - id: pygeoapi_config_validate
+        name: pygeoapi_config_validate
+        entry: uv run pygeoapi config validate --config pygeoapi.config.yml
+        language: system
+        types: [yaml]
+        pass_filenames: false

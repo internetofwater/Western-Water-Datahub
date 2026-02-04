@@ -29,7 +29,8 @@ const Download: React.FC = () => {
       </Text>
       <br />
       <Text size="sm">
-        At least one layer must have viable locations and parameters selected.
+        At least one data source must have viable locations and parameters
+        selected.
       </Text>
     </>
   );

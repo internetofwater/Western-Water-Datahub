@@ -12,7 +12,7 @@ from com.protocols.providers import EDRProviderProtocol
 from pygeoapi.provider.base_edr import BaseEDRProvider
 from com.covjson import CoverageCollectionDict
 from snotel.lib.parameters import ParametersCollection
-from pygeoapi.provider.base import ProviderQueryError
+from pygeoapi.provider.base import ProviderItemNotFoundError, ProviderQueryError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -58,6 +58,11 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         if location_id:
             collection.drop_all_locations_but_station_triplet(location_id)
 
+        if len(collection.locations) == 0:
+            raise ProviderItemNotFoundError(
+                f"Location {location_id} not found in awdb forecast collection"
+            )
+
         if bbox:
             collection.drop_all_locations_outside_bounding_box(bbox)
 
@@ -78,7 +83,16 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             # This is since in the awdb forecasts / snotel api
             # the parameter API does not distinguish if the parameter is for
             # an observation or a forecast
-            self._fields = ParametersCollection().get_fields()
+
+            # we filter out the parameters to just those which are relevant to forecast info
+            # this can be done by using the script in the root of the repo `list_all_awdb_params`.
+            # when ran it shows that only RESERVOIR STAGE, `REST` and STREAM VOLUME `SRVO` are relevant
+            # thus we only show those
+            filtered_fields: EDRFieldsMapping = {}
+            for id, info in ParametersCollection().get_fields().items():
+                if id == "SRVO" or id == "REST":
+                    filtered_fields[id] = info
+            self._fields = filtered_fields
         return self._fields
 
     @otel_trace()

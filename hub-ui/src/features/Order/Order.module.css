@@ -13,12 +13,14 @@
 }
 
 .title > svg {
-  width: 18px;
+  width: 2rem;
   height: auto;
 }
 
 .orderButton svg {
   fill: var(--mantine-color-white);
+  width: 2rem;
+  height: auto;
 }
 
 .actionIcon {
@@ -27,7 +29,7 @@
 }
 
 .actionIcon > svg {
-  width: 100%;
+  width: 2rem;
   height: auto;
 }
 

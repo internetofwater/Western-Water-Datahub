@@ -25,7 +25,7 @@ import { Feature, Point } from 'geojson';
 import { OrganizedProperties } from '@/features/Reservoirs/types';
 import { chunk } from '@/features/Reservoirs/utils';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
-import useMainStore from '@/stores/main/main';
+import useMainStore from '@/stores/main';
 import useSessionStore from '@/stores/session';
 import { getReservoirConfig } from '@/features/Map/utils';
 import MapSearch from '@/icons/MapSearch';
@@ -46,7 +46,7 @@ export const Table: React.FC<Props> = (props) => {
         Feature<Point, OrganizedProperties>[]
     >([]);
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(5);
 
     const { map } = useMap(MAP_ID);
 
@@ -140,7 +140,7 @@ export const Table: React.FC<Props> = (props) => {
     };
 
     return (
-        <Stack className={styles.tableWrapper} mb={16}>
+        <Stack className={styles.tableWrapper} pb={16}>
             <TableComponent
                 striped
                 stickyHeader
@@ -185,13 +185,6 @@ export const Table: React.FC<Props> = (props) => {
                                 </Text>
                             </Stack>
                         </TableTh>
-                        {/* <TableTh className={styles.buttonColumn}>
-                            <Stack align="center" justify="center">
-                                <Text {...textProps} ta="center">
-                                    See More
-                                </Text>
-                            </Stack>
-                        </TableTh> */}
                     </TableTr>
                 </TableThead>
                 <TableTbody>
@@ -295,34 +288,27 @@ export const Table: React.FC<Props> = (props) => {
                                                 onClick={(e) =>
                                                     handleViewOnMap(e, feature)
                                                 }
+                                                classNames={{
+                                                    root: styles.actionIconRoot,
+                                                    icon: styles.actionIcon,
+                                                }}
                                             >
                                                 <MapSearch />
                                             </ActionIcon>
                                         </Group>
                                     </TableTd>
-                                    {/* <TableTd>
-                                        <Group justify="center" align="center">
-                                            <ActionIcon
-                                                onClick={() =>
-                                                    handleSeeMore(
-                                                        feature.properties
-                                                            .identifier,
-                                                        feature.properties
-                                                            .sourceId
-                                                    )
-                                                }
-                                            >
-                                                <Info />
-                                            </ActionIcon>
-                                        </Group>
-                                    </TableTd> */}
                                 </TableTr>
                             </Tooltip>
                         );
                     })}
                 </TableTbody>
             </TableComponent>
-            <Group justify="space-between" align="flex-end" mx={8}>
+            <Group
+                justify="space-between"
+                align="flex-end"
+                mx={8}
+                className={styles.pageControls}
+            >
                 <NumberInput
                     size="xs"
                     className={styles.pageSizeInput}

@@ -203,17 +203,20 @@ resources:
     providers:
       - type: edr
         name: usace.usace_edr.USACEEDRProvider
-        data: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
+        data: https://water.usace.army.mil/cda/reporting/
       - type: feature
         name: usace.usace.USACEProvider
-        data: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
+        data: https://water.usace.army.mil/cda/reporting/
         entity: Observation
         title_field: name
     links:
       - type: application/html
         rel: canonical
         title: Data source
-        href: https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
+        # NOTE: this is distinct from https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html
+        # it appears that access2water is a transformed version of the main CWMS API and it
+        # has a different, and unfortunately slightly less robust, openapi spec.
+        href: https://water.usace.army.mil/cda/reporting/
       - type: application/html
         rel: documentation
         title: Documentation
@@ -302,7 +305,7 @@ resources:
     title: NOAA Weather Prediction Center Cumulative Quantitative Precipitation Forecast 120 Hours
     description: consists of layers that represent forecasted cumulative QPF for 120 hours from now.
     providers:
-      - <<: *default-qpf
+      - <<: *default-feature-qpf
         data: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer/10
 
   noaa-cqpf-168-hours:
@@ -429,9 +432,13 @@ resources:
     keywords: [NOAA]
     links:
       - type: application/html
+        rel: canonical
+        title: Data Source
+        href: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
+      - type: application/html
         rel: documentation
         title: Documentation
-        href: https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html
+        href: https://www.cbrfc.noaa.gov/wsup/graph/west/map/help.html
     extents: *default-extent
     templates:
       path: pygeoapi-deployment/templates/jsonld/noaa_rfc
@@ -507,9 +514,13 @@ resources:
     keywords: ["drought"]
     links:
       - type: application/html
-        rel: documentation
-        title: documentation
+        rel: canonical
+        title: Canonical
         href: https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3
+      - type: application/html
+        rel: documentation
+        title: Documentation
+        href: https://droughtmonitor.unl.edu/About/AbouttheData.aspx
     extents: *default-extent
     providers:
       - <<: *default-feature-qpf
@@ -537,6 +548,10 @@ resources:
       - type: application/html
         rel: documentation
         title: Documentation
+        href: https://droughtmonitor.unl.edu/About/AbouttheData.aspx
+      - type: application/html
+        rel: canonical
+        title: Canonical
         href: https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/US_Drought_Intensity_v1/FeatureServer/2
     extents: *default-extent
     providers:

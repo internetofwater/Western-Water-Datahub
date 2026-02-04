@@ -13,7 +13,9 @@ import {
   Button,
   Collapse,
   Divider,
+  Flex,
   Group,
+  Text,
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -61,6 +63,8 @@ const Collection: React.FC<Props> = (props) => {
   const [locations, setLocations] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
+  const [hasParameters, setHasParameters] = useState(false);
+
   useEffect(() => {
     const search = searches.find(
       (search) => search.collectionId === layer.collectionId,
@@ -101,6 +105,16 @@ const Collection: React.FC<Props> = (props) => {
       setCollection(collection);
     }
   }, [layer.collectionId]);
+
+  useEffect(() => {
+    if (collectionType === CollectionType.Features) {
+      setHasParameters(true);
+    } else if (
+      [CollectionType.EDR, CollectionType.EDRGrid].includes(collectionType)
+    ) {
+      setHasParameters(layer.parameters.length > 0);
+    }
+  }, [layer, collectionType]);
 
   const addLocation = (locationId: string) => {
     if (!locations.some((location) => location === locationId)) {
@@ -171,39 +185,52 @@ const Collection: React.FC<Props> = (props) => {
           </Group>
           <Collapse in={opened}>
             <Divider />
-            <Group w="100%" justify="space-between" align="flex-start" gap={0}>
-              <Menu
-                collectionId={layer.collectionId}
-                collectionType={collectionType}
-                mapLocations={mapLocations
-                  .filter((feature) => hasSearchTerm(searchTerm, feature))
-                  .map((feature) => getId(feature))}
-                otherLocations={otherLocations
-                  .filter((feature) => hasSearchTerm(searchTerm, feature))
-                  .map((feature) => getId(feature))}
-                selectedLocations={locations}
-                addLocation={addLocation}
-                removeLocation={removeLocation}
-                searchTerm={searchTerm}
-                onSearchTermChange={handleSearchTermChange}
-                onClear={handleClear}
-                linkLocation={linkLocation}
-              />
-              <LayerBlock
-                layer={layer}
-                collection={collection}
-                collectionType={collectionType}
-                locations={[
-                  ...mapLocations.filter((feature) =>
-                    locations.includes(getId(feature)),
-                  ),
-                  ...otherLocations.filter((feature) =>
-                    locations.includes(getId(feature)),
-                  ),
-                ]}
-                linkLocation={linkLocation}
-              />
-            </Group>
+            {hasParameters ? (
+              <Flex className={styles.layerContent} gap={0}>
+                <Menu
+                  collectionId={layer.collectionId}
+                  collectionType={collectionType}
+                  mapLocations={mapLocations
+                    .filter((feature) => hasSearchTerm(searchTerm, feature))
+                    .map((feature) => getId(feature))}
+                  otherLocations={otherLocations
+                    .filter((feature) => hasSearchTerm(searchTerm, feature))
+                    .map((feature) => getId(feature))}
+                  selectedLocations={locations}
+                  addLocation={addLocation}
+                  removeLocation={removeLocation}
+                  searchTerm={searchTerm}
+                  onSearchTermChange={handleSearchTermChange}
+                  onClear={handleClear}
+                  linkLocation={linkLocation}
+                />
+                <LayerBlock
+                  layer={layer}
+                  collection={collection}
+                  collectionType={collectionType}
+                  locations={[
+                    ...mapLocations.filter((feature) =>
+                      locations.includes(getId(feature)),
+                    ),
+                    ...otherLocations.filter((feature) =>
+                      locations.includes(getId(feature)),
+                    ),
+                  ]}
+                  linkLocation={linkLocation}
+                />
+              </Flex>
+            ) : (
+              <Group
+                justify="center"
+                align="center"
+                className={styles.parameterMessageWrapper}
+              >
+                <Text fw={700}>
+                  Select at least one parameter for this data source to enable
+                  access to download functionality.
+                </Text>
+              </Group>
+            )}
           </Collapse>
         </Box>
       )}

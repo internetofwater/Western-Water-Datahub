@@ -71,12 +71,12 @@ def loop_forever():
     Start a shared event loop so we can run async code across providers
     """
     try:
+        asyncio.set_event_loop(wwdh_event_loop)
         wwdh_event_loop.run_forever()
     finally:
         wwdh_event_loop.run_until_complete(wwdh_event_loop.shutdown_asyncgens())
         wwdh_event_loop.close()
 
 
-loop_thread = threading.Thread(target=loop_forever)
-loop_thread.daemon = True
+loop_thread = threading.Thread(target=loop_forever, daemon=True)
 loop_thread.start()

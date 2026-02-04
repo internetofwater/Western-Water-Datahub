@@ -8,7 +8,12 @@ import { immer } from "zustand/middleware/immer";
 import { createLoadingSlice } from "@/stores/session/slices/loading";
 import { createNotificationsSlice } from "@/stores/session/slices/notifications";
 import { createWarningsSlice } from "@/stores/session/slices/warning";
-import { EHelpTab, ETool, SessionState } from "@/stores/session/types";
+import {
+  EHelpTab,
+  EOverlay,
+  ETool,
+  SessionState,
+} from "@/stores/session/types";
 
 const useSessionStore = create<SessionState>()(
   immer((set, get, store) => ({
@@ -16,7 +21,7 @@ const useSessionStore = create<SessionState>()(
     setLegendEntries: (legendEntries) => set({ legendEntries }),
     openModal: null,
     setOpenModal: (openModal) => set({ openModal }),
-    overlay: null,
+    overlay: EOverlay.Controls,
     setOverlay: (overlay) => set({ overlay }),
     tools: {
       [ETool.Legend]: false,
