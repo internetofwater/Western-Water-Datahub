@@ -5,7 +5,7 @@
 
 import { createElement, Dispatch, RefObject, SetStateAction } from 'react';
 import { LngLatLike, Map } from 'mapbox-gl';
-import { loadTeacups as loadImages } from '@/features/Map/utils';
+import { loadImages as loadImages } from '@/features/Map/utils';
 import { Chart as ChartJS } from 'chart.js';
 import { createRoot } from 'react-dom/client';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';

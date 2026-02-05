@@ -21,7 +21,7 @@ import {
 import { useMap } from '@/contexts/MapContexts';
 import useMainStore from '@/stores/main';
 import {
-    loadTeacups as loadImages,
+    loadImages,
     getReservoirConfig,
     findReservoirIndex,
     getReservoirIdentifier,

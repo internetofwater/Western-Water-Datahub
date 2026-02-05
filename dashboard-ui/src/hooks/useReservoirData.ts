@@ -83,6 +83,7 @@ export const useReservoirData = () => {
             if ((error as Error)?.name !== 'AbortError') {
                 console.error(error);
             } else if ((error as Error)?.message) {
+                console.log('Abort', error);
                 const _error = error as Error;
                 notificationManager.show(
                     `Error: ${_error.message}`,

@@ -26,7 +26,7 @@ const Main: React.FC<Props> = (props) => {
 
     return (
         <>
-            <Panel />
+            <Panel accessToken={accessToken} />
             <Box className={styles.mapContainer}>
                 <Map accessToken={accessToken} />
                 <MapTools />

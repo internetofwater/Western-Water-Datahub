@@ -19,24 +19,20 @@ import Reservoirs from '@/features/Reservoirs';
 import Controls from '@/features/Controls';
 import DarkModeToggle from '@/features/Panel/DarkModeToggle';
 import Help, { HELP_LOCAL_KEY } from '@/features/Help';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import X from '@/icons/X';
 import { useMediaQuery } from '@mantine/hooks';
 import useSessionStore from '@/stores/session';
 import { Overlay } from '@/stores/session/types';
+import { Report } from './Report';
 
-const items = [
-    {
-        title: 'Reservoirs',
-        content: <Reservoirs />,
-    },
-    {
-        title: 'Reference Data',
-        content: <Controls />,
-    },
-];
+type Props = {
+    accessToken: string;
+};
 
-const Panel: React.FC = () => {
+const Panel: React.FC<Props> = (props) => {
+    const { accessToken } = props;
+
     const overlay = useSessionStore((state) => state.overlay);
     const setOverlay = useSessionStore((state) => state.setOverlay);
 
@@ -54,6 +50,28 @@ const Panel: React.FC = () => {
 
         setShow(overlay === Overlay.Controls);
     }, [mobile, overlay]);
+
+    const items = useMemo(() => {
+        const items = [
+            {
+                title: 'Reservoirs',
+                content: <Reservoirs />,
+            },
+            {
+                title: 'Reference Data',
+                content: <Controls />,
+            },
+        ];
+
+        if (accessToken) {
+            items.push({
+                title: 'Report',
+                content: <Report accessToken={accessToken} />,
+            });
+        }
+
+        return items;
+    }, [accessToken]);
 
     const handleClick = () => {
         const stored = localStorage.getItem(HELP_LOCAL_KEY);

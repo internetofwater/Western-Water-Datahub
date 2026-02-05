@@ -43,7 +43,7 @@ import { SnotelField, SnotelProperties } from '@/features/Map/types/snotel';
  *
  * @function
  */
-export const loadTeacups = (map: Map) => {
+export const loadImages = (map: Map) => {
     const teacupLevels = [
         100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15,
         10, 5, 0,
