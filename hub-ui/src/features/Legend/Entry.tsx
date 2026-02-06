@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { ExpressionSpecification } from "mapbox-gl";
-import { ColorInput, Group, Stack, Switch, Text } from "@mantine/core";
+import { ColorInput, Group, Stack, Text } from "@mantine/core";
 import { Grid } from "@/features/Legend/Grid";
 import styles from "@/features/Legend/Legend.module.css";
 import { OpacitySlider } from "@/features/Legend/OpacitySlider";
@@ -14,6 +14,7 @@ import { DetailedGradient } from "@/features/Panel/Refine/Palette/DetailedGradie
 import mainManager from "@/managers/Main.init";
 import { TLayer } from "@/stores/main/types";
 import { CollectionType, getCollectionType } from "@/utils/collection";
+import { VisibilityToggle } from "./VisibilityToggle";
 
 type Props = {
   layer: TLayer;
@@ -63,9 +64,16 @@ export const Entry: React.FC<Props> = (props) => {
 
   return (
     <Stack w="100%" gap="xs" className={styles.legendEntry}>
-      <Text size="lg" fw={700}>
-        {title}
-      </Text>
+      <Group justify="space-between" wrap="nowrap">
+        <VisibilityToggle
+          visible={layer.visible}
+          onClick={() => handleVisibilityChange(!layer.visible, layer.id)}
+        />
+        <Text size="lg" fw={700}>
+          {title}
+        </Text>
+      </Group>
+
       {showOpacity && (
         <OpacitySlider
           id={layer.id}
@@ -75,23 +83,11 @@ export const Entry: React.FC<Props> = (props) => {
       )}
 
       {layer.paletteDefinition && typeof layer.color !== "string" ? (
-        <>
-          <DetailedGradient
-            collectionId={layer.collectionId}
-            color={layer.color as ExpressionSpecification}
-            paletteDefinition={layer.paletteDefinition}
-          />
-          <Switch
-            size="lg"
-            mb="calc(var(--default-spacing) / 2)"
-            onLabel="VISIBLE"
-            offLabel="HIDDEN"
-            checked={layer.visible}
-            onChange={(event) =>
-              handleVisibilityChange(event.target.checked, layer.id)
-            }
-          />
-        </>
+        <DetailedGradient
+          collectionId={layer.collectionId}
+          color={layer.color as ExpressionSpecification}
+          paletteDefinition={layer.paletteDefinition}
+        />
       ) : (
         typeof layer.color === "string" && (
           <Group w="100%" justify="space-between" align="flex-start">
@@ -108,17 +104,6 @@ export const Entry: React.FC<Props> = (props) => {
                   className={styles.colorPicker}
                 />
               )}
-
-              <Switch
-                size="lg"
-                mb="calc(var(--default-spacing) / 2)"
-                onLabel="VISIBLE"
-                offLabel="HIDDEN"
-                checked={layer.visible}
-                onChange={(event) =>
-                  handleVisibilityChange(event.target.checked, layer.id)
-                }
-              />
             </Stack>
             {showShapes && (
               <Shapes color={layer.color} geometryTypes={layer.geometryTypes} />
