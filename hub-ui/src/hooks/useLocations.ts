@@ -78,7 +78,7 @@ export const useLocations = (layer: TLayer) => {
 
   useEffect(() => {
     void getOtherLocations();
-  }, []);
+  }, [locations]);
 
   useEffect(() => {
     isMounted.current = true;

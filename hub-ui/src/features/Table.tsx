@@ -43,7 +43,7 @@ export const Table: React.FC<Props> = (props) => {
       {search && (
         <TextInput
           size="sm"
-          label="Search"
+          label="Search Table"
           placeholder="Search property names and values"
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.currentTarget.value)}
