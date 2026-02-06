@@ -57,7 +57,12 @@ import { CoverageGridService } from "@/services/coverageGrid.service";
 import { ICollection } from "@/services/edr.service";
 import geoconnexService from "@/services/init/geoconnex.init";
 import wwdhService from "@/services/init/wwdh.init";
-import { MainState, TLayer, TLocation } from "@/stores/main/types";
+import {
+  MainState,
+  TGeometryTypes,
+  TLayer,
+  TLocation,
+} from "@/stores/main/types";
 import { ENotificationType } from "@/stores/session/types";
 import {
   CollectionType,
@@ -967,6 +972,8 @@ class MainManager {
         ?.parameters ??
       [];
 
+    const geometryTypes = new Set<TGeometryTypes>();
+
     this.checkDateRestrictions(collectionId, from, to);
 
     this.checkParameterRestrictions(collectionId);
@@ -992,6 +999,9 @@ class MainManager {
       let filtered = this.filterLocations(page);
       this.clearInvalidLocations(collectionId, filtered);
       if (Array.isArray(filtered.features)) {
+        filtered.features.forEach((feature) => {
+          geometryTypes.add(feature.geometry.type);
+        });
         aggregate.features.push(...filtered.features);
         source.setData(aggregate);
       }
@@ -1019,6 +1029,7 @@ class MainManager {
       this.store.getState().updateLayer({
         ...layer,
         loaded: true,
+        geometryTypes: Array.from(geometryTypes),
       });
     }
 
@@ -1259,6 +1270,7 @@ class MainManager {
               paletteDefinition,
               visible: true,
               loaded: collectionType === CollectionType.Map,
+              geometryTypes: [],
             });
             count += 1;
           }

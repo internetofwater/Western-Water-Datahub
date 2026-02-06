@@ -120,7 +120,9 @@ export const Entry: React.FC<Props> = (props) => {
                 }
               />
             </Stack>
-            {showShapes && <Shapes color={layer.color} />}
+            {showShapes && (
+              <Shapes color={layer.color} geometryTypes={layer.geometryTypes} />
+            )}
             {showGrid && <Grid color={layer.color} />}
           </Group>
         )
