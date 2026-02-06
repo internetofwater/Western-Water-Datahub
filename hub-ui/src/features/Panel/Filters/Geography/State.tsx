@@ -164,10 +164,7 @@ export const State: React.FC = () => {
   };
 
   return (
-    <Skeleton
-      height={55} // Default dimensions of select
-      visible={stateOptions.length === 0}
-    >
+    <Skeleton height={getError() ? 70 : 55} visible={stateOptions.length === 0}>
       <Select
         key={`state-select-${geographyFilterCollectionId}`}
         size="sm"
