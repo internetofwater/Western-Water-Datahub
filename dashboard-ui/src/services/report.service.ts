@@ -57,24 +57,24 @@ export class ReportService {
                 );
 
                 const infoSVG = this.createInfoBox(config, reservoir);
+
+                // Draw this svg, then calculate the width in the dom to reposition
+                svgOverlay = this.drawSVG(infoSVG, svgOverlay);
+
+                const { width: infoBoxWidth } = infoSVG.getBoundingClientRect();
+
                 const infoBoxPosition = {
-                    x:
-                        position.x +
-                        (Number(reservoirSVG.getAttribute('width')) ?? 0) / 2, // position at bottom left corner
+                    x: position.x - Math.abs(160 - infoBoxWidth) / 2,
                     y:
                         position.y +
                         (Number(reservoirSVG.getAttribute('height')) ?? 0),
                 };
 
-                svgOverlay = this.drawSVGAtPosition(
-                    infoBoxPosition,
-                    infoSVG,
-                    svgOverlay
-                );
+                this.repostion(infoBoxPosition, infoSVG);
 
                 const indicatorCircle = this.createCircle(i);
                 const indicatorPosition = {
-                    x: position.x + 45, // position at bottom left corner
+                    x: position.x - Math.abs(160 - infoBoxWidth) / 2, // position at bottom left corner
                     y:
                         position.y +
                         (Number(reservoirSVG.getAttribute('height')) ?? 0),
@@ -89,6 +89,7 @@ export class ReportService {
         }
 
         // Wait for map to render
+        map.setBearing(map.getBearing());
         await new Promise((resolve) => map.once('render', resolve));
         await new Promise(requestAnimationFrame);
 
@@ -270,6 +271,30 @@ export class ReportService {
         return circle;
     }
 
+    private breakLines(text: string): string[] {
+        const lines = [];
+        let line = '';
+
+        for (const word of text.split(' ')) {
+            line += word + ' ';
+
+            if (line.length > 16) {
+                lines.push(line);
+                line = '';
+            }
+        }
+
+        if (lines.length === 0) {
+            return [text];
+        }
+
+        if (line.length > 0) {
+            lines.push(line);
+        }
+
+        return lines;
+    }
+
     private createInfoBox(
         config: ReservoirConfig,
         reservoir: Feature<Point, GeoJsonProperties>
@@ -287,8 +312,12 @@ export class ReportService {
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         svg.appendChild(g);
 
+        const name = this.breakLines(
+            String(reservoir.properties![config.labelProperty])
+        );
+
         const lines = [
-            String(reservoir.properties![config.labelProperty]),
+            ...name,
             `Storage: ${Number(
                 reservoir.properties![config.storageProperty]
             ).toLocaleString('en-us')} / ${Number(
@@ -304,7 +333,7 @@ export class ReportService {
                 ) /
                     Number(reservoir.properties![config.capacityProperty])) *
                     100
-            )}`,
+            )}% Avg`,
             `Data as of ${dayjs(
                 String(reservoir.properties![config.storageDateProperty])
             ).format('MMM DD, YYYY')}`,
@@ -328,9 +357,11 @@ export class ReportService {
                 'http://www.w3.org/2000/svg',
                 'rect'
             );
+
+            const width = Math.min(bbox.width + 16, 200);
             rect.setAttribute('x', `${bbox.x - 8}`);
             rect.setAttribute('y', `${bbox.y - 8}`);
-            rect.setAttribute('width', `${bbox.width + 16}`);
+            rect.setAttribute('width', `${width}`);
             rect.setAttribute('height', `${bbox.height + 16}`);
             rect.setAttribute('fill', '#fff');
             rect.setAttribute('rx', '6');
@@ -338,7 +369,7 @@ export class ReportService {
 
             svg.insertBefore(rect, g);
 
-            svg.setAttribute('width', `${bbox.width + 16}`);
+            svg.setAttribute('width', `${width}`);
             svg.setAttribute('height', `${bbox.height + 16}`);
         });
 
@@ -458,6 +489,15 @@ export class ReportService {
         return svg;
     }
 
+    private drawSVG(
+        svgElement: SVGElement,
+        svgLayer: SVGSVGElement
+    ): SVGSVGElement {
+        svgLayer.appendChild(svgElement);
+
+        return svgLayer;
+    }
+
     private drawSVGAtPoint(
         map: Map,
         point: mapboxgl.LngLatLike,
@@ -486,6 +526,15 @@ export class ReportService {
         svgLayer.appendChild(svgElement);
 
         return svgLayer;
+    }
+
+    private repostion(
+        position: { x: number; y: number },
+        svgElement: SVGElement
+    ): void {
+        const { x, y } = position;
+
+        svgElement.setAttribute('transform', `translate(${x}, ${y})`);
     }
 
     private exportCombinedImage(map: Map, svgOverlay: SVGSVGElement) {

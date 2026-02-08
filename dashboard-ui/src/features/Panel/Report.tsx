@@ -38,7 +38,7 @@ export const Report: React.FC<Props> = (props) => {
 
         cloneMap.current.setStyle(map.getStyle());
         cloneMap.current.setCenter(map.getCenter());
-        cloneMap.current.setZoom(Math.max(map.getZoom() - 1, 0));
+        cloneMap.current.setZoom(Math.max(map.getZoom() - 0.5, 0));
         const features: Feature<Point, IdentifiableProperties>[] = [];
         for (const config of ReservoirConfigs) {
             features.push(...getHighestCapacityReservoirs(map, config));
