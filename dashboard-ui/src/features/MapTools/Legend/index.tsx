@@ -241,6 +241,12 @@ const Legend: React.FC = () => {
                         toggleableLayers={toggleableLayers}
                     />
                 </Box>
+                <img
+                    src="/report-legend.png"
+                    id="report-legend"
+                    alt=""
+                    aria-hidden
+                />
             </Box>
         </>
     );

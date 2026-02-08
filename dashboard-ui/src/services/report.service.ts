@@ -542,17 +542,27 @@ export class ReportService {
         const width = mapCanvas.width;
         const height = mapCanvas.height;
 
+        const reportLegend = document.getElementById(
+            'report-legend'
+        ) as HTMLImageElement | null;
+
         const canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        const context = canvas.getContext('2d');
+        if (!context) {
+            return;
+        }
 
         // Draw map canvas
-        ctx.save();
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.drawImage(mapCanvas, 0, 0);
-        ctx.restore();
+        context.save();
+        context.globalCompositeOperation = 'source-over';
+        context.drawImage(mapCanvas, 0, 0);
+        context.restore();
+
+        if (reportLegend) {
+            context.drawImage(reportLegend, 1307, 529, 293, 371);
+        }
 
         // Serialize SVG and draw it on canvas
         const svgData = new XMLSerializer().serializeToString(svgOverlay);
@@ -563,7 +573,7 @@ export class ReportService {
 
         const img = new Image();
         img.onload = () => {
-            ctx.drawImage(img, 0, 0);
+            context.drawImage(img, 0, 0);
             URL.revokeObjectURL(url);
 
             canvas.toBlob((blob) => {
@@ -581,43 +591,57 @@ export class ReportService {
     }
 }
 
-const positions = [
+export const positions = [
     // Right most
-    { x: 1400, y: 450 },
-    { x: 1400, y: 250 },
+    { x: 1400, y: 300 },
     // Top
-    { x: 1300, y: 75 }, // Top Right
-    { x: 1100, y: 50 },
-    { x: 900, y: 50 },
-    { x: 700, y: 50 },
-    { x: 500, y: 50 },
+    { x: 1400, y: 90 }, // Top Right
+    { x: 1150, y: 20 },
+    { x: 900, y: 20 },
+    { x: 650, y: 20 },
+    { x: 400, y: 20 },
+    { x: 150, y: 20 },
     // left
-    { x: 250, y: 75 }, // Top left
-    { x: 100, y: 250 },
-    { x: 100, y: 425 },
-    { x: 100, y: 600 },
+    { x: 60, y: 250 }, // Top left
+    { x: 60, y: 500 },
 
     // Bottom
-    { x: 300, y: 750 },
-    { x: 500, y: 750 },
-    { x: 700, y: 750 },
-    { x: 900, y: 750 },
+    { x: 300, y: 675 },
+    { x: 550, y: 675 },
+    { x: 800, y: 675 },
+    { x: 1050, y: 675 },
 ];
 
 const colors = [
-    '#FAEB55',
-    '#816EBA',
-    '#7E55FA',
-    '#A5A06F',
-    '#6C677A',
-    '#504E3F',
-    '#5D5311',
-    '#812663',
-    '#521FCA',
-    '#095D97',
-    '#488CD6',
-    '#78AF13',
-    '#4F0B02',
-    '#C54130',
-    '#F872B3',
+    '#4BC2FA',
+    '#9DFA57',
+    '#EE4BFA',
+    '#FAAB4B',
+    '#A168A5',
+    '#087F2F',
+    '#62737A',
+    '#3966D5',
+    '#6FAA23',
+    '#FF570E',
+    '#CFF9E0',
+    '#997B60',
+    '#7328A4',
 ];
+
+// const colors = [
+//     '#FAEB55',
+//     '#816EBA',
+//     '#7E55FA',
+//     '#A5A06F',
+//     '#6C677A',
+//     '#504E3F',
+//     '#5D5311',
+//     '#812663',
+//     '#521FCA',
+//     '#095D97',
+//     '#488CD6',
+//     '#78AF13',
+//     '#4F0B02',
+//     '#C54130',
+//     '#F872B3',
+// ];
