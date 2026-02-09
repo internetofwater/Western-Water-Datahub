@@ -14,7 +14,7 @@ import {
 import { Feature, GeoJsonProperties, Point } from 'geojson';
 import { Map } from 'mapbox-gl';
 import { IdentifiableProperties } from '@/services/report.utils';
-import { center, featureCollection } from '@turf/turf';
+import { bbox, center, featureCollection } from '@turf/turf';
 import dayjs from 'dayjs';
 
 export class ReportService {
@@ -103,23 +103,62 @@ export class ReportService {
     ) {
         const collection = featureCollection(reservoirs);
 
-        const _center = center(collection);
+        // const _center = center(collection);
 
-        const zoom = map.getZoom();
+        // const zoom = map.getZoom();
 
-        // Approximate degrees per km at the equator
-        const degreesPerKm = 1 / 111;
+        // // Approximate degrees per km at the equator
+        // const degreesPerKm = 1 / 111;
 
-        // Max shift at zoom level  0 (e.g., 200 km), scaled down as zoom increases
-        const maxKmShift = 200;
-        const kmShift = maxKmShift / Math.pow(zoom, 1.5); // shift at this zoom level
-        const latShift = kmShift * degreesPerKm;
+        // // Max shift at zoom level  0 (e.g., 200 km), scaled down as zoom increases
+        // const maxKmShift = 200;
+        // const kmShift = maxKmShift / Math.pow(zoom, 1.5); // shift at this zoom level
+        // const latShift = kmShift * degreesPerKm;
 
-        const shiftedCenter = {
-            lng: _center.geometry.coordinates[0],
-            lat: _center.geometry.coordinates[1] + latShift,
-        };
-        map.setCenter(shiftedCenter);
+        // const shiftedCenter = {
+        //     lng: _center.geometry.coordinates[0],
+        //     lat: _center.geometry.coordinates[1] + latShift,
+        // };
+        // map.setCenter(shiftedCenter);
+
+        const [minLng, minLat, maxLng, maxLat] = bbox(collection);
+
+        map.resize();
+        console.log('I resized 2', map, map.getCanvas().height);
+        map.fitBounds(
+            [
+                [minLng, minLat], // southwest
+                [maxLng, maxLat], // northeast
+            ],
+            // Fit padding to dimension of shapes
+            {
+                padding: {
+                    top: 250,
+                    left: 210,
+                    right: 210,
+                    bottom: 250,
+                },
+                maxZoom: 16, // prevent zooming in too far for very tight bounds
+                duration: 0, // smooth animation
+            }
+        );
+
+        // map.fitBounds(
+        //     [
+        //         [minLng, minLat], // southwest
+        //         [maxLng, maxLat], // northeast
+        //     ],
+        //     {
+        //         padding: {
+        //             top: 300,
+        //             left: 210,
+        //             right: 210,
+        //             bottom: 10,
+        //         },
+        //         // maxZoom: 16,  // prevent zooming in too far for very tight bounds
+        //         // duration: 800 // smooth animation
+        //     }
+        // );
     }
 
     private modifyLayers(map: Map) {
@@ -561,7 +600,7 @@ export class ReportService {
         context.restore();
 
         if (reportLegend) {
-            context.drawImage(reportLegend, 1307, 529, 293, 371);
+            context.drawImage(reportLegend, 1297, 519, 293, 371);
         }
 
         // Serialize SVG and draw it on canvas
