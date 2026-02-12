@@ -703,10 +703,13 @@ class MainManager {
     }
   }
 
-  public getBBox(collectionId: ICollection["id"]): BBox {
+  public getBBox(
+    collectionId: ICollection["id"],
+    includeGeography: boolean,
+  ): BBox {
     const filterFeature = this.store.getState().geographyFilter?.feature;
 
-    if (!filterFeature) {
+    if (!includeGeography || !filterFeature) {
       this.checkCollectionBBoxRestrictions(
         collectionId,
         turf.area(turf.bboxPolygon(DEFAULT_BBOX)),
@@ -741,7 +744,7 @@ class MainManager {
         await this.getFeatures<
           Geometry,
           { [paletteDefinition.parameter]: number }
-        >(layer.collectionId, signal)
+        >(layer.collectionId, layer.includeGeography, signal)
       ).features;
 
     const { parameter, count, palette, index } = paletteDefinition;
@@ -961,7 +964,7 @@ class MainManager {
       return sourceId;
     }
 
-    const bbox = this.getBBox(collectionId);
+    const bbox = this.getBBox(collectionId, options?.includeGeography ?? true);
     const from = options?.from ?? this.store.getState().from;
     const to = options?.to ?? this.store.getState().to;
     const parameters =
@@ -996,7 +999,9 @@ class MainManager {
         next,
       );
 
-      let filtered = this.filterLocations(page);
+      let filtered = options?.includeGeography
+        ? this.filterLocations(page)
+        : page;
       this.clearInvalidLocations(collectionId, filtered);
       if (Array.isArray(filtered.features)) {
         filtered.features.forEach((feature) => {
@@ -1114,7 +1119,7 @@ class MainManager {
     }
   }
 
-  public async deleteLayer(collectionId: ICollection["id"]) {
+  public deleteLayer(collectionId: ICollection["id"]) {
     let layers = this.store
       .getState()
       .layers.filter((_layer) => _layer.collectionId !== collectionId);
@@ -1182,7 +1187,96 @@ class MainManager {
    *
    * @function
    */
-  public async createLayer(): Promise<void> {
+  public async createLayer(
+    collection: ICollection,
+    includeGeography: boolean,
+  ): Promise<void> {
+    const from = this.store.getState().from;
+    const to = this.store.getState().to;
+    const layer = this.getLayer({ collectionId: collection.id });
+
+    const count = this.store.getState().layers.length;
+
+    const parameters =
+      this.store
+        .getState()
+        .parameters.find(
+          (parameter) => parameter.collectionId === collection.id,
+        )?.parameters ?? [];
+
+    const paletteDefinition =
+      this.store
+        .getState()
+        .palettes.find((palette) => palette.collectionId === collection.id)
+        ?.palette ?? null;
+
+    const collectionType = getCollectionType(collection);
+    if (layer) {
+      let color = layer.color;
+      // The user has removed the previous paletteDefinition but color is still a data expression
+      if (
+        this.map &&
+        paletteDefinition === null &&
+        typeof layer.color !== "string"
+      ) {
+        const { pointLayerId, fillLayerId, lineLayerId } =
+          this.getLocationsLayerIds(layer.collectionId);
+
+        color = getRandomHexColor();
+
+        if (this.map.getLayer(pointLayerId)) {
+          this.map.setPaintProperty(pointLayerId, "circle-color", color);
+        }
+        if (this.map.getLayer(fillLayerId)) {
+          this.map.setPaintProperty(fillLayerId, "fill-color", color);
+        }
+        if (this.map.getLayer(lineLayerId)) {
+          this.map.setPaintProperty(lineLayerId, "line-color", color);
+        }
+      }
+
+      this.store.getState().updateLayer({
+        ...layer,
+        parameters,
+        from,
+        to,
+        color,
+        paletteDefinition,
+        visible: true,
+        loaded: collectionType === CollectionType.Map,
+        includeGeography,
+      });
+    } else {
+      this.store.getState().addLayer({
+        id: this.createUUID(),
+        collectionId: collection.id,
+        color: getRandomHexColor(),
+        parameters,
+        from,
+        to,
+        position: count + 1,
+        opacity: DEFAULT_FILL_OPACITY,
+        paletteDefinition,
+        visible: true,
+        loaded: collectionType === CollectionType.Map,
+        geometryTypes: [],
+        includeGeography,
+      });
+    }
+
+    this.addSource(collection.id);
+    this.addLayer(collection.id);
+
+    await this.addData(collection.id, { includeGeography });
+
+    this.reorderLayers();
+  }
+
+  /**
+   *
+   * @function
+   */
+  public async createLayers(): Promise<void> {
     // Specific user collection choice
     const selectedCollections = this.store.getState().selectedCollections;
     // All collections for selected filters
@@ -1271,6 +1365,7 @@ class MainManager {
               visible: true,
               loaded: collectionType === CollectionType.Map,
               geometryTypes: [],
+              includeGeography: true,
             });
             count += 1;
           }
@@ -1422,6 +1517,7 @@ class MainManager {
     V extends GeoJsonProperties = GeoJsonProperties,
   >(
     collectionId: ICollection["id"],
+    includeGeography: boolean,
     signal?: AbortSignal,
   ): Promise<FeatureCollection<T, V>> {
     try {
@@ -1441,7 +1537,8 @@ class MainManager {
       console.error(error);
     }
 
-    const bbox = this.getBBox(collectionId);
+    // TODO
+    const bbox = this.getBBox(collectionId, includeGeography);
 
     // TODO: update to remove extra args
     const data = await this.fetchData<T, V>(

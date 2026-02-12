@@ -83,19 +83,19 @@ export const Provider: React.FC = () => {
 
   return (
     <Stack gap={0}>
-      {/* TODO */}
-      <Tooltip multiline label={helpText}>
-        <Group className={styles.filterTitleWrapper} gap="xs">
-          <Title order={3} size="h4">
-            Filter by Data Provider
-          </Title>
-          <Info />
-        </Group>
-      </Tooltip>
       <VisuallyHidden>{helpText}</VisuallyHidden>
       <MultiSelect
-        size="sm"
-        label="Data Provider"
+        size="xs"
+        label={
+          <Tooltip multiline label={helpText}>
+            <Group className={styles.filterTitleWrapper} gap="xs">
+              <Title order={3} size="h4">
+                Data Provider
+              </Title>
+              <Info />
+            </Group>
+          </Tooltip>
+        }
         placeholder="Select..."
         data={options}
         value={provider}

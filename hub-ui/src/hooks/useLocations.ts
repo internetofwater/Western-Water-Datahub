@@ -45,6 +45,7 @@ export const useLocations = (layer: TLayer) => {
 
       const allLocations = await mainManager.getFeatures(
         layer.collectionId,
+        layer.includeGeography,
         controller.current.signal,
       );
 

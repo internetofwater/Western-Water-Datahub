@@ -12,6 +12,40 @@
   fill: var(--mantine-color-white);
 }
 
+.datasourceLeft {
+  width: 70%;
+}
+
+.datasourceOption svg {
+  min-width: 1.5rem;
+  width: 1.5rem;
+  max-width: 1.5rem;
+  height: auto;
+}
+
+.datasourceOptionLabel {
+  max-width: 90%;
+}
+
+.datasourceTitle {
+  max-width: 90%;
+}
+
+.datasourceUpdate {
+  width: 100%;
+}
+
+.deleteButton svg {
+  width: 1.5rem;
+  height: auto;
+  stroke: var(--mantine-color-error);
+}
+
+.filterIcon {
+  width: 1.5rem;
+  height: auto;
+}
+
 .geoStack {
   min-height: 7.5rem;
 }
@@ -74,6 +108,26 @@
 
 .radioLabel {
   padding-left: calc(var(--default-spacing) / 2);
+}
+
+.radioLabel svg {
+  min-width: 1.25rem;
+  width: 1.25rem;
+  max-width: 1.25rem;
+  height: auto;
+}
+
+.switchRoot {
+  max-width: 5.75rem;
+}
+
+.switchTrack {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.switchLabel {
+  padding-inline-start: calc(var(--default-spacing) / 2);
 }
 
 .title {

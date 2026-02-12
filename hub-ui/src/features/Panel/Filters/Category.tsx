@@ -137,20 +137,21 @@ export const Category: React.FC = () => {
 
   return (
     <Stack gap={0} className={styles.selectStack}>
-      <Tooltip multiline label={helpText}>
-        <Group className={styles.filterTitleWrapper} gap="xs">
-          <Title order={3} size="h4">
-            Filter by Data Category
-          </Title>
-          <Info />
-        </Group>
-      </Tooltip>
       <VisuallyHidden>{helpText}</VisuallyHidden>
       <MultiSelect
-        size="sm"
-        label="Category"
+        size="xs"
+        label={
+          <Tooltip multiline label={helpText}>
+            <Group className={styles.filterTitleWrapper} gap="xs">
+              <Title order={3} size="h4">
+                Data Category
+              </Title>
+              <Info />
+            </Group>
+          </Tooltip>
+        }
         description={
-          provider
+          provider.length > 0
             ? `Showing categories available for ${getProviderLabel(provider.length)}: ${provider.join(", ")}`
             : null
         }

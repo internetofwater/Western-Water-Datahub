@@ -78,6 +78,7 @@ export type TLayer = {
   paletteDefinition: PaletteDefinition | null;
   loaded: boolean;
   geometryTypes: TGeometryTypes[];
+  includeGeography: boolean;
 };
 
 export type TLocation = {
