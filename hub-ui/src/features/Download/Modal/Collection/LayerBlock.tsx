@@ -19,6 +19,7 @@ import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import { ICollection } from "@/services/edr.service";
 import { TLayer, TLocation } from "@/stores/main/types";
+import useSessionStore from "@/stores/session";
 import { ELoadingType, ENotificationType } from "@/stores/session/types";
 import { chunk } from "@/utils/chunk";
 import { CollectionType } from "@/utils/collection";
@@ -47,6 +48,8 @@ export const LayerBlock: React.FC<Props> = (props) => {
     layer,
     linkLocation = null,
   } = props;
+
+  const hasNotification = useSessionStore((state) => state.hasNotification);
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -80,25 +83,34 @@ export const LayerBlock: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    let url = "";
-    if (collectionType === CollectionType.EDR) {
-      url = buildLocationsUrl(collection.id, layer.parameters);
-    } else if (collectionType === CollectionType.EDRGrid) {
-      const bbox = mainManager.getBBox(collection.id);
-      url = buildCubeUrl(
-        collection.id,
-        bbox,
-        layer.parameters,
-        layer.from,
-        layer.to,
-        false,
-        true,
-      );
-    } else if (collectionType === CollectionType.Features) {
-      url = buildItemsUrl(collection.id);
-    }
+    try {
+      let url = "";
+      if (collectionType === CollectionType.EDR) {
+        url = buildLocationsUrl(collection.id, layer.parameters);
+      } else if (collectionType === CollectionType.EDRGrid) {
+        const bbox = mainManager.getBBox(collection.id, true);
+        url = buildCubeUrl(
+          collection.id,
+          bbox,
+          layer.parameters,
+          layer.from,
+          layer.to,
+          false,
+          true,
+        );
+      } else if (collectionType === CollectionType.Features) {
+        url = buildItemsUrl(collection.id);
+      }
 
-    setUrl(url);
+      setUrl(url);
+    } catch (error) {
+      console.error(error);
+      // TODO: determine cause of duplicates
+      const message = `Unable to create base URL for layer: ${collection.title}. Skipping this entry in the Export modal.`;
+      if (!hasNotification(message)) {
+        notificationManager.show(message, ENotificationType.Error, 10000);
+      }
+    }
   }, [collection, collectionType]);
 
   useEffect(() => {

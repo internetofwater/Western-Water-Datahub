@@ -291,6 +291,9 @@ const MainMap: React.FC<Props> = (props) => {
           scaleControl: true,
           navigationControl: true,
         }}
+        eventHandlers={{
+          doubleClickZoom: false,
+        }}
       />
     </>
   );

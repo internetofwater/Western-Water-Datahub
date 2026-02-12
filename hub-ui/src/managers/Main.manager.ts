@@ -76,6 +76,7 @@ import {
 } from "@/utils/colors/types";
 import { getIdStore } from "@/utils/getIdStore";
 import { getRandomHexColor } from "@/utils/hexColor";
+import { isTopLayer } from "@/utils/isTopLayer";
 import { getRasterLayerSpecification } from "@/utils/layerDefinitions";
 
 /**
@@ -306,6 +307,7 @@ class MainManager {
     signal?: AbortSignal,
     next?: string,
   ): Promise<ExtendedFeatureCollection<T, V>> {
+    console.log("");
     const data = await wwdhService.getItems<ExtendedFeatureCollection<T, V>>(
       collectionId,
       {
@@ -485,26 +487,37 @@ class MainManager {
     collectionId: ICollection["id"],
   ): (e: T) => void {
     return (e) => {
+      if (e.originalEvent.cancelBubble) {
+        return;
+      }
       e.originalEvent.preventDefault();
 
-      const features = this.map!.queryRenderedFeatures(e.point, {
-        layers: [mapLayerId],
-      });
+      if (!isTopLayer(collectionId, this.map!, e.point)) {
+        return;
+      }
 
-      if (features.length > 0) {
-        // Hack, use the feature id to track this location, fetch id store in consuming features
-        const uniqueFeatures = this.getUniqueIds(features, collectionId);
-
-        uniqueFeatures.forEach((locationId) => {
-          if (this.hasLocation(locationId)) {
-            this.store.getState().removeLocation(locationId);
-          } else {
-            this.store.getState().addLocation({
-              id: locationId,
-              collectionId,
-            });
-          }
+      if (!e.originalEvent.defaultPrevented) {
+        e.originalEvent.preventDefault();
+        e.originalEvent.cancelBubble = true;
+        const features = this.map!.queryRenderedFeatures(e.point, {
+          layers: [mapLayerId],
         });
+
+        if (features.length > 0) {
+          // Hack, use the feature id to track this location, fetch id store in consuming features
+          const uniqueFeatures = this.getUniqueIds(features, collectionId);
+
+          uniqueFeatures.forEach((locationId) => {
+            if (this.hasLocation(locationId)) {
+              this.store.getState().removeLocation(locationId);
+            } else {
+              this.store.getState().addLocation({
+                id: locationId,
+                collectionId,
+              });
+            }
+          });
+        }
       }
     };
   }
@@ -516,6 +529,12 @@ class MainManager {
     lowerLabel: string,
   ): (e: MapMouseEvent) => void {
     return (e) => {
+      // As layers can be added in any order, and reordered, perform manual check to ensure popup shows
+      // for top layer in visual order
+      if (!isTopLayer(collectionId, this.map!, e.point)) {
+        return;
+      }
+
       this.map!.getCanvas().style.cursor = "pointer";
       const { features } = e;
       if (features && features.length > 0) {
@@ -1017,7 +1036,7 @@ class MainManager {
     } while (next);
 
     const layer = this.getLayer({ collectionId });
-    // TODO: Add this after figuring out pattern
+
     if (layer && layer.paletteDefinition) {
       const features = aggregate.features as Feature<
         Geometry,
@@ -1030,6 +1049,7 @@ class MainManager {
     }
 
     (aggregate as any) = undefined;
+
     if (layer) {
       this.store.getState().updateLayer({
         ...layer,
@@ -1137,6 +1157,11 @@ class MainManager {
     const palettes = this.store
       .getState()
       .palettes.filter((palette) => palette.collectionId !== collectionId);
+    const selectedCollections = this.store
+      .getState()
+      .selectedCollections.filter(
+        (selectedCollectionId) => selectedCollectionId !== collectionId,
+      );
 
     layers = layers
       .sort((a, b) => a.position - b.position)
@@ -1162,6 +1187,7 @@ class MainManager {
     this.store.getState().setParameters(parameters);
     this.store.getState().setSearches(searches);
     this.store.getState().setPalettes(palettes);
+    this.store.getState().setSelectedCollections(selectedCollections);
   }
 
   public cleanLayers(selectedCollections: string[]) {
