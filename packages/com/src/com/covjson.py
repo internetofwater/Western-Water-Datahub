@@ -20,6 +20,10 @@ class ParameterDict(TypedDict):
     unit: dict
     observedProperty: dict
 
+    # extra metadata property not required by covjson
+    # but useful for categorizing RISE data
+    isModeled: bool
+
 
 class CoverageRangeDict(TypedDict):
     type: Literal["NdArray"]

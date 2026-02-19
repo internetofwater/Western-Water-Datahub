@@ -31,6 +31,10 @@ class ParameterWithResults(BaseModel):
     timeseriesResults: list[float | None]
     timeseriesDates: list[str | None]
 
+    # RISE has the same parameter number for parameters which represent both modeled
+    # results and observations;
+    isModeled: bool = False
+
 
 class DataNeededForCovjson(BaseModel):
     """
@@ -130,6 +134,7 @@ class LocationResultBuilder:
                         timeseriesResults=results,
                         timeseriesDates=dates,
                         parameterId=timeseriesModel.get_parameter_id(),
+                        isModeled=timeseriesModel.is_modeled(),
                     )
                 )
             locations_with_data.append(

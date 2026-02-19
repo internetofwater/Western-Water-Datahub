@@ -76,14 +76,16 @@ class CovJSONBuilder:
         paramsToGeoJsonOutput: EDRFieldsMapping,
         location_response: list[DataNeededForCovjson],
     ):
-        relevant_parameters = []
+        relevant_parameters_and_modeling_status: list[Tuple[str, bool]] = []
         for location in location_response:
             for p in location.parameters:
-                relevant_parameters.append(p.parameterId)
+                relevant_parameters_and_modeling_status.append(
+                    (p.parameterId, p.isModeled)
+                )
 
         paramNameToMetadata: dict[str, ParameterDict] = {}
 
-        for param_id in relevant_parameters:
+        for param_id in relevant_parameters_and_modeling_status:
             if param_id not in paramsToGeoJsonOutput:
                 LOGGER.error(
                     f"Could not find metadata for {param_id} in {sorted(paramsToGeoJsonOutput.keys())}"
@@ -94,6 +96,8 @@ class CovJSONBuilder:
 
             _param: ParameterDict = {
                 "type": "Parameter",
+                # 1 index in the tuple represents isModeled
+                "isModeled": param_id[1],
                 "description": {"en": associatedData["description"]},
                 "unit": {"symbol": associatedData["x-ogc-unit"]},
                 "observedProperty": {
