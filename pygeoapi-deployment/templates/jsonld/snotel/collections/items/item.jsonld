@@ -7,7 +7,7 @@
       "hyf": "https://www.opengis.net/def/schema/hy_features/hyf/"
     }
   ],
-  "type": ["schema:Place", "hyf:HY_HydroLocation"],
+  "type": ["schema:Place", "hyf:HydrometricFeature"],
   "@id": "{{ data['@id'] | safe }}",
   "schema:identifier": {{ data["id"] | tojson }},
   "schema:name": "{{ data['name'] }}",
