@@ -51,7 +51,7 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const [openedProps, { toggle: toggleProps }] = useDisclosure(false);
   const [openedGeo, { toggle: toggleGeo }] = useDisclosure(false);
   const [openedChart, { toggle: toggleChart, close: closeChart }] =
-    useDisclosure(false);
+    useDisclosure(true);
 
   const [url, setUrl] = useState("");
   const [codeUrl, setCodeUrl] = useState("");

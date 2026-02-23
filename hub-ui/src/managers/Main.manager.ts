@@ -46,7 +46,7 @@ import {
   getLineLayerDefinition,
   getPointLayerDefinition,
 } from "@/features/Map/utils";
-import { getNextLink } from "@/managers/Main.utils";
+import { getNextLink, joinSentence } from "@/managers/Main.utils";
 import notificationManager from "@/managers/Notification.init";
 import {
   ExtendedFeatureCollection,
@@ -165,6 +165,41 @@ class MainManager {
    */
   public hasLocation(locationId: TLocation["id"]): boolean {
     return this.store.getState().hasLocation(locationId);
+  }
+
+  private getNoDataMessage(
+    collectionId: ICollection["id"],
+    parameterCount: number,
+  ): string {
+    const collection = this.getCollection(collectionId);
+    if (!collection) {
+      return `No data found for layer, unable to locate data source.`;
+    }
+
+    const collectionType = getCollectionType(collection);
+
+    const suggestions: string[] = [];
+
+    const isEDR = collectionType === CollectionType.EDR;
+    const isEDRGrid = collectionType === CollectionType.EDRGrid;
+
+    if (isEDR || isEDRGrid) {
+      if (parameterCount > 0) {
+        suggestions.push("Try a different parameter");
+      }
+
+      if (isEDRGrid) {
+        suggestions.push(
+          suggestions.length > 0 ? "date range" : "Try a different date range",
+        );
+      }
+    }
+
+    const suggestionText = joinSentence(suggestions, "or");
+
+    return suggestionText
+      ? `No data found for layer: ${collection.title}. ${suggestionText}.`
+      : `No data found for layer: ${collection.title}.`;
   }
 
   private async fetchData<
@@ -1034,6 +1069,12 @@ class MainManager {
 
       next = getNextLink(page);
     } while (next);
+
+    if (aggregate.features.length === 0) {
+      const message = this.getNoDataMessage(collectionId, parameters.length);
+
+      notificationManager.show(message, ENotificationType.Info, 10000);
+    }
 
     const layer = this.getLayer({ collectionId });
 

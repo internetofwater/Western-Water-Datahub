@@ -145,9 +145,9 @@ const Collection: React.FC<Props> = (props) => {
       title: "Original source of pre-transformed data",
     },
     {
-      label: "Methodology",
+      label: "Info",
       href: documentationLink,
-      title: "The methodology of the original source data",
+      title: "Background information from the original source data",
     },
   ].filter((link) => link.href?.length > 0);
 
