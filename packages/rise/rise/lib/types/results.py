@@ -5,6 +5,14 @@ from typing import Literal, Optional
 from pydantic import BaseModel, field_validator
 
 
+class ResultMetadataAttributes(BaseModel):
+    """These are metadata attributes for a single result call in RISE;
+    i.e. not the directly timeseries result but the metadata that goes with it"""
+
+    resultType: Literal["modelled"] | str | None
+    timeStep: Literal["day"] | str | None
+
+
 class ResultAttributes(BaseModel):
     """These are attributes for a single result call in RISE"""
 
@@ -12,6 +20,7 @@ class ResultAttributes(BaseModel):
     locationId: int
     result: Optional[float]
     parameterId: str
+    resultAttributes: ResultMetadataAttributes | None = None
 
     @field_validator("parameterId", check_fields=True, mode="before")
     @classmethod
@@ -24,17 +33,8 @@ class ResultAttributes(BaseModel):
     dateTime: Optional[str]
 
 
-class ResultMetadataAttributes(BaseModel):
-    """These are metadata attributes for a single result call in RISE;
-    i.e. not the directly timeseries result but the metadata that goes with it"""
-
-    resultType: Literal["modelled"] | str | None
-    timeStep: Literal["day"] | str | None
-
-
 class ResultData(BaseModel):
     attributes: ResultAttributes
-    metadata: ResultMetadataAttributes | None = None
 
 
 class ResultResponse(BaseModel):
@@ -66,7 +66,7 @@ class ResultResponse(BaseModel):
         and thus would not mix both modelled and non-modelled results in the
         same response
         """
-        metadata = self.data[0].metadata
+        metadata = self.data[0].attributes.resultAttributes
         if not metadata:
             return False
         return metadata.resultType == "modelled"

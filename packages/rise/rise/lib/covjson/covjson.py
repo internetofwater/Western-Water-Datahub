@@ -22,6 +22,7 @@ def _generate_coverage_item(
     location_type: str,
     coords: list[Any] | Tuple[float, float],
     times: list[str | None],
+    isModeled: bool,
     paramToCoverage: dict[str, CoverageRangeDict],
 ) -> CoverageDict:
     # if it is a point it will have different geometry
@@ -42,6 +43,7 @@ def _generate_coverage_item(
                 },
             },
             "ranges": paramToCoverage,
+            "isModeled": isModeled,
         }
 
     else:
@@ -60,6 +62,7 @@ def _generate_coverage_item(
                 },
             },
             "ranges": paramToCoverage,
+            "isModeled": isModeled,
         }
 
     return coverage_item
@@ -76,12 +79,10 @@ class CovJSONBuilder:
         paramsToGeoJsonOutput: EDRFieldsMapping,
         location_response: list[DataNeededForCovjson],
     ):
-        relevant_parameters_and_modeling_status: list[Tuple[str, bool]] = []
+        relevant_parameters_and_modeling_status: list[str] = []
         for location in location_response:
             for p in location.parameters:
-                relevant_parameters_and_modeling_status.append(
-                    (p.parameterId, p.isModeled)
-                )
+                relevant_parameters_and_modeling_status.append(p.parameterId)
 
         paramNameToMetadata: dict[str, ParameterDict] = {}
 
@@ -96,8 +97,6 @@ class CovJSONBuilder:
 
             _param: ParameterDict = {
                 "type": "Parameter",
-                # 1 index in the tuple represents isModeled
-                "isModeled": param_id[1],
                 "description": {"en": associatedData["description"]},
                 "unit": {"symbol": associatedData["x-ogc-unit"]},
                 "observedProperty": {
@@ -144,7 +143,8 @@ class CovJSONBuilder:
                     location_feature.locationType,
                     location_feature.geometry,
                     param.timeseriesDates,
-                    range,
+                    isModeled=param.isModeled,
+                    paramToCoverage=range,
                 )
 
                 coverages.append(coverage_item)
