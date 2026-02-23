@@ -36,6 +36,11 @@ class CoverageDict(TypedDict):
     domainType: NotRequired[Literal["PolygonSeries", "PointSeries"]]
     parameters: NotRequired[dict[str, ParameterDict]]
 
+    # extra custom metadata that is not part of the covjson spec
+    # that we add for the purpose of specifying if the coverage
+    # represents modelled data
+    isModeled: bool
+
 
 class CoverageCollectionDict(TypedDict):
     type: str
