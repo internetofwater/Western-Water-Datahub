@@ -97,6 +97,8 @@ export const Collection: React.FC = () => {
   const provider = useMainStore((state) => state.provider);
   const categories = useMainStore((state) => state.categories);
   const collections = useMainStore((state) => state.collections);
+
+  const [search, setSearch] = useState("");
   // const parameterGroups = useMainStore((state) => state.parameterGroups);
 
   const [collectionOptions, setCollectionOptions] = useState<ComboboxData>([]);
@@ -167,9 +169,17 @@ export const Collection: React.FC = () => {
   };
 
   const filter: OptionsFilter = ({ options }) => {
-    return (options as ExtendedItem[]).filter(
-      (option) => collectionType === "all" || option.type === collectionType,
-    );
+    const lowerSearch = search.toLowerCase();
+
+    return (options as ExtendedItem[])
+      .filter(
+        (option) => collectionType === "all" || option.type === collectionType,
+      )
+      .filter(
+        (option) =>
+          lowerSearch.length === 0 ||
+          option.label.toLowerCase().includes(lowerSearch),
+      );
   };
 
   const handleChange = (e: string[]) => {
@@ -180,6 +190,8 @@ export const Collection: React.FC = () => {
 
     setSelectedCollections(selectedCollections);
   };
+
+  const handleSearchChange = (search: string) => setSearch(search);
 
   const helpText = (
     <>
@@ -222,8 +234,10 @@ export const Collection: React.FC = () => {
         data={collectionOptions}
         value={getValue()}
         onChange={(e: string[]) => handleChange(e)}
+        onSearchChange={handleSearchChange}
         disabled={isFetchingCollections}
         hidePickedOptions
+        searchable
       />
       <Radio.Group
         size="xs"
