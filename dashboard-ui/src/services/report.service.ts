@@ -14,7 +14,7 @@ import {
 import { Feature, GeoJsonProperties, Point } from 'geojson';
 import { Map } from 'mapbox-gl';
 import { IdentifiableProperties } from '@/services/report.utils';
-import { bbox, center, featureCollection } from '@turf/turf';
+import { bbox, featureCollection } from '@turf/turf';
 import dayjs from 'dayjs';
 
 export class ReportService {
@@ -44,6 +44,15 @@ export class ReportService {
                     map,
                     point,
                     mapPositionCircle,
+                    svgOverlay
+                );
+
+                const mapTag = this.createTag(i);
+
+                svgOverlay = this.drawSVGAtPoint(
+                    map,
+                    point,
+                    mapTag,
                     svgOverlay
                 );
 
@@ -85,6 +94,14 @@ export class ReportService {
                     indicatorCircle,
                     svgOverlay
                 );
+
+                const infoTag = this.createTag(i);
+
+                svgOverlay = this.drawSVGAtPosition(
+                    indicatorPosition,
+                    infoTag,
+                    svgOverlay
+                );
             }
         }
 
@@ -103,28 +120,9 @@ export class ReportService {
     ) {
         const collection = featureCollection(reservoirs);
 
-        // const _center = center(collection);
-
-        // const zoom = map.getZoom();
-
-        // // Approximate degrees per km at the equator
-        // const degreesPerKm = 1 / 111;
-
-        // // Max shift at zoom level  0 (e.g., 200 km), scaled down as zoom increases
-        // const maxKmShift = 200;
-        // const kmShift = maxKmShift / Math.pow(zoom, 1.5); // shift at this zoom level
-        // const latShift = kmShift * degreesPerKm;
-
-        // const shiftedCenter = {
-        //     lng: _center.geometry.coordinates[0],
-        //     lat: _center.geometry.coordinates[1] + latShift,
-        // };
-        // map.setCenter(shiftedCenter);
-
         const [minLng, minLat, maxLng, maxLat] = bbox(collection);
 
         map.resize();
-        console.log('I resized 2', map, map.getCanvas().height);
         map.fitBounds(
             [
                 [minLng, minLat], // southwest
@@ -138,27 +136,10 @@ export class ReportService {
                     right: 210,
                     bottom: 250,
                 },
-                maxZoom: 16, // prevent zooming in too far for very tight bounds
-                duration: 0, // smooth animation
+                maxZoom: 16,
+                duration: 0,
             }
         );
-
-        // map.fitBounds(
-        //     [
-        //         [minLng, minLat], // southwest
-        //         [maxLng, maxLat], // northeast
-        //     ],
-        //     {
-        //         padding: {
-        //             top: 300,
-        //             left: 210,
-        //             right: 210,
-        //             bottom: 10,
-        //         },
-        //         // maxZoom: 16,  // prevent zooming in too far for very tight bounds
-        //         // duration: 800 // smooth animation
-        //     }
-        // );
     }
 
     private modifyLayers(map: Map) {
@@ -308,6 +289,25 @@ export class ReportService {
         circle.setAttribute('r', '10');
 
         return circle;
+    }
+
+    private createTag(index: number): SVGTextElement {
+        const tag = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'text'
+        );
+        tag.textContent = tags[index];
+
+        tag.setAttribute('text-anchor', 'middle');
+        tag.setAttribute('dominant-baseline', 'middle');
+        tag.setAttribute('fill', '#000');
+        tag.setAttribute('font-size', '12');
+        tag.setAttribute('font-family', 'sans-serif');
+
+        // tag.setAttribute('dx', '-3');
+        // tag.setAttribute('dy', '3');
+
+        return tag;
     }
 
     private breakLines(text: string): string[] {
@@ -544,9 +544,9 @@ export class ReportService {
         svgLayer: SVGSVGElement
     ): SVGSVGElement {
         const pixel = map.project(point);
-        // svgElement.setAttribute('x', `${pixel.x}`);
+        svgElement.setAttribute('x', `${pixel.x}`);
         svgElement.setAttribute('cx', `${pixel.x}`);
-        // svgElement.setAttribute('y', `${pixel.y}`);
+        svgElement.setAttribute('y', `${pixel.y}`);
         svgElement.setAttribute('cy', `${pixel.y}`);
         svgLayer.appendChild(svgElement);
 
@@ -666,6 +666,8 @@ const colors = [
     '#997B60',
     '#7328A4',
 ];
+
+const tags = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm'];
 
 // const colors = [
 //     '#FAEB55',
