@@ -4,15 +4,14 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from awdb_com.types import StationDTO
-import requests
+from com.cache import RedisCache
+from com.helpers import await_
 
 
-def get_all_snotel_station_metadata() -> dict[str, StationDTO]:
+def get_all_snotel_station_metadata(cache: RedisCache) -> dict[str, StationDTO]:
     """Get all station metadata such as huc and longitude/latitude"""
     url = "https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?activeOnly=true&stationTriplets=*:*:SNTL"
-    resp = requests.get(url)
-    resp.raise_for_status()
-    asJson = resp.json()
+    asJson = await_(cache.get_or_fetch_json(url))
     return {
         station["stationTriplet"]: StationDTO.model_validate(station)
         for station in asJson
@@ -40,13 +39,17 @@ class SnowWaterEquivalentCollectionWithMetadata:
         str,
         StationData,
     ]
+    redis_cache: RedisCache
 
     def __init__(self):
+        self.redis_cache = RedisCache()
         yesterday = get_yesterdays_month_and_day()
-        averages = get_30_year_snow_water_equivalent_average(yesterday)
+        averages = get_30_year_snow_water_equivalent_average(
+            self.redis_cache, yesterday
+        )
         assert len(averages) > 0
 
-        daily = get_daily_snow_water_equivalent(yesterday)
+        daily = get_daily_snow_water_equivalent(self.redis_cache, yesterday)
         assert len(daily) > 0
 
         self.stations = self._make_station_dict(averages, daily)
@@ -94,9 +97,8 @@ class SnowWaterEquivalentCollectionWithMetadata:
 
         return averagedAverages
 
-    @classmethod
     def _make_station_dict(
-        cls,
+        self,
         idTo30YearSnowWaterEquivalent: StationTripleToSnowWaterEquivalent,
         idToYesterdaySnowWaterEquivalent: StationTripleToSnowWaterEquivalent,
     ):
@@ -104,7 +106,7 @@ class SnowWaterEquivalentCollectionWithMetadata:
         Merge the data from yesterday and 30 year average
         into one data dict
         """
-        allmetadata = get_all_snotel_station_metadata()
+        allmetadata = get_all_snotel_station_metadata(self.redis_cache)
         stations: dict[str, StationData] = {}
         for id, valueToday in idToYesterdaySnowWaterEquivalent.items():
             if valueToday is None:
@@ -135,7 +137,9 @@ def get_yesterdays_month_and_day():
     return (datetime.now() - timedelta(days=1)).strftime("%m-%d")
 
 
-def get_30_year_snow_water_equivalent_average(month_and_date: str) -> dict[str, float]:
+def get_30_year_snow_water_equivalent_average(
+    cache: RedisCache, month_and_date: str
+) -> dict[str, float]:
     """
     Fetch the json file from the awdb api; this file represents the 30 year average
     for each snotel station; the first item for each station is the year of the start
@@ -145,9 +149,7 @@ def get_30_year_snow_water_equivalent_average(month_and_date: str) -> dict[str, 
     Definition: WTEQ is the depth of water that would result if the entire snowpack were to melt instantaneously.
     """
     url = f"https://nwcc-apps.sc.egov.usda.gov/awdb/data/WTEQ/DAILY/AVG/WTEQ_DAILY_AVG_{month_and_date}.json"
-    resp = requests.get(url)
-    resp.raise_for_status()
-    asJson = resp.json()
+    asJson = await_(cache.get_or_fetch_json(url))
     snotelStationTripleToSnowWaterEquivalent: dict[str, float] = {}
     for station in asJson:
         dataArray = asJson[station]
@@ -158,7 +160,9 @@ def get_30_year_snow_water_equivalent_average(month_and_date: str) -> dict[str, 
     return snotelStationTripleToSnowWaterEquivalent
 
 
-def get_daily_snow_water_equivalent(month_and_date: str) -> dict[str, float]:
+def get_daily_snow_water_equivalent(
+    cache: RedisCache, month_and_date: str
+) -> dict[str, float]:
     """
     Returns the snow water equivalent for each snotel station; data may be missing
     if you fetch for the current day and the day is not yet complete
@@ -166,9 +170,7 @@ def get_daily_snow_water_equivalent(month_and_date: str) -> dict[str, float]:
     Definition: WTEQ is the depth of water that would result if the entire snowpack were to melt instantaneously.
     """
     url = f"https://nwcc-apps.sc.egov.usda.gov/awdb/data/WTEQ/DAILY/OBS/WTEQ_DAILY_OBS_{month_and_date}.json"
-    resp = requests.get(url)
-    resp.raise_for_status()
-    asJson = resp.json()
+    asJson = await_(cache.get_or_fetch_json(url))
     snotelStationTripleToWaterEquivalent: dict[str, float] = {}
     for station in asJson:
         dataArray = asJson[station]
