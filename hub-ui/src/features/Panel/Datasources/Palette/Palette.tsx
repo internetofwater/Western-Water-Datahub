@@ -15,13 +15,12 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import Info from "@/assets/Info";
 import PaletteIcon from "@/assets/Palette";
 import Select from "@/components/Select";
 import Tooltip from "@/components/Tooltip";
+import { Gradient } from "@/features/Panel/Datasources/Palette/Gradient";
 import styles from "@/features/Panel/Panel.module.css";
-import { Gradient } from "@/features/Panel/Refine/Palette/Gradient";
 import mainManager from "@/managers/Main.init";
 import { ICollection } from "@/services/edr.service";
 import useMainStore from "@/stores/main";
@@ -50,8 +49,6 @@ export const Palette: React.FC<Props> = (props) => {
   const addPalette = useMainStore((state) => state.addPalette);
   const collectionParameters = useMainStore((state) => state.parameters);
   const collectionPalettes = useMainStore((state) => state.palettes);
-
-  const mobile = useMediaQuery("(max-width: 899px)");
 
   const [show, setShow] = useState(false);
 
@@ -187,10 +184,10 @@ export const Palette: React.FC<Props> = (props) => {
 
   const isValid = Boolean(
     count &&
-    parameter &&
-    palette &&
-    isValidPalette({ count, parameter, palette, index: 1 }) &&
-    parameters.includes(parameter),
+      parameter &&
+      palette &&
+      isValidPalette({ count, parameter, palette, index: 1 }) &&
+      parameters.includes(parameter),
   );
   const noParameters = parameters.length === 0;
 
@@ -199,7 +196,7 @@ export const Palette: React.FC<Props> = (props) => {
       opened={show}
       onChange={setShow}
       closeOnClickOutside={false}
-      position={mobile ? undefined : "right"}
+      position="right"
       shadow="md"
     >
       <Group gap="var(--default-spacing)">

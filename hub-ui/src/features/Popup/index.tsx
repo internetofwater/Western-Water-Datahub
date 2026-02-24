@@ -18,7 +18,7 @@ import { TLayer, TLocation } from "@/stores/main/types";
 import useSessionStore from "@/stores/session";
 import { EOverlay } from "@/stores/session/types";
 import { CollectionType, getCollectionType } from "@/utils/collection";
-import { getIdStore } from "@/utils/getIdStore";
+import { getIdStore } from "@/utils/getLabel";
 import { getParameterUnit } from "@/utils/parameters";
 
 export type Parameter = {

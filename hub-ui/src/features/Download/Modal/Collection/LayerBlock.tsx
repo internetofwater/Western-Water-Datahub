@@ -24,7 +24,7 @@ import { ELoadingType, ENotificationType } from "@/stores/session/types";
 import { chunk } from "@/utils/chunk";
 import { CollectionType } from "@/utils/collection";
 import { createEmptyCsv } from "@/utils/csv";
-import { getIdStore } from "@/utils/getIdStore";
+import { getIdStore } from "@/utils/getLabel";
 import {
   buildCubeUrl,
   buildItemsUrl,

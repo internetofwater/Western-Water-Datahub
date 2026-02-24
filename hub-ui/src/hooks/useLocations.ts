@@ -12,7 +12,7 @@ import { ICollection } from "@/services/edr.service";
 import useMainStore from "@/stores/main";
 import { TLayer, TLocation } from "@/stores/main/types";
 import { ELoadingType } from "@/stores/session/types";
-import { getIdStore } from "@/utils/getIdStore";
+import { getIdStore } from "@/utils/getLabel";
 
 export const useLocations = (layer: TLayer) => {
   const locations = useMainStore((state) => state.locations);

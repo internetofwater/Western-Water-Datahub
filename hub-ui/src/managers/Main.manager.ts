@@ -74,7 +74,7 @@ import {
   isValidColorBrewerIndex,
   PaletteDefinition,
 } from "@/utils/colors/types";
-import { getIdStore } from "@/utils/getIdStore";
+import { getIdStore, getLabel } from "@/utils/getLabel";
 import { getRandomHexColor } from "@/utils/hexColor";
 import { isTopLayer } from "@/utils/isTopLayer";
 import { getRasterLayerSpecification } from "@/utils/layerDefinitions";
@@ -496,11 +496,16 @@ class MainManager {
 
     const useIdStore = StringIdentifierCollections.includes(collectionId);
 
+    const layer = this.getLayer({ collectionId }) ?? { label: null };
+
+    const { label } = layer;
+
     for (const feature of features) {
+      const featureLabel = label ? getLabel(feature, label) : null;
       if (useIdStore) {
         const id = getIdStore(feature);
         if (id) {
-          uniques.add(id);
+          uniques.add(featureLabel ? `${featureLabel} (${id})` : id);
         } else {
           console.error(
             "Unable to find id store on layer from collection: ",
@@ -510,7 +515,8 @@ class MainManager {
           );
         }
       } else if (feature.id) {
-        uniques.add(String(feature.id));
+        const id = String(feature.id);
+        uniques.add(featureLabel ? `${featureLabel} (${id})` : id);
       }
     }
 
@@ -1316,6 +1322,7 @@ class MainManager {
     } else {
       this.store.getState().addLayer({
         id: this.createUUID(),
+        label: null,
         collectionId: collection.id,
         color: getRandomHexColor(),
         parameters,
@@ -1421,6 +1428,7 @@ class MainManager {
           } else {
             this.store.getState().addLayer({
               id: this.createUUID(),
+              label: null,
               collectionId,
               color: getRandomHexColor(),
               parameters,

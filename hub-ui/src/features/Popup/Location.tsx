@@ -13,7 +13,7 @@ import { Chart } from "@/features/Popup/Chart";
 import styles from "@/features/Popup/Popup.module.css";
 import { Table } from "@/features/Table";
 import { TLayer, TLocation } from "@/stores/main/types";
-import { getIdStore } from "@/utils/getIdStore";
+import { getIdStore } from "@/utils/getLabel";
 
 type Props = {
   location: TLocation;

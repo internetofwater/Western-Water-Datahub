@@ -13,8 +13,8 @@ import { CollectionType } from "@/utils/collection";
 type Props = {
   collectionId: ICollection["id"];
   collectionType: CollectionType;
-  mapLocations: string[];
-  otherLocations: string[];
+  mapLocations: { id: string; label: string }[];
+  otherLocations: { id: string; label: string }[];
   selectedLocations: string[];
   addLocation: (location: string) => void;
   removeLocation: (location: string) => void;

@@ -33,7 +33,7 @@ import { ICollection } from "@/services/edr.service";
 import { TLayer, TLocation } from "@/stores/main/types";
 import { ELoadingType, ENotificationType } from "@/stores/session/types";
 import { createEmptyCsv } from "@/utils/csv";
-import { getIdStore } from "@/utils/getIdStore";
+import { getIdStore, getLabel } from "@/utils/getLabel";
 import { buildLocationUrl } from "@/utils/url";
 
 dayjs.extend(isSameOrBefore);
@@ -62,6 +62,7 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const [to, setTo] = useState<TLayer["to"]>(layer.to);
 
   const [id, setId] = useState<string>(String(location.id));
+  const [label, setLabel] = useState<string>(String(location.id));
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -94,10 +95,6 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
   }, [id, from, to]);
 
   useEffect(() => {
-    if (!layer) {
-      return;
-    }
-
     const collection = mainManager.getCollection(layer.collectionId);
 
     if (collection) {
@@ -114,7 +111,27 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
       setParameters(parameters);
     }
+
+    if (StringIdentifierCollections.includes(layer.collectionId)) {
+      const id = getIdStore(location);
+      if (id) {
+        setId(id);
+      } else {
+        setId(String(location.id));
+      }
+    } else {
+      setId(String(location.id));
+    }
   }, [location, layer]);
+
+  useEffect(() => {
+    if (layer.label) {
+      const label = getLabel(location, layer.label);
+      if (label) {
+        setLabel(`${label} (${id})`);
+      }
+    }
+  }, [layer, location, id]);
 
   useEffect(() => {
     isMounted.current = true;
@@ -126,19 +143,6 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
       }
     };
   }, []);
-
-  useEffect(() => {
-    if (StringIdentifierCollections.includes(layer.collectionId)) {
-      const id = getIdStore(location);
-      if (id) {
-        setId(id);
-      } else {
-        setId(String(location.id));
-      }
-    } else {
-      setId(String(location.id));
-    }
-  }, [layer, location]);
 
   const getFileName = () => {
     let name = `data-${location.id}-${layer.parameters.join("_")}`;
@@ -246,7 +250,7 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
             <Text size="md" fw={700}>
               {collection.title}
             </Text>
-            <Text size="md">{location.id}</Text>
+            <Text size="md">{label}</Text>
           </Group>
           <Anchor
             title="This location in the API"

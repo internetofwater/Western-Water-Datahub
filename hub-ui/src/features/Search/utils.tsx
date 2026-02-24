@@ -8,7 +8,7 @@ import { Feature } from "geojson";
 import { Group, Text } from "@mantine/core";
 import { Properties } from "@/components/Map/types";
 import styles from "@/features/Search/Search.module.css";
-import { getIdStore } from "@/utils/getIdStore";
+import { getIdStore } from "@/utils/getLabel";
 
 export const getId = (
   feature: Feature,
@@ -29,7 +29,7 @@ const stringify = (value: any): string => {
     : String(value);
 };
 
-function highlightText(
+const highlightText = (
   text: string,
   term: string,
   {
@@ -41,7 +41,7 @@ function highlightText(
     keyPrefix?: string;
     strongProps?: Record<string, unknown>;
   } = {},
-): ReactNode[] {
+): ReactNode[] => {
   if (!term) {
     return [text];
   }
@@ -89,9 +89,9 @@ function highlightText(
   }
 
   return nodes;
-}
+};
 
-export function highlightMatches(
+export const highlightMatches = (
   properties: Properties,
   searchTerm: string,
   limit?: number,
@@ -104,7 +104,7 @@ export function highlightMatches(
     quoteStringValues?: boolean;
     strongProps?: Record<string, unknown>;
   } = {},
-): ReactNode[] {
+): ReactNode[] => {
   if (!properties || !searchTerm) {
     return [];
   }
@@ -189,4 +189,4 @@ export function highlightMatches(
   }
 
   return lines;
-}
+};

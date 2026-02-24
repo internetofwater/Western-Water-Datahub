@@ -67,6 +67,8 @@ export type TGeometryTypes = GeoJsonGeometryTypes | "raster";
 
 export type TLayer = {
   id: string; // uuid
+  // Used in place of a unique identifier in places like the popups or download modal
+  label: string | null;
   collectionId: ICollection["id"];
   color: TColor;
   parameters: string[];

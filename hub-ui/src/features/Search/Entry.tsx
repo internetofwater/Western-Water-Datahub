@@ -85,7 +85,7 @@ export const Entry: React.FC<Props> = (props) => {
 
   return (
     <Stack className={styles.entry} gap="calc(var(--default-spacing) / 2)">
-      <Text size="sm" fw={700} lineClamp={1} title={title}>
+      <Text size="sm" fw={700} title={title}>
         {title}
       </Text>
       <TextInput

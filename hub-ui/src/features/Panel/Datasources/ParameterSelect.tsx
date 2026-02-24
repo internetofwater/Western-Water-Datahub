@@ -18,8 +18,8 @@ import Delete from "@/assets/Delete";
 import Info from "@/assets/Info";
 import Select from "@/components/Select";
 import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
+import { Palette } from "@/features/Panel/Datasources/Palette/Palette";
 import styles from "@/features/Panel/Panel.module.css";
-import { Palette } from "@/features/Panel/Refine/Palette/Palette";
 import { showPalette, showParameterSelect } from "@/features/Panel/utils";
 import { ICollection } from "@/services/edr.service";
 import useMainStore from "@/stores/main";
@@ -51,15 +51,15 @@ const ParameterSelect: React.FC<Props> = (props) => {
       (palette) => palette.collectionId === collection.id,
     )?.palette ?? null;
 
-  const addParameter = useMainStore((state) => state.addParameter);
-  const removeParameter = useMainStore((state) => state.removeParameter);
-  const hasParameter = useMainStore((state) => state.hasParameter);
+  const setCollectionParameters = useMainStore(
+    (state) => state.setCollectionParameters,
+  );
 
   const removePalette = useMainStore((state) => state.removePalette);
 
   const [parameterLimit, setParameterLimit] = useState<number>();
   const [collectionType, setCollectionType] = useState(CollectionType.Unknown);
-  const [localParameters, setLocalParameters] = useState(parameters);
+  // const [localParameters, setLocalParameters] = useState(parameters);
   const [data, setData] = useState<ComboboxData>([]);
 
   const [collectionLink, setCollectionLink] = useState("");
@@ -129,24 +129,28 @@ const ParameterSelect: React.FC<Props> = (props) => {
     }
   }, [collection]);
 
-  useEffect(() => {
-    for (const parameter of localParameters) {
-      if (hasParameter(collection.id, parameter)) {
-        removeParameter(collection.id, parameter);
-      } else {
-        addParameter(collection.id, parameter);
-      }
-    }
+  // useEffect(() => {
+  //   console.log('Here', parameters, localParameters);
 
-    parameters.forEach((parameter) => {
-      if (
-        !localParameters.includes(parameter) &&
-        hasParameter(collection.id, parameter)
-      ) {
-        removeParameter(collection.id, parameter);
-      }
-    });
-  }, [localParameters]);
+  //   for (const parameter of localParameters) {
+  //     if (hasParameter(collection.id, parameter)) {
+  //       removeParameter(collection.id, parameter);
+  //     } else {
+  //       addParameter(collection.id, parameter);
+  //     }
+  //   }
+
+  //   parameters.forEach((parameter) => {
+  //     console.log('Here', parameter)
+  //     if (!localParameters.includes(parameter) && hasParameter(collection.id, parameter)) {
+  //       removeParameter(collection.id, parameter);
+  //     }
+  //   });
+  // }, [localParameters]);
+
+  const handleChange = (parameters: string[]) => {
+    setCollectionParameters(collection.id, parameters);
+  };
 
   const handlePaletteClear = () => {
     removePalette(collection.id);
@@ -166,14 +170,14 @@ const ParameterSelect: React.FC<Props> = (props) => {
    * @constant
    */
   const isMissingParameters =
-    collectionType === CollectionType.EDRGrid && localParameters.length === 0;
+    collectionType === CollectionType.EDRGrid && parameters.length === 0;
   /**
    * There is a parameter count limit on for this dataset and we have exceeded it
    *
    * @constant
    */
   const isParameterSelectionOverLimit = parameterLimit
-    ? localParameters.length > parameterLimit
+    ? parameters.length > parameterLimit
     : false;
 
   useEffect(() => {
@@ -185,7 +189,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
 
   const getParameterError = () => {
     if (parameterLimit && isParameterSelectionOverLimit) {
-      return `Please remove ${localParameters.length - parameterLimit} parameter${localParameters.length - parameterLimit > 1 ? "s" : ""}`;
+      return `Please remove ${parameters.length - parameterLimit} parameter${parameters.length - parameterLimit > 1 ? "s" : ""}`;
     }
 
     if (isMissingParameters) {
@@ -246,8 +250,8 @@ const ParameterSelect: React.FC<Props> = (props) => {
           }
           placeholder="Select..."
           data={data}
-          value={localParameters}
-          onChange={setLocalParameters}
+          value={parameters}
+          onChange={handleChange}
           error={getParameterError()}
           description={getDescription(categories)}
           disabled={data.length === 0}

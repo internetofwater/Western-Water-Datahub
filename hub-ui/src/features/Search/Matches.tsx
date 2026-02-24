@@ -3,16 +3,18 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { MouseEvent, ReactNode, useMemo } from "react";
+import { MouseEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import { bbox } from "@turf/turf";
 import { Feature, GeoJsonProperties, Geometry } from "geojson";
 import { LngLatBoundsLike } from "mapbox-gl";
 import { Box, Button, Divider, Group, Stack, Text } from "@mantine/core";
 import { useMap } from "@/contexts/MapContexts";
 import styles from "@/features/Search/Search.module.css";
+import mainManager from "@/managers/Main.init";
 import { ICollection } from "@/services/edr.service";
 import useMainStore from "@/stores/main";
 import { TLocation } from "@/stores/main/types";
+import { getLabel } from "@/utils/getLabel";
 import { MAP_ID } from "../Map/config";
 import { getId, highlightMatches } from "./utils";
 
@@ -42,7 +44,17 @@ export const Matches: React.FC<Props> = (props) => {
   const addLocation = useMainStore((state) => state.addLocation);
   const removeLocation = useMainStore((state) => state.removeLocation);
 
+  const [labelProperty, setLabelProperty] = useState<string | null>(null);
+
   const { map } = useMap(MAP_ID);
+
+  useEffect(() => {
+    const layer = mainManager.getLayer({ collectionId });
+
+    if (layer) {
+      setLabelProperty(layer.label);
+    }
+  }, [collectionId]);
 
   const handleSelect = (id: TLocation["id"]) => {
     addLocation({
@@ -90,6 +102,7 @@ export const Matches: React.FC<Props> = (props) => {
       if (!matchedSet.has(id)) {
         continue;
       }
+      const label = labelProperty ? getLabel(location, labelProperty) : null;
       if (location.properties) {
         const lines = highlightMatches(
           location.properties,
@@ -100,7 +113,7 @@ export const Matches: React.FC<Props> = (props) => {
           nodes.push(
             <Box key={`sel-${id}`} component="div">
               <Text size="sm">
-                Location: {id}, matches{" "}
+                Location: {label ? `${label} (${id})` : id}, matches{" "}
                 {lines.length === lineLimit && <>(Top 5)</>}:
               </Text>
               <Group
@@ -128,16 +141,6 @@ export const Matches: React.FC<Props> = (props) => {
                   >
                     Go to
                   </Button>
-                  {/* <ActionIcon
-                    title="Go to location on the map"
-                    onClick={(e) => handleViewOnMap(e, location)}
-                    classNames={{
-                      root: styles.actionIconRoot,
-                      icon: styles.actionIcon,
-                    }}
-                  >
-                    <MapSearch />
-                  </ActionIcon> */}
                 </Stack>
               </Group>
             </Box>,
@@ -149,6 +152,7 @@ export const Matches: React.FC<Props> = (props) => {
   }, [
     empty,
     selectedLocations,
+    labelProperty,
     matchedSet,
     isStringIdentifierCollection,
     searchTerm,
@@ -165,6 +169,7 @@ export const Matches: React.FC<Props> = (props) => {
       if (!matchedSet.has(id)) {
         continue;
       }
+      const label = labelProperty ? getLabel(location, labelProperty) : null;
       if (location.properties) {
         const lines = highlightMatches(
           location.properties,
@@ -175,7 +180,7 @@ export const Matches: React.FC<Props> = (props) => {
           nodes.push(
             <Box key={`oth-${id}`} component="div">
               <Text size="sm">
-                Location: {id}, matches{" "}
+                Location: {label ? `${label} (${id})` : id}, matches{" "}
                 {lines.length === lineLimit && <>(Top 5)</>}:
               </Text>
               <Group
@@ -217,6 +222,7 @@ export const Matches: React.FC<Props> = (props) => {
   }, [
     empty,
     otherLocations,
+    labelProperty,
     matchedSet,
     isStringIdentifierCollection,
     searchTerm,
