@@ -69,8 +69,9 @@ export const Entry: React.FC<Props> = (props) => {
   return (
     <Stack className={styles.entry} gap="calc(var(--default-spacing) / 2)">
       <Select
+        size="xs"
         label={
-          <Text size="sm" fw={700} title={title}>
+          <Text size="xs" fw={700} title={title}>
             {title}
           </Text>
         }

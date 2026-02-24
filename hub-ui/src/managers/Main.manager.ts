@@ -342,7 +342,6 @@ class MainManager {
     signal?: AbortSignal,
     next?: string,
   ): Promise<ExtendedFeatureCollection<T, V>> {
-    console.log("");
     const data = await wwdhService.getItems<ExtendedFeatureCollection<T, V>>(
       collectionId,
       {

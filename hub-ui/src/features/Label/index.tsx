@@ -14,7 +14,7 @@ import {
   Title,
 } from "@mantine/core";
 import Info from "@/assets/Info";
-import SearchIcon from "@/assets/Search";
+import LabelIcon from "@/assets/Label";
 import Tooltip from "@/components/Tooltip";
 import { Entry } from "@/features/Label/Entry";
 import styles from "@/features/Label/Label.module.css";
@@ -44,7 +44,6 @@ const Label: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("overlay", overlay);
     if (overlay !== EOverlay.Label) {
       setShow(false);
     }
@@ -77,7 +76,7 @@ const Label: React.FC = () => {
             size="lg"
             onClick={() => handleShow(!show)}
           >
-            <SearchIcon />
+            <LabelIcon />
           </ActionIcon>
         </Tooltip>
       </Popover.Target>

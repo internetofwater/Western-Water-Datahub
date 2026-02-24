@@ -82,7 +82,7 @@ export const Provider: React.FC = () => {
   );
 
   return (
-    <Stack gap={0}>
+    <Stack gap={0} className={styles.filterStack}>
       <VisuallyHidden>{helpText}</VisuallyHidden>
       <MultiSelect
         size="xs"
@@ -102,6 +102,11 @@ export const Provider: React.FC = () => {
         onChange={setProvider}
         searchable
         clearable
+        comboboxProps={{
+          withinPortal: false,
+          position: "bottom-start",
+          width: "fit-content",
+        }}
       />
     </Stack>
   );

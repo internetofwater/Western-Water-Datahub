@@ -77,19 +77,26 @@ const Panel: React.FC = () => {
         style={{ display: isVisible ? "block" : "none" }}
       >
         <Stack
-          gap="calc(var(--default-spacing) * 1)"
+          gap="calc(var(--default-spacing) * 2)"
           px="calc(var(--default-spacing) * 2)"
           py="xl"
           justify="center"
           className={styles.panelContent}
         >
           <Header />
-          <Filters />
-          <Collection />
+          <Stack gap="calc(var(--default-spacing) * 2)">
+            <Filters />
+            <Divider />
+            <Collection />
+          </Stack>
           <Divider size="md" />
-          <Refine />
+          <Stack gap="calc(var(--default-spacing) * 2)">
+            <Refine />
+          </Stack>
           <Divider size="md" />
-          <Datasources />
+          <Stack gap="calc(var(--default-spacing) * 2)">
+            <Datasources />
+          </Stack>
           {/* <Controls /> */}
         </Stack>
       </Box>

@@ -46,7 +46,7 @@ export const Properties: React.FC<Props> = (props) => {
     <>
       {!showTable && (
         <>
-          <Text size="sm" fw={700} mt="var(--default-spacing)">
+          <Text size="xs" fw={700} mt="var(--default-spacing)">
             Properties:
           </Text>
           <Text size="xs"> {list.slice(0, count).join(", ")}</Text>

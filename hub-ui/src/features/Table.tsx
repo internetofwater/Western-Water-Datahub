@@ -42,7 +42,7 @@ export const Table: React.FC<Props> = (props) => {
     <>
       {search && (
         <TextInput
-          size="sm"
+          size="xs"
           label="Search Table"
           placeholder="Search property names and values"
           value={searchTerm}

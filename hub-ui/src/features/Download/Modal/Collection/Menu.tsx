@@ -59,15 +59,6 @@ export const Menu: React.FC<Props> = (props) => {
         value={searchTerm}
         onChange={(event) => onSearchTermChange(event.currentTarget.value)}
       />
-      <Button
-        size="xs"
-        disabled={selectedLocations.length === 0}
-        data-disabled={selectedLocations.length === 0}
-        onClick={onClear}
-        color="red-rocks"
-      >
-        Deselect All
-      </Button>
       {mapLocations.length > 0 || allLocations.length > 0 ? (
         <>
           {mapLocations.length > 0 && (
@@ -106,6 +97,15 @@ export const Menu: React.FC<Props> = (props) => {
           No {getLabel()}s
         </Text>
       )}
+      <Button
+        size="xs"
+        disabled={selectedLocations.length === 0}
+        data-disabled={selectedLocations.length === 0}
+        onClick={onClear}
+        color="red-rocks"
+      >
+        Deselect All
+      </Button>
     </Stack>
   );
 };

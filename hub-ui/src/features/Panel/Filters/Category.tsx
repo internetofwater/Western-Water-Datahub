@@ -136,7 +136,7 @@ export const Category: React.FC = () => {
   );
 
   return (
-    <Stack gap={0} className={styles.selectStack}>
+    <Stack gap={0} className={styles.filterStack}>
       <VisuallyHidden>{helpText}</VisuallyHidden>
       <MultiSelect
         size="xs"
@@ -162,11 +162,15 @@ export const Category: React.FC = () => {
         disabled={categoryOptions.length === 0 || isLoading}
         searchable
         clearable
+        comboboxProps={{
+          withinPortal: false,
+          position: "bottom-end",
+          width: "fit-content",
+        }}
       />
       {isLoading && (
         <Group>
-          <Loader color="blue" type="dots" />
-          <Text size="sm">Updating Categories</Text>
+          <Loader size="xs" color="blue" type="dots" />
         </Group>
       )}
     </Stack>

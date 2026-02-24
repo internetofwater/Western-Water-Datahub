@@ -12,11 +12,11 @@ import {
   Group,
   Stack,
   Text,
-  Tooltip,
 } from "@mantine/core";
 import Delete from "@/assets/Delete";
 import Info from "@/assets/Info";
 import Select from "@/components/Select";
+import Tooltip from "@/components/Tooltip";
 import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
 import { Palette } from "@/features/Panel/Datasources/Palette/Palette";
 import styles from "@/features/Panel/Panel.module.css";
@@ -128,25 +128,6 @@ const ParameterSelect: React.FC<Props> = (props) => {
       }
     }
   }, [collection]);
-
-  // useEffect(() => {
-  //   console.log('Here', parameters, localParameters);
-
-  //   for (const parameter of localParameters) {
-  //     if (hasParameter(collection.id, parameter)) {
-  //       removeParameter(collection.id, parameter);
-  //     } else {
-  //       addParameter(collection.id, parameter);
-  //     }
-  //   }
-
-  //   parameters.forEach((parameter) => {
-  //     console.log('Here', parameter)
-  //     if (!localParameters.includes(parameter) && hasParameter(collection.id, parameter)) {
-  //       removeParameter(collection.id, parameter);
-  //     }
-  //   });
-  // }, [localParameters]);
 
   const handleChange = (parameters: string[]) => {
     setCollectionParameters(collection.id, parameters);
@@ -262,7 +243,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
       ) : (
         <Stack gap="var(--default-spacing)">
           <Text size="xs" c="dimmed">
-            This data source is not a timeseries dataset.
+            This data source does not contain timeseries.
           </Text>
         </Stack>
       )}

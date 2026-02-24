@@ -85,10 +85,13 @@ export const Entry: React.FC<Props> = (props) => {
 
   return (
     <Stack className={styles.entry} gap="calc(var(--default-spacing) / 2)">
-      <Text size="sm" fw={700} title={title}>
-        {title}
-      </Text>
       <TextInput
+        size="xs"
+        label={
+          <Text size="xs" fw={700} title={title}>
+            {title}
+          </Text>
+        }
         value={search.searchTerm}
         onChange={(event) => handleChange(event.currentTarget.value)}
         placeholder="Search all features in data source"

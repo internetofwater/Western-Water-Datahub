@@ -21,6 +21,7 @@
   width: 1.5rem;
   max-width: 1.5rem;
   height: auto;
+  fill: var(--mantine-color-text);
 }
 
 .datasourceOptionLabel {
@@ -44,6 +45,11 @@
 .filterIcon {
   width: 1.5rem;
   height: auto;
+  fill: var(--mantine-color-text);
+}
+
+.filterStack {
+  max-width: calc(50% - var(--default-spacing));
 }
 
 .geoStack {
@@ -115,6 +121,7 @@
   width: 1.25rem;
   max-width: 1.25rem;
   height: auto;
+  fill: var(--mantine-color-text);
 }
 
 .switchRoot {
