@@ -28,6 +28,7 @@ import { v6 } from "uuid";
 import { stringify, GeoJSONFeature as WellknownFeature } from "wellknown";
 import { StoreApi, UseBoundStore } from "zustand";
 import {
+  CollectionDefaultLabels,
   CollectionRestrictions,
   idStoreProperty,
   ItemsOnlyCollections,
@@ -1319,9 +1320,11 @@ class MainManager {
         includeGeography,
       });
     } else {
+      const label = CollectionDefaultLabels[collection.id] ?? null;
+
       this.store.getState().addLayer({
         id: this.createUUID(),
-        label: null,
+        label,
         collectionId: collection.id,
         color: getRandomHexColor(),
         parameters,

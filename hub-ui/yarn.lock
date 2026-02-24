@@ -3702,6 +3702,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@zip.js/zip.js@npm:^2.8.21":
+  version: 2.8.21
+  resolution: "@zip.js/zip.js@npm:2.8.21"
+  checksum: 10c0/90a28db33568e600968e3741f529a8648b1e658a0a4a237b0e52d70bf22299b742cbf17d948f0f764f68c9581db4196589ec0ef8c175171355f517d93c8bed62
+  languageName: node
+  linkType: hard
+
 "abbrev@npm:^3.0.0":
   version: 3.0.1
   resolution: "abbrev@npm:3.0.1"
@@ -6063,6 +6070,7 @@ __metadata:
     "@types/react-dom": "npm:^19.1.6"
     "@types/wellknown": "npm:^0"
     "@vitejs/plugin-react": "npm:^4.5.2"
+    "@zip.js/zip.js": "npm:^2.8.21"
     colorbrewer: "npm:^1.6.1"
     dayjs: "npm:^1.11.13"
     echarts: "npm:^5.6.0"

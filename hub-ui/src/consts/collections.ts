@@ -167,7 +167,7 @@ export const CollectionRestrictions: Record<string, Restiction[]> = {
   [CollectionId.Prism]: [
     {
       type: RestrictionType.Day,
-      days: 365,
+      days: 1095,
       message: "Select a date range no greater than one year.",
     },
     {
@@ -210,4 +210,8 @@ export const CollectionRestrictions: Record<string, Restiction[]> = {
       message: "Select a date range no greater than twenty years.",
     },
   ],
+};
+
+export const CollectionDefaultLabels: Record<string, string> = {
+  [CollectionId.RISEEdr]: "locationName",
 };
