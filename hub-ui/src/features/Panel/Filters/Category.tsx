@@ -136,21 +136,22 @@ export const Category: React.FC = () => {
   );
 
   return (
-    <Stack gap={0} className={styles.selectStack}>
-      <Tooltip multiline label={helpText}>
-        <Group className={styles.filterTitleWrapper} gap="xs">
-          <Title order={3} size="h4">
-            Filter by Data Category
-          </Title>
-          <Info />
-        </Group>
-      </Tooltip>
+    <Stack gap={0} className={styles.filterStack}>
       <VisuallyHidden>{helpText}</VisuallyHidden>
       <MultiSelect
-        size="sm"
-        label="Category"
+        size="xs"
+        label={
+          <Tooltip multiline label={helpText}>
+            <Group className={styles.filterTitleWrapper} gap="xs">
+              <Title order={3} size="h4">
+                Data Category
+              </Title>
+              <Info />
+            </Group>
+          </Tooltip>
+        }
         description={
-          provider
+          provider.length > 0
             ? `Showing categories available for ${getProviderLabel(provider.length)}: ${provider.join(", ")}`
             : null
         }
@@ -161,11 +162,15 @@ export const Category: React.FC = () => {
         disabled={categoryOptions.length === 0 || isLoading}
         searchable
         clearable
+        comboboxProps={{
+          withinPortal: false,
+          position: "bottom-end",
+          width: "fit-content",
+        }}
       />
       {isLoading && (
         <Group>
-          <Loader color="blue" type="dots" />
-          <Text size="sm">Updating Categories</Text>
+          <Loader size="xs" color="blue" type="dots" />
         </Group>
       )}
     </Stack>

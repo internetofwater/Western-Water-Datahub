@@ -165,7 +165,7 @@ export const Region: React.FC = () => {
 
   return (
     <Skeleton
-      height={55} // Default dimensions of select
+      height={getError() ? 70 : 55}
       visible={regionOptions.length === 0}
     >
       <Select

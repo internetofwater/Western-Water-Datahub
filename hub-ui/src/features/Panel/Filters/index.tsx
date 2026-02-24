@@ -3,23 +3,28 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Stack, Title } from "@mantine/core";
+import { Box, Group, Stack, Title } from "@mantine/core";
+import Filter from "@/assets/Filter";
 import { Category } from "@/features/Panel/Filters/Category";
-import { Collection } from "@/features/Panel/Filters/Collection";
-import { Provider } from "./Provider";
+import { Provider } from "@/features/Panel/Filters/Provider";
+import styles from "@/features/Panel/Panel.module.css";
 
 const Filters: React.FC = () => {
   return (
-    <>
-      <Title order={2} size="h3">
-        Find a Data Source
-      </Title>
-      <Stack pl="var(--default-spacing)" gap="calc(var(--default-spacing) * 2)">
+    <Stack gap="var(--default-spacing)">
+      <Group gap="var(--default-spacing)" justify="space-between">
+        <Title order={3} size="h4">
+          Filters
+        </Title>
+        <Box component="span" className={styles.filterIcon}>
+          <Filter />
+        </Box>
+      </Group>
+      <Group gap="var(--default-spacing)" align="flex-start">
         <Provider />
         <Category />
-        <Collection />
-      </Stack>
-    </>
+      </Group>
+    </Stack>
   );
 };
 

@@ -449,7 +449,7 @@ export class EDRService extends Service {
   ): Promise<T> {
     const url: string =
       next ?? `${this.baseUrl}/collections/${collectionId}/items`;
-    const params = { ...options.params };
+    const params = next ? undefined : { ...options.params };
     const result: T = await request({
       url,
       params,

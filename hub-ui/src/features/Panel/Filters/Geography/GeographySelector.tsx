@@ -37,7 +37,7 @@ export const GeographySelector: React.FC<Props> = (props) => {
       value={geography}
       onChange={onChange}
     >
-      <Group mt="xs">
+      <Group mt="xs" gap="calc(var(--default-spacing) * 2)">
         {geographies.map((option) => (
           <Radio
             key={`geography-selector-${option.value}`}

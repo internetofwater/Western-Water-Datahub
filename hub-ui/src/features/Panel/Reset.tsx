@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Button } from "@mantine/core";
+import { Box, Button } from "@mantine/core";
 import Tooltip from "@/components/Tooltip";
 import { useMap } from "@/contexts/MapContexts";
 import { MAP_ID } from "@/features/Map/config";
@@ -78,15 +78,17 @@ export const Reset: React.FC = () => {
   };
 
   return (
-    <Tooltip label={getLabel()}>
-      <Button
-        disabled={isDisabled}
-        data-disabled={isDisabled}
-        onClick={handleClick}
-        color="red-rocks"
-      >
-        Reset
-      </Button>
-    </Tooltip>
+    <Box mt="auto">
+      <Tooltip label={getLabel()}>
+        <Button
+          disabled={isDisabled}
+          data-disabled={isDisabled}
+          onClick={handleClick}
+          color="red-rocks"
+        >
+          Reset
+        </Button>
+      </Tooltip>
+    </Box>
   );
 };

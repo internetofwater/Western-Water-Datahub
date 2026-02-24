@@ -157,10 +157,7 @@ export const Basin: React.FC = () => {
   };
 
   return (
-    <Skeleton
-      height={55} // Default dimensions of select
-      visible={basinOptions.length === 0}
-    >
+    <Skeleton height={getError() ? 70 : 55} visible={basinOptions.length === 0}>
       <Select
         key={`basin-select-${geographyFilterCollectionId}`}
         size="sm"

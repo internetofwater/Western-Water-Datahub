@@ -6,7 +6,8 @@
 import { useEffect, useState } from "react";
 import { Box, Divider, Stack } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import Controls from "@/features/Panel/Controls";
+import { Collection } from "@/features/Panel/Collection";
+import { Datasources } from "@/features/Panel/Datasources";
 import Filters from "@/features/Panel/Filters";
 import { Header } from "@/features/Panel/Header";
 import styles from "@/features/Panel/Panel.module.css";
@@ -76,17 +77,27 @@ const Panel: React.FC = () => {
         style={{ display: isVisible ? "block" : "none" }}
       >
         <Stack
-          gap="calc(var(--default-spacing) * 1)"
-          px="xl"
+          gap="calc(var(--default-spacing) * 2)"
+          px="calc(var(--default-spacing) * 2)"
           py="xl"
           justify="center"
           className={styles.panelContent}
         >
           <Header />
-          <Filters />
+          <Stack gap="calc(var(--default-spacing) * 2)">
+            <Filters />
+            <Divider />
+            <Collection />
+          </Stack>
           <Divider size="md" />
-          <Refine />
-          <Controls />
+          <Stack gap="calc(var(--default-spacing) * 2)">
+            <Refine />
+          </Stack>
+          <Divider size="md" />
+          <Stack gap="calc(var(--default-spacing) * 2)">
+            <Datasources />
+          </Stack>
+          {/* <Controls /> */}
         </Stack>
       </Box>
     </>

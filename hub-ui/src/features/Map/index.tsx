@@ -70,6 +70,17 @@ const MainMap: React.FC<Props> = (props) => {
 
     mainManager.setMap(map);
 
+    map.on("mousedown", () => {
+      if (
+        window &&
+        window.getSelection &&
+        window.getSelection() &&
+        window.getSelection()?.removeAllRanges
+      ) {
+        window.getSelection()!.removeAllRanges();
+      }
+    });
+
     if (initialMapLoad.current) {
       map.resize();
       map.fitBounds(
@@ -279,6 +290,9 @@ const MainMap: React.FC<Props> = (props) => {
         controls={{
           scaleControl: true,
           navigationControl: true,
+        }}
+        eventHandlers={{
+          doubleClickZoom: false,
         }}
       />
     </>

@@ -13,8 +13,8 @@ import { CollectionType } from "@/utils/collection";
 type Props = {
   collectionId: ICollection["id"];
   collectionType: CollectionType;
-  mapLocations: string[];
-  otherLocations: string[];
+  mapLocations: { id: string; label: string }[];
+  otherLocations: { id: string; label: string }[];
   selectedLocations: string[];
   addLocation: (location: string) => void;
   removeLocation: (location: string) => void;
@@ -59,15 +59,6 @@ export const Menu: React.FC<Props> = (props) => {
         value={searchTerm}
         onChange={(event) => onSearchTermChange(event.currentTarget.value)}
       />
-      <Button
-        size="xs"
-        disabled={selectedLocations.length === 0}
-        data-disabled={selectedLocations.length === 0}
-        onClick={onClear}
-        color="red-rocks"
-      >
-        Deselect All
-      </Button>
       {mapLocations.length > 0 || allLocations.length > 0 ? (
         <>
           {mapLocations.length > 0 && (
@@ -106,6 +97,15 @@ export const Menu: React.FC<Props> = (props) => {
           No {getLabel()}s
         </Text>
       )}
+      <Button
+        size="xs"
+        disabled={selectedLocations.length === 0}
+        data-disabled={selectedLocations.length === 0}
+        onClick={onClear}
+        color="red-rocks"
+      >
+        Deselect All
+      </Button>
     </Stack>
   );
 };

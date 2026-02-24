@@ -22,6 +22,7 @@ export type SourceOptions = {
   to?: string | null;
   noFetch?: boolean;
   paletteDefinition?: TLayer["paletteDefinition"];
+  includeGeography?: boolean;
 };
 
 export type StyleOptions<T extends GeoJsonProperties> = {

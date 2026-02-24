@@ -14,11 +14,13 @@ import {
   Text,
 } from "@mantine/core";
 import Delete from "@/assets/Delete";
+import Info from "@/assets/Info";
 import Select from "@/components/Select";
+import Tooltip from "@/components/Tooltip";
 import { CollectionRestrictions, RestrictionType } from "@/consts/collections";
+import { Palette } from "@/features/Panel/Datasources/Palette/Palette";
 import styles from "@/features/Panel/Panel.module.css";
-import { Palette } from "@/features/Panel/Refine/Palette/Palette";
-import mainManager from "@/managers/Main.init";
+import { showPalette, showParameterSelect } from "@/features/Panel/utils";
 import { ICollection } from "@/services/edr.service";
 import useMainStore from "@/stores/main";
 import { MainState } from "@/stores/main/types";
@@ -27,11 +29,12 @@ import { getCategoryLabel } from "@/utils/label";
 import { getParameterUnit } from "@/utils/parameters";
 
 type Props = {
-  collectionId: ICollection["id"];
+  collection: ICollection;
+  onError: (hasError: boolean) => void;
 };
 
 const ParameterSelect: React.FC<Props> = (props) => {
-  const { collectionId } = props;
+  const { collection, onError } = props;
 
   const collections = useMainStore((state) => state.collections);
   const parameterGroups = useMainStore((state) => state.parameterGroups);
@@ -41,23 +44,22 @@ const ParameterSelect: React.FC<Props> = (props) => {
   );
   const parameters =
     useMainStore((state) => state.parameters).find(
-      (parameter) => parameter.collectionId === collectionId,
+      (parameter) => parameter.collectionId === collection.id,
     )?.parameters ?? [];
   const palette =
     useMainStore((state) => state.palettes).find(
-      (palette) => palette.collectionId === collectionId,
+      (palette) => palette.collectionId === collection.id,
     )?.palette ?? null;
 
-  const addParameter = useMainStore((state) => state.addParameter);
-  const removeParameter = useMainStore((state) => state.removeParameter);
-  const hasParameter = useMainStore((state) => state.hasParameter);
+  const setCollectionParameters = useMainStore(
+    (state) => state.setCollectionParameters,
+  );
 
   const removePalette = useMainStore((state) => state.removePalette);
 
   const [parameterLimit, setParameterLimit] = useState<number>();
   const [collectionType, setCollectionType] = useState(CollectionType.Unknown);
-  const [localParameters, setLocalParameters] = useState(parameters);
-  const [name, setName] = useState<string>("Parameters");
+  // const [localParameters, setLocalParameters] = useState(parameters);
   const [data, setData] = useState<ComboboxData>([]);
 
   const [collectionLink, setCollectionLink] = useState("");
@@ -65,19 +67,8 @@ const ParameterSelect: React.FC<Props> = (props) => {
   const [documentationLink, setDocumentationLink] = useState("");
 
   useEffect(() => {
-    const collection = mainManager.getCollection(collectionId);
-
-    if (!collection) {
-      // TODO: show notification of error
-      return;
-    }
-
     const collectionType = getCollectionType(collection);
     setCollectionType(collectionType);
-
-    if (collection.title) {
-      setName(collection.title);
-    }
 
     const collectionLink =
       collection.links.find(
@@ -101,7 +92,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
       );
 
       categoryFilter = validGroups
-        .flatMap((group) => group.members?.[collectionId])
+        .flatMap((group) => group.members?.[collection.id])
         .filter(Boolean);
     }
 
@@ -125,7 +116,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
   }, [collections, selectedCollections, parameterGroups, categories]);
 
   useEffect(() => {
-    const restrictions = CollectionRestrictions[collectionId];
+    const restrictions = CollectionRestrictions[collection.id];
 
     if (restrictions && restrictions.length > 0) {
       const parameterLimitRestriction = restrictions.find(
@@ -136,55 +127,14 @@ const ParameterSelect: React.FC<Props> = (props) => {
         setParameterLimit(parameterLimitRestriction.count);
       }
     }
-  }, [collectionId]);
+  }, [collection]);
 
-  useEffect(() => {
-    for (const parameter of localParameters) {
-      if (hasParameter(collectionId, parameter)) {
-        removeParameter(collectionId, parameter);
-      } else {
-        addParameter(collectionId, parameter);
-      }
-    }
-
-    parameters.forEach((parameter) => {
-      if (
-        !localParameters.includes(parameter) &&
-        hasParameter(collectionId, parameter)
-      ) {
-        removeParameter(collectionId, parameter);
-      }
-    });
-  }, [localParameters]);
-
-  const showParameterSelect = (collectionId: ICollection["id"]) => {
-    const collection = mainManager.getCollection(collectionId);
-
-    if (collection) {
-      const collectionType = getCollectionType(collection);
-
-      return [CollectionType.EDR, CollectionType.EDRGrid].includes(
-        collectionType,
-      );
-    }
-
-    return false;
-  };
-
-  const showPalette = (collectionId: ICollection["id"]) => {
-    const collection = mainManager.getCollection(collectionId);
-
-    if (collection) {
-      const collectionType = getCollectionType(collection);
-
-      return CollectionType.EDRGrid === collectionType;
-    }
-
-    return false;
+  const handleChange = (parameters: string[]) => {
+    setCollectionParameters(collection.id, parameters);
   };
 
   const handlePaletteClear = () => {
-    removePalette(collectionId);
+    removePalette(collection.id);
   };
 
   const getDescription = (categories: MainState["categories"]) => {
@@ -201,19 +151,26 @@ const ParameterSelect: React.FC<Props> = (props) => {
    * @constant
    */
   const isMissingParameters =
-    collectionType === CollectionType.EDRGrid && localParameters.length === 0;
+    collectionType === CollectionType.EDRGrid && parameters.length === 0;
   /**
    * There is a parameter count limit on for this dataset and we have exceeded it
    *
    * @constant
    */
   const isParameterSelectionOverLimit = parameterLimit
-    ? localParameters.length > parameterLimit
+    ? parameters.length > parameterLimit
     : false;
+
+  useEffect(() => {
+    const hasError =
+      (parameterLimit && isParameterSelectionOverLimit) || isMissingParameters;
+
+    onError(hasError);
+  }, [isMissingParameters, isParameterSelectionOverLimit]);
 
   const getParameterError = () => {
     if (parameterLimit && isParameterSelectionOverLimit) {
-      return `Please remove ${localParameters.length - parameterLimit} parameter${localParameters.length - parameterLimit > 1 ? "s" : ""}`;
+      return `Please remove ${parameters.length - parameterLimit} parameter${parameters.length - parameterLimit > 1 ? "s" : ""}`;
     }
 
     if (isMissingParameters) {
@@ -231,41 +188,68 @@ const ParameterSelect: React.FC<Props> = (props) => {
       title: "Original source of pre-transformed data",
     },
     {
-      label: "Methodology",
+      label: "Info",
       href: documentationLink,
-      title: "The methodology of the original source data",
+      title: "Background information from the original source data",
     },
   ].filter((link) => link.href?.length > 0);
 
+  const helpText = (
+    <>
+      <Text size="sm">
+        Parameters are scientific measurements, contained by data sources, that
+        are associated with specific locations and times.
+      </Text>
+      <br />
+      <Text size="sm">
+        Selecting one or more parameters will show locations on the map that
+        contain at least one measurement for that parameter.
+      </Text>
+    </>
+  );
+
   return (
     <>
-      {showParameterSelect(collectionId) && data.length > 0 ? (
+      {showParameterSelect(collection.id) && data.length > 0 ? (
         <Select
           size="sm"
-          label={name}
+          label={
+            <Tooltip multiline label={helpText}>
+              <Group
+                className={styles.filterTitleWrapper}
+                gap="calc(var(--default-spacing) / 2)"
+              >
+                <Text size="sm">Parameters</Text>
+                <Info />
+                {collectionType === CollectionType.EDRGrid && (
+                  <Text size="sm" c="red">
+                    *
+                  </Text>
+                )}
+              </Group>
+            </Tooltip>
+          }
           placeholder="Select..."
           data={data}
-          value={localParameters}
-          onChange={setLocalParameters}
+          value={parameters}
+          onChange={handleChange}
           error={getParameterError()}
           description={getDescription(categories)}
           disabled={data.length === 0}
-          withAsterisk={collectionType === CollectionType.EDRGrid}
           searchable
           multiple
           clearable
         />
       ) : (
         <Stack gap="var(--default-spacing)">
-          <Text size="sm">{name}</Text>
           <Text size="xs" c="dimmed">
-            This data source is not a timeseries dataset.
+            This data source does not contain timeseries.
           </Text>
         </Stack>
       )}
-      {showPalette(collectionId) && (
+      {showPalette(collection.id) && (
         <Group gap="var(--default-spacing)" mt="var(--default-spacing)">
-          <Palette collectionId={collectionId} />
+          <Palette collectionId={collection.id} />
           <ActionIcon
             disabled={!palette}
             data-disabled={!palette}
@@ -283,7 +267,7 @@ const ParameterSelect: React.FC<Props> = (props) => {
         mt="var(--default-spacing)"
       >
         {links.map(({ label, href, title }, index) => (
-          <Fragment key={`pm-select-${collectionId}-link-${label}`}>
+          <Fragment key={`pm-select-${collection.id}-link-${label}`}>
             {index > 0 && <Divider orientation="vertical" />}
             <Anchor size="xs" target="_blank" href={href} title={title}>
               {label}

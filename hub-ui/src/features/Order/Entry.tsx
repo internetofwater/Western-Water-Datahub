@@ -29,7 +29,7 @@ export const Entry: React.FC<Props> = (props) => {
 
   return (
     <Group justify="space-between" className={styles.entry}>
-      <Text size="sm" fw={700} lineClamp={1} title={title} maw="85%">
+      <Text size="sm" fw={700} title={title} maw="85%">
         {title}
       </Text>
       <Control layer={layer} />

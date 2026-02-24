@@ -14,7 +14,7 @@ import { CollectionType } from "@/utils/collection";
 type Props = {
   collectionId: ICollection["id"];
   collectionType: CollectionType;
-  locations: string[];
+  locations: { id: string; label: string }[];
   selectedLocations: string[];
   addLocation: (location: string) => void;
   removeLocation: (location: string) => void;
@@ -35,8 +35,12 @@ export const LocationBlock: React.FC<Props> = (props) => {
   const [pageSize, setPageSize] = useState(
     locations.length > 10 ? 10 : locations.length,
   );
-  const [chunkedLocations, setChunkedLocations] = useState<string[][]>([]);
-  const [currentChunk, setCurrentChunk] = useState<string[]>([]);
+  const [chunkedLocations, setChunkedLocations] = useState<
+    { id: string; label: string }[][]
+  >([]);
+  const [currentChunk, setCurrentChunk] = useState<
+    { id: string; label: string }[]
+  >([]);
 
   const handlePageSizeChange = (pageSize: number) => {
     setPageSize(pageSize);
@@ -59,7 +63,7 @@ export const LocationBlock: React.FC<Props> = (props) => {
 
     for (let i = 0; i < chunkedLocations.length; i++) {
       const linkLocationInChunk = chunkedLocations[i].some(
-        (location) => location === linkLocation.id,
+        (location) => location.id === linkLocation.id,
       );
       if (linkLocationInChunk) {
         setPage(i + 1);
@@ -100,16 +104,14 @@ export const LocationBlock: React.FC<Props> = (props) => {
   return (
     <Stack component="section" gap="var(--default-spacing)">
       <Flex className={styles.locationList} gap="var(--default-spacing)">
-        {currentChunk.map((locationId) => (
+        {currentChunk.map(({ id, label }) => (
           <Checkbox
             size="xs"
-            className={`${linkLocation && linkLocation.collectionId === collectionId && locationId === String(linkLocation.id) ? styles.checkboxHighlight : ""}`}
-            key={`${collectionId}-location-select-${locationId}`}
-            label={locationId}
-            checked={selectedLocations.includes(locationId)}
-            onChange={(event) =>
-              handleChange(event.currentTarget.checked, locationId)
-            }
+            className={`${linkLocation && linkLocation.collectionId === collectionId && id === String(linkLocation.id) ? styles.checkboxHighlight : ""}`}
+            key={`${collectionId}-location-select-${id}`}
+            label={label}
+            checked={selectedLocations.includes(id)}
+            onChange={(event) => handleChange(event.currentTarget.checked, id)}
           />
         ))}
       </Flex>

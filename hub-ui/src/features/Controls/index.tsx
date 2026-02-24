@@ -10,6 +10,7 @@ import styles from "@/features/Controls/Controls.module.css";
 import DarkModeToggle from "@/features/Controls/DarkModeToggle";
 import Download from "@/features/Download";
 import Info from "@/features/Info";
+import Label from "@/features/Label";
 import Legend from "@/features/Legend";
 import Order from "@/features/Order";
 import Search from "@/features/Search";
@@ -50,6 +51,7 @@ const Controls: React.FC = () => {
           <Time />
           <Order />
           <Search />
+          <Label />
         </Stack>
         <Download />
       </Group>
