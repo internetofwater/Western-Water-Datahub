@@ -24,7 +24,6 @@ import X from '@/icons/X';
 import { useMediaQuery } from '@mantine/hooks';
 import useSessionStore from '@/stores/session';
 import { Overlay } from '@/stores/session/types';
-import { Report } from './Report';
 
 type Props = {
     accessToken: string;
@@ -52,25 +51,25 @@ const Panel: React.FC<Props> = (props) => {
     }, [mobile, overlay]);
 
     const items = useMemo(() => {
-        const items = [
-            {
-                title: 'Reservoirs',
-                content: <Reservoirs />,
-            },
+        if (accessToken) {
+            return [
+                {
+                    title: 'Reservoirs',
+                    content: <Reservoirs accessToken={accessToken} />,
+                },
+                {
+                    title: 'Reference Data',
+                    content: <Controls />,
+                },
+            ];
+        }
+
+        return [
             {
                 title: 'Reference Data',
                 content: <Controls />,
             },
         ];
-
-        if (accessToken) {
-            items.push({
-                title: 'Report',
-                content: <Report accessToken={accessToken} />,
-            });
-        }
-
-        return items;
     }, [accessToken]);
 
     const handleClick = () => {

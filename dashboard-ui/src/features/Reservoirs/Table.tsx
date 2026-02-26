@@ -31,10 +31,10 @@ import { getReservoirConfig } from '@/features/Map/utils';
 import MapSearch from '@/icons/MapSearch';
 
 type Props = {
-    filteredReservoirs: Feature<Point, OrganizedProperties>[];
+    reservoirs: Feature<Point, OrganizedProperties>[];
 };
 export const Table: React.FC<Props> = (props) => {
-    const { filteredReservoirs } = props;
+    const { reservoirs } = props;
 
     const setReservoir = useMainStore((state) => state.setReservoir);
     const setHighlight = useSessionStore((state) => state.setHighlight);
@@ -51,9 +51,9 @@ export const Table: React.FC<Props> = (props) => {
     const { map } = useMap(MAP_ID);
 
     useEffect(() => {
-        const chunkedLocations = chunk(filteredReservoirs, pageSize);
+        const chunkedLocations = chunk(reservoirs, pageSize);
         setChunkedLocations(chunkedLocations);
-    }, [filteredReservoirs, pageSize]);
+    }, [reservoirs, pageSize]);
 
     useEffect(() => {
         if (chunkedLocations.length === 0 || chunkedLocations.length < page) {
@@ -156,8 +156,8 @@ export const Table: React.FC<Props> = (props) => {
                                 <Text {...textProps}>Date Measured</Text>
                             </Stack>
                         </TableTh>
-                        <TableTh>
-                            <Stack {...stackProps}>
+                        <TableTh align="right">
+                            <Stack {...stackProps} align="flex-end">
                                 <Text {...textProps}>
                                     Storage
                                     <br /> (acre-feet)
@@ -168,8 +168,8 @@ export const Table: React.FC<Props> = (props) => {
                                 </Text>
                             </Stack>
                         </TableTh>
-                        <TableTh>
-                            <Stack {...stackProps}>
+                        <TableTh align="right">
+                            <Stack {...stackProps} align="flex-end">
                                 <Text {...textProps}>% Full</Text>
                                 <Text {...textProps}>% of Average</Text>
                             </Stack>
@@ -251,7 +251,7 @@ export const Table: React.FC<Props> = (props) => {
                                             </Text>
                                         </Stack>
                                     </TableTd>
-                                    <TableTd>
+                                    <TableTd align="right">
                                         <Stack
                                             {...stackProps}
                                             justify="space-between"
@@ -268,7 +268,7 @@ export const Table: React.FC<Props> = (props) => {
                                             </Text>
                                         </Stack>
                                     </TableTd>
-                                    <TableTd>
+                                    <TableTd align="right">
                                         <Stack
                                             {...stackProps}
                                             justify="space-between"
@@ -318,7 +318,7 @@ export const Table: React.FC<Props> = (props) => {
                     value={pageSize}
                     onChange={(value) => handlePageSizeChange(Number(value))}
                     min={1}
-                    max={filteredReservoirs.length}
+                    max={reservoirs.length}
                 />
                 <Pagination
                     size="sm"

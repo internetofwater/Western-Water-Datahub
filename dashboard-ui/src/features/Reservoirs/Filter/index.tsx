@@ -25,6 +25,8 @@ type Props = {
     handleSortByChange: (value: SortByType) => void;
     sortOrder: SortOrder;
     handleSortOrderChange: (value: SortOrder) => void;
+    limitByExtent: boolean;
+    handleLimitByExtentChange: (limitByExtent: boolean) => void;
 };
 
 export const Filter: React.FC<Props> = (props) => {
@@ -35,6 +37,8 @@ export const Filter: React.FC<Props> = (props) => {
         handleSortByChange,
         sortOrder,
         handleSortOrderChange,
+        limitByExtent,
+        handleLimitByExtentChange,
     } = props;
 
     const boundingGeographyLevel = useMainStore(
@@ -156,6 +160,18 @@ export const Filter: React.FC<Props> = (props) => {
                     {...labelsSwitchProps}
                 />
             )}
+            <Switch
+                size="xs"
+                mt="calc(var(--default-spacing) / 2)"
+                disabled={isFetchingReservoirs}
+                classNames={{ label: styles.label }}
+                label="Show reservoirs on map only"
+                checked={limitByExtent}
+                onClick={(event) =>
+                    handleLimitByExtentChange(event.currentTarget.checked)
+                }
+                {...labelsSwitchProps}
+            />
         </Stack>
     );
 };

@@ -1,0 +1,52 @@
+/**
+ * Copyright 2026 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+.left {
+    max-width: 75%;
+}
+
+.root {
+    padding-left: calc(var(--default-spacing) * 2);
+    padding-right: calc(var(--default-spacing) * 2);
+    padding-bottom: calc(var(--default-spacing) * 2);
+    border-radius: 1rem;
+}
+
+.input {
+    min-height: 2.25rem;
+    align-items: flex-start;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.pillsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    max-height: 10rem;
+    overflow-y: auto;
+    padding-bottom: 1rem;
+}
+
+.label {
+    padding-inline-start: calc(var(--default-spacing) / 2);
+    padding-inline-end: calc(var(--default-spacing) * 0.75);
+}
+
+[data-mantine-color-scheme='dark'] .control {
+    background-color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='light'] .control {
+    background-color: var(--mantine-color-gray-4);
+}
+
+[data-mantine-color-scheme='dark'] .content {
+    background-color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='light'] .content {
+    background-color: var(--mantine-color-gray-2);
+}

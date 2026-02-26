@@ -48,6 +48,7 @@ import { StateField } from '@/features/Map/types/state';
 import { Huc02BasinField } from '@/features/Map/types/basin';
 import { BoundingGeographyLevel } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
+import debounce from 'lodash.debounce';
 
 type Props = {
     accessToken: string;
@@ -87,6 +88,8 @@ const MainMap: React.FC<Props> = (props) => {
 
     const loadingInstances = useSessionStore((state) => state.loadingInstances);
 
+    const setMapMoved = useSessionStore((state) => state.setMapMoved);
+
     const [shouldResize, setShouldResize] = useState(false);
 
     const isMounted = useRef(true);
@@ -95,8 +98,17 @@ const MainMap: React.FC<Props> = (props) => {
 
     // useSnotelData();
 
+    const handleMapMove = () => {
+        if (isMounted.current) {
+            setMapMoved(Date.now());
+        }
+    };
+
+    const debouncedHandleMapMove = debounce(handleMapMove, 150);
+
     useEffect(() => {
         return () => {
+            debouncedHandleMapMove.cancel();
             isMounted.current = false;
         };
     }, []);
@@ -239,6 +251,10 @@ const MainMap: React.FC<Props> = (props) => {
             loadImages(map);
         });
 
+        // Detect map movements, update features connected to map extent
+        map.on('moveend', debouncedHandleMapMove);
+        map.on('zoomend', debouncedHandleMapMove);
+
         // Resize and fit bounds to ensure consistent loading behavior in all screen sizes
         map.resize();
         map.fitBounds(
@@ -258,6 +274,8 @@ const MainMap: React.FC<Props> = (props) => {
             // map.off('click', SubLayerId.StatesFill, handleStatesClick);
             map.off('click', reservoirLayers, handleReservoirsClick);
             map.off('touchend', reservoirLayers, handleReservoirsClick);
+            map.off('moveend', debouncedHandleMapMove);
+            map.off('zoomend', debouncedHandleMapMove);
         };
     }, [map]);
 

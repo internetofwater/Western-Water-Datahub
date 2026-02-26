@@ -21,6 +21,8 @@ const useSessionStore = create<SessionState>()(
         setHighlight: (hoverFeature) => set({ highlight: hoverFeature }),
         helpTab: HelpTab.About,
         setHelpTab: (helpTab) => set({ helpTab }),
+        mapMoved: 0,
+        setMapMoved: (mapMoved) => set({ mapMoved }),
         ...createLoadingSlice(set, get, store),
         ...createNotificationsSlice(set, get, store),
     }))

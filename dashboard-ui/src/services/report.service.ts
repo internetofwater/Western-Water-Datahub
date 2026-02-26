@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { LayerId, SubLayerId } from '@/features/Map/consts';
+import { LayerId, SourceId, SubLayerId } from '@/features/Map/consts';
 import { ReservoirConfig } from '@/features/Map/types';
 import { getReservoirConfig } from '@/features/Map/utils';
 import {
@@ -13,14 +13,14 @@ import {
 } from '@/features/Reservior/TeacupDiagram/utils';
 import { Feature, GeoJsonProperties, Point } from 'geojson';
 import { Map } from 'mapbox-gl';
-import { IdentifiableProperties } from '@/services/report.utils';
 import { bbox, featureCollection } from '@turf/turf';
 import dayjs from 'dayjs';
+import { OrganizedProperties } from '@/features/Reservoirs/types';
 
 export class ReportService {
     public async report(
         map: Map,
-        reservoirs: Feature<Point, IdentifiableProperties>[],
+        reservoirs: Feature<Point, OrganizedProperties>[],
         container: HTMLDivElement
     ) {
         this.positionView(map, reservoirs);
@@ -32,7 +32,9 @@ export class ReportService {
         //const reservoir of reservoirsInCircle
         for (let i = 0; i < reservoirsInCircle.length; i++) {
             const reservoir = reservoirsInCircle[i];
-            const config = getReservoirConfig(reservoir.properties.configId);
+            const config = getReservoirConfig(
+                reservoir.properties.sourceId as SourceId
+            );
             if (config) {
                 const mapPositionCircle = this.createCircle(i);
                 const point = reservoir.geometry.coordinates as [
@@ -114,10 +116,7 @@ export class ReportService {
         this.exportCombinedImage(map, svgOverlay);
     }
 
-    private positionView(
-        map: Map,
-        reservoirs: Feature<Point, IdentifiableProperties>[]
-    ) {
+    private positionView(map: Map, reservoirs: Feature<Point>[]) {
         const collection = featureCollection(reservoirs);
 
         const [minLng, minLat, maxLng, maxLat] = bbox(collection);

@@ -224,6 +224,7 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         regionConnectorProperty: ResvizReservoirField.DoiRegionName,
         basinConnectorProperty: ResvizReservoirField.Huc06,
         stateConnectorProperty: ResvizReservoirField.State,
+        mainLayer: LayerId.ResvizEDRReservoirs,
         connectedLayers: [
             LayerId.ResvizEDRReservoirs,
             SubLayerId.ResvizEDRReservoirLabels,
