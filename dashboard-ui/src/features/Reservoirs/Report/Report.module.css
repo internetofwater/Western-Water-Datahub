@@ -36,7 +36,7 @@
 }
 
 [data-mantine-color-scheme='dark'] .control {
-    background-color: var(--mantine-color-dark-0);
+    background-color: var(--mantine-color-dark-4);
 }
 
 [data-mantine-color-scheme='light'] .control {
@@ -44,7 +44,7 @@
 }
 
 [data-mantine-color-scheme='dark'] .content {
-    background-color: var(--mantine-color-dark-0);
+    background-color: var(--mantine-color-dark-6);
 }
 
 [data-mantine-color-scheme='light'] .content {

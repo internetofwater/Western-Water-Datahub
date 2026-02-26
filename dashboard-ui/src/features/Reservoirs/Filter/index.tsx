@@ -148,30 +148,32 @@ export const Filter: React.FC<Props> = (props) => {
                 </ActionIcon>
             </Group>
             <BoundingGeography />
-            {boundingGeographyLevel !== BoundingGeographyLevel.None && (
+            <Group>
+                {boundingGeographyLevel !== BoundingGeographyLevel.None && (
+                    <Switch
+                        size="xs"
+                        mt="calc(var(--default-spacing) / 2)"
+                        disabled={isFetchingReservoirs}
+                        classNames={{ label: styles.label }}
+                        label={getLabel(boundingGeographyLevel)}
+                        checked={showAllLabels}
+                        onClick={handleLabelsChange}
+                        {...labelsSwitchProps}
+                    />
+                )}
                 <Switch
                     size="xs"
                     mt="calc(var(--default-spacing) / 2)"
                     disabled={isFetchingReservoirs}
                     classNames={{ label: styles.label }}
-                    label={getLabel(boundingGeographyLevel)}
-                    checked={showAllLabels}
-                    onClick={handleLabelsChange}
+                    label="Hide Reservoirs not on Map"
+                    checked={limitByExtent}
+                    onClick={(event) =>
+                        handleLimitByExtentChange(event.currentTarget.checked)
+                    }
                     {...labelsSwitchProps}
                 />
-            )}
-            <Switch
-                size="xs"
-                mt="calc(var(--default-spacing) / 2)"
-                disabled={isFetchingReservoirs}
-                classNames={{ label: styles.label }}
-                label="Show reservoirs on map only"
-                checked={limitByExtent}
-                onClick={(event) =>
-                    handleLimitByExtentChange(event.currentTarget.checked)
-                }
-                {...labelsSwitchProps}
-            />
+            </Group>
         </Stack>
     );
 };

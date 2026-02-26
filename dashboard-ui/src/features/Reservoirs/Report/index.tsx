@@ -148,11 +148,20 @@ const Report: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
+        const hidden = document.createElement('div');
+
+        // height: 0, width: 0, overflow: 'hidden'
+
+        hidden.style.width = '0';
+        hidden.style.height = '0';
+        hidden.style.overflow = 'hidden';
+
+        document.body.appendChild(hidden);
 
         container.current = document.createElement('div');
         container.current.style.width = '1600px';
         container.current.style.height = '900px';
-        document.body.appendChild(container.current);
+        hidden.appendChild(container.current);
         cloneMap.current = new Map({
             accessToken: accessToken,
             container: container.current,
@@ -185,7 +194,6 @@ const Report: React.FC<Props> = (props) => {
 
     return (
         <Accordion
-            defaultValue={'report-content'}
             classNames={{
                 root: styles.root,
                 content: styles.content,
