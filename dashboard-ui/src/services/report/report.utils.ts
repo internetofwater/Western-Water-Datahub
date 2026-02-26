@@ -7,7 +7,7 @@ import { ReservoirConfig } from '@/features/Map/types';
 import * as turf from '@turf/turf';
 import { Feature, GeoJsonProperties, Point } from 'geojson';
 import { Map } from 'mapbox-gl';
-import { positions } from './report.service';
+import { MAX_POSITIONS } from './report.consts';
 
 export type IdentifiableProperties = {
     configId: ReservoirConfig['id'];
@@ -82,7 +82,7 @@ export const getHighestCapacityReservoirs = (
     const sortedFeatures = sortFeaturesByValue(
         features,
         config.capacityProperty
-    ).slice(0, positions.length);
+    ).slice(0, MAX_POSITIONS);
 
     return sortedFeatures;
 };

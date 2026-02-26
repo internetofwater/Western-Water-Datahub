@@ -10,10 +10,10 @@ import { ExpressionSpecification, Map as MapObj } from 'mapbox-gl';
 
 export type ItemWithSource = ComboboxItem & { source?: string };
 
-export const formatOptions = <T extends GeoJsonProperties>(
-    features: Feature<Geometry, T>[],
-    getValueProperty: (feature: Feature<Geometry, T>) => string,
-    getLabelProperty: (feature: Feature<Geometry, T>) => string,
+export const formatOptions = <T extends Geometry, V extends GeoJsonProperties>(
+    features: Feature<T, V>[],
+    getValueProperty: (feature: Feature<T, V>) => string,
+    getLabelProperty: (feature: Feature<T, V>) => string,
     defaultLabel: string = 'All',
     defaultValue: string = 'all',
     noDefault: boolean = false,

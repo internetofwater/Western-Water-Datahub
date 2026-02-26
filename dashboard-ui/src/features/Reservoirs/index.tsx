@@ -5,7 +5,7 @@
 
 import { useReservoirData } from '@/hooks/useReservoirData';
 import { Filter } from '@/features/Reservoirs/Filter';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
     OrganizedFeature,
     OrganizedProperties,
@@ -21,6 +21,8 @@ import Report from '@/features/Reservoirs/Report';
 import useSessionStore from '@/stores/session';
 import { useMap } from '@/contexts/MapContexts';
 import { pointsWithinPolygon, polygon } from '@turf/turf';
+import { MAX_POSITIONS } from '@/services/report/report.consts';
+import { getKey } from './utils';
 
 type Props = {
     accessToken: string;
@@ -35,10 +37,17 @@ const Reservoirs: React.FC<Props> = (props) => {
 
     const mapMoved = useSessionStore((state) => state.mapMoved);
 
+    // Text string representing current search term
     const [search, setSearch] = useState('');
+    // Which column is the table sorted by
     const [sortBy, setSortBy] = useState<SortBy>(SortBy.Capacity);
+    // Only show reservoirs in the table & report that are w/in map extent
     const [limitByExtent, setLimitByExtent] = useState(true);
+    // Select reservoirs for the report from the table
     const [pickFromTable, setPickFromTable] = useState(false);
+
+    // Reservoirs included in the report
+    const [selectedReservoirs, setSelectedReservoirs] = useState<string[]>([]);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
@@ -242,6 +251,45 @@ const Reservoirs: React.FC<Props> = (props) => {
         );
     }, [showByExtent]);
 
+    useEffect(() => {
+        if (pickFromTable) {
+            return;
+        }
+
+        const newSelectedReservoirs = [];
+        for (const reservoirIdentifier of selectedReservoirs) {
+            const [id, sourceId] = reservoirIdentifier.split('_');
+
+            if (
+                limitedReservoirs.some(
+                    (reservoir) =>
+                        String(reservoir.id) === id &&
+                        reservoir.properties.sourceId === sourceId
+                )
+            ) {
+                newSelectedReservoirs.push(`${id}_${sourceId}`);
+            }
+        }
+
+        if (newSelectedReservoirs.length < MAX_POSITIONS) {
+            const selectionSet = new Set(newSelectedReservoirs);
+
+            for (const feature of limitedReservoirs) {
+                if (newSelectedReservoirs.length >= MAX_POSITIONS) {
+                    break;
+                }
+
+                const key = getKey(feature);
+                if (!selectionSet.has(key)) {
+                    newSelectedReservoirs.push(key);
+                    selectionSet.add(key);
+                }
+            }
+        }
+
+        setSelectedReservoirs(newSelectedReservoirs);
+    }, [limitedReservoirs]);
+
     const handleSearchChange = (search: string) => setSearch(search);
     const handleSortByChange = (sortBy: SortBy) => setSortBy(sortBy);
     const handleSortOrderChange = (sortOrder: SortOrder) =>
@@ -250,26 +298,37 @@ const Reservoirs: React.FC<Props> = (props) => {
         setLimitByExtent(limitByExtent);
     const handlePickFromTableChange = (pickFromTable: boolean) =>
         setPickFromTable(pickFromTable);
+    const handleSelectedReservoirsChange = (selectedReservoirs: string[]) =>
+        setSelectedReservoirs(selectedReservoirs);
 
     return (
         <>
             <Filter
                 search={search}
-                handleSearchChange={handleSearchChange}
+                onSearchChange={handleSearchChange}
                 sortBy={sortBy}
-                handleSortByChange={handleSortByChange}
+                onSortByChange={handleSortByChange}
                 sortOrder={sortOrder}
-                handleSortOrderChange={handleSortOrderChange}
+                onSortOrderChange={handleSortOrderChange}
                 limitByExtent={limitByExtent}
-                handleLimitByExtentChange={handleLimitByExtentChange}
+                onLimitByExtentChange={handleLimitByExtentChange}
             />
             <Report
                 accessToken={accessToken}
                 reservoirs={limitedReservoirs}
                 pickFromTable={pickFromTable}
-                handlePickFromTableChange={handlePickFromTableChange}
+                onPickFromTableChange={handlePickFromTableChange}
+                selectedReservoirs={selectedReservoirs}
+                onSelectedReservoirsChange={handleSelectedReservoirsChange}
             />
-            {filteredReservoirs && <Table reservoirs={limitedReservoirs} />}
+            {filteredReservoirs && (
+                <Table
+                    reservoirs={limitedReservoirs}
+                    pickFromTable={pickFromTable}
+                    selectedReservoirs={selectedReservoirs}
+                    onSelectedReservoirsChange={handleSelectedReservoirsChange}
+                />
+            )}
         </>
     );
 };

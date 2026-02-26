@@ -20,25 +20,25 @@ import { useLoading } from '@/hooks/useLoading';
 
 type Props = {
     search: string;
-    handleSearchChange: (value: string) => void;
+    onSearchChange: (value: string) => void;
     sortBy: SortByType;
-    handleSortByChange: (value: SortByType) => void;
+    onSortByChange: (value: SortByType) => void;
     sortOrder: SortOrder;
-    handleSortOrderChange: (value: SortOrder) => void;
+    onSortOrderChange: (value: SortOrder) => void;
     limitByExtent: boolean;
-    handleLimitByExtentChange: (limitByExtent: boolean) => void;
+    onLimitByExtentChange: (limitByExtent: boolean) => void;
 };
 
 export const Filter: React.FC<Props> = (props) => {
     const {
         search,
-        handleSearchChange,
+        onSearchChange,
         sortBy,
-        handleSortByChange,
+        onSortByChange,
         sortOrder,
-        handleSortOrderChange,
+        onSortOrderChange,
         limitByExtent,
-        handleLimitByExtentChange,
+        onLimitByExtentChange,
     } = props;
 
     const boundingGeographyLevel = useMainStore(
@@ -125,8 +125,8 @@ export const Filter: React.FC<Props> = (props) => {
                 >
                     <State />
                 </Box>
-                <Search search={search} handleChange={handleSearchChange} />
-                <SortBy sortBy={sortBy} handleChange={handleSortByChange} />
+                <Search search={search} handleChange={onSearchChange} />
+                <SortBy sortBy={sortBy} handleChange={onSortByChange} />
                 <ActionIcon
                     size="sm"
                     disabled={isFetchingReservoirs}
@@ -139,9 +139,7 @@ export const Filter: React.FC<Props> = (props) => {
                         icon: styles.actionIcon,
                     }}
                     onClick={() =>
-                        handleSortOrderChange(
-                            sortOrder === 'asc' ? 'desc' : 'asc'
-                        )
+                        onSortOrderChange(sortOrder === 'asc' ? 'desc' : 'asc')
                     }
                 >
                     <Up />
@@ -169,7 +167,7 @@ export const Filter: React.FC<Props> = (props) => {
                     label="Hide Reservoirs not on Map"
                     checked={limitByExtent}
                     onClick={(event) =>
-                        handleLimitByExtentChange(event.currentTarget.checked)
+                        onLimitByExtentChange(event.currentTarget.checked)
                     }
                     {...labelsSwitchProps}
                 />

@@ -9,7 +9,7 @@ import {
     AccordionItem,
     AccordionPanel,
     Button,
-    ComboboxData,
+    ComboboxItem,
     Group,
     Stack,
     Switch,
@@ -17,7 +17,7 @@ import {
 } from '@mantine/core';
 import { MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
-import { positions, ReportService } from '@/services/report.service';
+import { ReportService } from '@/services/report/report.service';
 import { useEffect, useRef, useState } from 'react';
 import { Map } from 'mapbox-gl';
 import { loadImages } from '@/features/Map/utils';
@@ -27,28 +27,31 @@ import { OrganizedProperties } from '@/features/Reservoirs/types';
 import { formatOptions } from '../Filter/Selectors/utils';
 import { useLoading } from '@/hooks/useLoading';
 import Select from '@/components/Select';
+import { MAX_POSITIONS } from '@/services/report/report.consts';
+import { getKey } from '../utils';
 
 type Props = {
     accessToken: string;
     reservoirs: Feature<Point, OrganizedProperties>[];
     pickFromTable: boolean;
-    handlePickFromTableChange: (pickFromTable: boolean) => void;
+    onPickFromTableChange: (pickFromTable: boolean) => void;
+    selectedReservoirs: string[];
+    onSelectedReservoirsChange: (selectedReservoirs: string[]) => void;
 };
-
-const MAX_RESERVOIRS = positions.length;
 
 const Report: React.FC<Props> = (props) => {
     const {
         accessToken,
         reservoirs,
         pickFromTable,
-        handlePickFromTableChange,
+        onPickFromTableChange,
+        selectedReservoirs,
+        onSelectedReservoirsChange,
     } = props;
 
     const [isMapLoaded, setIsMapLoaded] = useState(false);
 
-    const [selectedReservoirs, setSelectedReservoirs] = useState<string[]>([]);
-    const [options, setOptions] = useState<ComboboxData>([]);
+    const [options, setOptions] = useState<ComboboxItem[]>([]);
 
     const cloneMap = useRef<Map>(null);
     const container = useRef<HTMLDivElement>(null);
@@ -78,7 +81,7 @@ const Report: React.FC<Props> = (props) => {
                 features.push(reservoir);
 
                 // Stop early if we are already at the limit
-                if (features.length === MAX_RESERVOIRS) {
+                if (features.length === MAX_POSITIONS) {
                     break;
                 }
             }
@@ -92,57 +95,29 @@ const Report: React.FC<Props> = (props) => {
     };
 
     useEffect(() => {
-        if (pickFromTable) {
-            return;
-        }
-
-        const options = formatOptions(
+        const newOptions = formatOptions(
             reservoirs,
-            (feature) =>
-                `${String(feature.id)}_${String(feature.properties.sourceId)}`,
+            (feature) => getKey(feature),
             (feature) => feature.properties.name,
             '',
             '',
             true
         );
 
-        setOptions(options);
+        if (pickFromTable) {
+            const hiddenOptions = options.filter(
+                (option) =>
+                    selectedReservoirs.includes(option.value) &&
+                    !newOptions.some(
+                        (newOption) => newOption.value === option.value
+                    )
+            );
 
-        const newSelectedReservoirs = [];
-        for (const reservoirIdentifier of selectedReservoirs) {
-            const [id, sourceId] = reservoirIdentifier.split('_');
-
-            if (
-                reservoirs.some(
-                    (reservoir) =>
-                        String(reservoir.id) === id &&
-                        reservoir.properties.sourceId === sourceId
-                )
-            ) {
-                newSelectedReservoirs.push(`${id}_${sourceId}`);
-            }
+            newOptions.push(...hiddenOptions);
         }
 
-        if (!pickFromTable && newSelectedReservoirs.length < MAX_RESERVOIRS) {
-            const selectionSet = new Set(newSelectedReservoirs);
-
-            for (const feature of reservoirs) {
-                if (newSelectedReservoirs.length >= MAX_RESERVOIRS) {
-                    break;
-                }
-
-                const key = `${String(feature.id)}_${String(
-                    feature.properties.sourceId
-                )}`;
-                if (!selectionSet.has(key)) {
-                    newSelectedReservoirs.push(key);
-                    selectionSet.add(key);
-                }
-            }
-        }
-
-        setSelectedReservoirs(newSelectedReservoirs);
-    }, [reservoirs, pickFromTable]);
+        setOptions(newOptions);
+    }, [reservoirs]);
 
     useEffect(() => {
         if (!map) {
@@ -188,6 +163,12 @@ const Report: React.FC<Props> = (props) => {
         };
     }, []);
 
+    // const filter: OptionsFilter = ({ options }) => {
+    //     return (options as ComboboxItem[]).filter((option) =>
+    //         reservoirs.some((reservoir) => getKey(reservoir) === option.value)
+    //     );
+    // };
+
     const labelsSwitchProps = isFetchingReservoirs
         ? { 'data-disabled': true }
         : {};
@@ -222,7 +203,8 @@ const Report: React.FC<Props> = (props) => {
                             placeholder="Select..."
                             data={options}
                             value={selectedReservoirs}
-                            onChange={setSelectedReservoirs}
+                            // filter={filter}
+                            onChange={onSelectedReservoirsChange}
                             disabled={isFetchingReservoirs}
                         />
                         <Group
@@ -237,7 +219,7 @@ const Report: React.FC<Props> = (props) => {
                                 label="Select reservoirs from table"
                                 checked={pickFromTable}
                                 onClick={(event) =>
-                                    handlePickFromTableChange(
+                                    onPickFromTableChange(
                                         event.currentTarget.checked
                                     )
                                 }

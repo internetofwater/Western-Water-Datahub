@@ -16,6 +16,11 @@ import { Map } from 'mapbox-gl';
 import { bbox, featureCollection } from '@turf/turf';
 import dayjs from 'dayjs';
 import { OrganizedProperties } from '@/features/Reservoirs/types';
+import {
+    RESERVOIR_POSITIONS,
+    TAG_COLORS,
+    TAGS,
+} from '@/services/report/report.consts';
 
 export class ReportService {
     public async report(
@@ -58,7 +63,7 @@ export class ReportService {
                     svgOverlay
                 );
 
-                const position = positions[i];
+                const position = RESERVOIR_POSITIONS[i];
 
                 const reservoirSVG = this.createReservoirSVG(config, reservoir);
                 svgOverlay = this.drawSVGAtPosition(
@@ -277,7 +282,7 @@ export class ReportService {
             'circle'
         );
 
-        const color = colors[index];
+        const color = TAG_COLORS[index];
 
         circle.setAttribute('stroke', `#000`);
 
@@ -295,7 +300,7 @@ export class ReportService {
             'http://www.w3.org/2000/svg',
             'text'
         );
-        tag.textContent = tags[index];
+        tag.textContent = TAGS[index];
 
         tag.setAttribute('text-anchor', 'middle');
         tag.setAttribute('dominant-baseline', 'middle');
@@ -628,45 +633,6 @@ export class ReportService {
         img.src = url;
     }
 }
-
-export const positions = [
-    // Right most
-    { x: 1400, y: 300 },
-    // Top
-    { x: 1400, y: 90 }, // Top Right
-    { x: 1150, y: 20 },
-    { x: 900, y: 20 },
-    { x: 650, y: 20 },
-    { x: 400, y: 20 },
-    { x: 150, y: 20 },
-    // left
-    { x: 60, y: 250 }, // Top left
-    { x: 60, y: 500 },
-
-    // Bottom
-    { x: 300, y: 675 },
-    { x: 550, y: 675 },
-    { x: 800, y: 675 },
-    { x: 1050, y: 675 },
-];
-
-const colors = [
-    '#4BC2FA',
-    '#9DFA57',
-    '#EE4BFA',
-    '#FAAB4B',
-    '#A168A5',
-    '#087F2F',
-    '#62737A',
-    '#3966D5',
-    '#6FAA23',
-    '#FF570E',
-    '#CFF9E0',
-    '#997B60',
-    '#7328A4',
-];
-
-const tags = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm'];
 
 // const colors = [
 //     '#FAEB55',

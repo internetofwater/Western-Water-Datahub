@@ -5,6 +5,7 @@
 
 import {
     ActionIcon,
+    Checkbox,
     Group,
     NumberInput,
     Pagination,
@@ -18,23 +19,32 @@ import {
     Text,
     Tooltip,
 } from '@mantine/core';
-import { MouseEvent, useEffect, useState } from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 import { MAP_ID, SourceId } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { Feature, Point } from 'geojson';
 import { OrganizedProperties } from '@/features/Reservoirs/types';
-import { chunk } from '@/features/Reservoirs/utils';
+import { chunk, getKey } from '@/features/Reservoirs/utils';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import useMainStore from '@/stores/main';
 import useSessionStore from '@/stores/session';
 import { getReservoirConfig } from '@/features/Map/utils';
 import MapSearch from '@/icons/MapSearch';
+import { MAX_POSITIONS } from '@/services/report/report.consts';
 
 type Props = {
     reservoirs: Feature<Point, OrganizedProperties>[];
+    pickFromTable: boolean;
+    selectedReservoirs: string[];
+    onSelectedReservoirsChange: (selectedReservoirs: string[]) => void;
 };
 export const Table: React.FC<Props> = (props) => {
-    const { reservoirs } = props;
+    const {
+        reservoirs,
+        pickFromTable,
+        selectedReservoirs,
+        onSelectedReservoirsChange,
+    } = props;
 
     const setReservoir = useMainStore((state) => state.setReservoir);
     const setHighlight = useSessionStore((state) => state.setHighlight);
@@ -130,6 +140,24 @@ export const Table: React.FC<Props> = (props) => {
         setHighlight(null);
     };
 
+    const handleSelectionChange = (
+        event: ChangeEvent<HTMLInputElement>,
+        key: string
+    ) => {
+        const selected = event.currentTarget.checked;
+        if (selected) {
+            const newSelectedReservoirs = [...selectedReservoirs, key];
+
+            onSelectedReservoirsChange(newSelectedReservoirs);
+        } else {
+            const newSelectedReservoirs = selectedReservoirs.filter(
+                (selectedReservoir) => selectedReservoir !== key
+            );
+
+            onSelectedReservoirsChange(newSelectedReservoirs);
+        }
+    };
+
     const textProps = {
         size: 'xs',
         fw: 700,
@@ -150,7 +178,14 @@ export const Table: React.FC<Props> = (props) => {
             >
                 <TableThead>
                     <TableTr>
-                        <TableTh className={styles.nameColumn}>
+                        {pickFromTable && <TableTh />}
+                        <TableTh
+                            className={
+                                pickFromTable
+                                    ? styles.nameColumnSmall
+                                    : styles.nameColumn
+                            }
+                        >
                             <Stack {...stackProps}>
                                 <Text {...textProps}>Name</Text>
                                 <Text {...textProps}>Date Measured</Text>
@@ -160,11 +195,13 @@ export const Table: React.FC<Props> = (props) => {
                             <Stack {...stackProps} align="flex-end">
                                 <Text {...textProps}>
                                     Storage
-                                    <br /> (acre-feet)
+                                    <br /> (
+                                    {pickFromTable ? 'ac-ft' : 'acre-feet'})
                                 </Text>
                                 <Text {...textProps}>
                                     Capacity
-                                    <br /> (acre-feet)
+                                    <br /> (
+                                    {pickFromTable ? 'ac-ft' : 'acre-feet'})
                                 </Text>
                             </Stack>
                         </TableTh>
@@ -199,6 +236,11 @@ export const Table: React.FC<Props> = (props) => {
                             percentAverage,
                             sourceId,
                         } = feature.properties;
+
+                        const key = getKey(feature);
+
+                        const selectedReservoir =
+                            selectedReservoirs.includes(key);
 
                         const textProps = {
                             size: 'xs',
@@ -241,6 +283,33 @@ export const Table: React.FC<Props> = (props) => {
                                     }
                                     onMouseLeave={() => handleMouseExit()}
                                 >
+                                    {pickFromTable && (
+                                        <TableTd>
+                                            <Group
+                                                justify="center"
+                                                align="center"
+                                            >
+                                                <Checkbox
+                                                    size="xs"
+                                                    disabled={
+                                                        !selectedReservoir &&
+                                                        selectedReservoirs.length ===
+                                                            MAX_POSITIONS
+                                                    }
+                                                    checked={selectedReservoir}
+                                                    onClick={(e) =>
+                                                        e.stopPropagation()
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleSelectionChange(
+                                                            e,
+                                                            key
+                                                        )
+                                                    }
+                                                />
+                                            </Group>
+                                        </TableTd>
+                                    )}
                                     <TableTd>
                                         <Stack {...stackProps}>
                                             <Text {...textProps} fw="bold">
@@ -314,7 +383,7 @@ export const Table: React.FC<Props> = (props) => {
                     className={styles.pageSizeInput}
                     label="Reservoirs per page"
                     disabled={currentChunk.length === 0}
-                    data-disabled={currentChunk.length === 0}
+                    // data-disabled={currentChunk.length === 0}
                     value={pageSize}
                     onChange={(value) => handlePageSizeChange(Number(value))}
                     min={1}
