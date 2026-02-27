@@ -231,6 +231,7 @@ const Legend: React.FC = () => {
             <Box
                 style={{ height: 0, width: 0, overflow: 'hidden' }}
                 mt="calc(var(--default-spacing) * -1)"
+                aria-hidden
             >
                 <Box className={styles.hiddenLegend} id="legend">
                     <Title order={3} className={styles.mapToolTitle}>
@@ -242,8 +243,32 @@ const Legend: React.FC = () => {
                     />
                 </Box>
                 <img
-                    src="/report-legend.png"
-                    id="report-legend"
+                    src="report-legends/drought-legend.png"
+                    id="drought-legend"
+                    alt=""
+                    aria-hidden
+                />
+                <img
+                    src="report-legends/precip-legend.png"
+                    id="precip-legend"
+                    alt=""
+                    aria-hidden
+                />
+                <img
+                    src="report-legends/temp-legend.png"
+                    id="temp-legend"
+                    alt=""
+                    aria-hidden
+                />
+                <img
+                    src="report-legends/none-legend.png"
+                    id="none-legend"
+                    alt=""
+                    aria-hidden
+                />
+                <img
+                    src="mapbox-logo-white.png"
+                    id="mapbox-logo"
                     alt=""
                     aria-hidden
                 />

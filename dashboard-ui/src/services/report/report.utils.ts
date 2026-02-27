@@ -99,3 +99,16 @@ export const sortFeaturesByValue = <T extends Record<string, string | number>>(
 
     return sortedFeatures;
 };
+
+export const metersPerPixel = (latitude: number, zoomLevel: number) => {
+    const latRad = (latitude * Math.PI) / 180;
+    return (156543.03392 * Math.cos(latRad)) / Math.pow(2, zoomLevel);
+};
+
+export const feetPerPixel = (latitude: number, zoomLevel: number) => {
+    return metersPerPixel(latitude, zoomLevel) * 3.28084;
+};
+
+export const milesPerPixel = (latitude: number, zoomLevel: number) => {
+    return metersPerPixel(latitude, zoomLevel) / 1609.344;
+};

@@ -18,7 +18,7 @@
     --button-primary-hover: #383838;
     --button-secondary-hover: #f2f2f2;
 
-    font-family: var(--font-geist-sans);
+    font-family: inherit;
     overflow: hidden;
 }
 

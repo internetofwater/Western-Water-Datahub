@@ -32,11 +32,12 @@ export class ReportService {
         this.modifyLayers(map);
         let svgOverlay = this.addSVGLayer(container);
         svgOverlay.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        svgOverlay.setAttribute('font', '"Geist", "Geist Fallback"');
 
-        const reservoirsInCircle = this.sortReservoirs(map, reservoirs);
+        // const reservoirsInCircle = this.sortReservoirs(map, reservoirs);
         //const reservoir of reservoirsInCircle
-        for (let i = 0; i < reservoirsInCircle.length; i++) {
-            const reservoir = reservoirsInCircle[i];
+        for (let i = 0; i < reservoirs.length; i++) {
+            const reservoir = reservoirs[i];
             const config = getReservoirConfig(
                 reservoir.properties.sourceId as SourceId
             );
@@ -90,10 +91,11 @@ export class ReportService {
 
                 const indicatorCircle = this.createCircle(i);
                 const indicatorPosition = {
-                    x: position.x - Math.abs(160 - infoBoxWidth) / 2, // position at bottom left corner
+                    x: position.x - Math.abs(160 - infoBoxWidth) / 2 - 2, // position at bottom left corner
                     y:
                         position.y +
-                        (Number(reservoirSVG.getAttribute('height')) ?? 0),
+                        (Number(reservoirSVG.getAttribute('height')) ?? 0) -
+                        2,
                 };
 
                 svgOverlay = this.drawSVGAtPosition(
@@ -290,7 +292,7 @@ export class ReportService {
 
         circle.setAttribute('fill', color);
 
-        circle.setAttribute('r', '10');
+        circle.setAttribute('r', '14');
 
         return circle;
     }
@@ -300,12 +302,13 @@ export class ReportService {
             'http://www.w3.org/2000/svg',
             'text'
         );
-        tag.textContent = TAGS[index];
+        tag.textContent = TAGS[index].toUpperCase();
 
         tag.setAttribute('text-anchor', 'middle');
         tag.setAttribute('dominant-baseline', 'middle');
         tag.setAttribute('fill', '#000');
-        tag.setAttribute('font-size', '12');
+        tag.setAttribute('font-size', '14');
+        tag.setAttribute('font-weight', 'bold');
         tag.setAttribute('font-family', 'sans-serif');
 
         // tag.setAttribute('dx', '-3');
@@ -387,6 +390,10 @@ export class ReportService {
                 'http://www.w3.org/2000/svg',
                 'text'
             );
+            // Name
+            if (i < name.length) {
+                t.setAttribute('font-weight', 'bold');
+            }
             t.textContent = text;
             t.setAttribute('x', '8');
             t.setAttribute('y', `${20 + i * 16}`);
@@ -580,13 +587,45 @@ export class ReportService {
         svgElement.setAttribute('transform', `translate(${x}, ${y})`);
     }
 
+    private getLegend(map: Map): string {
+        // [RasterBaseLayers.Precipitation]: {
+        //     [LayerId.USDroughtMonitor]: false,
+        //     [LayerId.NOAAPrecipSixToTen]: true,
+        //     [LayerId.NOAATempSixToTen]: false,
+        // },
+        if (
+            map.getLayer(LayerId.USDroughtMonitor) &&
+            map.getLayoutProperty(LayerId.USDroughtMonitor, 'visibility') ===
+                'visible'
+        ) {
+            return 'drought-legend';
+        }
+        if (
+            map.getLayer(LayerId.NOAAPrecipSixToTen) &&
+            map.getLayoutProperty(LayerId.NOAAPrecipSixToTen, 'visibility') ===
+                'visible'
+        ) {
+            return 'precip-legend';
+        }
+        if (
+            map.getLayer(LayerId.NOAATempSixToTen) &&
+            map.getLayoutProperty(LayerId.NOAATempSixToTen, 'visibility') ===
+                'visible'
+        ) {
+            return 'temp-legend';
+        }
+        return 'none-legend';
+    }
+
     private exportCombinedImage(map: Map, svgOverlay: SVGSVGElement) {
         const mapCanvas = map.getCanvas();
         const width = mapCanvas.width;
         const height = mapCanvas.height;
 
+        const legendId = this.getLegend(map);
+
         const reportLegend = document.getElementById(
-            'report-legend'
+            legendId
         ) as HTMLImageElement | null;
 
         const canvas = document.createElement('canvas');
@@ -633,21 +672,3 @@ export class ReportService {
         img.src = url;
     }
 }
-
-// const colors = [
-//     '#FAEB55',
-//     '#816EBA',
-//     '#7E55FA',
-//     '#A5A06F',
-//     '#6C677A',
-//     '#504E3F',
-//     '#5D5311',
-//     '#812663',
-//     '#521FCA',
-//     '#095D97',
-//     '#488CD6',
-//     '#78AF13',
-//     '#4F0B02',
-//     '#C54130',
-//     '#F872B3',
-// ];
