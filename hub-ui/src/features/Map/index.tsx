@@ -178,7 +178,7 @@ const MainMap: React.FC<Props> = (props) => {
               layer.collectionId,
             );
 
-            const locations: TLocation[] = uniqueFeatures.map((id) => ({
+            const locations: TLocation[] = uniqueFeatures.map(({ id }) => ({
               id,
               collectionId: layer.collectionId,
             }));

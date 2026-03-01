@@ -28,7 +28,8 @@ dayjs.extend(isSameOrBefore);
 
 type Props = {
   collectionId: ICollection["id"];
-  locationId: TLocation["id"];
+  /** CHANGED: support multiple locations */
+  locationIds: Array<TLocation["id"]>;
   title: string;
   parameters: string[];
   from: string | null;
@@ -40,7 +41,7 @@ type Props = {
 export const Chart: React.FC<Props> = (props) => {
   const {
     collectionId,
-    locationId,
+    locationIds,
     parameters,
     from,
     to,
@@ -48,13 +49,13 @@ export const Chart: React.FC<Props> = (props) => {
     onData = () => null,
   } = props;
 
-  const controller = useRef<AbortController>(null);
+  const controller = useRef<AbortController | null>(null);
   const isMounted = useRef(true);
 
   const computedColorScheme = useComputedColorScheme();
 
-  const [data, setData] = useState<CoverageCollection | CoverageJSON | null>(
-    null,
+  const [data, setData] = useState<Array<CoverageCollection | CoverageJSON>>(
+    [],
   );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,39 +63,93 @@ export const Chart: React.FC<Props> = (props) => {
     Array<{ parameter: string; label: string }>
   >([]);
 
+  /** Validate a single coverage */
+  const isValid = (coverage: CoverageCollection | CoverageJSON) => {
+    if (isCoverageCollection(coverage) && coverage.coverages.length === 0) {
+      return false;
+    }
+    return true;
+  };
+
   const fetchData = async () => {
     const loadingInstance = loadingManager.add(
-      `Fetching chart data for location: ${locationId}, of collection: ${collectionId}`,
+      `Fetching chart data for locations: ${locationIds.join(", ")}, of collection: ${collectionId}`,
       ELoadingType.Data,
     );
     setIsLoading(true);
+
     try {
       controller.current = new AbortController();
+      const signal = controller.current.signal;
 
       const datetime = getDatetime(from, to);
+      const params = {
+        "parameter-name": parameters.join(","),
+        ...(datetime ? { datetime } : {}),
+      };
 
-      const coverageCollection = await wwdhService.getLocation<
-        CoverageCollection | CoverageJSON
-      >(collectionId, String(locationId), {
-        signal: controller.current.signal,
-        params: {
-          "parameter-name": parameters.join(","),
-          ...(datetime ? { datetime } : {}),
-        },
-      });
+      const requests = locationIds.map((locationId) =>
+        wwdhService.getLocation<CoverageCollection | CoverageJSON>(
+          collectionId,
+          locationId,
+          {
+            signal,
+            params,
+          },
+        ),
+      );
 
-      if (isMounted.current) {
-        setData(coverageCollection);
-        onData();
+      const results = await Promise.allSettled(requests);
+
+      if (!isMounted.current) {
+        return;
       }
-    } catch (error) {
+
+      // Collect successes and filter out empty collections
+      const fulfilled = results
+        .filter(
+          (r): r is PromiseFulfilledResult<CoverageCollection | CoverageJSON> =>
+            r.status === "fulfilled",
+        )
+        .map((r) => r.value)
+        .filter(isValid);
+
+      // Track rejections
+      // Added some handling to improve dev mode experience
+      const rejected = results.filter(
+        (r): r is PromiseRejectedResult =>
+          r.status === "rejected" &&
+          r.reason !== "Component unmount" &&
+          !(typeof r.reason === "string" && r.reason.includes("AbortError")),
+      );
+
+      setData(fulfilled);
+
+      if (rejected.length > 0) {
+        // TODO: add more indepth notification
+        notificationManager.show(
+          `Some locations failed to load (${rejected.length}/${results.length}).`,
+          ENotificationType.Info,
+          8000,
+        );
+      }
+
+      // No data
+      if (fulfilled.length === 0 && rejected.length > 0) {
+        setError("Failed to load data for the requested locations.");
+      } else {
+        setError(null);
+      }
+
+      onData();
+    } catch (err) {
       if (
-        (error as Error)?.name === "AbortError" ||
-        (typeof error === "string" && error === "Component unmount")
+        (err as Error)?.name === "AbortError" ||
+        (typeof err === "string" && err === "Component unmount")
       ) {
-        console.log("Fetch request canceled");
-      } else if ((error as Error)?.message) {
-        const _error = error as Error;
+        console.warn("Fetch request canceled");
+      } else if ((err as Error)?.message) {
+        const _error = err as Error;
         notificationManager.show(
           `Error: ${_error.message}`,
           ENotificationType.Error,
@@ -102,7 +157,6 @@ export const Chart: React.FC<Props> = (props) => {
         );
         setError(_error.message);
       }
-
       onData();
     } finally {
       if (isMounted.current) {
@@ -114,23 +168,26 @@ export const Chart: React.FC<Props> = (props) => {
 
   useEffect(() => {
     isMounted.current = true;
-    setData(null);
+    setData([]);
     setError(null);
 
     const isValidRange =
       from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
+
     if (isValidRange) {
       void fetchData();
     } else {
       setError("Invalid date range provided");
     }
+
     return () => {
       isMounted.current = false;
       if (controller.current) {
         controller.current.abort("Component unmount");
       }
     };
-  }, [locationId, from, to]);
+    // Re-run when locations or date filters change
+  }, [locationIds, from, to, collectionId, parameters]);
 
   useEffect(() => {
     const collection = mainManager.getCollection(collectionId);
@@ -139,37 +196,35 @@ export const Chart: React.FC<Props> = (props) => {
         parameter,
         label: getLabel(collection, parameter),
       }));
-
       setLabels(labels);
     }
-  }, [parameters]);
-
-  const isValid = (coverage: CoverageCollection | CoverageJSON) => {
-    if (isCoverageCollection(coverage) && coverage.coverages.length === 0) {
-      return false;
-    }
-
-    return true;
-  };
+  }, [parameters, collectionId]);
 
   return (
     <Skeleton
       visible={isLoading}
       className={`${className} ${styles.chartWrapper}`}
     >
-      {data && isValid(data) ? (
+      {data.length > 0 ? (
         <LineChart
           data={data}
           legend
           legendEntries={parameters}
           prettyLabels={labels}
           theme={computedColorScheme}
-          filename={`line-chart-${locationId}-${parameters.join("-")}`}
+          filename={`line-chart-${locationIds.join(",")}-${String(
+            collectionId,
+          )}-${parameters.join("-")}`}
         />
       ) : (
         !error && (
           <Group justify="center" align="center" className={styles.chartNoData}>
-            <Text>No Data found for {parameters.join(", ")}</Text>
+            <Text>
+              No Data found for{" "}
+              {labels.length > 0
+                ? labels.map((l) => l.label).join(", ")
+                : parameters.join(", ")}
+            </Text>
           </Group>
         )
       )}
@@ -184,3 +239,4 @@ export const Chart: React.FC<Props> = (props) => {
     </Skeleton>
   );
 };
+``;

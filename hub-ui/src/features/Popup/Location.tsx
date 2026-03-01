@@ -62,7 +62,7 @@ export const Location: React.FC<Props> = (props) => {
         {datasetName.length > 0 && parameters.length > 0 && id && (
           <Chart
             collectionId={location.collectionId}
-            locationId={id}
+            locationIds={[id]}
             parameters={parameters.map((parameter) => parameter.id)}
             title={datasetName}
             from={layer.from}

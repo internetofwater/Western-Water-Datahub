@@ -18,7 +18,7 @@ import {
   GeoJSONFeature,
   GeoJSONSource,
   LngLatBoundsLike,
-  Map,
+  Map as MapboxMap,
   MapMouseEvent,
   MapTouchEvent,
   Popup,
@@ -86,7 +86,7 @@ import { getRasterLayerSpecification } from "@/utils/layerDefinitions";
  */
 class MainManager {
   private store: UseBoundStore<StoreApi<MainState>>;
-  private map: Map | null = null;
+  private map: MapboxMap | null = null;
   private hoverPopup: Popup | null = null;
 
   constructor(store: UseBoundStore<StoreApi<MainState>>) {
@@ -97,7 +97,7 @@ class MainManager {
    *
    * @function
    */
-  public setMap(map: Map): void {
+  public setMap(map: MapboxMap): void {
     if (!this.map) {
       this.map = map;
     }
@@ -491,21 +491,27 @@ class MainManager {
   public getUniqueIds(
     features: GeoJSONFeature[],
     collectionId: ICollection["id"],
-  ): Array<string> {
-    const uniques = new Set<string>();
+  ): Array<{ id: string; label: string }> {
+    // Use a Map to maintain uniqueness by id while preserving the final display label.
+    const uniques = new Map<string, string>();
 
     const useIdStore = StringIdentifierCollections.includes(collectionId);
-
-    const layer = this.getLayer({ collectionId }) ?? { label: null };
-
+    const layer = this.getLayer({ collectionId }) ?? {
+      label: null as string | null,
+    };
     const { label } = layer;
 
     for (const feature of features) {
       const featureLabel = label ? getLabel(feature, label) : null;
+
       if (useIdStore) {
         const id = getIdStore(feature);
         if (id) {
-          uniques.add(featureLabel ? `${featureLabel} (${id})` : id);
+          const idStr = String(id);
+          const display = featureLabel ? `${featureLabel} (${idStr})` : idStr;
+          if (!uniques.has(idStr)) {
+            uniques.set(idStr, display);
+          }
         } else {
           console.error(
             "Unable to find id store on layer from collection: ",
@@ -514,13 +520,19 @@ class MainManager {
             feature,
           );
         }
-      } else if (feature.id) {
-        const id = String(feature.id);
-        uniques.add(featureLabel ? `${featureLabel} (${id})` : id);
+      } else if (feature.id != null) {
+        const idStr = String(feature.id);
+        const display = featureLabel ? `${featureLabel} (${idStr})` : idStr;
+        if (!uniques.has(idStr)) {
+          uniques.set(idStr, display);
+        }
       }
     }
 
-    return Array.from(uniques).sort();
+    // Convert to array of { id, label } and sort by the display label
+    return Array.from(uniques.entries())
+      .map(([id, displayLabel]) => ({ id, label: displayLabel }))
+      .sort((a, b) => a.label.localeCompare(b.label));
   }
 
   private getClickEventHandler<T extends MapMouseEvent | MapTouchEvent>(
@@ -548,12 +560,12 @@ class MainManager {
           // Hack, use the feature id to track this location, fetch id store in consuming features
           const uniqueFeatures = this.getUniqueIds(features, collectionId);
 
-          uniqueFeatures.forEach((locationId) => {
-            if (this.hasLocation(locationId)) {
-              this.store.getState().removeLocation(locationId);
+          uniqueFeatures.forEach(({ id }) => {
+            if (this.hasLocation(id)) {
+              this.store.getState().removeLocation(id);
             } else {
               this.store.getState().addLocation({
-                id: locationId,
+                id,
                 collectionId,
               });
             }
@@ -579,7 +591,9 @@ class MainManager {
       this.map!.getCanvas().style.cursor = "pointer";
       const { features } = e;
       if (features && features.length > 0) {
-        const uniqueFeatures = this.getUniqueIds(features, collectionId);
+        const uniqueFeatures = this.getUniqueIds(features, collectionId).map(
+          ({ label }) => label,
+        );
         const html = `
             <span>
               <strong>${name}</strong><br/>

@@ -149,12 +149,15 @@ const Popup: React.FC<Props> = (props) => {
 
   return (
     <Stack gap={0} className={styles.popupWrapper}>
-      <Header
-        id={id}
-        name={datasetName}
-        feature={feature}
-        collectionType={collectionType}
-      />
+      {layer && (
+        <Header
+          id={id}
+          name={datasetName}
+          feature={feature}
+          collectionType={collectionType}
+          labelProperty={layer.label}
+        />
+      )}
 
       {collectionType === CollectionType.EDR &&
         feature &&

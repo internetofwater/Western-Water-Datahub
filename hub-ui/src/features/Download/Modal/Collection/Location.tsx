@@ -339,7 +339,7 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
               <Chart
                 className={styles.linksChart}
                 collectionId={layer.collectionId}
-                locationId={id}
+                locationIds={[id]}
                 title={datasetName}
                 parameters={layer.parameters}
                 from={from}

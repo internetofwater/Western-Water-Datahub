@@ -34,7 +34,7 @@ echarts.use([
 ]);
 
 type Props = {
-  data: CoverageJSON | CoverageCollection;
+  data: Array<CoverageJSON | CoverageCollection>;
   title?: string;
   legend?: boolean;
   filename?: string;
@@ -55,23 +55,29 @@ const LineChart = (props: Props) => {
   } = props;
 
   const option: echarts.EChartsCoreOption = useMemo(() => {
-    const dates = isCoverageCollection(data)
-      ? (data.coverages[0]?.domain.axes.t as { values: string[] }).values
-      : (data.domain.axes.t as { values: string[] }).values;
+    const allSeries: EChartsSeries[] = [];
+    let dates: string[] = [];
+    for (const entry of data) {
+      dates = isCoverageCollection(entry)
+        ? (entry.coverages[0]?.domain.axes.t as { values: string[] }).values
+        : (entry.domain.axes.t as { values: string[] }).values;
 
-    let series = coverageJSONToSeries(data);
+      let series = coverageJSONToSeries(entry);
 
-    if (prettyLabels.length > 0 && prettyLabels.length === series.length) {
-      series = series.map((entry) => ({
-        ...series,
-        type: entry.type,
-        stack: entry.stack,
-        data: entry.data,
-        name:
-          prettyLabels.find(
-            (prettyLabel) => prettyLabel.parameter === entry.name,
-          )?.label ?? entry.name,
-      })) as EChartsSeries[];
+      if (prettyLabels.length > 0 && prettyLabels.length === series.length) {
+        series = series.map((entry) => ({
+          ...series,
+          type: entry.type,
+          stack: entry.stack,
+          data: entry.data,
+          name:
+            prettyLabels.find(
+              (prettyLabel) => prettyLabel.parameter === entry.name,
+            )?.label ?? entry.name,
+        })) as EChartsSeries[];
+      }
+
+      allSeries.push(...series);
     }
 
     return {
@@ -111,7 +117,7 @@ const LineChart = (props: Props) => {
       yAxis: {
         type: "value",
       },
-      series,
+      series: allSeries,
     };
   }, [data, title, legend]);
 
