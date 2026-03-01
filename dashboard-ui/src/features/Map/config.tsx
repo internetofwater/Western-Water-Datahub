@@ -590,6 +590,9 @@ export const getLayerConfig = (
                 paint: {
                     'raster-opacity': BaseLayerOpacity,
                 },
+                layout: {
+                    visibility: 'visible',
+                },
             };
         case LayerId.NOAAPrecipSixToTen:
             return {

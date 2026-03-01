@@ -587,34 +587,29 @@ export class ReportService {
         svgElement.setAttribute('transform', `translate(${x}, ${y})`);
     }
 
-    private getLegend(map: Map): string {
-        // [RasterBaseLayers.Precipitation]: {
-        //     [LayerId.USDroughtMonitor]: false,
-        //     [LayerId.NOAAPrecipSixToTen]: true,
-        //     [LayerId.NOAATempSixToTen]: false,
-        // },
+    private getLegend(map: Map): { id: string; w: number; h: number } {
         if (
             map.getLayer(LayerId.USDroughtMonitor) &&
             map.getLayoutProperty(LayerId.USDroughtMonitor, 'visibility') ===
                 'visible'
         ) {
-            return 'drought-legend';
+            return { id: 'drought-legend', w: 293, h: 371 };
         }
         if (
             map.getLayer(LayerId.NOAAPrecipSixToTen) &&
             map.getLayoutProperty(LayerId.NOAAPrecipSixToTen, 'visibility') ===
                 'visible'
         ) {
-            return 'precip-legend';
+            return { id: 'precip-legend', w: 293, h: 371 };
         }
         if (
             map.getLayer(LayerId.NOAATempSixToTen) &&
             map.getLayoutProperty(LayerId.NOAATempSixToTen, 'visibility') ===
                 'visible'
         ) {
-            return 'temp-legend';
+            return { id: 'temp-legend', w: 293, h: 371 };
         }
-        return 'none-legend';
+        return { id: 'none-legend', w: 293, h: 228 };
     }
 
     private exportCombinedImage(map: Map, svgOverlay: SVGSVGElement) {
@@ -622,7 +617,11 @@ export class ReportService {
         const width = mapCanvas.width;
         const height = mapCanvas.height;
 
-        const legendId = this.getLegend(map);
+        const {
+            id: legendId,
+            w: legendWidth,
+            h: legendHeight,
+        } = this.getLegend(map);
 
         const reportLegend = document.getElementById(
             legendId
@@ -643,7 +642,13 @@ export class ReportService {
         context.restore();
 
         if (reportLegend) {
-            context.drawImage(reportLegend, 1297, 519, 293, 371);
+            context.drawImage(
+                reportLegend,
+                1297,
+                519,
+                legendWidth,
+                legendHeight
+            );
         }
 
         // Serialize SVG and draw it on canvas
