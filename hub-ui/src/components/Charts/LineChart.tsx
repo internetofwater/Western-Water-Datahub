@@ -89,7 +89,7 @@ const LineChart = (props: Props) => {
 
       if (
         prettyLabels.length > 0 &&
-        prettyLabels.length === seriesForEntry.length
+        prettyLabels.length >= seriesForEntry.length
       ) {
         seriesForEntry = seriesForEntry.map((entrySeries) => {
           const pretty =
@@ -109,6 +109,7 @@ const LineChart = (props: Props) => {
           const finalName = `${series.name} - ${coverageLabel}`;
 
           // Construct a stable id
+          // This gets used to determine which series need to update
           const stableId = [
             chosenParameter ?? "param",
             chosenUnit ?? "unit",

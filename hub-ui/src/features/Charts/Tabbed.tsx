@@ -4,7 +4,7 @@
  */
 
 import { useState } from "react";
-import { Tabs } from "@mantine/core";
+import { Tabs, Text } from "@mantine/core";
 import LineChart from "@/components/Charts/LineChart";
 import styles from "@/features/Charts/Charts.module.css";
 import {
@@ -51,7 +51,9 @@ export const Tabbed: React.FC<Props> = (props) => {
       <Tabs.List>
         {tabs.map((tab) => (
           <Tabs.Tab key={`${collectionId}-${tab.value}-tab`} value={tab.value}>
-            {tab.label}
+            <Text size="xs" p={0}>
+              {tab.label}
+            </Text>
           </Tabs.Tab>
         ))}
       </Tabs.List>
@@ -65,7 +67,9 @@ export const Tabbed: React.FC<Props> = (props) => {
             <LineChart
               data={data}
               legend
-              prettyLabels={tabs}
+              prettyLabels={tabs.filter(
+                ({ type }) => type === ETabTypes.Parameter,
+              )}
               theme={theme}
               filename={`line-chart-${locationIds.join("_")}-${String(collectionId)}-${tab.value}`}
               seriesLabels={seriesLabels}
@@ -83,7 +87,9 @@ export const Tabbed: React.FC<Props> = (props) => {
             <LineChart
               data={data}
               legend
-              prettyLabels={tabs}
+              prettyLabels={tabs.filter(
+                ({ type }) => type === ETabTypes.Parameter,
+              )}
               theme={theme}
               filename={`line-chart-${locationIds.join("_")}-${String(collectionId)}-${tab.value}`}
               seriesLabels={seriesLabels}

@@ -8,10 +8,10 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { useEffect, useMemo, useState } from "react";
 import { Feature } from "geojson";
 import { Button, Group, Stack } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
 import Tooltip from "@/components/Tooltip";
 import { StringIdentifierCollections } from "@/consts/collections";
 import { Charts } from "@/features/Charts";
+import DateTime from "@/features/DateTime";
 import styles from "@/features/Download/Download.module.css";
 import { Parameter } from "@/features/Popup";
 import mainManager from "@/managers/Main.init";
@@ -95,7 +95,7 @@ export const LocationsChart: React.FC<Props> = (props) => {
         )
         .map((object) => ({
           id: object.id,
-          name: object.name,
+          name: object.observedProperty.label.en,
           unit: getParameterUnit(object),
         }));
 
@@ -103,8 +103,14 @@ export const LocationsChart: React.FC<Props> = (props) => {
     }
   }, [layer]);
 
+  const handleFromChange = (from: TLayer["from"]) => setFrom(from);
+  const handleToChange = (to: TLayer["to"]) => setTo(to);
+
   const isValidRange =
     from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
+
+  const disabled =
+    organizedLocations.length === 0 || isLoading || !isValidRange;
 
   return (
     <Stack align="flex-start">
@@ -123,27 +129,12 @@ export const LocationsChart: React.FC<Props> = (props) => {
       )}
       <Group w="100%" justify="space-between" align="flex-end">
         <Group gap="calc(var(--default-spacing) * 2)" align="flex-end">
-          <DateInput
-            label="From"
-            size="sm"
-            className={styles.datePicker}
-            placeholder="Pick start date"
-            value={from}
-            valueFormat="MM/DD/YYYY"
-            onChange={setFrom}
-            clearable
-            error={isValidRange ? false : "Invalid date range"}
-          />
-          <DateInput
-            label="To"
-            size="sm"
-            className={styles.datePicker}
-            placeholder="Pick end date"
-            value={to}
-            valueFormat="MM/DD/YYYY"
-            onChange={setTo}
-            clearable
-            error={isValidRange ? false : "Invalid date range"}
+          <DateTime
+            from={from}
+            onFromChange={handleFromChange}
+            to={to}
+            onToChange={handleToChange}
+            wait={300} // 0.3 second
           />
         </Group>
         <Tooltip
@@ -156,8 +147,8 @@ export const LocationsChart: React.FC<Props> = (props) => {
         >
           <Button
             size="md"
-            disabled={isLoading}
-            data-disabled={isLoading}
+            disabled={disabled}
+            data-disabled={disabled}
             onClick={onGetAllCSV}
           >
             Get All CSV's
