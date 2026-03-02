@@ -3,24 +3,18 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Button, Group, Text } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { Group, Text } from "@mantine/core";
 import CopyInput from "@/components/CopyInput";
-import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Download/Download.module.css";
 import { CollectionType } from "@/utils/collection";
 
 type Props = {
   url: string;
   collectionType: CollectionType;
-  isLoading: boolean;
-  onGetAllCSV: () => void;
 };
 
 export const Header: React.FC<Props> = (props) => {
-  const { url, collectionType, isLoading, onGetAllCSV } = props;
-
-  const mobile = useMediaQuery("(max-width: 899px)");
+  const { url, collectionType } = props;
 
   const getMessage = () => {
     switch (collectionType) {
@@ -41,34 +35,7 @@ export const Header: React.FC<Props> = (props) => {
         {getMessage()}
       </Text>
       <Group justify="space-between" gap="var(--default-spacing)">
-        <CopyInput
-          size="sm"
-          url={url}
-          className={
-            !mobile && collectionType === CollectionType.EDR
-              ? styles.partialWidth
-              : styles.fullWidth
-          }
-        />
-        {collectionType === CollectionType.EDR && (
-          <Tooltip
-            label={
-              isLoading
-                ? "Please wait for download to finish."
-                : `Download the parameter data for all selected locations in CSV format.`
-            }
-            multiline
-          >
-            <Button
-              size="md"
-              disabled={isLoading}
-              data-disabled={isLoading}
-              onClick={onGetAllCSV}
-            >
-              Get All CSV's
-            </Button>
-          </Tooltip>
-        )}
+        <CopyInput size="sm" url={url} className={styles.fullWidth} />
       </Group>
     </>
   );

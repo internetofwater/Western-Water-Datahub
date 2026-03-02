@@ -7,11 +7,8 @@ import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { useEffect, useRef, useState } from "react";
 import { IRequestParams } from "@ogcapi-js/shared";
-import { Group, Skeleton, Text, useComputedColorScheme } from "@mantine/core";
-import LineChart from "@/components/Charts/LineChart";
-import styles from "@/features/Popup/Popup.module.css";
+import { Loader, useComputedColorScheme } from "@mantine/core";
 import loadingManager from "@/managers/Loading.init";
-import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import {
   CoverageCollection,
@@ -20,26 +17,38 @@ import {
 } from "@/services/edr.service";
 import { TLocation } from "@/stores/main/types";
 import { ELoadingType, ENotificationType } from "@/stores/session/types";
-import { isCoverageCollection } from "@/utils/isTypeObject";
-import { getLabel } from "@/utils/parameters";
 import { getDatetime } from "@/utils/url";
+import { Parameter } from "../Popup";
+import { Tabbed } from "./Tabbed";
+import {
+  ETabTypes,
+  TCoverageLabel,
+  TTypedOption,
+  TWrappedCoverage,
+} from "./types";
+import {
+  computeCoverageLabel,
+  findReusableCoverage,
+  findStaleCoverage,
+  isValid,
+} from "./utils";
 
 dayjs.extend(isSameOrBefore);
 
-type WrappedCoverage = {
-  data: CoverageCollection | CoverageJSON;
-  label?: string;
-  locationId: TLocation["id"];
-};
+const MAX_STALE_ENTRIES = 5;
 
 type Props = {
   collectionId: ICollection["id"];
   locationIds: Array<TLocation["id"]>;
   title?: string;
-  parameters: string[];
+  parameter?: string;
+  parameters: Parameter[];
   from: string | null;
   to: string | null;
   className?: string;
+  tabs?: boolean;
+  select?: boolean;
+  chartClassname?: string;
   onData?: () => void;
   getData: <T extends IRequestParams>(
     collectionId: ICollection["id"],
@@ -50,23 +59,20 @@ type Props = {
     | CoverageCollection
     | CoverageJSON
     | Promise<CoverageCollection | CoverageJSON>;
-  coverageLabels?:
-    | Record<string, string>
-    | ((args: {
-        locationId: TLocation["id"];
-        index: number; // index into locationIds
-        coverage: CoverageCollection | CoverageJSON;
-      }) => string);
+  coverageLabels?: TCoverageLabel;
 };
 
-export const Chart: React.FC<Props> = (props) => {
+export const Charts: React.FC<Props> = (props) => {
   const {
     collectionId,
     locationIds,
     parameters,
     from,
     to,
-    className = "",
+    tabs = false,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    select = false,
+    chartClassname,
     onData = () => null,
     getData,
     coverageLabels,
@@ -77,46 +83,11 @@ export const Chart: React.FC<Props> = (props) => {
 
   const computedColorScheme = useComputedColorScheme();
 
-  const [data, setData] = useState<WrappedCoverage[]>([]);
+  const [data, setData] = useState<TWrappedCoverage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [prettyParamLabels, setPrettyParamLabels] = useState<
-    Array<{ value: string; label: string }>
-  >([]);
 
-  // Validate a single coverage
-  const isValid = (coverage: CoverageCollection | CoverageJSON) => {
-    if (isCoverageCollection(coverage) && coverage.coverages.length === 0) {
-      return false;
-    }
-    return true;
-  };
-
-  const computeCoverageLabel = (
-    locationId: TLocation["id"],
-    index: number,
-    coverage: CoverageCollection | CoverageJSON,
-  ): string => {
-    if (typeof coverageLabels === "function") {
-      try {
-        const val = coverageLabels({ locationId, index, coverage });
-        if (val && String(val).trim().length > 0) {
-          return String(val).trim();
-        }
-      } catch {
-        // TODO: graceful handling for no label
-        return locationId;
-      }
-    }
-    if (coverageLabels && typeof coverageLabels === "object") {
-      const key = String(locationId);
-      const val = coverageLabels[key];
-      if (val && String(val).trim().length > 0) {
-        return String(val).trim();
-      }
-    }
-    return String(locationId);
-  };
+  const [options, setOptions] = useState<TTypedOption[]>([]);
 
   const fetchData = async () => {
     const loadingInstance = loadingManager.add(
@@ -130,37 +101,84 @@ export const Chart: React.FC<Props> = (props) => {
       const signal = controller.current.signal;
 
       const datetime = getDatetime(from, to);
-      const params = {
-        "parameter-name": parameters.join(","),
+      const paramIds = parameters.map((p) => p.id);
+      const params: IRequestParams = {
+        "parameter-name": paramIds.join(","),
         ...(datetime ? { datetime } : {}),
       };
 
-      const requests = locationIds.map((locationId) =>
-        getData(collectionId, locationId, params as IRequestParams, signal),
+      type Pending = {
+        locationId: string;
+        idx: number;
+        params: IRequestParams;
+      };
+      const pending: Pending[] = [];
+      const wrappedByLoc = new Map<string, TWrappedCoverage>(); // locationId -> wrapped
+
+      const staleEntries = findStaleCoverage(
+        data.map(({ locationId, createdAt }) => ({ locationId, createdAt })),
+        locationIds,
+        MAX_STALE_ENTRIES,
       );
 
+      const currentDataSnapshot = data.filter(
+        (w) => !staleEntries.includes(w.locationId),
+      ); // assuming this is the fresh state here
+
+      locationIds.forEach((locId, idx) => {
+        const cached = findReusableCoverage(
+          currentDataSnapshot,
+          locId,
+          datetime ?? null,
+          paramIds,
+        );
+
+        if (cached) {
+          wrappedByLoc.set(locId, {
+            data: cached.data, // do not clone or mutate
+            label: computeCoverageLabel(
+              locId,
+              idx,
+              cached.data,
+              coverageLabels,
+            ),
+            locationId: locId,
+            params,
+            collectionId,
+            createdAt: Date.now(),
+          });
+        } else {
+          pending.push({ locationId: locId, idx, params });
+        }
+      });
+      const requests = pending.map((p) =>
+        getData(collectionId, p.locationId, p.params, signal),
+      );
       const results = await Promise.allSettled(requests);
 
       if (!isMounted.current) {
         return;
       }
 
-      const wrapped: WrappedCoverage[] = [];
       const rejected: PromiseRejectedResult[] = [];
 
-      results.forEach((res, idx) => {
-        const locId = locationIds[idx];
+      // Assign fetched results to their locationId slots
+      results.forEach((res, i) => {
+        const { locationId, idx } = pending[i];
 
         if (res.status === "fulfilled") {
           const cov = res.value;
           if (!isValid(cov)) {
+            // silently skip invalid
             return;
           }
-
-          wrapped.push({
+          wrappedByLoc.set(locationId, {
             data: cov, // do not clone or mutate
-            label: computeCoverageLabel(locId, idx, cov),
-            locationId: locId,
+            label: computeCoverageLabel(locationId, idx, cov, coverageLabels),
+            locationId,
+            params,
+            collectionId,
+            createdAt: Date.now(),
           });
         } else {
           const reason = res.reason;
@@ -173,12 +191,17 @@ export const Chart: React.FC<Props> = (props) => {
         }
       });
 
+      // Build the final `wrapped` list in the same order as `locationIds`
+      const wrapped: TWrappedCoverage[] = locationIds
+        .filter((locationId) => locationIds.includes(locationId))
+        .map((locId) => wrappedByLoc.get(locId))
+        .filter((w): w is TWrappedCoverage => Boolean(w));
+
       setData(wrapped);
 
       if (rejected.length > 0) {
-        // TODO: add more in-depth notification / per-location surfacing if needed
         notificationManager.show(
-          `Some locations failed to load (${rejected.length}/${results.length}).`,
+          `Some locations failed to load (${rejected.length}/${pending.length}).`,
           ENotificationType.Info,
           8000,
         );
@@ -217,7 +240,6 @@ export const Chart: React.FC<Props> = (props) => {
 
   useEffect(() => {
     isMounted.current = true;
-    setData([]);
     setError(null);
 
     const isValidRange =
@@ -238,55 +260,46 @@ export const Chart: React.FC<Props> = (props) => {
   }, [locationIds, from, to, collectionId, parameters, coverageLabels]);
 
   useEffect(() => {
-    const collection = mainManager.getCollection(collectionId);
-    if (collection) {
-      const labels = parameters.map((parameter) => ({
-        value: parameter,
-        label: getLabel(collection, parameter),
-      }));
-      setPrettyParamLabels(labels);
-    }
+    const paramOptions = parameters.map(({ id, name, unit }) => ({
+      value: id,
+      label: `${name} (${unit})`,
+      type: ETabTypes.Parameter,
+    }));
+
+    const unitOptions = Array.from(new Set(parameters.map((p) => p.unit))).map(
+      (unit) => ({
+        value: unit,
+        label: unit,
+        type: ETabTypes.Unit,
+      }),
+    );
+
+    setOptions([...paramOptions, ...unitOptions]);
   }, [parameters, collectionId]);
 
-  // Extract the underlying coverages and series labels for the chart
-  const chartData = data.map((w) => w.data);
-  const seriesLabels = data.map((w) => w.label ?? String(w.locationId));
+  // Extract the underlying coverages and labels for the chart
+  const chartData = data
+    .filter((w) => locationIds.includes(w.locationId))
+    .map((w) => w.data);
+  const seriesLabels = data
+    .filter((w) => locationIds.includes(w.locationId))
+    .map((w) => w.label ?? String(w.locationId));
 
   return (
-    <Skeleton
-      visible={isLoading}
-      className={`${styles.chartWrapper} ${className}`}
-    >
-      {chartData.length > 0 ? (
-        <LineChart
+    <>
+      {error && error.length > 0 && <>{error}</>}
+      {tabs && options.length > 0 && chartData.length > 0 && (
+        <Tabbed
+          collectionId={collectionId}
           data={chartData}
-          legend
-          legendEntries={parameters}
-          prettyLabels={prettyParamLabels}
+          locationIds={locationIds}
           theme={computedColorScheme}
-          filename={`line-chart-${locationIds.join(",")}-${String(collectionId)}-${parameters.join("-")}`}
           seriesLabels={seriesLabels}
+          tabs={options}
+          chartClassname={chartClassname}
         />
-      ) : (
-        !error && (
-          <Group justify="center" align="center" className={styles.chartNoData}>
-            <Text>
-              No Data found for{" "}
-              {prettyParamLabels.length > 0
-                ? prettyParamLabels.map((l) => l.label).join(", ")
-                : parameters.join(", ")}
-            </Text>
-          </Group>
-        )
       )}
-      {error && (
-        <Group justify="center" align="center" className={styles.chartNoData}>
-          <Text c="red">
-            <strong>Error: </strong>
-            {error}
-          </Text>
-        </Group>
-      )}
-    </Skeleton>
+      {isLoading && <Loader type="dots" />}
+    </>
   );
 };

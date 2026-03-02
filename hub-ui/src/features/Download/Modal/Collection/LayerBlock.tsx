@@ -31,6 +31,7 @@ import {
   buildLocationsUrl,
   buildLocationUrl,
 } from "@/utils/url";
+import { LocationsChart } from "./LocationsChart";
 
 type Props = {
   locations: Feature[];
@@ -290,16 +291,20 @@ export const LayerBlock: React.FC<Props> = (props) => {
       gap="var(--default-spacing)"
       className={styles.locationBlockWrapper}
     >
-      <Header
-        url={url}
-        isLoading={isLoading}
-        collectionType={collectionType}
-        onGetAllCSV={handleGetAllCSV}
-      />
+      <Header url={url} collectionType={collectionType} />
       {currentChunk.length === 0 && (
         <Text fw={700} m="auto">
           Select {getLabel()}s from the menu {mobile ? "above" : "on the left"}
         </Text>
+      )}
+
+      {collection && collectionType === CollectionType.EDR && (
+        <LocationsChart
+          layer={layer}
+          locations={currentChunk}
+          isLoading={isLoading}
+          onGetAllCSV={handleGetAllCSV}
+        />
       )}
       {collection &&
         collectionType === CollectionType.EDR &&

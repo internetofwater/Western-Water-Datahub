@@ -353,8 +353,11 @@ export class EDRService extends Service {
    * - `f`: Format of the response.
    */
   async getCube<
-    T extends CoverageJSON | CoverageCollection | GeoJSON | string =
-      CoverageJSON,
+    T extends
+      | CoverageJSON
+      | CoverageCollection
+      | GeoJSON
+      | string = CoverageJSON,
   >(
     collectionId: string,
     options: IServiceRequestOptions<IGetCubeParams> = {},
@@ -525,8 +528,12 @@ export class EDRService extends Service {
    * - `f`: Format of the response.
    */
   async getLocation<
-    T extends JSON | GeoJSON | CoverageJSON | CoverageCollection | string =
-      GeoJSON,
+    T extends
+      | JSON
+      | GeoJSON
+      | CoverageJSON
+      | CoverageCollection
+      | string = GeoJSON,
   >(
     collectionId: string,
     locId: string,
@@ -960,10 +967,12 @@ export interface ParameterName {
   type: "Parameter";
   name: string;
   observedProperty: {
+    id?: string;
     label: {
       id: string;
       en: string;
     };
+    description?: string;
   };
   unit: {
     label?: {
@@ -1069,25 +1078,36 @@ export interface IGetCollectionsResponse {
   parameterGroups: ParameterGroup[];
 }
 
-export type CoverageCollection = {
-  type: "CoverageCollection";
-  parameters: {
-    [key: string]: {
-      type: "Parameter";
-      description: {
-        en: string;
-      };
-      unit: {
-        symbol: string;
-      };
-      observedProperty: {
-        id: string;
-        label: {
-          en: string;
-        };
-      };
+type CoverageParameter = {
+  id: string;
+  type: "Parameter";
+  name: string;
+  observedProperty: {
+    id?: string;
+    label: {
+      id: string;
+      en: string;
+    };
+    description?: string;
+  };
+  unit: {
+    label?: {
+      en: string;
+    };
+    symbol: {
+      value: string;
+      type: string; // e.g., "http://www.opengis.net/def/uom/UCUM/"
     };
   };
+};
+
+type CoverageParameters = {
+  [key: string]: CoverageParameter;
+};
+
+export type CoverageCollection = {
+  type: "CoverageCollection";
+  parameters: CoverageParameters;
   referencing: Array<{
     coordinates: string[];
     system: {
@@ -1137,23 +1157,7 @@ export interface CoverageJSON {
       };
     }[];
   };
-  parameters: {
-    [key: string]: {
-      type: string;
-      observedProperty: {
-        id: string;
-        label: {
-          en: string;
-        };
-      };
-      unit: {
-        label: {
-          en: string;
-        };
-        symbol: string;
-      };
-    };
-  };
+  parameters: CoverageParameters;
   ranges: {
     [key: string]: {
       type: string;

@@ -4,11 +4,12 @@
  */
 
 import { GeoJsonProperties } from "geojson";
-import { Series } from "@/components/Charts/types";
+import { EChartsSeries, Series } from "@/components/Charts/types";
 import notificationManager from "@/managers/Notification.init";
 import { CoverageCollection, CoverageJSON } from "@/services/edr.service";
 import { ENotificationType } from "@/stores/session/types";
 import { isCoverageCollection } from "@/utils/clarifyObject";
+import { getParameterUnit } from "@/utils/parameters";
 
 export const aggregateProperties = <T extends GeoJsonProperties>(
   series: Series<T>[],
@@ -39,25 +40,40 @@ export const aggregateProperties = <T extends GeoJsonProperties>(
   return aggregatedProperties;
 };
 
-type EChartsSeries = {
-  name: string;
-  type: "line";
-  stack: string;
-  data: number[];
+type Options = {
+  chosenParameter?: string;
+  chosenUnit?: string;
 };
 
-export const coverageJSONToSeries = (
-  coverage: CoverageCollection | CoverageJSON,
-): EChartsSeries[] => {
-  const ranges = isCoverageCollection(coverage)
-    ? coverage.coverages[0]?.ranges
-    : coverage.ranges;
+const coverageCollectionToSeries = (
+  coverage: CoverageCollection,
+  options?: Options,
+) => {
+  const parameters = coverage.parameters as CoverageJSON["parameters"];
 
-  const dates = isCoverageCollection(coverage)
-    ? (coverage.coverages[0]?.domain.axes.t as { values: string[] }).values
-    : (coverage.domain.axes.t as { values: string[] }).values;
+  const curryCoverageToSeries = (coverage: CoverageJSON) => {
+    return coverageToSeries(coverage, {
+      parameters,
+      chosenParameter: options?.chosenParameter,
+      chosenUnit: options?.chosenUnit,
+    });
+  };
 
-  if (!ranges || !dates) {
+  return coverage.coverages.flatMap(curryCoverageToSeries);
+};
+
+type CoverageOptions = Options & {
+  parameters?: CoverageJSON["parameters"];
+};
+
+const coverageToSeries = (
+  coverage: CoverageJSON,
+  options?: CoverageOptions,
+) => {
+  const dates = (coverage.domain.axes.t as { values: string[] }).values;
+  const coverageParameters = coverage.parameters ?? options?.parameters;
+
+  if (!coverage.ranges || !dates) {
     notificationManager.show(
       "Missing ranges or date axis in coverage data",
       ENotificationType.Error,
@@ -68,19 +84,56 @@ export const coverageJSONToSeries = (
 
   const series: EChartsSeries[] = [];
 
-  for (const [parameter, range] of Object.entries(ranges)) {
+  const filteredRanges = Object.entries(coverage.ranges).filter(
+    ([parameterId]) => {
+      if (options?.chosenParameter) {
+        return parameterId === options?.chosenParameter;
+      }
+
+      if (options?.chosenUnit) {
+        const parameter = coverageParameters[parameterId];
+        const unit = getParameterUnit(parameter);
+
+        return unit === options?.chosenUnit;
+      }
+
+      return true;
+    },
+  );
+
+  for (const [parameterId, range] of filteredRanges) {
     if (!range.values || range.values.length !== dates.length) {
-      console.warn(`Skipping ${parameter} due to mismatched or missing values`);
+      console.warn(
+        `Skipping ${parameterId} due to mismatched or missing values`,
+      );
       continue;
     }
 
+    // TODO: add multi language
+    // TODO: switch so that name is the label
+    const parameter = coverageParameters[parameterId];
+
+    const unit = getParameterUnit(parameter);
+
     series.push({
-      name: parameter,
+      name: parameterId,
+      parameter: parameter.id,
+      unit,
       type: "line",
-      stack: "Total",
       data: range.values,
     });
   }
 
   return series;
+};
+
+export const coverageJSONToSeries = (
+  coverage: CoverageCollection | CoverageJSON,
+  options?: Options,
+): EChartsSeries[] => {
+  if (isCoverageCollection(coverage)) {
+    return coverageCollectionToSeries(coverage, options);
+  }
+
+  return coverageToSeries(coverage, options);
 };

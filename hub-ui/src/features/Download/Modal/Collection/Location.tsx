@@ -29,7 +29,13 @@ import { Table } from "@/features/Table";
 import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
-import { ICollection } from "@/services/edr.service";
+import {
+  CoverageCollection,
+  CoverageJSON,
+  ICollection,
+  IGetLocationParams,
+} from "@/services/edr.service";
+import wwdhService from "@/services/init/wwdh.init";
 import { TLayer, TLocation } from "@/stores/main/types";
 import { ELoadingType, ENotificationType } from "@/stores/session/types";
 import { createEmptyCsv } from "@/utils/csv";
@@ -238,6 +244,21 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const isValidRange =
     from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
 
+  const getData = (
+    collectionId: ICollection["id"],
+    locationId: TLocation["id"],
+    params: IGetLocationParams,
+    signal?: AbortSignal,
+  ) =>
+    wwdhService.getLocation<CoverageCollection | CoverageJSON>(
+      collectionId,
+      locationId,
+      {
+        signal,
+        params,
+      },
+    );
+
   return (
     <Paper
       ref={ref}
@@ -344,6 +365,7 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
                 parameters={layer.parameters}
                 from={from}
                 to={to}
+                getData={getData}
               />
             </Collapse>
           )}

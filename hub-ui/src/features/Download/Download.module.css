@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+.bigChart {
+  height: 31.875rem;
+}
+
 .partialWidth {
   width: 82%;
 }

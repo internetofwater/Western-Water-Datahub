@@ -1,0 +1,16 @@
+/**
+ * Copyright 2026 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+.root {
+  width: 100%;
+}
+
+.panel {
+  height: 20rem;
+}
+
+.bigChart {
+  height: 31.875rem;
+}

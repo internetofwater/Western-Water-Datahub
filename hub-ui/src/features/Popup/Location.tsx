@@ -12,6 +12,13 @@ import { Parameter } from "@/features/Popup";
 import { Chart } from "@/features/Popup/Chart";
 import styles from "@/features/Popup/Popup.module.css";
 import { Table } from "@/features/Table";
+import {
+  CoverageCollection,
+  CoverageJSON,
+  ICollection,
+  IGetLocationParams,
+} from "@/services/edr.service";
+import wwdhService from "@/services/init/wwdh.init";
 import { TLayer, TLocation } from "@/stores/main/types";
 import { getIdStore } from "@/utils/getLabel";
 
@@ -56,6 +63,21 @@ export const Location: React.FC<Props> = (props) => {
     }
   }, [location, feature]);
 
+  const getData = (
+    collectionId: ICollection["id"],
+    locationId: TLocation["id"],
+    params: IGetLocationParams,
+    signal?: AbortSignal,
+  ) =>
+    wwdhService.getLocation<CoverageCollection | CoverageJSON>(
+      collectionId,
+      locationId,
+      {
+        signal,
+        params,
+      },
+    );
+
   return (
     <>
       <Box style={{ display: tab === "chart" ? "block" : "none" }}>
@@ -67,6 +89,7 @@ export const Location: React.FC<Props> = (props) => {
             title={datasetName}
             from={layer.from}
             to={layer.to}
+            getData={getData}
           />
         )}
       </Box>
