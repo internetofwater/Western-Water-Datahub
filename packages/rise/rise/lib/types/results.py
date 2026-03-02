@@ -1,15 +1,26 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from typing import Optional
+from typing import Literal, Optional
 from pydantic import BaseModel, field_validator
 
 
+class ResultMetadataAttributes(BaseModel):
+    """These are metadata attributes for a single result call in RISE;
+    i.e. not the directly timeseries result but the metadata that goes with it"""
+
+    resultType: Literal["modelled"] | str | None
+    timeStep: Literal["day"] | str | None
+
+
 class ResultAttributes(BaseModel):
+    """These are attributes for a single result call in RISE"""
+
     itemId: int
     locationId: int
     result: Optional[float]
     parameterId: str
+    resultAttributes: ResultMetadataAttributes | None = None
 
     @field_validator("parameterId", check_fields=True, mode="before")
     @classmethod
@@ -45,3 +56,17 @@ class ResultResponse(BaseModel):
 
     def get_dates(self):
         return [d.attributes.dateTime for d in self.data]
+
+    def is_modeled(self) -> bool:
+        """
+        Check if a result represents data which is modeled
+        This checks just the first result since it is assumed that
+        this class contains all the result responses for a particular
+        catalogItem (i.e. something which represents a single study/scenario)
+        and thus would not mix both modelled and non-modelled results in the
+        same response
+        """
+        metadata = self.data[0].attributes.resultAttributes
+        if not metadata:
+            return False
+        return metadata.resultType == "modelled"
