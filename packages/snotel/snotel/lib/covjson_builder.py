@@ -52,13 +52,15 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
 
         edr_field = self.fieldsMapper[datastream.stationElement.elementCode]
 
+        id = datastream.stationElement.elementCode
+        title = edr_field["title"]
         param = Parameter(
             type="Parameter",
             unit=Unit(symbol=datastream.stationElement.storedUnitCode),
-            id=edr_field["title"],
+            id=id,
             observedProperty=ObservedProperty(
-                label={"en": datastream.stationElement.elementCode},
-                id=edr_field["title"],
+                label={"en": title, "title": title},
+                id=id,
                 description={"en": edr_field["description"]},
             ),
         )
@@ -110,12 +112,11 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                 ],
             ),
             ranges={
-                self.fieldsMapper[datastream.stationElement.elementCode][
-                    "title"
-                ]: NdArrayFloat(
+                datastream.stationElement.elementCode: NdArrayFloat(
                     shape=[len(values)],
                     values=values,  # type: ignore
                     axisNames=["t"],
+                    name=datastream.stationElement.elementCode,  # type: ignore
                 ),
             },
         )
@@ -131,13 +132,10 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
             for datastream in result.data:
                 assert datastream.stationElement
                 assert datastream.stationElement.elementCode
-                title = self.fieldsMapper[datastream.stationElement.elementCode][
-                    "title"
-                ]
                 id = datastream.stationElement.elementCode
                 if self.select_properties and id not in self.select_properties:
                     continue
-                parameters[title] = self._generate_parameter(triple, datastream)
+                parameters[id] = self._generate_parameter(triple, datastream)
 
                 cov = self._generate_coverage(triple, datastream)
                 coverages.append(cov)
