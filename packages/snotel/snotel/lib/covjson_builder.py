@@ -116,7 +116,6 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
                     shape=[len(values)],
                     values=values,  # type: ignore
                     axisNames=["t"],
-                    name=datastream.stationElement.elementCode,  # type: ignore
                 ),
             },
         )
