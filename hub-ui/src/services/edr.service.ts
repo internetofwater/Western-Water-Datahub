@@ -353,11 +353,8 @@ export class EDRService extends Service {
    * - `f`: Format of the response.
    */
   async getCube<
-    T extends
-      | CoverageJSON
-      | CoverageCollection
-      | GeoJSON
-      | string = CoverageJSON,
+    T extends CoverageJSON | CoverageCollection | GeoJSON | string =
+      CoverageJSON,
   >(
     collectionId: string,
     options: IServiceRequestOptions<IGetCubeParams> = {},
@@ -528,12 +525,8 @@ export class EDRService extends Service {
    * - `f`: Format of the response.
    */
   async getLocation<
-    T extends
-      | JSON
-      | GeoJSON
-      | CoverageJSON
-      | CoverageCollection
-      | string = GeoJSON,
+    T extends JSON | GeoJSON | CoverageJSON | CoverageCollection | string =
+      GeoJSON,
   >(
     collectionId: string,
     locId: string,
