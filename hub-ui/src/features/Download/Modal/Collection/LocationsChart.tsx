@@ -62,7 +62,10 @@ export const LocationsChart: React.FC<Props> = (props) => {
     const labels: Record<string, string> = {};
 
     for (const location of organizedLocations) {
-      labels[location.id] = `${location.label} (${location.id})`;
+      labels[location.id] =
+        location.label !== location.id
+          ? `${location.label} (${location.id})`
+          : location.label;
     }
     return labels;
   };
@@ -83,10 +86,10 @@ export const LocationsChart: React.FC<Props> = (props) => {
     );
 
   useEffect(() => {
-    const newDataset = mainManager.getCollection(layer.collectionId);
+    const collection = mainManager.getCollection(layer.collectionId);
 
-    if (newDataset) {
-      const paramObjects = Object.values(newDataset?.parameter_names ?? {});
+    if (collection) {
+      const paramObjects = Object.values(collection?.parameter_names ?? {});
 
       const parameters = paramObjects
         .filter(
@@ -146,12 +149,12 @@ export const LocationsChart: React.FC<Props> = (props) => {
           multiline
         >
           <Button
-            size="md"
+            size="sm"
             disabled={disabled}
             data-disabled={disabled}
             onClick={onGetAllCSV}
           >
-            Get All CSV's
+            Download All CSV's
           </Button>
         </Tooltip>
       </Group>

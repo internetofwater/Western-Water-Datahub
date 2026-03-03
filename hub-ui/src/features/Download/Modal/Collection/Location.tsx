@@ -16,15 +16,16 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import Code from "@/components/Code";
 import CopyInput from "@/components/CopyInput";
 import Tooltip from "@/components/Tooltip";
 import { StringIdentifierCollections } from "@/consts/collections";
+import { Charts } from "@/features/Charts";
+import DateTime from "@/features/DateTime";
 import styles from "@/features/Download/Download.module.css";
 import { GeoJSON } from "@/features/Download/Modal/Collection/GeoJSON";
-import { Chart } from "@/features/Popup/Chart";
+import { Parameter } from "@/features/Popup";
 import { Table } from "@/features/Table";
 import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
@@ -40,6 +41,7 @@ import { TLayer, TLocation } from "@/stores/main/types";
 import { ELoadingType, ENotificationType } from "@/stores/session/types";
 import { createEmptyCsv } from "@/utils/csv";
 import { getIdStore, getLabel } from "@/utils/getLabel";
+import { getParameterUnit } from "@/utils/parameters";
 import { buildLocationUrl } from "@/utils/url";
 
 dayjs.extend(isSameOrBefore);
@@ -57,12 +59,12 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const [openedProps, { toggle: toggleProps }] = useDisclosure(false);
   const [openedGeo, { toggle: toggleGeo }] = useDisclosure(false);
   const [openedChart, { toggle: toggleChart, close: closeChart }] =
-    useDisclosure(true);
+    useDisclosure(false);
 
   const [url, setUrl] = useState("");
   const [codeUrl, setCodeUrl] = useState("");
   const [datasetName, setDatasetName] = useState<string>("");
-  const [parameters, setParameters] = useState<TLayer["parameters"]>([]);
+  const [parameters, setParameters] = useState<Parameter[]>([]);
 
   const [from, setFrom] = useState<TLayer["from"]>(layer.from);
   const [to, setTo] = useState<TLayer["to"]>(layer.to);
@@ -108,8 +110,15 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
       const paramObjects = Object.values(collection?.parameter_names ?? {});
 
       const parameters = paramObjects
-        .filter((object) => layer.parameters.includes(object.id))
-        .map((object) => object.name);
+        .filter(
+          (object) =>
+            object.type === "Parameter" && layer.parameters.includes(object.id),
+        )
+        .map((object) => ({
+          id: object.id,
+          name: object.observedProperty.label.en,
+          unit: getParameterUnit(object),
+        }));
 
       if (parameters.length === 0) {
         closeChart();
@@ -129,7 +138,6 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
       setId(String(location.id));
     }
   }, [location, layer]);
-
   useEffect(() => {
     if (layer.label) {
       const label = getLabel(location, layer.label);
@@ -241,9 +249,6 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const code = `curl -X GET ${codeUrl} \n
 -H "Content-Type: application/json"`;
 
-  const isValidRange =
-    from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
-
   const getData = (
     collectionId: ICollection["id"],
     locationId: TLocation["id"],
@@ -258,6 +263,9 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
         params,
       },
     );
+
+  const handleFromChange = (from: TLayer["from"]) => setFrom(from);
+  const handleToChange = (to: TLayer["to"]) => setTo(to);
 
   return (
     <Paper
@@ -330,42 +338,28 @@ export const Location = forwardRef<HTMLDivElement, Props>((props, ref) => {
             </Tooltip>
           </Group>
           <Group gap="calc(var(--default-spacing) * 2)" align="flex-end">
-            <DateInput
-              label="From"
-              size="sm"
-              className={styles.datePicker}
-              placeholder="Pick start date"
-              value={from}
-              valueFormat="MM/DD/YYYY"
-              onChange={setFrom}
-              clearable
-              error={isValidRange ? false : "Invalid date range"}
-            />
-            <DateInput
-              label="To"
-              size="sm"
-              className={styles.datePicker}
-              placeholder="Pick end date"
-              value={to}
-              valueFormat="MM/DD/YYYY"
-              onChange={setTo}
-              clearable
-              error={isValidRange ? false : "Invalid date range"}
+            <DateTime
+              from={from}
+              onFromChange={handleFromChange}
+              to={to}
+              onToChange={handleToChange}
+              wait={300} // 0.3 second
             />
           </Group>
         </Group>
         <Stack>
-          {openedChart && (
+          {openedChart && parameters.length > 0 && (
             <Collapse in={openedChart}>
-              <Chart
+              <Charts
                 className={styles.linksChart}
                 collectionId={layer.collectionId}
                 locationIds={[id]}
                 title={datasetName}
-                parameters={layer.parameters}
+                parameters={parameters}
                 from={from}
                 to={to}
                 getData={getData}
+                tabs
               />
             </Collapse>
           )}

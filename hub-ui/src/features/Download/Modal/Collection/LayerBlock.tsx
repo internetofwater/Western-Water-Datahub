@@ -6,7 +6,14 @@
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { Feature } from "geojson";
-import { Group, NumberInput, Pagination, Stack, Text } from "@mantine/core";
+import {
+  Divider,
+  Group,
+  NumberInput,
+  Pagination,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { StringIdentifierCollections } from "@/consts/collections";
 import styles from "@/features/Download/Download.module.css";
@@ -299,12 +306,15 @@ export const LayerBlock: React.FC<Props> = (props) => {
       )}
 
       {collection && collectionType === CollectionType.EDR && (
-        <LocationsChart
-          layer={layer}
-          locations={currentChunk}
-          isLoading={isLoading}
-          onGetAllCSV={handleGetAllCSV}
-        />
+        <>
+          <LocationsChart
+            layer={layer}
+            locations={currentChunk}
+            isLoading={isLoading}
+            onGetAllCSV={handleGetAllCSV}
+          />
+          <Divider size="md" my="var(--default-spacing)" />
+        </>
       )}
       {collection &&
         collectionType === CollectionType.EDR &&

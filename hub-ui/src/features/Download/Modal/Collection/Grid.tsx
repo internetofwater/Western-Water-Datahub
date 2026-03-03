@@ -16,10 +16,10 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import Code from "@/components/Code";
 import CopyInput from "@/components/CopyInput";
+import DateTime from "@/features/DateTime";
 import styles from "@/features/Download/Download.module.css";
 import { GeoJSON } from "@/features/Download/Modal/Collection/GeoJSON";
 import { Table } from "@/features/Table";
@@ -97,8 +97,8 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const code = `curl -X GET ${codeUrl} \n
 -H "Content-Type: application/json"`;
 
-  const isValidRange =
-    from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
+  const handleFromChange = (from: TLayer["from"]) => setFrom(from);
+  const handleToChange = (to: TLayer["to"]) => setTo(to);
 
   return (
     <Paper
@@ -142,27 +142,12 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
             </Button>
           </Group>
           <Group gap="calc(var(--default-spacing) * 2)" align="flex-end">
-            <DateInput
-              label="From"
-              size="sm"
-              className={styles.datePicker}
-              placeholder="Pick start date"
-              value={from}
-              valueFormat="MM/DD/YYYY"
-              onChange={setFrom}
-              clearable
-              error={isValidRange ? false : "Invalid date range"}
-            />
-            <DateInput
-              label="To"
-              size="sm"
-              className={styles.datePicker}
-              placeholder="Pick end date"
-              value={to}
-              valueFormat="MM/DD/YYYY"
-              onChange={setTo}
-              clearable
-              error={isValidRange ? false : "Invalid date range"}
+            <DateTime
+              from={from}
+              onFromChange={handleFromChange}
+              to={to}
+              onToChange={handleToChange}
+              wait={300} // 0.3 second
             />
           </Group>
         </Group>

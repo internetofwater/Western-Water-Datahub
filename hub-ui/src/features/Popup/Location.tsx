@@ -5,11 +5,10 @@
 
 import { useEffect, useState } from "react";
 import { Feature } from "geojson";
-import { Box, Button, Group, Tooltip } from "@mantine/core";
+import { Box, Button, Group, Stack, Tooltip } from "@mantine/core";
 import Select from "@/components/Select";
 import { StringIdentifierCollections } from "@/consts/collections";
 import { Parameter } from "@/features/Popup";
-import { Chart } from "@/features/Popup/Chart";
 import styles from "@/features/Popup/Popup.module.css";
 import { Table } from "@/features/Table";
 import {
@@ -21,6 +20,7 @@ import {
 import wwdhService from "@/services/init/wwdh.init";
 import { TLayer, TLocation } from "@/stores/main/types";
 import { getIdStore } from "@/utils/getLabel";
+import { Charts } from "../Charts";
 
 type Props = {
   location: TLocation;
@@ -47,10 +47,21 @@ export const Location: React.FC<Props> = (props) => {
 
   const [tab, setTab] = useState<"chart" | "table">("chart");
   const [id, setId] = useState<string>();
+  const [selectedParameter, setSelectedParameter] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     if (parameters.length === 0) {
       setTab("table");
+      return;
+    }
+
+    if (
+      !selectedParameter ||
+      !parameters.some((parameter) => parameter.id === selectedParameter)
+    ) {
+      setSelectedParameter(parameters[0].id);
     }
   }, [parameters]);
 
@@ -82,14 +93,16 @@ export const Location: React.FC<Props> = (props) => {
     <>
       <Box style={{ display: tab === "chart" ? "block" : "none" }}>
         {datasetName.length > 0 && parameters.length > 0 && id && (
-          <Chart
+          <Charts
             collectionId={location.collectionId}
             locationIds={[id]}
-            parameters={parameters.map((parameter) => parameter.id)}
+            parameters={parameters}
             title={datasetName}
             from={layer.from}
             to={layer.to}
             getData={getData}
+            value={selectedParameter}
+            className={styles.chartWrapper}
           />
         )}
       </Box>
@@ -99,13 +112,12 @@ export const Location: React.FC<Props> = (props) => {
       >
         {feature && <Table size="xs" properties={feature.properties} />}
       </Box>
-      <Group
+      <Stack
         justify="space-between"
-        align="flex-end"
         mt="var(--default-spacing)"
         mb="var(--default-spacing)"
       >
-        <Group gap="var(--default-spacing)" align="flex-end">
+        <Group gap="calc(var(--default-spacing) / 2)" align="flex-end">
           {locations.length > 1 && (
             <Select
               className={styles.locationsDropdown}
@@ -117,38 +129,60 @@ export const Location: React.FC<Props> = (props) => {
               onChange={(value, _option) => handleLocationChange(value)}
             />
           )}
-          {parameters.length > 0 ? (
-            <Button size="xs" onClick={() => setTab("chart")}>
-              Chart
-            </Button>
-          ) : (
-            <Tooltip label="Select one or more parameters in the layer controls to enable charts.">
-              <Button size="xs" disabled data-disabled>
+          {parameters.length > 0 && tab === "chart" && (
+            <Select
+              className={styles.parametersDropdown}
+              size="xs"
+              label="Parameters"
+              searchable
+              data={parameters.map((parameter) => ({
+                value: parameter.id,
+                label: `${parameter.name} (${parameter.unit})`,
+              }))}
+              value={selectedParameter}
+              onChange={setSelectedParameter}
+              clearable={false}
+            />
+          )}
+        </Group>
+        <Group
+          gap="var(--default-spacing)"
+          align="flex-end"
+          justify="space-between"
+        >
+          <Group gap="calc(var(--default-spacing) / 2)">
+            {parameters.length > 0 ? (
+              <Button size="xs" onClick={() => setTab("chart")}>
                 Chart
               </Button>
-            </Tooltip>
-          )}
+            ) : (
+              <Tooltip label="Select one or more parameters in the layer controls to enable charts.">
+                <Button size="xs" disabled data-disabled>
+                  Chart
+                </Button>
+              </Tooltip>
+            )}
 
-          <Button size="xs" onClick={() => setTab("table")}>
-            Properties
-          </Button>
-        </Group>
-        <Box component="span" className={styles.linkButtonWrapper}>
+            <Button size="xs" onClick={() => setTab("table")}>
+              Properties
+            </Button>
+          </Group>
+
           {parameters.length > 0 ? (
-            <Tooltip label="Open this location in the Links modal.">
+            <Tooltip label="Open this location in the Download modal.">
               <Button size="xs" onClick={handleLinkClick}>
-                Link
+                Download
               </Button>
             </Tooltip>
           ) : (
-            <Tooltip label="Select one or more parameters in the layer controls to access links modal.">
+            <Tooltip label="Select one or more parameters in the layer controls to access Download modal.">
               <Button size="xs" disabled data-disabled>
-                Link
+                Download
               </Button>
             </Tooltip>
           )}
-        </Box>
-      </Group>
+        </Group>
+      </Stack>
     </>
   );
 };

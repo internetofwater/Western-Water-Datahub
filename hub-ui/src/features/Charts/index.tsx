@@ -26,6 +26,7 @@ import {
   TTypedOption,
   TWrappedCoverage,
 } from "./types";
+import { Unmanaged } from "./Unmanaged";
 import {
   computeCoverageLabel,
   findReusableCoverage,
@@ -48,7 +49,7 @@ type Props = {
   className?: string;
   tabs?: boolean;
   select?: boolean;
-  chartClassname?: string;
+  value?: string | null;
   onData?: () => void;
   getData: <T extends IRequestParams>(
     collectionId: ICollection["id"],
@@ -70,12 +71,14 @@ export const Charts: React.FC<Props> = (props) => {
     from,
     to,
     tabs = false,
+    // TODO: build self-managed select version
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     select = false,
-    chartClassname,
+    className,
     onData = () => null,
     getData,
     coverageLabels,
+    value = null,
   } = props;
 
   const controller = useRef<AbortController | null>(null);
@@ -285,10 +288,13 @@ export const Charts: React.FC<Props> = (props) => {
     .filter((w) => locationIds.includes(w.locationId))
     .map((w) => w.label ?? String(w.locationId));
 
+  const showTabs = tabs && options.length > 0 && chartData.length > 0;
+  const showUnmanaged = !select && !tabs && typeof value === "string";
+
   return (
     <>
       {error && error.length > 0 && <>{error}</>}
-      {tabs && options.length > 0 && chartData.length > 0 && (
+      {showTabs && (
         <Tabbed
           collectionId={collectionId}
           data={chartData}
@@ -296,7 +302,19 @@ export const Charts: React.FC<Props> = (props) => {
           theme={computedColorScheme}
           seriesLabels={seriesLabels}
           tabs={options}
-          chartClassname={chartClassname}
+          chartClassname={className}
+        />
+      )}
+      {showUnmanaged && (
+        <Unmanaged
+          collectionId={collectionId}
+          data={chartData}
+          locationIds={locationIds}
+          theme={computedColorScheme}
+          seriesLabels={seriesLabels}
+          entries={options}
+          chartClassname={className}
+          value={value}
         />
       )}
       {isLoading && <Loader type="dots" />}

@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.chartWrapper {
-  height: 200px;
+div.chartWrapper {
+  height: 12.5rem;
   width: 100%;
 }
 
@@ -14,24 +14,28 @@
 }
 
 .locationsDropdown {
-  width: 105px;
+  width: 6.5625rem;
+}
+
+.parametersDropdown {
+  width: 10.5rem;
 }
 
 .timesDropdown {
-  width: 140px;
+  width: 8.75rem;
 }
 
 .noContent {
-  margin-right: 25px;
+  margin-right: 1.5625rem;
   margin-top: -1px;
 }
 
 .popupContent {
-  margin-top: 20px;
+  margin-top: 1.25rem;
 }
 
 .popupWrapper {
-  width: 410px;
+  width: 28.125rem;
 }
 
 .table {
@@ -40,7 +44,7 @@
 }
 
 .tableWrapper {
-  max-height: 200px;
+  max-height: 12.5rem;
   overflow-y: scroll;
 }
 

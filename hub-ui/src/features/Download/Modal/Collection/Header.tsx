@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Group, Text } from "@mantine/core";
+import { Group, Stack, Text } from "@mantine/core";
 import CopyInput from "@/components/CopyInput";
+import Tooltip from "@/components/Tooltip";
 import styles from "@/features/Download/Download.module.css";
 import { CollectionType } from "@/utils/collection";
 
@@ -29,14 +30,29 @@ export const Header: React.FC<Props> = (props) => {
     }
   };
 
+  const getTitle = () => {
+    switch (collectionType) {
+      case CollectionType.EDR:
+        return "Get All Location Geometries";
+      case CollectionType.EDRGrid:
+        return "Get All Coverage Data";
+      case CollectionType.Features:
+        return "Get All Item Geometries";
+      default:
+        return "Get All Data";
+    }
+  };
+
   return (
-    <>
-      <Text size="xs" c="dimmed">
-        {getMessage()}
-      </Text>
-      <Group justify="space-between" gap="var(--default-spacing)">
-        <CopyInput size="sm" url={url} className={styles.fullWidth} />
-      </Group>
-    </>
+    <Tooltip label={getMessage()}>
+      <Stack gap="calc(var(--default-spacing) / 4)">
+        <Text size="md" fw={700}>
+          {getTitle()}
+        </Text>
+        <Group justify="space-between" gap="var(--default-spacing)">
+          <CopyInput size="sm" url={url} className={styles.fullWidth} />
+        </Group>
+      </Stack>
+    </Tooltip>
   );
 };
