@@ -50,6 +50,7 @@ type Props = {
   tabs?: boolean;
   select?: boolean;
   value?: string | null;
+  tabHeight?: number;
   onData?: () => void;
   getData: <T extends IRequestParams>(
     collectionId: ICollection["id"],
@@ -75,10 +76,11 @@ export const Charts: React.FC<Props> = (props) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     select = false,
     className,
+    tabHeight,
+    value = null,
     onData = () => null,
     getData,
     coverageLabels,
-    value = null,
   } = props;
 
   const controller = useRef<AbortController | null>(null);
@@ -303,6 +305,7 @@ export const Charts: React.FC<Props> = (props) => {
           seriesLabels={seriesLabels}
           tabs={options}
           chartClassname={className}
+          tabHeight={tabHeight}
         />
       )}
       {showUnmanaged && (

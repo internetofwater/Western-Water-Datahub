@@ -3,41 +3,32 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { Feature } from "geojson";
 import {
-  Divider,
   Group,
   NumberInput,
   Pagination,
+  Paper,
   Stack,
   Text,
+  Title,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { StringIdentifierCollections } from "@/consts/collections";
 import styles from "@/features/Download/Download.module.css";
 import { Grid } from "@/features/Download/Modal/Collection/Grid";
 import { Header } from "@/features/Download/Modal/Collection/Header";
 import { Item } from "@/features/Download/Modal/Collection/Item";
 import { Location } from "@/features/Download/Modal/Collection/Location";
-import loadingManager from "@/managers/Loading.init";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import { ICollection } from "@/services/edr.service";
 import { TLayer, TLocation } from "@/stores/main/types";
 import useSessionStore from "@/stores/session";
-import { ELoadingType, ENotificationType } from "@/stores/session/types";
+import { ENotificationType } from "@/stores/session/types";
 import { chunk } from "@/utils/chunk";
 import { CollectionType } from "@/utils/collection";
-import { createEmptyCsv } from "@/utils/csv";
-import { getIdStore } from "@/utils/getLabel";
-import {
-  buildCubeUrl,
-  buildItemsUrl,
-  buildLocationsUrl,
-  buildLocationUrl,
-} from "@/utils/url";
+import { buildCubeUrl, buildItemsUrl, buildLocationsUrl } from "@/utils/url";
 import { LocationsChart } from "./LocationsChart";
 
 type Props = {
@@ -65,7 +56,6 @@ export const LayerBlock: React.FC<Props> = (props) => {
   const [currentChunk, setCurrentChunk] = useState<Feature[]>([]);
   const [url, setUrl] = useState("");
 
-  const [isLoading, setIsLoading] = useState(false);
   const locationRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const controller = useRef<AbortController>(null);
@@ -76,18 +66,6 @@ export const LayerBlock: React.FC<Props> = (props) => {
   const handlePageSizeChange = (pageSize: number) => {
     setPageSize(pageSize);
     setPage(1);
-  };
-
-  const isStringIdentifierCollection = StringIdentifierCollections.includes(
-    layer.collectionId,
-  );
-
-  const getId = (feature: Feature) => {
-    if (isStringIdentifierCollection) {
-      return getIdStore(feature) ?? String(feature.id);
-    }
-
-    return String(feature.id);
   };
 
   useEffect(() => {
@@ -172,38 +150,6 @@ export const LayerBlock: React.FC<Props> = (props) => {
     };
   }, []);
 
-  const getFileName = (locationId: string) => {
-    let name = `data-${locationId}-${layer.parameters.join("_")}`;
-
-    if (layer.from && dayjs(layer.from).isValid()) {
-      name += `-${dayjs(layer.from).format("MM/DD/YYYY")}`;
-    }
-
-    if (layer.to && dayjs(layer.to).isValid()) {
-      name += `-${dayjs(layer.to).format("MM/DD/YYYY")}`;
-    }
-
-    return `${name}.csv`;
-  };
-
-  const handleGetAllCSV = async () => {
-    setIsLoading(true);
-
-    const promises = locations.map((feature) => getCSV(getId(feature)));
-
-    await Promise.all(promises);
-
-    if (isMounted.current) {
-      notificationManager.show(
-        "All CSV's generated",
-        ENotificationType.Success,
-        10000,
-      );
-
-      setIsLoading(false);
-    }
-  };
-
   const getLabel = () => {
     switch (collectionType) {
       case CollectionType.EDR:
@@ -215,80 +161,14 @@ export const LayerBlock: React.FC<Props> = (props) => {
     }
   };
 
-  const getCSV = async (locationId: string) => {
-    if (!collection) {
-      return;
-    }
-
-    const url = buildLocationUrl(
-      collection.id,
-      locationId,
-      layer.parameters,
-      layer.from,
-      layer.to,
-      true,
-      true,
-    );
-
-    const loadingInstance = loadingManager.add(
-      `Generating csv for ${getLabel()}: ${locationId}`,
-      ELoadingType.Data,
-    );
-    try {
-      setIsLoading(true);
-
-      if (!controller.current) {
-        controller.current = new AbortController();
-      }
-
-      const res = await fetch(url, {
-        signal: controller.current.signal,
-      });
-
-      if (!res.ok) {
-        throw new Error(
-          `Error: ${res.statusText.length > 0 ? res.statusText : "Unknown error"}`,
-        );
-      }
-
-      let objectUrl = "";
-      if (res.status === 204) {
-        notificationManager.show(
-          `No data found for ${getLabel()}: ${locationId} with the current parameter and date range selection.`,
-          ENotificationType.Error,
-          10000,
-        );
-        objectUrl = createEmptyCsv();
-      } else {
-        const blob = await res.blob();
-        objectUrl = URL.createObjectURL(blob);
-      }
-
-      const a = document.createElement("a");
-      a.href = objectUrl;
-      a.download = getFileName(locationId);
-      document.body.appendChild(a);
-      a.click();
-
-      URL.revokeObjectURL(objectUrl);
-      a.remove();
-      notificationManager.show(
-        `CSV generated successfully for ${getLabel()}: ${locationId}.`,
-        ENotificationType.Success,
-        10000,
-      );
-    } catch (err) {
-      if (((err as Error)?.message ?? "").length > 0) {
-        notificationManager.show(
-          (err as Error)?.message,
-          ENotificationType.Error,
-          10000,
-        );
-      } else if (typeof err === "string") {
-        notificationManager.show(err, ENotificationType.Error, 10000);
-      }
-    } finally {
-      loadingManager.remove(loadingInstance);
+  const getTitle = () => {
+    switch (collectionType) {
+      case CollectionType.EDR:
+        return "Locations";
+      case CollectionType.EDRGrid:
+        return "Grids";
+      default:
+        return "Items";
     }
   };
 
@@ -298,85 +178,88 @@ export const LayerBlock: React.FC<Props> = (props) => {
       gap="var(--default-spacing)"
       className={styles.locationBlockWrapper}
     >
-      <Header url={url} collectionType={collectionType} />
-      {currentChunk.length === 0 && (
-        <Text fw={700} m="auto">
-          Select {getLabel()}s from the menu {mobile ? "above" : "on the left"}
-        </Text>
-      )}
+      <Paper shadow="xs" p="var(--default-spacing)" className={styles.summary}>
+        <Stack gap="var(--default-spacing)">
+          <Header url={url} collectionType={collectionType} />
+          {currentChunk.length === 0 && (
+            <Text fw={700} m="auto">
+              Select {getLabel()}s from the menu{" "}
+              {mobile ? "above" : "on the left"}
+            </Text>
+          )}
 
-      {collection && collectionType === CollectionType.EDR && (
-        <>
-          <LocationsChart
-            layer={layer}
-            locations={currentChunk}
-            isLoading={isLoading}
-            onGetAllCSV={handleGetAllCSV}
-          />
-          <Divider size="md" my="var(--default-spacing)" />
-        </>
+          {collection && collectionType === CollectionType.EDR && (
+            <>
+              <LocationsChart layer={layer} locations={currentChunk} />
+            </>
+          )}
+        </Stack>
+      </Paper>
+      {collection && currentChunk.length > 0 && (
+        <Paper
+          shadow="xs"
+          p="var(--default-spacing)"
+          className={styles.summary}
+        >
+          <Stack gap="var(--default-spacing)">
+            {collection && collectionType === CollectionType.EDR && (
+              <Title order={5} size="h4">
+                {getTitle()}
+              </Title>
+            )}
+
+            {collectionType === CollectionType.EDR &&
+              currentChunk.map((location) => (
+                <Location
+                  key={`selected-location-${layer.id}-${location.id}`}
+                  linkLocation={linkLocation}
+                  location={location}
+                  layer={layer}
+                  collection={collection}
+                />
+              ))}
+            {collectionType === CollectionType.EDRGrid &&
+              currentChunk.map((location) => (
+                <Grid
+                  key={`selected-grid-${layer.id}-${location.id}`}
+                  linkLocation={linkLocation}
+                  location={location}
+                  layer={layer}
+                  collection={collection}
+                />
+              ))}
+            {collectionType === CollectionType.Features &&
+              currentChunk.map((location) => (
+                <Item
+                  key={`selected-item-${layer.id}-${location.id}`}
+                  linkLocation={linkLocation}
+                  location={location}
+                  layer={layer}
+                  collection={collection}
+                />
+              ))}
+            <Group justify="space-between" align="flex-end">
+              {currentChunk.length > 0 && (
+                <NumberInput
+                  size="xs"
+                  label="Locations per page"
+                  value={pageSize}
+                  onChange={(value) => handlePageSizeChange(Number(value))}
+                  min={1}
+                  max={locations.length}
+                />
+              )}
+              <Pagination
+                size="sm"
+                total={chunkedLocations.length}
+                value={page}
+                onChange={setPage}
+                mt="sm"
+              />
+            </Group>
+          </Stack>
+        </Paper>
       )}
-      {collection &&
-        collectionType === CollectionType.EDR &&
-        currentChunk.map((location) => (
-          <Location
-            key={`selected-location-${layer.id}-${location.id}`}
-            // ref={(el) => {
-            //   locationRefs.current[String(location.id)] = el;
-            // }}
-            linkLocation={linkLocation}
-            location={location}
-            layer={layer}
-            collection={collection}
-          />
-        ))}
-      {collection &&
-        collectionType === CollectionType.EDRGrid &&
-        currentChunk.map((location) => (
-          <Grid
-            key={`selected-grid-${layer.id}-${location.id}`}
-            // ref={(el) => {
-            //   locationRefs.current[String(location.id)] = el;
-            // }}
-            linkLocation={linkLocation}
-            location={location}
-            layer={layer}
-            collection={collection}
-          />
-        ))}
-      {collection &&
-        collectionType === CollectionType.Features &&
-        currentChunk.map((location) => (
-          <Item
-            key={`selected-item-${layer.id}-${location.id}`}
-            // ref={(el) => {
-            //   locationRefs.current[String(location.id)] = el;
-            // }}
-            linkLocation={linkLocation}
-            location={location}
-            layer={layer}
-            collection={collection}
-          />
-        ))}
-      <Group justify="space-between" align="flex-end">
-        {currentChunk.length > 0 && (
-          <NumberInput
-            size="xs"
-            label="Locations per page"
-            value={pageSize}
-            onChange={(value) => handlePageSizeChange(Number(value))}
-            min={1}
-            max={locations.length}
-          />
-        )}
-        <Pagination
-          size="sm"
-          total={chunkedLocations.length}
-          value={page}
-          onChange={setPage}
-          mt="sm"
-        />
-      </Group>
     </Stack>
   );
 };

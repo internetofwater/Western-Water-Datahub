@@ -119,6 +119,14 @@
   padding: calc(var(--default-spacing) * 2);
 }
 
+[data-mantine-color-scheme="dark"] .summary {
+  background-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme="light"] .summary {
+  background-color: var(--mantine-color-gray-2);
+}
+
 @media screen and (max-width: 899px) {
   .datePicker {
     min-width: 100%;
