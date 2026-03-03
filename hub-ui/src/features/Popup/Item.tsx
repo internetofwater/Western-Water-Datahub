@@ -50,9 +50,9 @@ export const Item: React.FC<Props> = (props) => {
           />
         )}
         <Box component="span" className={styles.linkButtonWrapper}>
-          <Tooltip label="Open this item in the Links modal.">
+          <Tooltip label="Open this item in the Download modal.">
             <Button size="xs" onClick={handleLinkClick}>
-              Link
+              Download
             </Button>
           </Tooltip>
         </Box>

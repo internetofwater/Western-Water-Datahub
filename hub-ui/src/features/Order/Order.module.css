@@ -11,9 +11,8 @@
   width: 100%;
   border-top: 1px solid var(--mantine-color-default-border);
 }
-
-.title > svg {
-  width: 2rem;
+.title svg {
+  width: 1.125rem;
   height: auto;
 }
 
@@ -24,32 +23,11 @@
 }
 
 .actionIcon {
-  stroke: var(--mantine-color-black);
-  fill: var(--mantine-color-black);
+  stroke: var(--mantine-color-text);
+  fill: var(--mantine-color-text);
 }
 
 .actionIcon > svg {
   width: 2rem;
   height: auto;
-}
-
-.actionIcon:hover:not(:disabled),
-.actionIcon:focus:not(:disabled),
-.actionIcon:active:not(:disabled) {
-  stroke: var(--mantine-color-gray-9);
-  fill: var(--mantine-color-gray-9);
-}
-
-[data-mantine-color-scheme="dark"] {
-  .actionIcon {
-    stroke: var(--mantine-color-white);
-    fill: var(--mantine-color-white);
-  }
-
-  .actionIcon:hover:not(:disabled),
-  .actionIcon:focus:not(:disabled),
-  .actionIcon:active:not(:disabled) {
-    stroke: var(--mantine-color-gray-5);
-    fill: var(--mantine-color-gray-5);
-  }
 }

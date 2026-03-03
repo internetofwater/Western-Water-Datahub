@@ -46,7 +46,7 @@ export const Entry: React.FC<Props> = (props) => {
     );
     setIsLoading(true);
     try {
-      const dates = await getDates(map, layer.collectionId);
+      const dates = await getDates(map, layer.collectionId, true);
 
       const data: ComboboxData = dates.map((date, index) => ({
         value: String(index),

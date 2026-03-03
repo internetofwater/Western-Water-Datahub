@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+.bigChart {
+  height: 31.875rem;
+}
+
 .partialWidth {
   width: 82%;
 }
@@ -50,6 +54,10 @@
 
 .downloadButtonWrapper > button:first-of-type {
   margin-right: var(--default-spacing);
+}
+
+.getAllWrapper svg {
+  width: 1.25rem;
 }
 
 .goButton {

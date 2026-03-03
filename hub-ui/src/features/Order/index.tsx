@@ -15,7 +15,9 @@ import useSessionStore from "@/stores/session";
 import { EOverlay } from "@/stores/session/types";
 
 const Order: React.FC = () => {
-  const layers = useMainStore((state) => state.layers);
+  const layers = useMainStore((state) => state.layers).filter(
+    (layer) => layer.loaded,
+  );
 
   const overlay = useSessionStore((state) => state.overlay);
   const setOverlay = useSessionStore((state) => state.setOverlay);

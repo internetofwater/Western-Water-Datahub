@@ -22,26 +22,26 @@ const options: ComboboxData = [
   //   label: "(DOA) Department of Administration",
   //   value: "DOA",
   // },
-  {
-    label: "(DOI) Department of the Interior",
-    value: "DOI",
-  },
-  {
-    label: "(NDMC) National Drought Mitigation Center",
-    value: "NDMC",
-  },
+  // {
+  //   label: '(DOI) Department of the Interior',
+  //   value: 'DOI',
+  // },
+  // {
+  //   label: "(NDMC) National Drought Mitigation Center",
+  //   value: "NDMC",
+  // },
   {
     label: "(NOAA) National Oceanic and Atmospheric Administration",
     value: "NOAA",
   },
-  {
-    label: "(NOHRSC) National Operational Hydrologic Remote Sensing Center",
-    value: "NOHRSC",
-  },
-  {
-    label: "(NRCS) Natural Resources Conservation Service",
-    value: "NRCS",
-  },
+  // {
+  //   label: "(NOHRSC) National Operational Hydrologic Remote Sensing Center",
+  //   value: "NOHRSC",
+  // },
+  // {
+  //   label: "(NRCS) Natural Resources Conservation Service",
+  //   value: "NRCS",
+  // },
   {
     label: "(USACE) U.S. Army Corps of Engineers",
     value: "USACE",
@@ -58,10 +58,10 @@ const options: ComboboxData = [
     label: "(USGS) U.S. Geological Survey",
     value: "USGS",
   },
-  {
-    label: "(WPC) Weather Prediction Center",
-    value: "WPC",
-  },
+  // {
+  //   label: '(WPC) Weather Prediction Center',
+  //   value: 'WPC',
+  // },
 ];
 
 export const Provider: React.FC = () => {
@@ -82,26 +82,31 @@ export const Provider: React.FC = () => {
   );
 
   return (
-    <Stack gap={0}>
-      {/* TODO */}
-      <Tooltip multiline label={helpText}>
-        <Group className={styles.filterTitleWrapper} gap="xs">
-          <Title order={3} size="h4">
-            Filter by Data Provider
-          </Title>
-          <Info />
-        </Group>
-      </Tooltip>
+    <Stack gap={0} className={styles.filterStack}>
       <VisuallyHidden>{helpText}</VisuallyHidden>
       <MultiSelect
-        size="sm"
-        label="Data Provider"
+        size="xs"
+        label={
+          <Tooltip multiline label={helpText}>
+            <Group className={styles.filterTitleWrapper} gap="xs">
+              <Title order={3} size="h4">
+                Data Provider
+              </Title>
+              <Info />
+            </Group>
+          </Tooltip>
+        }
         placeholder="Select..."
         data={options}
         value={provider}
         onChange={setProvider}
         searchable
         clearable
+        comboboxProps={{
+          withinPortal: false,
+          position: "bottom-start",
+          width: "fit-content",
+        }}
       />
     </Stack>
   );

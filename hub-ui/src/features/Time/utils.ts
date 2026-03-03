@@ -29,6 +29,7 @@ const getDatesFromProperties = (
 export const getDates = async (
   map: Map,
   collectionId: ICollection["id"],
+  includeGeography: boolean,
 ): Promise<string[]> => {
   const { pointLayerId, lineLayerId, fillLayerId } =
     mainManager.getLocationsLayerIds(collectionId);
@@ -44,7 +45,10 @@ export const getDates = async (
   }
 
   // Fallback to more costly potential fetch
-  const featureCollection = await mainManager.getFeatures(collectionId);
+  const featureCollection = await mainManager.getFeatures(
+    collectionId,
+    includeGeography,
+  );
   if (featureCollection.features.length > 0) {
     const feature = featureCollection.features[0];
 

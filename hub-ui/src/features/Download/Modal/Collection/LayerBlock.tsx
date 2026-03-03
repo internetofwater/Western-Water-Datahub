@@ -6,7 +6,14 @@
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { Feature } from "geojson";
-import { Group, NumberInput, Pagination, Stack, Text } from "@mantine/core";
+import {
+  Divider,
+  Group,
+  NumberInput,
+  Pagination,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { StringIdentifierCollections } from "@/consts/collections";
 import styles from "@/features/Download/Download.module.css";
@@ -19,17 +26,19 @@ import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import { ICollection } from "@/services/edr.service";
 import { TLayer, TLocation } from "@/stores/main/types";
+import useSessionStore from "@/stores/session";
 import { ELoadingType, ENotificationType } from "@/stores/session/types";
 import { chunk } from "@/utils/chunk";
 import { CollectionType } from "@/utils/collection";
 import { createEmptyCsv } from "@/utils/csv";
-import { getIdStore } from "@/utils/getIdStore";
+import { getIdStore } from "@/utils/getLabel";
 import {
   buildCubeUrl,
   buildItemsUrl,
   buildLocationsUrl,
   buildLocationUrl,
 } from "@/utils/url";
+import { LocationsChart } from "./LocationsChart";
 
 type Props = {
   locations: Feature[];
@@ -47,6 +56,8 @@ export const LayerBlock: React.FC<Props> = (props) => {
     layer,
     linkLocation = null,
   } = props;
+
+  const hasNotification = useSessionStore((state) => state.hasNotification);
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -80,25 +91,34 @@ export const LayerBlock: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    let url = "";
-    if (collectionType === CollectionType.EDR) {
-      url = buildLocationsUrl(collection.id, layer.parameters);
-    } else if (collectionType === CollectionType.EDRGrid) {
-      const bbox = mainManager.getBBox(collection.id);
-      url = buildCubeUrl(
-        collection.id,
-        bbox,
-        layer.parameters,
-        layer.from,
-        layer.to,
-        false,
-        true,
-      );
-    } else if (collectionType === CollectionType.Features) {
-      url = buildItemsUrl(collection.id);
-    }
+    try {
+      let url = "";
+      if (collectionType === CollectionType.EDR) {
+        url = buildLocationsUrl(collection.id, layer.parameters);
+      } else if (collectionType === CollectionType.EDRGrid) {
+        const bbox = mainManager.getBBox(collection.id, true);
+        url = buildCubeUrl(
+          collection.id,
+          bbox,
+          layer.parameters,
+          layer.from,
+          layer.to,
+          false,
+          true,
+        );
+      } else if (collectionType === CollectionType.Features) {
+        url = buildItemsUrl(collection.id);
+      }
 
-    setUrl(url);
+      setUrl(url);
+    } catch (error) {
+      console.error(error);
+      // TODO: determine cause of duplicates
+      const message = `Unable to create base URL for layer: ${collection.title}. Skipping this entry in the Export modal.`;
+      if (!hasNotification(message)) {
+        notificationManager.show(message, ENotificationType.Error, 10000);
+      }
+    }
   }, [collection, collectionType]);
 
   useEffect(() => {
@@ -278,16 +298,23 @@ export const LayerBlock: React.FC<Props> = (props) => {
       gap="var(--default-spacing)"
       className={styles.locationBlockWrapper}
     >
-      <Header
-        url={url}
-        isLoading={isLoading}
-        collectionType={collectionType}
-        onGetAllCSV={handleGetAllCSV}
-      />
+      <Header url={url} collectionType={collectionType} />
       {currentChunk.length === 0 && (
         <Text fw={700} m="auto">
           Select {getLabel()}s from the menu {mobile ? "above" : "on the left"}
         </Text>
+      )}
+
+      {collection && collectionType === CollectionType.EDR && (
+        <>
+          <LocationsChart
+            layer={layer}
+            locations={currentChunk}
+            isLoading={isLoading}
+            onGetAllCSV={handleGetAllCSV}
+          />
+          <Divider size="md" my="var(--default-spacing)" />
+        </>
       )}
       {collection &&
         collectionType === CollectionType.EDR &&
