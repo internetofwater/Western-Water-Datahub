@@ -56,6 +56,10 @@
   margin-right: var(--default-spacing);
 }
 
+.getAllWrapper svg {
+  width: 1.25rem;
+}
+
 .goButton {
   margin-top: 3.15em;
   max-width: 6em;
