@@ -1097,17 +1097,6 @@ class MainManager {
 
     const layer = this.getLayer({ collectionId });
 
-    if (layer && layer.paletteDefinition) {
-      const features = aggregate.features as Feature<
-        Geometry,
-        { [layer.paletteDefinition.parameter]: number }
-      >[];
-      this.styleLayer(layer, layer.paletteDefinition, {
-        features,
-        signal: options?.signal,
-      });
-    }
-
     (aggregate as any) = undefined;
 
     if (layer) {
@@ -1279,7 +1268,7 @@ class MainManager {
   ): Promise<void> {
     const from = this.store.getState().from;
     const to = this.store.getState().to;
-    const layer = this.getLayer({ collectionId: collection.id });
+    let layer = this.getLayer({ collectionId: collection.id });
 
     const count = this.store.getState().layers.length;
 
@@ -1357,6 +1346,39 @@ class MainManager {
     this.addLayer(collection.id);
 
     await this.addData(collection.id, { includeGeography });
+
+    layer = this.getLayer({ collectionId: collection.id });
+    let colorOrExpression = layer?.color ?? "#fff";
+    let correctedPaletteDefinition = layer?.paletteDefinition ?? null;
+    if (layer && layer.paletteDefinition) {
+      const expression = await this.styleLayer(layer, layer.paletteDefinition, {
+        updateStore: false,
+      });
+      if (expression) {
+        colorOrExpression = expression;
+
+        if (expression.length !== layer.paletteDefinition.count * 2 + 3) {
+          const count = (expression.length - 3) / 2;
+
+          if (isValidColorBrewerIndex(count)) {
+            correctedPaletteDefinition = {
+              ...layer.paletteDefinition,
+              count,
+            };
+            notificationManager.show(
+              `Duplicate thresholds detected. Reducing to ${count} threshold(s)`,
+              ENotificationType.Info,
+              5000,
+            );
+          }
+        }
+      }
+      this.store.getState().updateLayer({
+        ...layer,
+        color: colorOrExpression,
+        paletteDefinition: correctedPaletteDefinition,
+      });
+    }
 
     this.reorderLayers();
   }
@@ -1765,11 +1787,29 @@ class MainManager {
 
     if (opacity !== layer.opacity) {
       if (this.map) {
-        const { fillLayerId, rasterLayerId } = layerIds;
+        const { pointLayerId, lineLayerId, fillLayerId, rasterLayerId } =
+          layerIds;
         if (this.map.getLayer(fillLayerId)) {
-          this.map.setPaintProperty(fillLayerId, "fill-opacity", opacity);
+          const fillOpacity = Math.max(0, opacity * DEFAULT_FILL_OPACITY);
+          this.map.setPaintProperty(fillLayerId, "fill-opacity", fillOpacity);
         }
 
+        if (this.map.getLayer(pointLayerId)) {
+          const circleOpacity = Math.max(0, opacity * DEFAULT_FILL_OPACITY);
+          this.map.setPaintProperty(
+            pointLayerId,
+            "circle-opacity",
+            circleOpacity,
+          );
+          this.map.setPaintProperty(
+            pointLayerId,
+            "circle-stroke-opacity",
+            opacity,
+          );
+        }
+        if (this.map.getLayer(lineLayerId)) {
+          this.map.setPaintProperty(lineLayerId, "line-opacity", opacity);
+        }
         if (this.map.getLayer(rasterLayerId)) {
           this.map.setPaintProperty(rasterLayerId, "raster-opacity", opacity);
         }
@@ -1790,6 +1830,7 @@ class MainManager {
       const expression = await this.styleLayer(layer, paletteDefinition, {
         updateStore: false,
       });
+
       if (expression) {
         _color = expression;
 
@@ -1810,6 +1851,7 @@ class MainManager {
         }
       }
     }
+
     this.store.getState().updateLayer({
       ...layer,
       color: _color,

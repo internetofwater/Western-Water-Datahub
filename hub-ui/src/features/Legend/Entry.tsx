@@ -58,9 +58,9 @@ export const Entry: React.FC<Props> = (props) => {
     collectionType,
   );
   const showGrid = [CollectionType.EDRGrid].includes(collectionType);
-  const showOpacity = [CollectionType.EDRGrid, CollectionType.Map].includes(
-    collectionType,
-  );
+  // const showOpacity = [CollectionType.EDRGrid, CollectionType.Map].includes(
+  //   collectionType,
+  // );
 
   return (
     <Stack w="100%" gap="xs" className={styles.legendEntry}>
@@ -74,13 +74,13 @@ export const Entry: React.FC<Props> = (props) => {
         </Text>
       </Group>
 
-      {showOpacity && (
-        <OpacitySlider
-          id={layer.id}
-          opacity={layer.opacity}
-          handleOpacityChange={handleOpacityChange}
-        />
-      )}
+      <OpacitySlider
+        id={layer.id}
+        opacity={layer.opacity}
+        handleOpacityChange={handleOpacityChange}
+      />
+      {/* {showOpacity && (
+      )} */}
 
       {layer.paletteDefinition && typeof layer.color !== "string" ? (
         <DetailedGradient

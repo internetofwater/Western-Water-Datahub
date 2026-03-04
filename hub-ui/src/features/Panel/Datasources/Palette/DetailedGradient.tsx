@@ -65,7 +65,7 @@ export const DetailedGradient: React.FC<Props> = (props) => {
         setLabel(label);
       }
     }
-  }, [collectionId]);
+  }, [collectionId, paletteDefinition]);
 
   return (
     <Gradient
