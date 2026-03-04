@@ -10,11 +10,11 @@ import { Grid } from "@/features/Legend/Grid";
 import styles from "@/features/Legend/Legend.module.css";
 import { OpacitySlider } from "@/features/Legend/OpacitySlider";
 import { Shapes } from "@/features/Legend/Shapes";
+import { VisibilityToggle } from "@/features/Legend/VisibilityToggle";
 import { DetailedGradient } from "@/features/Panel/Datasources/Palette/DetailedGradient";
 import mainManager from "@/managers/Main.init";
 import { TLayer } from "@/stores/main/types";
 import { CollectionType, getCollectionType } from "@/utils/collection";
-import { VisibilityToggle } from "./VisibilityToggle";
 
 type Props = {
   layer: TLayer;

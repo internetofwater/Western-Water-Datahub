@@ -79,7 +79,7 @@ const Panel: React.FC = () => {
         <Stack
           gap="calc(var(--default-spacing) * 2)"
           px="calc(var(--default-spacing) * 2)"
-          py="xl"
+          py="calc(var(--default-spacing) * 3)"
           justify="center"
           className={styles.panelContent}
         >

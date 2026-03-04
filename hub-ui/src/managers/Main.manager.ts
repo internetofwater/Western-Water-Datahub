@@ -54,7 +54,7 @@ import {
   SourceOptions,
   StyleOptions,
 } from "@/managers/types";
-import { CoverageGridService } from "@/services/coverageGrid.service";
+import { CoverageGeoService } from "@/services/coverageJSON/coverageGeo.service";
 import { ICollection } from "@/services/edr.service";
 import geoconnexService from "@/services/init/geoconnex.init";
 import wwdhService from "@/services/init/wwdh.init";
@@ -381,7 +381,7 @@ class MainManager {
     parameterNames?: string[],
     signal?: AbortSignal,
   ): Promise<FeatureCollection> {
-    return await new CoverageGridService().createGrid(
+    return await new CoverageGeoService().createGrid(
       collectionId,
       bbox,
       from,

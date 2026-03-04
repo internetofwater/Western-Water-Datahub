@@ -6,7 +6,7 @@
 import { Feature } from "geojson";
 import { GeoJSONFeature, Map } from "mapbox-gl";
 import mainManager from "@/managers/Main.init";
-import { DATES_PROPERTY } from "@/services/coverageGrid.service";
+import { DATES_PROPERTY } from "@/services/coverageJSON/consts";
 import { ICollection } from "@/services/edr.service";
 
 const getDatesFromProperties = (

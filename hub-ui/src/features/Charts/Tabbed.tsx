@@ -7,12 +7,12 @@ import { useState } from "react";
 import { Tabs, Text } from "@mantine/core";
 import LineChart from "@/components/Charts/LineChart";
 import styles from "@/features/Charts/Charts.module.css";
+import { ETabTypes, TTypedOption } from "@/features/Charts/types";
 import {
   CoverageCollection,
   CoverageJSON,
   ICollection,
 } from "@/services/edr.service";
-import { ETabTypes, TTypedOption } from "./types";
 
 type Props = {
   collectionId: ICollection["id"];

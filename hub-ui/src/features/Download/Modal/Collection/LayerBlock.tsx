@@ -17,9 +17,11 @@ import {
 import { useMediaQuery } from "@mantine/hooks";
 import styles from "@/features/Download/Download.module.css";
 import { Grid } from "@/features/Download/Modal/Collection/Grid";
+import { GridsChart } from "@/features/Download/Modal/Collection/GridsChart";
 import { Header } from "@/features/Download/Modal/Collection/Header";
 import { Item } from "@/features/Download/Modal/Collection/Item";
 import { Location } from "@/features/Download/Modal/Collection/Location";
+import { LocationsChart } from "@/features/Download/Modal/Collection/LocationsChart";
 import mainManager from "@/managers/Main.init";
 import notificationManager from "@/managers/Notification.init";
 import { ICollection } from "@/services/edr.service";
@@ -29,7 +31,6 @@ import { ENotificationType } from "@/stores/session/types";
 import { chunk } from "@/utils/chunk";
 import { CollectionType } from "@/utils/collection";
 import { buildCubeUrl, buildItemsUrl, buildLocationsUrl } from "@/utils/url";
-import { LocationsChart } from "./LocationsChart";
 
 type Props = {
   locations: Feature[];
@@ -191,6 +192,11 @@ export const LayerBlock: React.FC<Props> = (props) => {
           {collection && collectionType === CollectionType.EDR && (
             <>
               <LocationsChart layer={layer} locations={currentChunk} />
+            </>
+          )}
+          {collection && collectionType === CollectionType.EDRGrid && (
+            <>
+              <GridsChart layer={layer} locations={currentChunk} />
             </>
           )}
         </Stack>
