@@ -543,7 +543,6 @@ class MainManager {
       if (e.originalEvent.cancelBubble) {
         return;
       }
-      e.originalEvent.preventDefault();
 
       if (!isTopLayer(collectionId, this.map!, e.point)) {
         return;
@@ -1693,6 +1692,7 @@ class MainManager {
       .getState()
       .setFrom(today.subtract(1, "week").format("YYYY-MM-DD"));
     this.store.getState().setTo(today.format("YYYY-MM-DD"));
+    this.store.getState().setGeographyFilter(null);
   }
 
   public reorderLayers() {

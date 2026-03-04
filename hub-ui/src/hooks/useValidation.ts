@@ -186,7 +186,7 @@ export const useValidation = (collectionId: ICollection["id"]) => {
       const geoRule = restrictions.find(
         (r) => r.type === RestrictionType.GeographyFilter,
       );
-      return !!geoRule && !geographyFilterItemId;
+      return !!geoRule;
     },
     [collectionId],
   );
