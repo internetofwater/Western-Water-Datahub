@@ -1101,7 +1101,7 @@ type CoverageParameters = {
 export type CoverageCollection = {
   type: "CoverageCollection";
   parameters: CoverageParameters;
-  referencing: Array<{
+  referencing?: Array<{
     coordinates: string[];
     system: {
       type: string;

@@ -7,12 +7,12 @@ import { useState } from "react";
 import { Tabs, Text } from "@mantine/core";
 import LineChart from "@/components/Charts/LineChart";
 import styles from "@/features/Charts/Charts.module.css";
+import { ETabTypes, TTypedOption } from "@/features/Charts/types";
 import {
   CoverageCollection,
   CoverageJSON,
   ICollection,
 } from "@/services/edr.service";
-import { ETabTypes, TTypedOption } from "./types";
 
 type Props = {
   collectionId: ICollection["id"];
@@ -22,6 +22,7 @@ type Props = {
   seriesLabels?: string[];
   tabs: TTypedOption[];
   chartClassname?: string;
+  tabHeight?: number;
 };
 
 export const Tabbed: React.FC<Props> = (props) => {
@@ -33,6 +34,7 @@ export const Tabbed: React.FC<Props> = (props) => {
     seriesLabels,
     tabs,
     chartClassname,
+    tabHeight = 20,
   } = props;
 
   const [tab, setTab] = useState<string | null>(
@@ -46,6 +48,7 @@ export const Tabbed: React.FC<Props> = (props) => {
       classNames={{
         root: styles.root,
         panel: `${styles.panel} ${chartClassname}`,
+        tab: styles.tab,
       }}
     >
       <Tabs.List>
@@ -63,6 +66,7 @@ export const Tabbed: React.FC<Props> = (props) => {
           <Tabs.Panel
             key={`${collectionId}-${tab.value}-tab-panel`}
             value={tab.value}
+            h={`${tabHeight}rem`}
           >
             <LineChart
               data={data}
@@ -83,6 +87,7 @@ export const Tabbed: React.FC<Props> = (props) => {
           <Tabs.Panel
             key={`${collectionId}-${tab.value}-tab-panel`}
             value={tab.value}
+            h={`${tabHeight}rem`}
           >
             <LineChart
               data={data}

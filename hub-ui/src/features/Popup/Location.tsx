@@ -8,6 +8,7 @@ import { Feature } from "geojson";
 import { Box, Button, Group, Stack, Tooltip } from "@mantine/core";
 import Select from "@/components/Select";
 import { StringIdentifierCollections } from "@/consts/collections";
+import { Charts } from "@/features/Charts";
 import { Parameter } from "@/features/Popup";
 import styles from "@/features/Popup/Popup.module.css";
 import { Table } from "@/features/Table";
@@ -20,7 +21,6 @@ import {
 import wwdhService from "@/services/init/wwdh.init";
 import { TLayer, TLocation } from "@/stores/main/types";
 import { getIdStore } from "@/utils/getLabel";
-import { Charts } from "../Charts";
 
 type Props = {
   location: TLocation;

@@ -8,6 +8,21 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { useEffect, useRef, useState } from "react";
 import { IRequestParams } from "@ogcapi-js/shared";
 import { Loader, useComputedColorScheme } from "@mantine/core";
+import { Tabbed } from "@/features/Charts/Tabbed";
+import {
+  ETabTypes,
+  TCoverageLabel,
+  TTypedOption,
+  TWrappedCoverage,
+} from "@/features/Charts/types";
+import { Unmanaged } from "@/features/Charts/Unmanaged";
+import {
+  computeCoverageLabel,
+  findReusableCoverage,
+  findStaleCoverage,
+  isValid,
+} from "@/features/Charts/utils";
+import { Parameter } from "@/features/Popup";
 import loadingManager from "@/managers/Loading.init";
 import notificationManager from "@/managers/Notification.init";
 import {
@@ -18,21 +33,6 @@ import {
 import { TLocation } from "@/stores/main/types";
 import { ELoadingType, ENotificationType } from "@/stores/session/types";
 import { getDatetime } from "@/utils/url";
-import { Parameter } from "../Popup";
-import { Tabbed } from "./Tabbed";
-import {
-  ETabTypes,
-  TCoverageLabel,
-  TTypedOption,
-  TWrappedCoverage,
-} from "./types";
-import { Unmanaged } from "./Unmanaged";
-import {
-  computeCoverageLabel,
-  findReusableCoverage,
-  findStaleCoverage,
-  isValid,
-} from "./utils";
 
 dayjs.extend(isSameOrBefore);
 
@@ -50,6 +50,7 @@ type Props = {
   tabs?: boolean;
   select?: boolean;
   value?: string | null;
+  tabHeight?: number;
   onData?: () => void;
   getData: <T extends IRequestParams>(
     collectionId: ICollection["id"],
@@ -75,10 +76,11 @@ export const Charts: React.FC<Props> = (props) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     select = false,
     className,
+    tabHeight,
+    value = null,
     onData = () => null,
     getData,
     coverageLabels,
-    value = null,
   } = props;
 
   const controller = useRef<AbortController | null>(null);
@@ -154,6 +156,7 @@ export const Charts: React.FC<Props> = (props) => {
           pending.push({ locationId: locId, idx, params });
         }
       });
+
       const requests = pending.map((p) =>
         getData(collectionId, p.locationId, p.params, signal),
       );
@@ -303,6 +306,7 @@ export const Charts: React.FC<Props> = (props) => {
           seriesLabels={seriesLabels}
           tabs={options}
           chartClassname={className}
+          tabHeight={tabHeight}
         />
       )}
       {showUnmanaged && (

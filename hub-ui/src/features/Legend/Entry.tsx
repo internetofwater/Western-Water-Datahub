@@ -10,11 +10,11 @@ import { Grid } from "@/features/Legend/Grid";
 import styles from "@/features/Legend/Legend.module.css";
 import { OpacitySlider } from "@/features/Legend/OpacitySlider";
 import { Shapes } from "@/features/Legend/Shapes";
+import { VisibilityToggle } from "@/features/Legend/VisibilityToggle";
 import { DetailedGradient } from "@/features/Panel/Datasources/Palette/DetailedGradient";
 import mainManager from "@/managers/Main.init";
 import { TLayer } from "@/stores/main/types";
 import { CollectionType, getCollectionType } from "@/utils/collection";
-import { VisibilityToggle } from "./VisibilityToggle";
 
 type Props = {
   layer: TLayer;
@@ -58,9 +58,9 @@ export const Entry: React.FC<Props> = (props) => {
     collectionType,
   );
   const showGrid = [CollectionType.EDRGrid].includes(collectionType);
-  const showOpacity = [CollectionType.EDRGrid, CollectionType.Map].includes(
-    collectionType,
-  );
+  // const showOpacity = [CollectionType.EDRGrid, CollectionType.Map].includes(
+  //   collectionType,
+  // );
 
   return (
     <Stack w="100%" gap="xs" className={styles.legendEntry}>
@@ -74,13 +74,13 @@ export const Entry: React.FC<Props> = (props) => {
         </Text>
       </Group>
 
-      {showOpacity && (
-        <OpacitySlider
-          id={layer.id}
-          opacity={layer.opacity}
-          handleOpacityChange={handleOpacityChange}
-        />
-      )}
+      <OpacitySlider
+        id={layer.id}
+        opacity={layer.opacity}
+        handleOpacityChange={handleOpacityChange}
+      />
+      {/* {showOpacity && (
+      )} */}
 
       {layer.paletteDefinition && typeof layer.color !== "string" ? (
         <DetailedGradient

@@ -18,7 +18,7 @@ import * as echarts from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import styles from "@/components/Charts/Charts.module.css";
 import { EChartsSeries, PrettyLabel } from "@/components/Charts/types";
-import { coverageJSONToSeries } from "@/components/Charts/utils";
+import { CoverageChartService } from "@/services/coverageJSON/coverageChart.service";
 import { CoverageCollection, CoverageJSON } from "@/services/edr.service";
 import { isCoverageCollection } from "@/utils/isTypeObject";
 
@@ -82,10 +82,13 @@ const LineChart = (props: Props) => {
             ?.values ?? dates)
         : ((entry.domain.axes.t as { values: string[] })?.values ?? dates);
 
-      let seriesForEntry = coverageJSONToSeries(entry, {
-        chosenParameter,
-        chosenUnit,
-      });
+      let seriesForEntry = new CoverageChartService().coverageJSONToSeries(
+        entry,
+        {
+          chosenParameter,
+          chosenUnit,
+        },
+      );
 
       if (
         prettyLabels.length > 0 &&

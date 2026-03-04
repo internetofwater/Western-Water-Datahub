@@ -7,16 +7,16 @@ import { useEffect, useState } from "react";
 import { GeoJsonProperties } from "geojson";
 import { Stack, Text, TextInput } from "@mantine/core";
 import { StringIdentifierCollections } from "@/consts/collections";
+import { Matches } from "@/features/Search/Matches";
+import { Properties } from "@/features/Search/Properties";
 import styles from "@/features/Search/Search.module.css";
+import { getId } from "@/features/Search/utils";
 import { useLocations } from "@/hooks/useLocations";
 import mainManager from "@/managers/Main.init";
 import useMainStore from "@/stores/main";
 import { TLayer } from "@/stores/main/types";
 import { hasSearchTerm } from "@/utils/searchFeatures";
 import { sortObject } from "@/utils/sortObject";
-import { Matches } from "./Matches";
-import { Properties } from "./Properties";
-import { getId } from "./utils";
 
 type Props = {
   layer: TLayer;

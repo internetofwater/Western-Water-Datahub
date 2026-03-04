@@ -21,14 +21,15 @@ import {
   CoverageCollection,
   CoverageJSON,
   ICollection,
-  IGetLocationParams,
+  IGetCubeParams,
 } from "@/services/edr.service";
 import wwdhService from "@/services/init/wwdh.init";
-import { TLayer, TLocation } from "@/stores/main/types";
+import { TLayer } from "@/stores/main/types";
 import { ENotificationType } from "@/stores/session/types";
 import { getIdStore, getLabel } from "@/utils/getLabel";
+import { normalizeBBox } from "@/utils/normalizeBBox";
 import { getParameterUnit } from "@/utils/parameters";
-import { buildLocationUrl } from "@/utils/url";
+import { buildCubeUrl } from "@/utils/url";
 
 dayjs.extend(isSameOrBefore);
 
@@ -37,7 +38,7 @@ type Props = {
   locations: Feature[];
 };
 
-export const LocationsChart: React.FC<Props> = (props) => {
+export const GridsChart: React.FC<Props> = (props) => {
   const { layer, locations } = props;
 
   const [from, setFrom] = useState<TLayer["from"]>(layer.from);
@@ -80,18 +81,44 @@ export const LocationsChart: React.FC<Props> = (props) => {
 
   const getData = (
     collectionId: ICollection["id"],
-    locationId: TLocation["id"],
-    params: IGetLocationParams,
+    locationId: string,
+    params: IGetCubeParams,
     signal?: AbortSignal,
-  ) =>
-    wwdhService.getLocation<CoverageCollection | CoverageJSON>(
-      collectionId,
-      locationId,
-      {
-        signal,
-        params,
-      },
+  ) => {
+    const location = locations.find(
+      (location) =>
+        String(
+          isStringIdentifierCollection
+            ? (getIdStore(location) ?? location.id)
+            : location.id,
+        ) === locationId,
     );
+
+    if (location) {
+      const bbox = location.bbox;
+      if (bbox) {
+        const normalizedBBox = normalizeBBox(bbox);
+        return wwdhService.getCube<CoverageCollection | CoverageJSON>(
+          collectionId,
+          {
+            signal,
+            params: { ...params, bbox: normalizedBBox },
+          },
+        );
+      }
+    }
+
+    console.error("Location without bbox detected: ", location);
+
+    // Stub collection to resolve type issues
+    // This statement should never be reached
+    return {
+      type: "CoverageCollection",
+      domainType: "PointSeries",
+      coverages: [],
+      parameters: {},
+    } as CoverageCollection;
+  };
 
   const getId = (feature: Feature) => {
     if (isStringIdentifierCollection) {
@@ -115,32 +142,39 @@ export const LocationsChart: React.FC<Props> = (props) => {
     return `${name}.csv`;
   };
 
-  const buildLink = (locationId: string, layer: TLayer): TZipLink => {
-    const url = buildLocationUrl(
+  const buildLink = (
+    location: Feature,
+    layer: TLayer,
+  ): TZipLink | undefined => {
+    if (!location.bbox) {
+      return undefined;
+    }
+
+    const url = buildCubeUrl(
       layer.collectionId,
-      locationId,
+      location.bbox,
       layer.parameters,
       from,
       to,
       true,
       true,
     );
-    const fileName = getFileName(locationId, layer);
+
+    const fileName = getFileName(getId(location), layer);
     return { url, fileName };
   };
 
   const handleGetAllCSV = async () => {
     setIsLoading(true);
 
-    // const promises = locations.map((feature) => getCSV(getId(feature)));
-
-    // await Promise.all(promises);
-
     if (!controller.current) {
       controller.current = new AbortController();
     }
 
-    const links = locations.map((feature) => buildLink(getId(feature), layer));
+    // Create link, exclude locations w/out a bbox
+    const links = locations
+      .map((location) => buildLink(location, layer))
+      .filter(Boolean) as TZipLink[];
 
     let count = 0;
 
