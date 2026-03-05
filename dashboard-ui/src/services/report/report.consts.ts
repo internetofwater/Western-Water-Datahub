@@ -54,9 +54,10 @@ export const RESERVOIR_POSITIONS = [
     { x: 560, y: 20 },
     { x: 810, y: 20 },
     { x: 1060, y: 20 },
-    { x: 1310, y: 90 }, // Top Right
+    // { x: 1310, y: 20 }, // Top Right
+    { x: 1310, y: 20 }, // Top Right
     // Right most
-    { x: 1400, y: 300 },
+    { x: 1400, y: 250 },
     // Bottom
     { x: 1050, y: 675 },
     { x: 800, y: 675 },
@@ -88,11 +89,11 @@ export const TAGS = [
 ];
 
 export const TAG_COLORS = [
-    '#4BC2FA',
     '#9DFA57',
     '#EE4BFA',
     '#FAAB4B',
     '#A168A5',
+    '#4BC2FA',
     '#087F2F',
     '#62737A',
     '#3966D5',
