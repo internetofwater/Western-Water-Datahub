@@ -86,7 +86,7 @@ resources:
 
   snotel-edr:
     type: collection
-    title: Snowpack Telemetry Network (SNOTEL)
+    title: USDA Snowpack Telemetry Network (SNOTEL)
     description: is an automated system of snowpack and related climate sensors primarily in mountainous regions in the Western United States which aims to collect data like snow water equivalent, accumulated precipitation, and air temperature. This is a proxy of the SNOTEL API into the OGC API EDR format.
     provider-name:
       - DOA
@@ -124,7 +124,7 @@ resources:
 
   awdb-forecasts-edr:
     type: collection
-    title: Air and Water Database (AWDB) Forecasts
+    title: USDA Air and Water Database (AWDB) Forecasts
     description: provides predictions for climate and water supply conditions. This is a proxy of the AWDB API into the OGC API EDR format. This collection uses the same endpoint as SNOTEL but includes only forecasts
     provider-name:
       - DOA
@@ -160,7 +160,7 @@ resources:
 
   snotel-huc06-means:
     type: collection
-    title: Snotel Snow Water Equivalent Aggregated by HUC06
+    title: USDA Snotel Snow Water Equivalent Aggregated by HUC06
     description: provides snow water equivalent (swe) data from SNOTEL aggregated by HUC06 watershed. Each feature contains one average for the entire HUC06; this is calculated by taking the latest swe value, dividing it by the 30 year average swe value on for the same day, and multiplying it by 100.
     provider-name:
       - DOA
@@ -190,7 +190,7 @@ resources:
 
   usace-edr:
     type: collection
-    title: US Army Corps of Engineers Access2Water API
+    title: USACE Access2Water API
     description: provides a subset of the USACE Corps Water Management System (CWMS) API specifically focused on water control management data. This is a proxy of the CWMS API into the OGC API EDR format.
     provider-name:
       - DOA
@@ -371,7 +371,7 @@ resources:
       - type: application/html
         rel: canonical
         title: Canonical
-        href: https://mapservices.weather.noaa.gov/raster/services/snow/NOHRSC_Snow_Analysis/MapServer/WMSServer
+        href: https://mapservices.weather.noaa.gov/raster/services/snow/NOHRSC_Snow_Analysis/MapServer/WMSServer?service=WMS&request=GetCapabilities
     extents:
       spatial:
         bbox: [-130.516667, 24.1, -62.25273100000001, 58.240301]
@@ -568,7 +568,7 @@ resources:
 
   usgs-prism:
     type: collection
-    title: Parameter-elevation Regressions on Independent Slopes Model (PRISM)
+    title: USGS Parameter-elevation Regressions on Independent Slopes Model (PRISM)
     description: provides a raster for high-resolution spatial climate data, including precipitation, temperature, and other climate variables, derived by combining point-based weather observations with digital elevation and other geographic information.
     hidden: True
     provider-name:

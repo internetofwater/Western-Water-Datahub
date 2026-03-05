@@ -6,6 +6,7 @@ from awdb_com.locations import MAGIC_UPSTREAM_DATE_SIGNIFYING_STILL_IN_SERVICE
 from com.cache import RedisCache
 from com.helpers import await_
 from awdb_com.types import ForecastDataDTO
+from pygeoapi.provider.base import ProviderNoDataError
 
 
 class ForecastResultCollection:
@@ -56,7 +57,9 @@ class ForecastResultCollection:
         result = await_(self.cache.get_or_fetch_json(url, force_fetch=force_fetch))
         assert "error" not in result, result
 
-        assert result, f"Got no data for {url}"
+        if not result:
+            raise ProviderNoDataError(f"Got no data for {url}")
+
         tripletToForecast: dict[str, list[ForecastDataDTO]] = {}
         for res in result:
             tripletToForecast[res.get("stationTriplet")] = [
