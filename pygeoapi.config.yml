@@ -371,7 +371,7 @@ resources:
       - type: application/html
         rel: canonical
         title: Canonical
-        href: https://mapservices.weather.noaa.gov/raster/services/snow/NOHRSC_Snow_Analysis/MapServer/WMSServer
+        href: https://mapservices.weather.noaa.gov/raster/services/snow/NOHRSC_Snow_Analysis/MapServer/WMSServer?service=WMS&request=GetCapabilities
     extents:
       spatial:
         bbox: [-130.516667, 24.1, -62.25273100000001, 58.240301]
