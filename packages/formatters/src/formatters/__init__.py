@@ -33,7 +33,11 @@ import logging
 
 from shapely.geometry import shape as geojson_to_geom
 
-from pygeoapi.formatter.base import BaseFormatter, FormatterSerializationError
+from pygeoapi.formatter.base import (
+    BaseFormatter,
+    FormatterGenericError,
+    FormatterSerializationError,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -57,7 +61,7 @@ class CSVFormatter(BaseFormatter):
         self.f = "csv"
         self.extension = "csv"
 
-    def write(self, options: dict = {}, data: dict = None) -> str:
+    def write(self, options: dict = {}, data: dict | None = None) -> str:
         """
         Generate data in CSV format
 
@@ -66,17 +70,20 @@ class CSVFormatter(BaseFormatter):
 
         :returns: string representation of format
         """
+        assert data
         type = data.get("type") or ""
         LOGGER.debug(f"Formatting CSV from data type: {type}")
 
         if "Feature" in type or "features" in data:
-            return self._write_from_geojson(options, data)
+            return self._write_from_geojson(data)
         elif "Coverage" in type or "coverages" in data:
-            return self._write_from_covjson(options, data)
+            return self._write_from_covjson(data)
+        else:
+            raise FormatterGenericError(
+                f"Formatter {self.name} applied to data type {type} not supported"
+            )
 
-    def _write_from_geojson(
-        self, options: dict = {}, data: dict = None, is_point=False
-    ) -> str:
+    def _write_from_geojson(self, data: dict, is_point=False) -> str:
         """
         Generate GeoJSON data in CSV format
 
@@ -111,7 +118,7 @@ class CSVFormatter(BaseFormatter):
         for feature in data["features"]:
             self._add_feature(writer, feature, is_point)
 
-        return output.getvalue().encode("utf-8")
+        return output.getvalue()
 
     def _add_feature(
         self, writer: csv.DictWriter, feature: dict, is_point: bool
@@ -139,7 +146,7 @@ class CSVFormatter(BaseFormatter):
             LOGGER.error(err)
             raise FormatterSerializationError("Error writing CSV output")
 
-    def _write_from_covjson(self, options: dict = {}, data: dict = None) -> str:
+    def _write_from_covjson(self, data: dict) -> str:
         """
         Generate CovJSON data in CSV format
 
@@ -172,7 +179,7 @@ class CSVFormatter(BaseFormatter):
                 for coverage in data["coverages"]
                 if "point" in coverage["domain"]["domainType"].lower()
             ]
-        return output.getvalue().encode("utf-8")
+        return output.getvalue()
 
     @staticmethod
     def _add_coverage(
