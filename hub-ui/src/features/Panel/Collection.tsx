@@ -144,7 +144,9 @@ export const Collection: React.FC = () => {
     }
 
     const currentCollections = collections
-      .filter((collection) => getCollectionType(collection) === collectionType)
+      .filter(
+        (collection) => collectionType === 'all' || getCollectionType(collection) === collectionType
+      )
       .map((collection) => collection.id);
 
     return selectedCollections.filter((collectionId) => currentCollections.includes(collectionId));
@@ -155,6 +157,7 @@ export const Collection: React.FC = () => {
 
     return (options as ExtendedItem[])
       .filter((option) => collectionType === 'all' || option.type === collectionType)
+      .filter((option) => !selectedCollections.includes(option.value))
       .filter(
         (option) => lowerSearch.length === 0 || option.label.toLowerCase().includes(lowerSearch)
       );

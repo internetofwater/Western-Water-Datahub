@@ -386,8 +386,12 @@ class MainManager {
     };
   }
 
+  public getFilterSourceId(collectionId: ICollection['id']): string {
+    return `user-${collectionId}-filter-source`;
+  }
+
   public getFilterLayerId(collectionId: ICollection['id']): string {
-    return `${collectionId}-filter`;
+    return `user-${collectionId}-filter`;
   }
 
   private filterByGeometryType(
@@ -1395,7 +1399,7 @@ class MainManager {
     collectionId: ICollection['id'],
     feature: Feature<Polygon>
   ): string {
-    const sourceId = this.getSourceId(collectionId);
+    const sourceId = this.getFilterSourceId(collectionId);
     if (this.map) {
       const source = this.map.getSource(sourceId) as GeoJSONSource;
       if (!source) {
