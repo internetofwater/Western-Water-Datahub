@@ -39,7 +39,7 @@ class CoverageDict(TypedDict):
     # extra custom metadata that is not part of the covjson spec
     # that we add for the purpose of specifying if the coverage
     # represents modelled data
-    isModeled: bool
+    isModeled: NotRequired[bool]
 
 
 class CoverageCollectionDict(TypedDict):
