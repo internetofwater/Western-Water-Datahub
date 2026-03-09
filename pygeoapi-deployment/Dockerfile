@@ -39,5 +39,10 @@ COPY pygeoapi.config.yml /opt/pygeoapi/local.config.yml
 # Set up environment
 ENV PATH="/opt/pygeoapi/.venv/bin:$PATH"
 
+# WWDH uses a custom event loop; we define the
+# import path here
+ENV PYGEOAPI_CUSTOM_EVENT_LOOP_MODULE=com.env
+ENV PYGEOAPI_CUSTOM_EVENT_LOOP_GETTER=get_loop
+
 # Entrypoint for running the app
 ENTRYPOINT [ "/opt/pygeoapi/pygeoapi-deployment/entrypoint.sh" ]

@@ -9,7 +9,7 @@ from com.otel import otel_trace
 from com.protocols.providers import OAFProviderProtocol
 from noaa_rfc.lib.forecast import ForecastCollection, ForecastDataSingle
 from pygeoapi.provider.base import BaseProvider
-from pygeoapi.util import crs_transform
+from pygeoapi.crs import crs_transform
 from com.geojson.helpers import (
     GeojsonFeatureDict,
     GeojsonFeatureCollectionDict,

@@ -7,7 +7,7 @@ from typing import Literal, Optional
 from com.otel import otel_trace
 from com.protocols.providers import OAFProviderProtocol
 from pygeoapi.provider.base import BaseProvider
-from pygeoapi.util import crs_transform
+from pygeoapi.crs import crs_transform
 from com.geojson.helpers import (
     GeojsonFeatureDict,
     GeojsonFeatureCollectionDict,

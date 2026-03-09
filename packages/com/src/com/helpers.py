@@ -3,10 +3,11 @@
 
 import asyncio
 import logging
-from typing import Any, Coroutine, Literal, Optional, Tuple, Type, TypedDict
 from annotated_types import T
+from typing import Any
+from typing import Coroutine, Literal, Optional, Tuple, Type, TypedDict
 from com.datetime import datetime_from_iso
-from com.env import wwdh_event_loop
+from com.env import get_loop
 from pydantic import BaseModel
 from rise.lib.types.helpers import ZType
 import datetime
@@ -36,9 +37,13 @@ EDRFieldsMapping = dict[str, EDRField]
 
 def await_(coro: Coroutine[Any, Any, T]) -> T:
     """
-    await an asyncio coroutine, ensuring it works even if an event loop is already running.
+    await a coroutine using our custom event loop; this allows us to run async
+    inside of flask gevent workers and other runtimes that would otherwise cause
+    async issues due to ephemeral event loops
     """
-    return asyncio.run_coroutine_threadsafe(coro, loop=wwdh_event_loop).result()
+    loop = get_loop()
+    future = asyncio.run_coroutine_threadsafe(coro, loop)
+    return future.result()
 
 
 def parse_z(z: str) -> Optional[Tuple[ZType, list[int]]]:
