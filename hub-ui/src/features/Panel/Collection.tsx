@@ -149,8 +149,6 @@ export const Collection: React.FC = () => {
       )
       .map((collection) => collection.id);
 
-    console.log('HERE', selectedCollections, currentCollections, collections);
-
     return selectedCollections.filter((collectionId) => currentCollections.includes(collectionId));
   };
 
@@ -159,6 +157,7 @@ export const Collection: React.FC = () => {
 
     return (options as ExtendedItem[])
       .filter((option) => collectionType === 'all' || option.type === collectionType)
+      .filter((option) => !selectedCollections.includes(option.value))
       .filter(
         (option) => lowerSearch.length === 0 || option.label.toLowerCase().includes(lowerSearch)
       );
