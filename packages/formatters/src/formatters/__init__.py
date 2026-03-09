@@ -60,6 +60,7 @@ class CSVFormatter(BaseFormatter):
         self.mimetype = "text/csv; charset=utf-8"
         self.f = "csv"
         self.extension = "csv"
+        self.attachment = True
 
     def write(self, options: dict = {}, data: dict | None = None) -> str:
         """
