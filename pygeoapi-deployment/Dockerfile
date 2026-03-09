@@ -44,5 +44,7 @@ ENV PATH="/opt/pygeoapi/.venv/bin:$PATH"
 ENV PYGEOAPI_CUSTOM_EVENT_LOOP_MODULE=com.env
 ENV PYGEOAPI_CUSTOM_EVENT_LOOP_GETTER=get_loop
 
+ENV PYGEOAPI_CACHE_PLUGINS=true
+
 # Entrypoint for running the app
 ENTRYPOINT [ "/opt/pygeoapi/pygeoapi-deployment/entrypoint.sh" ]
