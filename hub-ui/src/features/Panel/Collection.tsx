@@ -188,7 +188,6 @@ export const Collection: React.FC = () => {
       <Select
         size="sm"
         label={
-          // TODO: add asterisk
           <Tooltip multiline label={helpText}>
             <Group className={styles.filterTitleWrapper} gap="calc(var(--default-spacing) / 2)">
               <Title order={3} size="h4">

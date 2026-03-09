@@ -1204,7 +1204,9 @@ class MainManager {
         from,
         to,
         position: count + 1,
-        opacity: DEFAULT_FILL_OPACITY,
+        opacity: [CollectionType.EDRGrid, CollectionType.Map].includes(collectionType)
+          ? DEFAULT_FILL_OPACITY
+          : 1,
         paletteDefinition,
         visible: true,
         loaded: collectionType === CollectionType.Map,
@@ -1254,10 +1256,7 @@ class MainManager {
     this.reorderLayers();
   }
 
-  /**
-   *
-   * @function
-   */
+  // TODO: remove this if not needed, deprecated functionality
   public async createLayers(): Promise<void> {
     // Specific user collection choice
     const selectedCollections = this.store.getState().selectedCollections;
@@ -1640,8 +1639,7 @@ class MainManager {
         }
 
         if (this.map.getLayer(pointLayerId)) {
-          const circleOpacity = Math.max(0, opacity * DEFAULT_FILL_OPACITY);
-          this.map.setPaintProperty(pointLayerId, 'circle-opacity', circleOpacity);
+          this.map.setPaintProperty(pointLayerId, 'circle-opacity', opacity);
           this.map.setPaintProperty(pointLayerId, 'circle-stroke-opacity', opacity);
         }
         if (this.map.getLayer(lineLayerId)) {
