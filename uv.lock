@@ -11,6 +11,7 @@ members = [
     "awdb-com",
     "awdb-forecasts",
     "com",
+    "formatters",
     "noaa-rfc",
     "resops",
     "resviz",
@@ -491,6 +492,11 @@ sdist = { url = "https://files.pythonhosted.org/packages/70/74/0fc0fa68d62f21dae
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4f/af/72ad54402e599152de6d067324c46fe6a4f531c7c65baf7e96c63db55eaf/flask_cors-6.0.2-py3-none-any.whl", hash = "sha256:e57544d415dfd7da89a9564e1e3a9e515042df76e12130641ca6f3f2f03b699a", size = 13257, upload-time = "2025-12-12T20:31:41.3Z" },
 ]
+
+[[package]]
+name = "formatters"
+version = "0.1.0"
+source = { editable = "packages/formatters" }
 
 [[package]]
 name = "frozenlist"

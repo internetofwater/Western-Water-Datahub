@@ -60,6 +60,8 @@ resources:
       - EDR
       - RISE
       - USBR
+    formatters:
+      - name: formatters.CSVFormatter
     templates:
       path: pygeoapi-deployment/templates/jsonld/rise-edr
     links:
@@ -121,6 +123,8 @@ resources:
       - <<: *default-feature
         name: snotel.snotel.SnotelProvider
         data: https://wcc.sc.egov.usda.gov/
+    formatters:
+      - name: formatters.CSVFormatter
 
   awdb-forecasts-edr:
     type: collection
@@ -157,6 +161,8 @@ resources:
         hreflang: en-US
     templates:
       path: pygeoapi-deployment/templates/jsonld/snotel
+    formatters:
+      - name: formatters.CSVFormatter
 
   snotel-huc06-means:
     type: collection
@@ -221,6 +227,8 @@ resources:
         rel: documentation
         title: Documentation
         href: https://water.usace.army.mil/
+    formatters:
+      - name: formatters.CSVFormatter
 
   noaa-qpf-day-1: &default-qpf
     type: collection
@@ -617,6 +625,8 @@ resources:
       spatial:
         bbox: [-123.60518, 28.4667, -95.875, 48.8283]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    formatters:
+      - name: formatters.CSVFormatter
     links:
       - type: application/html
         rel: canonical
@@ -755,6 +765,8 @@ resources:
       - EDR
       - ResOpsUS
       - USACE
+    formatters:
+      - name: formatters.CSVFormatter
     links:
       - type: link
         rel: canonical
