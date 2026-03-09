@@ -468,7 +468,7 @@ resources:
       - type: application/html
         rel: documentation
         title: Documentation
-        href: https://www.cpc.ncep.noaa.gov/
+        href: https://www.cpc.ncep.noaa.gov/products/predictions/610day/index.php
       - type: application/html
         rel: canonical
         title: Data Source
@@ -497,7 +497,7 @@ resources:
       - type: application/html
         rel: documentation
         title: Documentation
-        href: https://www.cpc.ncep.noaa.gov/
+        href: https://www.cpc.ncep.noaa.gov/products/predictions/610day/index.php
     extents: *default-extent
     providers:
       - <<: *default-feature-qpf
