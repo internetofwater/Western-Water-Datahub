@@ -72,9 +72,10 @@ with metadata_path.open() as f:
         NOAA_ID_TO_METADATA[noaa_id] = {
             "doi_region_num": int(doi_region_num) if doi_region_num else None,
             "doi_region_name": row.pop("doi_region_name"),
-            "Include_in_WWDH_Dashboard": NOAA_ID_TO_INCLUDE[noaa_id][
-                "Include_in_WWDH_Dashboard"
-            ],
+            "Include_in_WWDH_Dashboard": str(
+                NOAA_ID_TO_INCLUDE[noaa_id]["Include_in_WWDH_Dashboard"]
+            ).lower()
+            == "true",
             "NOAA_RFC_NAME": NOAA_ID_TO_INCLUDE[noaa_id]["NOAA_RFC_NAME"],
             "geometry": NOAA_ID_TO_INCLUDE[noaa_id]["geometry"],
             "Location_Name": NOAA_ID_TO_INCLUDE[noaa_id]["Location_Name"],
@@ -305,9 +306,10 @@ class ForecastCollection(LocationCollectionProtocol):
 
                 item["doi_region_num"] = metadata["doi_region_num"]
                 item["doi_region_name"] = metadata["doi_region_name"]
-                item["include_in_wwdh_dashboard"] = metadata[
-                    "Include_in_WWDH_Dashboard"
-                ]
+                item["include_in_wwdh_dashboard"] = (
+                    str(metadata["Include_in_WWDH_Dashboard"]).lower() == "true"
+                )
+
                 item["NOAA_RFC_NAME"] = metadata["NOAA_RFC_NAME"]
                 pivoted_forecasts.append(
                     ForecastDataForNOAAStation.model_validate(item)
@@ -341,9 +343,9 @@ class ForecastCollection(LocationCollectionProtocol):
                 pivoted_forecasts.append(
                     ForecastDataAdHoc(
                         espid=id,
-                        includeInWWDHDashboard=NOAA_ID_TO_METADATA[id][
-                            "Include_in_WWDH_Dashboard"
-                        ],
+                        includeInWWDHDashboard=(
+                            NOAA_ID_TO_METADATA[id]["Include_in_WWDH_Dashboard"]
+                        ),
                         NOAA_RFC_NAME=NOAA_ID_TO_METADATA[id]["NOAA_RFC_NAME"],
                         geometry=shapely_geometry,
                         doi_region_num=NOAA_ID_TO_METADATA[id]["doi_region_num"],

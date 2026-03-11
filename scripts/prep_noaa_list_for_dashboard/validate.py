@@ -25,6 +25,8 @@ mapping = {"Include": True, "Do Not Include": False}
 
 excel_df["Post-Review Decision"] = excel_df["Post-Review Decision"].map(mapping)
 
+assert excel_df["Post-Review Decision"].isin([True, False]).all()
+
 # change the value of LABW4 to LABW4; there is an extra tab in the file
 # for some reason
 excel_df.loc[excel_df["noaa_id"] == "\tLABW4", "noaa_id"] = "LABW4"
@@ -34,13 +36,25 @@ excel_df.loc[excel_df["noaa_id"] == "\tLABW4", "noaa_id"] = "LABW4"
 excel_df = excel_df[excel_df["noaa_id"] != "ESSC2"]
 excel_df = excel_df[excel_df["noaa_id"] != "CGYC2"]
 
+
 # locations in local API
 api = "http://localhost:5005/collections/noaa-rfc/items?limit=2000"
 api_df = gpd.read_file(api)
 
+api_df["include_in_wwdh_dashboard"] = api_df["include_in_wwdh_dashboard"].astype(bool)
+excel_df["Post-Review Decision"] = excel_df["Post-Review Decision"].astype(bool)
+
+excel_df_include_total = len(excel_df.query("`Post-Review Decision` == True"))
+api_df_include_total = len(api_df.query("include_in_wwdh_dashboard == True"))
+
+assert excel_df_include_total == api_df_include_total == 216, (
+    f"{excel_df_include_total=} != {api_df_include_total=} != 216"
+)
+
 # compare sets
 excel_ids = set(excel_df["noaa_id"].unique())
 api_ids = set(api_df["espid"].unique())
+
 
 missing_in_api = excel_ids - api_ids
 extra_in_api = api_ids - excel_ids
@@ -76,4 +90,15 @@ mismatches = merged[
 assert mismatches.empty, (
     f"Mismatch in 'include_in_wwdh_dashboard' for the following IDs:\n"
     f"{mismatches[['noaa_id', 'Post-Review Decision', 'include_in_wwdh_dashboard']]}"
+)
+
+
+# ensure the location filter in the API behaves the same as manually querying in geopandas
+api_with_include_filter = "http://localhost:5005/collections/noaa-rfc/items?limit=2000&include_in_wwdh_dashboard=True"
+api_df_with_include_filter = gpd.read_file(api_with_include_filter)
+assert len(api_df_with_include_filter) == 216
+assert (
+    api_df_with_include_filter["espid"]
+    .isin(merged.query("`Post-Review Decision` == True")["noaa_id"].unique())
+    .all
 )
