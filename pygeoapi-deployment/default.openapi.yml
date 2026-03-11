@@ -1,6 +1,3 @@
-# Copyright 2025 Lincoln Institute of Land Policy
-# SPDX-License-Identifier: MIT
-
 components:
   parameters:
     bbox:
@@ -98,6 +95,19 @@ components:
         default: 0
         minimum: 0
         type: integer
+      style: form
+    properties:
+      description:
+        The properties that should be included. The parameter value is
+        a comma-separated list of property names.
+      explode: false
+      in: query
+      name: properties
+      required: false
+      schema:
+        items:
+          type: string
+        type: array
       style: form
     resourceId:
       description: Configuration resource identifier
@@ -232,7 +242,7 @@ info:
     url: https://opensource.org/license/MIT
   termsOfService: https://opensource.org/license/MIT
   title: Western Water Datahub
-  version: 0.22.dev0
+  version: 0.23.dev0
   x-keywords:
     - usbr
     - wwdh
@@ -261,6 +271,38 @@ paths:
       description: Collections
       operationId: getCollections
       parameters:
+        - in: query
+          name: parameter-name
+          schema:
+            allOf:
+              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
+              - enum:
+                  - Bedload
+                  - Elevation
+                  - Irradiance
+                  - Evapotranspiration
+                  - Water Temperature
+                  - Gage Height
+                  - Inflow
+                  - Snow Data
+                  - Shortage
+                  - Channel Flow
+                  - Outflow
+                  - Power Generation
+                  - River Characteristics
+                  - Macrobiological Characteristics
+                  - Lake/Reservoir Area
+                  - Hydropower Generation
+                  - Farm Allocation
+                  - Storage
+                  - Water Quality
+                  - Electrical Conductivity
+                  - Channel Diversion
+                  - Weather Data
+                  - Evaporation
+                type: string
+        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/lang"
         - description: Provider or the data
           in: query
           name: provider-name
@@ -269,58 +311,26 @@ paths:
             explode: false
             items:
               enum:
-                - GS
-                - RFC
-                - USGS
-                - NOAA
-                - DOA
-                - OSU
-                - BOR
-                - NDMC
-                - NOHRSC
-                - CPC
                 - NRCS
                 - USDA
-                - DOI
+                - DOA
+                - NDMC
+                - USGS
                 - DERIVED
+                - NOHRSC
+                - OSU
+                - RFC
+                - GS
                 - USBR
-                - WPC
+                - DOI
                 - USACE
+                - CPC
+                - BOR
+                - NOAA
+                - WPC
               type: string
             style: form
             type: array
-        - description: Parameter name or group
-          in: query
-          name: parameter-name
-          schema:
-            allOf:
-              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
-              - enum:
-                  - Electrical Conductivity
-                  - Water Quality
-                  - Water Temperature
-                  - Lake/Reservoir Area
-                  - Elevation
-                  - Farm Allocation
-                  - Channel Diversion
-                  - Shortage
-                  - River Characteristics
-                  - Outflow
-                  - Hydropower Generation
-                  - Storage
-                  - Inflow
-                  - Macrobiological Characteristics
-                  - Evaporation
-                  - Gage Height
-                  - Bedload
-                  - Power Generation
-                  - Channel Flow
-                  - Snow Data
-                  - Irradiance
-                  - Weather Data
-                type: string
-        - $ref: "#/components/parameters/f"
-        - $ref: "#/components/parameters/lang"
       responses:
         "200":
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/LandingPage
@@ -362,29 +372,44 @@ paths:
       operationId: queryAreaAwdb-forecasts-edr
       parameters:
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/areaCoords.yaml
-        - &id001
-          in: query
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
           name: parameter-name
           schema:
             allOf:
               - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
               - enum:
                   - Storage
-                  - Channel Flow
-                  - Evaporation
-                  - Electrical Conductivity
                   - Elevation
                   - Water Quality
-                  - Snow Data
-                  - Irradiance
-                  - Water Temperature
-                  - Channel Diversion
                   - River Characteristics
+                  - Snow Data
+                  - Electrical Conductivity
+                  - Irradiance
+                  - Channel Flow
+                  - Channel Diversion
+                  - Water Temperature
                   - Weather Data
+                  - Evaporation
                 type: string
-        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/z.yaml
-        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/crs"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
       responses:
         "200":
           content:
@@ -422,10 +447,44 @@ paths:
             minItems: 4
             type: array
           style: form
-        - *id001
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
+          name: parameter-name
+          schema:
+            allOf:
+              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
+              - enum:
+                  - Storage
+                  - Elevation
+                  - Water Quality
+                  - River Characteristics
+                  - Snow Data
+                  - Electrical Conductivity
+                  - Irradiance
+                  - Channel Flow
+                  - Channel Diversion
+                  - Water Temperature
+                  - Weather Data
+                  - Evaporation
+                type: string
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/z.yaml
-        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/crs"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
       responses:
         "200":
           content:
@@ -447,7 +506,22 @@ paths:
         the same endpoint as SNOTEL but includes only forecasts
       operationId: getAwdb-forecasts-edrFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -465,10 +539,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id002
+        - &id001
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -712,9 +786,8 @@ paths:
         the same endpoint as SNOTEL but includes only forecasts
       operationId: getLocationsAwdb-forecasts-edr
       parameters:
-        - *id001
-        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/bbox.yaml
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -737,9 +810,28 @@ paths:
         the same endpoint as SNOTEL but includes only forecasts
       operationId: getLocationAwdb-forecasts-edr
       parameters:
-        - *id001
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/locationId.yaml
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
+          name: parameter-name
+          schema:
+            allOf:
+              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
+              - enum:
+                  - Storage
+                  - Elevation
+                  - Water Quality
+                  - River Characteristics
+                  - Snow Data
+                  - Electrical Conductivity
+                  - Irradiance
+                  - Channel Flow
+                  - Channel Diversion
+                  - Water Temperature
+                  - Weather Data
+                  - Evaporation
+                type: string
+        - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -762,9 +854,9 @@ paths:
         the same endpoint as SNOTEL but includes only forecasts
       operationId: getAwdb-forecasts-edrQueryables
       parameters:
-        - *id002
+        - *id001
         - $ref: "#/components/parameters/f"
-        - &id004
+        - &id003
           description: The profile to be applied to a given request
           explode: false
           in: query
@@ -839,7 +931,23 @@ paths:
         of the Interior
       operationId: getDoi-regionsFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -857,10 +965,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id003
+        - &id002
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -1083,9 +1191,9 @@ paths:
         of the Interior
       operationId: getDoi-regionsQueryables
       parameters:
-        - *id003
+        - *id002
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -1148,7 +1256,23 @@ paths:
         0.25 inches of icing within 24 hours from now in a given area.
       operationId: getNoaa-0.25-inch-icingFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -1166,10 +1290,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id005
+        - &id004
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -1393,9 +1517,9 @@ paths:
         0.25 inches of icing within 24 hours from now in a given area.
       operationId: getNoaa-0.25-inch-icingQueryables
       parameters:
-        - *id005
-        - $ref: "#/components/parameters/f"
         - *id004
+        - $ref: "#/components/parameters/f"
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -1460,7 +1584,23 @@ paths:
         12 inches of snowfall within 24 hours from now in a given area.
       operationId: getNoaa-12-inch-snowFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -1478,10 +1618,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id006
+        - &id005
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -1715,9 +1855,9 @@ paths:
         12 inches of snowfall within 24 hours from now in a given area.
       operationId: getNoaa-12-inch-snowQueryables
       parameters:
-        - *id006
+        - *id005
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -1786,7 +1926,23 @@ paths:
         4 inches of snowfall within 24 hours from now in a given area.
       operationId: getNoaa-4-inch-snowFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -1804,10 +1960,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id007
+        - &id006
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -2041,9 +2197,9 @@ paths:
         4 inches of snowfall within 24 hours from now in a given area.
       operationId: getNoaa-4-inch-snowQueryables
       parameters:
-        - *id007
+        - *id006
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -2112,7 +2268,23 @@ paths:
         8 inches of snowfall within 24 hours from now in a given area.
       operationId: getNoaa-8-inch-snowFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -2130,10 +2302,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id008
+        - &id007
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -2367,9 +2539,9 @@ paths:
         8 inches of snowfall within 24 hours from now in a given area.
       operationId: getNoaa-8-inch-snowQueryables
       parameters:
-        - *id008
+        - *id007
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -2431,6 +2603,317 @@ paths:
         Forecast 120 Hours metadata
       tags:
         - noaa-cqpf-120-hours
+  /collections/noaa-cqpf-120-hours/items:
+    get:
+      description:
+        consists of layers that represent forecasted cumulative QPF for
+        120 hours from now.
+      operationId: getNoaa-cqpf-120-hoursFeatures
+      parameters:
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
+        - $ref: "#/components/parameters/lang"
+        - $ref: "#/components/parameters/bbox"
+        - description:
+            The optional limit parameter limits the number of items that
+            are presented in the response document (maximum=10950, default=1825).
+          explode: false
+          in: query
+          name: limit
+          required: false
+          schema:
+            default: 1825
+            maximum: 10950
+            minimum: 1
+            type: integer
+          style: form
+        - $ref: "#/components/parameters/crs"
+        - $ref: "#/components/parameters/bbox-crs"
+        - &id008
+          description:
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
+          explode: false
+          in: query
+          name: properties
+          required: false
+          schema:
+            items:
+              enum:
+                - objectid
+                - id
+                - product
+                - valid_time
+                - qpf
+                - units
+                - issue_time
+                - start_time
+                - end_time
+                - idp_filedate
+                - idp_ingestdate
+                - shape
+                - st_area(shape)
+                - st_perimeter(shape)
+              type: string
+            type: array
+          style: form
+        - $ref: "#/components/parameters/vendorSpecificParameters"
+        - $ref: "#/components/parameters/skipGeometry"
+        - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
+        - $ref: "#/components/parameters/offset"
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - explode: false
+          in: query
+          name: objectid
+          required: false
+          schema:
+            type: esriFieldTypeOID
+          style: form
+        - explode: false
+          in: query
+          name: id
+          required: false
+          schema:
+            type: esriFieldTypeInteger
+          style: form
+        - explode: false
+          in: query
+          name: product
+          required: false
+          schema:
+            type: esriFieldTypeString
+          style: form
+        - explode: false
+          in: query
+          name: valid_time
+          required: false
+          schema:
+            type: esriFieldTypeString
+          style: form
+        - explode: false
+          in: query
+          name: qpf
+          required: false
+          schema:
+            type: esriFieldTypeDouble
+          style: form
+        - explode: false
+          in: query
+          name: units
+          required: false
+          schema:
+            type: esriFieldTypeString
+          style: form
+        - explode: false
+          in: query
+          name: issue_time
+          required: false
+          schema:
+            type: esriFieldTypeString
+          style: form
+        - explode: false
+          in: query
+          name: start_time
+          required: false
+          schema:
+            type: esriFieldTypeString
+          style: form
+        - explode: false
+          in: query
+          name: end_time
+          required: false
+          schema:
+            type: esriFieldTypeString
+          style: form
+        - explode: false
+          in: query
+          name: idp_filedate
+          required: false
+          schema:
+            type: esriFieldTypeDate
+          style: form
+        - explode: false
+          in: query
+          name: idp_ingestdate
+          required: false
+          schema:
+            type: esriFieldTypeDate
+          style: form
+        - explode: false
+          in: query
+          name: shape
+          required: false
+          schema:
+            type: esriFieldTypeGeometry
+          style: form
+        - explode: false
+          in: query
+          name: st_area(shape)
+          required: false
+          schema:
+            type: esriFieldTypeDouble
+          style: form
+        - explode: false
+          in: query
+          name: st_perimeter(shape)
+          required: false
+          schema:
+            type: esriFieldTypeDouble
+          style: form
+      responses:
+        "200":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        "400":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        "404":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        "500":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary:
+        Get NOAA Weather Prediction Center Cumulative Quantitative Precipitation
+        Forecast 120 Hours items
+      tags:
+        - noaa-cqpf-120-hours
+    options:
+      description:
+        consists of layers that represent forecasted cumulative QPF for
+        120 hours from now.
+      operationId: optionsNoaa-cqpf-120-hoursFeatures
+      responses:
+        "200":
+          description: options response
+      summary:
+        Options for NOAA Weather Prediction Center Cumulative Quantitative
+        Precipitation Forecast 120 Hours items
+      tags:
+        - noaa-cqpf-120-hours
+    post:
+      description:
+        consists of layers that represent forecasted cumulative QPF for
+        120 hours from now.
+      operationId: getCQL2Noaa-cqpf-120-hoursFeatures
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: https://schemas.opengis.net/cql2/1.0/cql2.json
+        description: Get items with CQL2
+        required: true
+      responses:
+        "200":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        "400":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        "500":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary:
+        Get NOAA Weather Prediction Center Cumulative Quantitative Precipitation
+        Forecast 120 Hours items with CQL2
+      tags:
+        - noaa-cqpf-120-hours
+  /collections/noaa-cqpf-120-hours/items/{featureId}:
+    get:
+      description:
+        consists of layers that represent forecasted cumulative QPF for
+        120 hours from now.
+      operationId: getNoaa-cqpf-120-hoursFeature
+      parameters:
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
+        - $ref: "#/components/parameters/crs"
+        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/lang"
+      responses:
+        "200":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
+        "400":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        "404":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        "500":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary:
+        Get NOAA Weather Prediction Center Cumulative Quantitative Precipitation
+        Forecast 120 Hours item by id
+      tags:
+        - noaa-cqpf-120-hours
+    options:
+      description:
+        consists of layers that represent forecasted cumulative QPF for
+        120 hours from now.
+      operationId: optionsNoaa-cqpf-120-hoursFeature
+      parameters:
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
+      responses:
+        "200":
+          description: options response
+      summary:
+        Options for NOAA Weather Prediction Center Cumulative Quantitative
+        Precipitation Forecast 120 Hours item by id
+      tags:
+        - noaa-cqpf-120-hours
+  /collections/noaa-cqpf-120-hours/queryables:
+    get:
+      description:
+        consists of layers that represent forecasted cumulative QPF for
+        120 hours from now.
+      operationId: getNoaa-cqpf-120-hoursQueryables
+      parameters:
+        - *id008
+        - $ref: "#/components/parameters/f"
+        - *id003
+        - $ref: "#/components/parameters/lang"
+      responses:
+        "200":
+          $ref: "#/components/responses/Queryables"
+        "400":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        "404":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        "500":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary:
+        Get NOAA Weather Prediction Center Cumulative Quantitative Precipitation
+        Forecast 120 Hours queryables
+      tags:
+        - noaa-cqpf-120-hours
+  /collections/noaa-cqpf-120-hours/schema:
+    get:
+      description:
+        consists of layers that represent forecasted cumulative QPF for
+        120 hours from now.
+      operationId: getNoaa-cqpf-120-hoursSchema
+      parameters:
+        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/lang"
+      responses:
+        "200":
+          $ref: "#/components/responses/Queryables"
+        "400":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        "404":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        "500":
+          $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary:
+        Get NOAA Weather Prediction Center Cumulative Quantitative Precipitation
+        Forecast 120 Hours schema
+      tags:
+        - noaa-cqpf-120-hours
   /collections/noaa-cqpf-168-hours:
     get:
       description:
@@ -2461,7 +2944,23 @@ paths:
         168 hours from now.
       operationId: getNoaa-cqpf-168-hoursFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -2481,8 +2980,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id009
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -2710,7 +3209,7 @@ paths:
       parameters:
         - *id009
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -2779,7 +3278,23 @@ paths:
         48 hours from now.
       operationId: getNoaa-cqpf-48-hoursFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -2799,8 +3314,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id010
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -3028,7 +3543,7 @@ paths:
       parameters:
         - *id010
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -3097,7 +3612,23 @@ paths:
         6 hours from now.
       operationId: getNoaa-cqpf-6-hoursFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -3117,8 +3648,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id011
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -3346,7 +3877,7 @@ paths:
       parameters:
         - *id011
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -3415,7 +3946,23 @@ paths:
         72 hours from now.
       operationId: getNoaa-cqpf-72-hoursFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -3435,8 +3982,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id012
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -3664,7 +4211,7 @@ paths:
       parameters:
         - *id012
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -3735,7 +4282,23 @@ paths:
         and are represented as above, near, or below normal.
       operationId: getNoaa-precip-6-10-dayFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -3755,8 +4318,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id013
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -3989,6 +4552,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/bbox"
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - $ref: https://schemas.opengis.net/ogcapi/maps/part1/1.0/openapi/ogcapi-maps-1.yaml#/components/parameters/subset
         - description: Response image width
           explode: false
           in: query
@@ -4051,7 +4615,7 @@ paths:
       parameters:
         - *id013
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -4129,7 +4693,23 @@ paths:
         period starting at the valid date/time.
       operationId: getNoaa-qpf-day-1Features
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -4149,8 +4729,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id014
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -4398,7 +4978,7 @@ paths:
       parameters:
         - *id014
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -4481,7 +5061,23 @@ paths:
         1).
       operationId: getNoaa-qpf-day-2Features
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -4501,8 +5097,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id015
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -4755,7 +5351,7 @@ paths:
       parameters:
         - *id015
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -4839,7 +5435,23 @@ paths:
         1).
       operationId: getNoaa-qpf-day-3Features
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -4859,8 +5471,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id016
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -5113,7 +5725,7 @@ paths:
       parameters:
         - *id016
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -5197,7 +5809,23 @@ paths:
         1).
       operationId: getNoaa-qpf-day-4-5Features
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -5217,8 +5845,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id017
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -5471,7 +6099,7 @@ paths:
       parameters:
         - *id017
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -5555,7 +6183,23 @@ paths:
         1).
       operationId: getNoaa-qpf-day-6-7Features
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -5575,8 +6219,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id018
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -5829,7 +6473,7 @@ paths:
       parameters:
         - *id018
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -5901,7 +6545,23 @@ paths:
         forecast centers into one dataset.
       operationId: getNoaa-rfcFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -5921,8 +6581,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id019
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -5961,6 +6621,8 @@ paths:
                 - espqpfdays
                 - dataset_link
                 - image_plot_link
+                - doi_region_num
+                - doi_region_name
               type: string
             type: array
           style: form
@@ -6185,6 +6847,20 @@ paths:
           schema:
             type: string
           style: form
+        - explode: false
+          in: query
+          name: doi_region_num
+          required: false
+          schema:
+            type: integer
+          style: form
+        - explode: false
+          in: query
+          name: doi_region_name
+          required: false
+          schema:
+            type: string
+          style: form
       responses:
         "200":
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
@@ -6275,7 +6951,7 @@ paths:
       parameters:
         - *id019
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -6340,7 +7016,23 @@ paths:
         from now, including floods or low water thresholds.
       operationId: getNoaa-river-stage-forecast-day-1Features
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -6360,8 +7052,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id020
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -6693,7 +7385,7 @@ paths:
       parameters:
         - *id020
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -6762,7 +7454,23 @@ paths:
         from now, including floods or low water thresholds.
       operationId: getNoaa-river-stage-forecast-day-10Features
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -6782,8 +7490,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id021
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -7115,7 +7823,7 @@ paths:
       parameters:
         - *id021
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -7184,7 +7892,23 @@ paths:
         from now, including floods or low water thresholds.
       operationId: getNoaa-river-stage-forecast-day-2Features
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -7204,8 +7928,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id022
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -7537,7 +8261,7 @@ paths:
       parameters:
         - *id022
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -7606,7 +8330,23 @@ paths:
         from now, including floods or low water thresholds.
       operationId: getNoaa-river-stage-forecast-day-3Features
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -7626,8 +8366,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id023
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -7959,7 +8699,7 @@ paths:
       parameters:
         - *id023
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -8028,7 +8768,23 @@ paths:
         represented as above, near, or below normal.
       operationId: getNoaa-temp-6-10-dayFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -8048,8 +8804,8 @@ paths:
         - $ref: "#/components/parameters/bbox-crs"
         - &id024
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -8280,6 +9036,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/bbox"
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - $ref: https://schemas.opengis.net/ogcapi/maps/part1/1.0/openapi/ogcapi-maps-1.yaml#/components/parameters/subset
         - description: Response image width
           explode: false
           in: query
@@ -8342,7 +9099,7 @@ paths:
       parameters:
         - *id024
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -8406,6 +9163,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/bbox"
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - $ref: https://schemas.opengis.net/ogcapi/maps/part1/1.0/openapi/ogcapi-maps-1.yaml#/components/parameters/subset
         - description: Response image width
           explode: false
           in: query
@@ -8490,6 +9248,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/bbox"
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - $ref: https://schemas.opengis.net/ogcapi/maps/part1/1.0/openapi/ogcapi-maps-1.yaml#/components/parameters/subset
         - description: Response image width
           explode: false
           in: query
@@ -8577,11 +9336,27 @@ paths:
       operationId: queryAreaResops-edr
       parameters:
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/areaCoords.yaml
-        - &id025
-          - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/z.yaml
-        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/crs"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
       responses:
         "200":
           content:
@@ -8623,10 +9398,27 @@ paths:
             minItems: 4
             type: array
           style: form
-        - *id025
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/z.yaml
-        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/crs"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
       responses:
         "200":
           content:
@@ -8652,7 +9444,23 @@ paths:
         Inventory of Dams (NID) ID.
       operationId: getResops-edrFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -8671,8 +9479,8 @@ paths:
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
         - description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -8792,9 +9600,8 @@ paths:
         Inventory of Dams (NID) ID.
       operationId: getLocationsResops-edr
       parameters:
-        - *id025
-        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/bbox.yaml
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -8821,9 +9628,10 @@ paths:
         Inventory of Dams (NID) ID.
       operationId: getLocationResops-edr
       parameters:
-        - *id025
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/locationId.yaml
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
+        - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -8843,7 +9651,7 @@ paths:
   /collections/resviz-edr:
     get:
       description:
-        contains current and average drought conditions for USBR reservoirs
+        contains current and average storage levels for USBR reservoirs
         dervied from the USBR resviz endpoint
       operationId: describeResviz-edrCollection
       parameters:
@@ -8858,17 +9666,32 @@ paths:
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         "500":
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get USBR Reservoir Drought Conditions (resviz) metadata
+      summary: Get USBR Reservoir Storage Levels (resviz) metadata
       tags:
         - resviz-edr
   /collections/resviz-edr/items:
     get:
       description:
-        contains current and average drought conditions for USBR reservoirs
+        contains current and average storage levels for USBR reservoirs
         dervied from the USBR resviz endpoint
       operationId: getResviz-edrFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -8886,10 +9709,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id027
+        - &id025
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -8993,23 +9816,23 @@ paths:
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         "500":
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get USBR Reservoir Drought Conditions (resviz) items
+      summary: Get USBR Reservoir Storage Levels (resviz) items
       tags:
         - resviz-edr
     options:
       description:
-        contains current and average drought conditions for USBR reservoirs
+        contains current and average storage levels for USBR reservoirs
         dervied from the USBR resviz endpoint
       operationId: optionsResviz-edrFeatures
       responses:
         "200":
           description: options response
-      summary: Options for USBR Reservoir Drought Conditions (resviz) items
+      summary: Options for USBR Reservoir Storage Levels (resviz) items
       tags:
         - resviz-edr
     post:
       description:
-        contains current and average drought conditions for USBR reservoirs
+        contains current and average storage levels for USBR reservoirs
         dervied from the USBR resviz endpoint
       operationId: getCQL2Resviz-edrFeatures
       requestBody:
@@ -9026,13 +9849,13 @@ paths:
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         "500":
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get USBR Reservoir Drought Conditions (resviz) items with CQL2
+      summary: Get USBR Reservoir Storage Levels (resviz) items with CQL2
       tags:
         - resviz-edr
   /collections/resviz-edr/items/{featureId}:
     get:
       description:
-        contains current and average drought conditions for USBR reservoirs
+        contains current and average storage levels for USBR reservoirs
         dervied from the USBR resviz endpoint
       operationId: getResviz-edrFeature
       parameters:
@@ -9049,12 +9872,12 @@ paths:
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         "500":
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get USBR Reservoir Drought Conditions (resviz) item by id
+      summary: Get USBR Reservoir Storage Levels (resviz) item by id
       tags:
         - resviz-edr
     options:
       description:
-        contains current and average drought conditions for USBR reservoirs
+        contains current and average storage levels for USBR reservoirs
         dervied from the USBR resviz endpoint
       operationId: optionsResviz-edrFeature
       parameters:
@@ -9062,27 +9885,18 @@ paths:
       responses:
         "200":
           description: options response
-      summary: Options for USBR Reservoir Drought Conditions (resviz) item by id
+      summary: Options for USBR Reservoir Storage Levels (resviz) item by id
       tags:
         - resviz-edr
   /collections/resviz-edr/locations:
     get:
       description:
-        contains current and average drought conditions for USBR reservoirs
+        contains current and average storage levels for USBR reservoirs
         dervied from the USBR resviz endpoint
       operationId: getLocationsResviz-edr
       parameters:
-        - &id026
-          in: query
-          name: parameter-name
-          schema:
-            allOf:
-              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
-              - enum:
-                  - Storage
-                type: string
-        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/bbox.yaml
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -9092,20 +9906,28 @@ paths:
         "500":
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
       summary:
-        Get pre-defined locations of contains current and average drought conditions
+        Get pre-defined locations of contains current and average storage levels
         for USBR reservoirs dervied from the USBR resviz endpoint
       tags:
         - resviz-edr
   /collections/resviz-edr/locations/{locId}:
     get:
       description:
-        contains current and average drought conditions for USBR reservoirs
+        contains current and average storage levels for USBR reservoirs
         dervied from the USBR resviz endpoint
       operationId: getLocationResviz-edr
       parameters:
-        - *id026
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/locationId.yaml
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
+          name: parameter-name
+          schema:
+            allOf:
+              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
+              - enum:
+                  - Storage
+                type: string
+        - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -9115,20 +9937,20 @@ paths:
                 $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/schemas/coverageJSON.yaml
           description: Response
       summary:
-        query contains current and average drought conditions for USBR reservoirs
+        query contains current and average storage levels for USBR reservoirs
         dervied from the USBR resviz endpoint by location
       tags:
         - resviz-edr
   /collections/resviz-edr/queryables:
     get:
       description:
-        contains current and average drought conditions for USBR reservoirs
+        contains current and average storage levels for USBR reservoirs
         dervied from the USBR resviz endpoint
       operationId: getResviz-edrQueryables
       parameters:
-        - *id027
+        - *id025
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -9139,13 +9961,13 @@ paths:
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         "500":
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get USBR Reservoir Drought Conditions (resviz) queryables
+      summary: Get USBR Reservoir Storage Levels (resviz) queryables
       tags:
         - resviz-edr
   /collections/resviz-edr/schema:
     get:
       description:
-        contains current and average drought conditions for USBR reservoirs
+        contains current and average storage levels for USBR reservoirs
         dervied from the USBR resviz endpoint
       operationId: getResviz-edrSchema
       parameters:
@@ -9160,7 +9982,7 @@ paths:
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         "500":
           $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get USBR Reservoir Drought Conditions (resviz) schema
+      summary: Get USBR Reservoir Storage Levels (resviz) schema
       tags:
         - resviz-edr
   /collections/rise-edr:
@@ -9192,38 +10014,53 @@ paths:
       operationId: queryAreaRise-edr
       parameters:
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/areaCoords.yaml
-        - &id028
-          in: query
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
           name: parameter-name
           schema:
             allOf:
               - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
               - enum:
-                  - Electrical Conductivity
-                  - Water Quality
-                  - Water Temperature
-                  - Lake/Reservoir Area
-                  - Elevation
-                  - Farm Allocation
-                  - Channel Diversion
-                  - Shortage
-                  - River Characteristics
-                  - Outflow
-                  - Hydropower Generation
-                  - Storage
-                  - Inflow
-                  - Macrobiological Characteristics
-                  - Evaporation
-                  - Gage Height
                   - Bedload
-                  - Power Generation
-                  - Channel Flow
+                  - Elevation
+                  - Water Temperature
+                  - Gage Height
+                  - Inflow
                   - Snow Data
+                  - Shortage
+                  - Channel Flow
+                  - Outflow
+                  - Power Generation
+                  - River Characteristics
+                  - Macrobiological Characteristics
+                  - Lake/Reservoir Area
+                  - Hydropower Generation
+                  - Farm Allocation
+                  - Storage
+                  - Water Quality
+                  - Electrical Conductivity
+                  - Channel Diversion
                   - Weather Data
+                  - Evaporation
                 type: string
-        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/z.yaml
-        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/crs"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
       responses:
         "200":
           content:
@@ -9260,10 +10097,53 @@ paths:
             minItems: 4
             type: array
           style: form
-        - *id028
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
+          name: parameter-name
+          schema:
+            allOf:
+              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
+              - enum:
+                  - Bedload
+                  - Elevation
+                  - Water Temperature
+                  - Gage Height
+                  - Inflow
+                  - Snow Data
+                  - Shortage
+                  - Channel Flow
+                  - Outflow
+                  - Power Generation
+                  - River Characteristics
+                  - Macrobiological Characteristics
+                  - Lake/Reservoir Area
+                  - Hydropower Generation
+                  - Farm Allocation
+                  - Storage
+                  - Water Quality
+                  - Electrical Conductivity
+                  - Channel Diversion
+                  - Weather Data
+                  - Evaporation
+                type: string
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/z.yaml
-        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/crs"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
       responses:
         "200":
           content:
@@ -9284,7 +10164,22 @@ paths:
         USBR. This collection is a proxy of the RISE API into the OGC API EDR format.
       operationId: getRise-edrFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -9302,10 +10197,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id029
+        - &id026
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -9552,9 +10447,8 @@ paths:
         USBR. This collection is a proxy of the RISE API into the OGC API EDR format.
       operationId: getLocationsRise-edr
       parameters:
-        - *id028
-        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/bbox.yaml
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -9576,9 +10470,37 @@ paths:
         USBR. This collection is a proxy of the RISE API into the OGC API EDR format.
       operationId: getLocationRise-edr
       parameters:
-        - *id028
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/locationId.yaml
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
+          name: parameter-name
+          schema:
+            allOf:
+              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
+              - enum:
+                  - Bedload
+                  - Elevation
+                  - Water Temperature
+                  - Gage Height
+                  - Inflow
+                  - Snow Data
+                  - Shortage
+                  - Channel Flow
+                  - Outflow
+                  - Power Generation
+                  - River Characteristics
+                  - Macrobiological Characteristics
+                  - Lake/Reservoir Area
+                  - Hydropower Generation
+                  - Farm Allocation
+                  - Storage
+                  - Water Quality
+                  - Electrical Conductivity
+                  - Channel Diversion
+                  - Weather Data
+                  - Evaporation
+                type: string
+        - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -9600,9 +10522,9 @@ paths:
         USBR. This collection is a proxy of the RISE API into the OGC API EDR format.
       operationId: getRise-edrQueryables
       parameters:
-        - *id029
+        - *id026
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -9670,29 +10592,44 @@ paths:
       operationId: queryAreaSnotel-edr
       parameters:
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/areaCoords.yaml
-        - &id030
-          in: query
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
           name: parameter-name
           schema:
             allOf:
               - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
               - enum:
                   - Storage
-                  - Channel Flow
-                  - Evaporation
-                  - Electrical Conductivity
                   - Elevation
                   - Water Quality
-                  - Snow Data
-                  - Irradiance
-                  - Water Temperature
-                  - Channel Diversion
                   - River Characteristics
+                  - Snow Data
+                  - Electrical Conductivity
+                  - Irradiance
+                  - Channel Flow
+                  - Channel Diversion
+                  - Water Temperature
                   - Weather Data
+                  - Evaporation
                 type: string
-        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/z.yaml
-        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/crs"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
       responses:
         "200":
           content:
@@ -9733,10 +10670,44 @@ paths:
             minItems: 4
             type: array
           style: form
-        - *id030
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
+          name: parameter-name
+          schema:
+            allOf:
+              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
+              - enum:
+                  - Storage
+                  - Elevation
+                  - Water Quality
+                  - River Characteristics
+                  - Snow Data
+                  - Electrical Conductivity
+                  - Irradiance
+                  - Channel Flow
+                  - Channel Diversion
+                  - Water Temperature
+                  - Weather Data
+                  - Evaporation
+                type: string
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/z.yaml
-        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/crs"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
       responses:
         "200":
           content:
@@ -9761,7 +10732,22 @@ paths:
         temperature. This is a proxy of the SNOTEL API into the OGC API EDR format.
       operationId: getSnotel-edrFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -9779,10 +10765,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id031
+        - &id027
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -10031,9 +11017,8 @@ paths:
         temperature. This is a proxy of the SNOTEL API into the OGC API EDR format.
       operationId: getLocationsSnotel-edr
       parameters:
-        - *id030
-        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/bbox.yaml
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -10059,9 +11044,28 @@ paths:
         temperature. This is a proxy of the SNOTEL API into the OGC API EDR format.
       operationId: getLocationSnotel-edr
       parameters:
-        - *id030
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/locationId.yaml
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
+          name: parameter-name
+          schema:
+            allOf:
+              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
+              - enum:
+                  - Storage
+                  - Elevation
+                  - Water Quality
+                  - River Characteristics
+                  - Snow Data
+                  - Electrical Conductivity
+                  - Irradiance
+                  - Channel Flow
+                  - Channel Diversion
+                  - Water Temperature
+                  - Weather Data
+                  - Evaporation
+                type: string
+        - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -10087,9 +11091,9 @@ paths:
         temperature. This is a proxy of the SNOTEL API into the OGC API EDR format.
       operationId: getSnotel-edrQueryables
       parameters:
-        - *id031
+        - *id027
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -10129,9 +11133,10 @@ paths:
   /collections/snotel-huc06-means:
     get:
       description:
-        provides snow water equivalent data from SNOTEL aggregated by HUC06
-        watershed. Each feature contains one average for the entire HUC06; these averages
-        are relative to the 30 year average.
+        provides snow water equivalent (swe) data from SNOTEL aggregated
+        by HUC06 watershed. Each feature contains one average for the entire HUC06;
+        this is calculated by taking the latest swe value, dividing it by the 30 year
+        average swe value on for the same day, and multiplying it by 100.
       operationId: describeSnotel-huc06-meansCollection
       parameters:
         - $ref: "#/components/parameters/f"
@@ -10151,12 +11156,29 @@ paths:
   /collections/snotel-huc06-means/items:
     get:
       description:
-        provides snow water equivalent data from SNOTEL aggregated by HUC06
-        watershed. Each feature contains one average for the entire HUC06; these averages
-        are relative to the 30 year average.
+        provides snow water equivalent (swe) data from SNOTEL aggregated
+        by HUC06 watershed. Each feature contains one average for the entire HUC06;
+        this is calculated by taking the latest swe value, dividing it by the 30 year
+        average swe value on for the same day, and multiplying it by 100.
       operationId: getSnotel-huc06-meansFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -10174,10 +11196,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id032
+        - &id028
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -10342,9 +11364,10 @@ paths:
         - snotel-huc06-means
     options:
       description:
-        provides snow water equivalent data from SNOTEL aggregated by HUC06
-        watershed. Each feature contains one average for the entire HUC06; these averages
-        are relative to the 30 year average.
+        provides snow water equivalent (swe) data from SNOTEL aggregated
+        by HUC06 watershed. Each feature contains one average for the entire HUC06;
+        this is calculated by taking the latest swe value, dividing it by the 30 year
+        average swe value on for the same day, and multiplying it by 100.
       operationId: optionsSnotel-huc06-meansFeatures
       responses:
         "200":
@@ -10354,9 +11377,10 @@ paths:
         - snotel-huc06-means
     post:
       description:
-        provides snow water equivalent data from SNOTEL aggregated by HUC06
-        watershed. Each feature contains one average for the entire HUC06; these averages
-        are relative to the 30 year average.
+        provides snow water equivalent (swe) data from SNOTEL aggregated
+        by HUC06 watershed. Each feature contains one average for the entire HUC06;
+        this is calculated by taking the latest swe value, dividing it by the 30 year
+        average swe value on for the same day, and multiplying it by 100.
       operationId: getCQL2Snotel-huc06-meansFeatures
       requestBody:
         content:
@@ -10378,9 +11402,10 @@ paths:
   /collections/snotel-huc06-means/items/{featureId}:
     get:
       description:
-        provides snow water equivalent data from SNOTEL aggregated by HUC06
-        watershed. Each feature contains one average for the entire HUC06; these averages
-        are relative to the 30 year average.
+        provides snow water equivalent (swe) data from SNOTEL aggregated
+        by HUC06 watershed. Each feature contains one average for the entire HUC06;
+        this is calculated by taking the latest swe value, dividing it by the 30 year
+        average swe value on for the same day, and multiplying it by 100.
       operationId: getSnotel-huc06-meansFeature
       parameters:
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
@@ -10401,9 +11426,10 @@ paths:
         - snotel-huc06-means
     options:
       description:
-        provides snow water equivalent data from SNOTEL aggregated by HUC06
-        watershed. Each feature contains one average for the entire HUC06; these averages
-        are relative to the 30 year average.
+        provides snow water equivalent (swe) data from SNOTEL aggregated
+        by HUC06 watershed. Each feature contains one average for the entire HUC06;
+        this is calculated by taking the latest swe value, dividing it by the 30 year
+        average swe value on for the same day, and multiplying it by 100.
       operationId: optionsSnotel-huc06-meansFeature
       parameters:
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
@@ -10418,14 +11444,15 @@ paths:
   /collections/snotel-huc06-means/queryables:
     get:
       description:
-        provides snow water equivalent data from SNOTEL aggregated by HUC06
-        watershed. Each feature contains one average for the entire HUC06; these averages
-        are relative to the 30 year average.
+        provides snow water equivalent (swe) data from SNOTEL aggregated
+        by HUC06 watershed. Each feature contains one average for the entire HUC06;
+        this is calculated by taking the latest swe value, dividing it by the 30 year
+        average swe value on for the same day, and multiplying it by 100.
       operationId: getSnotel-huc06-meansQueryables
       parameters:
-        - *id032
+        - *id028
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -10442,9 +11469,10 @@ paths:
   /collections/snotel-huc06-means/schema:
     get:
       description:
-        provides snow water equivalent data from SNOTEL aggregated by HUC06
-        watershed. Each feature contains one average for the entire HUC06; these averages
-        are relative to the 30 year average.
+        provides snow water equivalent (swe) data from SNOTEL aggregated
+        by HUC06 watershed. Each feature contains one average for the entire HUC06;
+        this is calculated by taking the latest swe value, dividing it by the 30 year
+        average swe value on for the same day, and multiplying it by 100.
       operationId: getSnotel-huc06-meansSchema
       parameters:
         - $ref: "#/components/parameters/f"
@@ -10489,7 +11517,23 @@ paths:
         feature represents a category of drought intensity.
       operationId: getUs-current-drought-monitorFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -10507,10 +11551,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id033
+        - &id029
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -10800,6 +11844,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/bbox"
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - $ref: https://schemas.opengis.net/ogcapi/maps/part1/1.0/openapi/ogcapi-maps-1.yaml#/components/parameters/subset
         - description: Response image width
           explode: false
           in: query
@@ -10859,9 +11904,9 @@ paths:
         feature represents a category of drought intensity.
       operationId: getUs-current-drought-monitorQueryables
       parameters:
-        - *id033
+        - *id029
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -10920,7 +11965,23 @@ paths:
       description: contains historical drought intensity data across the United States.
       operationId: getUs-historical-drought-monitorFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+              - csv
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -10938,10 +11999,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id034
+        - &id030
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -11223,6 +12284,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/bbox"
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - $ref: https://schemas.opengis.net/ogcapi/maps/part1/1.0/openapi/ogcapi-maps-1.yaml#/components/parameters/subset
         - description: Response image width
           explode: false
           in: query
@@ -11280,9 +12342,9 @@ paths:
       description: contains historical drought intensity data across the United States.
       operationId: getUs-historical-drought-monitorQueryables
       parameters:
-        - *id034
+        - *id030
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -11346,8 +12408,8 @@ paths:
       operationId: queryAreaUsace-edr
       parameters:
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/areaCoords.yaml
-        - &id035
-          in: query
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
           name: parameter-name
           schema:
             allOf:
@@ -11355,19 +12417,34 @@ paths:
               - enum:
                   - Outflow
                   - Power Generation
-                  - Storage
-                  - Inflow
-                  - Evaporation
                   - Elevation
+                  - Storage
                   - Water Quality
-                  - Water Temperature
-                  - Gage Height
+                  - Inflow
                   - Irradiance
+                  - Water Temperature
                   - Weather Data
+                  - Evaporation
+                  - Gage Height
                 type: string
-        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/z.yaml
-        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/crs"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
       responses:
         "200":
           content:
@@ -11405,10 +12482,43 @@ paths:
             minItems: 4
             type: array
           style: form
-        - *id035
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
+          name: parameter-name
+          schema:
+            allOf:
+              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
+              - enum:
+                  - Outflow
+                  - Power Generation
+                  - Elevation
+                  - Storage
+                  - Water Quality
+                  - Inflow
+                  - Irradiance
+                  - Water Temperature
+                  - Weather Data
+                  - Evaporation
+                  - Gage Height
+                type: string
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/z.yaml
-        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/crs"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
       responses:
         "200":
           content:
@@ -11430,7 +12540,22 @@ paths:
         of the CWMS API into the OGC API EDR format.
       operationId: getUsace-edrFeatures
       parameters:
-        - $ref: "#/components/parameters/f"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
         - $ref: "#/components/parameters/lang"
         - $ref: "#/components/parameters/bbox"
         - description:
@@ -11448,10 +12573,10 @@ paths:
           style: form
         - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/bbox-crs"
-        - &id036
+        - &id031
           description:
-            The properties that should be included for each feature. The
-            parameter value is a comma-separated list of property names.
+            The properties that should be included. The parameter value is
+            a comma-separated list of property names.
           explode: false
           in: query
           name: properties
@@ -11679,9 +12804,8 @@ paths:
         of the CWMS API into the OGC API EDR format.
       operationId: getLocationsUsace-edr
       parameters:
-        - *id035
-        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/bbox.yaml
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -11704,9 +12828,27 @@ paths:
         of the CWMS API into the OGC API EDR format.
       operationId: getLocationUsace-edr
       parameters:
-        - *id035
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/locationId.yaml
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
+          name: parameter-name
+          schema:
+            allOf:
+              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
+              - enum:
+                  - Outflow
+                  - Power Generation
+                  - Elevation
+                  - Storage
+                  - Water Quality
+                  - Inflow
+                  - Irradiance
+                  - Water Temperature
+                  - Weather Data
+                  - Evaporation
+                  - Gage Height
+                type: string
+        - $ref: "#/components/parameters/crs"
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -11729,9 +12871,9 @@ paths:
         of the CWMS API into the OGC API EDR format.
       operationId: getUsace-edrQueryables
       parameters:
-        - *id036
+        - *id031
         - $ref: "#/components/parameters/f"
-        - *id004
+        - *id003
         - $ref: "#/components/parameters/lang"
       responses:
         "200":
@@ -11817,8 +12959,8 @@ paths:
             minItems: 4
             type: array
           style: form
-        - &id037
-          in: query
+        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
           name: parameter-name
           schema:
             allOf:
@@ -11826,9 +12968,24 @@ paths:
               - enum:
                   - Weather Data
                 type: string
-        - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/z.yaml
-        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/crs"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
       responses:
         "200":
           content:
@@ -11853,10 +13010,33 @@ paths:
       operationId: queryPositionUsgs-prism
       parameters:
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/positionCoords.yaml
-        - *id037
         - $ref: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+        - in: query
+          name: parameter-name
+          schema:
+            allOf:
+              - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/parameter-name.yaml
+              - enum:
+                  - Weather Data
+                type: string
         - $ref: https://schemas.opengis.net/ogcapi/edr/1.0/openapi/parameters/z.yaml
-        - $ref: "#/components/parameters/f"
+        - $ref: "#/components/parameters/crs"
+        - description:
+            The optional f parameter indicates the output format which the
+            server shall provide as part of the response document.  The default format
+            is GeoJSON.
+          explode: false
+          in: query
+          name: f
+          required: false
+          schema:
+            default: json
+            enum:
+              - json
+              - html
+              - jsonld
+            type: string
+          style: form
       responses:
         "200":
           content:
@@ -11907,7 +13087,7 @@ paths:
       description: Cancel / delete job
       operationId: deleteJob
       parameters:
-        - &id038
+        - &id032
           description: job identifier
           in: path
           name: jobId
@@ -11928,7 +13108,7 @@ paths:
       description: Retrieve job details
       operationId: getJob
       parameters:
-        - *id038
+        - *id032
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -11945,7 +13125,7 @@ paths:
       description: Retrieve job results
       operationId: getJobResults
       parameters:
-        - *id038
+        - *id032
         - $ref: "#/components/parameters/f"
       responses:
         "200":
@@ -11990,7 +13170,7 @@ servers:
   - description:
       The Western Water Datahub is an implementation of OGC API - EDR supported
       by the United States Bureau of Reclamation.
-    url: http://api.wwdh.internetofwater.app
+    url: http://localhost:5005
 tags:
   - description:
       The Western Water Datahub is an implementation of OGC API - EDR supported
@@ -12015,9 +13195,10 @@ tags:
       same endpoint as SNOTEL but includes only forecasts
     name: awdb-forecasts-edr
   - description:
-      provides snow water equivalent data from SNOTEL aggregated by HUC06
-      watershed. Each feature contains one average for the entire HUC06; these averages
-      are relative to the 30 year average.
+      provides snow water equivalent (swe) data from SNOTEL aggregated by
+      HUC06 watershed. Each feature contains one average for the entire HUC06; this
+      is calculated by taking the latest swe value, dividing it by the 30 year average
+      swe value on for the same day, and multiplying it by 100.
     name: snotel-huc06-means
   - description:
       provides a subset of the USACE Corps Water Management System (CWMS)
@@ -12130,8 +13311,8 @@ tags:
       point-based weather observations with digital elevation and other geographic information.
     name: usgs-prism
   - description:
-      contains current and average drought conditions for USBR reservoirs
-      dervied from the USBR resviz endpoint
+      contains current and average storage levels for USBR reservoirs dervied
+      from the USBR resviz endpoint
     name: resviz-edr
   - description:
       contains the boundaries for each of the regions in the US Department
