@@ -5,6 +5,12 @@
 
 import { LayerId, SubLayerId } from '@/features/Map/consts';
 import { getGlossaryEntry } from '@/features/Help/utils';
+import {
+    TEntry,
+    TGradientEntry,
+    TGroupEntry,
+    TItemsEntry,
+} from '@/features/MapTools/Legend/types';
 
 export const getTooltipContent = (
     layerId: LayerId | SubLayerId | string
@@ -44,4 +50,25 @@ export const getTooltipContent = (
         default:
             return '';
     }
+};
+
+export const isGradientEntry = (entry: TEntry): entry is TGradientEntry => {
+    return (
+        'colors' in entry &&
+        'from' in entry &&
+        'to' in entry &&
+        Array.isArray(entry.colors) &&
+        ['string', 'number'].includes(typeof entry.from) &&
+        ['string', 'number'].includes(typeof entry.to)
+    );
+};
+
+export const isItemsEntry = (entry: TEntry): entry is TItemsEntry => {
+    return 'items' in entry && Array.isArray(entry.items);
+};
+
+export const isGroupsEntry = (entry: TEntry): entry is TGroupEntry => {
+    return (
+        'groups' in entry && 'direction' in entry && Array.isArray(entry.groups)
+    );
 };
