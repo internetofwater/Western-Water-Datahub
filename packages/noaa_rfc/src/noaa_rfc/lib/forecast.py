@@ -33,7 +33,7 @@ LOGGER = logging.getLogger(__name__)
 class NOAAMetadata(TypedDict):
     doi_region_num: Optional[int]
     doi_region_name: Optional[str]
-    Include_in_WWDH_Dashboard: bool
+    is_usbr_curated: bool
     NOAA_RFC_NAME: str
     geometry: str
     Location_Name: str
@@ -54,7 +54,7 @@ with include_path.open() as f:
         noaa_id = row.pop("noaa_id")
         print(row)
         NOAA_ID_TO_INCLUDE[noaa_id] = {
-            "Include_in_WWDH_Dashboard": row.pop("Include_in_WWDH_Dashboard"),
+            "is_usbr_curated": row.pop("Include_in_WWDH_Dashboard"),
             "NOAA_RFC_NAME": row.pop("NOAA_RFC_NAME"),
             "geometry": row.pop("geometry"),
             "Location_Name": row.pop("Location_Name"),
@@ -72,8 +72,8 @@ with metadata_path.open() as f:
         NOAA_ID_TO_METADATA[noaa_id] = {
             "doi_region_num": int(doi_region_num) if doi_region_num else None,
             "doi_region_name": row.pop("doi_region_name"),
-            "Include_in_WWDH_Dashboard": str(
-                NOAA_ID_TO_INCLUDE[noaa_id]["Include_in_WWDH_Dashboard"]
+            "is_usbr_curated": str(
+                NOAA_ID_TO_INCLUDE[noaa_id]["is_usbr_curated"]
             ).lower()
             == "true",
             "NOAA_RFC_NAME": NOAA_ID_TO_INCLUDE[noaa_id]["NOAA_RFC_NAME"],
@@ -123,7 +123,7 @@ class ForecastDataAdHoc:
     to query and thus need to be populated with pregenerated static data"""
 
     espid: str
-    includeInWWDHDashboard: bool
+    is_usbr_curated: bool
     NOAA_RFC_NAME: str
     geometry: shapely.Point
     doi_region_num: Optional[int]
@@ -187,7 +187,7 @@ class ForecastDataForNOAAStation(BaseModel):
     doi_region_name: Optional[str] = None
 
     NOAA_RFC_NAME: Optional[str] = None
-    include_in_wwdh_dashboard: Optional[bool] = None
+    is_usbr_curated: Optional[bool] = None
 
     def extend_with_metadata(self):
         """
@@ -306,8 +306,8 @@ class ForecastCollection(LocationCollectionProtocol):
 
                 item["doi_region_num"] = metadata["doi_region_num"]
                 item["doi_region_name"] = metadata["doi_region_name"]
-                item["include_in_wwdh_dashboard"] = (
-                    str(metadata["Include_in_WWDH_Dashboard"]).lower() == "true"
+                item["is_usbr_curated"] = (
+                    str(metadata["is_usbr_curated"]).lower() == "true"
                 )
 
                 item["NOAA_RFC_NAME"] = metadata["NOAA_RFC_NAME"]
@@ -331,7 +331,7 @@ class ForecastCollection(LocationCollectionProtocol):
                         # image_plot_link = f"https://www.weather.gov/images/abrfc/WaterSupply/wsp.{id}.volume.exceed.90day.gif"
                         image_plot_link = None
                         dataset_link = "https://www.weather.gov/abrfc/watersupply_fcst"
-                    case "Arkansas-Rio Grande-Texas Gulf":
+                    case "West Gulf":
                         dataset_link = "https://www.weather.gov/wgrfc/wsp_forecasts"
                         # not aware of anywhere that wgrfc has an image plot link
                         image_plot_link = None
@@ -343,9 +343,7 @@ class ForecastCollection(LocationCollectionProtocol):
                 pivoted_forecasts.append(
                     ForecastDataAdHoc(
                         espid=id,
-                        includeInWWDHDashboard=(
-                            NOAA_ID_TO_METADATA[id]["Include_in_WWDH_Dashboard"]
-                        ),
+                        is_usbr_curated=(NOAA_ID_TO_METADATA[id]["is_usbr_curated"]),
                         NOAA_RFC_NAME=NOAA_ID_TO_METADATA[id]["NOAA_RFC_NAME"],
                         geometry=shapely_geometry,
                         doi_region_num=NOAA_ID_TO_METADATA[id]["doi_region_num"],
@@ -406,7 +404,10 @@ class ForecastCollection(LocationCollectionProtocol):
                     id=forecast.espid,
                     properties={
                         "espid": forecast.espid,
-                        "include_in_wwdh_dashboard": forecast.includeInWWDHDashboard,
+                        # special field that calls out the the fact that
+                        # usbr curate this forecast as being particularly
+                        # relevant to the dashboard
+                        "is_usbr_curated": forecast.is_usbr_curated,
                         "NOAA_RFC_NAME": forecast.NOAA_RFC_NAME,
                         "noaa_id": forecast.espid,
                         "espname": forecast.espname,
@@ -462,7 +463,7 @@ class ForecastCollection(LocationCollectionProtocol):
                         "espid": forecast.espid,
                         "doi_region_num": forecast.doi_region_num,
                         "doi_region_name": forecast.doi_region_name,
-                        "include_in_wwdh_dashboard": forecast.include_in_wwdh_dashboard,
+                        "is_usbr_curated": forecast.is_usbr_curated,
                         "NOAA_RFC_NAME": forecast.NOAA_RFC_NAME,
                     },
                     geometry=Point(

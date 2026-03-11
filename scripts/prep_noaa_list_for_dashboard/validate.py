@@ -27,7 +27,7 @@ excel_df["Post-Review Decision"] = excel_df["Post-Review Decision"].map(mapping)
 
 assert excel_df["Post-Review Decision"].isin([True, False]).all()
 
-# change the value of LABW4 to LABW4; there is an extra tab in the file
+# change the value of LABW4 to LABW4; there is an extra tab in the xlsx file
 # for some reason
 excel_df.loc[excel_df["noaa_id"] == "\tLABW4", "noaa_id"] = "LABW4"
 
@@ -41,11 +41,11 @@ excel_df = excel_df[excel_df["noaa_id"] != "CGYC2"]
 api = "http://localhost:5005/collections/noaa-rfc/items?limit=2000"
 api_df = gpd.read_file(api)
 
-api_df["include_in_wwdh_dashboard"] = api_df["include_in_wwdh_dashboard"].astype(bool)
+api_df["is_usbr_curated"] = api_df["is_usbr_curated"].astype(bool)
 excel_df["Post-Review Decision"] = excel_df["Post-Review Decision"].astype(bool)
 
 excel_df_include_total = len(excel_df.query("`Post-Review Decision` == True"))
-api_df_include_total = len(api_df.query("include_in_wwdh_dashboard == True"))
+api_df_include_total = len(api_df.query("is_usbr_curated == True"))
 
 assert excel_df_include_total == api_df_include_total == 216, (
     f"{excel_df_include_total=} != {api_df_include_total=} != 216"
@@ -71,10 +71,10 @@ assert len(excel_ids) == len(api_ids), (
     f"Excel has {len(excel_ids)} locations but API has {len(api_ids)}"
 )
 
-# ensure that include_in_wwdh_dashboard as set in the excel df matches the api df for each id value
+# ensure that is_usbr_curated as set in the excel df matches the api df for each id value
 # merge the relevant columns from Excel and API on the NOAA ID
 merged = excel_df[["noaa_id", "Post-Review Decision"]].merge(
-    api_df[["espid", "include_in_wwdh_dashboard"]],
+    api_df[["espid", "is_usbr_curated"]],
     left_on="noaa_id",
     right_on="espid",
     suffixes=("_excel", "_api"),
@@ -84,17 +84,19 @@ merged = excel_df[["noaa_id", "Post-Review Decision"]].merge(
 # ensure they are the same type, i.e. string values that represent true / false
 mismatches = merged[
     merged["Post-Review Decision"].astype(str).str.lower()
-    != merged["include_in_wwdh_dashboard"].astype(str).str.lower()
+    != merged["is_usbr_curated"].astype(str).str.lower()
 ]
 
 assert mismatches.empty, (
-    f"Mismatch in 'include_in_wwdh_dashboard' for the following IDs:\n"
-    f"{mismatches[['noaa_id', 'Post-Review Decision', 'include_in_wwdh_dashboard']]}"
+    f"Mismatch in 'is_usbr_curated' for the following IDs:\n"
+    f"{mismatches[['noaa_id', 'Post-Review Decision', 'is_usbr_curated']]}"
 )
 
 
 # ensure the location filter in the API behaves the same as manually querying in geopandas
-api_with_include_filter = "http://localhost:5005/collections/noaa-rfc/items?limit=2000&include_in_wwdh_dashboard=True"
+api_with_include_filter = (
+    "http://localhost:5005/collections/noaa-rfc/items?limit=2000&is_usbr_curated=True"
+)
 api_df_with_include_filter = gpd.read_file(api_with_include_filter)
 assert len(api_df_with_include_filter) == 216
 assert (
@@ -102,3 +104,5 @@ assert (
     .isin(merged.query("`Post-Review Decision` == True")["noaa_id"].unique())
     .all
 )
+
+print("Success!")

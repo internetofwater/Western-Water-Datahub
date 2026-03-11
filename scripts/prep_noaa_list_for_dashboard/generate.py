@@ -110,6 +110,10 @@ df.rename(
     inplace=True,
 )
 
+# change the value of LABW4 to LABW4; there is an extra tab in the file
+# for some reason
+df.loc[df["noaa_id"] == "\tLABW4", "noaa_id"] = "LABW4"
+
 
 df.to_csv(
     Path(__file__).parent.parent.parent
@@ -123,3 +127,5 @@ df.to_csv(
 
 
 print(df.head())
+
+print("DONE!")
