@@ -35,6 +35,7 @@ RUN uv sync --all-packages --inexact
 
 COPY pygeoapi-deployment/ /opt/pygeoapi/pygeoapi-deployment/
 COPY pygeoapi.config.yml /opt/pygeoapi/local.config.yml
+COPY pygeoapi-deployment/templates/ /opt/pygeoapi/.venv/lib/python3.12/site-packages/pygeoapi/templates/
 
 # Set up environment
 ENV PATH="/opt/pygeoapi/.venv/bin:$PATH"
