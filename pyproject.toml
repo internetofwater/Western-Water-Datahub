@@ -53,6 +53,7 @@ dev = [
     "pytest-cov>=6.0.0",
     "pytest>=8.3.4",
     "geopandas>=1.1.1",
+    "jupyter>=1.1.1",
 ]
 # dependencies needed for external providers
 deployment = [

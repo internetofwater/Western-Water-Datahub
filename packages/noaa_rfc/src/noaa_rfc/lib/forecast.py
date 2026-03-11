@@ -2,11 +2,12 @@
 # SPDX-License-Identifier: MIT
 
 import csv
+from dataclasses import dataclass
 from datetime import date
 import logging
 from pathlib import Path
 import time
-from typing import Literal, Optional, cast
+from typing import Literal, Optional, TypedDict, cast
 from com.cache import RedisCache
 from com.geojson.helpers import (
     GeojsonFeatureCollectionDict,
@@ -21,27 +22,61 @@ from com.protocols.locations import LocationCollectionProtocol
 from pydantic import BaseModel
 from geojson_pydantic import Feature, FeatureCollection, Point
 from geojson_pydantic.types import Position2D
+import shapely
 from shapely.geometry.base import BaseGeometry
 from shapely.geometry import Point as ShapelyPoint
 from pygeoapi.provider.base import ProviderItemNotFoundError, ProviderInvalidDataError
 
 LOGGER = logging.getLogger(__name__)
 
-NOAA_DOI_REGIONS: dict[str, dict] = {}
+
+class NOAAMetadata(TypedDict):
+    doi_region_num: Optional[int]
+    doi_region_name: Optional[str]
+    Include_in_WWDH_Dashboard: bool
+    NOAA_RFC_NAME: str
+    geometry: str
+    Location_Name: str
+
+
+NOAA_ID_TO_METADATA: dict[str, NOAAMetadata] = {}
 metadata_path = Path(__file__).parent.parent / "noaa_rfc_stations_by_region.csv"
+
+NOAA_ID_TO_INCLUDE: dict[str, dict] = {}
+include_path = Path(__file__).parent.parent / "noaa_id_to_include.csv"
+with include_path.open() as f:
+    LOGGER.info(f"Loading static NOAA include metadata from {include_path}")
+    reader = csv.DictReader(f)
+    for row in reader:
+        noaa_id = row.pop("noaa_id")
+        print(row)
+        NOAA_ID_TO_INCLUDE[noaa_id] = {
+            "Include_in_WWDH_Dashboard": row.pop("Include_in_WWDH_Dashboard"),
+            "NOAA_RFC_NAME": row.pop("NOAA_RFC_NAME"),
+            "geometry": row.pop("geometry"),
+            "Location_Name": row.pop("Location_Name"),
+        }
+
 with metadata_path.open() as f:
     LOGGER.info(f"Loading static NOAA doi region metadata from {metadata_path}")
     reader = csv.DictReader(f)
     for row in reader:
-        # Skip rows where in_wwdh_backend_api is True
-        if row.get("in_wwdh_backend_api", "False").strip().lower() != "true":
-            continue
         noaa_id = row.pop("noaa_id")
         # we don't need all the fields, so just grab the ones we need for the API
-        NOAA_DOI_REGIONS[noaa_id] = {
-            "doi_region_num": row.pop("doi_region_num"),
+        doi_region_num = row.pop("doi_region_num")
+        if noaa_id not in NOAA_ID_TO_INCLUDE:
+            continue
+        NOAA_ID_TO_METADATA[noaa_id] = {
+            "doi_region_num": int(doi_region_num) if doi_region_num else None,
             "doi_region_name": row.pop("doi_region_name"),
+            "Include_in_WWDH_Dashboard": NOAA_ID_TO_INCLUDE[noaa_id][
+                "Include_in_WWDH_Dashboard"
+            ],
+            "NOAA_RFC_NAME": NOAA_ID_TO_INCLUDE[noaa_id]["NOAA_RFC_NAME"],
+            "geometry": NOAA_ID_TO_INCLUDE[noaa_id]["geometry"],
+            "Location_Name": NOAA_ID_TO_INCLUDE[noaa_id]["Location_Name"],
         }
+del NOAA_ID_TO_INCLUDE
 
 
 class ForecastData(BaseModel):
@@ -77,9 +112,27 @@ class ForecastData(BaseModel):
     wsobasin: Optional[list[str]] = None
 
 
-class ForecastDataSingle(BaseModel):
+@dataclass
+class ForecastDataAdHoc:
+    """This is ad hoc data from other river forecast centers like arkansas that don't have a proper api
+    to query and thus need to be populated with pregenerated static data"""
+
+    espid: str
+    includeInWWDHDashboard: bool
+    NOAA_RFC_NAME: str
+    geometry: shapely.Point
+    doi_region_num: Optional[int]
+    doi_region_name: Optional[str]
+    espname: str
+    image_plot_link: Optional[str] = None
+    dataset_link: Optional[str] = None
+
+
+class ForecastDataForNOAAStation(BaseModel):
     """
     A class reprsenting the output data of an extended streamflow prediction
+    for the entire station; this essentially combines multiple extended streamflow predictions
+    for the same station into one object
     """
 
     espid: str  # The id of the station where the data is from
@@ -128,6 +181,9 @@ class ForecastDataSingle(BaseModel):
     doi_region_num: Optional[int] = None
     doi_region_name: Optional[str] = None
 
+    NOAA_RFC_NAME: Optional[str] = None
+    include_in_wwdh_dashboard: Optional[bool]
+
     def extend_with_metadata(self):
         """
         Add plotting and datasets links to the metadata of the pydantic object in place
@@ -157,7 +213,7 @@ class ForecastDataSingle(BaseModel):
 
 
 class ForecastDataSingleWithLinks:
-    forecastDataSingle: ForecastDataSingle
+    forecastDataSingle: ForecastDataForNOAAStation
 
     link: Optional[str] = None
     plot: Optional[str] = None
@@ -174,7 +230,7 @@ def get_water_year() -> str:
 
 
 class ForecastCollection(LocationCollectionProtocol):
-    locations: list[ForecastDataSingle] = []
+    locations: list[ForecastDataForNOAAStation | ForecastDataAdHoc] = []
 
     def _get_data(self):
         water_year = get_water_year()
@@ -225,9 +281,12 @@ class ForecastCollection(LocationCollectionProtocol):
         # them so it is a list of forecasts where each forecast represents item[N] from each list.
         wide_forecasts = self._get_data()
 
-        pivoted_forecasts: list[ForecastDataSingle] = []
+        pivoted_forecasts: list[ForecastDataForNOAAStation | ForecastDataAdHoc] = []
+
+        noaa_ids_seen_in_api_response = set()
         for basin_forecast in wide_forecasts:
-            dumped = basin_forecast.model_dump()
+            dumped: dict = basin_forecast.model_dump()
+
             # by iterating over the field with the max length out of all of them, this is the equivalent of zipping them all together,
             # but we don't need to worry about the case in which a field is null
             MAX_LENGTH_OF_A_FIELD_LIST = len(dumped["espid"])
@@ -235,14 +294,71 @@ class ForecastCollection(LocationCollectionProtocol):
                 # Get the i indexed item from the list and serialized it with pydantic
                 # This allows us to get a list of all stations instead of grouping them by basin
                 item = {k: v[i] if v else None for k, v in dumped.items()}
-                pivoted_forecasts.append(ForecastDataSingle.model_validate(item))
+
+                metadata = NOAA_ID_TO_METADATA[dumped["espid"][i]]
+
+                noaa_ids_seen_in_api_response.add(dumped["espid"][i])
+
+                item["doi_region_num"] = metadata["doi_region_num"]
+                item["doi_region_name"] = metadata["doi_region_name"]
+                item["include_in_wwdh_dashboard"] = metadata[
+                    "Include_in_WWDH_Dashboard"
+                ]
+                item["NOAA_RFC_NAME"] = metadata["NOAA_RFC_NAME"]
+                pivoted_forecasts.append(
+                    ForecastDataForNOAAStation.model_validate(item)
+                )
+
+        for id in NOAA_ID_TO_METADATA:
+            # don't add the same id twice
+            if id in noaa_ids_seen_in_api_response:
+                continue
+            else:
+                noaa_rfc_name = NOAA_ID_TO_METADATA[id]["NOAA_RFC_NAME"]
+
+                match noaa_rfc_name:
+                    case "Arkansas-Red Basin":
+                        # all stations in the arkansas river basin for which this doesn't 404 are already
+                        # included in the main noaa rfc api which powers the esp map so there is no reason to include this here;
+                        # all stations that would hit this if statement would all 404 out
+                        # image_plot_link = f"https://www.weather.gov/images/abrfc/WaterSupply/wsp.{id}.volume.exceed.90day.gif"
+                        image_plot_link = None
+                        dataset_link = "https://www.weather.gov/abrfc/watersupply_fcst"
+                    case "Arkansas-Rio Grande-Texas Gulf":
+                        dataset_link = "https://www.weather.gov/wgrfc/wsp_forecasts"
+                        # not aware of anywhere that wgrfc has an image plot link
+                        image_plot_link = None
+                    case _:
+                        dataset_link = None
+                        image_plot_link = None
+                shapely_geometry = shapely.from_wkt(NOAA_ID_TO_METADATA[id]["geometry"])
+                assert isinstance(shapely_geometry, shapely.geometry.Point)
+                pivoted_forecasts.append(
+                    ForecastDataAdHoc(
+                        espid=id,
+                        includeInWWDHDashboard=NOAA_ID_TO_METADATA[id][
+                            "Include_in_WWDH_Dashboard"
+                        ],
+                        NOAA_RFC_NAME=NOAA_ID_TO_METADATA[id]["NOAA_RFC_NAME"],
+                        geometry=shapely_geometry,
+                        doi_region_num=NOAA_ID_TO_METADATA[id]["doi_region_num"],
+                        doi_region_name=NOAA_ID_TO_METADATA[id]["doi_region_name"],
+                        espname=NOAA_ID_TO_METADATA[id]["Location_Name"],
+                        image_plot_link=image_plot_link,
+                        dataset_link=dataset_link,
+                    )
+                )
 
         self.locations = pivoted_forecasts
 
     def drop_all_locations_but_id(self, location_id: str):
-        self.locations = [
-            forecast for forecast in self.locations if forecast.espid == location_id
-        ]
+        locations = []
+
+        for forecast in self.locations:
+            if forecast.espid == location_id:
+                locations.append(forecast)
+
+        self.locations = locations
 
     def _filter_by_geometry(
         self, geometry: BaseGeometry | None, z: str | None = None
@@ -251,11 +367,20 @@ class ForecastCollection(LocationCollectionProtocol):
             raise NotImplementedError
         if not geometry:
             return
-        self.locations = [
-            forecast
-            for forecast in self.locations
-            if geometry.contains(ShapelyPoint(forecast.esplngdd, forecast.esplatdd))
-        ]
+
+        locations = []
+        for forecast in self.locations:
+            if isinstance(forecast, ForecastDataAdHoc) and geometry.contains(
+                forecast.geometry
+            ):
+                locations.append(forecast)
+            elif isinstance(forecast, ForecastDataForNOAAStation):
+                if geometry.contains(
+                    ShapelyPoint(forecast.esplngdd, forecast.esplatdd)
+                ):
+                    locations.append(forecast)
+
+        self.locations = locations
 
     def to_geojson(
         self,
@@ -268,59 +393,74 @@ class ForecastCollection(LocationCollectionProtocol):
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         features: dict[str, Feature] = {}
         for forecast in self.locations:
-            forecast.extend_with_metadata()
-
-            # get all forecast values besides those which are shared across the entire forecast
-            all_forecast_values = forecast.model_dump(
-                exclude={
-                    "esplatdd",
-                    "esplngdd",
-                    "espid",
-                    "espfdate",
-                    "espname",
-                    "dataset_link",
-                    "image_plot_link",
-                    "espfgroupid",
-                    "espbasin",
-                    "espsubbasin",
-                }
-            )
-
-            doi_region_info = NOAA_DOI_REGIONS.get(forecast.espid)
-            doi_region_num: Optional[int] = (
-                doi_region_info.get("doi_region_num") if doi_region_info else None
-            )
-            doi_region_name: Optional[str] = (
-                doi_region_info.get("doi_region_name") if doi_region_info else None
-            )
-            if doi_region_num:
-                # ensure the region number is an integer so that it is consistent across collections
-                doi_region_num = int(doi_region_num)
-
-            serialized_feature = Feature(
-                type="Feature",
-                id=forecast.espid,
-                properties={
-                    "forecasts": {
-                        str(forecast.espfdate): all_forecast_values,
+            if isinstance(forecast, ForecastDataAdHoc):
+                serialized_feature = Feature(
+                    type="Feature",
+                    id=forecast.espid,
+                    properties={
+                        "espid": forecast.espid,
+                        "include_in_wwdh_dashboard": forecast.includeInWWDHDashboard,
+                        "NOAA_RFC_NAME": forecast.NOAA_RFC_NAME,
+                        "noaa_id": forecast.espid,
+                        "espname": forecast.espname,
+                        "doi_region_num": forecast.doi_region_num,
+                        "doi_region_name": forecast.doi_region_name,
+                        "image_plot_link": forecast.image_plot_link,
+                        "dataset_link": forecast.dataset_link,
                     },
-                    "image_plot_link": forecast.image_plot_link,
-                    "dataset_link": forecast.dataset_link,
-                    "espname": forecast.espname,
-                    "espfgroupid": forecast.espfgroupid,
-                    "espbasin": forecast.espbasin,
-                    "espsubbasin": forecast.espsubbasin,
-                    "espid": forecast.espid,
-                    "doi_region_num": doi_region_num,
-                    "doi_region_name": doi_region_name,
-                },
-                geometry=Point(
-                    coordinates=Position2D(forecast.esplngdd, forecast.esplatdd),
-                    type="Point",
+                    geometry=Point(
+                        coordinates=Position2D(
+                            forecast.geometry.x,
+                            forecast.geometry.y,
+                        ),
+                        type="Point",
+                    ),
                 )
-                if not skip_geometry
-                else None,
-            )
+            else:
+                forecast.extend_with_metadata()
+
+                # get all forecast values besides those which are shared across the entire forecast
+                all_forecast_values = forecast.model_dump(
+                    exclude={
+                        "esplatdd",
+                        "esplngdd",
+                        "espid",
+                        "espfdate",
+                        "espname",
+                        "dataset_link",
+                        "image_plot_link",
+                        "espfgroupid",
+                        "espbasin",
+                        "espsubbasin",
+                    }
+                )
+
+                serialized_feature = Feature(
+                    type="Feature",
+                    id=forecast.espid,
+                    properties={
+                        "forecasts": {
+                            str(forecast.espfdate): all_forecast_values,
+                        },
+                        "image_plot_link": forecast.image_plot_link,
+                        "dataset_link": forecast.dataset_link,
+                        "espname": forecast.espname,
+                        "espfgroupid": forecast.espfgroupid,
+                        "espbasin": forecast.espbasin,
+                        "espsubbasin": forecast.espsubbasin,
+                        "espid": forecast.espid,
+                        "doi_region_num": forecast.doi_region_num,
+                        "doi_region_name": forecast.doi_region_name,
+                        "include_in_wwdh_dashboard": forecast.include_in_wwdh_dashboard,
+                        "NOAA_RFC_NAME": forecast.NOAA_RFC_NAME,
+                    },
+                    geometry=Point(
+                        coordinates=Position2D(forecast.esplngdd, forecast.esplatdd),
+                        type="Point",
+                    )
+                    if not skip_geometry
+                    else None,
+                )
             if properties:
                 fields_mapping = cast(OAFFieldsMapping, fields_mapping)
 
@@ -334,20 +474,22 @@ class ForecastCollection(LocationCollectionProtocol):
                 filter_out_properties_not_selected(
                     serialized_feature, select_properties
                 )
-
-            if forecast.espid in features:
-                alreadyExistingFeature = features[forecast.espid]
-                assert alreadyExistingFeature.properties
-                alreadyExistingFeature.properties["forecasts"][
-                    str(forecast.espfdate)
-                ] = all_forecast_values
-            else:
+            if isinstance(forecast, ForecastDataForNOAAStation):
+                if forecast.espid in features:
+                    alreadyExistingFeature = features[forecast.espid]
+                    assert alreadyExistingFeature.properties
+                    alreadyExistingFeature.properties["forecasts"][
+                        str(forecast.espfdate)
+                    ] = all_forecast_values  # pyright: ignore[reportPossiblyUnboundVariable]
+                else:
+                    features[forecast.espid] = serialized_feature
+            elif isinstance(forecast, ForecastDataAdHoc):
                 features[forecast.espid] = serialized_feature
 
         # since mapbox requires a static property for the latest forecast, we create it here
         # so the frontend doesn't need to do transformations on the data
         for feature in features.values():
-            if not feature.properties or not feature.properties["forecasts"]:
+            if not feature.properties or not feature.properties.get("forecasts"):
                 continue
 
             # why the first forecast esppavg is considered to be the % normal
