@@ -8,7 +8,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "GDAL==3.6.4",
+    "GDAL",
     "geoalchemy2>=0.17.1",
     "pgedr",
     "psycopg2>=2.9.10",
@@ -16,10 +16,6 @@ dependencies = [
 
 [tool.uv]
 package = true
-
-[tool.uv.sources]
-# pin to pgedr version before area and cube introduction until we upgrade to latest pygeoapi version; otherwise we will have version conflicts
-pgedr = { git = "https://github.com/internetofwater/pg_edr.git", rev="e4800acd0884fbc2514bfad66cd57aa5f3791d3c" }
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
