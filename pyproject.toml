@@ -79,3 +79,6 @@ markers = [
 omit = [
     "**/*_test.py"
 ]
+
+[tool.pyright]
+ignore = ["scripts/prep_noaa_list_for_dashboard/**"]
