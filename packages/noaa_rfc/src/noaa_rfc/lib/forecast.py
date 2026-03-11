@@ -43,6 +43,9 @@ NOAA_ID_TO_METADATA: dict[str, NOAAMetadata] = {}
 metadata_path = Path(__file__).parent.parent / "noaa_rfc_stations_by_region.csv"
 
 NOAA_ID_TO_INCLUDE: dict[str, dict] = {}
+# we open two csvs and merge them together since
+# usbr historically needed the other csv so its easy to keep them as distinct
+# in case of future requests
 include_path = Path(__file__).parent.parent / "noaa_id_to_include.csv"
 with include_path.open() as f:
     LOGGER.info(f"Loading static NOAA include metadata from {include_path}")
@@ -76,6 +79,7 @@ with metadata_path.open() as f:
             "geometry": NOAA_ID_TO_INCLUDE[noaa_id]["geometry"],
             "Location_Name": NOAA_ID_TO_INCLUDE[noaa_id]["Location_Name"],
         }
+# we don't need to keep a second copy of this around so it can be deleted
 del NOAA_ID_TO_INCLUDE
 
 
@@ -182,7 +186,7 @@ class ForecastDataForNOAAStation(BaseModel):
     doi_region_name: Optional[str] = None
 
     NOAA_RFC_NAME: Optional[str] = None
-    include_in_wwdh_dashboard: Optional[bool]
+    include_in_wwdh_dashboard: Optional[bool] = None
 
     def extend_with_metadata(self):
         """
@@ -310,7 +314,8 @@ class ForecastCollection(LocationCollectionProtocol):
                 )
 
         for id in NOAA_ID_TO_METADATA:
-            # don't add the same id twice
+            # don't add the same id twice; if we saw it already in the API
+            # we don't need to add the same location info frm the CSV metadata
             if id in noaa_ids_seen_in_api_response:
                 continue
             else:

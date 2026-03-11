@@ -99,6 +99,8 @@ def all_properties_found_in_feature(
                 prop_value = int(prop_value)
             case "string":
                 prop_value = str(prop_value)
+            case "boolean":
+                prop_value = bool(prop_value)
             case _:
                 assert_never(datatype)
 
