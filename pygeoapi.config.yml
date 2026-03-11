@@ -783,24 +783,3 @@ resources:
       - <<: *default-edr
         data: https://zenodo.org/records/5893641
         name: resops.resops_edr.ResOpsUSProviderEDR
-
-  noaa-rfc-esri-gages:
-    type: collection
-    title: NOAA Weather Prediction Center Quantitative Precipitation Forecast Day 1
-    description: consists of layers that represent forecasted QPFs for 24 hours from now. Quantitative Precipitation Forecasts, or QPFs, depict the amount of liquid precipitation expected to fall in a defined period of time. In the case of snow or ice, QPF represents the amount of liquid that will be measured when the precipitation is melted. QPF 24 Hours Day 1 is for the 24 hour time period starting at the valid date/time.
-    provider-name:
-      - WPC
-      - NOAA
-    keywords: [NOAA, QPF]
-    links:
-      - type: application/html
-        rel: canonical
-        title: Canonical
-        href: https://mapservices.weather.noaa.gov/vector/rest/services/precip/wpc_qpf/MapServer
-    extents: *default-extent
-    providers:
-      - type: feature
-        name: ESRI
-        data: https://mapservices.weather.noaa.gov/eventdriven/rest/services/water/riv_gauges/MapServer/15
-        id_field: objectid
-        time_field: idp_ingestdate
