@@ -414,6 +414,10 @@ class ForecastCollection(LocationCollectionProtocol):
                         "doi_region_name": forecast.doi_region_name,
                         "image_plot_link": forecast.image_plot_link,
                         "dataset_link": forecast.dataset_link,
+                        # there are no ensemble prediction forecasts on ad hoc data
+                        # since they generally don't have an api associated with them
+                        "forecasts": None,
+                        "percentage_normal": None,
                     },
                     geometry=Point(
                         coordinates=Position2D(
