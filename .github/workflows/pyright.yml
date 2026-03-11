@@ -17,7 +17,6 @@ jobs:
         uses: awalsh128/cache-apt-pkgs-action@v1.4.3
         with:
           packages: gdal-bin libgdal-dev
-          version: 3.6.4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -26,7 +25,9 @@ jobs:
           cache-dependency-glob: "uv.lock"
 
       - name: Install the project
-        run: uv sync --all-extras --dev --all-packages --all-groups
+        run: |
+          uv sync --dev --all-packages --all-groups
+          uv pip install GDAL==`gdal-config --version`
 
       - name: Run type checks
         run: uv run pyright
