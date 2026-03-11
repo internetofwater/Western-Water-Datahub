@@ -18,7 +18,7 @@ from pygeoapi.provider.base import ProviderQueryError
 LOGGER = logging.getLogger(__name__)
 
 OAFFieldsMapping = dict[
-    str, dict[Literal["type"], Literal["number", "string", "integer"]]
+    str, dict[Literal["type"], Literal["number", "string", "integer", "boolean"]]
 ]
 
 
@@ -146,7 +146,7 @@ def get_oaf_fields_from_pydantic_model(model: Type[BaseModel]) -> OAFFieldsMappi
     pydanticFields = model.model_fields
     fields: OAFFieldsMapping = {}
     for fieldName in pydanticFields.keys():
-        dataType: Literal["number", "string", "integer"]
+        dataType: Literal["number", "string", "integer", "boolean"]
 
         aliasName: str | None = pydanticFields[fieldName].alias
         if aliasName:
@@ -160,6 +160,8 @@ def get_oaf_fields_from_pydantic_model(model: Type[BaseModel]) -> OAFFieldsMappi
             dataType = "integer"
         elif "float" in str(pydanticFields[fieldName].annotation):
             dataType = "number"
+        elif "bool" in str(pydanticFields[fieldName].annotation):
+            dataType = "boolean"
         else:
             LOGGER.warning(
                 f"Skipping OAF field '{name}' with unmappable type {pydanticFields[fieldName].annotation}"

@@ -53,7 +53,7 @@ print(f"Loaded {len(gdf_doi)} DOI regions")
 
 print("Downloading all NOAA gauges...")
 gdf_noaa = gpd.read_file(NOAA_ALL_GAGES_URL)
-print(f"Loaded {len(gdf_noaa)} NOAA gauges")
+print(f"Loaded {len(gdf_noaa)} NOAA gauges with columns {gdf_noaa.columns}")
 
 assert len(gdf_noaa) < 10000, (
     "Fetched the max amount of stations from ESRI; this is a sign some got cut off"

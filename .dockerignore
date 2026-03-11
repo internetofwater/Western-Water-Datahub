@@ -1,3 +1,5 @@
 __pycache__/
 *.pyc
 doi_regions.gpkg
+**/rf05mr24
+scripts/**
