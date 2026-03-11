@@ -17,7 +17,6 @@ from teacup.env import BASE_URL, POSTGRES_URL
 from teacup.lib import (
     create_feature,
     date_range,
-    file_exists,
     run_location_load,
     setup_table_schema,
 )
