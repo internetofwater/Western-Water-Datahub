@@ -38,11 +38,16 @@ def run_subprocess(csv_url: str):
     Downloads a CSV, processes and loads it into PostgreSQL
     using OGR Python bindings.
     """
+    if csv_url.startswith("http"):
+        csv_url = f"/vsicurl/{csv_url}"
+
+    if csv_url.endswith(".zip"):
+        csv_url = f"/vsizip/{csv_url}"
 
     # Open the CSV datasource
     csv_driver = ogr.GetDriverByName("CSV")
     try:
-        csv_ds = csv_driver.Open(f"/vsicurl/{csv_url}", 0)  # 0 for update mode
+        csv_ds = csv_driver.Open(csv_url, 0)  # 0 for read-only mode
     except RuntimeError:
         LOGGER.warning(f"No CSV found at {csv_url}")
         return
@@ -127,7 +132,7 @@ def load_locations():
     except Exception as e:
         LOGGER.error(f"Error loading locations: {e}")
         LOGGER.info("Attempting to create table schema and retry loading locations.")
-        create_table_schema()
+        setup_table_schema()
         run_location_load()
 
 
