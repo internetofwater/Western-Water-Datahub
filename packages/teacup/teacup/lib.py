@@ -2,13 +2,21 @@
 # SPDX-License-Identifier: MIT
 
 from datetime import timedelta, date
+from enum import StrEnum
 import logging
 from osgeo import ogr, gdal
 import requests
 from typing import Iterator
 
-from teacup.env import POSTGRES_URL
+from teacup.env import POSTGRES_URL, LOCATION_GEOJSON_URL
 from teacup.mappings import LOCATION_IDS, DOI_REGIONS, STATE_MAPPING
+
+
+class SourceName(StrEnum):
+    USACE = "USACE"
+    USGS = "USGS"
+    RISE = "RISE"
+    CDEC = "CDEC"
 
 
 gdal.UseExceptions()
@@ -16,33 +24,40 @@ gdal.UseExceptions()
 LOGGER = logging.getLogger(__name__)
 
 
-def setup_table_schema():
-    # Open the PostgreSQL datasource
+def setup_table_schema() -> gdal.Dataset:
+    """
+    Sets up the PostgreSQL table schema for teacup locations, parameters, and results.
+    """
+    # Open the PostgreSQL dataset
     pg_driver = ogr.GetDriverByName("PostgreSQL")
     pg_ds = pg_driver.Open(POSTGRES_URL, 1)  # 1 for update mode
     if pg_ds is None:
         LOGGER.error("Could not open PostgreSQL database")
 
+    # Create tables
     create_locations_table(pg_ds)
     create_parameters_table(pg_ds)
     create_results_table(pg_ds)
 
+    # Return OGR dataset
     return pg_ds
 
 
-def create_locations_table(pg_ds):
+def create_locations_table(pg_ds: gdal.Dataset) -> None:
+    """
+    Create `teacup_locations` table in PostgreSQL
+
+    :param pg_ds: OGR dataset representing the PostgreSQL database connection
+    """
+
     # Create the target layer.
     pg_layer = pg_ds.CreateLayer(
         "teacup_locations",
         geom_type=ogr.wkbPoint,
         options=["OVERWRITE=YES", "LAUNDER=NO"],
     )
-    # Mark 'id' as the layer FID so it becomes the Postgres primary key
-    try:
-        pg_layer.SetFIDColumn("id")
-    except AttributeError:
-        # SetFIDColumn may not be available on older GDAL/OGR Python bindings
-        pass
+
+    # Define fields
     pg_layer.CreateField(ogr.FieldDefn("id", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("name", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("map_label", ogr.OFTString))
@@ -55,6 +70,15 @@ def create_locations_table(pg_ds):
     pg_layer.CreateField(ogr.FieldDefn("reg_num", ogr.OFTInteger))
     pg_layer.CreateField(ogr.FieldDefn("total_capacity", ogr.OFTReal))
     pg_layer.CreateField(ogr.FieldDefn("active_capacity", ogr.OFTReal))
+
+    # Mark 'id' as the layer FID so it becomes the Postgres primary key
+    try:
+        pg_layer.SetFIDColumn("id")
+    except AttributeError:
+        # SetFIDColumn may not be available on older GDAL/OGR Python bindings
+        pass
+
+    # Create unique index and set primary key on 'id' field
     pg_ds.ExecuteSQL("""
         ALTER TABLE teacup_locations ADD CONSTRAINT locations_id_unique UNIQUE (id);
         ALTER TABLE teacup_locations DROP CONSTRAINT teacup_locations_pkey;
@@ -62,7 +86,12 @@ def create_locations_table(pg_ds):
     """)
 
 
-def create_parameters_table(pg_ds):
+def create_parameters_table(pg_ds: gdal.Dataset) -> None:
+    """
+    Create `teacup_parameters` table in PostgreSQL
+
+    :param pg_ds: OGR dataset representing the PostgreSQL database connection
+    """
     # Create the Parameter Table.
     pg_ds.ExecuteSQL("""
         DROP TABLE IF EXISTS public.teacup_parameters CASCADE;
@@ -87,7 +116,12 @@ def create_parameters_table(pg_ds):
     """)
 
 
-def create_results_table(pg_ds):
+def create_results_table(pg_ds: gdal.Dataset) -> None:
+    """
+    Create `teacup` table in PostgreSQL
+
+    :param pg_ds: OGR dataset representing the PostgreSQL database connection
+    """
     # Create the Result Table.
     pg_ds.ExecuteSQL("""
         DROP TABLE IF EXISTS public.teacup CASCADE;
@@ -111,21 +145,25 @@ def create_results_table(pg_ds):
     """)
 
 
-def run_location_load():
+def run_location_load() -> None:
+    """
+    Download and load location GeoJSON into PostGIS using ogr2ogr.
+    """
     # Open the CSV datasource
     csv_driver = ogr.GetDriverByName("GeoJSON")
     csv_ds = csv_driver.Open(
-        "/vsicurl/https://raw.githubusercontent.com/cgs-earth/teacup-generator/refs/heads/main/R-workflow/config/locations.geojson",
+        f"/vsicurl/{LOCATION_GEOJSON_URL}",
         0,
     )
     if csv_ds is None:
         LOGGER.warning("Could not open GeoJSON")
         return
 
-    # Get the source layer.
+    # Get the CSV layer.
     layer = csv_ds.GetLayer()
     layer_def = layer.GetLayerDefn()
 
+    # Open the PostgreSQL datasource
     pg_driver = ogr.GetDriverByName("PostgreSQL")
     pg_ds = pg_driver.Open(POSTGRES_URL, 1)  # 1 for update mode
     if pg_ds is None:
@@ -133,7 +171,6 @@ def run_location_load():
 
     pg_layer = pg_ds.GetLayerByName("teacup_locations")
 
-    mapping = {}
     # Process source 'layer'
     for f in layer:
         # Represent at SQL column names
@@ -164,12 +201,11 @@ def run_location_load():
 
         # Handle uris
         row["huc6"] = "https://geoconnex.us/ref/hu06/" + row["huc6"]
-        row["huc12"] = get_hu12(row)
+        row["huc12"] = get_hu12(row["longitude"], row["latitude"])
         row["state"] = STATE_MAPPING[row["state"]]
         row.update(DOI_REGIONS[row["doiregion"]])
 
         row["id"] = row["name"].replace(" ", "").replace(" ", ".")
-        mapping[row["popup_label"]] = row["id"]
 
         feature = ogr.Feature(pg_layer.GetLayerDefn())
         feature.SetField("id", row["id"])
@@ -184,6 +220,7 @@ def run_location_load():
         feature.SetField("reg_num", row["reg_num"])
         feature.SetField("total_capacity", row["total_capacity"])
         feature.SetField("active_capacity", row["active_capacity"])
+
         # Prefer geometry from the source GeoJSON feature (saved as src_feature).
         # Falls back to lon/lat if geometry is missing.
         lon = float(row["longitude"])
@@ -201,36 +238,52 @@ def run_location_load():
 
 
 def get_source_url(
-    source_name: str, source_for_storage_data: str, pref_name: str
-) -> str:
-    if source_name == "USACE":
-        return source_for_storage_data.split()[-1]
-    elif source_name.startswith("USGS"):
+    source_name: SourceName | str, source_for_storage_data: str, pref_name: str
+) -> str | None:
+    """
+    Construct source URL based on source name and source_for_storage_data value.
+
+    :param source_name: The name of the data source (e.g., USGS, USACE, RISE, CDEC)
+    :param source_for_storage_data: The value from the source_for_storage_data column.
+    :param pref_name: The preferred label for map and table, used for RISE URL identification.
+
+    :returns: Constructed URL string or None if source name is unrecognized
+    """
+    if source_name.startswith(SourceName.USGS):
         station_id = source_for_storage_data[-13:]
         return "https://waterdata.usgs.gov/monitoring-location/" + station_id
-    elif source_name == "RISE":
-        return "https://data.usbr.gov/rise/api/locations/" + str(
-            LOCATION_IDS[pref_name]
-        )
-    elif source_name in ("USACE", "CDEC"):
-        return source_for_storage_data
-    else:
-        LOGGER.warning(
-            f"Unrecognized source_for_storage_data for {pref_name}: {source_name}"
-        )
-        return ""
+
+    match source_name:
+        case SourceName.USACE:
+            return source_for_storage_data.split()[-1]
+        case SourceName.RISE:
+            return "https://data.usbr.gov/rise/api/locations/" + str(
+                LOCATION_IDS[pref_name]
+            )
+        case SourceName.USACE | SourceName.CDEC:
+            return source_for_storage_data
+        case _:
+            LOGGER.warning(
+                f"Unrecognized source_for_storage_data for {pref_name}: {source_name}"
+            )
 
 
-def get_hu12(row) -> str:
+def get_hu12(longitude: float, latitude: float) -> str | None:
+    """
+    Retrieve HUC12 identifier for a given row.
 
+    :param longitude: The longitude of the location.
+    :param latitude: The latitude of the location.
+
+    :returns: The HUC12 identifier or None if not found.
+    """
+    url = "https://reference.geoconnex.us/collections/hu12/items"
     params = {
         "f": "json",
         "skipGeometry": True,
-        "bbox": f"{row['longitude']},{row['latitude']},{row['longitude']},{row['latitude']}",
+        "bbox": f"{longitude - 0.001},{latitude - 0.001},{longitude + 0.001},{latitude + 0.001}",
     }
-    response = requests.get(
-        "https://reference.geoconnex.us/collections/hu12/items", params=params
-    )
+    response = requests.get(url, params=params)
 
     if response.status_code == 200:
         data = response.json()
@@ -238,7 +291,7 @@ def get_hu12(row) -> str:
         if features:
             return features[0]["properties"]["uri"]
 
-    return ""
+    LOGGER.warning(f"Could not retrieve HUC12 at {longitude}, {latitude}")
 
 
 def file_exists(url: str) -> bool:

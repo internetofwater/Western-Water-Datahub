@@ -25,7 +25,8 @@ from teacup.mappings import NAME_TO_ID_MAPPING
 
 LOGGER = logging.getLogger(__name__)
 
-
+# Set GDAL config options via environment variable
+# https://gdal.org/en/stable/user/configoptions.html#global-configuration-options
 os.environ["CPL_VSIL_CURL_USE_HEAD"] = "NO"
 os.environ["PG_USE_COPY"] = "OFF"
 os.environ["OGR_PG_RETRIEVE_FID"] = "NO"
