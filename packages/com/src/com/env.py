@@ -76,6 +76,9 @@ def get_loop():
     use asyncio and need a reference to the event loop
     """
 
+    if os.environ.get("PYGEOAPI_SKIP_CUSTOM_EVENT_LOOP"):
+        return asyncio.get_event_loop()
+
     def _start_loop(loop: asyncio.AbstractEventLoop):
         asyncio.set_event_loop(loop)
         loop.run_forever()
