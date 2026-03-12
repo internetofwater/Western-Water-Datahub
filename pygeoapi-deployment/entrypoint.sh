@@ -93,6 +93,11 @@ case ${entry_cmd} in
         exec resviz
         ;;
 
+    teacup)
+        echo "Crawling teacup layers into PostGIS"
+        exec ${@}
+        ;;
+
     *)
         error "unknown command arg: must be run (default), run-with-hot-reload, or test"
         ;;

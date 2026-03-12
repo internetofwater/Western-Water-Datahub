@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 [project]
-name = "resviz"
+name = "teacup"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -16,18 +16,15 @@ dependencies = [
 [project.optional-dependencies]
 gdal = ["GDAL"]
 
-[tool.uv]
-package = true
-
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-resviz = "resviz:load"
+teacup = "teacup:cli"
 
 [tool.hatch.build.targets.wheel]
-packages = ["resviz"]
+packages = ["teacup"]
 
 [tool.hatch.metadata]
 allow-direct-references = true

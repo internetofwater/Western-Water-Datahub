@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.14'",
@@ -19,6 +19,7 @@ members = [
     "rise",
     "snotel",
     "snotel-means",
+    "teacup",
     "usace",
     "wwdh-integrations",
 ]
@@ -570,9 +571,9 @@ wheels = [
 
 [[package]]
 name = "gdal"
-version = "3.6.4"
+version = "3.12.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d8/45/ce25a03268e6ccab9396acb92537b58eb5d0f4bdfa2144fd0f0e3bfdbacc/GDAL-3.6.4.tar.gz", hash = "sha256:c07d548cbd6544e8a51651fc1e487ca4b39e8fe6b5b3c886082d87f0e49e8313", size = 758072, upload-time = "2023-04-21T13:04:05.772Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b7/73/52753654d259cae674b7d4f2167d421382d9aa2ee510f047338381ae175b/gdal-3.12.2.tar.gz", hash = "sha256:a5afa8e55a19b296a004a15d38fe3ad60cc380f1f090e2aab5d35331008c970f", size = 899232, upload-time = "2026-02-09T17:53:29.78Z" }
 
 [[package]]
 name = "geoalchemy"
@@ -1287,8 +1288,8 @@ wheels = [
 
 [[package]]
 name = "pgedr"
-version = "0.2.dev0"
-source = { git = "https://github.com/internetofwater/pg_edr.git?rev=e4800acd0884fbc2514bfad66cd57aa5f3791d3c#e4800acd0884fbc2514bfad66cd57aa5f3791d3c" }
+version = "0.2.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cryptography" },
     { name = "geoalchemy2" },
@@ -1296,6 +1297,10 @@ dependencies = [
     { name = "pydantic" },
     { name = "pygeoapi" },
     { name = "pymysql" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9f/38/b09c2d6e5cdb7fb11a8565373a8dbb092df912e0ed022ac3339f27a8cff5/pgedr-0.2.0.tar.gz", hash = "sha256:d5bd2ac669f88aea157383e73475ffde300957a25917a80997818a105f9bb85f", size = 19347, upload-time = "2026-03-09T16:50:21.69Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b4/31/9ee73082d38244d87fbcb7cc70dcab889ff3317a51fc59356cb726731a36/pgedr-0.2.0-py3-none-any.whl", hash = "sha256:af1748c5dc1342abb90d296d9b98b85cfc63bcd89f75c7fff4093fc0b94148dd", size = 17178, upload-time = "2026-03-09T16:50:20.471Z" },
 ]
 
 [[package]]
@@ -1457,8 +1462,8 @@ wheels = [
 
 [[package]]
 name = "pygeoapi"
-version = "0.23.dev0"
-source = { git = "https://github.com/internetofwater/pygeoapi.git?rev=c116205654703d65c9247fdcd6257c4cd8c7c6c9#c116205654703d65c9247fdcd6257c4cd8c7c6c9" }
+version = "0.24.dev0"
+source = { git = "https://github.com/internetofwater/pygeoapi.git?rev=ab729a925bf2ff120e5ee2aacce3a7c5fb9cfe35#ab729a925bf2ff120e5ee2aacce3a7c5fb9cfe35" }
 dependencies = [
     { name = "babel" },
     { name = "click" },
@@ -1865,19 +1870,24 @@ name = "resviz"
 version = "0.1.0"
 source = { editable = "packages/resviz" }
 dependencies = [
-    { name = "gdal" },
     { name = "geoalchemy2" },
     { name = "pgedr" },
     { name = "psycopg2" },
 ]
 
+[package.optional-dependencies]
+gdal = [
+    { name = "gdal" },
+]
+
 [package.metadata]
 requires-dist = [
-    { name = "gdal", specifier = "==3.6.4" },
+    { name = "gdal", marker = "extra == 'gdal'" },
     { name = "geoalchemy2", specifier = ">=0.17.1" },
-    { name = "pgedr", git = "https://github.com/internetofwater/pg_edr.git?rev=e4800acd0884fbc2514bfad66cd57aa5f3791d3c" },
+    { name = "pgedr", specifier = "==0.2.0" },
     { name = "psycopg2", specifier = ">=2.9.10" },
 ]
+provides-extras = ["gdal"]
 
 [[package]]
 name = "rise"
@@ -2050,6 +2060,30 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/e9/61/e8c1b9b6307c57157d328dd8b8348ddc4c47ffdf1279365a13b2b98b8049/sqlalchemy-2.0.41-cp313-cp313-win_amd64.whl", hash = "sha256:82ca366a844eb551daff9d2e6e7a9e5e76d2612c8564f58db6c19a726869c1df", size = 2108329, upload-time = "2025-05-14T17:55:54.495Z" },
     { url = "https://files.pythonhosted.org/packages/1c/fc/9ba22f01b5cdacc8f5ed0d22304718d2c758fce3fd49a5372b886a86f37c/sqlalchemy-2.0.41-py3-none-any.whl", hash = "sha256:57df5dc6fdb5ed1a88a1ed2195fd31927e705cad62dedd86b46972752a80f576", size = 1911224, upload-time = "2025-05-14T17:39:42.154Z" },
 ]
+
+[[package]]
+name = "teacup"
+version = "0.1.0"
+source = { editable = "packages/teacup" }
+dependencies = [
+    { name = "geoalchemy2" },
+    { name = "pgedr" },
+    { name = "psycopg2" },
+]
+
+[package.optional-dependencies]
+gdal = [
+    { name = "gdal" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "gdal", marker = "extra == 'gdal'" },
+    { name = "geoalchemy2", specifier = ">=0.17.1" },
+    { name = "pgedr", specifier = "==0.2.0" },
+    { name = "psycopg2", specifier = ">=2.9.10" },
+]
+provides-extras = ["gdal"]
 
 [[package]]
 name = "tinydb"
@@ -2243,7 +2277,7 @@ requires-dist = [
     { name = "opentelemetry-instrumentation-aiohttp-client", specifier = ">=0.51b0" },
     { name = "opentelemetry-sdk", specifier = ">=1.30.0" },
     { name = "orjson", specifier = ">=3.10.15" },
-    { name = "pygeoapi", git = "https://github.com/internetofwater/pygeoapi.git?rev=c116205654703d65c9247fdcd6257c4cd8c7c6c9" },
+    { name = "pygeoapi", git = "https://github.com/internetofwater/pygeoapi.git?rev=ab729a925bf2ff120e5ee2aacce3a7c5fb9cfe35" },
     { name = "redis", specifier = ">=5.2.1" },
     { name = "uvicorn", specifier = ">=0.34.0" },
 ]
