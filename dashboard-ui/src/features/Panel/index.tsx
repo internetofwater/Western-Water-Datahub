@@ -16,7 +16,7 @@ import {
 import { Header } from '@/features/Panel/Header';
 import styles from '@/features/Panel/Panel.module.css';
 import Reservoirs from '@/features/Reservoirs';
-import Controls from '@/features/Controls';
+import ReferenceData from '@/features/ReferenceData';
 import DarkModeToggle from '@/features/Panel/DarkModeToggle';
 import Help, { HELP_LOCAL_KEY } from '@/features/Help';
 import { useEffect, useRef, useState } from 'react';
@@ -32,7 +32,7 @@ const items = [
     },
     {
         title: 'Reference Data',
-        content: <Controls />,
+        content: <ReferenceData />,
     },
 ];
 

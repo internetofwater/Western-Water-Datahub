@@ -230,13 +230,13 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
         case LayerId.Snotel:
             return 'Snow Water Equivalent Averages (%)';
         case LayerId.NOAARiverForecast:
-            return 'River Forecast Points (%)';
+            return 'Water Supply Forecast Points (%)';
         case LayerId.USDroughtMonitor:
-            return 'Drought';
+            return 'Drought Forecast';
         case LayerId.NOAAPrecipSixToTen:
-            return 'Precipitation';
+            return 'Precipitation Forecast (% Chance)';
         case LayerId.NOAATempSixToTen:
-            return 'Temperature';
+            return 'Temperature Forecast (% Chance)';
         default:
             return '';
     }
@@ -1271,7 +1271,7 @@ export const getLayerMouseMoveFunction = (
                                 .setLngLat(
                                     feature.geometry.coordinates as [
                                         number,
-                                        number
+                                        number,
                                     ]
                                 )
                                 .setHTML(html)
@@ -1348,7 +1348,7 @@ export const getLayerClickFunction = (
                                 .setLngLat(
                                     feature.geometry.coordinates as [
                                         number,
-                                        number
+                                        number,
                                     ]
                                 )
                                 .setHTML(html)
@@ -1383,7 +1383,7 @@ export const getLayerClickFunction = (
                                 .setLngLat(
                                     feature.geometry.coordinates as [
                                         number,
-                                        number
+                                        number,
                                     ]
                                 )
                                 .setHTML(html)

@@ -16,6 +16,7 @@ import loadingManager from '@/managers/Loading.init';
 import { LoadingType, NotificationType } from '@/stores/session/types';
 import notificationManager from '@/managers/Notification.init';
 import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
+import debounce from 'lodash.debounce';
 
 export const ReservoirDateSelector: React.FC = () => {
     const reservoirDate = useMainStore((state) => state.reservoirDate);
@@ -135,6 +136,11 @@ export const ReservoirDateSelector: React.FC = () => {
         }
     };
 
+    const debouncedHandleReservoirDateChange = debounce(
+        handleReservoirDateChange,
+        300
+    );
+
     useEffect(() => {
         const resvizData = reservoirCollections?.[SourceId.ResvizEDRReservoirs];
 
@@ -150,9 +156,16 @@ export const ReservoirDateSelector: React.FC = () => {
         void updateReservoirs(reservoirDate);
     }, [reservoirDate]);
 
+    useEffect(() => {
+        return () => {
+            debouncedHandleReservoirDateChange.cancel();
+        };
+    }, []);
+
     return (
-        <Stack>
+        <Stack gap="calc(var(--default-spacing) / 2)">
             <Checkbox
+                size="xs"
                 checked={!reservoirDate}
                 disabled={isFetchingReservoirs}
                 data-disabled={isFetchingReservoirs}
@@ -161,13 +174,14 @@ export const ReservoirDateSelector: React.FC = () => {
             />
             {reservoirDate && (
                 <DateInput
+                    size="xs"
                     valueFormat="MM/DD/YYYY"
                     disabled={isFetchingReservoirs}
                     value={dayjs(reservoirDate).toDate()}
                     // minDate={new Date()}
                     maxDate={new Date()}
                     label="Reservoir Storage Date"
-                    onChange={handleReservoirDateChange}
+                    onChange={debouncedHandleReservoirDateChange}
                 />
             )}
         </Stack>

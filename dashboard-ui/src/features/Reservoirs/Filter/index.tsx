@@ -17,6 +17,7 @@ import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import Up from '@/icons/Up';
 import FilterIcon from '@/icons/Filter';
 import { useLoading } from '@/hooks/useLoading';
+import { ReservoirDateSelector } from '@/features/Reservoirs/ReservoirDateSelector';
 
 type Props = {
     search: string;
@@ -82,6 +83,7 @@ export const Filter: React.FC<Props> = (props) => {
                     <FilterIcon />
                 </Box>
             </Group>
+            <ReservoirDateSelector />
             <Group
                 gap="var(--default-spacing)"
                 my="calc(var(--default-spacing) / 2)"
