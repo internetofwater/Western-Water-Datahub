@@ -116,7 +116,7 @@ export const BoundingGeography: React.FC = () => {
             value={boundingGeographyLevel}
             onChange={handleChange}
         >
-            <Group gap={8}>
+            <Group gap={'calc(var(--default-spacing) * 2)'}>
                 {data.map(({ value, label }) => (
                     <Radio
                         size="xs"

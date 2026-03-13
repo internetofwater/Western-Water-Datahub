@@ -136,8 +136,9 @@ const Reservoirs: React.FC = () => {
             return;
         }
 
-        const filterFunctions: Array<(feature: OrganizedFeature) => boolean> =
-            [];
+        const filterFunctions: Array<(feature: OrganizedFeature) => boolean> = [
+            (feature) => dayjs(feature.properties.dateMeasured).isValid(),
+        ];
 
         if (search.length > 0) {
             const lower = search.toLowerCase();

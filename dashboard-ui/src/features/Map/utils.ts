@@ -109,7 +109,7 @@ export const loadTeacups = (map: Map) => {
  * @function
  */
 export const parseReservoirProperties = <
-    T extends keyof RiseReservoirPropertiesRaw
+    T extends keyof RiseReservoirPropertiesRaw,
 >(
     key: T,
     value: string | number
@@ -131,9 +131,9 @@ export const isSourceDataLoaded = (
 ): boolean => {
     return Boolean(
         event.sourceId === sourceId &&
-            map.getSource(sourceId) &&
-            map.isSourceLoaded(sourceId) &&
-            map.querySourceFeatures(sourceId).length
+        map.getSource(sourceId) &&
+        map.isSourceLoaded(sourceId) &&
+        map.querySourceFeatures(sourceId).length
     );
 };
 
@@ -263,7 +263,7 @@ export const getHighlightIcon = (
         [
             'case',
             ['>=', ['var', 'capacity'], capacity],
-            'outline',
+            ['case', ['<', ['var', 'storage'], 0], 'outline-large', 'outline'],
             'outline-large',
         ], // evaluate this expression
     ]);
@@ -272,6 +272,12 @@ export const getHighlightIcon = (
         'let',
         'capacity',
         ['coalesce', ['get', config.capacityProperty], 1],
+        'storage', // var name
+        [
+            '/',
+            ['coalesce', ['get', config.storageProperty], -1],
+            ['coalesce', ['get', config.capacityProperty], 1],
+        ],
         ['step', ['zoom'], 'outline', ...zoomSteps],
     ];
 };
@@ -285,7 +291,12 @@ export const getReservoirSymbolSize = (
         [
             'case',
             ['>=', ['var', 'capacity'], capacity],
-            TeacupSizeExpression,
+            [
+                'case',
+                ['<', ['var', 'storage'], 0],
+                defaultSize,
+                TeacupSizeExpression,
+            ],
             defaultSize,
         ], // evaluate this expression
     ]);
@@ -294,6 +305,12 @@ export const getReservoirSymbolSize = (
         'let',
         'capacity',
         ['coalesce', ['get', config.capacityProperty], 1],
+        'storage', // var name
+        [
+            '/',
+            ['coalesce', ['get', config.storageProperty], -1],
+            ['coalesce', ['get', config.capacityProperty], 1],
+        ],
         ['step', ['zoom'], TeacupSizeExpression, ...zoomSteps],
     ];
 };
@@ -574,7 +591,7 @@ export const getBoundingGeographyFilter = (
             ]),
         ];
 
-        const matchExpression = [
+        const matchExpression: FilterSpecification = [
             'case',
             ['==', ['typeof', prop], 'array'],
             arrayMatches,
@@ -586,14 +603,16 @@ export const getBoundingGeographyFilter = (
             scalarMatches,
             false,
         ];
-        return ['all', getReservoirFilter(config), matchExpression];
+
+        return matchExpression;
+        // return ['all', getReservoirFilter(config), matchExpression];
     }
 
     const scalarMatches = ['any', ...values.map((v) => ['==', prop, v])];
 
     const arrayMatches = ['any', ...values.map((v) => ['in', v, prop])];
 
-    const matchExpression = [
+    const matchExpression: FilterSpecification = [
         'case',
         ['==', ['typeof', prop], 'array'],
         arrayMatches,
@@ -606,7 +625,8 @@ export const getBoundingGeographyFilter = (
         false,
     ];
 
-    return ['all', getReservoirFilter(config), matchExpression];
+    return matchExpression;
+    // return ['all', getReservoirFilter(config), matchExpression];
 };
 
 export const resetMap = (map: Map) => {

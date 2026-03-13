@@ -538,9 +538,9 @@ export const getLayerConfig = (
                 id: LayerId.ResvizEDRReservoirs,
                 type: LayerType.Symbol,
                 source: SourceId.ResvizEDRReservoirs,
-                filter: getReservoirFilter(
-                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
-                ),
+                // filter: getReservoirFilter(
+                //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                // ),
                 layout: getReservoirSymbolLayout(
                     getReservoirConfig(SourceId.ResvizEDRReservoirs)!
                 ),
@@ -550,9 +550,9 @@ export const getLayerConfig = (
                 id: SubLayerId.ResvizEDRReservoirLabels,
                 type: LayerType.Symbol,
                 source: SourceId.ResvizEDRReservoirs,
-                filter: getReservoirFilter(
-                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
-                ),
+                // filter: getReservoirFilter(
+                //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                // ),
                 layout: getReservoirLabelLayout(
                     getReservoirConfig(SourceId.ResvizEDRReservoirs)!
                 ),

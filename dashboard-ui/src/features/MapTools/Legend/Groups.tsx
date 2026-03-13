@@ -24,7 +24,10 @@ export const Groups: React.FC<Props> = (props) => {
                 wrap="wrap"
             >
                 {entry.groups.map((group, index) => (
-                    <Stack gap="calc(var(--default-spacing) / 2)">
+                    <Stack
+                        gap="calc(var(--default-spacing) / 2)"
+                        key={`legend-group-${entry.id}-${index}`}
+                    >
                         <Text size="xs">{group.label}</Text>
                         <Items
                             id={`${entry.id}-${index}`}

@@ -74,7 +74,7 @@ export const Filter: React.FC<Props> = (props) => {
         >
             <Group
                 justify="space-between"
-                my="calc(var(--default-spacing) / 2)"
+                mt="calc(var(--default-spacing) / 2)"
             >
                 <Title order={3} size="h5">
                     Filters
