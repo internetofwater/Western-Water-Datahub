@@ -6,6 +6,7 @@
 import {
     ActionIcon,
     Group,
+    Loader,
     NumberInput,
     Pagination,
     Stack,
@@ -29,6 +30,8 @@ import useMainStore from '@/stores/main';
 import useSessionStore from '@/stores/session';
 import { getReservoirConfig } from '@/features/Map/utils';
 import MapSearch from '@/icons/MapSearch';
+import dayjs from 'dayjs';
+import { useLoading } from '@/hooks/useLoading';
 
 type Props = {
     filteredReservoirs: Feature<Point, OrganizedProperties>[];
@@ -47,10 +50,18 @@ export const Table: React.FC<Props> = (props) => {
     >([]);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(5);
+    // Dont display no data found on page load prior to reservoir fetch
+    const [initialLoad, setInitialLoad] = useState(true);
 
     const { map } = useMap(MAP_ID);
 
+    const { isFetchingReservoirs } = useLoading();
+
     useEffect(() => {
+        if (initialLoad) {
+            setInitialLoad(false);
+        }
+
         const chunkedLocations = chunk(filteredReservoirs, pageSize);
         setChunkedLocations(chunkedLocations);
     }, [filteredReservoirs, pageSize]);
@@ -76,10 +87,9 @@ export const Table: React.FC<Props> = (props) => {
         }
         map.flyTo({
             center: feature.geometry.coordinates as [number, number],
-            zoom: 10, // Desired zoom level
-            speed: 1.2, // Animation speed (default is 1.2)
-            curve: 1.42, // Flight curve (default is 1.42)
-            essential: true, // Ensures animation is not skipped for accessibility
+            zoom: 10,
+            speed: 1.2,
+            curve: 1.42,
         });
     };
 
@@ -128,6 +138,30 @@ export const Table: React.FC<Props> = (props) => {
 
     const handleMouseExit = () => {
         setHighlight(null);
+    };
+
+    const displayDate = (date: string) => {
+        if (dayjs(date).isValid()) {
+            return date;
+        }
+
+        return 'No data';
+    };
+
+    const displayVolume = (volume: number) => {
+        if (isNaN(volume)) {
+            return 'N/A';
+        }
+
+        return volume.toLocaleString('en-US');
+    };
+
+    const displayPercentage = (percentage: number) => {
+        if (isNaN(percentage)) {
+            return 'N/A';
+        }
+
+        return `${percentage.toFixed(1)}%`;
     };
 
     const textProps = {
@@ -188,119 +222,148 @@ export const Table: React.FC<Props> = (props) => {
                     </TableTr>
                 </TableThead>
                 <TableTbody>
-                    {currentChunk.map((feature) => {
-                        const {
-                            identifier,
-                            name,
-                            dateMeasured,
-                            storage,
-                            capacity,
-                            percentFull,
-                            percentAverage,
-                            sourceId,
-                        } = feature.properties;
+                    {currentChunk.length === 0 ? (
+                        <TableTr
+                            className={styles.row}
+                            data-noReservoirs
+                            tabIndex={0}
+                        >
+                            <TableTd colSpan={4} ta={'center'}>
+                                {initialLoad || isFetchingReservoirs ? (
+                                    <Loader />
+                                ) : (
+                                    <> No Reservoirs Found</>
+                                )}
+                            </TableTd>
+                        </TableTr>
+                    ) : (
+                        <>
+                            {currentChunk.map((feature) => {
+                                const {
+                                    identifier,
+                                    name,
+                                    dateMeasured,
+                                    storage,
+                                    capacity,
+                                    percentFull,
+                                    percentAverage,
+                                    sourceId,
+                                } = feature.properties;
 
-                        const textProps = {
-                            size: 'xs',
-                        };
+                                const textProps = {
+                                    size: 'xs',
+                                };
 
-                        const rowLabel = `Reservoir ${name}, measured ${dateMeasured}. Storage ${storage.toLocaleString(
-                            'en-US'
-                        )}, Capacity ${capacity.toLocaleString(
-                            'en-US'
-                        )}. ${percentFull.toFixed(1)} percent full.`;
+                                const rowLabel = `Reservoir ${name}, measured ${displayDate(dateMeasured)}. Storage ${displayVolume(storage)}, Capacity ${displayVolume(capacity)}. ${displayPercentage(percentFull)} percent full.`;
 
-                        const onRowActivate = () => {
-                            handleSeeMore(identifier, sourceId);
-                        };
+                                const onRowActivate = () => {
+                                    handleSeeMore(identifier, sourceId);
+                                };
 
-                        const onRowKeyDown: React.KeyboardEventHandler<
-                            HTMLTableRowElement
-                        > = (e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                onRowActivate();
-                            }
-                        };
-
-                        return (
-                            <Tooltip
-                                label="Click to learn more."
-                                openDelay={500}
-                                key={`row-${identifier}`}
-                            >
-                                <TableTr
-                                    className={styles.row}
-                                    role="button"
-                                    tabIndex={0}
-                                    aria-label={rowLabel}
-                                    onClick={onRowActivate}
-                                    onKeyDown={onRowKeyDown}
-                                    onMouseEnter={() =>
-                                        handleMouseOver(feature)
+                                const onRowKeyDown: React.KeyboardEventHandler<
+                                    HTMLTableRowElement
+                                > = (e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        onRowActivate();
                                     }
-                                    onMouseLeave={() => handleMouseExit()}
-                                >
-                                    <TableTd>
-                                        <Stack {...stackProps}>
-                                            <Text {...textProps} fw="bold">
-                                                {name}
-                                            </Text>
-                                            <Text {...textProps}>
-                                                {dateMeasured}
-                                            </Text>
-                                        </Stack>
-                                    </TableTd>
-                                    <TableTd>
-                                        <Stack
-                                            {...stackProps}
-                                            justify="space-between"
+                                };
+
+                                return (
+                                    <Tooltip
+                                        label="Click to learn more."
+                                        openDelay={500}
+                                        key={`row-${identifier}`}
+                                    >
+                                        <TableTr
+                                            className={styles.row}
+                                            role="button"
+                                            tabIndex={0}
+                                            aria-label={rowLabel}
+                                            onClick={onRowActivate}
+                                            onKeyDown={onRowKeyDown}
+                                            onMouseEnter={() =>
+                                                handleMouseOver(feature)
+                                            }
+                                            onMouseLeave={() =>
+                                                handleMouseExit()
+                                            }
                                         >
-                                            <Text {...textProps}>
-                                                {storage.toLocaleString(
-                                                    'en-US'
-                                                )}
-                                            </Text>
-                                            <Text {...textProps}>
-                                                {capacity.toLocaleString(
-                                                    'en-US'
-                                                )}
-                                            </Text>
-                                        </Stack>
-                                    </TableTd>
-                                    <TableTd>
-                                        <Stack
-                                            {...stackProps}
-                                            justify="space-between"
-                                        >
-                                            <Text {...textProps}>
-                                                {percentFull.toFixed(1)}%
-                                            </Text>
-                                            <Text {...textProps}>
-                                                {percentAverage.toFixed(1)}%
-                                            </Text>
-                                        </Stack>
-                                    </TableTd>
-                                    <TableTd>
-                                        <Group justify="center" align="center">
-                                            <ActionIcon
-                                                title={`Go to ${name} on the map`}
-                                                onClick={(e) =>
-                                                    handleViewOnMap(e, feature)
-                                                }
-                                                classNames={{
-                                                    root: styles.actionIconRoot,
-                                                    icon: styles.actionIcon,
-                                                }}
-                                            >
-                                                <MapSearch />
-                                            </ActionIcon>
-                                        </Group>
-                                    </TableTd>
-                                </TableTr>
-                            </Tooltip>
-                        );
-                    })}
+                                            <TableTd>
+                                                <Stack {...stackProps}>
+                                                    <Text
+                                                        {...textProps}
+                                                        fw="bold"
+                                                    >
+                                                        {name}
+                                                    </Text>
+                                                    <Text {...textProps}>
+                                                        {displayDate(
+                                                            dateMeasured
+                                                        )}
+                                                    </Text>
+                                                </Stack>
+                                            </TableTd>
+                                            <TableTd>
+                                                <Stack
+                                                    {...stackProps}
+                                                    justify="space-between"
+                                                >
+                                                    <Text {...textProps}>
+                                                        {displayVolume(storage)}
+                                                    </Text>
+                                                    <Text {...textProps}>
+                                                        {displayVolume(
+                                                            capacity
+                                                        )}
+                                                    </Text>
+                                                </Stack>
+                                            </TableTd>
+                                            <TableTd>
+                                                <Stack
+                                                    {...stackProps}
+                                                    justify="space-between"
+                                                >
+                                                    <Text {...textProps}>
+                                                        {displayPercentage(
+                                                            percentFull
+                                                        )}
+                                                    </Text>
+                                                    <Text {...textProps}>
+                                                        {displayPercentage(
+                                                            percentAverage
+                                                        )}
+                                                    </Text>
+                                                </Stack>
+                                            </TableTd>
+                                            <TableTd>
+                                                <Group
+                                                    justify="center"
+                                                    align="center"
+                                                >
+                                                    <ActionIcon
+                                                        title={`Go to ${name} on the map`}
+                                                        onClick={(e) =>
+                                                            handleViewOnMap(
+                                                                e,
+                                                                feature
+                                                            )
+                                                        }
+                                                        classNames={{
+                                                            root: styles.actionIconRoot,
+                                                            icon: styles.actionIcon,
+                                                        }}
+                                                    >
+                                                        <MapSearch />
+                                                    </ActionIcon>
+                                                </Group>
+                                            </TableTd>
+                                        </TableTr>
+                                    </Tooltip>
+                                );
+                            })}
+                        </>
+                    )}
                 </TableTbody>
             </TableComponent>
             <Group

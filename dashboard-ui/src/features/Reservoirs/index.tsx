@@ -25,8 +25,8 @@ const Reservoirs: React.FC = () => {
 
     const [search, setSearch] = useState('');
     const [sortBy, setSortBy] = useState<SortBy>(SortBy.Capacity);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+    const [hideNoData, setHideNoData] = useState(false);
 
     const { reservoirCollections } = useReservoirData();
 
@@ -136,9 +136,13 @@ const Reservoirs: React.FC = () => {
             return;
         }
 
-        const filterFunctions: Array<(feature: OrganizedFeature) => boolean> = [
-            (feature) => dayjs(feature.properties.dateMeasured).isValid(),
-        ];
+        const filterFunctions: Array<(feature: OrganizedFeature) => boolean> =
+            [];
+        if (hideNoData) {
+            filterFunctions.push((feature) =>
+                dayjs(feature.properties.dateMeasured).isValid()
+            );
+        }
 
         if (search.length > 0) {
             const lower = search.toLowerCase();
@@ -172,12 +176,23 @@ const Reservoirs: React.FC = () => {
             .sort(getSort(sortBy, sortOrder));
 
         setFilteredReservoirs(filteredReservoirs);
-    }, [organizedReservoirs, search, region, basin, state, sortBy, sortOrder]);
+    }, [
+        organizedReservoirs,
+        search,
+        region,
+        basin,
+        state,
+        sortBy,
+        sortOrder,
+        hideNoData,
+    ]);
 
     const handleSearchChange = (search: string) => setSearch(search);
     const handleSortByChange = (sortBy: SortBy) => setSortBy(sortBy);
     const handleSortOrderChange = (sortOrder: SortOrder) =>
         setSortOrder(sortOrder);
+    const handleHideNoDataChange = (hideNoData: boolean) =>
+        setHideNoData(hideNoData);
 
     return (
         <>
@@ -188,6 +203,8 @@ const Reservoirs: React.FC = () => {
                 handleSortByChange={handleSortByChange}
                 sortOrder={sortOrder}
                 handleSortOrderChange={handleSortOrderChange}
+                hideNoData={hideNoData}
+                handleHideNoDataChange={handleHideNoDataChange}
             />
             {filteredReservoirs && (
                 <Table filteredReservoirs={filteredReservoirs} />

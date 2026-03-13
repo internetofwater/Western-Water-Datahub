@@ -26,6 +26,8 @@ type Props = {
     handleSortByChange: (value: SortByType) => void;
     sortOrder: SortOrder;
     handleSortOrderChange: (value: SortOrder) => void;
+    hideNoData: boolean;
+    handleHideNoDataChange: (hideNoData: boolean) => void;
 };
 
 export const Filter: React.FC<Props> = (props) => {
@@ -36,6 +38,8 @@ export const Filter: React.FC<Props> = (props) => {
         handleSortByChange,
         sortOrder,
         handleSortOrderChange,
+        hideNoData,
+        handleHideNoDataChange,
     } = props;
 
     const boundingGeographyLevel = useMainStore(
@@ -146,18 +150,33 @@ export const Filter: React.FC<Props> = (props) => {
                 </ActionIcon>
             </Group>
             <BoundingGeography />
-            {boundingGeographyLevel !== BoundingGeographyLevel.None && (
+            <Group
+                gap="var(--default-spacing)"
+                mt="calc(var(--default-spacing) / 2)"
+            >
+                {boundingGeographyLevel !== BoundingGeographyLevel.None && (
+                    <Switch
+                        size="xs"
+                        disabled={isFetchingReservoirs}
+                        classNames={{ label: styles.label }}
+                        label={getLabel(boundingGeographyLevel)}
+                        checked={showAllLabels}
+                        onClick={handleLabelsChange}
+                        {...labelsSwitchProps}
+                    />
+                )}
                 <Switch
                     size="xs"
-                    mt="calc(var(--default-spacing) / 2)"
                     disabled={isFetchingReservoirs}
                     classNames={{ label: styles.label }}
-                    label={getLabel(boundingGeographyLevel)}
-                    checked={showAllLabels}
-                    onClick={handleLabelsChange}
+                    label={'Hide reservoirs with no data'}
+                    checked={hideNoData}
+                    onClick={(e) =>
+                        handleHideNoDataChange(e.currentTarget.checked)
+                    }
                     {...labelsSwitchProps}
                 />
-            )}
+            </Group>
         </Stack>
     );
 };
