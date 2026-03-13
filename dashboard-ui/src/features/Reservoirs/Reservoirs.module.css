@@ -66,12 +66,12 @@
     transform: rotate(180deg);
 }
 
-.row:not([data-noReservoirs]) {
+.row {
     cursor: pointer;
 }
 
-.row:not([data-noReservoirs]):focus-visible,
-.row:not([data-noReservoirs]):hover {
+.row:focus-visible,
+.row:hover {
     background-color: var(--mantine-color-default-hover);
     outline: 3px solid #d0a02a;
     outline-offset: -3px;

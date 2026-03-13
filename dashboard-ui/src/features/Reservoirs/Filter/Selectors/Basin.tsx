@@ -65,6 +65,7 @@ export const Basin: React.FC = () => {
                     bbox: [-125, 24, -96.5, 49],
                     skipGeometry: true,
                 },
+                signal: controller.current.signal,
             });
 
             if (basinFeatureCollection.features.length) {

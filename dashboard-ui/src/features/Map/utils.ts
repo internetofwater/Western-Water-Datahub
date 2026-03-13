@@ -439,9 +439,9 @@ export const getReservoirFilter = (
     const dataProperties = [
         config.capacityProperty,
         config.storageProperty,
-        config.tenthPercentileProperty,
-        config.ninetiethPercentileProperty,
-        config.thirtyYearAverageProperty,
+        // config.tenthPercentileProperty,
+        // config.ninetiethPercentileProperty,
+        // config.thirtyYearAverageProperty,
     ];
     return [
         'all',
@@ -495,7 +495,8 @@ export const getReservoirIdentifier = (
 
 export const appendResvizDataProperties = async (
     featureCollection: FeatureCollection<Point, GeoJsonProperties>,
-    reservoirDate?: string | null
+    reservoirDate?: string | null,
+    signal?: AbortSignal
 ): Promise<FeatureCollection<Point, GeoJsonProperties>> => {
     const ids = featureCollection.features.map((feature) => feature.id!);
 
@@ -508,6 +509,7 @@ export const appendResvizDataProperties = async (
                     limit: 1,
                     ...(reservoirDate ? { datetime: reservoirDate } : {}),
                 },
+                signal,
             }
         )
     );

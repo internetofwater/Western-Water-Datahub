@@ -63,6 +63,7 @@ export const State: React.FC = () => {
                     bbox: [-125, 24, -96.5, 49],
                     skipGeometry: true,
                 },
+                signal: controller.current.signal,
             });
 
             if (stateFeatureCollection.features.length) {

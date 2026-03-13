@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { MantineColorScheme } from '@mantine/core';
+import { Group, MantineColorScheme, Text } from '@mantine/core';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import {
@@ -78,6 +78,7 @@ export const Graphic: React.FC<Props> = (props) => {
     const [highPercentile, setHighPercentile] = useState<number>();
     const [average, setAverage] = useState<number>();
     const [lowPercentile, setLowPercentile] = useState<number>();
+    const [isInvalidGraphic, setIsInvalidGraphic] = useState(false);
 
     useEffect(() => {
         if (!svgRef.current || !reservoirProperties || !config) {
@@ -126,6 +127,11 @@ export const Graphic: React.FC<Props> = (props) => {
         const tenthPercentage =
             Number(reservoirProperties[config.tenthPercentileProperty]) /
             Number(reservoirProperties[config.capacityProperty]);
+
+        if (isNaN(storagePercentage)) {
+            setIsInvalidGraphic(true);
+            return;
+        }
 
         // Determine basic dimensions of teacup trapezoid
         const size = 1 - Number(storagePercentage.toFixed(2));
@@ -363,14 +369,11 @@ export const Graphic: React.FC<Props> = (props) => {
         // Now that the diagram is created, call the callback function if exists
         // Used when creating the diagram for the report
         callback?.();
-    }, [
-        svgRef.current,
-        colorScheme,
-        reservoirProperties![config.identifierProperty],
-    ]);
+    }, [svgRef.current, colorScheme, reservoirProperties]);
 
     useEffect(() => {
         if (
+            isInvalidGraphic ||
             !listeners ||
             cutHeight === undefined ||
             highPercentile === undefined ||
@@ -477,6 +480,14 @@ export const Graphic: React.FC<Props> = (props) => {
         average,
         reservoirProperties![config.identifierProperty],
     ]);
+
+    if (isInvalidGraphic) {
+        return (
+            <Group h={127} justify="center" align="center" grow>
+                <Text size="sm">Missing required data</Text>
+            </Group>
+        );
+    }
 
     return (
         <svg

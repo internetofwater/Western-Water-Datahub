@@ -30,8 +30,12 @@ import useMainStore from '@/stores/main';
 import useSessionStore from '@/stores/session';
 import { getReservoirConfig } from '@/features/Map/utils';
 import MapSearch from '@/icons/MapSearch';
-import dayjs from 'dayjs';
 import { useLoading } from '@/hooks/useLoading';
+import {
+    displayDate,
+    displayPercentage,
+    displayVolume,
+} from '@/utils/reservoirDataDisplay';
 
 type Props = {
     filteredReservoirs: Feature<Point, OrganizedProperties>[];
@@ -140,30 +144,6 @@ export const Table: React.FC<Props> = (props) => {
         setHighlight(null);
     };
 
-    const displayDate = (date: string) => {
-        if (dayjs(date).isValid()) {
-            return date;
-        }
-
-        return 'No data';
-    };
-
-    const displayVolume = (volume: number) => {
-        if (isNaN(volume)) {
-            return 'N/A';
-        }
-
-        return volume.toLocaleString('en-US');
-    };
-
-    const displayPercentage = (percentage: number) => {
-        if (isNaN(percentage)) {
-            return 'N/A';
-        }
-
-        return `${percentage.toFixed(1)}%`;
-    };
-
     const textProps = {
         size: 'xs',
         fw: 700,
@@ -223,11 +203,7 @@ export const Table: React.FC<Props> = (props) => {
                 </TableThead>
                 <TableTbody>
                     {currentChunk.length === 0 ? (
-                        <TableTr
-                            className={styles.row}
-                            data-noReservoirs
-                            tabIndex={0}
-                        >
+                        <TableTr tabIndex={0}>
                             <TableTd colSpan={4} ta={'center'}>
                                 {initialLoad || isFetchingReservoirs ? (
                                     <Loader />

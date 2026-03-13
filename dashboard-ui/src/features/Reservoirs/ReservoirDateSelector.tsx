@@ -7,7 +7,7 @@ import useMainStore from '@/stores/main';
 import { Checkbox, Group } from '@mantine/core';
 import { DateInput, DateValue } from '@mantine/dates';
 import dayjs from 'dayjs';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { SourceId } from '@/features/Map/consts';
 import { FeatureCollection, Point, GeoJsonProperties } from 'geojson';
 import { appendResvizDataProperties } from '@/features/Map/utils';
@@ -28,6 +28,9 @@ export const ReservoirDateSelector: React.FC = () => {
     const setReservoirCollections = useMainStore(
         (state) => state.setReservoirCollections
     );
+
+    const controller = useRef<AbortController>(null);
+    const isMounted = useRef(true);
 
     const { isFetchingReservoirs } = useLoading();
 
@@ -75,9 +78,12 @@ export const ReservoirDateSelector: React.FC = () => {
             return;
         }
 
+        controller.current = new AbortController();
+
         const processedResult = await appendResvizDataProperties(
             currentCollection,
-            date
+            date,
+            controller.current.signal
         );
 
         if (
@@ -159,7 +165,11 @@ export const ReservoirDateSelector: React.FC = () => {
 
     useEffect(() => {
         return () => {
+            isMounted.current = false;
             debouncedHandleReservoirDateChange.cancel();
+            if (controller.current) {
+                controller.current.abort('Component unmount');
+            }
         };
     }, []);
 

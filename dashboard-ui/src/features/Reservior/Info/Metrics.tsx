@@ -9,6 +9,10 @@ import styles from '@/features/Reservior/Reservoir.module.css';
 import { GeoJsonProperties } from 'geojson';
 import dayjs from 'dayjs';
 import { useMediaQuery } from '@mantine/hooks';
+import {
+    displayPercentage,
+    displayVolumeWithUnits,
+} from '@/utils/reservoirDataDisplay';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
@@ -19,7 +23,7 @@ type Props = {
  *
  * @component
  */
-export const Info: React.FC<Props> = (props) => {
+export const Metrics: React.FC<Props> = (props) => {
     const { reservoirProperties, config } = props;
 
     const verticalDivider = useMediaQuery(
@@ -42,8 +46,8 @@ export const Info: React.FC<Props> = (props) => {
         reservoirProperties[config.tenthPercentileProperty]
     );
 
-    const percentFull = ((storage / capacity) * 100).toFixed(1);
-    const percentOfAverage = ((storage / average) * 100).toFixed(1);
+    const percentFull = (storage / capacity) * 100;
+    const percentOfAverage = (storage / average) * 100;
 
     const text = {
         size: 'lg',
@@ -63,22 +67,22 @@ export const Info: React.FC<Props> = (props) => {
                         <Text {...text} fw={700}>
                             Storage:
                         </Text>
-                        <Text {...text}>
-                            {storage.toLocaleString('en-US')}&nbsp;acre-feet
-                        </Text>
+                        <Text {...text}>{displayVolumeWithUnits(storage)}</Text>
                     </Group>
 
                     <Group gap="xs" justify="flex-start">
                         <Text {...text} fw={700}>
                             Percent Full:
                         </Text>
-                        <Text {...text}>{percentFull}%</Text>
+                        <Text {...text}>{displayPercentage(percentFull)}</Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
                         <Text {...text} fw={700}>
                             Percent of Average:
                         </Text>
-                        <Text {...text}>{percentOfAverage}%</Text>
+                        <Text {...text}>
+                            {displayPercentage(percentOfAverage)}
+                        </Text>
                     </Group>
                 </Box>
                 {verticalDivider ? (
@@ -93,26 +97,21 @@ export const Info: React.FC<Props> = (props) => {
                             Capacity:
                         </Text>
                         <Text {...text}>
-                            {capacity.toLocaleString('en-US')}
-                            &nbsp;acre-feet
+                            {displayVolumeWithUnits(capacity)}
                         </Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
                         <Text {...text} fw={700}>
                             30-year Average:
                         </Text>
-                        <Text {...text}>
-                            {Math.round(average).toLocaleString('en-US')}
-                            &nbsp;acre-feet
-                        </Text>
+                        <Text {...text}>{displayVolumeWithUnits(average)}</Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
                         <Text {...text} fw={700}>
                             High (90<sup>th</sup> Percentile):
                         </Text>
                         <Text {...text}>
-                            {ninetiethPercentile.toLocaleString('en-US')}
-                            &nbsp;acre-feet
+                            {displayVolumeWithUnits(ninetiethPercentile)}
                         </Text>
                     </Group>
                     <Group gap="xs" justify="flex-start">
@@ -120,8 +119,7 @@ export const Info: React.FC<Props> = (props) => {
                             Low (10<sup>th</sup> Percentile):
                         </Text>
                         <Text {...text}>
-                            {tenthPercentile.toLocaleString('en-US')}
-                            &nbsp;acre-feet
+                            {displayVolumeWithUnits(tenthPercentile)}
                         </Text>
                     </Group>
                 </Box>

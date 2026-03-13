@@ -13,10 +13,11 @@ import {
     SortOrder,
 } from '@/features/Reservoirs/types';
 import { Table } from '@/features/Reservoirs/Table';
-import { getReservoirConfig } from '@/features/Map/utils';
-import { SourceId } from '@/features/Map/consts';
+import { getReservoirConfig, getReservoirFilter } from '@/features/Map/utils';
+import { MAP_ID, ReservoirConfigs, SourceId } from '@/features/Map/consts';
 import dayjs from 'dayjs';
 import useMainStore from '@/stores/main';
+import { useMap } from '@/contexts/MapContexts';
 
 const Reservoirs: React.FC = () => {
     const region = useMainStore((state) => state.region);
@@ -36,6 +37,8 @@ const Reservoirs: React.FC = () => {
     const [filteredReservoirs, setFilteredReservoirs] = useState<
         OrganizedFeature[]
     >([]);
+
+    const { map } = useMap(MAP_ID);
 
     const getSortByProperty = (sortBy: SortBy): keyof OrganizedProperties => {
         switch (sortBy) {
@@ -68,6 +71,30 @@ const Reservoirs: React.FC = () => {
 
             return valueA - valueB;
         };
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        ReservoirConfigs.forEach((config) => {
+            if (hideNoData) {
+                const filter = getReservoirFilter(config);
+
+                config.connectedLayers.forEach((layerId) => {
+                    if (map.getLayer(layerId)) {
+                        map.setFilter(layerId, filter);
+                    }
+                });
+            } else {
+                config.connectedLayers.forEach((layerId) => {
+                    if (map.getLayer(layerId)) {
+                        map.setFilter(layerId, null);
+                    }
+                });
+            }
+        });
+    }, [hideNoData]);
 
     useEffect(() => {
         if (!reservoirCollections) {
