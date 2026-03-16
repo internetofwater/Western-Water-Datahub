@@ -29,7 +29,6 @@ import {
 import {
     getDefaultGeoJSON,
     getReservoirConfig,
-    getReservoirFilter,
     getReservoirLabelLayout,
     getReservoirLabelPaint,
     getReservoirSymbolLayout,
@@ -948,7 +947,12 @@ export const getLayerHoverFunction = (
                             </div>
                             `;
                             hoverPopup
-                                .setLngLat(e.lngLat)
+                                .setLngLat(
+                                    feature.geometry.coordinates as [
+                                        number,
+                                        number,
+                                    ]
+                                )
                                 .setHTML(html)
                                 .addTo(map);
                         }
@@ -1371,14 +1375,35 @@ export const getLayerClickFunction = (
                                 'dataset_link'
                             ] as string;
 
+                            const title = feature.properties[
+                                'espname'
+                            ] as string;
+
                             const html = `
-                                <div style="color:black;width:400px;">
+                                <div style="color:var(--foreground);width:400px;">
+                                    <div style="margin-bottom:var(--default-spacing);">${title}</div>
                                     <a href="${datasetLink}" target="_blank">
-                                        <img style="width:100%;" src="${imageLink}" alt="Plot of forecasted river conditions" />
-                                        Data Source
+                                    <div id="noaa-rfc-skeleton" class="skeleton-animation">
+                                        <img
+                                        id="popup-img"
+                                        src="${imageLink}"
+                                        alt="Plot of forecasted river conditions"
+                                        loading="lazy"
+                                        decoding="async"
+                                        style="
+                                            width:100%;
+                                            height:100%;
+                                            object-fit:contain;
+                                            opacity:0;
+                                            transition:opacity 0.25s ease;
+                                        "
+                                        />
+                                    </div>
+                                    <div style="margin-top:var(--default-spacing);">Data Source</div>
                                     </a>
                                 </div>
                                 `;
+
                             persistentPopup
                                 .setLngLat(
                                     feature.geometry.coordinates as [
@@ -1388,6 +1413,59 @@ export const getLayerClickFunction = (
                                 )
                                 .setHTML(html)
                                 .addTo(map);
+
+                            // Mock async loading behavior
+                            requestAnimationFrame(() => {
+                                const img =
+                                    document.getElementById('popup-img');
+                                if (!img) return;
+
+                                // Image loaded successfully, remove animation, show image
+                                img.addEventListener('load', () => {
+                                    const parentDiv =
+                                        document.getElementById(
+                                            'noaa-rfc-skeleton'
+                                        );
+                                    if (parentDiv) {
+                                        parentDiv.classList.remove(
+                                            'skeleton-animation'
+                                        );
+                                    }
+
+                                    img.style.opacity = '1';
+                                });
+
+                                // Image failed to load, remove animation, show fallback
+                                img.addEventListener('error', () => {
+                                    const parentDiv =
+                                        document.getElementById(
+                                            'noaa-rfc-skeleton'
+                                        );
+                                    if (parentDiv) {
+                                        parentDiv.classList.remove(
+                                            'skeleton-animation'
+                                        );
+                                    }
+
+                                    img.replaceWith(
+                                        Object.assign(
+                                            document.createElement('div'),
+                                            {
+                                                textContent:
+                                                    'Image unavailable',
+                                                style: `
+                                                    position:absolute;
+                                                    inset:0;
+                                                    display:flex;
+                                                    align-items:center;
+                                                    justify-content:center;
+                                                    background:#fafafa;
+                                                `,
+                                            }
+                                        )
+                                    );
+                                });
+                            });
                         }
                     }
                 };
