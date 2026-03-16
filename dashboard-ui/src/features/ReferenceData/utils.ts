@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { LayerId, ReservoirConfigs, SubLayerId } from '@/features/Map/consts';
+import { LayerId, SubLayerId } from '@/features/Map/consts';
 import { RasterBaseLayers } from '@/features/Map/types';
-import { getReservoirIconImageExpression } from '@/features/Map/utils';
 import { Map } from 'mapbox-gl';
 
 export const RasterVisibilityMap: {
@@ -62,27 +61,6 @@ export const updateBaseLayerOpacity = (baseLayerOpacity: number, map: Map) => {
         LayerId.NOAATempSixToTen,
         'raster-opacity',
         baseLayerOpacity
-    );
-};
-
-export const updateTeacups = (showTeacups: boolean, map: Map) => {
-    ReservoirConfigs.forEach((config) =>
-        config.connectedLayers
-            .filter((layerId) =>
-                [
-                    LayerId.RiseEDRReservoirs,
-                    LayerId.ResvizEDRReservoirs,
-                ].includes(layerId as LayerId)
-            )
-            .forEach((layerId) =>
-                map.setLayoutProperty(
-                    layerId,
-                    'icon-image',
-                    showTeacups
-                        ? getReservoirIconImageExpression(config)
-                        : 'default'
-                )
-            )
     );
 };
 

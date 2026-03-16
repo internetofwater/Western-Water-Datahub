@@ -23,8 +23,8 @@ import {
     RegionsSource,
     BaseLayerOpacity,
     ValidStates,
-    ResVizEDRReservoirSource,
     ValidBasins,
+    TeacupEDRReservoirSource,
 } from '@/features/Map/consts';
 import {
     getDefaultGeoJSON,
@@ -131,12 +131,20 @@ export const sourceConfigs: SourceConfig[] = [
     //         filter: ['!=', ['get', '_id'], 3688],
     //     },
     // },
+    // {
+    //     id: SourceId.ResvizEDRReservoirs,
+    //     type: Sources.GeoJSON,
+    //     definition: {
+    //         type: 'geojson',
+    //         data: ResVizEDRReservoirSource,
+    //     },
+    // },
     {
-        id: SourceId.ResvizEDRReservoirs,
+        id: SourceId.TeacupEDRReservoirs,
         type: Sources.GeoJSON,
         definition: {
             type: 'geojson',
-            data: ResVizEDRReservoirSource,
+            data: TeacupEDRReservoirSource,
         },
     },
     {
@@ -505,58 +513,25 @@ export const getLayerConfig = (
                     'line-width': 3,
                 },
             };
-        // case LayerId.RiseEDRReservoirs:
-        //     return {
-        //         id: LayerId.RiseEDRReservoirs,
-        //         type: LayerType.Symbol,
-        //         source: SourceId.RiseEDRReservoirs,
-        //         filter: getReservoirFilter(
-        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
-        //         ),
-        //         layout: getReservoirSymbolLayout(
-        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
-        //         ),
-        //     };
-        // case SubLayerId.RiseEDRReservoirLabels:
-        //     return {
-        //         id: SubLayerId.RiseEDRReservoirLabels,
-        //         type: LayerType.Symbol,
-        //         source: SourceId.RiseEDRReservoirs,
-        //         filter: getReservoirFilter(
-        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
-        //         ),
-        //         layout: getReservoirLabelLayout(
-        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
-        //         ),
-        //         paint: getReservoirLabelPaint(
-        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
-        //         ),
-        //     };
-        case LayerId.ResvizEDRReservoirs:
+        case LayerId.TeacupEDRReservoirs:
             return {
-                id: LayerId.ResvizEDRReservoirs,
+                id: LayerId.TeacupEDRReservoirs,
                 type: LayerType.Symbol,
-                source: SourceId.ResvizEDRReservoirs,
-                // filter: getReservoirFilter(
-                //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!
-                // ),
+                source: SourceId.TeacupEDRReservoirs,
                 layout: getReservoirSymbolLayout(
-                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                    getReservoirConfig(SourceId.TeacupEDRReservoirs)!
                 ),
             };
-        case SubLayerId.ResvizEDRReservoirLabels:
+        case SubLayerId.TeacupEDRReservoirLabels:
             return {
-                id: SubLayerId.ResvizEDRReservoirLabels,
+                id: SubLayerId.TeacupEDRReservoirLabels,
                 type: LayerType.Symbol,
-                source: SourceId.ResvizEDRReservoirs,
-                // filter: getReservoirFilter(
-                //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!
-                // ),
+                source: SourceId.TeacupEDRReservoirs,
                 layout: getReservoirLabelLayout(
-                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                    getReservoirConfig(SourceId.TeacupEDRReservoirs)!
                 ),
                 paint: getReservoirLabelPaint(
-                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                    getReservoirConfig(SourceId.TeacupEDRReservoirs)!
                 ),
             };
 
@@ -774,15 +749,18 @@ export const getLayerHoverFunction = (
                             feature,
                         });
                     }
-                    // showReservoirPopup(
-                    //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
-                    //     map,
-                    //     e,
-                    //     root,
-                    //     container,
-                    //     hoverPopup,
-                    //     false
-                    // );
+                };
+            case LayerId.TeacupEDRReservoirs:
+                return (e) => {
+                    const feature = e.features?.[0] as Feature<Point>;
+                    if (feature) {
+                        useSessionStore.getState().setHighlight({
+                            config: getReservoirConfig(
+                                SourceId.TeacupEDRReservoirs
+                            )!,
+                            feature,
+                        });
+                    }
                 };
             case SubLayerId.RegionsFill:
                 return (e) => {
@@ -1002,6 +980,11 @@ export const getLayerCustomHoverExitFunction = (
                     map.getCanvas().style.cursor = '';
                     useSessionStore.getState().setHighlight(null);
                 };
+            case LayerId.TeacupEDRReservoirs:
+                return () => {
+                    map.getCanvas().style.cursor = '';
+                    useSessionStore.getState().setHighlight(null);
+                };
             case SubLayerId.RegionsFill:
                 return () => {
                     map.getCanvas().style.cursor = '';
@@ -1106,6 +1089,18 @@ export const getLayerMouseMoveFunction = (
                         useSessionStore.getState().setHighlight({
                             config: getReservoirConfig(
                                 SourceId.ResvizEDRReservoirs
+                            )!,
+                            feature,
+                        });
+                    }
+                };
+            case LayerId.TeacupEDRReservoirs:
+                return (e) => {
+                    const feature = e.features?.[0] as Feature<Point>;
+                    if (feature) {
+                        useSessionStore.getState().setHighlight({
+                            config: getReservoirConfig(
+                                SourceId.TeacupEDRReservoirs
                             )!,
                             feature,
                         });
@@ -1657,40 +1652,22 @@ export const layerDefinitions: MainLayerDefinition[] = [
         clickFunction: getLayerClickFunction(LayerId.NOAARiverForecast),
         hoverFunction: getLayerHoverFunction(LayerId.NOAARiverForecast),
     },
-
-    // {
-    //     id: LayerId.RiseEDRReservoirs,
-    //     config: getLayerConfig(LayerId.RiseEDRReservoirs),
-    //     controllable: false,
-    //     legend: false,
-    //     hoverFunction: getLayerHoverFunction(LayerId.RiseEDRReservoirs),
-    //     mouseMoveFunction: getLayerMouseMoveFunction(LayerId.RiseEDRReservoirs),
-    //     subLayers: [
-    //         {
-    //             id: SubLayerId.RiseEDRReservoirLabels,
-    //             config: getLayerConfig(SubLayerId.RiseEDRReservoirLabels),
-    //             controllable: false,
-    //             legend: false,
-    //         },
-    //     ],
-    //     // hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
-    // },
     {
-        id: LayerId.ResvizEDRReservoirs,
-        config: getLayerConfig(LayerId.ResvizEDRReservoirs),
+        id: LayerId.TeacupEDRReservoirs,
+        config: getLayerConfig(LayerId.TeacupEDRReservoirs),
         controllable: false,
         legend: false,
-        hoverFunction: getLayerHoverFunction(LayerId.ResvizEDRReservoirs),
+        hoverFunction: getLayerHoverFunction(LayerId.TeacupEDRReservoirs),
         customHoverExitFunction: getLayerCustomHoverExitFunction(
-            LayerId.ResvizEDRReservoirs
+            LayerId.TeacupEDRReservoirs
         ),
         mouseMoveFunction: getLayerMouseMoveFunction(
-            LayerId.ResvizEDRReservoirs
+            LayerId.TeacupEDRReservoirs
         ),
         subLayers: [
             {
-                id: SubLayerId.ResvizEDRReservoirLabels,
-                config: getLayerConfig(SubLayerId.ResvizEDRReservoirLabels),
+                id: SubLayerId.TeacupEDRReservoirLabels,
+                config: getLayerConfig(SubLayerId.TeacupEDRReservoirLabels),
                 controllable: false,
                 legend: false,
             },

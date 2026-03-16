@@ -30,7 +30,8 @@ export type ReservoirConfig = {
     storageDateProperty: string;
     identifierProperty: string;
     identifierType: 'string' | 'number';
-    labelProperty: string;
+    shortLabelProperty: string;
+    longLabelProperty: string;
     chartLabel: string;
     regionConnectorProperty: string;
     basinConnectorProperty: string;

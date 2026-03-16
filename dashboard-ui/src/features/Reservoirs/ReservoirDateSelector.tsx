@@ -10,14 +10,14 @@ import dayjs from 'dayjs';
 import { useEffect, useRef } from 'react';
 import { SourceId } from '@/features/Map/consts';
 import { FeatureCollection, Point, GeoJsonProperties } from 'geojson';
-import { appendResvizDataProperties } from '@/features/Map/utils';
+import { appendTeacupDataProperties } from '@/features/Map/utils';
 import { useLoading } from '@/hooks/useLoading';
 import loadingManager from '@/managers/Loading.init';
 import { LoadingType, NotificationType } from '@/stores/session/types';
 import notificationManager from '@/managers/Notification.init';
-import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
 import debounce from 'lodash.debounce';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
+import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
 
 export const ReservoirDateSelector: React.FC = () => {
     const reservoirDate = useMainStore((state) => state.reservoirDate);
@@ -80,7 +80,7 @@ export const ReservoirDateSelector: React.FC = () => {
 
         controller.current = new AbortController();
 
-        const processedResult = await appendResvizDataProperties(
+        const processedResult = await appendTeacupDataProperties(
             currentCollection,
             date,
             controller.current.signal
@@ -90,7 +90,7 @@ export const ReservoirDateSelector: React.FC = () => {
             processedResult.features.every(
                 (feature) =>
                     feature.properties &&
-                    !feature.properties[ResvizReservoirField.StorageAverage]
+                    !feature.properties[TeacupReservoirField.StorageAverage]
             )
         ) {
             const { noDataMessage } = getMessages(date);
@@ -103,7 +103,7 @@ export const ReservoirDateSelector: React.FC = () => {
 
         const _reservoirCollection = {
             ...reservoirCollections,
-            [SourceId.ResvizEDRReservoirs]: processedResult,
+            [SourceId.TeacupEDRReservoirs]: processedResult,
         };
         setReservoirCollections(_reservoirCollection);
     };
@@ -117,7 +117,7 @@ export const ReservoirDateSelector: React.FC = () => {
         );
         try {
             await fetchRiseReservoirLocations(
-                reservoirCollections![SourceId.ResvizEDRReservoirs]!,
+                reservoirCollections![SourceId.TeacupEDRReservoirs]!,
                 reservoirDate
             );
             notificationManager.show(updatedMessage, NotificationType.Success);
@@ -149,7 +149,7 @@ export const ReservoirDateSelector: React.FC = () => {
     );
 
     useEffect(() => {
-        const resvizData = reservoirCollections?.[SourceId.ResvizEDRReservoirs];
+        const resvizData = reservoirCollections?.[SourceId.TeacupEDRReservoirs];
 
         const isValidFeatureCollection =
             resvizData?.type === 'FeatureCollection' &&

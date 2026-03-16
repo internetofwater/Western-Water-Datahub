@@ -57,7 +57,7 @@ export const Hover: React.FC<Props> = (props) => {
             <Group justify="space-between">
                 <Stack gap="xs" className={styles.reservoirLeft}>
                     <Title order={4} size="h5">
-                        {reservoirProperties[config.labelProperty]}
+                        {reservoirProperties[config.longLabelProperty]}
                     </Title>
                     <Graphic
                         reservoirProperties={reservoirProperties}

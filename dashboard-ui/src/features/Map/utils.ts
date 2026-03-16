@@ -38,6 +38,7 @@ import wwdhService from '@/services/init/wwdh.init';
 import { CoverageJSON } from '@/services/edr.service';
 import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
 import { SnotelField, SnotelProperties } from '@/features/Map/types/snotel';
+import { TeacupReservoirField } from './types/reservoir/teacup';
 
 /**
  *
@@ -346,7 +347,7 @@ export const getReservoirLabelLayout = (
     config: ReservoirConfig
 ): LayoutSpecification => {
     return {
-        'text-field': ['get', config.labelProperty],
+        'text-field': ['get', config.shortLabelProperty],
         'text-anchor': 'bottom',
         'text-size': 16,
         'symbol-sort-key': [
@@ -542,6 +543,92 @@ export const appendResvizDataProperties = async (
                 ]?.values?.[0];
             updatedProps[ResvizReservoirField.StorageDate] =
                 coverage.domain.axes.t.values?.[0];
+        } else {
+            console.warn(
+                `Failed to fetch data for ID ${feature.id}:`,
+                result.reason
+            );
+        }
+
+        return {
+            ...feature,
+            properties: updatedProps,
+        };
+    });
+
+    return {
+        type: 'FeatureCollection',
+        features: updatedFeatures,
+    };
+};
+
+export const appendTeacupDataProperties = async (
+    featureCollection: FeatureCollection<Point, GeoJsonProperties>,
+    reservoirDate?: string | null,
+    signal?: AbortSignal
+): Promise<FeatureCollection<Point, GeoJsonProperties>> => {
+    const ids = featureCollection.features.map((feature) => feature.id!);
+
+    const requests = ids.map((id) =>
+        wwdhService.getLocation<CoverageJSON>(
+            SourceId.TeacupEDRReservoirs,
+            String(id),
+            {
+                params: {
+                    limit: 1,
+                    ...(reservoirDate ? { datetime: reservoirDate } : {}),
+                },
+                signal,
+            }
+        )
+    );
+
+    const results = await Promise.allSettled(requests);
+
+    const updatedFeatures = featureCollection.features.map((feature, index) => {
+        const result = results[index];
+        const updatedProps: GeoJsonProperties = {
+            ...feature.properties,
+        };
+
+        if (result.status === 'fulfilled') {
+            const coverage = result.value;
+            // Determine which capacity to use, set to general capacity property
+            if (feature.properties) {
+                const activeCapacity = Number(
+                    feature.properties[TeacupReservoirField.ActiveCapacity] ??
+                        -1
+                );
+
+                const totalCapacity = Number(
+                    feature.properties[TeacupReservoirField.TotalCapacity] ?? -1
+                );
+                updatedProps[TeacupReservoirField.Capacity] = Math.max(
+                    activeCapacity,
+                    totalCapacity
+                );
+            }
+
+            // Set Storage
+            updatedProps[TeacupReservoirField.Storage] =
+                coverage.ranges[TeacupReservoirField.Storage]?.values?.[0];
+            // 10th Percentile
+            updatedProps[TeacupReservoirField.TenthPercentile] =
+                coverage.ranges[
+                    TeacupReservoirField.TenthPercentile
+                ]?.values?.[0];
+            // 90th Percentile
+            updatedProps[TeacupReservoirField.NinetiethPercentile] =
+                coverage.ranges[
+                    TeacupReservoirField.NinetiethPercentile
+                ]?.values?.[0];
+            // 30-year Average
+            updatedProps[TeacupReservoirField.StorageAverage] =
+                coverage.ranges[
+                    TeacupReservoirField.StorageAverage
+                ]?.values?.[0];
+            updatedProps[TeacupReservoirField.StorageDate] = coverage.domain
+                .axes.t.values?.[0] as string;
         } else {
             console.warn(
                 `Failed to fetch data for ID ${feature.id}:`,

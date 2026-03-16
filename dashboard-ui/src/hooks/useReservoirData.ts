@@ -8,7 +8,10 @@ import wwdhService from '@/services/init/wwdh.init';
 import { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
 import useMainStore from '@/stores/main';
 import { ReservoirConfigs, SourceId } from '@/features/Map/consts';
-import { appendResvizDataProperties } from '@/features/Map/utils';
+import {
+    appendResvizDataProperties,
+    appendTeacupDataProperties,
+} from '@/features/Map/utils';
 import { ReservoirCollections } from '@/stores/main/types';
 import loadingManager from '@/managers/Loading.init';
 import { LoadingType, NotificationType } from '@/stores/session/types';
@@ -43,9 +46,8 @@ export const useReservoirData = () => {
                     params: config.params,
                 });
                 if (config.id === SourceId.ResvizEDRReservoirs) {
-                    const processedResult = await appendResvizDataProperties(
-                        result
-                    );
+                    const processedResult =
+                        await appendResvizDataProperties(result);
                     const reservoirCollection = {
                         ...processedResult,
                         features: processedResult.features.map((feature) => {
@@ -66,6 +68,12 @@ export const useReservoirData = () => {
                             };
                         }),
                     };
+
+                    reservoirCollections[config.id] = reservoirCollection;
+                }
+                if (config.id === SourceId.TeacupEDRReservoirs) {
+                    const reservoirCollection =
+                        await appendTeacupDataProperties(result);
 
                     reservoirCollections[config.id] = reservoirCollection;
                 }

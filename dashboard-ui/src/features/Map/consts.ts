@@ -7,7 +7,7 @@ import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
 import { ExpressionSpecification } from 'mapbox-gl';
 import { ReservoirConfig } from '@/features/Map/types';
-import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
+import { TeacupReservoirField } from './types/reservoir/teacup';
 
 export const MAP_ID = 'main';
 
@@ -25,6 +25,7 @@ export enum SourceId {
     StateCenters = 'states-center',
     RiseEDRReservoirs = 'rise-edr',
     ResvizEDRReservoirs = 'resviz-edr',
+    TeacupEDRReservoirs = 'teacup-edr',
     USACEEDRReservoirs = 'usace-edr',
     SnowWater = 'snow-water',
     USDroughtMonitor = 'us-current-drought-monitor',
@@ -46,6 +47,7 @@ export enum LayerId {
 
     RiseEDRReservoirs = 'dash-rise-edr-reservoir-points',
     ResvizEDRReservoirs = 'dash-resviz-edr-reservoir-points',
+    TeacupEDRReservoirs = 'dash-teacup-edr-reservoir-points',
     SnowWater = 'dash-snow-water',
     USDroughtMonitor = 'dash-us-current-drought-monitor',
     NOAAPrecipSixToTen = 'dash-noaa-precip-6-10-day',
@@ -71,6 +73,7 @@ export enum SubLayerId {
 
     RiseEDRReservoirLabels = 'dash-rise-edr-reservoir-labels',
     ResvizEDRReservoirLabels = 'dash-resviz-edr-reservoir-labels',
+    TeacupEDRReservoirLabels = 'dash-teacup-edr-reservoir-labels',
     SnotelBoundary = 'dash-snotel-edr-boundary',
     SnotelFill = 'dash-snotel-edr-fill',
 }
@@ -177,6 +180,9 @@ export const RISEEDRReservoirSource =
 export const ResVizEDRReservoirSource =
     'https://cache.wwdh.internetofwater.app/collections/resviz-edr/locations';
 
+export const TeacupEDRReservoirSource =
+    'https://cache.wwdh.internetofwater.app/collections/teacup-edr/locations';
+
 /**
  *
  * @constant
@@ -209,24 +215,45 @@ export const ReservoirConfigs: ReservoirConfig[] = [
     //         'parameter-name': 'Storage',
     //     },
     // },
+    // {
+    //     id: SourceId.ResvizEDRReservoirs,
+    //     storageProperty: ResvizReservoirField.Storage,
+    //     capacityProperty: ResvizReservoirField.MaxCapacity,
+    //     tenthPercentileProperty: ResvizReservoirField.TenthPercentile,
+    //     ninetiethPercentileProperty: ResvizReservoirField.NinetiethPercentile,
+    //     thirtyYearAverageProperty: ResvizReservoirField.StorageAverage,
+    //     storageDateProperty: ResvizReservoirField.StorageDate,
+    //     identifierProperty: ResvizReservoirField.MonitoringLocationId,
+    //     identifierType: 'number',
+    //     labelProperty: ResvizReservoirField.SiteName,
+    //     chartLabel: ResvizReservoirField.Storage,
+    //     regionConnectorProperty: ResvizReservoirField.DoiRegionName,
+    //     basinConnectorProperty: ResvizReservoirField.Huc06,
+    //     stateConnectorProperty: ResvizReservoirField.State,
+    //     connectedLayers: [
+    //         LayerId.ResvizEDRReservoirs,
+    //         SubLayerId.ResvizEDRReservoirLabels,
+    //     ],
+    // },
     {
-        id: SourceId.ResvizEDRReservoirs,
-        storageProperty: ResvizReservoirField.Storage,
-        capacityProperty: ResvizReservoirField.MaxCapacity,
-        tenthPercentileProperty: ResvizReservoirField.TenthPercentile,
-        ninetiethPercentileProperty: ResvizReservoirField.NinetiethPercentile,
-        thirtyYearAverageProperty: ResvizReservoirField.StorageAverage,
-        storageDateProperty: ResvizReservoirField.StorageDate,
-        identifierProperty: ResvizReservoirField.MonitoringLocationId,
-        identifierType: 'number',
-        labelProperty: ResvizReservoirField.SiteName,
-        chartLabel: ResvizReservoirField.Storage,
-        regionConnectorProperty: ResvizReservoirField.DoiRegionName,
-        basinConnectorProperty: ResvizReservoirField.Huc06,
-        stateConnectorProperty: ResvizReservoirField.State,
+        id: SourceId.TeacupEDRReservoirs,
+        storageProperty: TeacupReservoirField.Storage,
+        capacityProperty: TeacupReservoirField.Capacity,
+        tenthPercentileProperty: TeacupReservoirField.TenthPercentile,
+        ninetiethPercentileProperty: TeacupReservoirField.NinetiethPercentile,
+        thirtyYearAverageProperty: TeacupReservoirField.StorageAverage,
+        storageDateProperty: TeacupReservoirField.StorageDate,
+        identifierProperty: TeacupReservoirField.Id,
+        identifierType: 'string',
+        shortLabelProperty: TeacupReservoirField.MapLabel,
+        longLabelProperty: TeacupReservoirField.PopupLabel,
+        chartLabel: TeacupReservoirField.Storage,
+        regionConnectorProperty: TeacupReservoirField.RegionName,
+        basinConnectorProperty: TeacupReservoirField.Huc06,
+        stateConnectorProperty: TeacupReservoirField.State,
         connectedLayers: [
-            LayerId.ResvizEDRReservoirs,
-            SubLayerId.ResvizEDRReservoirLabels,
+            LayerId.TeacupEDRReservoirs,
+            SubLayerId.TeacupEDRReservoirLabels,
         ],
     },
 ];

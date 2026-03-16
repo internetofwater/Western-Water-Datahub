@@ -138,6 +138,30 @@ const MainMap: React.FC<Props> = (props) => {
     }, [map, reservoirCollections?.[SourceId.ResvizEDRReservoirs]]);
 
     useEffect(() => {
+        const teacupData = reservoirCollections?.[SourceId.TeacupEDRReservoirs];
+
+        const isValidFeatureCollection =
+            teacupData?.type === 'FeatureCollection' &&
+            Array.isArray(teacupData.features);
+
+        if (!map || !isValidFeatureCollection) {
+            return;
+        }
+
+        const teacupSource = map.getSource<GeoJSONSource>(
+            SourceId.TeacupEDRReservoirs
+        );
+
+        if (!teacupSource) {
+            return;
+        }
+
+        teacupSource.setData(
+            reservoirCollections![SourceId.TeacupEDRReservoirs]!
+        );
+    }, [map, reservoirCollections?.[SourceId.TeacupEDRReservoirs]]);
+
+    useEffect(() => {
         if (!map) {
             return;
         }
@@ -172,49 +196,6 @@ const MainMap: React.FC<Props> = (props) => {
                         feature.properties,
                         feature.id!
                     );
-
-                    // if (feature.properties[config.regionConnectorProperty]) {
-                    //     const rawRegionProperty = String(
-                    //         feature.properties[config.regionConnectorProperty]
-                    //     );
-                    //     const regionProperty = rawRegionProperty.startsWith('[')
-                    //         ? (JSON.parse(rawRegionProperty) as string[])
-                    //         : rawRegionProperty;
-
-                    //     setRegion(
-                    //         Array.isArray(regionProperty)
-                    //             ? regionProperty[0]
-                    //             : regionProperty
-                    //     );
-                    // }
-                    // if (feature.properties[config.basinConnectorProperty]) {
-                    //     const rawBasinProperty = String(
-                    //         feature.properties[config.basinConnectorProperty]
-                    //     );
-                    //     const basinProperty = rawBasinProperty.startsWith('[')
-                    //         ? (JSON.parse(rawBasinProperty) as string[])
-                    //         : String(rawBasinProperty).slice(0, 2);
-
-                    //     setBasin(
-                    //         Array.isArray(basinProperty)
-                    //             ? basinProperty[0]
-                    //             : basinProperty
-                    //     );
-                    // }
-                    // if (feature.properties[config.stateConnectorProperty]) {
-                    //     const rawStateProperty = String(
-                    //         feature.properties[config.stateConnectorProperty]
-                    //     );
-                    //     const stateProperty = rawStateProperty.startsWith('[')
-                    //         ? (JSON.parse(rawStateProperty) as string[])
-                    //         : rawStateProperty;
-
-                    //     setState(
-                    //         Array.isArray(stateProperty)
-                    //             ? stateProperty[0]
-                    //             : stateProperty
-                    //     );
-                    // }
 
                     setReservoir({
                         identifier:

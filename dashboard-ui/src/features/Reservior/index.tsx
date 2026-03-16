@@ -84,7 +84,17 @@ const Reservoir: React.FC = () => {
             return;
         }
 
-        const name = String(initialReservoirProperties[config.labelProperty]);
+        if (
+            currentReservoirProperties &&
+            currentReservoirProperties[config.storageDateProperty] ===
+                currentDate
+        ) {
+            return;
+        }
+
+        const name = String(
+            initialReservoirProperties[config.longLabelProperty]
+        );
         const loadingInstance = loadingManager.add(
             `Fetching data for reservoir: ${name}, on date: ${dayjs(currentDate).format('MM/DD/YYYY')}`,
             LoadingType.SingleReservoir
@@ -251,8 +261,9 @@ const Reservoir: React.FC = () => {
             onClose={handleClose}
             title={
                 <Title order={3}>
-                    {String(currentReservoirProperties[config.labelProperty]) ??
-                        ''}
+                    {String(
+                        currentReservoirProperties[config.longLabelProperty]
+                    ) ?? ''}
                 </Title>
             }
         >
