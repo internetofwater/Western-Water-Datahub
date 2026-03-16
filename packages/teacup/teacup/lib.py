@@ -174,15 +174,21 @@ def run_location_load() -> None:
     # Process source 'layer'
     for f in layer:
         # Represent at SQL column names
-        row = {
-            layer_def.GetFieldDefn(i)
-            .GetName()
-            .strip()
-            .lower()
-            .replace(" ", "_")
-            .replace("-", "_"): f.GetField(i)
-            for i in range(layer_def.GetFieldCount())
-        }
+        try:
+            row = {
+                layer_def.GetFieldDefn(i)
+                .GetName()
+                .strip()
+                .lower()
+                .replace(" ", "_")
+                .replace("-", "_"): f.GetField(i)
+                for i in range(layer_def.GetFieldCount())
+            }
+        except AttributeError:
+            LOGGER.error(
+                f"Skipping row with missing fields from {f.GetField('source_name')}"
+            )
+            continue
 
         # Handle source URL
         source = row["source_for_storage_data"]
