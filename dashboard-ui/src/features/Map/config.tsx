@@ -335,15 +335,16 @@ export const getLayerConfig = (
                 source: SourceId.RegionCenters,
                 layout: {
                     'text-field': ['get', RegionField.Name],
+                    'text-font': ['Arial Unicode MS Bold'],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                     'text-size': 22,
                     'text-allow-overlap': true,
                     'text-ignore-placement': true,
                 },
                 paint: {
-                    'text-color': '#fff',
+                    'text-color': '#000',
                     'text-opacity': 0,
-                    'text-halo-color': '#000000',
+                    'text-halo-color': '#fff',
                     'text-halo-width': 2,
                 },
             };
@@ -413,15 +414,16 @@ export const getLayerConfig = (
                 source: SourceId.BasinCenters,
                 layout: {
                     'text-field': ['get', Huc02BasinField.Name],
+                    'text-font': ['Arial Unicode MS Bold'],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                     'text-size': 22,
                     'text-allow-overlap': true,
                     'text-ignore-placement': true,
                 },
                 paint: {
-                    'text-color': '#fff',
+                    'text-color': '#000',
                     'text-opacity': 0,
-                    'text-halo-color': '#000000',
+                    'text-halo-color': '#fff',
                     'text-halo-width': 2,
                 },
             };
@@ -485,15 +487,16 @@ export const getLayerConfig = (
                 source: SourceId.StateCenters,
                 layout: {
                     'text-field': ['get', 'name'],
+                    'text-font': ['Arial Unicode MS Bold'],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                     'text-size': 22,
                     'text-allow-overlap': true,
                     'text-ignore-placement': true,
                 },
                 paint: {
-                    'text-color': '#fff',
+                    'text-color': '#000',
                     'text-opacity': 0,
-                    'text-halo-color': '#000000',
+                    'text-halo-color': '#fff',
                     'text-halo-width': 2,
                 },
             };
