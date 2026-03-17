@@ -73,8 +73,7 @@ export const State: React.FC = () => {
                             feature.properties[StateField.Acronym]
                         )
                     ),
-                    (feature) =>
-                        String(feature?.properties?.[StateField.Acronym]),
+                    (feature) => String(feature?.properties?.[StateField.Uri]),
                     (feature) => String(feature?.properties?.[StateField.Name]),
                     '',
                     '',

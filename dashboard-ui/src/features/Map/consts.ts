@@ -249,7 +249,7 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         longLabelProperty: TeacupReservoirField.PopupLabel,
         chartLabel: TeacupReservoirField.Storage,
         regionConnectorProperty: TeacupReservoirField.RegionName,
-        basinConnectorProperty: TeacupReservoirField.Huc06,
+        basinConnectorProperty: TeacupReservoirField.Huc02,
         stateConnectorProperty: TeacupReservoirField.State,
         connectedLayers: [
             LayerId.TeacupEDRReservoirs,

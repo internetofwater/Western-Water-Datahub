@@ -607,6 +607,23 @@ export const appendTeacupDataProperties = async (
                     activeCapacity,
                     totalCapacity
                 );
+
+                // Huc06 is given as a URI
+                const huc06URI = String(
+                    feature.properties[TeacupReservoirField.Huc06]
+                );
+                const huc06 = huc06URI.substring(
+                    huc06URI.length - 6,
+                    huc06URI.length
+                );
+
+                const huc02 = String(
+                    feature.properties[TeacupReservoirField.Huc06]
+                ).substring(huc06URI.length - 6, huc06URI.length - 4);
+
+                updatedProps[TeacupReservoirField.Huc02] = huc02;
+
+                console.log('huc06', huc06);
             }
 
             // Set Storage
@@ -659,7 +676,10 @@ export const getBoundingGeographyFilter = (
     const values = Array.isArray(value) ? value : [value];
 
     // Handle basin HUC06 identifiers
-    if (property === 'basinConnectorProperty') {
+    if (
+        config.id === SourceId.ResvizEDRReservoirs &&
+        property === 'basinConnectorProperty'
+    ) {
         const values = Array.isArray(value) ? value : [value];
 
         const scalarMatches = [

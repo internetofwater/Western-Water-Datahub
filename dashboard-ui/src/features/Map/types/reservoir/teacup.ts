@@ -17,12 +17,13 @@ export enum TeacupReservoirField {
     State = 'state',
     Source = 'source_uri',
 
-    Storage = 'raw',
     Capacity = 'capacity',
+    Storage = 'raw',
     TenthPercentile = 'p10',
     NinetiethPercentile = 'p90',
     StorageAverage = 'avg',
     StorageDate = 'storage_date',
+    Huc02 = 'huc02', // Client side property for easier filtering by huc02
 }
 
 export type TeacupReservoirProperties = {
@@ -45,4 +46,5 @@ export type TeacupReservoirProperties = {
     [TeacupReservoirField.NinetiethPercentile]?: number;
     [TeacupReservoirField.StorageAverage]?: number;
     [TeacupReservoirField.StorageDate]?: string;
+    [TeacupReservoirField.Huc02]?: number;
 };
