@@ -50,6 +50,7 @@ import { StateField } from '@/features/Map/types/state';
 import { Huc02BasinField } from '@/features/Map/types/basin';
 import { BoundingGeographyLevel } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
+import debounce from 'lodash.debounce';
 
 type Props = {
     accessToken: string;
@@ -84,10 +85,9 @@ const MainMap: React.FC<Props> = (props) => {
         (state) => state.reservoirCollections
     );
     const showAllLabels = useMainStore((state) => state.showAllLabels);
-
     const highlight = useSessionStore((state) => state.highlight);
-
     const loadingInstances = useSessionStore((state) => state.loadingInstances);
+    const setMapMoved = useSessionStore((state) => state.setMapMoved);
 
     const [shouldResize, setShouldResize] = useState(false);
 
@@ -95,10 +95,17 @@ const MainMap: React.FC<Props> = (props) => {
 
     useReservoirData();
 
-    // useSnotelData();
+    const handleMapMove = () => {
+        if (isMounted.current) {
+            setMapMoved(Date.now());
+        }
+    };
+
+    const debouncedHandleMapMove = debounce(handleMapMove, 150);
 
     useEffect(() => {
         return () => {
+            debouncedHandleMapMove.cancel();
             isMounted.current = false;
         };
     }, []);
@@ -211,13 +218,16 @@ const MainMap: React.FC<Props> = (props) => {
 
         map.on('click', reservoirLayers, handleReservoirsClick);
         map.on('touchend', reservoirLayers, handleReservoirsClick);
+        // Detect map movements, update features connected to map extent
+        map.on('moveend', debouncedHandleMapMove);
+        map.on('zoomend', debouncedHandleMapMove);
 
         loadImages(map);
         map.on('style.load', () => {
             loadImages(map);
         });
 
-        map.on('zoom', () => {
+        const handleMapZoom = () => {
             const zoom = map.getZoom();
             if (zoom > 8) {
                 ReservoirConfigs.forEach((config) => {
@@ -255,7 +265,9 @@ const MainMap: React.FC<Props> = (props) => {
                     }
                 });
             }
-        });
+        };
+
+        map.on('zoom', handleMapZoom);
 
         // Resize and fit bounds to ensure consistent loading behavior in all screen sizes
         map.resize();
@@ -273,6 +285,9 @@ const MainMap: React.FC<Props> = (props) => {
         return () => {
             map.off('click', reservoirLayers, handleReservoirsClick);
             map.off('touchend', reservoirLayers, handleReservoirsClick);
+            map.off('moveend', debouncedHandleMapMove);
+            map.off('zoomend', debouncedHandleMapMove);
+            map.off('zoom', handleMapZoom);
         };
     }, [map]);
 
