@@ -7,7 +7,7 @@ import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
 import { ExpressionSpecification } from 'mapbox-gl';
 import { ReservoirConfig } from '@/features/Map/types';
-import { TeacupReservoirField } from './types/reservoir/teacup';
+import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
 
 export const MAP_ID = 'main';
 

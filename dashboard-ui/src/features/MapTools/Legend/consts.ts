@@ -4,7 +4,7 @@
  */
 
 import { LayerId } from '@/features/Map/consts';
-import { TEntry } from './types';
+import { TEntry } from '@/features/MapTools/Legend/types';
 import { LayerType } from '@/components/Map/types';
 
 export const entries: TEntry[] = [
