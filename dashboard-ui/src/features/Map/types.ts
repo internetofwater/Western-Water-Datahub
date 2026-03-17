@@ -36,7 +36,8 @@ export type ReservoirConfig = {
     regionConnectorProperty: string;
     basinConnectorProperty: string;
     stateConnectorProperty: string;
-    connectedLayers: (LayerId | SubLayerId)[];
+    iconLayer: LayerId | SubLayerId;
+    labelLayer: LayerId | SubLayerId;
     params?: IGetLocationParams;
 };
 

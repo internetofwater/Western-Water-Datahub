@@ -251,10 +251,8 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         regionConnectorProperty: TeacupReservoirField.RegionName,
         basinConnectorProperty: TeacupReservoirField.Huc02,
         stateConnectorProperty: TeacupReservoirField.State,
-        connectedLayers: [
-            LayerId.TeacupEDRReservoirs,
-            SubLayerId.TeacupEDRReservoirLabels,
-        ],
+        iconLayer: LayerId.TeacupEDRReservoirs,
+        labelLayer: SubLayerId.TeacupEDRReservoirLabels,
     },
 ];
 

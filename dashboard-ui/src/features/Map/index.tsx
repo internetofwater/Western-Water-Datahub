@@ -34,6 +34,7 @@ import {
     getReservoirSymbolSortKey,
     getHighlightIcon,
     getReservoirLabelFilter,
+    getAllMapLayers,
 } from '@/features/Map/utils';
 import { basemaps } from '@/components/Map/consts';
 import {
@@ -167,10 +168,9 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
-        const reservoirLayers = ReservoirConfigs.flatMap(
-            (config) => config.connectedLayers
+        const reservoirLayers = ReservoirConfigs.flatMap((config) =>
+            getAllMapLayers(config)
         );
-
         const handleReservoirsClick = (e: MapMouseEvent | MapTouchEvent) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: reservoirLayers,
@@ -220,36 +220,40 @@ const MainMap: React.FC<Props> = (props) => {
         map.on('zoom', () => {
             const zoom = map.getZoom();
             if (zoom > 8) {
-                if (map.getLayer(SubLayerId.TeacupEDRReservoirLabels)) {
-                    map.setLayoutProperty(
-                        SubLayerId.TeacupEDRReservoirLabels,
-                        'text-allow-overlap',
-                        false
-                    );
-                }
+                ReservoirConfigs.forEach((config) => {
+                    if (map.getLayer(config.labelLayer)) {
+                        map.setLayoutProperty(
+                            config.labelLayer,
+                            'text-allow-overlap',
+                            false
+                        );
+                    }
+                });
             } else if (zoom > 6.5) {
-                if (map.getLayer(SubLayerId.TeacupEDRReservoirLabels)) {
-                    map.setFilter(SubLayerId.TeacupEDRReservoirLabels, null);
-                    map.setLayoutProperty(
-                        SubLayerId.TeacupEDRReservoirLabels,
-                        'text-allow-overlap',
-                        true
-                    );
-                }
+                ReservoirConfigs.forEach((config) => {
+                    if (map.getLayer(config.labelLayer)) {
+                        map.setFilter(config.labelLayer, null);
+                        map.setLayoutProperty(
+                            config.labelLayer,
+                            'text-allow-overlap',
+                            true
+                        );
+                    }
+                });
             } else {
-                if (map.getLayer(SubLayerId.TeacupEDRReservoirLabels)) {
-                    map.setFilter(
-                        SubLayerId.TeacupEDRReservoirLabels,
-                        getReservoirLabelFilter(
-                            getReservoirConfig(SourceId.TeacupEDRReservoirs)!
-                        )
-                    );
-                    map.setLayoutProperty(
-                        SubLayerId.TeacupEDRReservoirLabels,
-                        'text-allow-overlap',
-                        true
-                    );
-                }
+                ReservoirConfigs.forEach((config) => {
+                    if (map.getLayer(config.labelLayer)) {
+                        map.setFilter(
+                            config.labelLayer,
+                            getReservoirLabelFilter(config)
+                        );
+                        map.setLayoutProperty(
+                            config.labelLayer,
+                            'text-allow-overlap',
+                            true
+                        );
+                    }
+                });
             }
         });
 
@@ -283,7 +287,7 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (reservoir === ReservoirDefault) {
                 ReservoirConfigs.forEach((config) => {
-                    config.connectedLayers.forEach((layerId) => {
+                    getAllMapLayers(config).forEach((layerId) => {
                         map.setFilter(layerId, getReservoirFilter(config));
                     });
                 });
@@ -307,7 +311,7 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (boundingGeographyLevel === BoundingGeographyLevel.Region) {
                 ReservoirConfigs.forEach((config) => {
-                    config.connectedLayers.forEach((layerId) => {
+                    getAllMapLayers(config).forEach((layerId) => {
                         map.setFilter(
                             layerId,
                             getBoundingGeographyFilter(
@@ -341,7 +345,7 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (reservoir === ReservoirDefault) {
                 ReservoirConfigs.forEach((config) => {
-                    config.connectedLayers.forEach((layerId) => {
+                    getAllMapLayers(config).forEach((layerId) => {
                         map.setFilter(layerId, getReservoirFilter(config));
                     });
                 });
@@ -360,7 +364,7 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (boundingGeographyLevel === BoundingGeographyLevel.Basin) {
                 ReservoirConfigs.forEach((config) => {
-                    config.connectedLayers.forEach((layerId) => {
+                    getAllMapLayers(config).forEach((layerId) => {
                         map.setFilter(
                             layerId,
                             getBoundingGeographyFilter(
@@ -386,7 +390,7 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (reservoir === ReservoirDefault) {
                 ReservoirConfigs.forEach((config) => {
-                    config.connectedLayers.forEach((layerId) => {
+                    getAllMapLayers(config).forEach((layerId) => {
                         map.setFilter(layerId, getReservoirFilter(config));
                     });
                 });
@@ -405,7 +409,7 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (boundingGeographyLevel === BoundingGeographyLevel.State) {
                 ReservoirConfigs.forEach((config) => {
-                    config.connectedLayers.forEach((layerId) => {
+                    getAllMapLayers(config).forEach((layerId) => {
                         map.setFilter(
                             layerId,
                             getBoundingGeographyFilter(
@@ -424,8 +428,8 @@ const MainMap: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
-        const reservoirLayers = ReservoirConfigs.flatMap(
-            (config) => config.connectedLayers
+        const reservoirLayers = ReservoirConfigs.flatMap((config) =>
+            getAllMapLayers(config)
         );
 
         const handleClickOffReservoir = (e: MapMouseEvent) => {

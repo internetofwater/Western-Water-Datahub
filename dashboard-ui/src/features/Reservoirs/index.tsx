@@ -13,7 +13,11 @@ import {
     SortOrder,
 } from '@/features/Reservoirs/types';
 import { Table } from '@/features/Reservoirs/Table';
-import { getReservoirConfig, getReservoirFilter } from '@/features/Map/utils';
+import {
+    getAllMapLayers,
+    getReservoirConfig,
+    getReservoirFilter,
+} from '@/features/Map/utils';
 import { MAP_ID, ReservoirConfigs, SourceId } from '@/features/Map/consts';
 import dayjs from 'dayjs';
 import useMainStore from '@/stores/main';
@@ -78,16 +82,17 @@ const Reservoirs: React.FC = () => {
         }
 
         ReservoirConfigs.forEach((config) => {
+            const layers = getAllMapLayers(config);
             if (hideNoData) {
                 const filter = getReservoirFilter(config);
 
-                config.connectedLayers.forEach((layerId) => {
+                layers.forEach((layerId) => {
                     if (map.getLayer(layerId)) {
                         map.setFilter(layerId, filter);
                     }
                 });
             } else {
-                config.connectedLayers.forEach((layerId) => {
+                layers.forEach((layerId) => {
                     if (map.getLayer(layerId)) {
                         map.setFilter(layerId, null);
                     }

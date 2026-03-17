@@ -346,6 +346,13 @@ export const getReservoirSymbolLayout = (
 export const getReservoirLabelLayout = (
     config: ReservoirConfig
 ): LayoutSpecification => {
+    const handleNoData = (expresssion: ExpressionSpecification) => [
+        'case',
+        ['<', ['var', 'storage'], 0],
+        [0, 0.4],
+        expresssion,
+    ];
+
     return {
         'text-field': ['get', config.shortLabelProperty],
         // 'text-variable-anchor': ['bottom', 'bottom-left', 'bottom-right'],
@@ -361,14 +368,18 @@ export const getReservoirLabelLayout = (
             'let',
             'capacity',
             ['coalesce', ['get', config.capacityProperty], 1],
-            'labelLength',
-            ['length', ['get', config.shortLabelProperty]],
+            'storage', // var name
+            [
+                '/',
+                ['coalesce', ['get', config.storageProperty], -1],
+                ['coalesce', ['get', config.capacityProperty], 1],
+            ],
             [
                 'step',
                 ['zoom'],
                 [0, 0],
                 0,
-                [
+                handleNoData([
                     'step',
                     ['var', 'capacity'],
                     [0, 0],
@@ -378,9 +389,9 @@ export const getReservoirLabelLayout = (
                     [0, 0.8],
                     2010000,
                     [0, 1.7],
-                ],
+                ]),
                 5,
-                [
+                handleNoData([
                     'step',
                     ['var', 'capacity'],
                     [0, 0.3],
@@ -390,9 +401,9 @@ export const getReservoirLabelLayout = (
                     [0, 1.6],
                     2010000,
                     [0, 1.7],
-                ],
+                ]),
                 8,
-                [
+                handleNoData([
                     'step',
                     ['var', 'capacity'],
                     [0, 1],
@@ -402,7 +413,7 @@ export const getReservoirLabelLayout = (
                     [0, 1.7],
                     2010000,
                     [0, 1.8],
-                ],
+                ]),
             ],
         ],
         'text-allow-overlap': true,
@@ -797,4 +808,8 @@ export const getAndDisplaySnotelChart = async (
             .setHTML(htmlText)
             .addTo(map);
     }
+};
+
+export const getAllMapLayers = (config: ReservoirConfig) => {
+    return [config.iconLayer, config.labelLayer];
 };
