@@ -38,6 +38,7 @@ import wwdhService from '@/services/init/wwdh.init';
 import { CoverageJSON } from '@/services/edr.service';
 import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
 import { SnotelField, SnotelProperties } from '@/features/Map/types/snotel';
+import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
 
 /**
  *
@@ -109,7 +110,7 @@ export const loadTeacups = (map: Map) => {
  * @function
  */
 export const parseReservoirProperties = <
-    T extends keyof RiseReservoirPropertiesRaw
+    T extends keyof RiseReservoirPropertiesRaw,
 >(
     key: T,
     value: string | number
@@ -131,9 +132,9 @@ export const isSourceDataLoaded = (
 ): boolean => {
     return Boolean(
         event.sourceId === sourceId &&
-            map.getSource(sourceId) &&
-            map.isSourceLoaded(sourceId) &&
-            map.querySourceFeatures(sourceId).length
+        map.getSource(sourceId) &&
+        map.isSourceLoaded(sourceId) &&
+        map.querySourceFeatures(sourceId).length
     );
 };
 
@@ -263,7 +264,7 @@ export const getHighlightIcon = (
         [
             'case',
             ['>=', ['var', 'capacity'], capacity],
-            'outline',
+            ['case', ['<', ['var', 'storage'], 0], 'outline-large', 'outline'],
             'outline-large',
         ], // evaluate this expression
     ]);
@@ -272,6 +273,12 @@ export const getHighlightIcon = (
         'let',
         'capacity',
         ['coalesce', ['get', config.capacityProperty], 1],
+        'storage', // var name
+        [
+            '/',
+            ['coalesce', ['get', config.storageProperty], -1],
+            ['coalesce', ['get', config.capacityProperty], 1],
+        ],
         ['step', ['zoom'], 'outline', ...zoomSteps],
     ];
 };
@@ -285,7 +292,12 @@ export const getReservoirSymbolSize = (
         [
             'case',
             ['>=', ['var', 'capacity'], capacity],
-            TeacupSizeExpression,
+            [
+                'case',
+                ['<', ['var', 'storage'], 0],
+                defaultSize,
+                TeacupSizeExpression,
+            ],
             defaultSize,
         ], // evaluate this expression
     ]);
@@ -294,6 +306,12 @@ export const getReservoirSymbolSize = (
         'let',
         'capacity',
         ['coalesce', ['get', config.capacityProperty], 1],
+        'storage', // var name
+        [
+            '/',
+            ['coalesce', ['get', config.storageProperty], -1],
+            ['coalesce', ['get', config.capacityProperty], 1],
+        ],
         ['step', ['zoom'], TeacupSizeExpression, ...zoomSteps],
     ];
 };
@@ -328,61 +346,77 @@ export const getReservoirSymbolLayout = (
 export const getReservoirLabelLayout = (
     config: ReservoirConfig
 ): LayoutSpecification => {
+    const handleNoData = (expresssion: ExpressionSpecification) => [
+        'case',
+        ['<', ['var', 'storage'], 0],
+        [0, 0.4],
+        expresssion,
+    ];
+
     return {
-        'text-field': ['get', config.labelProperty],
-        'text-anchor': 'bottom',
+        'text-field': ['get', config.shortLabelProperty],
+        // 'text-variable-anchor': ['bottom', 'bottom-left', 'bottom-right'],
+        'text-anchor': 'top',
         'text-size': 16,
         'symbol-sort-key': [
             '+',
             ['coalesce', ['get', config.capacityProperty], 1],
             1,
         ],
+        'text-font': ['Arial Unicode MS Bold'],
         'text-offset': [
             'let',
             'capacity',
             ['coalesce', ['get', config.capacityProperty], 1],
+            'storage', // var name
+            [
+                '/',
+                ['coalesce', ['get', config.storageProperty], -1],
+                ['coalesce', ['get', config.capacityProperty], 1],
+            ],
             [
                 'step',
                 ['zoom'],
                 [0, 0],
                 0,
-                [
+                handleNoData([
                     'step',
                     ['var', 'capacity'],
-                    [0, 0.5],
+                    [0, 0],
                     45000,
-                    [0, 1],
+                    [0, 0.2],
                     320000,
-                    [0, 2.4],
+                    [0, 0.8],
                     2010000,
-                    [0, 3.2],
-                ],
+                    [0, 1.7],
+                ]),
                 5,
-                [
+                handleNoData([
                     'step',
                     ['var', 'capacity'],
-                    [0, 0.5],
+                    [0, 0.3],
                     45000,
-                    [0, 2.1],
+                    [0, 1.2],
                     320000,
-                    [0, 2.8],
+                    [0, 1.6],
                     2010000,
-                    [0, 3.2],
-                ],
+                    [0, 1.7],
+                ]),
                 8,
-                [
+                handleNoData([
                     'step',
                     ['var', 'capacity'],
-                    [0, 2.4],
+                    [0, 1],
                     45000,
-                    [0, 2.8],
+                    [0, 1.3],
                     320000,
-                    [0, 3.2],
+                    [0, 1.7],
                     2010000,
-                    [0, 3.5],
-                ],
+                    [0, 1.8],
+                ]),
             ],
         ],
+        'text-allow-overlap': true,
     };
 };
 
@@ -390,7 +424,7 @@ export const getReservoirLabelPaint = (
     config: ReservoirConfig
 ): PaintSpecification => {
     return {
-        'text-color': '#fff',
+        'text-color': '#000',
         'text-opacity': [
             'let',
             'capacity',
@@ -411,7 +445,8 @@ export const getReservoirLabelPaint = (
                 ]),
             ],
         ],
-        'text-halo-color': '#000',
+
+        'text-halo-color': '#fff',
         'text-halo-width': 2,
     };
 };
@@ -422,9 +457,9 @@ export const getReservoirFilter = (
     const dataProperties = [
         config.capacityProperty,
         config.storageProperty,
-        config.tenthPercentileProperty,
-        config.ninetiethPercentileProperty,
-        config.thirtyYearAverageProperty,
+        // config.tenthPercentileProperty,
+        // config.ninetiethPercentileProperty,
+        // config.thirtyYearAverageProperty,
     ];
     return [
         'all',
@@ -433,6 +468,29 @@ export const getReservoirFilter = (
             ['has', property],
             ['==', ['typeof', ['get', property]], 'number'],
         ]),
+    ];
+};
+
+export const getReservoirLabelFilter = (
+    config: ReservoirConfig
+): FilterSpecification => {
+    return [
+        'in',
+        ['get', config.identifierProperty],
+        [
+            'literal',
+            [
+                'ElephantButte',
+                'FranklinD.Roosevelt',
+                'Shasta',
+                'FortPeck',
+                'Powell',
+                'Mead',
+                'FlamingGorge',
+                'ElephantButte',
+                'NewMelones',
+            ],
+        ],
     ];
 };
 
@@ -478,7 +536,8 @@ export const getReservoirIdentifier = (
 
 export const appendResvizDataProperties = async (
     featureCollection: FeatureCollection<Point, GeoJsonProperties>,
-    reservoirDate?: string | null
+    reservoirDate?: string | null,
+    signal?: AbortSignal
 ): Promise<FeatureCollection<Point, GeoJsonProperties>> => {
     const ids = featureCollection.features.map((feature) => feature.id!);
 
@@ -491,6 +550,7 @@ export const appendResvizDataProperties = async (
                     limit: 1,
                     ...(reservoirDate ? { datetime: reservoirDate } : {}),
                 },
+                signal,
             }
         )
     );
@@ -542,6 +602,103 @@ export const appendResvizDataProperties = async (
     };
 };
 
+export const appendTeacupDataProperties = async (
+    featureCollection: FeatureCollection<Point, GeoJsonProperties>,
+    reservoirDate?: string | null,
+    signal?: AbortSignal
+): Promise<FeatureCollection<Point, GeoJsonProperties>> => {
+    const ids = featureCollection.features.map((feature) => feature.id!);
+
+    const requests = ids.map((id) =>
+        wwdhService.getLocation<CoverageJSON>(
+            SourceId.TeacupEDRReservoirs,
+            String(id),
+            {
+                params: {
+                    limit: 1,
+                    ...(reservoirDate ? { datetime: reservoirDate } : {}),
+                },
+                signal,
+            }
+        )
+    );
+
+    const results = await Promise.allSettled(requests);
+
+    const updatedFeatures = featureCollection.features.map((feature, index) => {
+        const result = results[index];
+        const updatedProps: GeoJsonProperties = {
+            ...feature.properties,
+        };
+
+        if (result.status === 'fulfilled') {
+            const coverage = result.value;
+            // Determine which capacity to use, set to general capacity property
+            if (feature.properties) {
+                const activeCapacity = Number(
+                    feature.properties[TeacupReservoirField.ActiveCapacity] ??
+                        -1
+                );
+
+                const totalCapacity = Number(
+                    feature.properties[TeacupReservoirField.TotalCapacity] ?? -1
+                );
+                updatedProps[TeacupReservoirField.Capacity] = Math.max(
+                    activeCapacity,
+                    totalCapacity
+                );
+
+                // Huc06 is given as a URI
+                const huc06URI = String(
+                    feature.properties[TeacupReservoirField.Huc06]
+                );
+
+                const huc02 = String(
+                    feature.properties[TeacupReservoirField.Huc06]
+                ).substring(huc06URI.length - 6, huc06URI.length - 4);
+
+                updatedProps[TeacupReservoirField.Huc02] = huc02;
+            }
+
+            // Set Storage
+            updatedProps[TeacupReservoirField.Storage] =
+                coverage.ranges[TeacupReservoirField.Storage]?.values?.[0];
+            // 10th Percentile
+            updatedProps[TeacupReservoirField.TenthPercentile] =
+                coverage.ranges[
+                    TeacupReservoirField.TenthPercentile
+                ]?.values?.[0];
+            // 90th Percentile
+            updatedProps[TeacupReservoirField.NinetiethPercentile] =
+                coverage.ranges[
+                    TeacupReservoirField.NinetiethPercentile
+                ]?.values?.[0];
+            // 30-year Average
+            updatedProps[TeacupReservoirField.StorageAverage] =
+                coverage.ranges[
+                    TeacupReservoirField.StorageAverage
+                ]?.values?.[0];
+            updatedProps[TeacupReservoirField.StorageDate] = coverage.domain
+                .axes.t.values?.[0] as string;
+        } else {
+            console.warn(
+                `Failed to fetch data for ID ${feature.id}:`,
+                result.reason
+            );
+        }
+
+        return {
+            ...feature,
+            properties: updatedProps,
+        };
+    });
+
+    return {
+        type: 'FeatureCollection',
+        features: updatedFeatures,
+    };
+};
+
 export const getBoundingGeographyFilter = (
     config: ReservoirConfig,
     property: keyof ReservoirConfig,
@@ -553,7 +710,10 @@ export const getBoundingGeographyFilter = (
     const values = Array.isArray(value) ? value : [value];
 
     // Handle basin HUC06 identifiers
-    if (property === 'basinConnectorProperty') {
+    if (
+        config.id === SourceId.ResvizEDRReservoirs &&
+        property === 'basinConnectorProperty'
+    ) {
         const values = Array.isArray(value) ? value : [value];
 
         const scalarMatches = [
@@ -574,7 +734,7 @@ export const getBoundingGeographyFilter = (
             ]),
         ];
 
-        const matchExpression = [
+        const matchExpression: FilterSpecification = [
             'case',
             ['==', ['typeof', prop], 'array'],
             arrayMatches,
@@ -586,14 +746,16 @@ export const getBoundingGeographyFilter = (
             scalarMatches,
             false,
         ];
-        return ['all', getReservoirFilter(config), matchExpression];
+
+        return matchExpression;
+        // return ['all', getReservoirFilter(config), matchExpression];
     }
 
     const scalarMatches = ['any', ...values.map((v) => ['==', prop, v])];
 
     const arrayMatches = ['any', ...values.map((v) => ['in', v, prop])];
 
-    const matchExpression = [
+    const matchExpression: FilterSpecification = [
         'case',
         ['==', ['typeof', prop], 'array'],
         arrayMatches,
@@ -606,7 +768,8 @@ export const getBoundingGeographyFilter = (
         false,
     ];
 
-    return ['all', getReservoirFilter(config), matchExpression];
+    return matchExpression;
+    // return ['all', getReservoirFilter(config), matchExpression];
 };
 
 export const resetMap = (map: Map) => {
@@ -645,4 +808,8 @@ export const getAndDisplaySnotelChart = async (
             .setHTML(htmlText)
             .addTo(map);
     }
+};
+
+export const getAllMapLayers = (config: ReservoirConfig) => {
+    return [config.iconLayer, config.labelLayer];
 };

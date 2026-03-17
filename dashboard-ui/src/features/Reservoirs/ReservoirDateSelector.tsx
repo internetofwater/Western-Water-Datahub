@@ -4,18 +4,20 @@
  */
 
 import useMainStore from '@/stores/main';
-import { Checkbox, Stack } from '@mantine/core';
+import { Checkbox, Group } from '@mantine/core';
 import { DateInput, DateValue } from '@mantine/dates';
 import dayjs from 'dayjs';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { SourceId } from '@/features/Map/consts';
 import { FeatureCollection, Point, GeoJsonProperties } from 'geojson';
-import { appendResvizDataProperties } from '@/features/Map/utils';
+import { appendTeacupDataProperties } from '@/features/Map/utils';
 import { useLoading } from '@/hooks/useLoading';
 import loadingManager from '@/managers/Loading.init';
 import { LoadingType, NotificationType } from '@/stores/session/types';
 import notificationManager from '@/managers/Notification.init';
-import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
+import debounce from 'lodash.debounce';
+import styles from '@/features/Reservoirs/Reservoirs.module.css';
+import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
 
 export const ReservoirDateSelector: React.FC = () => {
     const reservoirDate = useMainStore((state) => state.reservoirDate);
@@ -26,6 +28,9 @@ export const ReservoirDateSelector: React.FC = () => {
     const setReservoirCollections = useMainStore(
         (state) => state.setReservoirCollections
     );
+
+    const controller = useRef<AbortController>(null);
+    const isMounted = useRef(true);
 
     const { isFetchingReservoirs } = useLoading();
 
@@ -73,16 +78,19 @@ export const ReservoirDateSelector: React.FC = () => {
             return;
         }
 
-        const processedResult = await appendResvizDataProperties(
+        controller.current = new AbortController();
+
+        const processedResult = await appendTeacupDataProperties(
             currentCollection,
-            date
+            date,
+            controller.current.signal
         );
 
         if (
             processedResult.features.every(
                 (feature) =>
                     feature.properties &&
-                    !feature.properties[ResvizReservoirField.StorageAverage]
+                    !feature.properties[TeacupReservoirField.StorageAverage]
             )
         ) {
             const { noDataMessage } = getMessages(date);
@@ -95,7 +103,7 @@ export const ReservoirDateSelector: React.FC = () => {
 
         const _reservoirCollection = {
             ...reservoirCollections,
-            [SourceId.ResvizEDRReservoirs]: processedResult,
+            [SourceId.TeacupEDRReservoirs]: processedResult,
         };
         setReservoirCollections(_reservoirCollection);
     };
@@ -109,7 +117,7 @@ export const ReservoirDateSelector: React.FC = () => {
         );
         try {
             await fetchRiseReservoirLocations(
-                reservoirCollections![SourceId.ResvizEDRReservoirs]!,
+                reservoirCollections![SourceId.TeacupEDRReservoirs]!,
                 reservoirDate
             );
             notificationManager.show(updatedMessage, NotificationType.Success);
@@ -135,8 +143,13 @@ export const ReservoirDateSelector: React.FC = () => {
         }
     };
 
+    const debouncedHandleReservoirDateChange = debounce(
+        handleReservoirDateChange,
+        300
+    );
+
     useEffect(() => {
-        const resvizData = reservoirCollections?.[SourceId.ResvizEDRReservoirs];
+        const resvizData = reservoirCollections?.[SourceId.TeacupEDRReservoirs];
 
         const isValidFeatureCollection =
             resvizData?.type === 'FeatureCollection' &&
@@ -150,26 +163,43 @@ export const ReservoirDateSelector: React.FC = () => {
         void updateReservoirs(reservoirDate);
     }, [reservoirDate]);
 
+    useEffect(() => {
+        return () => {
+            isMounted.current = false;
+            debouncedHandleReservoirDateChange.cancel();
+            if (controller.current) {
+                controller.current.abort('Component unmount');
+            }
+        };
+    }, []);
+
+    const hasReservoirDate = reservoirDate !== null;
+
     return (
-        <Stack>
-            <Checkbox
-                checked={!reservoirDate}
-                disabled={isFetchingReservoirs}
-                data-disabled={isFetchingReservoirs}
-                label="Latest Storage Value"
-                onChange={() => handleCheckboxChange(!reservoirDate)}
-            />
-            {reservoirDate && (
+        <Group gap="calc(var(--default-spacing) / 1)" align="flex-end">
+            {hasReservoirDate && (
                 <DateInput
+                    size="xs"
+                    className={styles.multiselect}
                     valueFormat="MM/DD/YYYY"
                     disabled={isFetchingReservoirs}
                     value={dayjs(reservoirDate).toDate()}
-                    // minDate={new Date()}
                     maxDate={new Date()}
                     label="Reservoir Storage Date"
-                    onChange={handleReservoirDateChange}
+                    onChange={debouncedHandleReservoirDateChange}
                 />
             )}
-        </Stack>
+            <Checkbox
+                size="xs"
+                className={styles.dateCheckbox}
+                mb={hasReservoirDate ? '0.4375rem' : 0}
+                classNames={{ label: styles.label }}
+                checked={!hasReservoirDate}
+                disabled={isFetchingReservoirs}
+                data-disabled={isFetchingReservoirs}
+                label="Latest Storage Value"
+                onChange={() => handleCheckboxChange(!hasReservoirDate)}
+            />
+        </Group>
     );
 };

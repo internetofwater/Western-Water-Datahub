@@ -65,6 +65,7 @@ export const Basin: React.FC = () => {
                     bbox: [-125, 24, -96.5, 49],
                     skipGeometry: true,
                 },
+                signal: controller.current.signal,
             });
 
             if (basinFeatureCollection.features.length) {
@@ -139,27 +140,6 @@ export const Basin: React.FC = () => {
                     }}
                     clearable
                 />
-                // <MultiSelect
-                //     size="xs"
-                //     id="regionSelector"
-                //     className={styles.multiselect}
-                //     disabled={isFetchingReservoirs}
-                //     data={regionOptions}
-                //     value={region}
-                //     data-testid="region-select"
-                //     aria-label="Select a region"
-                //     placeholder="Select a region"
-                //     label="Filter by Region"
-                //     onChange={(value: string[]) => {
-                //         if (value) {
-                //             setRegion(value);
-                //         } else {
-                //             setRegion([]);
-                //         }
-                //     }}
-                //     searchable
-                //     clearable
-                // />
             )}
         </>
     );

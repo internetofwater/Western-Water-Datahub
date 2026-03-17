@@ -3,9 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Entry } from '@/features/MapTools/Legend/types';
-import { LayerId } from '@/features/Map/consts';
-import { LayerType } from '@/components/Map/types';
 import styles from '@/features/MapTools/Legend/Legend.module.css';
 import useMainStore from '@/stores/main';
 import {
@@ -25,138 +22,7 @@ import { useEffect, useState } from 'react';
 import { Overlay } from '@/stores/session/types';
 import { useMediaQuery } from '@mantine/hooks';
 import { Content } from '@/features/MapTools/Legend/Content';
-
-const entries: Entry[] = [
-    {
-        id: LayerId.Snotel,
-        type: LayerType.Fill,
-        items: [
-            {
-                color: '#ea3e3e',
-                label: '<50',
-            },
-            {
-                color: '#eab03e',
-                label: '50-70',
-            },
-            {
-                color: '#eaea3e',
-                label: '70-90',
-            },
-            {
-                color: '#77ea3e',
-                label: '90-110',
-            },
-            {
-                color: '#94fde5',
-                label: '110-130',
-            },
-            {
-                color: '#3ebdea',
-                label: '130-150',
-            },
-            {
-                color: '#3e3efd',
-                label: '>150',
-            },
-        ],
-    },
-    {
-        id: LayerId.NOAARiverForecast,
-        type: LayerType.Circle,
-        items: [
-            {
-                color: '#fff',
-                label: 'No Data',
-            },
-            {
-                color: '#a30000',
-                label: '<25',
-            },
-            {
-                color: '#fb0000',
-                label: '25-50',
-            },
-            {
-                color: '#fd9400',
-                label: '50-75',
-            },
-            {
-                color: '#e8ec08',
-                label: '75-90',
-            },
-            {
-                color: '#20ee00',
-                label: '90-100',
-            },
-            {
-                color: '#1eeae8',
-                label: '100-125',
-            },
-            {
-                color: '#1084e7',
-                label: '125-150',
-            },
-            {
-                color: '#0000fe',
-                label: '>150',
-            },
-        ],
-    },
-    {
-        id: LayerId.USDroughtMonitor,
-        type: LayerType.Raster,
-        colors: ['#fefe00', '#fed27e', '#fea900', '#e50000', '#720000'],
-        from: 'Dry',
-        to: 'Exceptional',
-    },
-    {
-        id: LayerId.NOAAPrecipSixToTen,
-        type: LayerType.Raster,
-        colors: [
-            '#4F2F2F',
-            '#804000',
-            '#934639',
-            '#9B5031',
-            '#BB6D33',
-            '#D8A74F',
-            '#F0D493',
-            '#A0A0A0',
-            '#B3D9AB',
-            '#95CE7F',
-            '#48B430',
-            '#009620',
-            '#007814',
-            '#28600A',
-            '#285300',
-        ],
-        from: 'Below, 90%',
-        to: 'Above, 90%',
-    },
-    {
-        id: LayerId.NOAATempSixToTen,
-        type: LayerType.Raster,
-        colors: [
-            '#221852',
-            '#2E216F',
-            '#005DA1',
-            '#389FDC',
-            '#77B5E2',
-            '#A0C0DF',
-            '#BFCBE4',
-            '#A0A0A0',
-            '#E7B168',
-            '#E38B4B',
-            '#DA5731',
-            '#C93B1A',
-            '#B32E05',
-            '#912600',
-            '#702100',
-        ],
-        from: 'Below, 90%',
-        to: 'Above, 90%',
-    },
-];
+import { entries } from '@/features/MapTools/Legend/consts';
 
 const Legend: React.FC = () => {
     const toggleableLayers = useMainStore((state) => state.toggleableLayers);

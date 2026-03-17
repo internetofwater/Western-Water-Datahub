@@ -13,10 +13,15 @@ import {
     SortOrder,
 } from '@/features/Reservoirs/types';
 import { Table } from '@/features/Reservoirs/Table';
-import { getReservoirConfig } from '@/features/Map/utils';
-import { SourceId } from '@/features/Map/consts';
+import {
+    getAllMapLayers,
+    getReservoirConfig,
+    getReservoirFilter,
+} from '@/features/Map/utils';
+import { MAP_ID, ReservoirConfigs, SourceId } from '@/features/Map/consts';
 import dayjs from 'dayjs';
 import useMainStore from '@/stores/main';
+import { useMap } from '@/contexts/MapContexts';
 
 const Reservoirs: React.FC = () => {
     const region = useMainStore((state) => state.region);
@@ -25,8 +30,8 @@ const Reservoirs: React.FC = () => {
 
     const [search, setSearch] = useState('');
     const [sortBy, setSortBy] = useState<SortBy>(SortBy.Capacity);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+    const [hideNoData, setHideNoData] = useState(false);
 
     const { reservoirCollections } = useReservoirData();
 
@@ -36,6 +41,8 @@ const Reservoirs: React.FC = () => {
     const [filteredReservoirs, setFilteredReservoirs] = useState<
         OrganizedFeature[]
     >([]);
+
+    const { map } = useMap(MAP_ID);
 
     const getSortByProperty = (sortBy: SortBy): keyof OrganizedProperties => {
         switch (sortBy) {
@@ -68,6 +75,31 @@ const Reservoirs: React.FC = () => {
 
             return valueA - valueB;
         };
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        ReservoirConfigs.forEach((config) => {
+            const layers = getAllMapLayers(config);
+            if (hideNoData) {
+                const filter = getReservoirFilter(config);
+
+                layers.forEach((layerId) => {
+                    if (map.getLayer(layerId)) {
+                        map.setFilter(layerId, filter);
+                    }
+                });
+            } else {
+                layers.forEach((layerId) => {
+                    if (map.getLayer(layerId)) {
+                        map.setFilter(layerId, null);
+                    }
+                });
+            }
+        });
+    }, [hideNoData]);
 
     useEffect(() => {
         if (!reservoirCollections) {
@@ -111,7 +143,7 @@ const Reservoirs: React.FC = () => {
                                 config.identifierType === 'number'
                                     ? Number(props[config.identifierProperty])
                                     : String(props[config.identifierProperty]),
-                            name: getString(config.labelProperty),
+                            name: getString(config.longLabelProperty),
                             dateMeasured: dayjs(
                                 getString(config.storageDateProperty)
                             ).format('MM/DD/YYYY'),
@@ -138,6 +170,11 @@ const Reservoirs: React.FC = () => {
 
         const filterFunctions: Array<(feature: OrganizedFeature) => boolean> =
             [];
+        if (hideNoData) {
+            filterFunctions.push((feature) =>
+                dayjs(feature.properties.dateMeasured).isValid()
+            );
+        }
 
         if (search.length > 0) {
             const lower = search.toLowerCase();
@@ -171,12 +208,23 @@ const Reservoirs: React.FC = () => {
             .sort(getSort(sortBy, sortOrder));
 
         setFilteredReservoirs(filteredReservoirs);
-    }, [organizedReservoirs, search, region, basin, state, sortBy, sortOrder]);
+    }, [
+        organizedReservoirs,
+        search,
+        region,
+        basin,
+        state,
+        sortBy,
+        sortOrder,
+        hideNoData,
+    ]);
 
     const handleSearchChange = (search: string) => setSearch(search);
     const handleSortByChange = (sortBy: SortBy) => setSortBy(sortBy);
     const handleSortOrderChange = (sortOrder: SortOrder) =>
         setSortOrder(sortOrder);
+    const handleHideNoDataChange = (hideNoData: boolean) =>
+        setHideNoData(hideNoData);
 
     return (
         <>
@@ -187,6 +235,8 @@ const Reservoirs: React.FC = () => {
                 handleSortByChange={handleSortByChange}
                 sortOrder={sortOrder}
                 handleSortOrderChange={handleSortOrderChange}
+                hideNoData={hideNoData}
+                handleHideNoDataChange={handleHideNoDataChange}
             />
             {filteredReservoirs && (
                 <Table filteredReservoirs={filteredReservoirs} />

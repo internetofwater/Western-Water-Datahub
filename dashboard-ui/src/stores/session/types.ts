@@ -19,6 +19,7 @@ export enum LoadingType {
     Snotel = 'snotel',
     NOAA = 'noaa',
     Chart = 'chart',
+    SingleReservoir = 'single-date',
 }
 
 export enum Overlay {
