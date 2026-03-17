@@ -348,17 +348,21 @@ export const getReservoirLabelLayout = (
 ): LayoutSpecification => {
     return {
         'text-field': ['get', config.shortLabelProperty],
-        'text-anchor': 'bottom',
+        // 'text-variable-anchor': ['bottom', 'bottom-left', 'bottom-right'],
+        'text-anchor': 'top',
         'text-size': 16,
         'symbol-sort-key': [
             '+',
             ['coalesce', ['get', config.capacityProperty], 1],
             1,
         ],
+        'text-font': ['Arial Unicode MS Bold'],
         'text-offset': [
             'let',
             'capacity',
             ['coalesce', ['get', config.capacityProperty], 1],
+            'labelLength',
+            ['length', ['get', config.shortLabelProperty]],
             [
                 'step',
                 ['zoom'],
@@ -367,40 +371,41 @@ export const getReservoirLabelLayout = (
                 [
                     'step',
                     ['var', 'capacity'],
-                    [0, 0.5],
+                    [0, 0],
                     45000,
-                    [0, 1],
+                    [0, 0.2],
                     320000,
-                    [0, 2.4],
+                    [0, 0.8],
                     2010000,
-                    [0, 3.2],
+                    [0, 1.7],
                 ],
                 5,
                 [
                     'step',
                     ['var', 'capacity'],
-                    [0, 0.5],
+                    [0, 0.3],
                     45000,
-                    [0, 2.1],
+                    [0, 1.2],
                     320000,
-                    [0, 2.8],
+                    [0, 1.6],
                     2010000,
-                    [0, 3.2],
+                    [0, 1.7],
                 ],
                 8,
                 [
                     'step',
                     ['var', 'capacity'],
-                    [0, 2.4],
+                    [0, 1],
                     45000,
-                    [0, 2.8],
+                    [0, 1.3],
                     320000,
-                    [0, 3.2],
+                    [0, 1.7],
                     2010000,
-                    [0, 3.5],
+                    [0, 1.8],
                 ],
             ],
         ],
+        'text-allow-overlap': true,
     };
 };
 
@@ -408,7 +413,7 @@ export const getReservoirLabelPaint = (
     config: ReservoirConfig
 ): PaintSpecification => {
     return {
-        'text-color': '#fff',
+        'text-color': '#000',
         'text-opacity': [
             'let',
             'capacity',
@@ -429,7 +434,8 @@ export const getReservoirLabelPaint = (
                 ]),
             ],
         ],
-        'text-halo-color': '#000',
+
+        'text-halo-color': '#fff',
         'text-halo-width': 2,
     };
 };
@@ -451,6 +457,29 @@ export const getReservoirFilter = (
             ['has', property],
             ['==', ['typeof', ['get', property]], 'number'],
         ]),
+    ];
+};
+
+export const getReservoirLabelFilter = (
+    config: ReservoirConfig
+): FilterSpecification => {
+    return [
+        'in',
+        ['get', config.identifierProperty],
+        [
+            'literal',
+            [
+                'ElephantButte',
+                'FranklinD.Roosevelt',
+                'Shasta',
+                'FortPeck',
+                'Powell',
+                'Mead',
+                'FlamingGorge',
+                'ElephantButte',
+                'NewMelones',
+            ],
+        ],
     ];
 };
 
@@ -612,18 +641,12 @@ export const appendTeacupDataProperties = async (
                 const huc06URI = String(
                     feature.properties[TeacupReservoirField.Huc06]
                 );
-                const huc06 = huc06URI.substring(
-                    huc06URI.length - 6,
-                    huc06URI.length
-                );
 
                 const huc02 = String(
                     feature.properties[TeacupReservoirField.Huc06]
                 ).substring(huc06URI.length - 6, huc06URI.length - 4);
 
                 updatedProps[TeacupReservoirField.Huc02] = huc02;
-
-                console.log('huc06', huc06);
             }
 
             // Set Storage

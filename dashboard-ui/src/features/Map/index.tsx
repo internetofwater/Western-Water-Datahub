@@ -33,6 +33,7 @@ import {
     getReservoirSymbolSize,
     getReservoirSymbolSortKey,
     getHighlightIcon,
+    getReservoirLabelFilter,
 } from '@/features/Map/utils';
 import { basemaps } from '@/components/Map/consts';
 import {
@@ -208,16 +209,48 @@ const MainMap: React.FC<Props> = (props) => {
             }
         };
 
-        // map.on('click', SubLayerId.RegionsFill, handleRegionsClick);
-        // map.on('click', SubLayerId.BasinsFill, handleBasinsClick);
-        // map.on('click', SubLayerId.StatesFill, handleStatesClick);
-
         map.on('click', reservoirLayers, handleReservoirsClick);
         map.on('touchend', reservoirLayers, handleReservoirsClick);
 
         loadImages(map);
         map.on('style.load', () => {
             loadImages(map);
+        });
+
+        map.on('zoom', () => {
+            const zoom = map.getZoom();
+            if (zoom > 8) {
+                if (map.getLayer(SubLayerId.TeacupEDRReservoirLabels)) {
+                    map.setLayoutProperty(
+                        SubLayerId.TeacupEDRReservoirLabels,
+                        'text-allow-overlap',
+                        false
+                    );
+                }
+            } else if (zoom > 6.5) {
+                if (map.getLayer(SubLayerId.TeacupEDRReservoirLabels)) {
+                    map.setFilter(SubLayerId.TeacupEDRReservoirLabels, null);
+                    map.setLayoutProperty(
+                        SubLayerId.TeacupEDRReservoirLabels,
+                        'text-allow-overlap',
+                        true
+                    );
+                }
+            } else {
+                if (map.getLayer(SubLayerId.TeacupEDRReservoirLabels)) {
+                    map.setFilter(
+                        SubLayerId.TeacupEDRReservoirLabels,
+                        getReservoirLabelFilter(
+                            getReservoirConfig(SourceId.TeacupEDRReservoirs)!
+                        )
+                    );
+                    map.setLayoutProperty(
+                        SubLayerId.TeacupEDRReservoirLabels,
+                        'text-allow-overlap',
+                        true
+                    );
+                }
+            }
         });
 
         // Resize and fit bounds to ensure consistent loading behavior in all screen sizes
@@ -234,9 +267,6 @@ const MainMap: React.FC<Props> = (props) => {
         );
 
         return () => {
-            // map.off('click', SubLayerId.RegionsFill, handleRegionsClick);
-            // map.off('click', SubLayerId.BasinsFill, handleBasinsClick);
-            // map.off('click', SubLayerId.StatesFill, handleStatesClick);
             map.off('click', reservoirLayers, handleReservoirsClick);
             map.off('touchend', reservoirLayers, handleReservoirsClick);
         };
