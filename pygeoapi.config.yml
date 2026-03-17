@@ -577,7 +577,7 @@ resources:
   usgs-prism:
     type: collection
     title: USGS Parameter-elevation Regressions on Independent Slopes Model (PRISM)
-    description: provides a raster for high-resolution spatial climate data, including precipitation, temperature, and other climate variables, derived by combining point-based weather observations with digital elevation and other geographic information.
+    description: provides a raster for high-resolution spatial climate data, including precipitation, temperature, and other climate variables, derived by combining point-based weather observations with digital elevation and other geographic information. Originally produced by Oregon State University
     hidden: True
     provider-name:
       - GS
@@ -591,7 +591,7 @@ resources:
       - type: application/html
         rel: documentation
         title: Documentation
-        href: https://cida.usgs.gov/thredds/catalog.html?dataset=cida.usgs.gov/prism_v2
+        href: https://prism.oregonstate.edu/
       - type: application/html
         rel: canonical
         title: Data source
