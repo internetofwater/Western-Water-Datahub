@@ -21,7 +21,8 @@ import {
     LayerId,
     ReservoirConfigs,
     SubLayerId,
-    TeacupPercentageOfCapacityExpression,
+    TeacupPercentageOfCapacityWithAvgExpression,
+    TeacupPercentageOfCapacityWithoutAvgExpression,
     TeacupSizeExpression,
     ZoomCapacityArray,
 } from '@/features/Map/consts';
@@ -168,7 +169,12 @@ export const getReservoirIconImageExpression = (
             ['<', ['var', 'storage'], 0],
             'no-data',
             ['>=', ['var', 'capacity'], capacity],
-            TeacupPercentageOfCapacityExpression,
+            [
+                'case',
+                ['==', ['var', 'average'], 'no-data'],
+                TeacupPercentageOfCapacityWithoutAvgExpression,
+                TeacupPercentageOfCapacityWithAvgExpression,
+            ],
             'default',
         ], // evaluate this expression
     ]);
@@ -239,7 +245,17 @@ export const getReservoirIconImageExpression = (
             '100,',
         ], // average variable value
         // Primary expression
-        ['step', ['zoom'], TeacupPercentageOfCapacityExpression, ...zoomSteps],
+        [
+            'step',
+            ['zoom'],
+            [
+                'case',
+                ['==', ['var', 'average'], 'no-data'],
+                TeacupPercentageOfCapacityWithoutAvgExpression,
+                TeacupPercentageOfCapacityWithAvgExpression,
+            ],
+            ...zoomSteps,
+        ],
     ];
 };
 
