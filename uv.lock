@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.14'",
@@ -1463,7 +1463,7 @@ wheels = [
 [[package]]
 name = "pygeoapi"
 version = "0.24.dev0"
-source = { git = "https://github.com/internetofwater/pygeoapi.git?rev=6bab0a8d7b1afd1d77dd2b3a2d48e6b1d1cec3b3#6bab0a8d7b1afd1d77dd2b3a2d48e6b1d1cec3b3" }
+source = { git = "https://github.com/internetofwater/pygeoapi.git?rev=2b6288e40a1045052bbd98473ea49df8caa0ed72#2b6288e40a1045052bbd98473ea49df8caa0ed72" }
 dependencies = [
     { name = "babel" },
     { name = "click" },
@@ -2277,7 +2277,7 @@ requires-dist = [
     { name = "opentelemetry-instrumentation-aiohttp-client", specifier = ">=0.51b0" },
     { name = "opentelemetry-sdk", specifier = ">=1.30.0" },
     { name = "orjson", specifier = ">=3.10.15" },
-    { name = "pygeoapi", git = "https://github.com/internetofwater/pygeoapi.git?rev=6bab0a8d7b1afd1d77dd2b3a2d48e6b1d1cec3b3" },
+    { name = "pygeoapi", git = "https://github.com/internetofwater/pygeoapi.git?rev=2b6288e40a1045052bbd98473ea49df8caa0ed72" },
     { name = "redis", specifier = ">=5.2.1" },
     { name = "uvicorn", specifier = ">=0.34.0" },
 ]
