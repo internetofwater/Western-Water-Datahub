@@ -480,7 +480,7 @@ const MainMap: React.FC<Props> = (props) => {
                         getBoundingGeographyFilter(
                             config,
                             'basinConnectorProperty',
-                            region
+                            basin
                         )
                     );
                     map.setFilter(
@@ -488,7 +488,7 @@ const MainMap: React.FC<Props> = (props) => {
                         getBoundingGeographyFilter(
                             config,
                             'basinConnectorProperty',
-                            region,
+                            basin,
                             true
                         )
                     );
@@ -518,12 +518,12 @@ const MainMap: React.FC<Props> = (props) => {
         } else {
             map.setFilter(SubLayerId.StatesFill, [
                 'in',
-                ['get', StateField.Acronym],
+                ['get', StateField.Uri],
                 ['literal', state],
             ]);
             map.setFilter(SubLayerId.StatesBoundary, [
                 'in',
-                ['get', StateField.Acronym],
+                ['get', StateField.Uri],
                 ['literal', state],
             ]);
 
@@ -534,7 +534,7 @@ const MainMap: React.FC<Props> = (props) => {
                         getBoundingGeographyFilter(
                             config,
                             'stateConnectorProperty',
-                            region
+                            state
                         )
                     );
                     map.setFilter(
@@ -542,7 +542,7 @@ const MainMap: React.FC<Props> = (props) => {
                         getBoundingGeographyFilter(
                             config,
                             'stateConnectorProperty',
-                            region,
+                            state,
                             true
                         )
                     );
