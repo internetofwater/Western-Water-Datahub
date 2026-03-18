@@ -78,5 +78,7 @@ export type SessionState = {
     setHelpTab: (helpTab: SessionState['helpTab']) => void;
     mapMoved: number;
     setMapMoved: (mapMoved: SessionState['mapMoved']) => void;
+    hideNoData: boolean;
+    setHideNoData: (hideNoData: SessionState['hideNoData']) => void;
 } & NotificationsSlice &
     LoadingSlice;

@@ -422,7 +422,11 @@ export const Table: React.FC<Props> = (props) => {
                     className={styles.pageSizeInput}
                     label="Reservoirs per page"
                     disabled={currentChunk.length === 0}
-                    data-disabled={currentChunk.length === 0}
+                    {...(currentChunk.length === 0
+                        ? {
+                              'data-disabled': true,
+                          }
+                        : {})}
                     value={pageSize}
                     onChange={(value) => handlePageSizeChange(Number(value))}
                     min={1}

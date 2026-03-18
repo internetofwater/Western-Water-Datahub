@@ -82,8 +82,7 @@ export const ReservoirDateSelector: React.FC = () => {
 
         const processedResult = await appendTeacupDataProperties(
             currentCollection,
-            date,
-            controller.current.signal
+            { reservoirDate: date, signal: controller.current.signal }
         );
 
         if (

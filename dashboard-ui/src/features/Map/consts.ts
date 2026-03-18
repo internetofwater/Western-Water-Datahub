@@ -181,7 +181,7 @@ export const ResVizEDRReservoirSource =
     'https://cache.wwdh.internetofwater.app/collections/resviz-edr/locations';
 
 export const TeacupEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/teacup-edr/locations';
+    'https://cache.wwdh.internetofwater.app/collections/teacup-edr/items';
 
 /**
  *
