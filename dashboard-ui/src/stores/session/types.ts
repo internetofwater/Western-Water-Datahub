@@ -76,5 +76,7 @@ export type SessionState = {
     setHighlight: (highlight: SessionState['highlight']) => void;
     helpTab: HelpTab;
     setHelpTab: (helpTab: SessionState['helpTab']) => void;
+    mapMoved: number;
+    setMapMoved: (mapMoved: SessionState['mapMoved']) => void;
 } & NotificationsSlice &
     LoadingSlice;

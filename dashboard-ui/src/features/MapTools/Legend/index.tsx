@@ -107,6 +107,36 @@ const Legend: React.FC = () => {
                         toggleableLayers={toggleableLayers}
                     />
                 </Box>
+                <img
+                    src="report-legends/drought-legend.png"
+                    id="drought-legend"
+                    alt=""
+                    aria-hidden
+                />
+                <img
+                    src="report-legends/precip-legend.png"
+                    id="precip-legend"
+                    alt=""
+                    aria-hidden
+                />
+                <img
+                    src="report-legends/temp-legend.png"
+                    id="temp-legend"
+                    alt=""
+                    aria-hidden
+                />
+                <img
+                    src="report-legends/none-legend.png"
+                    id="none-legend"
+                    alt=""
+                    aria-hidden
+                />
+                <img
+                    src="mapbox-logo-white.png"
+                    id="mapbox-logo"
+                    alt=""
+                    aria-hidden
+                />
             </Box>
         </>
     );

@@ -28,6 +28,8 @@ type Props = {
     handleSortOrderChange: (value: SortOrder) => void;
     hideNoData: boolean;
     handleHideNoDataChange: (hideNoData: boolean) => void;
+    limitByExtent: boolean;
+    onLimitByExtentChange: (limitByExtent: boolean) => void;
 };
 
 export const Filter: React.FC<Props> = (props) => {
@@ -40,6 +42,8 @@ export const Filter: React.FC<Props> = (props) => {
         handleSortOrderChange,
         hideNoData,
         handleHideNoDataChange,
+        limitByExtent,
+        onLimitByExtentChange,
     } = props;
 
     const boundingGeographyLevel = useMainStore(
@@ -173,6 +177,18 @@ export const Filter: React.FC<Props> = (props) => {
                     checked={hideNoData}
                     onClick={(e) =>
                         handleHideNoDataChange(e.currentTarget.checked)
+                    }
+                    {...labelsSwitchProps}
+                />
+                <Switch
+                    size="xs"
+                    mt="calc(var(--default-spacing) / 2)"
+                    disabled={isFetchingReservoirs}
+                    classNames={{ label: styles.label }}
+                    label="Hide Reservoirs not on Map"
+                    checked={limitByExtent}
+                    onClick={(event) =>
+                        onLimitByExtentChange(event.currentTarget.checked)
                     }
                     {...labelsSwitchProps}
                 />

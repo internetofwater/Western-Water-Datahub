@@ -5,7 +5,7 @@
 
 import { useReservoirData } from '@/hooks/useReservoirData';
 import { Filter } from '@/features/Reservoirs/Filter';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
     OrganizedFeature,
     OrganizedProperties,
@@ -22,25 +22,42 @@ import { MAP_ID, ReservoirConfigs, SourceId } from '@/features/Map/consts';
 import dayjs from 'dayjs';
 import useMainStore from '@/stores/main';
 import { useMap } from '@/contexts/MapContexts';
+import Report from '@/features/Reservoirs/Report';
+import { pointsWithinPolygon, polygon } from '@turf/turf';
+import { MAX_POSITIONS } from '@/services/report/report.consts';
+import useSessionStore from '@/stores/session';
+import { getKey } from './utils';
 
-const Reservoirs: React.FC = () => {
+type Props = {
+    accessToken: string;
+};
+
+const Reservoirs: React.FC<Props> = (props) => {
+    const { accessToken } = props;
+
     const region = useMainStore((state) => state.region);
     const basin = useMainStore((state) => state.basin);
     const state = useMainStore((state) => state.state);
 
+    const mapMoved = useSessionStore((state) => state.mapMoved);
+
+    // Text string representing current search term
     const [search, setSearch] = useState('');
+    // Which column is the table sorted by
     const [sortBy, setSortBy] = useState<SortBy>(SortBy.Capacity);
+    // Only show reservoirs in the table & report that are w/in map extent
+    const [limitByExtent, setLimitByExtent] = useState(false);
+    // Select reservoirs for the report from the table
+    const [pickFromTable, setPickFromTable] = useState(false);
+
+    // Reservoirs included in the report
+    const [selectedReservoirs, setSelectedReservoirs] = useState<string[]>([]);
+
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+
     const [hideNoData, setHideNoData] = useState(false);
 
     const { reservoirCollections } = useReservoirData();
-
-    const [organizedReservoirs, setOrganizedReservoirs] = useState<
-        OrganizedFeature[]
-    >([]);
-    const [filteredReservoirs, setFilteredReservoirs] = useState<
-        OrganizedFeature[]
-    >([]);
 
     const { map } = useMap(MAP_ID);
 
@@ -101,75 +118,80 @@ const Reservoirs: React.FC = () => {
         });
     }, [hideNoData]);
 
-    useEffect(() => {
+    const organizedReservoirs = useMemo<OrganizedFeature[]>(() => {
         if (!reservoirCollections) {
-            return;
+            return [];
         }
 
-        const organizedReservoirs: OrganizedFeature[] = Object.entries(
-            reservoirCollections
-        ).flatMap(([collectionId, featureCollection]) => {
-            const config = getReservoirConfig(collectionId as SourceId);
-            if (!config) return [];
+        return Object.entries(reservoirCollections).flatMap(
+            ([collectionId, featureCollection]) => {
+                const config = getReservoirConfig(collectionId as SourceId);
+                if (!config) return [];
 
-            return featureCollection.features
-                .filter((feature) => Boolean(feature.properties))
-                .map((feature) => {
-                    const props = feature.properties!;
-                    const getNumber = (key: keyof typeof props) =>
-                        Number(props[key]);
-                    const getString = (key: keyof typeof props) =>
-                        String(props[key]);
+                return featureCollection.features
+                    .filter((feature) => Boolean(feature.properties))
+                    .map((feature) => {
+                        const props = feature.properties!;
+                        const getNumber = (key: keyof typeof props) =>
+                            Number(props[key]);
+                        const getString = (key: keyof typeof props) =>
+                            String(props[key]);
 
-                    const storage = getNumber(config.storageProperty);
-                    const capacity = getNumber(config.capacityProperty);
-                    const average = getNumber(config.thirtyYearAverageProperty);
-                    const regionConnector = getString(
-                        config.regionConnectorProperty
-                    );
-                    const basinConnector = getString(
-                        config.basinConnectorProperty
-                    );
-                    const stateConnector = getString(
-                        config.stateConnectorProperty
-                    );
+                        const storage = getNumber(config.storageProperty);
+                        const capacity = getNumber(config.capacityProperty);
+                        const average = getNumber(
+                            config.thirtyYearAverageProperty
+                        );
+                        const regionConnector = getString(
+                            config.regionConnectorProperty
+                        );
+                        const basinConnector = getString(
+                            config.basinConnectorProperty
+                        );
+                        const stateConnector = getString(
+                            config.stateConnectorProperty
+                        );
 
-                    return {
-                        ...feature,
-                        properties: {
-                            ...feature.properties,
-                            collectionId,
-                            identifier:
-                                config.identifierType === 'number'
-                                    ? Number(props[config.identifierProperty])
-                                    : String(props[config.identifierProperty]),
-                            name: getString(config.longLabelProperty),
-                            dateMeasured: dayjs(
-                                getString(config.storageDateProperty)
-                            ).format('MM/DD/YYYY'),
-                            storage,
-                            capacity,
-                            percentFull: (storage / capacity) * 100,
-                            percentAverage: (storage / average) * 100,
-                            sourceId: collectionId,
-                            regionConnector,
-                            basinConnector,
-                            stateConnector,
-                        },
-                    } as OrganizedFeature;
-                });
-        });
-
-        setOrganizedReservoirs(organizedReservoirs);
+                        return {
+                            ...feature,
+                            properties: {
+                                ...feature.properties,
+                                collectionId,
+                                identifier:
+                                    config.identifierType === 'number'
+                                        ? Number(
+                                              props[config.identifierProperty]
+                                          )
+                                        : String(
+                                              props[config.identifierProperty]
+                                          ),
+                                name: getString(config.longLabelProperty),
+                                dateMeasured: dayjs(
+                                    getString(config.storageDateProperty)
+                                ).format('MM/DD/YYYY'),
+                                storage,
+                                capacity,
+                                percentFull: (storage / capacity) * 100,
+                                percentAverage: (storage / average) * 100,
+                                sourceId: collectionId,
+                                regionConnector,
+                                basinConnector,
+                                stateConnector,
+                            },
+                        } as OrganizedFeature;
+                    });
+            }
+        );
     }, [reservoirCollections]);
 
-    useEffect(() => {
+    const filteredReservoirs = useMemo<OrganizedFeature[]>(() => {
         if (organizedReservoirs.length === 0) {
-            return;
+            return [];
         }
 
         const filterFunctions: Array<(feature: OrganizedFeature) => boolean> =
             [];
+
         if (hideNoData) {
             filterFunctions.push((feature) =>
                 dayjs(feature.properties.dateMeasured).isValid()
@@ -188,26 +210,26 @@ const Reservoirs: React.FC = () => {
                 region.includes(feature.properties.regionConnector)
             );
         }
+
         if (basin.length > 0) {
             filterFunctions.push((feature) =>
                 basin.includes(feature.properties.basinConnector.slice(0, 2))
             );
         }
+
         if (state.length > 0) {
             filterFunctions.push((feature) =>
                 state.includes(feature.properties.stateConnector)
             );
         }
 
-        const filteredReservoirs = organizedReservoirs
+        return organizedReservoirs
             .filter(
                 (feature) =>
                     filterFunctions.length === 0 ||
                     filterFunctions.every((filter) => filter(feature))
             )
             .sort(getSort(sortBy, sortOrder));
-
-        setFilteredReservoirs(filteredReservoirs);
     }, [
         organizedReservoirs,
         search,
@@ -215,9 +237,105 @@ const Reservoirs: React.FC = () => {
         basin,
         state,
         sortBy,
-        sortOrder,
         hideNoData,
+        sortOrder,
     ]);
+
+    const showByExtent = useMemo(
+        () => (limitByExtent ? mapMoved : 0),
+        [limitByExtent, mapMoved]
+    );
+
+    const limitedReservoirs = useMemo<OrganizedFeature[]>(() => {
+        if (!map) {
+            return [];
+        }
+
+        if (filteredReservoirs.length === 0) {
+            return [];
+        }
+
+        if (!limitByExtent) {
+            return filteredReservoirs;
+        }
+
+        const bounds = map.getBounds();
+        if (bounds) {
+            const southWest = bounds.getSouthWest();
+            const northEast = bounds.getNorthEast();
+            const southEast = bounds.getSouthEast();
+            const northWest = bounds.getNorthWest();
+
+            const bbox = polygon([
+                [
+                    [northEast.lng, northEast.lat],
+                    [northWest.lng, northWest.lat],
+                    [southWest.lng, southWest.lat],
+                    [southEast.lng, southEast.lat],
+                    [northEast.lng, northEast.lat],
+                ],
+            ]);
+
+            const contained = pointsWithinPolygon(
+                { type: 'FeatureCollection', features: filteredReservoirs },
+                bbox
+            );
+
+            return contained.features as OrganizedFeature[];
+        }
+
+        // Fallback, more expensive function call
+        const renderedFeatures = map.queryRenderedFeatures({
+            layers: ReservoirConfigs.filter((config) =>
+                map.getLayer(config.iconLayer)
+            ).map((config) => config.iconLayer),
+        });
+
+        return filteredReservoirs.filter((reservoir) =>
+            renderedFeatures.some(
+                (renderedFeature) => renderedFeature.id === reservoir.id
+            )
+        );
+    }, [showByExtent, filteredReservoirs]);
+
+    useEffect(() => {
+        if (pickFromTable) {
+            return;
+        }
+
+        const newSelectedReservoirs = [];
+        for (const reservoirIdentifier of selectedReservoirs) {
+            const [id, sourceId] = reservoirIdentifier.split('_');
+
+            if (
+                limitedReservoirs.some(
+                    (reservoir) =>
+                        String(reservoir.id) === id &&
+                        reservoir.properties.sourceId === sourceId
+                )
+            ) {
+                newSelectedReservoirs.push(`${id}_${sourceId}`);
+            }
+        }
+
+        if (newSelectedReservoirs.length < MAX_POSITIONS) {
+            const selectionSet = new Set(newSelectedReservoirs);
+
+            for (const feature of limitedReservoirs) {
+                if (newSelectedReservoirs.length >= MAX_POSITIONS) {
+                    break;
+                }
+
+                const key = getKey(feature);
+                if (!selectionSet.has(key)) {
+                    newSelectedReservoirs.push(key);
+                    selectionSet.add(key);
+                }
+            }
+        }
+
+        setSelectedReservoirs(newSelectedReservoirs);
+    }, [limitedReservoirs]);
 
     const handleSearchChange = (search: string) => setSearch(search);
     const handleSortByChange = (sortBy: SortBy) => setSortBy(sortBy);
@@ -225,6 +343,12 @@ const Reservoirs: React.FC = () => {
         setSortOrder(sortOrder);
     const handleHideNoDataChange = (hideNoData: boolean) =>
         setHideNoData(hideNoData);
+    const handleLimitByExtentChange = (limitByExtent: boolean) =>
+        setLimitByExtent(limitByExtent);
+    const handlePickFromTableChange = (pickFromTable: boolean) =>
+        setPickFromTable(pickFromTable);
+    const handleSelectedReservoirsChange = (selectedReservoirs: string[]) =>
+        setSelectedReservoirs(selectedReservoirs);
 
     return (
         <>
@@ -237,9 +361,24 @@ const Reservoirs: React.FC = () => {
                 handleSortOrderChange={handleSortOrderChange}
                 hideNoData={hideNoData}
                 handleHideNoDataChange={handleHideNoDataChange}
+                limitByExtent={limitByExtent}
+                onLimitByExtentChange={handleLimitByExtentChange}
+            />
+            <Report
+                accessToken={accessToken}
+                reservoirs={limitedReservoirs}
+                pickFromTable={pickFromTable}
+                onPickFromTableChange={handlePickFromTableChange}
+                selectedReservoirs={selectedReservoirs}
+                onSelectedReservoirsChange={handleSelectedReservoirsChange}
             />
             {filteredReservoirs && (
-                <Table filteredReservoirs={filteredReservoirs} />
+                <Table
+                    reservoirs={limitedReservoirs}
+                    pickFromTable={pickFromTable}
+                    selectedReservoirs={selectedReservoirs}
+                    onSelectedReservoirsChange={handleSelectedReservoirsChange}
+                />
             )}
         </>
     );

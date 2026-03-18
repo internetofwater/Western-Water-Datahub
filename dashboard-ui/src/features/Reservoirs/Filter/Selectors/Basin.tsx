@@ -76,9 +76,7 @@ export const Basin: React.FC = () => {
                     (feature) => String(feature.id),
                     (feature) =>
                         String(feature?.properties?.[Huc02BasinField.Name]),
-                    '',
-                    '',
-                    true
+                    { defaultLabel: '', defaultValue: '', noDefault: true }
                 );
 
                 if (isMounted.current) {

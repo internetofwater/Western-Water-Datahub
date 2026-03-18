@@ -75,9 +75,7 @@ export const State: React.FC = () => {
                     ),
                     (feature) => String(feature?.properties?.[StateField.Uri]),
                     (feature) => String(feature?.properties?.[StateField.Name]),
-                    '',
-                    '',
-                    true
+                    { defaultLabel: '', defaultValue: '', noDefault: true }
                 );
 
                 if (isMounted.current) {
