@@ -702,7 +702,8 @@ export const appendTeacupDataProperties = async (
 export const getBoundingGeographyFilter = (
     config: ReservoirConfig,
     property: keyof ReservoirConfig,
-    value: string | number | string[] | number[]
+    value: string | number | string[] | number[],
+    applyLabelFilter: boolean = false
 ): FilterSpecification => {
     const prop = ['get', config[property]];
 
@@ -751,9 +752,21 @@ export const getBoundingGeographyFilter = (
         // return ['all', getReservoirFilter(config), matchExpression];
     }
 
-    const scalarMatches = ['any', ...values.map((v) => ['==', prop, v])];
+    const scalarMatches = applyLabelFilter
+        ? [
+              'all',
+              ['any', ...values.map((v) => ['==', prop, v])],
+              getReservoirLabelFilter(config),
+          ]
+        : ['any', ...values.map((v) => ['==', prop, v])];
 
-    const arrayMatches = ['any', ...values.map((v) => ['in', v, prop])];
+    const arrayMatches = applyLabelFilter
+        ? [
+              'all',
+              ['any', ...values.map((v) => ['in', v, prop])],
+              getReservoirLabelFilter(config),
+          ]
+        : ['any', ...values.map((v) => ['in', v, prop])];
 
     const matchExpression: FilterSpecification = [
         'case',

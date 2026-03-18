@@ -192,6 +192,12 @@ const Reservoirs: React.FC<Props> = (props) => {
         const filterFunctions: Array<(feature: OrganizedFeature) => boolean> =
             [];
 
+        if (hideNoData) {
+            filterFunctions.push((feature) =>
+                dayjs(feature.properties.dateMeasured).isValid()
+            );
+        }
+
         if (search.length > 0) {
             const lower = search.toLowerCase();
             filterFunctions.push((feature) =>
@@ -204,11 +210,13 @@ const Reservoirs: React.FC<Props> = (props) => {
                 region.includes(feature.properties.regionConnector)
             );
         }
+
         if (basin.length > 0) {
             filterFunctions.push((feature) =>
                 basin.includes(feature.properties.basinConnector.slice(0, 2))
             );
         }
+
         if (state.length > 0) {
             filterFunctions.push((feature) =>
                 state.includes(feature.properties.stateConnector)
@@ -222,7 +230,16 @@ const Reservoirs: React.FC<Props> = (props) => {
                     filterFunctions.every((filter) => filter(feature))
             )
             .sort(getSort(sortBy, sortOrder));
-    }, [organizedReservoirs, search, region, basin, state, sortBy, sortOrder]);
+    }, [
+        organizedReservoirs,
+        search,
+        region,
+        basin,
+        state,
+        sortBy,
+        hideNoData,
+        sortOrder,
+    ]);
 
     const showByExtent = useMemo(
         () => (limitByExtent ? mapMoved : 0),

@@ -38,6 +38,7 @@ import {
 } from '@/features/Map/utils';
 import { basemaps } from '@/components/Map/consts';
 import {
+    FilterSpecification,
     GeoJSONSource,
     LngLatLike,
     MapMouseEvent,
@@ -51,6 +52,7 @@ import { Huc02BasinField } from '@/features/Map/types/basin';
 import { BoundingGeographyLevel } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
 import debounce from 'lodash.debounce';
+import { ReservoirConfig } from './types';
 
 type Props = {
     accessToken: string;
@@ -170,6 +172,20 @@ const MainMap: React.FC<Props> = (props) => {
         );
     }, [map, reservoirCollections?.[SourceId.TeacupEDRReservoirs]]);
 
+    const getProperty = (
+        boundingGeographyLevel: BoundingGeographyLevel
+    ): keyof ReservoirConfig => {
+        switch (boundingGeographyLevel) {
+            case BoundingGeographyLevel.Region:
+                return 'regionConnectorProperty';
+            case BoundingGeographyLevel.Basin:
+                return 'basinConnectorProperty';
+            default:
+            case BoundingGeographyLevel.State:
+                return 'stateConnectorProperty';
+        }
+    };
+
     useEffect(() => {
         if (!map) {
             return;
@@ -227,44 +243,113 @@ const MainMap: React.FC<Props> = (props) => {
             loadImages(map);
         });
 
+        const ZOOM_HIGH = 8;
+        const ZOOM_MID = 6;
+
+        const getFilterValue = (
+            region: string[],
+            basin: string[],
+            state: string[],
+            boundingGeographyLevel: BoundingGeographyLevel
+        ) => {
+            if (
+                boundingGeographyLevel === BoundingGeographyLevel.Region &&
+                region.length > 0
+            ) {
+                return region;
+            }
+            if (
+                boundingGeographyLevel === BoundingGeographyLevel.Basin &&
+                basin.length > 0
+            ) {
+                return basin;
+            }
+            if (
+                boundingGeographyLevel === BoundingGeographyLevel.State &&
+                state.length > 0
+            ) {
+                return state;
+            }
+            return [];
+        };
+
+        const applyLabelSettings = (
+            layerId: LayerId | SubLayerId,
+            options: {
+                filter?: FilterSpecification | null;
+                allowOverlap?: boolean;
+            }
+        ) => {
+            if (!map.getLayer(layerId)) return;
+
+            if (typeof options.allowOverlap === 'boolean') {
+                map.setLayoutProperty(
+                    layerId,
+                    'text-allow-overlap',
+                    options.allowOverlap
+                );
+            }
+            if (options.filter !== undefined) {
+                map.setFilter(layerId, options.filter ?? null);
+            }
+        };
+
         const handleMapZoom = () => {
             const zoom = map.getZoom();
-            if (zoom > 8) {
-                ReservoirConfigs.forEach((config) => {
-                    if (map.getLayer(config.labelLayer)) {
-                        map.setLayoutProperty(
-                            config.labelLayer,
-                            'text-allow-overlap',
-                            false
-                        );
-                    }
+
+            const { boundingGeographyLevel, region, basin, state } =
+                useMainStore.getState();
+
+            const hasBoundingGeography =
+                (region?.length ?? 0) > 0 ||
+                (basin?.length ?? 0) > 0 ||
+                (state?.length ?? 0) > 0;
+
+            const zoomBucket =
+                zoom > ZOOM_HIGH ? 'high' : zoom > ZOOM_MID ? 'mid' : 'low';
+
+            const buildFilter = (config: ReservoirConfig) => {
+                if (hasBoundingGeography) {
+                    const filterValue = getFilterValue(
+                        region ?? [],
+                        basin ?? [],
+                        state ?? [],
+                        boundingGeographyLevel
+                    );
+
+                    const property = getProperty(boundingGeographyLevel);
+
+                    const includeLabelFilter = zoomBucket === 'low';
+
+                    // Modify filter to show based on zoom/capacity within bounds
+                    return getBoundingGeographyFilter(
+                        config,
+                        property,
+                        filterValue,
+                        includeLabelFilter
+                    );
+                }
+
+                // No bounding geography
+                if (zoomBucket === 'low') {
+                    // Modify filter to show based on zoom/capacity
+                    return getReservoirLabelFilter(config);
+                }
+
+                // At mid zoom you clear the filter; at high zoom modify only collision settings
+                return zoomBucket === 'mid' ? null : undefined; // `undefined` => don't change
+            };
+
+            const allowOverlapForBucket = zoomBucket === 'high' ? false : true;
+
+            ReservoirConfigs.forEach((config) => {
+                const filter = buildFilter(config);
+
+                applyLabelSettings(config.labelLayer, {
+                    filter,
+                    allowOverlap: allowOverlapForBucket,
                 });
-            } else if (zoom > 6.5) {
-                ReservoirConfigs.forEach((config) => {
-                    if (map.getLayer(config.labelLayer)) {
-                        map.setFilter(config.labelLayer, null);
-                        map.setLayoutProperty(
-                            config.labelLayer,
-                            'text-allow-overlap',
-                            true
-                        );
-                    }
-                });
-            } else {
-                ReservoirConfigs.forEach((config) => {
-                    if (map.getLayer(config.labelLayer)) {
-                        map.setFilter(
-                            config.labelLayer,
-                            getReservoirLabelFilter(config)
-                        );
-                        map.setLayoutProperty(
-                            config.labelLayer,
-                            'text-allow-overlap',
-                            true
-                        );
-                    }
-                });
-            }
+            });
         };
 
         map.on('zoom', handleMapZoom);
@@ -302,9 +387,11 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (reservoir === ReservoirDefault) {
                 ReservoirConfigs.forEach((config) => {
-                    getAllMapLayers(config).forEach((layerId) => {
-                        map.setFilter(layerId, getReservoirFilter(config));
-                    });
+                    map.setFilter(config.iconLayer, getReservoirFilter(config));
+                    map.setFilter(
+                        config.labelLayer,
+                        getReservoirLabelFilter(config)
+                    );
                 });
             }
         } else {
@@ -326,16 +413,23 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (boundingGeographyLevel === BoundingGeographyLevel.Region) {
                 ReservoirConfigs.forEach((config) => {
-                    getAllMapLayers(config).forEach((layerId) => {
-                        map.setFilter(
-                            layerId,
-                            getBoundingGeographyFilter(
-                                config,
-                                'regionConnectorProperty',
-                                region
-                            )
-                        );
-                    });
+                    map.setFilter(
+                        config.iconLayer,
+                        getBoundingGeographyFilter(
+                            config,
+                            'regionConnectorProperty',
+                            region
+                        )
+                    );
+                    map.setFilter(
+                        config.labelLayer,
+                        getBoundingGeographyFilter(
+                            config,
+                            'regionConnectorProperty',
+                            region,
+                            true
+                        )
+                    );
                 });
             }
         }
@@ -360,9 +454,11 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (reservoir === ReservoirDefault) {
                 ReservoirConfigs.forEach((config) => {
-                    getAllMapLayers(config).forEach((layerId) => {
-                        map.setFilter(layerId, getReservoirFilter(config));
-                    });
+                    map.setFilter(config.iconLayer, getReservoirFilter(config));
+                    map.setFilter(
+                        config.labelLayer,
+                        getReservoirLabelFilter(config)
+                    );
                 });
             }
         } else {
@@ -379,16 +475,23 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (boundingGeographyLevel === BoundingGeographyLevel.Basin) {
                 ReservoirConfigs.forEach((config) => {
-                    getAllMapLayers(config).forEach((layerId) => {
-                        map.setFilter(
-                            layerId,
-                            getBoundingGeographyFilter(
-                                config,
-                                'basinConnectorProperty',
-                                basin
-                            )
-                        );
-                    });
+                    map.setFilter(
+                        config.iconLayer,
+                        getBoundingGeographyFilter(
+                            config,
+                            'basinConnectorProperty',
+                            region
+                        )
+                    );
+                    map.setFilter(
+                        config.labelLayer,
+                        getBoundingGeographyFilter(
+                            config,
+                            'basinConnectorProperty',
+                            region,
+                            true
+                        )
+                    );
                 });
             }
         }
@@ -405,9 +508,11 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (reservoir === ReservoirDefault) {
                 ReservoirConfigs.forEach((config) => {
-                    getAllMapLayers(config).forEach((layerId) => {
-                        map.setFilter(layerId, getReservoirFilter(config));
-                    });
+                    map.setFilter(config.iconLayer, getReservoirFilter(config));
+                    map.setFilter(
+                        config.labelLayer,
+                        getReservoirLabelFilter(config)
+                    );
                 });
             }
         } else {
@@ -424,16 +529,23 @@ const MainMap: React.FC<Props> = (props) => {
 
             if (boundingGeographyLevel === BoundingGeographyLevel.State) {
                 ReservoirConfigs.forEach((config) => {
-                    getAllMapLayers(config).forEach((layerId) => {
-                        map.setFilter(
-                            layerId,
-                            getBoundingGeographyFilter(
-                                config,
-                                'stateConnectorProperty',
-                                state
-                            )
-                        );
-                    });
+                    map.setFilter(
+                        config.iconLayer,
+                        getBoundingGeographyFilter(
+                            config,
+                            'stateConnectorProperty',
+                            region
+                        )
+                    );
+                    map.setFilter(
+                        config.labelLayer,
+                        getBoundingGeographyFilter(
+                            config,
+                            'stateConnectorProperty',
+                            region,
+                            true
+                        )
+                    );
                 });
             }
         }
