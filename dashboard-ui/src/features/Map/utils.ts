@@ -96,8 +96,18 @@ export const loadTeacups = (map: Map) => {
         });
     }
 
-    teacupLevels.forEach((average) => {
-        teacupLevels.forEach((storage) => {
+    teacupLevels.forEach((storage) => {
+        const id = `teacup-${storage}`;
+        if (!map.hasImage(id)) {
+            map.loadImage(`/map-icons/${id}.png`, (error, image) => {
+                if (error) throw error;
+                if (!image) {
+                    throw new Error(`Image not found: ${id}.png`);
+                }
+                map.addImage(id, image);
+            });
+        }
+        teacupLevels.forEach((average) => {
             const id = `teacup-${storage}-${average}`;
             if (!map.hasImage(id)) {
                 map.loadImage(`/map-icons/${id}.png`, (error, image) => {

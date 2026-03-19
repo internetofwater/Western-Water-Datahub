@@ -39,19 +39,15 @@
 }
 
 .main {
-    display: flex;
-    flex: 1;
-    width: 100vw;
-    max-height: 100%;
-    /* overflow-y: auto; */
-}
+    max-width: 100vw;
 
-.main code {
-    font-family: inherit;
-    background: var(--gray-alpha-100);
-    padding: 2px 4px;
-    border-radius: 4px;
-    font-weight: 600;
+    min-height: 100vh;
+    height: auto;
+
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .footer {
