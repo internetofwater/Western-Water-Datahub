@@ -4,21 +4,18 @@
  */
 
 import styles from '@/app/page.module.css';
-import Loading from '@/features/Loading';
 import Main from '@/features/Main';
 import Notifications from '@/features/Notifications';
+import { Box } from '@mantine/core';
 
 const Page: React.FC = () => {
     return (
         <>
-            <div className={styles.page}>
-                <main className={styles.main}>
-                    <Main accessToken={process.env.MAPBOX_ACCESS_TOKEN ?? ''} />
-                    <Notifications />
-                </main>
-                <Loading desktop />
-                <footer className={styles.footer}></footer>
-            </div>
+            <Box component="main" className={styles.main}>
+                <Main accessToken={process.env.MAPBOX_ACCESS_TOKEN ?? ''} />
+                <Notifications />
+            </Box>
+            <Box component="footer" className={styles.footer}></Box>
         </>
     );
 };

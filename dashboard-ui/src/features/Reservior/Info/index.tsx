@@ -6,7 +6,7 @@
 import { ReservoirConfig } from '@/features/Map/types';
 import { Group, Flex, Text } from '@mantine/core';
 import { GeoJsonProperties } from 'geojson';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { Metrics } from '@/features/Reservior/Info/Metrics';
 import { TeacupDiagram } from '@/features/Reservior/TeacupDiagram';
@@ -21,11 +21,37 @@ type Props = {
 const InfoWrapper: React.FC<Props> = (props) => {
     const { reservoirProperties, config } = props;
 
-    if (!reservoirProperties) {
-        return null;
-    }
-
     const [showLabels, setShowLabels] = useState(true);
+    const [excludedEntries, setExcludedEntries] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (!reservoirProperties) {
+            return;
+        }
+
+        const highPercentile = reservoirProperties[
+            config.ninetiethPercentileProperty
+        ] as number | undefined;
+        const average = reservoirProperties[
+            config.thirtyYearAverageProperty
+        ] as number | undefined;
+        const lowPercentile = reservoirProperties[
+            config.tenthPercentileProperty
+        ] as number | undefined;
+
+        const excludedEntries: string[] = [];
+        if (!highPercentile) {
+            excludedEntries.push('high-percentile');
+        }
+        if (!average) {
+            excludedEntries.push('average');
+        }
+        if (!lowPercentile) {
+            excludedEntries.push('low-percentile');
+        }
+
+        setExcludedEntries(excludedEntries);
+    }, [reservoirProperties, config]);
 
     const handleLabelsChange = (showLabels: boolean) => {
         setShowLabels(showLabels);
@@ -35,6 +61,10 @@ const InfoWrapper: React.FC<Props> = (props) => {
         reservoirProperties: Properties,
         config: ReservoirConfig
     ): boolean => Boolean(reservoirProperties[config.storageProperty]);
+
+    if (!reservoirProperties) {
+        return null;
+    }
 
     return (
         <>
@@ -49,6 +79,7 @@ const InfoWrapper: React.FC<Props> = (props) => {
                             <Legend
                                 showLabels={showLabels}
                                 onChange={handleLabelsChange}
+                                excludeEntries={excludedEntries}
                             />
                             <TeacupDiagram
                                 reservoirProperties={reservoirProperties}

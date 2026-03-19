@@ -23,6 +23,8 @@ const useSessionStore = create<SessionState>()(
         setHelpTab: (helpTab) => set({ helpTab }),
         mapMoved: 0,
         setMapMoved: (mapMoved) => set({ mapMoved }),
+        hideNoData: false,
+        setHideNoData: (hideNoData) => set({ hideNoData }),
         ...createLoadingSlice(set, get, store),
         ...createNotificationsSlice(set, get, store),
     }))

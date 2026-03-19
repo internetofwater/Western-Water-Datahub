@@ -78,12 +78,13 @@ export const ReservoirDateSelector: React.FC = () => {
             return;
         }
 
+        const { noDataMessage } = getMessages(date);
+
         controller.current = new AbortController();
 
         const processedResult = await appendTeacupDataProperties(
             currentCollection,
-            date,
-            controller.current.signal
+            { reservoirDate: date, signal: controller.current.signal }
         );
 
         if (
@@ -93,7 +94,6 @@ export const ReservoirDateSelector: React.FC = () => {
                     !feature.properties[TeacupReservoirField.StorageAverage]
             )
         ) {
-            const { noDataMessage } = getMessages(date);
             notificationManager.show(
                 noDataMessage,
                 NotificationType.Info,

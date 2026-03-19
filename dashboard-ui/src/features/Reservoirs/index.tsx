@@ -13,11 +13,7 @@ import {
     SortOrder,
 } from '@/features/Reservoirs/types';
 import { Table } from '@/features/Reservoirs/Table';
-import {
-    getAllMapLayers,
-    getReservoirConfig,
-    getReservoirFilter,
-} from '@/features/Map/utils';
+import { getReservoirConfig } from '@/features/Map/utils';
 import { MAP_ID, ReservoirConfigs, SourceId } from '@/features/Map/consts';
 import dayjs from 'dayjs';
 import useMainStore from '@/stores/main';
@@ -40,6 +36,8 @@ const Reservoirs: React.FC<Props> = (props) => {
     const state = useMainStore((state) => state.state);
 
     const mapMoved = useSessionStore((state) => state.mapMoved);
+    const hideNoData = useSessionStore((state) => state.hideNoData);
+    const setHideNoData = useSessionStore((state) => state.setHideNoData);
 
     // Text string representing current search term
     const [search, setSearch] = useState('');
@@ -54,8 +52,6 @@ const Reservoirs: React.FC<Props> = (props) => {
     const [selectedReservoirs, setSelectedReservoirs] = useState<string[]>([]);
 
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
-
-    const [hideNoData, setHideNoData] = useState(false);
 
     const { reservoirCollections } = useReservoirData();
 
@@ -79,11 +75,15 @@ const Reservoirs: React.FC<Props> = (props) => {
         (sortBy: SortBy, sortOrder: SortOrder) =>
         (featureA: OrganizedFeature, featureB: OrganizedFeature) => {
             const property = getSortByProperty(sortBy);
-            const valueA = featureA.properties[property];
-            const valueB = featureB.properties[property];
+            const valueA = Number(featureA.properties[property]);
+            const valueB = Number(featureB.properties[property]);
 
-            if (typeof valueA !== 'number' || typeof valueB !== 'number') {
+            if (typeof valueA !== 'number' && typeof valueB !== 'number') {
                 return 0;
+            } else if (typeof valueA !== 'number') {
+                return -1;
+            } else if (typeof valueB !== 'number') {
+                return 1;
             }
 
             if (sortOrder === 'desc') {
@@ -92,31 +92,6 @@ const Reservoirs: React.FC<Props> = (props) => {
 
             return valueA - valueB;
         };
-
-    useEffect(() => {
-        if (!map) {
-            return;
-        }
-
-        ReservoirConfigs.forEach((config) => {
-            const layers = getAllMapLayers(config);
-            if (hideNoData) {
-                const filter = getReservoirFilter(config);
-
-                layers.forEach((layerId) => {
-                    if (map.getLayer(layerId)) {
-                        map.setFilter(layerId, filter);
-                    }
-                });
-            } else {
-                layers.forEach((layerId) => {
-                    if (map.getLayer(layerId)) {
-                        map.setFilter(layerId, null);
-                    }
-                });
-            }
-        });
-    }, [hideNoData]);
 
     const organizedReservoirs = useMemo<OrganizedFeature[]>(() => {
         if (!reservoirCollections) {

@@ -295,7 +295,12 @@ const Reservoir: React.FC = () => {
                     </ActionIcon>
                 </Group>
                 <Divider my="var(--default-spacing)" />
-                <Chart id={reservoirId} ref={chartRef} config={config} />
+                <Chart
+                    currentDate={currentDate}
+                    id={reservoirId}
+                    ref={chartRef}
+                    config={config}
+                />
             </>
         </Modal>
     );

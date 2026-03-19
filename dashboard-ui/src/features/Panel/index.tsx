@@ -105,7 +105,7 @@ const Panel: React.FC<Props> = (props) => {
             </ActionIcon>
             <Accordion
                 multiple
-                defaultValue={['Reservoirs']}
+                defaultValue={['Reservoirs', 'Reference Data']}
                 className={styles.sticky}
                 classNames={{
                     root: styles.root,

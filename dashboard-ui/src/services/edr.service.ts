@@ -171,7 +171,9 @@ export type IGetLocationParams = Omit<IDataQueryParams, 'z'>;
 /**
  * Default options for the service requests.
  */
-const DEFAULT_OPTIONS = { headers: { Accept: 'application/json', 'Accept-Encoding': 'gzip' } };
+const DEFAULT_OPTIONS = {
+    headers: { Accept: 'application/json', 'Accept-Encoding': 'gzip' },
+};
 
 export class EDRService extends Service {
     /**
@@ -365,7 +367,7 @@ export class EDRService extends Service {
      * - `f`: Format of the response.
      */
     async getTrajectory<
-        T extends CoverageJSON | GeoJSON | string = CoverageJSON
+        T extends CoverageJSON | GeoJSON | string = CoverageJSON,
     >(
         collectionId: string,
         options: IServiceRequestOptions<IGetTrajectoryParams> = {}
@@ -499,12 +501,8 @@ export class EDRService extends Service {
      * - `f`: Format of the response.
      */
     async getLocation<
-        T extends
-            | JSON
-            | GeoJSON
-            | CoverageJSON
-            | CoverageCollection
-            | string = GeoJSON
+        T extends JSON | GeoJSON | CoverageJSON | CoverageCollection | string =
+            GeoJSON,
     >(
         collectionId: string,
         locId: string,
@@ -536,7 +534,7 @@ export class EDRService extends Service {
      * - `f`: Format of the response.
      */
     async getInstancePosition<
-        T extends CoverageJSON | GeoJSON | string = CoverageJSON
+        T extends CoverageJSON | GeoJSON | string = CoverageJSON,
     >(
         collectionId: string,
         instanceId: string,
@@ -569,7 +567,7 @@ export class EDRService extends Service {
      * - `f`: Format of the response.
      */
     async getInstanceRadius<
-        T extends CoverageJSON | GeoJSON | string = CoverageJSON
+        T extends CoverageJSON | GeoJSON | string = CoverageJSON,
     >(
         collectionId: string,
         instanceId: string,
@@ -602,7 +600,7 @@ export class EDRService extends Service {
      * - `f`: Format of the response.
      */
     async getInstanceArea<
-        T extends CoverageJSON | GeoJSON | string = CoverageJSON
+        T extends CoverageJSON | GeoJSON | string = CoverageJSON,
     >(
         collectionId: string,
         instanceId: string,
@@ -633,7 +631,7 @@ export class EDRService extends Service {
      * - `f`: Format of the response.
      */
     async getInstanceCube<
-        T extends CoverageJSON | GeoJSON | string = CoverageJSON
+        T extends CoverageJSON | GeoJSON | string = CoverageJSON,
     >(
         collectionId: string,
         instanceId: string,
@@ -664,7 +662,7 @@ export class EDRService extends Service {
      * - `f`: Format of the response.
      */
     async getInstanceTrajectory<
-        T extends CoverageJSON | GeoJSON | string = CoverageJSON
+        T extends CoverageJSON | GeoJSON | string = CoverageJSON,
     >(
         collectionId: string,
         instanceId: string,
@@ -700,7 +698,7 @@ export class EDRService extends Service {
      * - `f`: Format of the response.
      */
     async getInstanceCorridor<
-        T extends CoverageJSON | GeoJSON | string = CoverageJSON
+        T extends CoverageJSON | GeoJSON | string = CoverageJSON,
     >(
         collectionId: string,
         instanceId: string,
@@ -1042,6 +1040,7 @@ export type CoverageCollection = {
 };
 
 export interface CoverageJSON {
+    id?: string;
     type: string;
     domain: {
         type: string;
