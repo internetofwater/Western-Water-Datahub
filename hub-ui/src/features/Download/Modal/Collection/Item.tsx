@@ -19,11 +19,13 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import Code from "@/components/Code";
 import CopyInput from "@/components/CopyInput";
+import { StringIdentifierCollections } from "@/consts/collections";
 import styles from "@/features/Download/Download.module.css";
 import { GeoJSON } from "@/features/Download/Modal/Collection/GeoJSON";
 import { Table } from "@/features/Table";
 import { ICollection } from "@/services/edr.service";
 import { TLayer, TLocation } from "@/stores/main/types";
+import { getIdStore, getLabel } from "@/utils/getLabel";
 import { buildItemUrl } from "@/utils/url";
 
 dayjs.extend(isSameOrBefore);
@@ -36,13 +38,37 @@ type Props = {
 };
 
 export const Item = forwardRef<HTMLDivElement, Props>((props, ref) => {
-  const { location, collection, linkLocation } = props;
+  const { location, collection, layer, linkLocation } = props;
 
   const [openedProps, { toggle: toggleProps }] = useDisclosure(false);
   const [openedGeo, { toggle: toggleGeo }] = useDisclosure(false);
+  const [id, setId] = useState<string>(String(location.id));
 
   const [url, setUrl] = useState("");
   const [codeUrl, setCodeUrl] = useState("");
+  const [label, setLabel] = useState<string>(String(location.id));
+
+  useEffect(() => {
+    if (StringIdentifierCollections.includes(layer.collectionId)) {
+      const id = getIdStore(location);
+      if (id) {
+        setId(id);
+      } else {
+        setId(String(location.id));
+      }
+    } else {
+      setId(String(location.id));
+    }
+  }, [location, layer]);
+
+  useEffect(() => {
+    if (layer.label) {
+      const label = getLabel(location, layer.label);
+      if (label) {
+        setLabel(`${label} (${id})`);
+      }
+    }
+  }, [layer, location, id]);
 
   useEffect(() => {
     const url = buildItemUrl(collection.id, String(location.id));
@@ -68,7 +94,7 @@ export const Item = forwardRef<HTMLDivElement, Props>((props, ref) => {
             <Text size="md" fw={700}>
               {collection.title}
             </Text>
-            <Text size="md">{location.id}</Text>
+            <Text size="md">{label}</Text>
           </Group>
           <Anchor title="This item in the API" href={url} target="_blank">
             API

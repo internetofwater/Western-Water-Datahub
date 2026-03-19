@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { ExpressionSpecification } from "mapbox-gl";
-import { Gradient } from "@/features/Panel/Refine/Palette/Gradient";
+import { Gradient } from "@/features/Panel/Datasources/Palette/Gradient";
 import mainManager from "@/managers/Main.init";
 import { TLayer } from "@/stores/main/types";
 import { createColorRange } from "@/utils/colors";
@@ -65,7 +65,7 @@ export const DetailedGradient: React.FC<Props> = (props) => {
         setLabel(label);
       }
     }
-  }, [collectionId]);
+  }, [collectionId, paletteDefinition]);
 
   return (
     <Gradient

@@ -6,6 +6,9 @@
 import { bbox, bboxPolygon, point } from "@turf/turf";
 import { BBox, FeatureCollection, Point, Polygon } from "geojson";
 import { getDefaultGeoJSON } from "@/consts/geojson";
+import { DATES_PROPERTY } from "@/services/coverageJSON/consts";
+import { CoverageService } from "@/services/coverageJSON/coverage.service";
+import { TValues } from "@/services/coverageJSON/types";
 import {
   CoverageAxesSegments,
   CoverageAxesValues,
@@ -17,97 +20,13 @@ import wwdhService from "@/services/init/wwdh.init";
 import { isCoverageJSON } from "@/utils/isTypeObject";
 import { getDatetime } from "@/utils/url";
 
-export const DATES_PROPERTY = "times";
-
-type Values = Record<string, (number | null)[]>;
-type Axes = {
-  t: { values: string[] };
-  x: { start: number; stop: number; num: number };
-  y: { start: number; stop: number; num: number };
-};
-
-export class CoverageGridService {
-  private getLength({
-    start,
-    stop,
-    num,
-  }: {
-    start: number;
-    stop: number;
-    num: number;
-  }): number {
-    const length = Math.abs(stop - start) / num;
-
-    return length;
-  }
-
-  private getValues(coverage: CoverageJSON): Values {
-    const keys: Values = {};
-    let keyValues = Object.keys(coverage.ranges);
-    if (coverage.parameters) {
-      keyValues = Object.keys(coverage.parameters);
-    }
-    for (const key of keyValues) {
-      keys[key] = coverage.ranges[key].values;
-    }
-    return keys;
-  }
-
-  private isSegments(
-    axis: CoverageAxesSegments | CoverageAxesValues,
-  ): axis is CoverageAxesSegments {
-    const a = axis as CoverageAxesSegments;
-    return (
-      typeof a?.start !== "undefined" &&
-      typeof a?.stop !== "undefined" &&
-      typeof a?.num !== "undefined" &&
-      typeof a.start === "number" &&
-      typeof a.stop === "number" &&
-      typeof a.num === "number"
-    );
-  }
-
-  private isValues(
-    axis: CoverageAxesSegments | CoverageAxesValues,
-  ): axis is CoverageAxesValues {
-    return Array.isArray((axis as any)?.values);
-  }
-
-  private getAxes(coverage: CoverageJSON): Axes {
-    return coverage.domain.axes as Axes;
-  }
-
-  private getCurrentValuesConstructor(
-    count: number,
-    values: Values,
-    xCount: number,
-    yCount: number,
-  ) {
-    const keys = Object.keys(values);
-
-    return (i: number, j: number): Values => {
-      const currentValues: Values = {};
-
-      for (const key of keys) {
-        const flatValues = values[key];
-        currentValues[key] = [];
-
-        for (let k = 0; k < count; k++) {
-          const index = k * (xCount * yCount) + j * xCount + i;
-          currentValues[key].push(flatValues[index] ?? null);
-        }
-      }
-
-      return currentValues;
-    };
-  }
-
+export class CoverageGeoService extends CoverageService {
   private addGridValuesConstructor(
     xValues: number[],
     yValues: number[],
     featureCollection: FeatureCollection<Polygon>,
     times: (string | number)[],
-    values: Values,
+    values: TValues,
     currentId?: number,
   ) {
     const count = times.length;
@@ -160,7 +79,7 @@ export class CoverageGridService {
     coverage: CoverageJSON,
     currentId?: number,
   ): FeatureCollection<Polygon> {
-    let values: Values | null = this.getValues(coverage);
+    let values: TValues | null = this.getValues(coverage);
 
     const featureCollection = getDefaultGeoJSON<Polygon>();
 
@@ -192,7 +111,7 @@ export class CoverageGridService {
     yCount: number,
     featureCollection: FeatureCollection<Polygon>,
     times: (string | number)[],
-    values: Values,
+    values: TValues,
     currentId?: number,
   ) {
     const count = times.length;
@@ -246,7 +165,7 @@ export class CoverageGridService {
     const xLength = this.getLength(xObj);
     const yLength = this.getLength(yObj);
 
-    let values: Values | null = this.getValues(coverage);
+    let values: TValues | null = this.getValues(coverage);
 
     const featureCollection = getDefaultGeoJSON<Polygon>();
 
@@ -308,7 +227,7 @@ export class CoverageGridService {
     yValues: number[],
     featureCollection: FeatureCollection<Point>,
     times: (string | number)[],
-    values: Values,
+    values: TValues,
     currentId?: number,
   ) {
     const count = times.length;
@@ -362,7 +281,7 @@ export class CoverageGridService {
     coverage: CoverageJSON,
     id?: number,
   ): FeatureCollection<Point> {
-    let values: Values | null = this.getValues(coverage);
+    let values: TValues | null = this.getValues(coverage);
 
     const featureCollection = getDefaultGeoJSON<Point>();
 

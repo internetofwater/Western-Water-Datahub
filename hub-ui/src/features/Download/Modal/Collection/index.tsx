@@ -30,7 +30,7 @@ import useMainStore from "@/stores/main";
 import { TLayer } from "@/stores/main/types";
 import useSessionStore from "@/stores/session";
 import { CollectionType, getCollectionType } from "@/utils/collection";
-import { getIdStore } from "@/utils/getIdStore";
+import { getIdStore, getLabel } from "@/utils/getLabel";
 import { hasSearchTerm } from "@/utils/searchFeatures";
 
 dayjs.extend(isSameOrBefore);
@@ -145,9 +145,9 @@ const Collection: React.FC<Props> = (props) => {
       title: "Original source of pre-transformed data",
     },
     {
-      label: "Methodology",
+      label: "Info",
       href: documentationLink,
-      title: "The methodology of the original source data",
+      title: "Background information from the original source data",
     },
   ].filter((link) => link.href?.length > 0);
 
@@ -161,6 +161,17 @@ const Collection: React.FC<Props> = (props) => {
     }
 
     return String(feature.id);
+  };
+
+  const getFeatureLabel = (feature: Feature) => {
+    if (layer.label) {
+      const label = getLabel(feature, layer.label);
+      if (label) {
+        return `${label} (${getId(feature)})`;
+      }
+    }
+
+    return getId(feature);
   };
 
   return (
@@ -192,10 +203,16 @@ const Collection: React.FC<Props> = (props) => {
                   collectionType={collectionType}
                   mapLocations={mapLocations
                     .filter((feature) => hasSearchTerm(searchTerm, feature))
-                    .map((feature) => getId(feature))}
+                    .map((feature) => ({
+                      id: getId(feature),
+                      label: getFeatureLabel(feature),
+                    }))}
                   otherLocations={otherLocations
                     .filter((feature) => hasSearchTerm(searchTerm, feature))
-                    .map((feature) => getId(feature))}
+                    .map((feature) => ({
+                      id: getId(feature),
+                      label: getFeatureLabel(feature),
+                    }))}
                   selectedLocations={locations}
                   addLocation={addLocation}
                   removeLocation={removeLocation}

@@ -77,7 +77,10 @@ const getRequestArgsMap: Record<TRequestMethods, TRequestArgsGetter> = {
     headers = { Accept: "application/json", "Accept-Encoding": "gzip" },
     params = {},
   }: IRequestOptions): TRequestArgs => {
-    const url = `${baseUrl}?${toSearchParams(params).toString()}`;
+    let url = baseUrl;
+    if (Object.keys(params).length > 0) {
+      url += `?${toSearchParams(params).toString()}`;
+    }
     const init = {
       signal,
       headers,

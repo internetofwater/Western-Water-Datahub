@@ -6,7 +6,6 @@
 import { Stack, Title } from "@mantine/core";
 import Geography from "@/features/Panel/Filters/Geography";
 import { DateSelect } from "@/features/Panel/Refine/DateSelect";
-import ParameterSelect from "@/features/Panel/Refine/ParameterSelect";
 
 const Refine: React.FC = () => {
   return (
@@ -14,8 +13,7 @@ const Refine: React.FC = () => {
       <Title order={2} size="h3">
         Refine your Search
       </Title>
-      <Stack pl="var(--default-spacing)" gap="calc(var(--default-spacing) * 2)">
-        <ParameterSelect />
+      <Stack gap="calc(var(--default-spacing) * 2)">
         <Geography />
         <DateSelect />
       </Stack>
