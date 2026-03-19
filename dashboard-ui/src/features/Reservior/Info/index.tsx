@@ -4,13 +4,14 @@
  */
 
 import { ReservoirConfig } from '@/features/Map/types';
-import { Group, Flex } from '@mantine/core';
+import { Group, Flex, Text } from '@mantine/core';
 import { GeoJsonProperties } from 'geojson';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
-import { Info } from '@/features/Reservior/Info/Metrics';
+import { Metrics } from '@/features/Reservior/Info/Metrics';
 import { TeacupDiagram } from '@/features/Reservior/TeacupDiagram';
 import { Legend } from '@/features/Reservior/Info/Legend';
+import { Properties } from '@/components/Map/types';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
@@ -20,15 +21,50 @@ type Props = {
 const InfoWrapper: React.FC<Props> = (props) => {
     const { reservoirProperties, config } = props;
 
-    if (!reservoirProperties) {
-        return null;
-    }
-
     const [showLabels, setShowLabels] = useState(true);
+    const [excludedEntries, setExcludedEntries] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (!reservoirProperties) {
+            return;
+        }
+
+        const highPercentile = reservoirProperties[
+            config.ninetiethPercentileProperty
+        ] as number | undefined;
+        const average = reservoirProperties[
+            config.thirtyYearAverageProperty
+        ] as number | undefined;
+        const lowPercentile = reservoirProperties[
+            config.tenthPercentileProperty
+        ] as number | undefined;
+
+        const excludedEntries: string[] = [];
+        if (!highPercentile) {
+            excludedEntries.push('high-percentile');
+        }
+        if (!average) {
+            excludedEntries.push('average');
+        }
+        if (!lowPercentile) {
+            excludedEntries.push('low-percentile');
+        }
+
+        setExcludedEntries(excludedEntries);
+    }, [reservoirProperties, config]);
 
     const handleLabelsChange = (showLabels: boolean) => {
         setShowLabels(showLabels);
     };
+
+    const isDataValid = (
+        reservoirProperties: Properties,
+        config: ReservoirConfig
+    ): boolean => Boolean(reservoirProperties[config.storageProperty]);
+
+    if (!reservoirProperties) {
+        return null;
+    }
 
     return (
         <>
@@ -38,17 +74,27 @@ const InfoWrapper: React.FC<Props> = (props) => {
                 className={styles.infoChartGroup}
             >
                 <Flex className={styles.graphicPanel}>
-                    <Legend
-                        showLabels={showLabels}
-                        onChange={handleLabelsChange}
-                    />
-                    <TeacupDiagram
-                        reservoirProperties={reservoirProperties}
-                        config={config}
-                        showLabels={showLabels}
-                    />
+                    {isDataValid(reservoirProperties, config) ? (
+                        <>
+                            <Legend
+                                showLabels={showLabels}
+                                onChange={handleLabelsChange}
+                                excludeEntries={excludedEntries}
+                            />
+                            <TeacupDiagram
+                                reservoirProperties={reservoirProperties}
+                                config={config}
+                                showLabels={showLabels}
+                            />
+                        </>
+                    ) : (
+                        <Text ta={'center'}>
+                            This reservoir has no capacity measurement for the
+                            selected date.
+                        </Text>
+                    )}
                 </Flex>
-                <Info
+                <Metrics
                     reservoirProperties={reservoirProperties}
                     config={config}
                 />

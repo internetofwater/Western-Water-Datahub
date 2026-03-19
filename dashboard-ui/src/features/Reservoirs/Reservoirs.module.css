@@ -22,6 +22,15 @@
     padding: 0px;
 }
 
+.dateCheckbox {
+    margin-bottom: 0.4375rem;
+}
+
+.dateDivider {
+    height: 2.0625rem;
+    max-width: var(--divider-size);
+}
+
 .filterWrapper {
     padding: calc(var(--default-spacing) * 2);
 }
@@ -36,8 +45,8 @@
 }
 
 .label {
-    padding-inline-start: calc(var(--default-spacing) / 2);
-    padding-inline-end: calc(var(--default-spacing) * 0.75);
+    padding-inline-start: var(--default-spacing);
+    padding-inline-end: 0;
 }
 
 .multiselect {
@@ -47,6 +56,10 @@
 
 .nameColumn {
     width: 14.15rem;
+}
+
+.nameColumnSmall {
+    width: 12.15rem;
 }
 
 .pageSizeInput {

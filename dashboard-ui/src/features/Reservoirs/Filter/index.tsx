@@ -17,6 +17,7 @@ import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import Up from '@/icons/Up';
 import FilterIcon from '@/icons/Filter';
 import { useLoading } from '@/hooks/useLoading';
+import { ReservoirDateSelector } from '@/features/Reservoirs/ReservoirDateSelector';
 
 type Props = {
     search: string;
@@ -25,6 +26,10 @@ type Props = {
     handleSortByChange: (value: SortByType) => void;
     sortOrder: SortOrder;
     handleSortOrderChange: (value: SortOrder) => void;
+    hideNoData: boolean;
+    handleHideNoDataChange: (hideNoData: boolean) => void;
+    limitByExtent: boolean;
+    onLimitByExtentChange: (limitByExtent: boolean) => void;
 };
 
 export const Filter: React.FC<Props> = (props) => {
@@ -35,6 +40,10 @@ export const Filter: React.FC<Props> = (props) => {
         handleSortByChange,
         sortOrder,
         handleSortOrderChange,
+        hideNoData,
+        handleHideNoDataChange,
+        limitByExtent,
+        onLimitByExtentChange,
     } = props;
 
     const boundingGeographyLevel = useMainStore(
@@ -73,7 +82,7 @@ export const Filter: React.FC<Props> = (props) => {
         >
             <Group
                 justify="space-between"
-                my="calc(var(--default-spacing) / 2)"
+                mt="calc(var(--default-spacing) / 2)"
             >
                 <Title order={3} size="h5">
                     Filters
@@ -82,6 +91,7 @@ export const Filter: React.FC<Props> = (props) => {
                     <FilterIcon />
                 </Box>
             </Group>
+            <ReservoirDateSelector />
             <Group
                 gap="var(--default-spacing)"
                 my="calc(var(--default-spacing) / 2)"
@@ -144,18 +154,45 @@ export const Filter: React.FC<Props> = (props) => {
                 </ActionIcon>
             </Group>
             <BoundingGeography />
-            {boundingGeographyLevel !== BoundingGeographyLevel.None && (
+            <Group
+                gap="var(--default-spacing)"
+                mt="calc(var(--default-spacing) / 2)"
+            >
+                {boundingGeographyLevel !== BoundingGeographyLevel.None && (
+                    <Switch
+                        size="xs"
+                        disabled={isFetchingReservoirs}
+                        classNames={{ label: styles.label }}
+                        label={getLabel(boundingGeographyLevel)}
+                        checked={showAllLabels}
+                        onClick={handleLabelsChange}
+                        {...labelsSwitchProps}
+                    />
+                )}
+                <Switch
+                    size="xs"
+                    disabled={isFetchingReservoirs}
+                    classNames={{ label: styles.label }}
+                    label={'Hide reservoirs with no data'}
+                    checked={hideNoData}
+                    onClick={(e) =>
+                        handleHideNoDataChange(e.currentTarget.checked)
+                    }
+                    {...labelsSwitchProps}
+                />
                 <Switch
                     size="xs"
                     mt="calc(var(--default-spacing) / 2)"
                     disabled={isFetchingReservoirs}
                     classNames={{ label: styles.label }}
-                    label={getLabel(boundingGeographyLevel)}
-                    checked={showAllLabels}
-                    onClick={handleLabelsChange}
+                    label="Hide Reservoirs not on Map"
+                    checked={limitByExtent}
+                    onClick={(event) =>
+                        onLimitByExtentChange(event.currentTarget.checked)
+                    }
                     {...labelsSwitchProps}
                 />
-            )}
+            </Group>
         </Stack>
     );
 };

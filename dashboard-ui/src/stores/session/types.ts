@@ -19,6 +19,7 @@ export enum LoadingType {
     Snotel = 'snotel',
     NOAA = 'noaa',
     Chart = 'chart',
+    SingleReservoir = 'single-date',
 }
 
 export enum Overlay {
@@ -75,5 +76,9 @@ export type SessionState = {
     setHighlight: (highlight: SessionState['highlight']) => void;
     helpTab: HelpTab;
     setHelpTab: (helpTab: SessionState['helpTab']) => void;
+    mapMoved: number;
+    setMapMoved: (mapMoved: SessionState['mapMoved']) => void;
+    hideNoData: boolean;
+    setHideNoData: (hideNoData: SessionState['hideNoData']) => void;
 } & NotificationsSlice &
     LoadingSlice;

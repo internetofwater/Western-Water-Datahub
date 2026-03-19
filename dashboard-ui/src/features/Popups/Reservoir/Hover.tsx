@@ -11,6 +11,10 @@ import dayjs from 'dayjs';
 import { GeoJsonProperties } from 'geojson';
 import styles from '@/features/Popups/Popups.module.css';
 import { TextBlock } from '@/components/TextBlock';
+import {
+    displayPercentage,
+    displayVolumeWithUnits,
+} from '@/utils/reservoirDataDisplay';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
@@ -38,8 +42,8 @@ export const Hover: React.FC<Props> = (props) => {
         reservoirProperties[config.tenthPercentileProperty]
     );
 
-    const percentFull = ((storage / capacity) * 100).toFixed(1);
-    const percentOfAverage = ((storage / average) * 100).toFixed(1);
+    const percentFull = (storage / capacity) * 100;
+    const percentOfAverage = (storage / average) * 100;
 
     return (
         <Card
@@ -53,7 +57,7 @@ export const Hover: React.FC<Props> = (props) => {
             <Group justify="space-between">
                 <Stack gap="xs" className={styles.reservoirLeft}>
                     <Title order={4} size="h5">
-                        {reservoirProperties[config.labelProperty]}
+                        {reservoirProperties[config.longLabelProperty]}
                     </Title>
                     <Graphic
                         reservoirProperties={reservoirProperties}
@@ -81,8 +85,7 @@ export const Hover: React.FC<Props> = (props) => {
                                     Storage:
                                 </Text>
                                 <Text size="xs">
-                                    {storage.toLocaleString('en-US')}
-                                    &nbsp;acre-feet
+                                    {displayVolumeWithUnits(storage)}
                                 </Text>
                             </Group>
                             <Group gap={4} justify="flex-start">
@@ -90,8 +93,7 @@ export const Hover: React.FC<Props> = (props) => {
                                     30-year Average:
                                 </Text>
                                 <Text size="xs">
-                                    {average.toLocaleString('en-US')}
-                                    &nbsp;acre-feet
+                                    {displayVolumeWithUnits(average)}
                                 </Text>
                             </Group>
                             <Group gap={4} justify="flex-start">
@@ -99,8 +101,7 @@ export const Hover: React.FC<Props> = (props) => {
                                     Capacity:
                                 </Text>
                                 <Text size="xs">
-                                    {capacity.toLocaleString('en-US')}
-                                    &nbsp;acre-feet
+                                    {displayVolumeWithUnits(capacity)}
                                 </Text>
                             </Group>
                             <Group gap={4} justify="flex-start">
@@ -108,10 +109,9 @@ export const Hover: React.FC<Props> = (props) => {
                                     (High) 90<sup>th</sup> Percentile:
                                 </Text>
                                 <Text size="xs">
-                                    {ninetiethPercentile.toLocaleString(
-                                        'en-US'
+                                    {displayVolumeWithUnits(
+                                        ninetiethPercentile
                                     )}
-                                    &nbsp;acre-feet
                                 </Text>
                             </Group>
                             <Group gap={4} justify="flex-start">
@@ -119,8 +119,7 @@ export const Hover: React.FC<Props> = (props) => {
                                     (Low) 10<sup>th</sup> Percentile:
                                 </Text>
                                 <Text size="xs">
-                                    {tenthPercentile.toLocaleString('en-US')}
-                                    &nbsp;acre-feet
+                                    {displayVolumeWithUnits(tenthPercentile)}
                                 </Text>
                             </Group>
                         </TextBlock>
@@ -130,13 +129,17 @@ export const Hover: React.FC<Props> = (props) => {
                             <Text size="xs" fw={700}>
                                 Percent Full:
                             </Text>
-                            <Text size="xs">{percentFull}%</Text>
+                            <Text size="xs">
+                                {displayPercentage(percentFull)}
+                            </Text>
                         </Group>
                         <Group gap={4} justify="flex-start">
                             <Text size="xs" fw={700}>
                                 Percent of Average:
                             </Text>
-                            <Text size="xs">{percentOfAverage}%</Text>
+                            <Text size="xs">
+                                {displayPercentage(percentOfAverage)}
+                            </Text>
                         </Group>
                     </TextBlock>
                 </Stack>

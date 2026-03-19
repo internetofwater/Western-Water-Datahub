@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { glossaryEntries, GlossaryEntry } from './consts';
+import { glossaryEntries, GlossaryEntry } from '@/features/Help/consts';
 
 export const getGlossaryEntry = (
     glossaryEntry: string

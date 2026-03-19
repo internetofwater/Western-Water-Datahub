@@ -23,13 +23,12 @@ import {
     RegionsSource,
     BaseLayerOpacity,
     ValidStates,
-    ResVizEDRReservoirSource,
     ValidBasins,
+    TeacupEDRReservoirSource,
 } from '@/features/Map/consts';
 import {
     getDefaultGeoJSON,
     getReservoirConfig,
-    getReservoirFilter,
     getReservoirLabelLayout,
     getReservoirLabelPaint,
     getReservoirSymbolLayout,
@@ -132,12 +131,20 @@ export const sourceConfigs: SourceConfig[] = [
     //         filter: ['!=', ['get', '_id'], 3688],
     //     },
     // },
+    // {
+    //     id: SourceId.ResvizEDRReservoirs,
+    //     type: Sources.GeoJSON,
+    //     definition: {
+    //         type: 'geojson',
+    //         data: ResVizEDRReservoirSource,
+    //     },
+    // },
     {
-        id: SourceId.ResvizEDRReservoirs,
+        id: SourceId.TeacupEDRReservoirs,
         type: Sources.GeoJSON,
         definition: {
             type: 'geojson',
-            data: ResVizEDRReservoirSource,
+            data: TeacupEDRReservoirSource,
         },
     },
     {
@@ -230,13 +237,13 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
         case LayerId.Snotel:
             return 'Snow Water Equivalent Averages (%)';
         case LayerId.NOAARiverForecast:
-            return 'River Forecast Points (%)';
+            return 'Water Supply Forecast Points (%)';
         case LayerId.USDroughtMonitor:
-            return 'Drought';
+            return 'Drought Forecast';
         case LayerId.NOAAPrecipSixToTen:
-            return 'Precipitation';
+            return 'Precipitation Forecast (% Chance)';
         case LayerId.NOAATempSixToTen:
-            return 'Temperature';
+            return 'Temperature Forecast (% Chance)';
         default:
             return '';
     }
@@ -328,15 +335,16 @@ export const getLayerConfig = (
                 source: SourceId.RegionCenters,
                 layout: {
                     'text-field': ['get', RegionField.Name],
+                    'text-font': ['Arial Unicode MS Bold'],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                     'text-size': 22,
                     'text-allow-overlap': true,
                     'text-ignore-placement': true,
                 },
                 paint: {
-                    'text-color': '#fff',
+                    'text-color': '#000',
                     'text-opacity': 0,
-                    'text-halo-color': '#000000',
+                    'text-halo-color': '#fff',
                     'text-halo-width': 2,
                 },
             };
@@ -406,15 +414,16 @@ export const getLayerConfig = (
                 source: SourceId.BasinCenters,
                 layout: {
                     'text-field': ['get', Huc02BasinField.Name],
+                    'text-font': ['Arial Unicode MS Bold'],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                     'text-size': 22,
                     'text-allow-overlap': true,
                     'text-ignore-placement': true,
                 },
                 paint: {
-                    'text-color': '#fff',
+                    'text-color': '#000',
                     'text-opacity': 0,
-                    'text-halo-color': '#000000',
+                    'text-halo-color': '#fff',
                     'text-halo-width': 2,
                 },
             };
@@ -478,15 +487,16 @@ export const getLayerConfig = (
                 source: SourceId.StateCenters,
                 layout: {
                     'text-field': ['get', 'name'],
+                    'text-font': ['Arial Unicode MS Bold'],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
                     'text-size': 22,
                     'text-allow-overlap': true,
                     'text-ignore-placement': true,
                 },
                 paint: {
-                    'text-color': '#fff',
+                    'text-color': '#000',
                     'text-opacity': 0,
-                    'text-halo-color': '#000000',
+                    'text-halo-color': '#fff',
                     'text-halo-width': 2,
                 },
             };
@@ -506,58 +516,25 @@ export const getLayerConfig = (
                     'line-width': 3,
                 },
             };
-        // case LayerId.RiseEDRReservoirs:
-        //     return {
-        //         id: LayerId.RiseEDRReservoirs,
-        //         type: LayerType.Symbol,
-        //         source: SourceId.RiseEDRReservoirs,
-        //         filter: getReservoirFilter(
-        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
-        //         ),
-        //         layout: getReservoirSymbolLayout(
-        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
-        //         ),
-        //     };
-        // case SubLayerId.RiseEDRReservoirLabels:
-        //     return {
-        //         id: SubLayerId.RiseEDRReservoirLabels,
-        //         type: LayerType.Symbol,
-        //         source: SourceId.RiseEDRReservoirs,
-        //         filter: getReservoirFilter(
-        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
-        //         ),
-        //         layout: getReservoirLabelLayout(
-        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
-        //         ),
-        //         paint: getReservoirLabelPaint(
-        //             getReservoirConfig(SourceId.RiseEDRReservoirs)!
-        //         ),
-        //     };
-        case LayerId.ResvizEDRReservoirs:
+        case LayerId.TeacupEDRReservoirs:
             return {
-                id: LayerId.ResvizEDRReservoirs,
+                id: LayerId.TeacupEDRReservoirs,
                 type: LayerType.Symbol,
-                source: SourceId.ResvizEDRReservoirs,
-                filter: getReservoirFilter(
-                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
-                ),
+                source: SourceId.TeacupEDRReservoirs,
                 layout: getReservoirSymbolLayout(
-                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                    getReservoirConfig(SourceId.TeacupEDRReservoirs)!
                 ),
             };
-        case SubLayerId.ResvizEDRReservoirLabels:
+        case SubLayerId.TeacupEDRReservoirLabels:
             return {
-                id: SubLayerId.ResvizEDRReservoirLabels,
+                id: SubLayerId.TeacupEDRReservoirLabels,
                 type: LayerType.Symbol,
-                source: SourceId.ResvizEDRReservoirs,
-                filter: getReservoirFilter(
-                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
-                ),
+                source: SourceId.TeacupEDRReservoirs,
                 layout: getReservoirLabelLayout(
-                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                    getReservoirConfig(SourceId.TeacupEDRReservoirs)!
                 ),
                 paint: getReservoirLabelPaint(
-                    getReservoirConfig(SourceId.ResvizEDRReservoirs)!
+                    getReservoirConfig(SourceId.TeacupEDRReservoirs)!
                 ),
             };
 
@@ -775,15 +752,18 @@ export const getLayerHoverFunction = (
                             feature,
                         });
                     }
-                    // showReservoirPopup(
-                    //     getReservoirConfig(SourceId.ResvizEDRReservoirs)!,
-                    //     map,
-                    //     e,
-                    //     root,
-                    //     container,
-                    //     hoverPopup,
-                    //     false
-                    // );
+                };
+            case LayerId.TeacupEDRReservoirs:
+                return (e) => {
+                    const feature = e.features?.[0] as Feature<Point>;
+                    if (feature) {
+                        useSessionStore.getState().setHighlight({
+                            config: getReservoirConfig(
+                                SourceId.TeacupEDRReservoirs
+                            )!,
+                            feature,
+                        });
+                    }
                 };
             case SubLayerId.RegionsFill:
                 return (e) => {
@@ -948,7 +928,12 @@ export const getLayerHoverFunction = (
                             </div>
                             `;
                             hoverPopup
-                                .setLngLat(e.lngLat)
+                                .setLngLat(
+                                    feature.geometry.coordinates as [
+                                        number,
+                                        number,
+                                    ]
+                                )
                                 .setHTML(html)
                                 .addTo(map);
                         }
@@ -994,6 +979,11 @@ export const getLayerCustomHoverExitFunction = (
     ) => {
         switch (id) {
             case LayerId.ResvizEDRReservoirs:
+                return () => {
+                    map.getCanvas().style.cursor = '';
+                    useSessionStore.getState().setHighlight(null);
+                };
+            case LayerId.TeacupEDRReservoirs:
                 return () => {
                     map.getCanvas().style.cursor = '';
                     useSessionStore.getState().setHighlight(null);
@@ -1102,6 +1092,18 @@ export const getLayerMouseMoveFunction = (
                         useSessionStore.getState().setHighlight({
                             config: getReservoirConfig(
                                 SourceId.ResvizEDRReservoirs
+                            )!,
+                            feature,
+                        });
+                    }
+                };
+            case LayerId.TeacupEDRReservoirs:
+                return (e) => {
+                    const feature = e.features?.[0] as Feature<Point>;
+                    if (feature) {
+                        useSessionStore.getState().setHighlight({
+                            config: getReservoirConfig(
+                                SourceId.TeacupEDRReservoirs
                             )!,
                             feature,
                         });
@@ -1271,7 +1273,7 @@ export const getLayerMouseMoveFunction = (
                                 .setLngLat(
                                     feature.geometry.coordinates as [
                                         number,
-                                        number
+                                        number,
                                     ]
                                 )
                                 .setHTML(html)
@@ -1348,7 +1350,7 @@ export const getLayerClickFunction = (
                                 .setLngLat(
                                     feature.geometry.coordinates as [
                                         number,
-                                        number
+                                        number,
                                     ]
                                 )
                                 .setHTML(html)
@@ -1371,23 +1373,97 @@ export const getLayerClickFunction = (
                                 'dataset_link'
                             ] as string;
 
+                            const title = feature.properties[
+                                'espname'
+                            ] as string;
+
                             const html = `
-                                <div style="color:black;width:400px;">
+                                <div style="color:var(--foreground);width:400px;">
+                                    <div style="margin-bottom:var(--default-spacing);">${title}</div>
                                     <a href="${datasetLink}" target="_blank">
-                                        <img style="width:100%;" src="${imageLink}" alt="Plot of forecasted river conditions" />
-                                        Data Source
+                                    <div id="noaa-rfc-skeleton" class="skeleton-animation">
+                                        <img
+                                        id="popup-img"
+                                        src="${imageLink}"
+                                        alt="Plot of forecasted river conditions"
+                                        loading="lazy"
+                                        decoding="async"
+                                        style="
+                                            width:100%;
+                                            height:100%;
+                                            object-fit:contain;
+                                            opacity:0;
+                                            transition:opacity 0.25s ease;
+                                        "
+                                        />
+                                    </div>
+                                    <div style="margin-top:var(--default-spacing);">Data Source</div>
                                     </a>
                                 </div>
                                 `;
+
                             persistentPopup
                                 .setLngLat(
                                     feature.geometry.coordinates as [
                                         number,
-                                        number
+                                        number,
                                     ]
                                 )
                                 .setHTML(html)
                                 .addTo(map);
+
+                            // Mock async loading behavior
+                            requestAnimationFrame(() => {
+                                const img =
+                                    document.getElementById('popup-img');
+                                if (!img) return;
+
+                                // Image loaded successfully, remove animation, show image
+                                img.addEventListener('load', () => {
+                                    const parentDiv =
+                                        document.getElementById(
+                                            'noaa-rfc-skeleton'
+                                        );
+                                    if (parentDiv) {
+                                        parentDiv.classList.remove(
+                                            'skeleton-animation'
+                                        );
+                                    }
+
+                                    img.style.opacity = '1';
+                                });
+
+                                // Image failed to load, remove animation, show fallback
+                                img.addEventListener('error', () => {
+                                    const parentDiv =
+                                        document.getElementById(
+                                            'noaa-rfc-skeleton'
+                                        );
+                                    if (parentDiv) {
+                                        parentDiv.classList.remove(
+                                            'skeleton-animation'
+                                        );
+                                    }
+
+                                    img.replaceWith(
+                                        Object.assign(
+                                            document.createElement('div'),
+                                            {
+                                                textContent:
+                                                    'Image unavailable',
+                                                style: `
+                                                    position:absolute;
+                                                    inset:0;
+                                                    display:flex;
+                                                    align-items:center;
+                                                    justify-content:center;
+                                                    background:#fafafa;
+                                                `,
+                                            }
+                                        )
+                                    );
+                                });
+                            });
                         }
                     }
                 };
@@ -1579,40 +1655,22 @@ export const layerDefinitions: MainLayerDefinition[] = [
         clickFunction: getLayerClickFunction(LayerId.NOAARiverForecast),
         hoverFunction: getLayerHoverFunction(LayerId.NOAARiverForecast),
     },
-
-    // {
-    //     id: LayerId.RiseEDRReservoirs,
-    //     config: getLayerConfig(LayerId.RiseEDRReservoirs),
-    //     controllable: false,
-    //     legend: false,
-    //     hoverFunction: getLayerHoverFunction(LayerId.RiseEDRReservoirs),
-    //     mouseMoveFunction: getLayerMouseMoveFunction(LayerId.RiseEDRReservoirs),
-    //     subLayers: [
-    //         {
-    //             id: SubLayerId.RiseEDRReservoirLabels,
-    //             config: getLayerConfig(SubLayerId.RiseEDRReservoirLabels),
-    //             controllable: false,
-    //             legend: false,
-    //         },
-    //     ],
-    //     // hoverFunction: getLayerHoverFunction(LayerId.Reservoirs),
-    // },
     {
-        id: LayerId.ResvizEDRReservoirs,
-        config: getLayerConfig(LayerId.ResvizEDRReservoirs),
+        id: LayerId.TeacupEDRReservoirs,
+        config: getLayerConfig(LayerId.TeacupEDRReservoirs),
         controllable: false,
         legend: false,
-        hoverFunction: getLayerHoverFunction(LayerId.ResvizEDRReservoirs),
+        hoverFunction: getLayerHoverFunction(LayerId.TeacupEDRReservoirs),
         customHoverExitFunction: getLayerCustomHoverExitFunction(
-            LayerId.ResvizEDRReservoirs
+            LayerId.TeacupEDRReservoirs
         ),
         mouseMoveFunction: getLayerMouseMoveFunction(
-            LayerId.ResvizEDRReservoirs
+            LayerId.TeacupEDRReservoirs
         ),
         subLayers: [
             {
-                id: SubLayerId.ResvizEDRReservoirLabels,
-                config: getLayerConfig(SubLayerId.ResvizEDRReservoirLabels),
+                id: SubLayerId.TeacupEDRReservoirLabels,
+                config: getLayerConfig(SubLayerId.TeacupEDRReservoirLabels),
                 controllable: false,
                 legend: false,
             },

@@ -3,7 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Group, Loader, Select, Slider, Stack, Text } from '@mantine/core';
+import {
+    Divider,
+    Group,
+    Loader,
+    Select,
+    Slider,
+    Stack,
+    Text,
+} from '@mantine/core';
 import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { RasterBaseLayers } from '@/features/Map/types';
@@ -15,23 +23,24 @@ import {
     updateBaseLayerOpacity,
     updateNOAARFC,
     updateSnotel,
-} from '@/features/Controls/utils';
-import styles from '@/features/Controls/Controls.module.css';
-import { Links } from '@/features/Controls/Links';
-import { Entry } from '@/features/Controls/Entry';
+} from '@/features/ReferenceData/utils';
+import styles from '@/features/ReferenceData/ReferenceData.module.css';
+import { Links } from '@/features/ReferenceData/Links';
+import { Entry } from '@/features/ReferenceData/Entry';
+import { getLayerName } from '@/features/Map/config';
 
 const RasterBaseLayerIconObj = [
     {
         id: RasterBaseLayers.Drought,
-        friendlyName: 'Drought',
+        friendlyName: getLayerName(LayerId.USDroughtMonitor),
     },
     {
         id: RasterBaseLayers.Precipitation,
-        friendlyName: 'Precipitation',
+        friendlyName: getLayerName(LayerId.NOAAPrecipSixToTen),
     },
     {
         id: RasterBaseLayers.Temperature,
-        friendlyName: 'Temperature',
+        friendlyName: getLayerName(LayerId.NOAATempSixToTen),
     },
     {
         id: RasterBaseLayers.None,
@@ -43,7 +52,7 @@ const RasterBaseLayerIconObj = [
  *
  * @component
  */
-const Controls: React.FC = () => {
+const ReferenceData: React.FC = () => {
     const [baseLayerOpacity, setBaseLayerOpacity] = useState(BaseLayerOpacity);
 
     const toggleableLayers = useMainStore((state) => state.toggleableLayers);
@@ -179,7 +188,7 @@ const Controls: React.FC = () => {
                 <>
                     <Entry
                         layerId={LayerId.NOAARiverForecast}
-                        label="Show River Forecast Points (NOAA RFC)"
+                        label="Show Water Supply Forecast Locations (NOAA RFC)"
                         onClick={handleNOAARFCChange}
                         toggleableLayers={toggleableLayers}
                     />
@@ -189,7 +198,7 @@ const Controls: React.FC = () => {
                         onClick={handleSnotelChange}
                         toggleableLayers={toggleableLayers}
                     />
-
+                    <Divider size="md" />
                     <Stack gap="calc(var(--default-spacing) / 2)">
                         <Select
                             id="baseLayerSelector"
@@ -214,7 +223,7 @@ const Controls: React.FC = () => {
                         )}
                     </Stack>
                     {getBaseLayerValue() !== RasterBaseLayers.None && (
-                        <Stack gap="xs">
+                        <Stack gap="calc(var(--default-spacing) / 2)">
                             <Text size="sm">Base Layer Opacity</Text>
                             <Slider
                                 min={0}
@@ -226,6 +235,7 @@ const Controls: React.FC = () => {
                             />
                         </Stack>
                     )}
+                    <Divider size="md" />
                     <Entry
                         layerId={LayerId.RegionsReference}
                         label="Show DOI Region Boundaries"
@@ -257,4 +267,4 @@ const Controls: React.FC = () => {
     );
 };
 
-export default Controls;
+export default ReferenceData;
