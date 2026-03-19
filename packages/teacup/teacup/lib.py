@@ -331,7 +331,12 @@ def create_feature(pg_layer, row, parameter: str):
     feature = ogr.Feature(pg_layer.GetLayerDefn())
     id = f"{row['SiteId']}.{row['DataDate']}.{parameter}"
     feature.SetField("id", id)
-    feature.SetField("value", row[p_val])
+
+    # if the value is an empty string, '' this should be explicitly set to
+    # None; otherwise it seems like gdal may try to convert it to 0
+    # upon db insert
+    val = row[p_val] or None
+    feature.SetField("value", val)
     feature.SetField("data_date", row["DataDate"])
     feature.SetField("monitoring_location_id", row["SiteId"])
     feature.SetField("parameter_id", parameter)
