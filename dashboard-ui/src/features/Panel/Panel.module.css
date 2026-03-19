@@ -16,23 +16,6 @@
     width: 1rem;
 }
 
-.panel {
-    height: 100%;
-    height: 100vh;
-    max-height: 100vh;
-    width: 31rem;
-    min-width: 31rem;
-    max-width: 25%;
-    margin: 0 auto;
-    z-index: 199;
-    background: var(--mantine-color-body);
-}
-
-.root {
-    max-height: calc(100% - 13.125rem);
-    overflow-y: auto;
-}
-
 .content {
     padding: 0px;
 }
@@ -41,6 +24,15 @@
     background: var(--mantine-color-body);
     border-bottom: 1px solid var(--item-border-color);
     border-top: 1px solid var(--item-border-color);
+}
+
+.footer {
+    border-top: 1px solid var(--mantine-color-default-border);
+}
+
+.root {
+    max-height: calc(100% - 12.625rem);
+    overflow-y: auto;
 }
 
 .sticky .control {
@@ -64,6 +56,18 @@
 .mobileClose svg {
     width: 2rem;
     height: auto;
+}
+
+.panel {
+    height: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    width: 31rem;
+    min-width: 31rem;
+    max-width: 25%;
+    margin: 0 auto;
+    z-index: 199;
+    background: var(--mantine-color-body);
 }
 
 @media screen and (max-width: 899px) {
@@ -112,9 +116,34 @@
 :where([data-mantine-color-scheme='light']) div.mapboxgl-popup-content {
     color: #000;
 }
-/* :where([data-mantine-color-scheme='dark']) .content {
-    background: var(--mantine-color-dark-6);
+
+/* TODO: static sizing of USBR logo causing layout issues with rem sizing */
+@media screen and (max-width: 1280px) {
+    .root {
+        max-height: calc(100% - 188px);
+    }
 }
-:where([data-mantine-color-scheme='light']) .content {
-    background: var(--mantine-color-gray-2);
-} */
+
+@media screen and (max-width: 1024px) {
+    .root {
+        max-height: calc(100% - 172px);
+    }
+}
+
+@media screen and (max-width: 899px) {
+    .root {
+        max-height: calc(100% - 219px);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .root {
+        max-height: calc(100% - 188px);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .root {
+        max-height: calc(100% - 172px);
+    }
+}

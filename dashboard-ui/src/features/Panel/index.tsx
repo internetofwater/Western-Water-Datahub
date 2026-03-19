@@ -124,10 +124,13 @@ const Panel: React.FC<Props> = (props) => {
                     </AccordionItem>
                 ))}
             </Accordion>
-            <Group justify="space-between" p="calc(var(--default-spacing) * 2)">
-                <Group gap="var(--default-spacing)">
-                    <Help />
-                </Group>
+            <Group
+                justify="space-between"
+                px="calc(var(--default-spacing) * 2)"
+                py="var(--default-spacing)"
+                className={styles.footer}
+            >
+                <Help />
                 <DarkModeToggle />
             </Group>
         </Paper>
