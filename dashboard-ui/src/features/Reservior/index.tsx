@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { useRef } from 'react';
-import { ActionIcon, Divider, Group, Modal, Title } from '@mantine/core';
+import { ActionIcon, Divider, Group, Modal, Title, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { ReservoirConfig } from '@/features/Map/types';
 import { SourceId } from '@/features/Map/consts';
@@ -32,6 +32,7 @@ import debounce from 'lodash.debounce';
 import { useLoading } from '@/hooks/useLoading';
 import { Properties } from '@/components/Map/types';
 import Reset from '@/icons/Reset';
+import { TeacupReservoirField } from '../Map/types/reservoir/teacup';
 
 /**
  *
@@ -60,6 +61,7 @@ const Reservoir: React.FC = () => {
     const [reservoirId, setReservoirId] = useState<string | number>();
     const [config, setConfig] = useState<ReservoirConfig>();
     const [currentDate, setCurrentDate] = useState(reservoirDate);
+    const [isLocation, setIsLocation] = useState(false);
 
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
@@ -90,6 +92,15 @@ const Reservoir: React.FC = () => {
                 currentDate
         ) {
             return;
+        }
+
+        if (config.id === SourceId.TeacupEDRReservoirs) {
+            const isItem = Boolean(
+                initialReservoirProperties[TeacupReservoirField.Item]
+            );
+            if (isItem) {
+                return;
+            }
         }
 
         const name = String(
@@ -194,10 +205,20 @@ const Reservoir: React.FC = () => {
                     );
 
                     setReservoirId(id);
-                    if (properties && properties[config.storageDateProperty]) {
-                        setCurrentDate(
-                            String(properties[config.storageDateProperty])
-                        );
+                    if (properties) {
+                        if (config.id === SourceId.TeacupEDRReservoirs) {
+                            const isLocation =
+                                !properties[TeacupReservoirField.Item];
+                            setIsLocation(isLocation);
+                        }
+
+                        const currentDate = properties[
+                            config.storageDateProperty
+                        ]
+                            ? String(properties[config.storageDateProperty])
+                            : dayjs().format('YYYY-MM-DD');
+
+                        setCurrentDate(currentDate);
                     }
 
                     setInitialReservoirProperties(properties);
@@ -222,18 +243,32 @@ const Reservoir: React.FC = () => {
     }, [overlay]);
 
     const handleSetToDefault = () => {
-        const today = new Date().toDateString();
+        const today = dayjs().format('YYYY-MM-DD');
 
         if (reservoir && initialReservoirProperties) {
             const config = getReservoirConfig(reservoir.source as SourceId);
 
             if (config) {
-                const storedDate = String(
-                    initialReservoirProperties[config.storageDateProperty]
-                );
+                const storedDate = initialReservoirProperties[
+                    config.storageDateProperty
+                ] as string | undefined;
+                const finalDate = reservoirDate
+                    ? reservoirDate
+                    : storedDate
+                      ? storedDate
+                      : today;
 
-                const finalDate = reservoirDate ?? storedDate ?? today;
                 setCurrentDate(String(finalDate));
+
+                if (config.id === SourceId.TeacupEDRReservoirs) {
+                    const isLocation =
+                        Boolean(
+                            initialReservoirProperties[
+                                TeacupReservoirField.Item
+                            ]
+                        ) === false;
+                    setIsLocation(isLocation);
+                }
                 return;
             }
         }
@@ -272,35 +307,44 @@ const Reservoir: React.FC = () => {
                     reservoirProperties={currentReservoirProperties}
                     config={config}
                 />
-                <Group gap="var(--default-spacing)" align="flex-end">
-                    <DateInput
-                        size="xs"
-                        className={styles.dateSelector}
-                        valueFormat="MM/DD/YYYY"
-                        disabled={isFetchingSingleReservoir}
-                        value={
-                            currentDate
-                                ? dayjs(currentDate).toDate()
-                                : undefined
-                        }
-                        maxDate={new Date()}
-                        label="Reservoir Storage Date"
-                        onChange={debouncedHandleDateChange}
-                    />
-                    <ActionIcon
-                        classNames={{ icon: styles.actionIcon }}
-                        onClick={handleSetToDefault}
-                    >
-                        <Reset />
-                    </ActionIcon>
-                </Group>
+                {isLocation && (
+                    <Group gap="var(--default-spacing)" align="flex-end">
+                        <DateInput
+                            size="xs"
+                            className={styles.dateSelector}
+                            valueFormat="MM/DD/YYYY"
+                            disabled={isFetchingSingleReservoir}
+                            value={
+                                currentDate
+                                    ? dayjs(currentDate).toDate()
+                                    : undefined
+                            }
+                            maxDate={new Date()}
+                            label="Reservoir Storage Date"
+                            onChange={debouncedHandleDateChange}
+                        />
+                        <ActionIcon
+                            classNames={{ icon: styles.actionIcon }}
+                            onClick={handleSetToDefault}
+                        >
+                            <Reset />
+                        </ActionIcon>
+                    </Group>
+                )}
+
                 <Divider my="var(--default-spacing)" />
-                <Chart
-                    currentDate={currentDate}
-                    id={reservoirId}
-                    ref={chartRef}
-                    config={config}
-                />
+                {isLocation ? (
+                    <Chart
+                        currentDate={currentDate}
+                        id={reservoirId}
+                        ref={chartRef}
+                        config={config}
+                    />
+                ) : (
+                    <Text ta={'center'} mt="14%">
+                        This reservoir has no storage measurements available.
+                    </Text>
+                )}
             </>
         </Modal>
     );
