@@ -733,11 +733,15 @@ export const appendTeacupDataProperties = async (
             // 30-year Average
             updatedProperties[TeacupReservoirField.StorageAverage] = undefined;
             updatedProperties[TeacupReservoirField.StorageDate] = undefined;
+            updatedProperties[TeacupReservoirField.Item] = true;
 
             return {
                 ...feature,
                 properties: updatedProperties,
             };
+        } else {
+            // Mark that this is a location, not item
+            updatedProperties[TeacupReservoirField.Item] = false;
         }
 
         const coverage = result.value;
@@ -761,6 +765,7 @@ export const appendTeacupDataProperties = async (
         );
         updatedProperties[TeacupReservoirField.StorageDate] = coverage.domain
             .axes.t.values?.[0] as string;
+
         return {
             ...feature,
             properties: updatedProperties,
