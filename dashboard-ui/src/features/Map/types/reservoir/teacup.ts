@@ -24,6 +24,7 @@ export enum TeacupReservoirField {
     StorageAverage = 'avg',
     StorageDate = 'storage_date',
     Huc02 = 'huc02', // Client side property for easier filtering by huc02
+    Item = 'item', // Client side property to determine if this res is a location
 }
 
 export type TeacupReservoirProperties = {

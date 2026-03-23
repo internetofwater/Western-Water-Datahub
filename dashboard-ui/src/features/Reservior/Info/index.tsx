@@ -89,7 +89,7 @@ const InfoWrapper: React.FC<Props> = (props) => {
                         </>
                     ) : (
                         <Text ta={'center'}>
-                            This reservoir has no capacity measurement for the
+                            This reservoir has no storage measurement for the
                             selected date.
                         </Text>
                     )}
