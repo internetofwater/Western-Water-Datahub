@@ -1,8 +1,8 @@
 # Western Water Datahub
 
-The Wester Water Datahub (WWDH) is an implementation of the [OGC API](https://ogcapi.ogc.org/) suite of standards, enabling access to water data from various sources through a unified interface. It is designed to enhance data interoperability, accessibility, and discoverability across multiple water data platforms.
+The Western Water Datahub (WWDH) is an implementation of the [OGC API](https://ogcapi.ogc.org/) suite of standards, enabling access to water data from various sources through a unified interface. It is designed to enhance data interoperability, accessibility, and discoverability across multiple water data platforms.
 
-This project is a collaboration between the United States Beaureu of Reclamation, the Center for Geospatial Solutions, and Wester States Water Council.
+This project is a collaboration between the United States Bureau of Reclamation, the Center for Geospatial Solutions, and Western States Water Council.
 
 ## Source Systems
 

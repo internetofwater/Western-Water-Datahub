@@ -31,13 +31,24 @@ RUN uv sync --group deployment
 COPY packages /opt/pygeoapi/packages/
 # Install all local integrations
 # --inexact makes it so the deployment packages we just copied aren't removed
-RUN uv sync --all-packages --inexact 
+RUN uv sync --all-packages --inexact
+RUN uv pip install GDAL==`gdal-config --version`
 
 COPY pygeoapi-deployment/ /opt/pygeoapi/pygeoapi-deployment/
 COPY pygeoapi.config.yml /opt/pygeoapi/local.config.yml
 
 # Set up environment
 ENV PATH="/opt/pygeoapi/.venv/bin:$PATH"
+
+# WWDH uses a custom event loop; we define the
+# import path here
+ENV PYGEOAPI_CUSTOM_EVENT_LOOP_MODULE=com.env
+ENV PYGEOAPI_CUSTOM_EVENT_LOOP_GETTER=get_loop
+
+# Cache the __init__ method of plugin objects;
+# this allows us to store a persistent object
+# instead of needing to initialize it new each time
+ENV PYGEOAPI_CACHE_PLUGINS=true
 
 # Entrypoint for running the app
 ENTRYPOINT [ "/opt/pygeoapi/pygeoapi-deployment/entrypoint.sh" ]

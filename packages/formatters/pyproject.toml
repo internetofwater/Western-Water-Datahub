@@ -1,0 +1,20 @@
+# Copyright 2026 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
+[project]
+name = "formatters"
+version = "0.1.0"
+description = "Custom formatters for the various WWDH integrations"
+readme = "README.md"
+authors = [
+    { name = "Colton Loftus", email = "70598503+C-Loftus@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"

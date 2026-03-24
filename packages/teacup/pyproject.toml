@@ -1,0 +1,30 @@
+# Copyright 2025 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
+[project]
+name = "teacup"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "geoalchemy2>=0.17.1",
+    "pgedr==0.2.0",
+    "psycopg2>=2.9.10",
+]
+
+[project.optional-dependencies]
+gdal = ["GDAL"]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+teacup = "teacup:cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["teacup"]
+
+[tool.hatch.metadata]
+allow-direct-references = true

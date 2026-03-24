@@ -33,8 +33,8 @@
             {% if data['dataset_link'] %},
             "schema:url": {{ data['dataset_link'] | tojson }}
             {% endif %}
-            {% if data['image_plot_link'] %},
-            "schema:image": {{ data['image_plot_link'] | tojson }}
+            {% if data.get('image_plot_link') %},
+            "schema:image": {{ data.get('image_plot_link') | tojson }}
             {% endif %}
         }
     ]

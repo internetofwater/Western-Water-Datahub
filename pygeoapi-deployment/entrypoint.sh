@@ -24,7 +24,7 @@ CONTAINER_NAME=${CONTAINER_NAME:=pygeoapi}
 CONTAINER_HOST=${CONTAINER_HOST:=0.0.0.0}
 CONTAINER_PORT=${CONTAINER_PORT:=80}
 WSGI_APP=${WSGI_APP:=pygeoapi.flask_app:APP}
-WSGI_WORKERS=${WSGI_WORKERS:=4}
+WSGI_WORKERS=${WSGI_WORKERS:=9}
 WSGI_WORKER_TIMEOUT=${WSGI_WORKER_TIMEOUT:=6000}
 WSGI_WORKER_CLASS=${WSGI_WORKER_CLASS:=gevent}
 
@@ -91,6 +91,11 @@ case ${entry_cmd} in
     crawl-resviz)
         echo "Crawling resviz layers into PostGIS"
         exec resviz
+        ;;
+
+    teacup)
+        echo "Crawling teacup layers into PostGIS"
+        exec ${@}
         ;;
 
     *)

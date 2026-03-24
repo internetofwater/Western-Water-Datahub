@@ -3,10 +3,11 @@
 
 import asyncio
 import logging
-from typing import Any, Coroutine, Literal, Optional, Tuple, Type, TypedDict
 from annotated_types import T
+from typing import Any
+from typing import Coroutine, Literal, Optional, Tuple, Type, TypedDict
 from com.datetime import datetime_from_iso
-from com.env import wwdh_event_loop
+from com.env import get_loop
 from pydantic import BaseModel
 from rise.lib.types.helpers import ZType
 import datetime
@@ -17,7 +18,7 @@ from pygeoapi.provider.base import ProviderQueryError
 LOGGER = logging.getLogger(__name__)
 
 OAFFieldsMapping = dict[
-    str, dict[Literal["type"], Literal["number", "string", "integer"]]
+    str, dict[Literal["type"], Literal["number", "string", "integer", "boolean"]]
 ]
 
 
@@ -36,9 +37,13 @@ EDRFieldsMapping = dict[str, EDRField]
 
 def await_(coro: Coroutine[Any, Any, T]) -> T:
     """
-    await an asyncio coroutine, ensuring it works even if an event loop is already running.
+    await a coroutine using our custom event loop; this allows us to run async
+    inside of flask gevent workers and other runtimes that would otherwise cause
+    async issues due to ephemeral event loops
     """
-    return asyncio.run_coroutine_threadsafe(coro, loop=wwdh_event_loop).result()
+    loop = get_loop()
+    future = asyncio.run_coroutine_threadsafe(coro, loop)
+    return future.result()
 
 
 def parse_z(z: str) -> Optional[Tuple[ZType, list[int]]]:
@@ -141,7 +146,7 @@ def get_oaf_fields_from_pydantic_model(model: Type[BaseModel]) -> OAFFieldsMappi
     pydanticFields = model.model_fields
     fields: OAFFieldsMapping = {}
     for fieldName in pydanticFields.keys():
-        dataType: Literal["number", "string", "integer"]
+        dataType: Literal["number", "string", "integer", "boolean"]
 
         aliasName: str | None = pydanticFields[fieldName].alias
         if aliasName:
@@ -155,6 +160,8 @@ def get_oaf_fields_from_pydantic_model(model: Type[BaseModel]) -> OAFFieldsMappi
             dataType = "integer"
         elif "float" in str(pydanticFields[fieldName].annotation):
             dataType = "number"
+        elif "bool" in str(pydanticFields[fieldName].annotation):
+            dataType = "boolean"
         else:
             LOGGER.warning(
                 f"Skipping OAF field '{name}' with unmappable type {pydanticFields[fieldName].annotation}"

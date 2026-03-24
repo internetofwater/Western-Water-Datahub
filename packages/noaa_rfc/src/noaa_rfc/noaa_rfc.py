@@ -7,9 +7,9 @@ from typing import Literal, Optional
 from com.helpers import get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
 from com.protocols.providers import OAFProviderProtocol
-from noaa_rfc.lib.forecast import ForecastCollection, ForecastDataSingle
+from noaa_rfc.lib.forecast import ForecastCollection, ForecastDataForNOAAStation
 from pygeoapi.provider.base import BaseProvider
-from pygeoapi.util import crs_transform
+from pygeoapi.crs import crs_transform
 from com.geojson.helpers import (
     GeojsonFeatureDict,
     GeojsonFeatureCollectionDict,
@@ -107,5 +107,7 @@ class NOAARFCProvider(BaseProvider, OAFProviderProtocol):
         :returns: dict of field names and their associated JSON Schema types
         """
         if not self._fields:
-            self._fields = get_oaf_fields_from_pydantic_model(ForecastDataSingle)
+            self._fields = get_oaf_fields_from_pydantic_model(
+                ForecastDataForNOAAStation
+            )
         return self._fields

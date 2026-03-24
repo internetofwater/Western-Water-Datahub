@@ -1,8 +1,8 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-import asyncio
 import os
+from typing import Optional
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import (
@@ -12,6 +12,7 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 import requests
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
+import asyncio
 import threading
 
 """
@@ -63,20 +64,38 @@ TRACER = trace.get_tracer(os.environ.get("OTEL_TRACER_NAME", "wwdh_tracer"))
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 
-wwdh_event_loop = asyncio.new_event_loop()
+
+_custom_event_loop: Optional[asyncio.AbstractEventLoop] = None
+_custom_event_loop_thread: Optional[threading.Thread] = None
 
 
-def loop_forever():
+def get_loop():
     """
-    Start a shared event loop so we can run async code across providers
+    Get the custom event loop for async operations; this can
+    be used for passing the loop to other tools which internally
+    use asyncio and need a reference to the event loop
     """
-    try:
-        asyncio.set_event_loop(wwdh_event_loop)
-        wwdh_event_loop.run_forever()
-    finally:
-        wwdh_event_loop.run_until_complete(wwdh_event_loop.shutdown_asyncgens())
-        wwdh_event_loop.close()
+
+    def _start_loop(loop: asyncio.AbstractEventLoop):
+        asyncio.set_event_loop(loop)
+        loop.run_forever()
+
+    global _custom_event_loop, _custom_event_loop_thread
+
+    if _custom_event_loop is None:
+        _custom_event_loop = asyncio.new_event_loop()
+        _custom_event_loop_thread = threading.Thread(
+            target=_start_loop,
+            args=(_custom_event_loop,),
+            daemon=True,
+        )
+        _custom_event_loop_thread.start()
+
+    return _custom_event_loop
 
 
-loop_thread = threading.Thread(target=loop_forever, daemon=True)
-loop_thread.start()
+# Initialize the event loop
+# This MUST BE DONE BEFORE ANY ASYNC OPERATIONS
+# i.e. this means that you should not have any global
+# code which utilizes async operations
+_custom_event_loop = get_loop()

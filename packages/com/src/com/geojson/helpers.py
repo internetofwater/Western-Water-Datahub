@@ -99,6 +99,15 @@ def all_properties_found_in_feature(
                 prop_value = int(prop_value)
             case "string":
                 prop_value = str(prop_value)
+            case "boolean":
+                if isinstance(prop_value, str):
+                    prop_value = prop_value.lower() == "true"
+                elif isinstance(prop_value, bool):
+                    prop_value = prop_value
+                else:
+                    raise ProviderQueryError(
+                        f"Ambiguous boolean value '{prop_value}' for property '{prop_name}'"
+                    )
             case _:
                 assert_never(datatype)
 
