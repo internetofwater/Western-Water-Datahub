@@ -11,3 +11,12 @@ export const getIdStore = (feature: Feature): string | undefined => {
     return feature.properties[idStoreProperty];
   }
 };
+
+export const getLabel = (
+  feature: Feature,
+  label: string,
+): string | undefined => {
+  if (feature.properties && feature.properties[label]) {
+    return feature.properties[label];
+  }
+};

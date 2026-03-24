@@ -18,7 +18,7 @@ import { TLayer, TLocation } from "@/stores/main/types";
 import useSessionStore from "@/stores/session";
 import { EOverlay } from "@/stores/session/types";
 import { CollectionType, getCollectionType } from "@/utils/collection";
-import { getIdStore } from "@/utils/getIdStore";
+import { getIdStore } from "@/utils/getLabel";
 import { getParameterUnit } from "@/utils/parameters";
 
 export type Parameter = {
@@ -149,12 +149,15 @@ const Popup: React.FC<Props> = (props) => {
 
   return (
     <Stack gap={0} className={styles.popupWrapper}>
-      <Header
-        id={id}
-        name={datasetName}
-        feature={feature}
-        collectionType={collectionType}
-      />
+      {layer && (
+        <Header
+          id={id}
+          name={datasetName}
+          feature={feature}
+          collectionType={collectionType}
+          labelProperty={layer.label}
+        />
+      )}
 
       {collectionType === CollectionType.EDR &&
         feature &&

@@ -6,6 +6,7 @@
 import { BBox } from "geojson";
 import { ICollection } from "@/services/edr.service";
 import { TLocation } from "@/stores/main/types";
+import { normalizeBBox } from "@/utils/normalizeBBox";
 
 export const getDatetime = (
   from: string | null | undefined,
@@ -93,17 +94,6 @@ export const buildItemsUrl = (
     url.searchParams.set("f", format);
   }
   return url.toString();
-};
-
-const normalizeBBox = (bbox: BBox) => {
-  const [x1, y1, x2, y2] = bbox;
-
-  const minX = Math.min(x1, x2);
-  const maxX = Math.max(x1, x2);
-  const minY = Math.min(y1, y2);
-  const maxY = Math.max(y1, y2);
-
-  return [minX, minY, maxX, maxY];
 };
 
 export const buildCubeUrl = (

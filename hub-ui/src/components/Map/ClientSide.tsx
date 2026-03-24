@@ -6,7 +6,7 @@
 import React, { useEffect, useRef } from "react";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import mapboxgl from "mapbox-gl";
-import { MapComponentProps } from "@/components/Map/types";
+import { MapComponentProps, MapEventKey } from "@/components/Map/types";
 import {
   addClickFunctions,
   addControls,
@@ -63,6 +63,7 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
     accessToken,
     persist = false,
     geocoder,
+    eventHandlers = {},
   } = props;
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -98,6 +99,15 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
       const container = document.createElement("div");
       container.setAttribute("id", "customPopupContent");
       const root = createRoot(container);
+
+      Object.entries(eventHandlers).forEach(([event, value]) => {
+        const key = event as MapEventKey;
+        if (event in newMap && typeof newMap[key]?.enable === "function") {
+          value ? newMap[key].enable() : newMap[key].disable();
+        } else {
+          console.error("Invalid event key used: ", key);
+        }
+      });
 
       newMap.once("load", () => {
         const createFeatureService = (

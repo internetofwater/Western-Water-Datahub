@@ -60,5 +60,5 @@ export const GeographyFilterSources = [
 export const DEFAULT_RASTER_OPACITY = 0.5;
 export const DEFAULT_FILL_OPACITY = 0.7;
 export const DEFAULT_BBOX: [number, number, number, number] = [
-  -125.375977, 25.799891, -89.077148, 49.582226,
+  -125.375977, 25.799891, -93.506788, 49.582226,
 ];

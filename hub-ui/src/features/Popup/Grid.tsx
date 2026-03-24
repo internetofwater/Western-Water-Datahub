@@ -5,6 +5,7 @@
 
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { bbox } from "@turf/turf";
 import { Feature } from "geojson";
 import {
   Box,
@@ -17,9 +18,24 @@ import {
   Tooltip,
 } from "@mantine/core";
 import Select from "@/components/Select";
+import { StringIdentifierCollections } from "@/consts/collections";
+import { Charts } from "@/features/Charts";
 import { Parameter } from "@/features/Popup";
 import styles from "@/features/Popup/Popup.module.css";
-import { TLocation as LocationType, TLayer } from "@/stores/main/types";
+import {
+  CoverageCollection,
+  CoverageJSON,
+  ICollection,
+  IGetCubeParams,
+} from "@/services/edr.service";
+import wwdhService from "@/services/init/wwdh.init";
+import {
+  TLocation as LocationType,
+  TLayer,
+  TLocation,
+} from "@/stores/main/types";
+import { getIdStore } from "@/utils/getLabel";
+import { normalizeBBox } from "@/utils/normalizeBBox";
 
 type Props = {
   location: LocationType;
@@ -38,16 +54,45 @@ export const Grid: React.FC<Props> = (props) => {
     locations,
     feature,
     layer,
+    datasetName,
     parameters,
     handleLocationChange,
     handleLinkClick,
   } = props;
 
+  const [tab, setTab] = useState<"chart" | "table">("chart");
+  const [id, setId] = useState<string>();
   const [times, setTimes] = useState<{ value: string; label: string }[]>([]);
   const [time, setTime] = useState<{ value: string; label: string }>();
   const [displayValues, setDisplayValues] = useState<
     { value: string; label: string; unit: string }[]
   >([]);
+  const [selectedParameter, setSelectedParameter] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (parameters.length === 0) {
+      setTab("table");
+      return;
+    }
+
+    if (
+      !selectedParameter ||
+      !parameters.some((parameter) => parameter.id === selectedParameter)
+    ) {
+      setSelectedParameter(parameters[0].id);
+    }
+  }, [parameters]);
+
+  useEffect(() => {
+    if (StringIdentifierCollections.includes(location.collectionId)) {
+      const id = getIdStore(feature);
+      setId(id);
+    } else {
+      setId(location.id);
+    }
+  }, [location, feature]);
 
   useEffect(() => {
     if (feature.properties) {
@@ -127,45 +172,82 @@ export const Grid: React.FC<Props> = (props) => {
     }
   }, [time]);
 
+  const getData = (
+    collectionId: ICollection["id"],
+    _locationId: TLocation["id"],
+    params: IGetCubeParams,
+    signal?: AbortSignal,
+  ) => {
+    const normalizedBBox = normalizeBBox(bbox(feature));
+
+    return wwdhService.getCube<CoverageCollection | CoverageJSON>(
+      collectionId,
+      {
+        signal,
+        params: { ...params, bbox: normalizedBBox },
+      },
+    );
+  };
+
   return (
     <>
       <Divider mt="calc(var(--default-spacing) / 2)" />
-      {time && (
-        <Text
-          size="sm"
-          mt="calc(var(--default-spacing) * 2)"
-          mb="var(--default-spacing)"
-        >
-          {time?.label}
-        </Text>
-      )}
 
-      <ScrollArea scrollbars="x" type="hover" style={{ maxWidth: "100%" }}>
-        <Group
-          justify="flex-start"
-          align="flex-start"
-          mb="calc(var(--default-spacing) * 2)"
-          wrap="nowrap"
-        >
-          {displayValues.map((displayValue) => (
-            <Stack
-              key={`${location.id}-${displayValue.label}-${displayValue.value}`}
-              gap="var(--default-spacing)"
-              miw={120}
-            >
-              <Text size="sm" fw={700}>
-                {displayValue.label}
-              </Text>
-              <Text size="xs">
-                {displayValue.value} ({displayValue.unit})
-              </Text>
-            </Stack>
-          ))}
-        </Group>
-      </ScrollArea>
-      <Group
+      <Box style={{ display: tab === "chart" ? "block" : "none" }}>
+        {datasetName.length > 0 && parameters.length > 0 && id && (
+          <Charts
+            collectionId={location.collectionId}
+            locationIds={[id]}
+            parameters={parameters}
+            title={datasetName}
+            from={layer.from}
+            to={layer.to}
+            getData={getData}
+            value={selectedParameter}
+            className={styles.chartWrapper}
+          />
+        )}
+      </Box>
+      <Box
+        style={{ display: tab === "table" ? "block" : "none" }}
+        className={styles.tableWrapper}
+      >
+        {time && (
+          <Text
+            size="sm"
+            mt="calc(var(--default-spacing) * 2)"
+            mb="var(--default-spacing)"
+          >
+            {time?.label}
+          </Text>
+        )}
+        <ScrollArea scrollbars="x" type="hover" style={{ maxWidth: "100%" }}>
+          <Group
+            justify="flex-start"
+            align="flex-start"
+            mb="calc(var(--default-spacing) * 2)"
+            wrap="nowrap"
+          >
+            {displayValues.map((displayValue) => (
+              <Stack
+                key={`${location.id}-${displayValue.label}-${displayValue.value}`}
+                gap="var(--default-spacing)"
+                miw={120}
+              >
+                <Text size="sm" fw={700}>
+                  {displayValue.label}
+                </Text>
+                <Text size="xs">
+                  {displayValue.value} ({displayValue.unit})
+                </Text>
+              </Stack>
+            ))}
+          </Group>
+        </ScrollArea>
+      </Box>
+
+      <Stack
         justify="space-between"
-        align="flex-end"
         mt="var(--default-spacing)"
         mb="var(--default-spacing)"
       >
@@ -192,15 +274,52 @@ export const Grid: React.FC<Props> = (props) => {
               onChange={(_value, option) => setTime(option)}
             />
           )}
+          {parameters.length > 0 && tab === "chart" && (
+            <Select
+              className={styles.parametersDropdown}
+              size="xs"
+              label="Parameters"
+              searchable
+              data={parameters.map((parameter) => ({
+                value: parameter.id,
+                label: `${parameter.name} (${parameter.unit})`,
+              }))}
+              value={selectedParameter}
+              onChange={setSelectedParameter}
+              clearable={false}
+            />
+          )}
         </Group>
-        <Box component="span" className={styles.linkButtonWrapper}>
-          <Tooltip label="Open this location in the Links modal.">
+        <Group
+          gap="var(--default-spacing)"
+          align="flex-end"
+          justify="space-between"
+        >
+          <Group gap="calc(var(--default-spacing) / 2)">
+            {parameters.length > 0 ? (
+              <Button size="xs" onClick={() => setTab("chart")}>
+                Chart
+              </Button>
+            ) : (
+              <Tooltip label="Select one or more parameters in the layer controls to enable charts.">
+                <Button size="xs" disabled data-disabled>
+                  Chart
+                </Button>
+              </Tooltip>
+            )}
+
+            <Button size="xs" onClick={() => setTab("table")}>
+              Values
+            </Button>
+          </Group>
+
+          <Tooltip label="Open this location in the Download modal.">
             <Button size="xs" onClick={handleLinkClick}>
-              Link
+              Download
             </Button>
           </Tooltip>
-        </Box>
-      </Group>
+        </Group>
+      </Stack>
     </>
   );
 };

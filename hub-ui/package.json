@@ -34,6 +34,7 @@
     "@ogcapi-js/shared": "^1.1.1",
     "@turf/turf": "^7.2.0",
     "@types/lodash.debounce": "^4.0.9",
+    "@zip.js/zip.js": "^2.8.21",
     "colorbrewer": "^1.6.1",
     "dayjs": "^1.11.13",
     "echarts": "^5.6.0",
