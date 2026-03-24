@@ -70,6 +70,9 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
     pg_layer.CreateField(ogr.FieldDefn("reg_num", ogr.OFTInteger))
     pg_layer.CreateField(ogr.FieldDefn("total_capacity", ogr.OFTReal))
     pg_layer.CreateField(ogr.FieldDefn("active_capacity", ogr.OFTReal))
+    # this will be of values "Total" / "Active"; the original CSV has some null values
+    # for locations without any storage data in general; but it appears that this will be dropped
+    # before ending up in the locations geojson
     pg_layer.CreateField(ogr.FieldDefn("use_total_or_active_storage", ogr.OFTString))
 
     # Mark 'id' as the layer FID so it becomes the Postgres primary key
