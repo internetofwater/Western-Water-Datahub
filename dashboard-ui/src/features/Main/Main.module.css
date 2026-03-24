@@ -35,6 +35,14 @@
     justify-self: flex-start;
 }
 
+.betaDescription {
+    color: var(--mantine-color-default-color);
+}
+
+.top {
+    top: 0;
+}
+
 .bottom {
     bottom: 2.25rem;
     align-self: flex-end;
