@@ -720,6 +720,7 @@ resources:
           - teacup_locations.reg_num
           - teacup_locations.state
           - teacup_locations.source_uri
+          - teacup_locations.use_total_or_active_storage
         edr_fields:
           id_field: id
           time_field: data_date
