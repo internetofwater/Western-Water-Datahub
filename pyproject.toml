@@ -81,4 +81,4 @@ omit = [
 ]
 
 [tool.pyright]
-ignore = ["scripts/prep_noaa_list_for_dashboard/**"]
+ignore = ["scripts/prep_noaa_list_for_dashboard/**", "scripts/storage_sql_script/**"]
