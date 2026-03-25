@@ -110,7 +110,7 @@ resources:
       - type: application/html
         rel: canonical
         title: data source
-        href: https://wcc.sc.egov.usda.gov/awdbrestapi/swagger-ui/index.html
+        href: https://wcc.sc.egov.usda.gov/awdbRestApi/swagger-ui/index.html
         hreflang: en-us
     extents:
       spatial:
