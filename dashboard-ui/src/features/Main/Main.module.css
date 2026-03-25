@@ -97,4 +97,8 @@
 
         min-height: 0;
     }
+
+    .notification {
+        max-width: calc(100svw - 3.625rem);
+    }
 }

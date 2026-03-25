@@ -8,6 +8,7 @@ import { BasemapId } from '@/components/Map/types';
 import { ExpressionSpecification } from 'mapbox-gl';
 import { ReservoirConfig } from '@/features/Map/types';
 import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
+import { BBox } from 'geojson';
 
 export const MAP_ID = 'main';
 
@@ -15,6 +16,8 @@ export const BASEMAP = basemaps[BasemapId.Dark];
 
 export const INITIAL_CENTER: [number, number] = [-107.85792, 38.1736];
 export const INITIAL_ZOOM = 4.15;
+
+export const US_BBOX: BBox = [-171.791111, 18.91619, -66.96466, 71.357764];
 
 export enum SourceId {
     Regions = 'regions',

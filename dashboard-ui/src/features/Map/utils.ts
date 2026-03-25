@@ -24,6 +24,7 @@ import {
     TeacupPercentageOfCapacityWithAvgExpression,
     TeacupPercentageOfCapacityWithoutAvgExpression,
     TeacupSizeExpression,
+    US_BBOX,
     ZoomCapacityArray,
 } from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/consts';
@@ -39,7 +40,11 @@ import {
     RiseReservoirPropertiesRaw,
 } from '@/features/Map/types/reservoir/rise';
 import wwdhService from '@/services/init/wwdh.init';
-import { CoverageJSON, IGetLocationParams } from '@/services/edr.service';
+import {
+    CoverageCollection,
+    CoverageJSON,
+    IGetLocationParams,
+} from '@/services/edr.service';
 import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
 import { SnotelField, SnotelProperties } from '@/features/Map/types/snotel';
 import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
@@ -648,13 +653,29 @@ const updateTeacupProperties = (feature: Feature<Point, GeoJsonProperties>) => {
     };
 
     if (feature.properties) {
-        const totalCapacity = feature.properties[
-            TeacupReservoirField.TotalCapacity
-        ]
-            ? Number(feature.properties[TeacupReservoirField.TotalCapacity])
-            : undefined;
+        const useTotal =
+            String(
+                feature.properties[TeacupReservoirField.UseTotalOrActiveStorage]
+            ) === 'Total';
+        if (useTotal) {
+            const totalCapacity = feature.properties[
+                TeacupReservoirField.TotalCapacity
+            ]
+                ? Number(feature.properties[TeacupReservoirField.TotalCapacity])
+                : undefined;
 
-        updatedProps[TeacupReservoirField.Capacity] = totalCapacity;
+            updatedProps[TeacupReservoirField.Capacity] = totalCapacity;
+        } else {
+            const activeCapacity = feature.properties[
+                TeacupReservoirField.ActiveCapacity
+            ]
+                ? Number(
+                      feature.properties[TeacupReservoirField.ActiveCapacity]
+                  )
+                : undefined;
+
+            updatedProps[TeacupReservoirField.Capacity] = activeCapacity;
+        }
 
         // Huc06 is given as a URI
         const huc06URI = String(feature.properties[TeacupReservoirField.Huc06]);
@@ -678,51 +699,30 @@ export const appendTeacupDataProperties = async (
     featureCollection: FeatureCollection<Point, GeoJsonProperties>,
     options: Options = {}
 ): Promise<FeatureCollection<Point, GeoJsonProperties>> => {
-    const { params, reservoirDate, signal } = options;
+    const { reservoirDate, signal } = options;
 
-    const locations = await wwdhService.getLocations<
-        FeatureCollection<Point, GeoJsonProperties>
-    >(SourceId.TeacupEDRReservoirs, {
-        signal,
-        params,
-    });
-
-    const ids = locations.features.map((feature) => feature.id!);
-
-    const requests = ids.map((id) =>
-        wwdhService.getLocation<CoverageJSON>(
-            SourceId.TeacupEDRReservoirs,
-            String(id),
-            {
-                params: {
-                    limit: 1,
-                    ...(reservoirDate ? { datetime: reservoirDate } : {}),
-                },
-                signal,
-            }
-        )
-    );
-
-    const results = await Promise.allSettled(requests);
-
-    const successfulRequests = results.filter(
-        (results) => results.status === 'fulfilled'
-    );
-    const failedRequests = results.filter(
-        (results) => results.status !== 'fulfilled'
+    const coverageCollection = await wwdhService.getCube<CoverageCollection>(
+        SourceId.TeacupEDRReservoirs,
+        {
+            params: {
+                bbox: US_BBOX,
+                limit: 1,
+                ...(reservoirDate ? { datetime: reservoirDate } : {}),
+            },
+            signal,
+        }
     );
 
     const updatedFeatures = featureCollection.features.map((feature) => {
-        const result = successfulRequests.find(
-            (result) => result.value?.id && result.value.id === feature.id
+        const coverage = coverageCollection.coverages.find(
+            (coverage) => coverage.id && coverage.id === feature.id
         );
-        // const result = results[index];
 
         // Set basic things that are not dependant on /location return, like capacity or the huc02 id
         const updatedProperties = updateTeacupProperties(feature);
 
         // This feature came from the /items request
-        if (!result) {
+        if (!coverage) {
             // Set Storage
             updatedProperties[TeacupReservoirField.Storage] = undefined;
             // 10th Percentile
@@ -743,8 +743,6 @@ export const appendTeacupDataProperties = async (
             // Mark that this is a location, not item
             updatedProperties[TeacupReservoirField.Item] = false;
         }
-
-        const coverage = result.value;
 
         const getRangeValue = getRangeValueConstructor(coverage.ranges);
 
@@ -770,15 +768,6 @@ export const appendTeacupDataProperties = async (
             ...feature,
             properties: updatedProperties,
         };
-    });
-
-    failedRequests.forEach((result) => {
-        console.warn(
-            `Failed to fetch data, reason: `,
-            result.reason,
-            ', full result object: ',
-            result
-        );
     });
 
     return {

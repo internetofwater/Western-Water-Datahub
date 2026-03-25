@@ -141,9 +141,3 @@
         max-height: calc(100% - 188px);
     }
 }
-
-@media screen and (max-width: 600px) {
-    .root {
-        max-height: calc(100% - 172px);
-    }
-}

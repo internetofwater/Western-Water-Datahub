@@ -13,6 +13,8 @@ import {
     displayPercentage,
     displayVolumeWithUnits,
 } from '@/utils/reservoirDataDisplay';
+import { SourceId } from '@/features/Map/consts';
+import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
@@ -33,6 +35,19 @@ export const Metrics: React.FC<Props> = (props) => {
     if (!reservoirProperties) {
         return null;
     }
+
+    const getLabel = (label: string) => {
+        if (config.id === SourceId.TeacupEDRReservoirs) {
+            const totalOrActive = String(
+                reservoirProperties[
+                    TeacupReservoirField.UseTotalOrActiveStorage
+                ]
+            );
+            return `${label} (${totalOrActive})`;
+        }
+
+        return label;
+    };
 
     const storage = Number(reservoirProperties[config.storageProperty]);
     const capacity = Number(reservoirProperties[config.capacityProperty]);
@@ -65,7 +80,7 @@ export const Metrics: React.FC<Props> = (props) => {
                 <Box className={styles.metricsGroup}>
                     <Group gap="xs" justify="flex-start">
                         <Text {...text} fw={700}>
-                            Storage:
+                            {getLabel('Storage')}:
                         </Text>
                         <Text {...text}>{displayVolumeWithUnits(storage)}</Text>
                     </Group>
@@ -94,7 +109,7 @@ export const Metrics: React.FC<Props> = (props) => {
                 <Box className={styles.metricsGroup}>
                     <Group gap="xs" justify="flex-start">
                         <Text {...text} fw={700}>
-                            Capacity:
+                            {getLabel('Capacity')}:
                         </Text>
                         <Text {...text}>
                             {displayVolumeWithUnits(capacity)}

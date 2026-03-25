@@ -16,6 +16,7 @@ export enum TeacupReservoirField {
     RegionId = 'reg_num',
     State = 'state',
     Source = 'source_uri',
+    UseTotalOrActiveStorage = 'use_total_or_active_storage',
 
     Capacity = 'capacity',
     Storage = 'raw',
@@ -40,6 +41,7 @@ export type TeacupReservoirProperties = {
     [TeacupReservoirField.RegionId]: number;
     [TeacupReservoirField.State]: string;
     [TeacupReservoirField.Source]: string;
+    [TeacupReservoirField.UseTotalOrActiveStorage]: string;
 
     [TeacupReservoirField.Capacity]?: number;
     [TeacupReservoirField.Storage]?: number;
