@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { useRef } from 'react';
-import { ActionIcon, Divider, Group, Modal, Title, Text } from '@mantine/core';
+import { ActionIcon, Divider, Group, Modal, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { ReservoirConfig } from '@/features/Map/types';
 import { SourceId } from '@/features/Map/consts';
@@ -291,15 +291,16 @@ const Reservoir: React.FC = () => {
         <Modal
             centered
             size="auto"
-            classNames={{ content: styles.content, body: styles.body }}
+            classNames={{
+                content: styles.content,
+                body: styles.body,
+                title: styles.title,
+            }}
             opened={opened}
             onClose={handleClose}
             title={
-                <Title order={3}>
-                    {String(
-                        currentReservoirProperties[config.longLabelProperty]
-                    ) ?? ''}
-                </Title>
+                String(currentReservoirProperties[config.longLabelProperty]) ??
+                ''
             }
         >
             <>

@@ -219,9 +219,3 @@ html[data-mantine-color-scheme='light'] {
         font-size: 14px;
     }
 }
-
-@media screen and (max-width: 600px) {
-    :root {
-        font-size: 12px;
-    }
-}
