@@ -4,7 +4,7 @@
  */
 
 import { Box, Grid, Group, Paper, Text } from '@mantine/core';
-import { contacts } from '@/features/Help/consts';
+import { contacts, content } from '@/features/Help/consts';
 import styles from '@/features/Help/Help.module.css';
 
 export const Contact: React.FC = () => {
@@ -29,12 +29,21 @@ export const Contact: React.FC = () => {
                                 align="flex-start"
                                 grow
                             >
-                                <Box className={styles.contactImage}>
-                                    {contact.image}
-                                </Box>
-                                <Text size="sm" className={styles.contactBody}>
-                                    {contact.body}
-                                </Text>
+                                {contact.image && (
+                                    <Box className={styles.contactImage}>
+                                        {contact.image}
+                                    </Box>
+                                )}
+                                {typeof contact.body === 'object' ? (
+                                    contact.body
+                                ) : (
+                                    <Text
+                                        {...content}
+                                        className={styles.contactBody}
+                                    >
+                                        {contact.body}
+                                    </Text>
+                                )}
                             </Group>
                             <Text
                                 size="xs"

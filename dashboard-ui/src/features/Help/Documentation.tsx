@@ -11,7 +11,7 @@ import {
     sections,
     subSectionDescription,
     subSectionLabel,
-} from './consts';
+} from '@/features/Help/consts';
 
 export const Documentation: React.FC = () => {
     return (
@@ -22,18 +22,18 @@ export const Documentation: React.FC = () => {
             {sections.map((section) => (
                 <Stack key={section.id} gap="calc(var(--default-spacing) / 1)">
                     {section.label &&
-                        (typeof section.label === 'string' ? (
-                            <Title {...sectionLabel}>{section.label}</Title>
-                        ) : (
+                        (typeof section.label === 'object' ? (
                             section.label
+                        ) : (
+                            <Title {...sectionLabel}>{section.label}</Title>
                         ))}
                     {section.description &&
-                        (typeof section.description === 'string' ? (
+                        (typeof section.description === 'object' ? (
+                            section.description
+                        ) : (
                             <Text {...sectionDescription}>
                                 {section.description}
                             </Text>
-                        ) : (
-                            section.description
                         ))}
                     {section.subSections.map((subSection) => (
                         <Stack
@@ -41,20 +41,20 @@ export const Documentation: React.FC = () => {
                             gap="calc(var(--default-spacing) / 2)"
                         >
                             {subSection.label &&
-                                (typeof subSection.label === 'string' ? (
+                                (typeof subSection.label === 'object' ? (
+                                    subSection.label
+                                ) : (
                                     <Title {...subSectionLabel}>
                                         {subSection.label}
                                     </Title>
-                                ) : (
-                                    subSection.label
                                 ))}
                             {subSection.description &&
-                                (typeof subSection.description === 'string' ? (
+                                (typeof subSection.description === 'object' ? (
+                                    subSection.description
+                                ) : (
                                     <Text {...subSectionDescription}>
                                         {subSection.description}
                                     </Text>
-                                ) : (
-                                    subSection.description
                                 ))}
                             {subSection.entries.map((entry) => (
                                 <List
@@ -64,23 +64,23 @@ export const Documentation: React.FC = () => {
                                         {entry.label && (
                                             <>
                                                 {typeof entry.label ===
-                                                'string' ? (
+                                                'object' ? (
+                                                    entry.label
+                                                ) : (
                                                     <Text {...content} fw={700}>
                                                         {entry.label}:
                                                     </Text>
-                                                ) : (
-                                                    entry.label
                                                 )}
                                                 &nbsp;
                                             </>
                                         )}
 
-                                        {typeof entry.content === 'string' ? (
+                                        {typeof entry.content === 'object' ? (
+                                            entry.content
+                                        ) : (
                                             <Text {...content}>
                                                 {entry.content}
                                             </Text>
-                                        ) : (
-                                            entry.content
                                         )}
                                     </ListItem>
                                 </List>

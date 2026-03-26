@@ -29,14 +29,7 @@ export const FAQ: React.FC = () => {
                                     <List.Item
                                         key={`faq-${question.id}-bullet-${index}`}
                                     >
-                                        <Text size="sm">
-                                            {bullet.label && (
-                                                <strong>
-                                                    {bullet.label}&nbsp;
-                                                </strong>
-                                            )}
-                                            {bullet.content}
-                                        </Text>
+                                        {bullet}
                                     </List.Item>
                                 ))}
                             </List>

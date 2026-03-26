@@ -579,153 +579,186 @@ export const sections: GlossarySection[] = [
     },
 ];
 
-// export const glossaryEntries: GlossaryEntry[] = [
-//     {
-//         id: LayerId.NOAARiverForecast,
-//         label: getLayerName(LayerId.NOAARiverForecast),
-//         short: 'Forecasted average change in flow for current season against the 30 year normal period.',
-//         descriptions: [
-//             <Text {...description}>
-//                 Forecasted average change in flow for current season against the
-//                 30 year normal period.
-//             </Text>,
-//         ],
-//     },
-//     {
-//         id: LayerId.Snotel,
-//         label: getLayerName(LayerId.Snotel),
-//         short: 'The average snow water equivalent across each HUC06 basin relative to the 30 year average.',
-//         descriptions: [
-//             <Text {...description}>
-//                 The average snow water equivalent across each HUC06 basin
-//                 relative to the 30 year average.
-//             </Text>,
-//         ],
-//     },
-//     {
-//         id: 'capacity',
-//         label: 'Capacity',
-//         short: 'Potential water storage',
-//         descriptions: [
-//             <Text {...description}>
-//                 The total volume of water a reservoir can hold.
-//             </Text>,
-//         ],
-//     },
-//     {
-//         id: 'storage',
-//         label: 'Storage',
-//         short: 'Current water storage',
-//         descriptions: [
-//             <Text {...description}>
-//                 The current reservoir storage level on the indicated date.
-//             </Text>,
-//         ],
-//     },
-//     {
-//         id: 'average',
-//         label: '30-year Average',
-//         short: 'Average water storage on this date',
-//         descriptions: [
-//             <Text {...description}>
-//                 The average storage level on this date, measured over the last
-//                 30 years.
-//             </Text>,
-//         ],
-//     },
-//     // {
-//     //   id: 'layers',
-//     //   label: 'Layers',
-//     //   descriptions: [
-//     //     <Text {...description}>
-//     //       Layers are interactive instances of selected datasets. Once a dataset is added to your map
-//     //       as a layer, you are able to extract the specific parameter (including time extent, if
-//     //       applicable) and visualize it on the map.
-//     //     </Text>,
-//     //   ],
-//     // },
-//     {
-//         id: 'api',
-//         label: (
-//             <Anchor
-//                 href="https://asu-awo-pygeoapi-864861257574.us-south1.run.app/"
-//                 target="_blank"
-//             >
-//                 API
-//             </Anchor>
-//         ),
-//         short: 'This application is powered by an OGC API instance',
-//         descriptions: [
-//             <Text {...description}>
-//                 This application is powered by an OGC API instance built in a{' '}
-//                 <Anchor href="https://pygeoapi.io/" target="_blank">
-//                     pygeoapi
-//                 </Anchor>{' '}
-//                 server. Click on any "API" links throughout the application to
-//                 visit the backend page for that item.
-//             </Text>,
-//         ],
-//     },
-//     // {
-//     //   id: 'links',
-//     //   label: 'Links',
-//     //   descriptions: [
-//     //     <Text {...description}>
-//     //       Use the Links modal to explore features in more detail. Find file downloads, explore data,
-//     //       and retrieve API requests used to fetch the same data visualized on the map and in the
-//     //       charts.
-//     //     </Text>,
-//     //   ],
-//     // },
-// ];
-
-type Bullet = {
-    label?: string;
-    content: string;
-};
-
 type QA = {
     id: string;
-    question: string;
-    answer: string;
-    bullets?: Bullet[];
+    question: ReactNode;
+    answer: ReactNode;
+    bullets?: ReactNode[];
 };
 
 export const questions: QA[] = [
-    // {
-    //     id: 'grid',
-    //     question: 'What are the available gridded datasets?',
-    //     answer: 'Gridded datasets provide continuous spatial coverage with estimated values for every cell across a geographic area. The following gridded datasets are available:',
-    //     bullets: [
-    //         {
-    //             label: 'National Water Model Channel Routing Output ',
-    //             content:
-    //                 '- contains simulated flow and channel-related variables for river and stream segments, representing the movement of water through the channel network.',
-    //         },
-    //         {
-    //             label: 'National Water Model Land Data Assimilation System Output ',
-    //             content:
-    //                 '- aims to produce high quality fields of land surface states and fluxes by integrating satellite and ground-based observational data products.',
-    //         },
-    //         {
-    //             label: 'National Water Model Reach to Reach Routing Output ',
-    //             content:
-    //                 '- provides simulated streamflow and related hydrologic variables for millions of individual river and stream reaches across the U.S., representing how water is routed downstream through the national river network.',
-    //         },
-    //         {
-    //             label: 'Parameter-elevation Regressions on Independent Slopes Model (PRISM) ',
-    //             content:
-    //                 '- provides high-resolution climate data including precipitation and temperature estimates across complex terrain.',
-    //         },
-    //     ],
-    // },
+    {
+        id: 'wheres-the-data',
+        question: 'Where does the data come from?',
+        answer: (
+            <>
+                <Text {...content}>
+                    Reservoir storage data is primarily sourced from the&nbsp;
+                    {getAnchor(
+                        'Reclamation Information Sharing Environment (RISE)',
+                        'https://data.usbr.gov/'
+                    )}
+                    &nbsp;system via the Western Water Data Hub. Data for US
+                    Army Corps of Engineers reservoirs comes from&nbsp;
+                    {getAnchor(
+                        "USACE's Access2Water",
+                        'https://water.usace.army.mil/'
+                    )}
+                    &nbsp;system via the Hub. In a few cases, reservoir storage
+                    data comes from the&nbsp;
+                    {getAnchor(
+                        "US Geological Survey's Water Data for the Nation",
+                        'https://waterdata.usgs.gov/'
+                    )}
+                    &nbsp;via the Hub or from the&nbsp;
+                    {getAnchor(
+                        'California Data Exchange Center (CDEC)',
+                        'https://cdec.water.ca.gov/'
+                    )}
+                    &nbsp;via the Hub. Additional information on these data
+                    sources is available from the Hub.
+                </Text>
+                <Text {...content}>
+                    Reservoir storage data is generally obtained from the Hub as
+                    either total or active reservoir storage in acre-feet for
+                    the specified date, but in a few cases, the source data is
+                    only provided as reservoir elevation, so the dashboard uses
+                    elevation-storage curves to compute the reservoir storage
+                    value that is displayed.
+                </Text>
+                <Text {...content}>
+                    Reservoir capacity data is primarily sourced from
+                    Reclamation's Enterprise Asset Registry. Capacities for
+                    USACE reservoirs come from the Access2Water system.
+                </Text>
+                <Text {...content}>
+                    Reference, base layers, and boundaries are sourced from the
+                    data sources indicated in the dashboard via the Hub.
+                </Text>
+            </>
+        ),
+    },
+    {
+        id: 'how-often',
+        question: 'How often is the Dashboard updated?',
+        answer: (
+            <>
+                <Text {...content}>
+                    The dashboard updates with the latest available data from
+                    the source data systems every 6 hours.
+                </Text>
+                <Text {...content}>
+                    Because the dashboard shows daily reservoir storage data,
+                    the most recent possible storage values are for the previous
+                    day. Reservoir storage data is updated in the source systems
+                    (RISE, Access2Water, etc.) at varied intervals, depending on
+                    facility and data system reporting schedules. Storage data
+                    for the previous day is typically updated in source systems
+                    each morning, but in some cases it may take several hours or
+                    days for the values for a given date to be added to the
+                    source system.
+                </Text>
+                <Text {...content}>
+                    Selecting the “Latest Storage Value” option in the Dashboard
+                    will show the most recent available value.
+                </Text>
+            </>
+        ),
+    },
+    {
+        id: 'missing-reservoirs',
+        question: 'Why do some reservoirs show missing data?',
+        answer: (
+            <Text {...content}>
+                Reservoirs can show missing data for a couple of reasons:
+            </Text>
+        ),
+        bullets: [
+            <Text {...content}>
+                <Text {...content} fw={700}>
+                    Storage data for the reservoir is not yet available from the
+                    Hub.
+                </Text>
+                &nbsp;In these cases, the reservoir will appear as a gray icon
+                on the map, storage values on the teacup diagram will be listed
+                as N/A, and there will be no time series available in the
+                details view of the reservoir.
+            </Text>,
+            <Text {...content}>
+                <Text {...content} fw={700}>
+                    Storage data for the reservoir is not available for the
+                    selected date.
+                </Text>
+                &nbsp;Data may be unavailable due to reporting delays, seasonal
+                operations, or quality-control issues, all controlled by the
+                data provider. In these cases, the reservoir will appear as a
+                gray icon on the map and storage values on the teacup diagram
+                will be listed as N/A, but there will be a time series of
+                reservoir storage values available in the details view of the
+                reservoir.
+            </Text>,
+        ],
+    },
+    {
+        id: 'get-the-data',
+        question: 'How can I get the data that I see in the dashboard?',
+        answer: (
+            <>
+                <Text {...content}>
+                    You can access almost all the data in the dashboard from the
+                    Western Water Data Hub.
+                </Text>
+                <Text {...content}>
+                    The only data that is not available from the Hub is the
+                    reservoir capacities, which are available…
+                </Text>
+            </>
+        ),
+    },
+    {
+        id: 'get-reservoir-list',
+        question: 'Is there a list of reservoirs and data sources?',
+        answer: (
+            <Text {...content}>
+                The list of reservoirs and their associated ultimate data
+                sources is available{' '}
+                {getAnchor(
+                    'here',
+                    'https://api.wwdh.internetofwater.app/collections/teacup-edr/items?f=csv'
+                )}
+                .
+            </Text>
+        ),
+    },
+    {
+        id: 'get-a-print',
+        question:
+            'Can I get a printable version of the dashboard or a version that I can put into a presentation?',
+        answer: (
+            <>
+                <Text {...content}>
+                    To get an image of whatever you see on the map, use the
+                    Screenshot tool. The map extents, reservoirs, reservoir
+                    labels, reference data, the basemap, and boundaries will be
+                    displayed as shown on the map when you take the screenshot.
+                    The screenshot will not include detailed teacups, a title,
+                    or a legend.
+                </Text>
+                <Text {...content}>
+                    To get an image with a map, detailed teacups, a title, and a
+                    legend, use the Report tool. With the report tool, you can
+                    select specific reservoirs to include.
+                </Text>
+            </>
+        ),
+    },
 ];
 
 type Contact = {
     id: string;
-    image: ReactNode;
-    body: string;
-    link: string;
+    image?: ReactNode;
+    body: ReactNode;
+    link?: string;
 };
 
 export const contacts: Contact[] = [
@@ -734,5 +767,19 @@ export const contacts: Contact[] = [
         image: <GitHub />,
         body: 'Access the repository containing the source code for the Western Water Datahub. Contribute new features, report issues, and learn more about how this application was built.',
         link: 'https://github.com/internetofwater/Western-Water-Datahub',
+    },
+    {
+        id: 'email-bor',
+        body: (
+            <Text {...content}>
+                For questions or feedback on the Western Water Data Dashboard,
+                please contact the Bureau of Reclamation at{' '}
+                <Text {...content} c="blue">
+                    data@usbr.gov
+                </Text>
+                .
+            </Text>
+        ),
+        link: 'mailto:data@usbr.gov',
     },
 ];
