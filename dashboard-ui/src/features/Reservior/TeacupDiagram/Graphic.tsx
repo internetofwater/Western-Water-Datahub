@@ -114,7 +114,7 @@ export const Graphic: React.FC<Props> = (props) => {
             svgRef.current.removeChild(svgRef.current.firstChild);
         }
 
-        const storagePercentage = Math.max(
+        const storagePercentage = Math.min(
             Number(reservoirProperties[config.storageProperty]) /
                 Number(reservoirProperties[config.capacityProperty]),
             1
