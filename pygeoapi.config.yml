@@ -469,9 +469,9 @@ resources:
       - NOAA
     keywords: [NOAA, temperature]
     flask_cache:
-      # this forecast is updated twice a day
-      # so 1 hour caching is fine
-      ttl_seconds: 3600 # 1 hour
+      # 1 hour caching since dataset is updated daily
+      # and we want to ensure the latest forecast
+      ttl_seconds: 3600
     links:
       - type: application/html
         rel: documentation
@@ -498,7 +498,9 @@ resources:
       - NOAA
     keywords: [NOAA, temperature]
     flask_cache:
-      ttl_seconds: 3600 # 1 hour
+      # 1 hour caching since dataset is updated daily
+      # and we want to ensure the latest forecast
+      ttl_seconds: 3600
     links:
       - type: application/html
         rel: canonical
