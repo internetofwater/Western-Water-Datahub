@@ -85,7 +85,6 @@ export const Chart: React.FC<Props> = (props) => {
                         signal: controller.current.signal,
                         params: {
                             limit: dateRange.days,
-                            f: 'json',
                             ...config.params,
                             datetime:
                                 dateRange.startDate + '/' + dateRange.endDate,

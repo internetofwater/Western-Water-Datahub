@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { glossaryEntries, GlossaryEntry } from '@/features/Help/consts';
+// import { glossaryEntries, GlossaryEntry } from '@/features/Help/consts';
 
-export const getGlossaryEntry = (
-    glossaryEntry: string
-): GlossaryEntry | undefined => {
-    return glossaryEntries.find((entry) => entry.id === glossaryEntry);
-};
+// export const getGlossaryEntry = (
+//     glossaryEntry: string
+// ): GlossaryEntry | undefined => {
+//     return glossaryEntries.find((entry) => entry.id === glossaryEntry);
+// };
