@@ -78,12 +78,12 @@ const Reservoirs: React.FC<Props> = (props) => {
             const valueA = Number(featureA.properties[property]);
             const valueB = Number(featureB.properties[property]);
 
-            if (typeof valueA !== 'number' && typeof valueB !== 'number') {
+            if (isNaN(valueA) && isNaN(valueB)) {
                 return 0;
-            } else if (typeof valueA !== 'number') {
-                return -1;
-            } else if (typeof valueB !== 'number') {
+            } else if (isNaN(valueA)) {
                 return 1;
+            } else if (isNaN(valueB)) {
+                return -1;
             }
 
             if (sortOrder === 'desc') {
