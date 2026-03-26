@@ -6,7 +6,7 @@
 'use client';
 
 import Map from '@/components/Map';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { layerDefinitions, sourceConfigs } from '@/features/Map/config';
 import {
     MAP_ID,
@@ -94,14 +94,26 @@ const MainMap: React.FC<Props> = (props) => {
 
     useReservoirData();
 
-    const handleMapMove = () => {
+    const handleMapMove = useCallback(() => {
         if (isMounted.current) {
             setMapMoved(Date.now());
         }
-    };
+    }, [isMounted, setMapMoved]);
 
-    const debouncedHandleMapMove = debounce(handleMapMove, 150);
-    const debouncedHandleMapZoom = debounce(updateReservoirFilters, 75);
+    const debouncedHandleMapMove = useCallback(debounce(handleMapMove, 150), [
+        handleMapMove,
+    ]);
+
+    const debouncedHandleMapZoom = useCallback(
+        debounce(updateReservoirFilters, 75),
+        [updateReservoirFilters]
+    );
+
+    useEffect(() => {
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
 
     useEffect(() => {
         return () => {
@@ -109,7 +121,7 @@ const MainMap: React.FC<Props> = (props) => {
             debouncedHandleMapZoom.cancel();
             isMounted.current = false;
         };
-    }, []);
+    }, [debouncedHandleMapMove, debouncedHandleMapZoom]);
 
     useEffect(() => {
         setShouldResize(loadingInstances.length > 0);
