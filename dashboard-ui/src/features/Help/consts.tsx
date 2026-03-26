@@ -7,6 +7,7 @@ import { ReactNode } from 'react';
 import {
     Anchor,
     AnchorProps,
+    Stack,
     Text,
     TextProps,
     TitleProps,
@@ -591,8 +592,8 @@ export const questions: QA[] = [
         id: 'wheres-the-data',
         question: 'Where does the data come from?',
         answer: (
-            <>
-                <Text {...content}>
+            <Stack gap="var(--default-spacing)">
+                <Text {...subSectionDescription}>
                     Reservoir storage data is primarily sourced from the&nbsp;
                     {getAnchor(
                         'Reclamation Information Sharing Environment (RISE)',
@@ -618,7 +619,7 @@ export const questions: QA[] = [
                     &nbsp;via the Hub. Additional information on these data
                     sources is available from the Hub.
                 </Text>
-                <Text {...content}>
+                <Text {...subSectionDescription}>
                     Reservoir storage data is generally obtained from the Hub as
                     either total or active reservoir storage in acre-feet for
                     the specified date, but in a few cases, the source data is
@@ -626,28 +627,28 @@ export const questions: QA[] = [
                     elevation-storage curves to compute the reservoir storage
                     value that is displayed.
                 </Text>
-                <Text {...content}>
+                <Text {...subSectionDescription}>
                     Reservoir capacity data is primarily sourced from
                     Reclamation's Enterprise Asset Registry. Capacities for
                     USACE reservoirs come from the Access2Water system.
                 </Text>
-                <Text {...content}>
+                <Text {...subSectionDescription}>
                     Reference, base layers, and boundaries are sourced from the
                     data sources indicated in the dashboard via the Hub.
                 </Text>
-            </>
+            </Stack>
         ),
     },
     {
         id: 'how-often',
         question: 'How often is the Dashboard updated?',
         answer: (
-            <>
-                <Text {...content}>
+            <Stack gap="var(--default-spacing)">
+                <Text {...subSectionDescription}>
                     The dashboard updates with the latest available data from
                     the source data systems every 6 hours.
                 </Text>
-                <Text {...content}>
+                <Text {...subSectionDescription}>
                     Because the dashboard shows daily reservoir storage data,
                     the most recent possible storage values are for the previous
                     day. Reservoir storage data is updated in the source systems
@@ -658,24 +659,24 @@ export const questions: QA[] = [
                     days for the values for a given date to be added to the
                     source system.
                 </Text>
-                <Text {...content}>
+                <Text {...subSectionDescription}>
                     Selecting the “Latest Storage Value” option in the Dashboard
                     will show the most recent available value.
                 </Text>
-            </>
+            </Stack>
         ),
     },
     {
         id: 'missing-reservoirs',
         question: 'Why do some reservoirs show missing data?',
         answer: (
-            <Text {...content}>
+            <Text {...subSectionDescription}>
                 Reservoirs can show missing data for a couple of reasons:
             </Text>
         ),
         bullets: [
-            <Text {...content}>
-                <Text {...content} fw={700}>
+            <Text {...subSectionDescription}>
+                <Text {...subSectionDescription} fw={700}>
                     Storage data for the reservoir is not yet available from the
                     Hub.
                 </Text>
@@ -684,8 +685,8 @@ export const questions: QA[] = [
                 as N/A, and there will be no time series available in the
                 details view of the reservoir.
             </Text>,
-            <Text {...content}>
-                <Text {...content} fw={700}>
+            <Text {...subSectionDescription}>
+                <Text {...subSectionDescription} fw={700}>
                     Storage data for the reservoir is not available for the
                     selected date.
                 </Text>
@@ -703,23 +704,23 @@ export const questions: QA[] = [
         id: 'get-the-data',
         question: 'How can I get the data that I see in the dashboard?',
         answer: (
-            <>
-                <Text {...content}>
+            <Stack gap="var(--default-spacing)">
+                <Text {...subSectionDescription}>
                     You can access almost all the data in the dashboard from the
                     Western Water Data Hub.
                 </Text>
-                <Text {...content}>
+                <Text {...subSectionDescription}>
                     The only data that is not available from the Hub is the
                     reservoir capacities, which are available…
                 </Text>
-            </>
+            </Stack>
         ),
     },
     {
         id: 'get-reservoir-list',
         question: 'Is there a list of reservoirs and data sources?',
         answer: (
-            <Text {...content}>
+            <Text {...subSectionDescription}>
                 The list of reservoirs and their associated ultimate data
                 sources is available{' '}
                 {getAnchor(
@@ -735,8 +736,8 @@ export const questions: QA[] = [
         question:
             'Can I get a printable version of the dashboard or a version that I can put into a presentation?',
         answer: (
-            <>
-                <Text {...content}>
+            <Stack gap="var(--default-spacing)">
+                <Text {...subSectionDescription}>
                     To get an image of whatever you see on the map, use the
                     Screenshot tool. The map extents, reservoirs, reservoir
                     labels, reference data, the basemap, and boundaries will be
@@ -744,12 +745,12 @@ export const questions: QA[] = [
                     The screenshot will not include detailed teacups, a title,
                     or a legend.
                 </Text>
-                <Text {...content}>
+                <Text {...subSectionDescription}>
                     To get an image with a map, detailed teacups, a title, and a
                     legend, use the Report tool. With the report tool, you can
                     select specific reservoirs to include.
                 </Text>
-            </>
+            </Stack>
         ),
     },
 ];
