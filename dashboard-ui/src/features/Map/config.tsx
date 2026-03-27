@@ -235,15 +235,15 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
         case LayerId.Regions:
             return 'Regions';
         case LayerId.Snotel:
-            return 'Snow Water Equivalent Averages (%)';
+            return 'NRCS SNOTEL Snow Water Equivalent (% of Average)';
         case LayerId.NOAARiverForecast:
-            return 'Water Supply Forecast Points (%)';
+            return 'NOAA RFC Seasonal Water Supply Forecasts (% of Average)';
         case LayerId.USDroughtMonitor:
-            return 'Drought Forecast';
+            return 'U.S. Drought Monitor Drought Intensity';
         case LayerId.NOAAPrecipSixToTen:
-            return 'Precipitation Forecast (% Chance)';
+            return 'NOAA NWS 6-10 Day Precipitation Outlook (% Chance)';
         case LayerId.NOAATempSixToTen:
-            return 'Temperature Forecast (% Chance)';
+            return 'NOAA NWS 6-10 Day Temperature Outlook (% Chance)';
         default:
             return '';
     }

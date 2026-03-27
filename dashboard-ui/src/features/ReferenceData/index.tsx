@@ -188,29 +188,29 @@ const ReferenceData: React.FC = () => {
                 <>
                     <Entry
                         layerId={LayerId.NOAARiverForecast}
-                        label="Show Water Supply Forecast Locations (NOAA RFC)"
+                        label={`Show ${getLayerName(LayerId.NOAARiverForecast)}`}
                         onClick={handleNOAARFCChange}
                         toggleableLayers={toggleableLayers}
                     />
                     <Entry
                         layerId={LayerId.Snotel}
-                        label="Show Snow Water Equivalent Averages (NRCS SNOTEL)"
+                        label={`Show ${getLayerName(LayerId.Snotel)}`}
                         onClick={handleSnotelChange}
                         toggleableLayers={toggleableLayers}
                     />
                     <Divider size="md" />
-                    <Stack gap="calc(var(--default-spacing) / 2)">
+                    <Stack gap="calc(var(--default-spacing) / 2)" w="100%">
                         <Select
                             id="baseLayerSelector"
                             data={RasterBaseLayerIconObj.map((obj) => ({
                                 value: obj.id,
                                 label: obj.friendlyName,
                             }))}
+                            w="100%"
                             value={getBaseLayerValue()}
                             aria-label="Select a Base Layer"
                             placeholder="Select a Base Layer"
-                            label="Base Layer"
-                            className={styles.baseLayerSelector}
+                            label={'Base Layer'}
                             onChange={(_value) =>
                                 handleBaseLayerChange(
                                     _value as RasterBaseLayers
@@ -219,7 +219,9 @@ const ReferenceData: React.FC = () => {
                         />
 
                         {getBaseLayerValue() !== RasterBaseLayers.None && (
-                            <Links collectionId={getBaseLayerValue()} />
+                            <Group>
+                                <Links collectionId={getBaseLayerValue()} />
+                            </Group>
                         )}
                     </Stack>
                     {getBaseLayerValue() !== RasterBaseLayers.None && (
