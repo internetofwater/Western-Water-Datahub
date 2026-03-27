@@ -29,7 +29,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: 'Western Water Data Dashboard',
-    description: 'TODO: add description',
+    description:
+        'The Western Water Data Dashboard provides fast access to current reservoir data and supplemental information.',
 };
 
 const Body: React.FC<PropsWithChildren> = ({ children }) => {

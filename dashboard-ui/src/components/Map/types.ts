@@ -270,3 +270,5 @@ export enum LayerType {
     Fill = 'fill',
     Raster = 'raster',
 }
+
+export type Properties = Record<string, string | number | string[] | number[]>;

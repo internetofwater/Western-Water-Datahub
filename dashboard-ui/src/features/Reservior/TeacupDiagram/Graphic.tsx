@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { MantineColorScheme } from '@mantine/core';
+import { Group, MantineColorScheme, Text } from '@mantine/core';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import {
@@ -78,6 +78,7 @@ export const Graphic: React.FC<Props> = (props) => {
     const [highPercentile, setHighPercentile] = useState<number>();
     const [average, setAverage] = useState<number>();
     const [lowPercentile, setLowPercentile] = useState<number>();
+    const [isInvalidGraphic, setIsInvalidGraphic] = useState(false);
 
     useEffect(() => {
         if (!svgRef.current || !reservoirProperties || !config) {
@@ -113,11 +114,12 @@ export const Graphic: React.FC<Props> = (props) => {
             svgRef.current.removeChild(svgRef.current.firstChild);
         }
 
-        const storagePercentage =
+        const storagePercentage = Math.min(
             Number(reservoirProperties[config.storageProperty]) /
-            Number(reservoirProperties[config.capacityProperty]);
-
-        const nintiethPercentage =
+                Number(reservoirProperties[config.capacityProperty]),
+            1
+        );
+        const ninetiethPercentage =
             Number(reservoirProperties[config.ninetiethPercentileProperty]) /
             Number(reservoirProperties[config.capacityProperty]);
         const averagePercentage =
@@ -127,6 +129,15 @@ export const Graphic: React.FC<Props> = (props) => {
             Number(reservoirProperties[config.tenthPercentileProperty]) /
             Number(reservoirProperties[config.capacityProperty]);
 
+        if (isNaN(storagePercentage)) {
+            setIsInvalidGraphic(true);
+            return;
+        }
+
+        const hasHighPercentile = !isNaN(ninetiethPercentage);
+        const hasAverage = !isNaN(averagePercentage);
+        const hasLowPercentile = !isNaN(tenthPercentage);
+
         // Determine basic dimensions of teacup trapezoid
         const size = 1 - Number(storagePercentage.toFixed(2));
         const upperWidth = 160;
@@ -134,12 +145,19 @@ export const Graphic: React.FC<Props> = (props) => {
         const height = 107;
         const scale = 1;
 
-        // TODO: replace these with the actual percentages
-        const highPercentile = height - height * nintiethPercentage;
+        const highPercentile = height - height * ninetiethPercentage;
         const average = height - height * averagePercentage;
         const lowPercentile = height - height * tenthPercentage;
 
-        setHighPercentile(highPercentile);
+        if (hasHighPercentile && !isNaN(highPercentile)) {
+            setHighPercentile(highPercentile);
+        }
+        if (hasAverage && !isNaN(average)) {
+            setAverage(average);
+        }
+        if (hasLowPercentile && !isNaN(lowPercentile)) {
+            setLowPercentile(lowPercentile);
+        }
         setAverage(average);
         setLowPercentile(lowPercentile);
 
@@ -223,11 +241,9 @@ export const Graphic: React.FC<Props> = (props) => {
             calculateXPosition
         );
 
-        const highPercentileLine = addLine(
-            highPercentileId,
-            highPercentile,
-            '#FFF'
-        );
+        const highPercentileLine = hasHighPercentile
+            ? addLine(highPercentileId, highPercentile, '#FFF')
+            : null;
         const averageLine = addLine(averageId, average, '#d0a02a');
         const lowPercentileLine = addLine(
             lowPercentileId,
@@ -246,21 +262,30 @@ export const Graphic: React.FC<Props> = (props) => {
 
             // Add high percentile line and label
 
-            const highLabelTSpanData = getHighPercentileLabel();
+            const highLabelTSpanData = hasHighPercentile
+                ? getHighPercentileLabel()
+                : [];
 
-            const highLabel = addLabel(
-                highPercentileLabelId,
-                highLabelTSpanData,
-                highPercentile,
-                textColor
-            );
+            const highLabel = hasHighPercentile
+                ? addLabel(
+                      highPercentileLabelId,
+                      highLabelTSpanData,
+                      highPercentile,
+                      textColor
+                  )
+                : null;
 
             // Add average line and label
 
             // Adjust the average label position if too close to high percentile label
             let averageAdjust = 0;
-            if (average - highPercentile < 40) {
-                const height = getHeight(highLabel);
+            if (
+                hasAverage &&
+                hasHighPercentile &&
+                average - highPercentile < 40
+            ) {
+                const height =
+                    hasHighPercentile && highLabel ? getHeight(highLabel) : -1;
 
                 averageAdjust = Math.max(
                     0,
@@ -268,37 +293,48 @@ export const Graphic: React.FC<Props> = (props) => {
                 );
             }
 
-            const averageLabelTSpanData = getAverageLabel(averageAdjust);
+            const averageLabelTSpanData = hasAverage
+                ? getAverageLabel(averageAdjust)
+                : [];
 
-            const averageLabel = addLabel(
-                averageLabelId,
-                averageLabelTSpanData,
-                average,
-                '#d0a02a'
-            );
+            const averageLabel = hasAverage
+                ? addLabel(
+                      averageLabelId,
+                      averageLabelTSpanData,
+                      average,
+                      '#d0a02a'
+                  )
+                : null;
 
             // Add low percentile line and label
 
             // Adjust the low percentile label position if too close to average label
             // Handle if average is also too close to high percentile
             let lowPercentileAdjust = 0;
-            if (lowPercentile - average < 40) {
-                const height = getHeight(averageLabel);
+            if (
+                hasAverage &&
+                hasLowPercentile &&
+                lowPercentile - average < 40
+            ) {
+                const height =
+                    hasAverage && averageLabel ? getHeight(averageLabel) : -1;
 
                 lowPercentileAdjust =
                     Math.max(0, height - (lowPercentile - average + 1)) +
                     averageAdjust;
             }
 
-            const lowLabelTSpanData =
-                getLowPercentileLabel(lowPercentileAdjust);
+            if (hasLowPercentile) {
+                const lowLabelTSpanData =
+                    getLowPercentileLabel(lowPercentileAdjust);
 
-            addLabel(
-                lowPercentileLabelId,
-                lowLabelTSpanData,
-                lowPercentile,
-                textColor
-            );
+                addLabel(
+                    lowPercentileLabelId,
+                    lowLabelTSpanData,
+                    lowPercentile,
+                    textColor
+                );
+            }
 
             // Total capacity of reservoir
             addText(
@@ -311,7 +347,10 @@ export const Graphic: React.FC<Props> = (props) => {
                 showLabels
             );
 
-            const highPercentileY = getY(highPercentileLine);
+            const highPercentileY =
+                hasHighPercentile && highPercentileLine
+                    ? getY(highPercentileLine)
+                    : -1;
             const averageY = getY(averageLine);
             const lowPercentileY = getY(lowPercentileLine);
 
@@ -319,7 +358,11 @@ export const Graphic: React.FC<Props> = (props) => {
             averageAdjust = 0;
 
             // Check overlap with high percentile line
-            if (Math.abs(highPercentileY - averageY) < minSpacing) {
+            if (
+                hasAverage &&
+                hasHighPercentile &&
+                Math.abs(highPercentileY - averageY) < minSpacing
+            ) {
                 averageAdjust +=
                     (highPercentileY <= averageY ? 1 : -1) *
                     (minSpacing + 9 - Math.abs(highPercentileY - averageY));
@@ -327,6 +370,8 @@ export const Graphic: React.FC<Props> = (props) => {
 
             // Check overlap with low percentile line
             if (
+                hasAverage &&
+                hasLowPercentile &&
                 Math.abs(lowPercentileY - averageY + averageAdjust) < minSpacing
             ) {
                 averageAdjust +=
@@ -336,17 +381,21 @@ export const Graphic: React.FC<Props> = (props) => {
                         Math.abs(lowPercentileY - averageY + averageAdjust));
             }
 
-            addText(
-                averageTextId,
-                `${Math.round(
-                    Number(
-                        reservoirProperties[config.thirtyYearAverageProperty]
-                    )
-                ).toLocaleString('en-us')} acre-feet`,
-                average - 2 + averageAdjust,
-                '#d0a02a',
-                showLabels
-            );
+            if (hasAverage) {
+                addText(
+                    averageTextId,
+                    `${Math.round(
+                        Number(
+                            reservoirProperties[
+                                config.thirtyYearAverageProperty
+                            ]
+                        )
+                    ).toLocaleString('en-us')} acre-feet`,
+                    average - 2 + averageAdjust,
+                    '#d0a02a',
+                    showLabels
+                );
+            }
 
             // Current Storage of reservoir
             addText(
@@ -363,22 +412,16 @@ export const Graphic: React.FC<Props> = (props) => {
         // Now that the diagram is created, call the callback function if exists
         // Used when creating the diagram for the report
         callback?.();
-    }, [
-        svgRef.current,
-        colorScheme,
-        reservoirProperties![config.identifierProperty],
-    ]);
+    }, [svgRef.current, colorScheme, reservoirProperties]);
 
     useEffect(() => {
-        if (
-            !listeners ||
-            cutHeight === undefined ||
-            highPercentile === undefined ||
-            average === undefined ||
-            lowPercentile === undefined
-        ) {
+        if (isInvalidGraphic || !listeners || cutHeight === undefined) {
             return;
         }
+
+        const hasHighPercentile = highPercentile !== undefined;
+        const hasAverage = average !== undefined;
+        const hasLowPercentile = lowPercentile !== undefined;
 
         const propagateEventToContainerElem =
             propagateEventToContainerElemConstructor(
@@ -403,69 +446,76 @@ export const Graphic: React.FC<Props> = (props) => {
             })!
         );
 
-        const highPercentileHandler =
-            (type: 'mouseenter' | 'mouseleave') => () =>
-                propagateEventToContainerElem(type, highPercentile);
+        if (hasHighPercentile) {
+            const highPercentileHandler =
+                (type: 'mouseenter' | 'mouseleave') => () =>
+                    propagateEventToContainerElem(type, highPercentile);
 
-        cleanups.push(
-            addListeners(_highPercentileId, {
-                mouseenter: highPercentileHandler('mouseenter'),
-                mouseleave: highPercentileHandler('mouseleave'),
-            })!
-        );
+            cleanups.push(
+                addListeners(_highPercentileId, {
+                    mouseenter: highPercentileHandler('mouseenter'),
+                    mouseleave: highPercentileHandler('mouseleave'),
+                })!
+            );
 
-        cleanups.push(
-            addListeners(`${_highPercentileId}-ghost`, {
-                mouseenter: highPercentileHandler('mouseenter'),
-                mouseleave: highPercentileHandler('mouseleave'),
-            })!
-        );
+            cleanups.push(
+                addListeners(`${_highPercentileId}-ghost`, {
+                    mouseenter: highPercentileHandler('mouseenter'),
+                    mouseleave: highPercentileHandler('mouseleave'),
+                })!
+            );
+        }
 
-        const averageHandler = (type: 'mouseenter' | 'mouseleave') => () => {
-            if (type === 'mouseenter') handleAverageLineEnter();
-            else handleAverageLineLeave(showLabels);
+        if (hasAverage) {
+            const averageHandler =
+                (type: 'mouseenter' | 'mouseleave') => () => {
+                    if (type === 'mouseenter') handleAverageLineEnter();
+                    else handleAverageLineLeave(showLabels);
 
-            propagateEventToContainerElem(type, average);
-        };
+                    propagateEventToContainerElem(type, average);
+                };
 
-        cleanups.push(
-            addListeners(_averageId, {
-                mouseenter: averageHandler('mouseenter'),
-                mouseleave: averageHandler('mouseleave'),
-            })!
-        );
+            cleanups.push(
+                addListeners(_averageId, {
+                    mouseenter: averageHandler('mouseenter'),
+                    mouseleave: averageHandler('mouseleave'),
+                })!
+            );
 
-        cleanups.push(
-            addListeners(`${_averageId}-ghost`, {
-                mouseenter: averageHandler('mouseenter'),
-                mouseleave: averageHandler('mouseleave'),
-            })!
-        );
+            cleanups.push(
+                addListeners(`${_averageId}-ghost`, {
+                    mouseenter: averageHandler('mouseenter'),
+                    mouseleave: averageHandler('mouseleave'),
+                })!
+            );
 
-        cleanups.push(
-            addListeners(_averageTextId, {
-                mouseenter: averageHandler('mouseenter'),
-                mouseleave: averageHandler('mouseleave'),
-            })!
-        );
+            cleanups.push(
+                addListeners(_averageTextId, {
+                    mouseenter: averageHandler('mouseenter'),
+                    mouseleave: averageHandler('mouseleave'),
+                })!
+            );
+        }
 
-        const lowPercentileHandler =
-            (type: 'mouseenter' | 'mouseleave') => () =>
-                propagateEventToContainerElem(type, lowPercentile);
+        if (hasLowPercentile) {
+            const lowPercentileHandler =
+                (type: 'mouseenter' | 'mouseleave') => () =>
+                    propagateEventToContainerElem(type, lowPercentile);
 
-        cleanups.push(
-            addListeners(_lowPercentileId, {
-                mouseenter: lowPercentileHandler('mouseenter'),
-                mouseleave: lowPercentileHandler('mouseleave'),
-            })!
-        );
+            cleanups.push(
+                addListeners(_lowPercentileId, {
+                    mouseenter: lowPercentileHandler('mouseenter'),
+                    mouseleave: lowPercentileHandler('mouseleave'),
+                })!
+            );
 
-        cleanups.push(
-            addListeners(`${_lowPercentileId}-ghost`, {
-                mouseenter: lowPercentileHandler('mouseenter'),
-                mouseleave: lowPercentileHandler('mouseleave'),
-            })!
-        );
+            cleanups.push(
+                addListeners(`${_lowPercentileId}-ghost`, {
+                    mouseenter: lowPercentileHandler('mouseenter'),
+                    mouseleave: lowPercentileHandler('mouseleave'),
+                })!
+            );
+        }
 
         return () => {
             cleanups.forEach((cleanup) => cleanup?.());
@@ -477,6 +527,14 @@ export const Graphic: React.FC<Props> = (props) => {
         average,
         reservoirProperties![config.identifierProperty],
     ]);
+
+    if (isInvalidGraphic) {
+        return (
+            <Group h={127} justify="center" align="center" grow>
+                <Text size="sm">Missing required data</Text>
+            </Group>
+        );
+    }
 
     return (
         <svg

@@ -24,7 +24,13 @@ import styles from '@/features/MapTools/MapTools.module.css';
 import { MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { Map } from 'mapbox-gl';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import {
+    ChangeEvent,
+    Dispatch,
+    SetStateAction,
+    useEffect,
+    useState,
+} from 'react';
 import Image from 'next/image';
 import ScreenshotIcon from '@/icons/Screenshot';
 import { NotificationType, Overlay } from '@/stores/session/types';
@@ -32,6 +38,8 @@ import useSessionStore from '@/stores/session';
 import { useMediaQuery } from '@mantine/hooks';
 import { toJpeg } from 'html-to-image';
 import notificationManager from '@/managers/Notification.init';
+import useMainStore from '@/stores/main';
+import dayjs from 'dayjs';
 
 /**
  *
@@ -44,6 +52,8 @@ const Screenshot: React.FC = () => {
 
     const overlay = useSessionStore((state) => state.overlay);
     const setOverlay = useSessionStore((state) => state.setOverlay);
+
+    const reservoirDate = useMainStore((state) => state.reservoirDate);
 
     const mobile = useMediaQuery('(max-width: 899px)');
 
@@ -120,7 +130,17 @@ const Screenshot: React.FC = () => {
 
     const downloadImage = async () => {
         try {
-            downloadDataUrl(src, `${name}.jpg`);
+            const today = dayjs().format('MM-DD-YYYY');
+            let filename = `${name}_${today}`;
+            if (reservoirDate) {
+                const dateObj = dayjs(reservoirDate);
+
+                if (dateObj.isValid()) {
+                    const date = dateObj.format('MM-DD-YYYY');
+                    filename += `_${date}`;
+                }
+            }
+            downloadDataUrl(src, `${filename}.jpg`);
 
             const legend = document.getElementById('legend');
             if (!legend) return;
@@ -131,7 +151,7 @@ const Screenshot: React.FC = () => {
             const dataUrl = await toJpeg(legend, {
                 style: { display: 'block' },
             });
-            downloadDataUrl(dataUrl, `${name}-legend.jpg`);
+            downloadDataUrl(dataUrl, `${filename}_legend.jpg`);
         } catch (err) {
             notificationManager.show(
                 (err as Error).message,
@@ -144,6 +164,11 @@ const Screenshot: React.FC = () => {
     const handleShow = (show: boolean) => {
         setOverlay(show ? Overlay.Screenshot : null);
         setShow(show);
+    };
+
+    const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const name = event.currentTarget.value;
+        setName(name);
     };
 
     return (
@@ -200,9 +225,7 @@ const Screenshot: React.FC = () => {
                         <TextInput
                             label="File Name"
                             value={name}
-                            onChange={(event) =>
-                                setName(event.currentTarget.value)
-                            }
+                            onChange={handleNameChange}
                         />
                         <Button
                             variant="default"

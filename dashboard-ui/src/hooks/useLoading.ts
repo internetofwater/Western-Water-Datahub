@@ -13,16 +13,22 @@ export const useLoading = () => {
 
     const [isFetchingReservoirs, setIsFetchingReservoirs] = useState(false);
     const [isFetchingSnotel, setIsFetchingSnotel] = useState(false);
+    const [isFetchingSingleReservoir, setIsFetchingSingleReservoir] =
+        useState(false);
 
     useEffect(() => {
         setIsFetchingReservoirs(
             loadingManager.has({ type: LoadingType.Reservoirs })
         );
         setIsFetchingSnotel(loadingManager.has({ type: LoadingType.Snotel }));
+        setIsFetchingSingleReservoir(
+            loadingManager.has({ type: LoadingType.SingleReservoir })
+        );
     }, [loadingInstances]);
 
     return {
         isFetchingReservoirs,
         isFetchingSnotel,
+        isFetchingSingleReservoir,
     };
 };

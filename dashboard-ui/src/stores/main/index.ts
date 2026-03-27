@@ -91,7 +91,7 @@ const useMainStore = create<MainState>()((set) => ({
     reservoirCollections: null,
     setReservoirCollections: (reservoirCollection) =>
         set({ reservoirCollections: reservoirCollection }),
-    basemap: BasemapId.Standard,
+    basemap: BasemapId.Streets,
     setBasemap: (basemap) => set({ basemap }),
     chartUpdate: 0,
     setChartUpdate: (chartUpdate) => set({ chartUpdate }),
