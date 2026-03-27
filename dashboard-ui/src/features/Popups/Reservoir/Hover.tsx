@@ -15,6 +15,8 @@ import {
     displayPercentage,
     displayVolumeWithUnits,
 } from '@/utils/reservoirDataDisplay';
+import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
+import { SourceId } from '@/features/Map/consts';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
@@ -44,6 +46,19 @@ export const Hover: React.FC<Props> = (props) => {
 
     const percentFull = (storage / capacity) * 100;
     const percentOfAverage = (storage / average) * 100;
+
+    const getLabel = (label: string) => {
+        if (config.id === SourceId.TeacupEDRReservoirs) {
+            const totalOrActive = String(
+                reservoirProperties[
+                    TeacupReservoirField.UseTotalOrActiveStorage
+                ]
+            );
+            return `${label} (${totalOrActive})`;
+        }
+
+        return label;
+    };
 
     return (
         <Card
@@ -82,7 +97,7 @@ export const Hover: React.FC<Props> = (props) => {
                         <TextBlock w="100%">
                             <Group gap={4} justify="flex-start">
                                 <Text size="xs" fw={700}>
-                                    Storage:
+                                    {getLabel('Storage')}:
                                 </Text>
                                 <Text size="xs">
                                     {displayVolumeWithUnits(storage)}
@@ -98,7 +113,7 @@ export const Hover: React.FC<Props> = (props) => {
                             </Group>
                             <Group gap={4} justify="flex-start">
                                 <Text size="xs" fw={700}>
-                                    Capacity:
+                                    {getLabel('Capacity')}:
                                 </Text>
                                 <Text size="xs">
                                     {displayVolumeWithUnits(capacity)}

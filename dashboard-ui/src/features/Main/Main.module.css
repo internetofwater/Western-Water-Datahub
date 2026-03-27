@@ -73,6 +73,7 @@
     flex: 1;
     display: flex;
 
+    height: 100svh;
     min-height: 0;
     overflow: hidden;
 }
@@ -81,7 +82,7 @@
     position: relative;
     flex: 1;
 
-    height: -webkit-fill-available;
+    height: inherit;
     min-height: 0;
 
     overflow: hidden;

@@ -114,10 +114,11 @@ export const Graphic: React.FC<Props> = (props) => {
             svgRef.current.removeChild(svgRef.current.firstChild);
         }
 
-        const storagePercentage =
+        const storagePercentage = Math.min(
             Number(reservoirProperties[config.storageProperty]) /
-            Number(reservoirProperties[config.capacityProperty]);
-
+                Number(reservoirProperties[config.capacityProperty]),
+            1
+        );
         const ninetiethPercentage =
             Number(reservoirProperties[config.ninetiethPercentileProperty]) /
             Number(reservoirProperties[config.capacityProperty]);

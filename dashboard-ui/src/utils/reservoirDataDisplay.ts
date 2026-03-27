@@ -14,6 +14,10 @@ export const displayDate = (date: string) => {
 };
 
 export const displayVolume = (volume: number) => {
+    if (!isFinite(volume)) {
+        return 'N/A';
+    }
+
     if (isNaN(volume)) {
         return 'N/A';
     }
@@ -22,6 +26,10 @@ export const displayVolume = (volume: number) => {
 };
 
 export const displayVolumeWithUnits = (volume: number) => {
+    if (!isFinite(volume)) {
+        return 'N/A';
+    }
+
     const value = displayVolume(volume);
 
     if (value === 'N/A') {
@@ -32,6 +40,10 @@ export const displayVolumeWithUnits = (volume: number) => {
 };
 
 export const displayPercentage = (percentage: number) => {
+    if (!isFinite(percentage)) {
+        return 'N/A';
+    }
+
     if (isNaN(percentage)) {
         return 'N/A';
     }

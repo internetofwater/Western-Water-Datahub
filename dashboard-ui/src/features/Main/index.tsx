@@ -35,53 +35,45 @@ const Main: React.FC<Props> = (props) => {
 
     return (
         <>
-            <Stack gap={0} className={styles.contentWrapper}>
-                <Group
-                    gap={0}
-                    align="flex-start"
-                    className={styles.primaryWrapper}
-                >
-                    <Panel accessToken={accessToken} />
-                    <Stack gap={0} className={styles.right}>
-                        <Map accessToken={accessToken} />
-                        <Box
-                            className={`${styles.container} ${styles.left} ${styles.top}`}
-                        >
-                            <Stack gap={'var(--default-spacing)'}>
-                                <MobilePanelButton />
-                                {showNotification && (
-                                    <Notification
-                                        className={styles.notification}
-                                        classNames={{
-                                            description: styles.betaDescription,
-                                        }}
-                                        title={
-                                            <Text fw={700}>
-                                                Application Beta
-                                            </Text>
-                                        }
-                                        withCloseButton
-                                        onClick={handleClick}
-                                    >
-                                        <Text size="sm">
-                                            This application is still in active
-                                            development. Some features may not
-                                            be fully implemented.
-                                        </Text>
-                                    </Notification>
-                                )}
-                            </Stack>
-                        </Box>
-                        <Box
-                            className={`${styles.container} ${styles.left} ${styles.bottom}`}
-                        >
-                            <Popups />
-                        </Box>
+            <Group gap={0} align="flex-start" className={styles.primaryWrapper}>
+                <Panel accessToken={accessToken} />
+                <Stack gap={0} className={styles.right}>
+                    <Map accessToken={accessToken} />
+                    <Box
+                        className={`${styles.container} ${styles.left} ${styles.top}`}
+                    >
+                        <Stack gap={'var(--default-spacing)'}>
+                            <MobilePanelButton />
+                            {showNotification && (
+                                <Notification
+                                    className={styles.notification}
+                                    classNames={{
+                                        description: styles.betaDescription,
+                                    }}
+                                    title={
+                                        <Text fw={700}>Application Beta</Text>
+                                    }
+                                    withCloseButton
+                                    onClick={handleClick}
+                                >
+                                    <Text size="sm">
+                                        This application is still in active
+                                        development. Some features may not be
+                                        fully implemented.
+                                    </Text>
+                                </Notification>
+                            )}
+                        </Stack>
+                    </Box>
+                    <Box
+                        className={`${styles.container} ${styles.left} ${styles.bottom}`}
+                    >
+                        <Popups />
+                    </Box>
 
-                        <Loading desktop />
-                    </Stack>
-                </Group>
-            </Stack>
+                    <Loading desktop />
+                </Stack>
+            </Group>
             <Reservoir />
             <MapTools />
         </>
