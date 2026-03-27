@@ -81,7 +81,7 @@
     position: relative;
     flex: 1;
 
-    height: -webkit-fill-available;
+    height: 100svh;
     min-height: 0;
 
     overflow: hidden;
