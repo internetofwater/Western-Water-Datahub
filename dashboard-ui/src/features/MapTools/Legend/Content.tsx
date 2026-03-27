@@ -45,25 +45,23 @@ export const Content: React.FC<Props> = (props) => {
                             label={getTooltipContent(entry.id)}
                             disabled={!getTooltipContent(entry.id)}
                             position="top-start"
+                            multiline
                         >
-                            <Group align="center" gap="xs">
-                                <Title order={4} size="h6">
-                                    {getLayerName(entry.id)}
-                                </Title>
+                            <Title order={4} size="h6">
+                                {getLayerName(entry.id)}
                                 <Box
                                     component="span"
+                                    ml="calc(var(--default-spacing) / 2)"
                                     style={{
-                                        display:
-                                            getTooltipContent(entry.id).length >
-                                            0
-                                                ? 'inline-block'
-                                                : 'none',
+                                        display: getTooltipContent(entry.id)
+                                            ? 'inline-block'
+                                            : 'none',
                                     }}
                                     className={styles.listItemIconWrapper}
                                 >
                                     <Info />
                                 </Box>
-                            </Group>
+                            </Title>
                         </Tooltip>
                         {isItemsEntry(entry) && (
                             <Items id={entry.id} entry={entry} />

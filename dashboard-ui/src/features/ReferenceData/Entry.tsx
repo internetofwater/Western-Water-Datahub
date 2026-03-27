@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Box, Group, Stack, Switch, Tooltip, Text } from '@mantine/core';
+import { Box, Stack, Switch, Tooltip, Text } from '@mantine/core';
 import { getTooltipContent } from '@/features/MapTools/Legend/utils';
 import Info from '@/icons/Info';
 import { Links } from '@/features/ReferenceData/Links';
@@ -20,30 +20,34 @@ type Props = {
 export const Entry: React.FC<Props> = (props) => {
     const { layerId, label, onClick, toggleableLayers, links = true } = props;
 
+    const tooltipContent = getTooltipContent(layerId);
+    const hasTooltip = Boolean(tooltipContent);
+
     return (
         <Stack gap="calc(var(--default-spacing) / 2)">
             <Switch
                 label={
                     <Tooltip
                         label={getTooltipContent(layerId)}
-                        disabled={!getTooltipContent(layerId)}
+                        disabled={!hasTooltip}
                         position="top-start"
+                        multiline
                     >
-                        <Group align="center" gap="xs">
-                            <Text size="sm">{label}</Text>
+                        <Text size="sm">
+                            {label}
                             <Box
+                                ml="calc(var(--default-spacing) / 2)"
                                 component="span"
                                 style={{
-                                    display:
-                                        getTooltipContent(layerId).length > 0
-                                            ? 'inline-block'
-                                            : 'none',
+                                    display: hasTooltip
+                                        ? 'inline-block'
+                                        : 'none',
                                 }}
                                 className={styles.labelIcon}
                             >
                                 <Info />
                             </Box>
-                        </Group>
+                        </Text>
                     </Tooltip>
                 }
                 aria-label={label}
