@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.14'",
@@ -1289,7 +1289,7 @@ wheels = [
 [[package]]
 name = "pgedr"
 version = "0.3.dev0"
-source = { url = "https://github.com/internetofwater/pgedr/archive/refs/heads/main.zip" }
+source = { git = "https://github.com/internetofwater/pgedr.git?rev=e6df854624ef21a5cd79dd6b1a16d9651bf7103d#e6df854624ef21a5cd79dd6b1a16d9651bf7103d" }
 dependencies = [
     { name = "cryptography" },
     { name = "geoalchemy2" },
@@ -1297,17 +1297,6 @@ dependencies = [
     { name = "pydantic" },
     { name = "pygeoapi" },
     { name = "pymysql" },
-]
-sdist = { hash = "sha256:61e0c75e8ae663dd8e6a30cd2958375acac48d444e02e3f8feaeacbee88f6675" }
-
-[package.metadata]
-requires-dist = [
-    { name = "cryptography", specifier = ">=44.0.3" },
-    { name = "geoalchemy2" },
-    { name = "psycopg2" },
-    { name = "pydantic" },
-    { name = "pygeoapi", specifier = ">=0.23.0" },
-    { name = "pymysql", specifier = ">=1.1.1" },
 ]
 
 [[package]]
@@ -1891,7 +1880,7 @@ gdal = [
 requires-dist = [
     { name = "gdal", marker = "extra == 'gdal'" },
     { name = "geoalchemy2", specifier = ">=0.17.1" },
-    { name = "pgedr", url = "https://github.com/internetofwater/pgedr/archive/refs/heads/main.zip" },
+    { name = "pgedr", git = "https://github.com/internetofwater/pgedr.git?rev=e6df854624ef21a5cd79dd6b1a16d9651bf7103d" },
     { name = "psycopg2", specifier = ">=2.9.10" },
 ]
 provides-extras = ["gdal"]
@@ -2087,7 +2076,7 @@ gdal = [
 requires-dist = [
     { name = "gdal", marker = "extra == 'gdal'" },
     { name = "geoalchemy2", specifier = ">=0.17.1" },
-    { name = "pgedr", url = "https://github.com/internetofwater/pgedr/archive/refs/heads/main.zip" },
+    { name = "pgedr", git = "https://github.com/internetofwater/pgedr.git?rev=e6df854624ef21a5cd79dd6b1a16d9651bf7103d" },
     { name = "psycopg2", specifier = ">=2.9.10" },
 ]
 provides-extras = ["gdal"]
@@ -2249,6 +2238,7 @@ dependencies = [
     { name = "opentelemetry-instrumentation-aiohttp-client" },
     { name = "opentelemetry-sdk" },
     { name = "orjson" },
+    { name = "pgedr" },
     { name = "pygeoapi" },
     { name = "redis" },
     { name = "uvicorn" },
@@ -2284,6 +2274,7 @@ requires-dist = [
     { name = "opentelemetry-instrumentation-aiohttp-client", specifier = ">=0.51b0" },
     { name = "opentelemetry-sdk", specifier = ">=1.30.0" },
     { name = "orjson", specifier = ">=3.10.15" },
+    { name = "pgedr", git = "https://github.com/internetofwater/pgedr.git?rev=e6df854624ef21a5cd79dd6b1a16d9651bf7103d" },
     { name = "pygeoapi", git = "https://github.com/internetofwater/pygeoapi.git?rev=2b6288e40a1045052bbd98473ea49df8caa0ed72" },
     { name = "redis", specifier = ">=5.2.1" },
     { name = "uvicorn", specifier = ">=0.34.0" },
