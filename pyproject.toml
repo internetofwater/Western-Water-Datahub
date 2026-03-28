@@ -66,6 +66,9 @@ deployment = [
 [tool.uv.workspace]
 members = ["packages/*"]
 
+[tool.uv.sources]
+pgedr = { url = "https://github.com/internetofwater/pgedr/archive/refs/heads/main.zip" }
+
 [tool.pytest.ini_options]
 # needed to prevent a deprecation warning; doesnt really affect any behavior
 asyncio_default_fixture_loop_scope = "function"
