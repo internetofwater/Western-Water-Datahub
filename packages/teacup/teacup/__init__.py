@@ -91,6 +91,17 @@ def run_subprocess(csv_url: str):
             continue
 
         try:
+            row["DataValue"] = float(row["DataValue"])
+            assert not isnan(row["DataValue"])
+            assert row["DataValue"] >= 0
+        except (ValueError, TypeError, AssertionError):
+            LOGGER.warning(
+                f"Skipping invalid value {row['DataValue']} "
+                f"on {row['DataDate']} from {row['SiteName']}"
+            )
+            continue
+
+        try:
             row["DataDate"] = datetime.strptime(row["DataDate"], "%m/%d/%Y").strftime(
                 "%Y-%m-%d"
             )

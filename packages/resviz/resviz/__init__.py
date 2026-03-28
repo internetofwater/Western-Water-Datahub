@@ -54,10 +54,14 @@ def run_subprocess(csv_url: str):
 
     # Process source 'layer'
     for feature in layer:
-        row = {
-            layer_def.GetFieldDefn(i).GetName().strip(): feature.GetField(i).strip()
-            for i in range(layer_def.GetFieldCount())
-        }
+        try:
+            row = {
+                layer_def.GetFieldDefn(i).GetName().strip(): feature.GetField(i).strip()
+                for i in range(layer_def.GetFieldCount())
+            }
+        except AttributeError:
+            LOGGER.error(f"Skipping row with missing fields from {row['SiteName']}")
+            continue
 
         row["DataDate"] = datetime.strptime(row["DataDate"], "%m/%d/%Y").strftime(
             "%Y-%m-%d"

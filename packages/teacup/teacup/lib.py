@@ -270,7 +270,7 @@ def get_source_url(
         case SourceName.USACE:
             return source_for_storage_data.split()[-1]
         case SourceName.RISE:
-            return "https://data.usbr.gov/rise/api/locations/" + str(
+            return "https://data.usbr.gov/rise/api/location/" + str(
                 LOCATION_IDS[pref_name]
             )
         case SourceName.USACE | SourceName.CDEC:
