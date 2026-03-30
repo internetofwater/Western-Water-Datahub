@@ -338,8 +338,8 @@ def create_feature(pg_layer, row, parameter: str):
 
     try:
         row[p_val] = float(row[p_val])
-        assert not isnan(row[p_val])
-        assert row[p_val] >= 0
+        assert not isnan(row[p_val]), "Value is NaN"
+        assert row[p_val] >= 0, "Value is negative"
     except (ValueError, TypeError, AssertionError):
         LOGGER.warning(
             f"Skipping invalid value {row[p_val]} "
