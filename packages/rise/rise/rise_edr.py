@@ -46,8 +46,6 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
 
         BaseEDRProvider.__init__(self, provider_def)
 
-        self.instances = []  # used so pygeoapi doesn't register the same query multiple times in the UI
-
     @otel_trace()
     def locations(
         self,

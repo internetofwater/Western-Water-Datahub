@@ -27,7 +27,6 @@ class ResOpsUSProviderEDR(BaseEDRProvider, EDRProviderProtocol):
         :param provider_def: provider definition
         """
         BaseEDRProvider.__init__(self, provider_def)
-        self.instances = []
 
     @otel_trace()
     def locations(

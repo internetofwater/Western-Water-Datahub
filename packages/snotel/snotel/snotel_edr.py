@@ -29,7 +29,6 @@ class SnotelEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         :returns: rise.base_edr.RiseEDRProvider
         """
         BaseEDRProvider.__init__(self, provider_def)
-        self.instances = []
 
     @otel_trace()
     def locations(
