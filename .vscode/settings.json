@@ -10,7 +10,7 @@
     ".ruff_cache/": true,
     // hide build artifacts / dependency installations
     "**/*.egg-info/": true,
-    ".venv/": true,
+    ".venv/": false,
     "dist/": true,
     "htmlcov/": true,
     "node_modules/": true

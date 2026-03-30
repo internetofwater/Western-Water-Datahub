@@ -238,6 +238,10 @@ resources:
       - WPC
       - NOAA
     keywords: [NOAA, QPF]
+    flask_cache:
+      # this forecast is updated twice a day
+      # so 1 hour caching is fine
+      ttl_seconds: 3600 # 1 hour
     links:
       - type: application/html
         rel: canonical
@@ -464,6 +468,10 @@ resources:
       - CPC
       - NOAA
     keywords: [NOAA, temperature]
+    flask_cache:
+      # 1 hour caching since dataset is updated daily
+      # and we want to ensure the latest forecast
+      ttl_seconds: 3600
     links:
       - type: application/html
         rel: documentation
@@ -489,6 +497,10 @@ resources:
       - CPC
       - NOAA
     keywords: [NOAA, temperature]
+    flask_cache:
+      # 1 hour caching since dataset is updated daily
+      # and we want to ensure the latest forecast
+      ttl_seconds: 3600
     links:
       - type: application/html
         rel: canonical
@@ -616,6 +628,11 @@ resources:
     title: USBR Reservoir Storage Levels (resviz)
     description: contains current and average storage levels for USBR reservoirs dervied from the USBR resviz endpoint
     hidden: True
+    # cache for 1 hour to reduce
+    # unnecessary requests to the db
+    flask_cache:
+      ttl_seconds: 3600
+      permit_args: ['bbox']
     provider-name:
       - DERIVED
     keywords:
@@ -687,6 +704,11 @@ resources:
     keywords:
       - reservoir
       - drought
+    # cache for 1 hour to reduce
+    # unnecessary requests to the db
+    flask_cache:
+      ttl_seconds: 3600
+      permit_args: ['bbox']
     extents:
       spatial:
         bbox: [-123.60518, 28.4667, -95.875, 48.8283]
@@ -751,6 +773,8 @@ resources:
       - BOR
       - USBR
       - DOI
+    flask_cache:
+      ttl_seconds: 360000 # 100 hours since regions will rarely have any significant change
     keywords:
       - doi
       - boundaries
@@ -778,6 +802,8 @@ resources:
       - NOAA
       - RFC
     keywords: [NOAA, riv_gauges]
+    flask_cache:
+      ttl_seconds: 300 # cache for 5 minutes since the forecast is updated every 15 minutes
     links:
       - type: application/html
         rel: documentation

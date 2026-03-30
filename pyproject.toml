@@ -19,7 +19,7 @@ dependencies = [
     "opentelemetry-exporter-otlp>=1.30.0",
     "orjson>=3.10.15",
     # Uses the `dev` branch which brings in optimizations common to both wwdh and asu projects
-    "pygeoapi @ git+https://github.com/internetofwater/pygeoapi.git@2b6288e40a1045052bbd98473ea49df8caa0ed72",
+    "pygeoapi",
     "msgspec>=0.19.0",
     "flask-cors>=6.0.2",
     "pgedr",
@@ -69,6 +69,7 @@ members = ["packages/*"]
 
 [tool.uv.sources]
 pgedr = { git = "https://github.com/internetofwater/pgedr.git", rev = "e6df854624ef21a5cd79dd6b1a16d9651bf7103d" }
+pygeoapi = { git = "https://github.com/internetofwater/pygeoapi.git", rev = "5ecc9373191816357b0cbf133857d10ac44dac3c" }
 
 [tool.pytest.ini_options]
 # needed to prevent a deprecation warning; doesnt really affect any behavior

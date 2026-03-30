@@ -49,6 +49,7 @@ ENV PYGEOAPI_CUSTOM_EVENT_LOOP_GETTER=get_loop
 # this allows us to store a persistent object
 # instead of needing to initialize it new each time
 ENV PYGEOAPI_CACHE_PLUGINS=true
+ENV PYGEOAPI_FLASK_CACHE_TYPE=REDIS
 
 # Entrypoint for running the app
 ENTRYPOINT [ "/opt/pygeoapi/pygeoapi-deployment/entrypoint.sh" ]

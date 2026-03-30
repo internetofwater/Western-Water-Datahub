@@ -10,10 +10,14 @@
         "FLASK_APP": "pygeoapi.flask_app:APP",
         "FLASK_ENV": "development",
         "PYGEOAPI_CONFIG": "${workspaceFolder}/pygeoapi.config.yml",
-        "PYGEOAPI_OPENAPI": "${workspaceFolder}/local.openapi.yml"
+        "PYGEOAPI_OPENAPI": "${workspaceFolder}/local.openapi.yml",
+        "REDIS_HOST": "127.0.0.1",
+        "REDIS_PORT": "6379"
       },
       "args": ["run", "--host=127.0.0.1", "--port=5005"],
-      "jinja": true
+      "jinja": true,
+      // allow debugging of internal pygeoapi server code
+      "justMyCode": false
     }
   ]
 }
