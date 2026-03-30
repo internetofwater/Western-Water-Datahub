@@ -33,7 +33,6 @@ class AwdbForecastsEDRProvider(BaseEDRProvider, EDRProviderProtocol):
             provider_def
             or {"name": "AWDB Forecasts", "type": "feature", "data": "remote"},
         )
-        self.instances = []
 
     @otel_trace()
     def locations(

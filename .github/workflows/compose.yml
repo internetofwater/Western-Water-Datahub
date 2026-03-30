@@ -28,6 +28,8 @@ jobs:
           docker compose build --no-cache
 
       - name: Verify services can start
+        env:
+          COMPOSE_PROFILES: production
         run: |
           docker compose up -d
           sleep 10  # Give containers some time to initialize
