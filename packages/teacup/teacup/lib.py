@@ -4,6 +4,7 @@
 from datetime import timedelta, date
 from enum import StrEnum
 import logging
+from math import isnan
 from osgeo import ogr, gdal
 import requests
 from typing import Iterator
@@ -334,6 +335,17 @@ def create_feature(pg_layer, row, parameter: str):
             p_val = "DataDateP90"
         case _:
             p_val = "DataValue"
+
+    try:
+        row[p_val] = float(row[p_val])
+        assert not isnan(row[p_val])
+        assert row[p_val] >= 0
+    except (ValueError, TypeError, AssertionError):
+        LOGGER.warning(
+            f"Skipping invalid value {row[p_val]} "
+            f"on {row['DataDate']} from {row['SiteName']}"
+        )
+        return
 
     feature = ogr.Feature(pg_layer.GetLayerDefn())
     id = f"{row['SiteId']}.{row['DataDate']}.{parameter}"
