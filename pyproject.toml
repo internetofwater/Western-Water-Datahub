@@ -19,7 +19,7 @@ dependencies = [
     "opentelemetry-exporter-otlp>=1.30.0",
     "orjson>=3.10.15",
     # Uses the `dev` branch which brings in optimizations common to both wwdh and asu projects
-    "pygeoapi @ git+https://github.com/internetofwater/pygeoapi.git@fb2117ff35cc0135f43d44cea311fcac3d5bb1f8",
+    "pygeoapi @ git+https://github.com/internetofwater/pygeoapi.git@5ecc9373191816357b0cbf133857d10ac44dac3c",
     "msgspec>=0.19.0",
     "flask-cors>=6.0.2",
 ]
