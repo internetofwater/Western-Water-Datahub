@@ -628,6 +628,11 @@ resources:
     title: USBR Reservoir Storage Levels (resviz)
     description: contains current and average storage levels for USBR reservoirs dervied from the USBR resviz endpoint
     hidden: True
+    # cache for 1 hour to reduce
+    # unnecessary requests to the db
+    flask_cache:
+      ttl_seconds: 3600
+      permit_args: ['bbox']
     provider-name:
       - DERIVED
     keywords:
@@ -703,6 +708,7 @@ resources:
     # unnecessary requests to the db
     flask_cache:
       ttl_seconds: 3600
+      permit_args: ['bbox']
     extents:
       spatial:
         bbox: [-123.60518, 28.4667, -95.875, 48.8283]
