@@ -35,7 +35,7 @@ export const ReservoirPopup: React.FC<Props> = (props) => {
         >
             <Stack align="center" gap="xs">
                 <Title order={4} size="h6">
-                    {reservoirProperties[config.labelProperty]}
+                    {reservoirProperties[config.longLabelProperty]}
                 </Title>
                 <Text size="xs">
                     Data as of:{' '}

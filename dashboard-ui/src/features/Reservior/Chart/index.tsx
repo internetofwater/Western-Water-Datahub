@@ -30,6 +30,7 @@ type Props = {
     id: string | number;
     ref: RefObject<ChartJS<'line', Array<{ x: string; y: number }>> | null>;
     config: ReservoirConfig;
+    currentDate: string | null;
 };
 
 /**
@@ -37,7 +38,7 @@ type Props = {
  * @component
  */
 export const Chart: React.FC<Props> = (props) => {
-    const { ref, id, config } = props;
+    const { ref, id, config, currentDate } = props;
 
     const [data, setData] = useState<Array<{ x: string; y: number }>>([]);
     const [loading, setLoading] = useState(true);
@@ -64,14 +65,17 @@ export const Chart: React.FC<Props> = (props) => {
         };
     }, []);
 
-    const getReservoirStorage = async (range: DateRange) => {
+    const getReservoirStorage = async (
+        reservoirDate: string | null,
+        range: DateRange
+    ) => {
         try {
             if (isMounted.current) {
                 setLoading(true);
             }
             controller.current = new AbortController();
 
-            const dateRange = getDateRange(range);
+            const dateRange = getDateRange(reservoirDate, range);
 
             const coverageCollection =
                 await wwdhService.getLocation<CoverageCollection>(
@@ -81,9 +85,9 @@ export const Chart: React.FC<Props> = (props) => {
                         signal: controller.current.signal,
                         params: {
                             limit: dateRange.days,
-                            f: 'json',
                             ...config.params,
-                            datetime: dateRange.startDate + '/' + '..',
+                            datetime:
+                                dateRange.startDate + '/' + dateRange.endDate,
                         },
                     }
                 );
@@ -118,8 +122,8 @@ export const Chart: React.FC<Props> = (props) => {
     useEffect(() => {
         setError('');
         chartDidUpdate.current = false;
-        void getReservoirStorage(range);
-    }, [range, id]);
+        void getReservoirStorage(currentDate, range);
+    }, [currentDate, range, id]);
 
     const chartData: ChartData<'line', Array<{ x: string; y: number }>> = {
         datasets: [
@@ -142,25 +146,25 @@ export const Chart: React.FC<Props> = (props) => {
                 </Title>
                 <Group>
                     <Radio
-                        label="1 year"
+                        label="Past year"
                         data-testid="1-year-radio"
                         checked={range === 1}
                         onChange={() => setRange(1)}
                     />
                     <Radio
-                        label="5 years"
+                        label="Past 5 years"
                         data-testid="5-year-radio"
                         checked={range === 5}
                         onChange={() => setRange(5)}
                     />
                     <Radio
-                        label="10 years"
+                        label="Past 10 years"
                         data-testid="10-year-radio"
                         checked={range === 10}
                         onChange={() => setRange(10)}
                     />
                     <Radio
-                        label="30 years"
+                        label="Past 30 years"
                         data-testid="30-year-radio"
                         checked={range === 30}
                         onChange={() => setRange(30)}

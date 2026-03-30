@@ -4,7 +4,15 @@
  */
 
 import { useEffect, useState } from "react";
-import { ActionIcon, Group, Popover, Stack, Text, Title } from "@mantine/core";
+import {
+  ActionIcon,
+  Box,
+  Group,
+  Popover,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import Info from "@/assets/Info";
 import SearchIcon from "@/assets/Search";
 import Tooltip from "@/components/Tooltip";
@@ -76,24 +84,30 @@ const Search: React.FC = () => {
         </Tooltip>
       </Popover.Target>
       <Popover.Dropdown>
-        <Tooltip multiline label={helpText}>
-          <Group className={styles.title} gap="xs" mb="var(--default-spacing)">
-            <Title order={4} size="h5">
-              Search
-            </Title>
-            <Info />
-          </Group>
-        </Tooltip>
+        <Box className={styles.wrapper}>
+          <Tooltip multiline label={helpText}>
+            <Group
+              className={styles.title}
+              gap="xs"
+              mb="var(--default-spacing)"
+            >
+              <Title order={4} size="h5">
+                Search
+              </Title>
+              <Info />
+            </Group>
+          </Tooltip>
 
-        <Stack
-          gap={0}
-          className={`${styles.container} ${styles.dateSelectorContainer}`}
-          align="flex-start"
-        >
-          {layers.map((layer) => (
-            <Entry key={`layer-order-${layer.id}`} layer={layer} />
-          ))}
-        </Stack>
+          <Stack
+            gap={0}
+            className={`${styles.container} ${styles.dateSelectorContainer}`}
+            align="flex-start"
+          >
+            {layers.map((layer) => (
+              <Entry key={`layer-order-${layer.id}`} layer={layer} />
+            ))}
+          </Stack>
+        </Box>
       </Popover.Dropdown>
     </Popover>
   );

@@ -10,12 +10,13 @@ export type Series<T extends GeoJsonProperties> = {
   data: FeatureCollection<Geometry, T>;
 };
 
-export type PrettyLabel = { parameter: string; label: string };
+export type PrettyLabel = { value: string; label: string };
 
 // TODO: consilidate, make generic?
 export type EChartsSeries = {
   name: string;
+  parameter: string;
+  unit: string;
   type: "line";
-  stack: string;
   data: number[];
 };

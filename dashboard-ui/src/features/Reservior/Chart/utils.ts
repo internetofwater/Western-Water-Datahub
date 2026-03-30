@@ -4,23 +4,30 @@
  */
 
 import { CoverageCollection, CoverageJSON } from '@/services/edr.service';
+import dayjs from 'dayjs';
+
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 export type DateRange = 1 | 5 | 10 | 30;
+
 /**
  *
  * @function
  */
-export const getDateRange = (range: DateRange) => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const endDate = new Date(today);
-    endDate.setDate(endDate.getDate() - 1);
-    const startDate = new Date(endDate);
-    startDate.setFullYear(startDate.getFullYear() - range);
+export const getDateRange = (endDate: string | null, range: number) => {
+    const endDayObj =
+        endDate && dayjs(endDate).isValid() ? dayjs(endDate) : dayjs();
+
+    const end = endDayObj.startOf('day').subtract(1, 'day');
+
+    const start = end.subtract(range, 'year');
+
     return {
-        startDate: startDate.toISOString().split('T')[0],
-        endDate: endDate.toISOString().split('T')[0],
-        days: range * 365
+        startDate: start.utc().format('YYYY-MM-DD'),
+        endDate: end.utc().format('YYYY-MM-DD'),
+        days: range * 365,
     };
 };
 

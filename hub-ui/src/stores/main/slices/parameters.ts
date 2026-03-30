@@ -10,6 +10,10 @@ import { MainState, TParameter } from "@/stores/main/types";
 export interface IParameterSlice {
   parameters: TParameter[];
   setParameters: (parameters: TParameter[]) => void;
+  setCollectionParameters: (
+    collectionId: ICollection["id"],
+    parameters: string[],
+  ) => void;
   addParameter: (collectionId: ICollection["id"], parameter: string) => void;
   removeParameter: (collectionId: ICollection["id"], parameter: string) => void;
   hasParameter: (collectionId: ICollection["id"], parameter: string) => boolean;
@@ -27,6 +31,19 @@ export const createParametersSlice: StateCreator<
   setParameters: (parameters) =>
     set((state) => {
       state.parameters = parameters;
+    }),
+  setCollectionParameters: (collectionId, parameters) =>
+    set((state) => {
+      const parameterGroups = state.parameters.filter(
+        (entry) => entry.collectionId !== collectionId,
+      );
+
+      parameterGroups.push({
+        collectionId,
+        parameters,
+      });
+
+      state.parameters = parameterGroups;
     }),
 
   addParameter: (collectionId, parameter) =>

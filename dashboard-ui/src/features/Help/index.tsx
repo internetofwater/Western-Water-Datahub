@@ -8,11 +8,11 @@ import { Button, Modal, Tabs, Text, Tooltip } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { About } from '@/features/Help/About';
 import { FAQ } from '@/features/Help/FAQ';
-import { Glossary } from '@/features/Help/Glossary';
 import { Contact } from '@/features/Help/Contact';
 import styles from '@/features/Help/Help.module.css';
 import useSessionStore from '@/stores/session';
 import { HelpTab, Overlay } from '@/stores/session/types';
+import { Documentation } from './Documentation';
 
 export const HELP_LOCAL_KEY = 'wwdh-show-help';
 
@@ -105,7 +105,7 @@ const Help: React.FC = () => {
                         </Tabs.Tab>
                         <Tabs.Tab value={HelpTab.Glossary}>
                             <Text size="md" fw={700}>
-                                Glossary
+                                Documentation
                             </Text>
                         </Tabs.Tab>
                         <Tabs.Tab value={HelpTab.FAQ}>
@@ -124,7 +124,7 @@ const Help: React.FC = () => {
                         <About onClose={handleClose} showHelp={showHelp} />
                     </Tabs.Panel>
                     <Tabs.Panel value={HelpTab.Glossary}>
-                        <Glossary />
+                        <Documentation />
                     </Tabs.Panel>
                     <Tabs.Panel value={HelpTab.FAQ}>
                         <FAQ />

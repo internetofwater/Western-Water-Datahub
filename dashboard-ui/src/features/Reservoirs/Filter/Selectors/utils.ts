@@ -10,15 +10,28 @@ import { ExpressionSpecification, Map as MapObj } from 'mapbox-gl';
 
 export type ItemWithSource = ComboboxItem & { source?: string };
 
-export const formatOptions = (
-    features: Feature<Geometry, GeoJsonProperties>[],
-    getValueProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
-    getLabelProperty: (feature: Feature<Geometry, GeoJsonProperties>) => string,
-    defaultLabel: string = 'All',
-    defaultValue: string = 'all',
-    noDefault: boolean = false,
-    source?: string
+type FormatOptionsConfig = {
+    defaultLabel?: string;
+    defaultValue?: string;
+    noDefault?: boolean;
+    source?: string;
+    sort?: boolean;
+};
+
+export const formatOptions = <T extends Geometry, V extends GeoJsonProperties>(
+    features: Feature<T, V>[],
+    getValueProperty: (feature: Feature<T, V>) => string,
+    getLabelProperty: (feature: Feature<T, V>) => string,
+    config: FormatOptionsConfig
 ): ItemWithSource[] => {
+    const {
+        defaultLabel = 'All',
+        defaultValue = 'all',
+        noDefault = false,
+        source,
+        sort = true,
+    } = config;
+
     const options = new Map<string, ItemWithSource>();
     if (!noDefault) {
         options.set('all', { value: defaultValue, label: defaultLabel });
@@ -38,9 +51,13 @@ export const formatOptions = (
             }
         }
     });
-    return Array.from(options.values()).sort((a, b) =>
-        a.label.localeCompare(b.label)
-    );
+    const values = Array.from(options.values());
+
+    if (sort) {
+        return values.sort((a, b) => a.label.localeCompare(b.label));
+    }
+
+    return values;
 };
 
 /**
@@ -58,12 +75,9 @@ export const createOptionsFromMapboxSource = (
         sourceLayer: sourceId,
     });
 
-    return formatOptions(
-        features,
-        getValueProperty,
-        getLabelProperty,
-        defaultLabel
-    );
+    return formatOptions(features, getValueProperty, getLabelProperty, {
+        defaultLabel,
+    });
 };
 
 /**
@@ -83,10 +97,7 @@ export const createFilteredOptionsFromMapboxSource = (
         filter: filter,
     });
 
-    return formatOptions(
-        features,
-        getValueProperty,
-        getLabelProperty,
-        defaultLabel
-    );
+    return formatOptions(features, getValueProperty, getLabelProperty, {
+        defaultLabel,
+    });
 };

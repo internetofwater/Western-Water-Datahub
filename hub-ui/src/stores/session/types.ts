@@ -61,14 +61,15 @@ export type TLoading = {
 };
 
 export enum EOverlay {
-  Legend = "legend",
-  Info = "info",
-  Warning = "warning",
-  Download = "download",
+  Controls = "controls",
   Date = "date",
+  Download = "download",
+  Info = "info",
+  Label = "label",
+  Legend = "legend",
   Order = "order",
   Search = "search",
-  Controls = "controls",
+  Warning = "warning",
 }
 
 export type LegendEntry = {

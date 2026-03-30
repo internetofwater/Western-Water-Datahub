@@ -7,12 +7,18 @@ import { useEffect, useRef } from 'react';
 import wwdhService from '@/services/init/wwdh.init';
 import { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
 import useMainStore from '@/stores/main';
-import { ReservoirConfigs, SourceId } from '@/features/Map/consts';
-import { appendResvizDataProperties } from '@/features/Map/utils';
+import { MAP_ID, ReservoirConfigs, SourceId } from '@/features/Map/consts';
+import {
+    appendResvizDataProperties,
+    appendTeacupDataProperties,
+    getFeatures,
+} from '@/features/Map/utils';
 import { ReservoirCollections } from '@/stores/main/types';
 import loadingManager from '@/managers/Loading.init';
 import { LoadingType, NotificationType } from '@/stores/session/types';
 import notificationManager from '@/managers/Notification.init';
+import { useMap } from '@/contexts/MapContexts';
+import { Map } from 'mapbox-gl';
 
 export const useReservoirData = () => {
     const reservoirCollections = useMainStore(
@@ -25,7 +31,9 @@ export const useReservoirData = () => {
     const controller = useRef<AbortController | null>(null);
     const isMounted = useRef(true);
 
-    const fetchReservoirLocations = async () => {
+    const { map } = useMap(MAP_ID);
+
+    const fetchReservoirLocations = async (map: Map) => {
         const loadingInstance = loadingManager.add(
             'Loading reservoir data',
             LoadingType.Reservoirs
@@ -36,15 +44,31 @@ export const useReservoirData = () => {
             const reservoirCollections: ReservoirCollections = {};
 
             for (const config of ReservoirConfigs) {
-                const result = await wwdhService.getLocations<
-                    FeatureCollection<Point, GeoJsonProperties>
-                >(config.id, {
-                    signal: controller.current.signal,
-                    params: config.params,
-                });
+                let currentFeatureCollection;
+                currentFeatureCollection = getFeatures<
+                    Point,
+                    GeoJsonProperties
+                >(map, config.id);
+                if (!currentFeatureCollection) {
+                    currentFeatureCollection = await wwdhService.getItems<
+                        FeatureCollection<Point, GeoJsonProperties>
+                    >(config.id, {
+                        signal: controller.current.signal,
+                        params: config.params,
+                    });
+                }
+
+                if (!currentFeatureCollection) {
+                    console.error(
+                        'Unable to retrieve basic feature collection for: ',
+                        config.id
+                    );
+                    continue;
+                }
+
                 if (config.id === SourceId.ResvizEDRReservoirs) {
                     const processedResult = await appendResvizDataProperties(
-                        result
+                        currentFeatureCollection
                     );
                     const reservoirCollection = {
                         ...processedResult,
@@ -66,6 +90,18 @@ export const useReservoirData = () => {
                             };
                         }),
                     };
+
+                    reservoirCollections[config.id] = reservoirCollection;
+                }
+                if (config.id === SourceId.TeacupEDRReservoirs) {
+                    const reservoirCollection =
+                        await appendTeacupDataProperties(
+                            currentFeatureCollection,
+                            {
+                                signal: controller.current.signal,
+                                params: config.params,
+                            }
+                        );
 
                     reservoirCollections[config.id] = reservoirCollection;
                 }
@@ -97,18 +133,25 @@ export const useReservoirData = () => {
 
     useEffect(() => {
         isMounted.current = true;
-        if (
-            !reservoirCollections &&
-            !loadingManager.has({ type: LoadingType.Reservoirs })
-        ) {
-            void fetchReservoirLocations();
-        }
 
         return () => {
             isMounted.current = false;
             controller.current?.abort();
         };
     }, []);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        if (
+            !reservoirCollections &&
+            !loadingManager.has({ type: LoadingType.Reservoirs })
+        ) {
+            void fetchReservoirLocations(map);
+        }
+    }, [map]);
 
     return {
         reservoirCollections,

@@ -3,7 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Feature, FeatureCollection, Polygon } from "geojson";
+import {
+  Feature,
+  FeatureCollection,
+  GeoJsonGeometryTypes,
+  Polygon,
+} from "geojson";
 import { ColorSpecification, PropertyValueSpecification } from "mapbox-gl";
 import { Properties } from "@/components/Map/types";
 import { ICollection, ParameterGroup } from "@/services/edr.service";
@@ -58,8 +63,12 @@ export enum EDatasourceType {
 // Allows for basic string colors (hex, rgba etc) or an expression
 export type TColor = PropertyValueSpecification<ColorSpecification>;
 
+export type TGeometryTypes = GeoJsonGeometryTypes | "raster";
+
 export type TLayer = {
   id: string; // uuid
+  // Used in place of a unique identifier in places like the popups or download modal
+  label: string | null;
   collectionId: ICollection["id"];
   color: TColor;
   parameters: string[];
@@ -70,6 +79,8 @@ export type TLayer = {
   position: number; // The order this layer is drawn relative to other user layers
   paletteDefinition: PaletteDefinition | null;
   loaded: boolean;
+  geometryTypes: TGeometryTypes[];
+  includeGeography: boolean;
 };
 
 export type TLocation = {
