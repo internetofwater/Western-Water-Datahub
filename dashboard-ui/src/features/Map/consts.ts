@@ -7,7 +7,8 @@ import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
 import { ExpressionSpecification } from 'mapbox-gl';
 import { ReservoirConfig } from '@/features/Map/types';
-import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
+import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
+import { BBox } from 'geojson';
 
 export const MAP_ID = 'main';
 
@@ -15,6 +16,8 @@ export const BASEMAP = basemaps[BasemapId.Dark];
 
 export const INITIAL_CENTER: [number, number] = [-107.85792, 38.1736];
 export const INITIAL_ZOOM = 4.15;
+
+export const US_BBOX: BBox = [-171.791111, 18.91619, -66.96466, 71.357764];
 
 export enum SourceId {
     Regions = 'regions',
@@ -25,6 +28,7 @@ export enum SourceId {
     StateCenters = 'states-center',
     RiseEDRReservoirs = 'rise-edr',
     ResvizEDRReservoirs = 'resviz-edr',
+    TeacupEDRReservoirs = 'teacup-edr',
     USACEEDRReservoirs = 'usace-edr',
     SnowWater = 'snow-water',
     USDroughtMonitor = 'us-current-drought-monitor',
@@ -46,6 +50,7 @@ export enum LayerId {
 
     RiseEDRReservoirs = 'dash-rise-edr-reservoir-points',
     ResvizEDRReservoirs = 'dash-resviz-edr-reservoir-points',
+    TeacupEDRReservoirs = 'dash-teacup-edr-reservoir-points',
     SnowWater = 'dash-snow-water',
     USDroughtMonitor = 'dash-us-current-drought-monitor',
     NOAAPrecipSixToTen = 'dash-noaa-precip-6-10-day',
@@ -71,6 +76,7 @@ export enum SubLayerId {
 
     RiseEDRReservoirLabels = 'dash-rise-edr-reservoir-labels',
     ResvizEDRReservoirLabels = 'dash-resviz-edr-reservoir-labels',
+    TeacupEDRReservoirLabels = 'dash-teacup-edr-reservoir-labels',
     SnotelBoundary = 'dash-snotel-edr-boundary',
     SnotelFill = 'dash-snotel-edr-fill',
 }
@@ -100,55 +106,107 @@ export const TeacupSizeExpression: ExpressionSpecification = [
     0.55,
 ];
 
-export const TeacupPercentageOfCapacityExpression: ExpressionSpecification = [
-    'step',
-    ['var', 'storage'],
-    'default', // Below first step value
-    -1,
-    'no-data',
-    0,
-    ['concat', 'teacup-0-', ['var', 'average']],
-    0.05,
-    ['concat', 'teacup-5-', ['var', 'average']],
-    0.1,
-    ['concat', 'teacup-10-', ['var', 'average']],
-    0.15,
-    ['concat', 'teacup-15-', ['var', 'average']],
-    0.2,
-    ['concat', 'teacup-20-', ['var', 'average']],
-    0.25,
-    ['concat', 'teacup-25-', ['var', 'average']],
-    0.3,
-    ['concat', 'teacup-30-', ['var', 'average']],
-    0.35,
-    ['concat', 'teacup-35-', ['var', 'average']],
-    0.4,
-    ['concat', 'teacup-40-', ['var', 'average']],
-    0.45,
-    ['concat', 'teacup-45-', ['var', 'average']],
-    0.5,
-    ['concat', 'teacup-50-', ['var', 'average']],
-    0.55,
-    ['concat', 'teacup-55-', ['var', 'average']],
-    0.6,
-    ['concat', 'teacup-60-', ['var', 'average']],
-    0.65,
-    ['concat', 'teacup-65-', ['var', 'average']],
-    0.7,
-    ['concat', 'teacup-70-', ['var', 'average']],
-    0.75,
-    ['concat', 'teacup-75-', ['var', 'average']],
-    0.8,
-    ['concat', 'teacup-80-', ['var', 'average']],
-    0.85,
-    ['concat', 'teacup-85-', ['var', 'average']],
-    0.9,
-    ['concat', 'teacup-90-', ['var', 'average']],
-    0.95,
-    ['concat', 'teacup-95-', ['var', 'average']],
-    1.0,
-    ['concat', 'teacup-100-', ['var', 'average']],
-];
+export const TeacupPercentageOfCapacityWithAvgExpression: ExpressionSpecification =
+    [
+        'step',
+        ['var', 'storage'],
+        'default', // Below first step value
+        -1,
+        'no-data',
+        0,
+        ['concat', 'teacup-0-', ['var', 'average']],
+        0.05,
+        ['concat', 'teacup-5-', ['var', 'average']],
+        0.1,
+        ['concat', 'teacup-10-', ['var', 'average']],
+        0.15,
+        ['concat', 'teacup-15-', ['var', 'average']],
+        0.2,
+        ['concat', 'teacup-20-', ['var', 'average']],
+        0.25,
+        ['concat', 'teacup-25-', ['var', 'average']],
+        0.3,
+        ['concat', 'teacup-30-', ['var', 'average']],
+        0.35,
+        ['concat', 'teacup-35-', ['var', 'average']],
+        0.4,
+        ['concat', 'teacup-40-', ['var', 'average']],
+        0.45,
+        ['concat', 'teacup-45-', ['var', 'average']],
+        0.5,
+        ['concat', 'teacup-50-', ['var', 'average']],
+        0.55,
+        ['concat', 'teacup-55-', ['var', 'average']],
+        0.6,
+        ['concat', 'teacup-60-', ['var', 'average']],
+        0.65,
+        ['concat', 'teacup-65-', ['var', 'average']],
+        0.7,
+        ['concat', 'teacup-70-', ['var', 'average']],
+        0.75,
+        ['concat', 'teacup-75-', ['var', 'average']],
+        0.8,
+        ['concat', 'teacup-80-', ['var', 'average']],
+        0.85,
+        ['concat', 'teacup-85-', ['var', 'average']],
+        0.9,
+        ['concat', 'teacup-90-', ['var', 'average']],
+        0.95,
+        ['concat', 'teacup-95-', ['var', 'average']],
+        1.0,
+        ['concat', 'teacup-100-', ['var', 'average']],
+    ];
+
+export const TeacupPercentageOfCapacityWithoutAvgExpression: ExpressionSpecification =
+    [
+        'step',
+        ['var', 'storage'],
+        'default', // Below first step value
+        -1,
+        'no-data',
+        0,
+        'teacup-0',
+        0.05,
+        'teacup-5',
+        0.1,
+        'teacup-10',
+        0.15,
+        'teacup-15',
+        0.2,
+        'teacup-20',
+        0.25,
+        'teacup-25',
+        0.3,
+        'teacup-30',
+        0.35,
+        'teacup-35',
+        0.4,
+        'teacup-40',
+        0.45,
+        'teacup-45',
+        0.5,
+        'teacup-50',
+        0.55,
+        'teacup-55',
+        0.6,
+        'teacup-60',
+        0.65,
+        'teacup-65',
+        0.7,
+        'teacup-70',
+        0.75,
+        'teacup-75',
+        0.8,
+        'teacup-80',
+        0.85,
+        'teacup-85',
+        0.9,
+        'teacup-90',
+        0.95,
+        'teacup-95',
+        1.0,
+        'teacup-100',
+    ];
 
 /**
  *
@@ -176,6 +234,9 @@ export const RISEEDRReservoirSource =
  */
 export const ResVizEDRReservoirSource =
     'https://cache.wwdh.internetofwater.app/collections/resviz-edr/locations';
+
+export const TeacupEDRReservoirSource =
+    'https://cache.wwdh.internetofwater.app/collections/teacup-edr/items';
 
 /**
  *
@@ -209,25 +270,44 @@ export const ReservoirConfigs: ReservoirConfig[] = [
     //         'parameter-name': 'Storage',
     //     },
     // },
+    // {
+    //     id: SourceId.ResvizEDRReservoirs,
+    //     storageProperty: ResvizReservoirField.Storage,
+    //     capacityProperty: ResvizReservoirField.MaxCapacity,
+    //     tenthPercentileProperty: ResvizReservoirField.TenthPercentile,
+    //     ninetiethPercentileProperty: ResvizReservoirField.NinetiethPercentile,
+    //     thirtyYearAverageProperty: ResvizReservoirField.StorageAverage,
+    //     storageDateProperty: ResvizReservoirField.StorageDate,
+    //     identifierProperty: ResvizReservoirField.MonitoringLocationId,
+    //     identifierType: 'number',
+    //     labelProperty: ResvizReservoirField.SiteName,
+    //     chartLabel: ResvizReservoirField.Storage,
+    //     regionConnectorProperty: ResvizReservoirField.DoiRegionName,
+    //     basinConnectorProperty: ResvizReservoirField.Huc06,
+    //     stateConnectorProperty: ResvizReservoirField.State,
+    //     connectedLayers: [
+    //         LayerId.ResvizEDRReservoirs,
+    //         SubLayerId.ResvizEDRReservoirLabels,
+    //     ],
+    // },
     {
-        id: SourceId.ResvizEDRReservoirs,
-        storageProperty: ResvizReservoirField.Storage,
-        capacityProperty: ResvizReservoirField.MaxCapacity,
-        tenthPercentileProperty: ResvizReservoirField.TenthPercentile,
-        ninetiethPercentileProperty: ResvizReservoirField.NinetiethPercentile,
-        thirtyYearAverageProperty: ResvizReservoirField.StorageAverage,
-        storageDateProperty: ResvizReservoirField.StorageDate,
-        identifierProperty: ResvizReservoirField.MonitoringLocationId,
-        identifierType: 'number',
-        labelProperty: ResvizReservoirField.SiteName,
-        chartLabel: ResvizReservoirField.Storage,
-        regionConnectorProperty: ResvizReservoirField.DoiRegionName,
-        basinConnectorProperty: ResvizReservoirField.Huc06,
-        stateConnectorProperty: ResvizReservoirField.State,
-        connectedLayers: [
-            LayerId.ResvizEDRReservoirs,
-            SubLayerId.ResvizEDRReservoirLabels,
-        ],
+        id: SourceId.TeacupEDRReservoirs,
+        storageProperty: TeacupReservoirField.Storage,
+        capacityProperty: TeacupReservoirField.Capacity,
+        tenthPercentileProperty: TeacupReservoirField.TenthPercentile,
+        ninetiethPercentileProperty: TeacupReservoirField.NinetiethPercentile,
+        thirtyYearAverageProperty: TeacupReservoirField.StorageAverage,
+        storageDateProperty: TeacupReservoirField.StorageDate,
+        identifierProperty: TeacupReservoirField.Id,
+        identifierType: 'string',
+        shortLabelProperty: TeacupReservoirField.MapLabel,
+        longLabelProperty: TeacupReservoirField.PopupLabel,
+        chartLabel: TeacupReservoirField.Storage,
+        regionConnectorProperty: TeacupReservoirField.RegionName,
+        basinConnectorProperty: TeacupReservoirField.Huc02,
+        stateConnectorProperty: TeacupReservoirField.State,
+        iconLayer: LayerId.TeacupEDRReservoirs,
+        labelLayer: SubLayerId.TeacupEDRReservoirLabels,
     },
 ];
 

@@ -57,6 +57,7 @@ describe('Chart component', () => {
         jest.spyOn(utils, 'getDateRange').mockReturnValue({
             startDate: '2022-01-01',
             endDate: '2023-01-01',
+            days: 4,
         });
         jest.spyOn(utils, 'getLabelsAndValues').mockReturnValue([
             { x: '2023-01-01', y: 100 },

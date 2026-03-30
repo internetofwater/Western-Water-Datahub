@@ -7,6 +7,7 @@ import {
     ExpressionSpecification,
     FilterSpecification,
     GeoJSONFeature,
+    GeoJSONSource,
     LayoutSpecification,
     Map,
     PaintSpecification,
@@ -17,9 +18,13 @@ import {
     ComplexReservoirProperties,
     INITIAL_CENTER,
     INITIAL_ZOOM,
+    LayerId,
     ReservoirConfigs,
-    TeacupPercentageOfCapacityExpression,
+    SubLayerId,
+    TeacupPercentageOfCapacityWithAvgExpression,
+    TeacupPercentageOfCapacityWithoutAvgExpression,
     TeacupSizeExpression,
+    US_BBOX,
     ZoomCapacityArray,
 } from '@/features/Map/consts';
 import { SourceId } from '@/features/Map/consts';
@@ -35,9 +40,19 @@ import {
     RiseReservoirPropertiesRaw,
 } from '@/features/Map/types/reservoir/rise';
 import wwdhService from '@/services/init/wwdh.init';
-import { CoverageJSON } from '@/services/edr.service';
+import {
+    CoverageCollection,
+    CoverageJSON,
+    IGetLocationParams,
+} from '@/services/edr.service';
 import { ResvizReservoirField } from '@/features/Map/types/reservoir/resviz';
 import { SnotelField, SnotelProperties } from '@/features/Map/types/snotel';
+import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
+import { featureCollection as createFeatureCollection } from '@turf/turf';
+import useMainStore from '@/stores/main';
+import { BoundingGeographyLevel } from '@/stores/main/types';
+import useSessionStore from '@/stores/session';
+import { ReservoirDefault } from '@/stores/main/consts';
 
 /**
  *
@@ -86,8 +101,18 @@ export const loadTeacups = (map: Map) => {
         });
     }
 
-    teacupLevels.forEach((average) => {
-        teacupLevels.forEach((storage) => {
+    teacupLevels.forEach((storage) => {
+        const id = `teacup-${storage}`;
+        if (!map.hasImage(id)) {
+            map.loadImage(`/map-icons/${id}.png`, (error, image) => {
+                if (error) throw error;
+                if (!image) {
+                    throw new Error(`Image not found: ${id}.png`);
+                }
+                map.addImage(id, image);
+            });
+        }
+        teacupLevels.forEach((average) => {
             const id = `teacup-${storage}-${average}`;
             if (!map.hasImage(id)) {
                 map.loadImage(`/map-icons/${id}.png`, (error, image) => {
@@ -109,7 +134,7 @@ export const loadTeacups = (map: Map) => {
  * @function
  */
 export const parseReservoirProperties = <
-    T extends keyof RiseReservoirPropertiesRaw
+    T extends keyof RiseReservoirPropertiesRaw,
 >(
     key: T,
     value: string | number
@@ -131,9 +156,9 @@ export const isSourceDataLoaded = (
 ): boolean => {
     return Boolean(
         event.sourceId === sourceId &&
-            map.getSource(sourceId) &&
-            map.isSourceLoaded(sourceId) &&
-            map.querySourceFeatures(sourceId).length
+        map.getSource(sourceId) &&
+        map.isSourceLoaded(sourceId) &&
+        map.querySourceFeatures(sourceId).length
     );
 };
 
@@ -159,7 +184,12 @@ export const getReservoirIconImageExpression = (
             ['<', ['var', 'storage'], 0],
             'no-data',
             ['>=', ['var', 'capacity'], capacity],
-            TeacupPercentageOfCapacityExpression,
+            [
+                'case',
+                ['==', ['var', 'average'], 'no-data'],
+                TeacupPercentageOfCapacityWithoutAvgExpression,
+                TeacupPercentageOfCapacityWithAvgExpression,
+            ],
             'default',
         ], // evaluate this expression
     ]);
@@ -230,7 +260,17 @@ export const getReservoirIconImageExpression = (
             '100,',
         ], // average variable value
         // Primary expression
-        ['step', ['zoom'], TeacupPercentageOfCapacityExpression, ...zoomSteps],
+        [
+            'step',
+            ['zoom'],
+            [
+                'case',
+                ['==', ['var', 'average'], 'no-data'],
+                TeacupPercentageOfCapacityWithoutAvgExpression,
+                TeacupPercentageOfCapacityWithAvgExpression,
+            ],
+            ...zoomSteps,
+        ],
     ];
 };
 
@@ -263,7 +303,7 @@ export const getHighlightIcon = (
         [
             'case',
             ['>=', ['var', 'capacity'], capacity],
-            'outline',
+            ['case', ['<', ['var', 'storage'], 0], 'outline-large', 'outline'],
             'outline-large',
         ], // evaluate this expression
     ]);
@@ -272,6 +312,12 @@ export const getHighlightIcon = (
         'let',
         'capacity',
         ['coalesce', ['get', config.capacityProperty], 1],
+        'storage', // var name
+        [
+            '/',
+            ['coalesce', ['get', config.storageProperty], -1],
+            ['coalesce', ['get', config.capacityProperty], 1],
+        ],
         ['step', ['zoom'], 'outline', ...zoomSteps],
     ];
 };
@@ -285,7 +331,12 @@ export const getReservoirSymbolSize = (
         [
             'case',
             ['>=', ['var', 'capacity'], capacity],
-            TeacupSizeExpression,
+            [
+                'case',
+                ['<', ['var', 'storage'], 0],
+                defaultSize,
+                TeacupSizeExpression,
+            ],
             defaultSize,
         ], // evaluate this expression
     ]);
@@ -294,6 +345,12 @@ export const getReservoirSymbolSize = (
         'let',
         'capacity',
         ['coalesce', ['get', config.capacityProperty], 1],
+        'storage', // var name
+        [
+            '/',
+            ['coalesce', ['get', config.storageProperty], -1],
+            ['coalesce', ['get', config.capacityProperty], 1],
+        ],
         ['step', ['zoom'], TeacupSizeExpression, ...zoomSteps],
     ];
 };
@@ -328,61 +385,77 @@ export const getReservoirSymbolLayout = (
 export const getReservoirLabelLayout = (
     config: ReservoirConfig
 ): LayoutSpecification => {
+    const handleNoData = (expresssion: ExpressionSpecification) => [
+        'case',
+        ['<', ['var', 'storage'], 0],
+        [0, 0.4],
+        expresssion,
+    ];
+
     return {
-        'text-field': ['get', config.labelProperty],
-        'text-anchor': 'bottom',
+        'text-field': ['get', config.shortLabelProperty],
+        // 'text-variable-anchor': ['bottom', 'bottom-left', 'bottom-right'],
+        'text-anchor': 'top',
         'text-size': 16,
         'symbol-sort-key': [
             '+',
             ['coalesce', ['get', config.capacityProperty], 1],
             1,
         ],
+        'text-font': ['Arial Unicode MS Bold'],
         'text-offset': [
             'let',
             'capacity',
             ['coalesce', ['get', config.capacityProperty], 1],
+            'storage', // var name
+            [
+                '/',
+                ['coalesce', ['get', config.storageProperty], -1],
+                ['coalesce', ['get', config.capacityProperty], 1],
+            ],
             [
                 'step',
                 ['zoom'],
                 [0, 0],
                 0,
-                [
+                handleNoData([
                     'step',
                     ['var', 'capacity'],
-                    [0, 0.5],
+                    [0, 0],
                     45000,
-                    [0, 1],
+                    [0, 0.2],
                     320000,
-                    [0, 2.4],
+                    [0, 0.8],
                     2010000,
-                    [0, 3.2],
-                ],
+                    [0, 1.7],
+                ]),
                 5,
-                [
+                handleNoData([
                     'step',
                     ['var', 'capacity'],
-                    [0, 0.5],
+                    [0, 0.3],
                     45000,
-                    [0, 2.1],
+                    [0, 1.2],
                     320000,
-                    [0, 2.8],
+                    [0, 1.6],
                     2010000,
-                    [0, 3.2],
-                ],
+                    [0, 1.7],
+                ]),
                 8,
-                [
+                handleNoData([
                     'step',
                     ['var', 'capacity'],
-                    [0, 2.4],
+                    [0, 1],
                     45000,
-                    [0, 2.8],
+                    [0, 1.3],
                     320000,
-                    [0, 3.2],
+                    [0, 1.7],
                     2010000,
-                    [0, 3.5],
-                ],
+                    [0, 1.8],
+                ]),
             ],
         ],
+        'text-allow-overlap': true,
     };
 };
 
@@ -390,7 +463,7 @@ export const getReservoirLabelPaint = (
     config: ReservoirConfig
 ): PaintSpecification => {
     return {
-        'text-color': '#fff',
+        'text-color': '#000',
         'text-opacity': [
             'let',
             'capacity',
@@ -411,7 +484,8 @@ export const getReservoirLabelPaint = (
                 ]),
             ],
         ],
-        'text-halo-color': '#000',
+
+        'text-halo-color': '#fff',
         'text-halo-width': 2,
     };
 };
@@ -422,9 +496,9 @@ export const getReservoirFilter = (
     const dataProperties = [
         config.capacityProperty,
         config.storageProperty,
-        config.tenthPercentileProperty,
-        config.ninetiethPercentileProperty,
-        config.thirtyYearAverageProperty,
+        // config.tenthPercentileProperty,
+        // config.ninetiethPercentileProperty,
+        // config.thirtyYearAverageProperty,
     ];
     return [
         'all',
@@ -433,6 +507,29 @@ export const getReservoirFilter = (
             ['has', property],
             ['==', ['typeof', ['get', property]], 'number'],
         ]),
+    ];
+};
+
+export const getReservoirLabelFilter = (
+    config: ReservoirConfig
+): FilterSpecification => {
+    return [
+        'in',
+        ['get', config.identifierProperty],
+        [
+            'literal',
+            [
+                'ElephantButte',
+                'FranklinD.Roosevelt',
+                'Shasta',
+                'FortPeck',
+                'Powell',
+                'Mead',
+                'FlamingGorge',
+                'ElephantButte',
+                'NewMelones',
+            ],
+        ],
     ];
 };
 
@@ -478,7 +575,8 @@ export const getReservoirIdentifier = (
 
 export const appendResvizDataProperties = async (
     featureCollection: FeatureCollection<Point, GeoJsonProperties>,
-    reservoirDate?: string | null
+    reservoirDate?: string | null,
+    signal?: AbortSignal
 ): Promise<FeatureCollection<Point, GeoJsonProperties>> => {
     const ids = featureCollection.features.map((feature) => feature.id!);
 
@@ -491,6 +589,7 @@ export const appendResvizDataProperties = async (
                     limit: 1,
                     ...(reservoirDate ? { datetime: reservoirDate } : {}),
                 },
+                signal,
             }
         )
     );
@@ -542,10 +641,146 @@ export const appendResvizDataProperties = async (
     };
 };
 
+type Options = {
+    params?: IGetLocationParams;
+    reservoirDate?: string | null;
+    signal?: AbortSignal;
+};
+
+const updateTeacupProperties = (feature: Feature<Point, GeoJsonProperties>) => {
+    const updatedProps: GeoJsonProperties = {
+        ...feature.properties,
+    };
+
+    if (feature.properties) {
+        const useTotal =
+            String(
+                feature.properties[TeacupReservoirField.UseTotalOrActiveStorage]
+            ) === 'Total';
+        if (useTotal) {
+            const totalCapacity = feature.properties[
+                TeacupReservoirField.TotalCapacity
+            ]
+                ? Number(feature.properties[TeacupReservoirField.TotalCapacity])
+                : undefined;
+
+            updatedProps[TeacupReservoirField.Capacity] = totalCapacity;
+        } else {
+            const activeCapacity = feature.properties[
+                TeacupReservoirField.ActiveCapacity
+            ]
+                ? Number(
+                      feature.properties[TeacupReservoirField.ActiveCapacity]
+                  )
+                : undefined;
+
+            updatedProps[TeacupReservoirField.Capacity] = activeCapacity;
+        }
+
+        // Huc06 is given as a URI
+        const huc06URI = String(feature.properties[TeacupReservoirField.Huc06]);
+
+        const huc02 = String(
+            feature.properties[TeacupReservoirField.Huc06]
+        ).substring(huc06URI.length - 6, huc06URI.length - 4);
+
+        updatedProps[TeacupReservoirField.Huc02] = huc02;
+    }
+
+    return updatedProps;
+};
+
+const getRangeValueConstructor =
+    (ranges: CoverageJSON['ranges']) => (property: string) => {
+        return ranges[property]?.values?.[0];
+    };
+
+export const appendTeacupDataProperties = async (
+    featureCollection: FeatureCollection<Point, GeoJsonProperties>,
+    options: Options = {}
+): Promise<FeatureCollection<Point, GeoJsonProperties>> => {
+    const { reservoirDate, signal } = options;
+
+    const coverageCollection = await wwdhService.getCube<CoverageCollection>(
+        SourceId.TeacupEDRReservoirs,
+        {
+            params: {
+                bbox: US_BBOX,
+                limit: 1,
+                ...(reservoirDate ? { datetime: reservoirDate } : {}),
+            },
+            signal,
+        }
+    );
+
+    const updatedFeatures = featureCollection.features.map((feature) => {
+        const coverage = coverageCollection.coverages.find(
+            (coverage) => coverage.id && coverage.id === feature.id
+        );
+
+        // Set basic things that are not dependant on /location return, like capacity or the huc02 id
+        const updatedProperties = updateTeacupProperties(feature);
+
+        // This feature came from the /items request
+        if (!coverage) {
+            // Set Storage
+            updatedProperties[TeacupReservoirField.Storage] = undefined;
+            // 10th Percentile
+            updatedProperties[TeacupReservoirField.TenthPercentile] = undefined;
+            // 90th Percentile
+            updatedProperties[TeacupReservoirField.NinetiethPercentile] =
+                undefined;
+            // 30-year Average
+            updatedProperties[TeacupReservoirField.StorageAverage] = undefined;
+            updatedProperties[TeacupReservoirField.StorageDate] = undefined;
+            updatedProperties[TeacupReservoirField.Item] = true;
+
+            return {
+                ...feature,
+                properties: updatedProperties,
+            };
+        } else {
+            // Mark that this is a location, not item
+            updatedProperties[TeacupReservoirField.Item] = false;
+        }
+
+        const getRangeValue = getRangeValueConstructor(coverage.ranges);
+
+        // Set Storage
+        updatedProperties[TeacupReservoirField.Storage] = getRangeValue(
+            TeacupReservoirField.Storage
+        );
+        // 10th Percentile
+        updatedProperties[TeacupReservoirField.TenthPercentile] = getRangeValue(
+            TeacupReservoirField.TenthPercentile
+        );
+        // 90th Percentile
+        updatedProperties[TeacupReservoirField.NinetiethPercentile] =
+            getRangeValue(TeacupReservoirField.NinetiethPercentile);
+        // 30-year Average
+        updatedProperties[TeacupReservoirField.StorageAverage] = getRangeValue(
+            TeacupReservoirField.StorageAverage
+        );
+        updatedProperties[TeacupReservoirField.StorageDate] = coverage.domain
+            .axes.t.values?.[0] as string;
+
+        return {
+            ...feature,
+            properties: updatedProperties,
+        };
+    });
+
+    return {
+        type: 'FeatureCollection',
+        features: updatedFeatures,
+    };
+};
+
 export const getBoundingGeographyFilter = (
     config: ReservoirConfig,
     property: keyof ReservoirConfig,
-    value: string | number | string[] | number[]
+    value: string | number | string[] | number[],
+    applyLabelFilter: boolean = false
 ): FilterSpecification => {
     const prop = ['get', config[property]];
 
@@ -553,7 +788,10 @@ export const getBoundingGeographyFilter = (
     const values = Array.isArray(value) ? value : [value];
 
     // Handle basin HUC06 identifiers
-    if (property === 'basinConnectorProperty') {
+    if (
+        config.id === SourceId.ResvizEDRReservoirs &&
+        property === 'basinConnectorProperty'
+    ) {
         const values = Array.isArray(value) ? value : [value];
 
         const scalarMatches = [
@@ -574,7 +812,7 @@ export const getBoundingGeographyFilter = (
             ]),
         ];
 
-        const matchExpression = [
+        const matchExpression: FilterSpecification = [
             'case',
             ['==', ['typeof', prop], 'array'],
             arrayMatches,
@@ -586,14 +824,28 @@ export const getBoundingGeographyFilter = (
             scalarMatches,
             false,
         ];
-        return ['all', getReservoirFilter(config), matchExpression];
+
+        return matchExpression;
+        // return ['all', getReservoirFilter(config), matchExpression];
     }
 
-    const scalarMatches = ['any', ...values.map((v) => ['==', prop, v])];
+    const scalarMatches = applyLabelFilter
+        ? [
+              'all',
+              ['any', ...values.map((v) => ['==', prop, v])],
+              getReservoirLabelFilter(config),
+          ]
+        : ['any', ...values.map((v) => ['==', prop, v])];
 
-    const arrayMatches = ['any', ...values.map((v) => ['in', v, prop])];
+    const arrayMatches = applyLabelFilter
+        ? [
+              'all',
+              ['any', ...values.map((v) => ['in', v, prop])],
+              getReservoirLabelFilter(config),
+          ]
+        : ['any', ...values.map((v) => ['in', v, prop])];
 
-    const matchExpression = [
+    const matchExpression: FilterSpecification = [
         'case',
         ['==', ['typeof', prop], 'array'],
         arrayMatches,
@@ -606,7 +858,8 @@ export const getBoundingGeographyFilter = (
         false,
     ];
 
-    return ['all', getReservoirFilter(config), matchExpression];
+    return matchExpression;
+    // return ['all', getReservoirFilter(config), matchExpression];
 };
 
 export const resetMap = (map: Map) => {
@@ -645,4 +898,226 @@ export const getAndDisplaySnotelChart = async (
             .setHTML(htmlText)
             .addTo(map);
     }
+};
+
+export const getAllMapLayers = (config: ReservoirConfig) => {
+    return [config.iconLayer, config.labelLayer];
+};
+
+export const getFeatures = <T extends Geometry, V extends GeoJsonProperties>(
+    map: Map,
+    sourceId: SourceId
+): FeatureCollection<T, V> | undefined => {
+    try {
+        const source = map.getSource(sourceId) as GeoJSONSource;
+
+        const data = source._data;
+        if (typeof data !== 'string') {
+            const e = createFeatureCollection<T, V>(
+                (data as FeatureCollection<T, V>).features
+            );
+
+            return e;
+        }
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const ZOOM_HIGH = 8;
+const ZOOM_MID = 6;
+
+const getProperty = (
+    boundingGeographyLevel: BoundingGeographyLevel
+): keyof ReservoirConfig => {
+    switch (boundingGeographyLevel) {
+        case BoundingGeographyLevel.Region:
+            return 'regionConnectorProperty';
+        case BoundingGeographyLevel.Basin:
+            return 'basinConnectorProperty';
+        default:
+        case BoundingGeographyLevel.State:
+            return 'stateConnectorProperty';
+    }
+};
+
+const getFilterValue = (
+    region: string[],
+    basin: string[],
+    state: string[],
+    boundingGeographyLevel: BoundingGeographyLevel
+) => {
+    if (
+        boundingGeographyLevel === BoundingGeographyLevel.Region &&
+        region.length > 0
+    ) {
+        return region;
+    }
+    if (
+        boundingGeographyLevel === BoundingGeographyLevel.Basin &&
+        basin.length > 0
+    ) {
+        return basin;
+    }
+    if (
+        boundingGeographyLevel === BoundingGeographyLevel.State &&
+        state.length > 0
+    ) {
+        return state;
+    }
+    return [];
+};
+
+const applyLabelSettingsConstructor =
+    (map: Map) =>
+    (
+        layerId: LayerId | SubLayerId,
+        options: {
+            filter?: FilterSpecification | null;
+            allowOverlap?: boolean;
+        }
+    ) => {
+        if (!map.getLayer(layerId)) {
+            return;
+        }
+        if (typeof options.allowOverlap === 'boolean') {
+            map.setLayoutProperty(
+                layerId,
+                'text-allow-overlap',
+                options.allowOverlap
+            );
+        }
+        if (options.filter !== undefined) {
+            map.setFilter(layerId, options.filter ?? null);
+        }
+    };
+
+const allOf = (
+    ...filters: Array<FilterSpecification | null | undefined>
+): FilterSpecification | null | undefined => {
+    const defined = filters.filter(
+        (f): f is FilterSpecification => f !== null && f !== undefined
+    );
+    if (defined.length > 0) {
+        return ['all', ...defined] as unknown as FilterSpecification;
+    }
+    // If we have only null/undefined, and any is null then clear all filters
+    if (filters.some((f) => f === null)) {
+        return null;
+    }
+    // do not change the current filter
+    return undefined;
+};
+
+const getZoomBucket = (zoom: number) => {
+    return zoom > ZOOM_HIGH ? 'high' : zoom > ZOOM_MID ? 'mid' : 'low';
+};
+
+export const updateReservoirFilters = (map: Map) => {
+    const zoom = map.getZoom();
+    const zoomBucket = getZoomBucket(zoom);
+
+    const {
+        boundingGeographyLevel,
+        region = [],
+        basin = [],
+        state = [],
+        reservoir,
+    } = useMainStore.getState();
+    const { hideNoData } = useSessionStore.getState();
+
+    const hasBoundingGeography =
+        (region?.length ?? 0) > 0 ||
+        (basin?.length ?? 0) > 0 ||
+        (state?.length ?? 0) > 0;
+
+    const property = getProperty(boundingGeographyLevel);
+    const filterValue = getFilterValue(
+        region ?? [],
+        basin ?? [],
+        state ?? [],
+        boundingGeographyLevel
+    );
+
+    // Overlap behavior (labels collide less as we zoom in)
+    const allowOverlapForBucket = zoomBucket === 'high' ? false : true;
+
+    const applyLabelSettings = applyLabelSettingsConstructor(map);
+
+    ReservoirConfigs.forEach((config) => {
+        //    - If geography active: filter to geography
+        //    - Else: either hideNoData filter or no filter
+        const iconBaseFilter: FilterSpecification | null | undefined =
+            hasBoundingGeography
+                ? getBoundingGeographyFilter(config, property, filterValue)
+                : hideNoData
+                  ? getReservoirFilter(config)
+                  : null;
+
+        const iconFilter: FilterSpecification | null | undefined =
+            hasBoundingGeography && hideNoData
+                ? allOf(iconBaseFilter, getReservoirFilter(config))
+                : iconBaseFilter;
+
+        if (map.getLayer(config.iconLayer)) {
+            map.setFilter(config.iconLayer, iconFilter ?? null);
+        }
+
+        let labelFilter: FilterSpecification | null | undefined;
+        if (hasBoundingGeography) {
+            const includeLabelFilter = zoomBucket === 'low';
+            const geoLabel = getBoundingGeographyFilter(
+                config,
+                property,
+                filterValue,
+                includeLabelFilter
+            );
+
+            labelFilter = hideNoData
+                ? allOf(geoLabel, getReservoirFilter(config))
+                : geoLabel;
+        } else {
+            // No geography selection
+            if (reservoir === ReservoirDefault) {
+                // - low: show labels via getReservoirLabelFilter
+                // - mid: clear labels
+                // - high: don't change
+                labelFilter =
+                    zoomBucket === 'low'
+                        ? getReservoirLabelFilter(config)
+                        : zoomBucket === 'mid'
+                          ? null
+                          : undefined;
+
+                // If hideNoData is on, compose it as well
+                if (hideNoData) {
+                    labelFilter = allOf(
+                        labelFilter,
+                        getReservoirFilter(config)
+                    );
+                }
+            } else {
+                // Non-default reservoir, no geography:
+                labelFilter =
+                    zoomBucket === 'low'
+                        ? getReservoirLabelFilter(config)
+                        : zoomBucket === 'mid'
+                          ? null
+                          : undefined;
+
+                if (hideNoData) {
+                    labelFilter = allOf(
+                        labelFilter,
+                        getReservoirFilter(config)
+                    );
+                }
+            }
+        }
+
+        // Apply label settings and filter in one call
+        applyLabelSettings(config.labelLayer, {
+            filter: labelFilter,
+            allowOverlap: allowOverlapForBucket,
+        });
+    });
 };

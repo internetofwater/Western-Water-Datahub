@@ -83,9 +83,7 @@ export const Region: React.FC = () => {
                         fixLabel(
                             String(feature?.properties?.[RegionField.Name])
                         ),
-                    '',
-                    '',
-                    true
+                    { defaultLabel: '', defaultValue: '', noDefault: true }
                 );
 
                 if (isMounted.current) {

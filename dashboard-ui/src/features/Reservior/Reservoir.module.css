@@ -81,6 +81,13 @@
     transform: scale(1.05);
 }
 
+.title {
+    font-weight: 700;
+    font-size: 1.375rem;
+    line-height: 1.4;
+    font-family: var(--mantine-font-family-headings);
+}
+
 .row {
     height: calc(48% - var(--default-spacing));
 }
@@ -140,6 +147,12 @@
 
     .metricsWrapper {
         width: 100%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .svg {
+        width: 26rem;
     }
 }
 

@@ -16,27 +16,22 @@ import {
 import { Header } from '@/features/Panel/Header';
 import styles from '@/features/Panel/Panel.module.css';
 import Reservoirs from '@/features/Reservoirs';
-import Controls from '@/features/Controls';
+import ReferenceData from '@/features/ReferenceData';
 import DarkModeToggle from '@/features/Panel/DarkModeToggle';
 import Help, { HELP_LOCAL_KEY } from '@/features/Help';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import X from '@/icons/X';
 import { useMediaQuery } from '@mantine/hooks';
 import useSessionStore from '@/stores/session';
 import { Overlay } from '@/stores/session/types';
 
-const items = [
-    {
-        title: 'Reservoirs',
-        content: <Reservoirs />,
-    },
-    {
-        title: 'Reference Data',
-        content: <Controls />,
-    },
-];
+type Props = {
+    accessToken: string;
+};
 
-const Panel: React.FC = () => {
+const Panel: React.FC<Props> = (props) => {
+    const { accessToken } = props;
+
     const overlay = useSessionStore((state) => state.overlay);
     const setOverlay = useSessionStore((state) => state.setOverlay);
 
@@ -54,6 +49,28 @@ const Panel: React.FC = () => {
 
         setShow(overlay === Overlay.Controls);
     }, [mobile, overlay]);
+
+    const items = useMemo(() => {
+        if (accessToken) {
+            return [
+                {
+                    title: 'Reservoirs',
+                    content: <Reservoirs accessToken={accessToken} />,
+                },
+                {
+                    title: 'Reference Data',
+                    content: <ReferenceData />,
+                },
+            ];
+        }
+
+        return [
+            {
+                title: 'Reference Data',
+                content: <ReferenceData />,
+            },
+        ];
+    }, [accessToken]);
 
     const handleClick = () => {
         const stored = localStorage.getItem(HELP_LOCAL_KEY);
@@ -88,7 +105,7 @@ const Panel: React.FC = () => {
             </ActionIcon>
             <Accordion
                 multiple
-                defaultValue={['Reservoirs']}
+                defaultValue={['Reservoirs', 'Reference Data']}
                 className={styles.sticky}
                 classNames={{
                     root: styles.root,
@@ -107,10 +124,13 @@ const Panel: React.FC = () => {
                     </AccordionItem>
                 ))}
             </Accordion>
-            <Group justify="space-between" p="calc(var(--default-spacing) * 2)">
-                <Group gap="var(--default-spacing)">
-                    <Help />
-                </Group>
+            <Group
+                justify="space-between"
+                px="calc(var(--default-spacing) * 2)"
+                py="var(--default-spacing)"
+                className={styles.footer}
+            >
+                <Help />
                 <DarkModeToggle />
             </Group>
         </Paper>

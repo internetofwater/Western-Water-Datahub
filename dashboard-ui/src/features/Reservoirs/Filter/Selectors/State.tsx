@@ -63,6 +63,7 @@ export const State: React.FC = () => {
                     bbox: [-125, 24, -96.5, 49],
                     skipGeometry: true,
                 },
+                signal: controller.current.signal,
             });
 
             if (stateFeatureCollection.features.length) {
@@ -72,12 +73,9 @@ export const State: React.FC = () => {
                             feature.properties[StateField.Acronym]
                         )
                     ),
-                    (feature) =>
-                        String(feature?.properties?.[StateField.Acronym]),
+                    (feature) => String(feature?.properties?.[StateField.Uri]),
                     (feature) => String(feature?.properties?.[StateField.Name]),
-                    '',
-                    '',
-                    true
+                    { defaultLabel: '', defaultValue: '', noDefault: true }
                 );
 
                 if (isMounted.current) {
