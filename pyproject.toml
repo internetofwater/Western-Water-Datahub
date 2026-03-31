@@ -69,7 +69,7 @@ members = ["packages/*"]
 
 [tool.uv.sources]
 pgedr = { git = "https://github.com/internetofwater/pgedr.git", rev = "e6df854624ef21a5cd79dd6b1a16d9651bf7103d" }
-pygeoapi = { git = "https://github.com/internetofwater/pygeoapi.git", rev = "48b8781e447063eaee926e8dffb5e32a21b43d04" }
+pygeoapi = { git = "https://github.com/internetofwater/pygeoapi.git", rev = "a85c2f7646a326c2ba5ba2f436a98810e1285e4c" }
 
 [tool.pytest.ini_options]
 # needed to prevent a deprecation warning; doesnt really affect any behavior
