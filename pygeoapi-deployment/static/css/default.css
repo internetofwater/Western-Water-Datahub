@@ -38,6 +38,30 @@ main {
 /*    text-transform: capitalize;*/
 }
 
+.badge {
+    background-color: #213f8c !important;
+}
+
+#record-collections {
+    display: none !important;
+
+}
+
+a {
+    color: #213F8C;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+header .nav-link:hover {
+    color: #fff;
+}
+
+main a:hover {
+    text-decoration: underline;
+    color: #213F8C;
+}
+
 #items-map, #collection-map {
     width: 100%;
     height: 400px;
