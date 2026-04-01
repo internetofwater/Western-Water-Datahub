@@ -9,6 +9,8 @@ server:
   language: en-US
   cors: true
   pretty_print: true
+  templates:
+    static: ${PWD}/pygeoapi-deployment/static
   limits:
     default_items: 1825 # 5 Years
     max_items: 10950 # 30 Years
@@ -701,7 +703,7 @@ resources:
   teacup-edr:
     type: collection
     title: USBR Reservoir Storage Levels (Teacup)
-    description: Contains current and average storage levels for reservoirs endpoint
+    description: contains current and average storage levels from reservoirs in RISE (~191), USACE (6), USGS (6) and CDEC (1) with historical statistics based on 30 water years (1990-2020)
     hidden: True
     provider-name:
       - DERIVED
