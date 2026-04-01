@@ -9,6 +9,8 @@ server:
   language: en-US
   cors: true
   pretty_print: true
+  templates:
+    static: ${PWD}/pygeoapi-deployment/static
   limits:
     default_items: 1825 # 5 Years
     max_items: 10950 # 30 Years
