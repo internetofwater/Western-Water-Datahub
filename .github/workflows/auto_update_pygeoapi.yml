@@ -1,0 +1,61 @@
+# Copyright 2026 Lincoln Institute of Land Policy
+# SPDX-License-Identifier: MIT
+
+name: Update pygeoapi dependency
+on:
+  workflow_dispatch:
+#   schedule:
+#     #  Between 8AM and 6PM EST, Monday through Thursday 
+#     - cron: "0 13-23 * * 1-4"  
+
+jobs:
+  update-dependency:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Get latest commit hash from dev branch
+        id: get_commit
+        run: |
+          COMMIT_HASH=$(git ls-remote https://github.com/internetofwater/pygeoapi.git refs/heads/dev | cut -f1)
+          echo "commit=$COMMIT_HASH" >> $GITHUB_OUTPUT
+          echo "Latest commit: $COMMIT_HASH"
+
+      - name: Create branch
+        run: |
+          BRANCH_NAME="update-pygeoapi-${{ steps.get_commit.outputs.commit }}"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          git checkout -b $BRANCH_NAME
+
+      - name: Update dependency with uv
+        run: |
+          uv add git+https://github.com/internetofwater/pygeoapi.git@${{ steps.get_commit.outputs.commit }}
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "Update pygeoapi to ${{ steps.get_commit.outputs.commit }}" || echo "No changes to commit"
+
+      - name: Push branch
+        run: |
+          git push origin $BRANCH_NAME
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: ${{ env.BRANCH_NAME }}
+          title: "Update pygeoapi to latest dev commit"
+          body: |
+            This PR updates pygeoapi to the latest commit on the `dev` branch.
+
+            Commit: ${{ steps.get_commit.outputs.commit }}
+          commit-message: "Update pygeoapi to ${{ steps.get_commit.outputs.commit }}"
