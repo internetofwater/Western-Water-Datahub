@@ -59,10 +59,10 @@ import { ReservoirDefault } from '@/stores/main/consts';
  * @function
  */
 export const loadTeacups = (map: Map) => {
-    const teacupLevels = [
-        100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15,
-        10, 5, 0,
-    ];
+    // const teacupLevels = [
+    //     100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15,
+    //     10, 5, 0,
+    // ];
 
     if (!map.hasImage('default')) {
         map.loadImage('/map-icons/default.png', (error, image) => {
@@ -101,30 +101,30 @@ export const loadTeacups = (map: Map) => {
         });
     }
 
-    teacupLevels.forEach((storage) => {
-        const id = `teacup-${storage}`;
-        if (!map.hasImage(id)) {
-            map.loadImage(`/map-icons/${id}.png`, (error, image) => {
-                if (error) throw error;
-                if (!image) {
-                    throw new Error(`Image not found: ${id}.png`);
-                }
-                map.addImage(id, image);
-            });
-        }
-        teacupLevels.forEach((average) => {
-            const id = `teacup-${storage}-${average}`;
-            if (!map.hasImage(id)) {
-                map.loadImage(`/map-icons/${id}.png`, (error, image) => {
-                    if (error) throw error;
-                    if (!image) {
-                        throw new Error(`Image not found: ${id}.png`);
-                    }
-                    map.addImage(id, image);
-                });
-            }
-        });
-    });
+    // teacupLevels.forEach((storage) => {
+    //     const id = `teacup-${storage}`;
+    //     if (!map.hasImage(id)) {
+    //         map.loadImage(`/map-icons/${id}.png`, (error, image) => {
+    //             if (error) throw error;
+    //             if (!image) {
+    //                 throw new Error(`Image not found: ${id}.png`);
+    //             }
+    //             map.addImage(id, image);
+    //         });
+    //     }
+    //     teacupLevels.forEach((average) => {
+    //         const id = `teacup-${storage}-${average}`;
+    //         if (!map.hasImage(id)) {
+    //             map.loadImage(`/map-icons/${id}.png`, (error, image) => {
+    //                 if (error) throw error;
+    //                 if (!image) {
+    //                     throw new Error(`Image not found: ${id}.png`);
+    //                 }
+    //                 map.addImage(id, image);
+    //             });
+    //         }
+    //     });
+    // });
 
     map.triggerRepaint();
 };

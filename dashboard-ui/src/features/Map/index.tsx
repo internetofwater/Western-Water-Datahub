@@ -33,6 +33,7 @@ import {
     getHighlightIcon,
     getAllMapLayers,
     updateReservoirFilters,
+    // loadTeacupsFromSpriteSheet,
 } from '@/features/Map/utils';
 import { basemaps } from '@/components/Map/consts';
 import {
@@ -49,6 +50,7 @@ import { Huc02BasinField } from '@/features/Map/types/basin';
 import { BoundingGeographyLevel } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
 import debounce from 'lodash.debounce';
+import { SpriteService } from '@/services/sprite/sprite.service';
 
 type Props = {
     accessToken: string;
@@ -91,6 +93,7 @@ const MainMap: React.FC<Props> = (props) => {
     const [shouldResize, setShouldResize] = useState(false);
 
     const isMounted = useRef(true);
+    const spriteService = useRef<SpriteService>(null);
 
     useReservoirData();
 
@@ -109,11 +112,47 @@ const MainMap: React.FC<Props> = (props) => {
         [updateReservoirFilters]
     );
 
+    const loadSpriteSheet = async () => {
+        spriteService.current = new SpriteService(
+            '/sprite/teacups.png',
+            '/sprite/teacups.json'
+        );
+
+        const [spritesheetResult, coordinateMapResult] =
+            await Promise.allSettled([
+                spriteService.current.loadSpritesheet(),
+                spriteService.current.loadCoordinateMap(),
+            ]);
+
+        if (
+            spritesheetResult.status === 'fulfilled' &&
+            spritesheetResult.value
+        ) {
+            console.log('Spritesheet loaded successfully');
+        }
+        if (
+            coordinateMapResult.status === 'fulfilled' &&
+            coordinateMapResult.value
+        ) {
+            console.log('Coordinate map loaded successfully');
+        }
+    };
+
     useEffect(() => {
+        void loadSpriteSheet();
+
         return () => {
             isMounted.current = false;
         };
     }, []);
+
+    useEffect(() => {
+        if (!map || !spriteService.current?.ready()) {
+            return;
+        }
+
+        spriteService.current.load(map, { onDemand: true });
+    }, [map, spriteService.current?.ready()]);
 
     useEffect(() => {
         return () => {
@@ -235,14 +274,21 @@ const MainMap: React.FC<Props> = (props) => {
         map.on('moveend', debouncedHandleMapMove);
         map.on('zoomend', debouncedHandleMapMove);
 
+        const testSet = new Set();
         loadImages(map);
+        // void loadTeacupsFromSpriteSheet(map);
         map.on('style.load', () => {
             loadImages(map);
+            testSet.clear();
         });
 
         const handleMapZoom = () => updateReservoirFilters(map);
 
         map.on('zoom', handleMapZoom);
+
+        // map.on('styleimagemissing', (e) => {
+        //     console.log('e', e);
+        // });
 
         // Resize and fit bounds to ensure consistent loading behavior in all screen sizes
         map.resize();
