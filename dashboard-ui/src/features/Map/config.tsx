@@ -235,7 +235,7 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
         case LayerId.Regions:
             return 'Regions';
         case LayerId.Snotel:
-            return 'NRCS SNOTEL Snow Water Equivalent (% of Average)';
+            return 'NRCS SNOTEL Snow Water Equivalent (% of Median)';
         case LayerId.NOAARiverForecast:
             return 'NOAA RFC Seasonal Water Supply Forecasts (% of Average)';
         case LayerId.USDroughtMonitor:
