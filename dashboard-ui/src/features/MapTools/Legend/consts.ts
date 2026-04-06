@@ -110,7 +110,7 @@ export const entries: TEntry[] = [
                         label: 'Drought - Extreme',
                     },
                     {
-                        color: '#fefe00',
+                        color: '#730000',
                         label: 'Drought - Exceptional',
                     },
                 ],
