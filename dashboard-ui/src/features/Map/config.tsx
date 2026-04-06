@@ -891,7 +891,7 @@ export const getLayerHoverFunction = (
                             const html = `
                                 <div>
                                   <strong>${name}</strong><br/>
-                                  <p>Huc06: ${huc06}</p>
+                                  <p>Huc6: ${huc06}</p>
                                   <p>Change in Snow Water Equivalent: ${swe}%</p>
                                 </div>
                                 `;
@@ -1233,7 +1233,7 @@ export const getLayerMouseMoveFunction = (
                             const html = `
                             <div>
                               <strong>${name}</strong><br/>
-                              <p>Huc06: ${huc06}</p>
+                              <p>Huc6: ${huc06}</p>
                               <p>Change in Snow Water Equivalent: ${swe}%</p>
                             </div>
                             `;
