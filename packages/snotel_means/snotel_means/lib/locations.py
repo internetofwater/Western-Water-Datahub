@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Annotated, Optional
+from typing import Optional
 from com.cache import RedisCache
 from com.helpers import await_
 
@@ -15,20 +15,6 @@ class BasinIndexResult:
 
 
 class Huc6WithStationMetadata:
-    id: str
-    name: str
-    x: float
-    y: float
-    area: float
-    states: Annotated[str, "comma separated list of state abbreviations"]
-    btype: str
-
-    station_list: list[str]
-
-    geometry: Optional[dict]
-    latest_swe_values: dict[str, float]
-    median_swe_values: dict[str, float]
-
     def __init__(
         self,
         json_response: dict,
@@ -45,8 +31,8 @@ class Huc6WithStationMetadata:
         self.btype = json_response["btype"]
         self.station_list = json_response["station_list"]
 
-        self.latest_swe_values = {}
-        self.median_swe_values = {}
+        self.latest_swe_values: dict[str, float] = {}
+        self.median_swe_values: dict[str, float] = {}
 
         if self.id in huc_to_geometry:
             self.geometry = huc_to_geometry[self.id].get("geometry")
@@ -67,6 +53,9 @@ class Huc6WithStationMetadata:
 
         stations_used_for_basin_index_calc = 0
         for station in self.station_list:
+            # only SNTL stations are used for calculating the
+            # basin index; this is just the way it is done not entirely
+            # clear why
             if "SNTL" not in station:
                 continue
 
@@ -78,6 +67,7 @@ class Huc6WithStationMetadata:
             sum_of_median_swe_for_all_associated_stations += median_swe
             stations_used_for_basin_index_calc += 1
 
+        # prevent divide by 0
         if sum_of_median_swe_for_all_associated_stations == 0:
             return None
 
@@ -93,8 +83,6 @@ class Huc6WithStationMetadata:
 
 
 class AllHuc6WithStationMetadata:
-    huc6List: list[Huc6WithStationMetadata]
-
     def get_daily_snow_water_equivalent(self, month_and_date: str) -> dict[str, float]:
         """
         Returns the snow water equivalent for each snotel station; data may be missing
