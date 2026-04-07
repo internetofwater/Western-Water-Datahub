@@ -17,6 +17,7 @@ class BasinIndexResult:
 class Huc6WithStationMetadata:
     def __init__(
         self,
+        most_recent_data: str,
         json_response: dict,
         huc_to_geometry: dict,
         station_to_latest_swe: dict,
@@ -30,6 +31,7 @@ class Huc6WithStationMetadata:
         self.states = json_response["states"]
         self.btype = json_response["btype"]
         self.station_list = json_response["station_list"]
+        self.date_for_fetched_data = most_recent_data
 
         self.latest_swe_values: dict[str, float] = {}
         self.median_swe_values: dict[str, float] = {}
@@ -91,7 +93,7 @@ class AllHuc6WithStationMetadata:
         Definition: WTEQ is the depth of water that would result if the entire snowpack were to melt instantaneously.
         """
         url = f"https://nwcc-apps.sc.egov.usda.gov/awdb/data/WTEQ/DAILY/OBS/WTEQ_DAILY_OBS_{month_and_date}.json"
-        asJson = await_(self.cache.get_or_fetch_json(url))
+        asJson = await_(self.cache.get_or_fetch_json(url, force_fetch=True))
         snotelStationTripleToWaterEquivalent: dict[str, float] = {}
         for station in asJson:
             dataArray = asJson[station]
@@ -128,6 +130,7 @@ class AllHuc6WithStationMetadata:
 
         self.huc6List = [
             Huc6WithStationMetadata(
+                most_recent_data=yesterday,
                 json_response=station_json,
                 huc_to_geometry=huc06_geometry_reference,
                 station_to_latest_swe=station_to_latest_swe_value,

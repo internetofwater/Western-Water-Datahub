@@ -102,6 +102,7 @@ class SnotelMeansProvider(BaseProvider, OAFProviderProtocol):
                         "latest_values": huc6.latest_swe_values,
                         "number_of_stations_used_for_basin_index_calculation": calculation_result.total_stations_used,
                         "geoconnex_url": f"https://geoconnex.us/ref/hu06/{huc6.id}",
+                        "latest_full_day_of_data": huc6.date_for_fetched_data,
                     },
                 }
             )
