@@ -181,12 +181,12 @@ resources:
       - type: application/html
         rel: documentation
         title: Documentation
-        href: https://www.nrcs.usda.gov/wps/portal/wcc/home/aboutUs/monitoringPrograms/automatedSnowMonitoring/
+        href: https://www.nrcs.usda.gov/resources/data-and-reports/climatic-and-hydrologic-normals
         hreflang: en-US
       - type: application/html
         rel: canonical
         title: Data source
-        href: https://wcc.sc.egov.usda.gov/awdbRestApi/swagger-ui/index.html
+        href: https://nwcc-apps.sc.egov.usda.gov/imap/#version=2&elements=&networks=!&states=!&basins=!&hucs=&minElevation=&maxElevation=&elementSelectType=any&activeOnly=true&activeForecastPointsOnly=true&hucLabels=false&hucIdLabels=false&hucParameterLabels=true&stationLabels=&overlays=&hucOverlays=&basinOpacity=75&basinNoDataOpacity=25&basemapOpacity=100&maskOpacity=0&mode=data&openSections=networks&controlsOpen=true&popup=&popupMulti=&popupBasin=&base=esriNgwm&displayType=basinstation&basinType=6&dataElement=WTEQ&depth=-8&parameter=PCTMED&frequency=DAILY&duration=I&customDuration=&dayPart=E&year=2026&month=4&day=6&monthPart=E&forecastPubMonth=4&forecastPubDay=1&forecastExceedance=50&useMixedPast=true&seqColor=1&divColor=7&scaleType=D&scaleMin=&scaleMax=&referencePeriodType=POR&referenceBegin=1991&referenceEnd=2020&minimumYears=20&hucAssociations=true&lat=42.747&lon=-117.313&zoom=5.0
         hreflang: en-US
     extents: *default-extent
     providers:
