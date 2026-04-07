@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 from typing import Literal, Optional
 
-from com.helpers import get_oaf_fields_from_pydantic_model
+from com.helpers import OAFFieldsMapping
 from com.otel import otel_trace
 from com.protocols.providers import OAFProviderProtocol
 from pygeoapi.provider.base import BaseProvider, ProviderNoDataError, ProviderQueryError
@@ -17,7 +17,6 @@ from com.geojson.helpers import (
     SortDict,
 )
 from com.cache import RedisCache
-from awdb_com.types import StationDTO
 
 from snotel_means.lib.locations import (
     AllHuc6WithStationMetadata,
@@ -140,7 +139,7 @@ class SnotelMeansProvider(BaseProvider, OAFProviderProtocol):
 
         return self.items(itemId=identifier, bbox=[], **kwargs)
 
-    def get_fields(self, **kwargs):
+    def get_fields(self, **kwargs) -> OAFFieldsMapping:
         """
         Get provider field information (names, types)
 
@@ -148,6 +147,14 @@ class SnotelMeansProvider(BaseProvider, OAFProviderProtocol):
 
         :returns: dict of field names and their associated JSON Schema types
         """
-        if not self._fields:
-            self._fields = get_oaf_fields_from_pydantic_model(StationDTO)
+        self._fields: OAFFieldsMapping = {
+            "name": {"type": "string"},
+            "geoconnex_url": {"type": "string"},
+            "id": {"type": "string"},
+            "number_of_stations_used_for_basin_index_calculation": {"type": "number"},
+            "current_snow_water_equivalent_relative_to_thirty_year_avg": {
+                "type": "number"
+            },
+            "basin_index": {"type": "number"},
+        }
         return self._fields
