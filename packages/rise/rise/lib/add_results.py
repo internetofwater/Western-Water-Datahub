@@ -1,6 +1,7 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+from datetime import timedelta
 import logging
 from typing import Any, Literal, Optional, Tuple
 
@@ -78,7 +79,12 @@ class LocationResultBuilder:
             )
 
         LOGGER.debug(f"Fetching {resultUrls}; {len(resultUrls)} in total")
-        return await_(self.cache.get_or_fetch_all_results(resultUrls))
+        # We cache the results for 3 hours; this may be able to be adjusted
+        # to cache longer; however, 3 hours ensures that fetches like N/.. without
+        # a frequently updating time filter can get refreshed throughout the day
+        return await_(
+            self.cache.get_or_fetch_all_results(resultUrls, ttl=timedelta(hours=3))
+        )
 
     def _get_timeseries_for_catalogitem(self, catalogItem):
         if catalogItem not in self.timeseriesResults:

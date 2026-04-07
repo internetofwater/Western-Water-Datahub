@@ -87,21 +87,30 @@ class CovJSONBuilder:
         paramNameToMetadata: dict[str, ParameterDict] = {}
 
         for param_id in relevant_parameters_and_modeling_status:
-            if param_id not in paramsToGeoJsonOutput:
-                LOGGER.error(
-                    f"Could not find metadata for {param_id} in {sorted(paramsToGeoJsonOutput.keys())}"
-                )
-                continue
-
-            associatedData = paramsToGeoJsonOutput[param_id]
+            associatedData = paramsToGeoJsonOutput.get(param_id)
+            description = (
+                associatedData["description"]
+                if associatedData
+                else "No parameter description provided in RISE API"
+            )
+            unit = (
+                associatedData["x-ogc-unit"]
+                if associatedData
+                else "No parameter unit provided in RISE API"
+            )
+            title = (
+                associatedData["title"]
+                if associatedData
+                else "No parameter title provided in RISE API"
+            )
 
             _param: ParameterDict = {
                 "type": "Parameter",
-                "description": {"en": associatedData["description"]},
-                "unit": {"symbol": associatedData["x-ogc-unit"]},
+                "description": {"en": description},
+                "unit": {"symbol": unit},
                 "observedProperty": {
                     "id": param_id,
-                    "label": {"en": associatedData["title"]},
+                    "label": {"en": title},
                 },
             }
             paramNameToMetadata[param_id] = _param
@@ -123,10 +132,6 @@ class CovJSONBuilder:
                 ):
                     # Since coveragejson does not allow a parameter without results,
                     # we can skip adding the parameter/location combination all together
-                    continue
-
-                value = paramsToGeoJsonOutput.get(param.parameterId)
-                if not value:
                     continue
 
                 range: dict[str, CoverageRangeDict] = {

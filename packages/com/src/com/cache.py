@@ -44,15 +44,15 @@ class RedisCache:
         self.db = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=False)
         self.ttl = ttl
 
-    async def set(self, url: str, json_data: dict):
+    async def set(self, url: str, json_data: dict, ttl: Optional[timedelta] = None):
         """Associate a url key with json data in the cache"""
         # Serialize the data before storing it in Redis
         await self.db.set(name=url, value=orjson.dumps(json_data))
-        await self.db.expire(name=url, time=self.ttl)
+        await self.db.expire(name=url, time=self.ttl if ttl is None else ttl)
 
-    async def set_text(self, url: str, text_data: str):
+    async def set_text(self, url: str, text_data: str, ttl: Optional[timedelta] = None):
         await self.db.set(name=url, value=text_data)
-        await self.db.expire(name=url, time=self.ttl)
+        await self.db.expire(name=url, time=self.ttl if ttl is None else ttl)
 
     async def reset(self):
         """Delete all keys in the current Redis database"""
@@ -83,29 +83,37 @@ class RedisCache:
             raise KeyError(f"{url} not found in cache")
         return data
 
-    async def get_or_fetch_json(self, url, force_fetch=False, headers=HEADERS) -> dict:
+    async def get_or_fetch_json(
+        self, url, force_fetch=False, headers=HEADERS, ttl: Optional[timedelta] = None
+    ) -> dict:
         """Send a get request or grab it locally if it already exists in the cache"""
 
         if not await self.contains(url) or force_fetch:
             res = await fetch_url(url, headers=headers)
-            await self.set(url, res)
+            await self.set(url, res, ttl)
             return res
 
         else:
             LOGGER.debug(f"Got {url} from cache")
             return await self.get(url)
 
-    async def get_or_fetch_response_text(self, url, force_fetch=False, headers=HEADERS):
+    async def get_or_fetch_response_text(
+        self, url, force_fetch=False, headers=HEADERS, ttl: Optional[timedelta] = None
+    ):
         if not await self.contains(url) or force_fetch:
             res = await fetch_url_text(url, headers=headers)
-            await self.set_text(url, res)
+            await self.set_text(url, res, ttl)
             return res
         else:
             LOGGER.debug(f"Got {url} from cache")
             return await self.get_text(url)
 
     async def get_or_fetch_group(
-        self, urls: list[str], force_fetch=False, custom_mimetype: Optional[str] = None
+        self,
+        urls: list[str],
+        force_fetch=False,
+        custom_mimetype: Optional[str] = None,
+        ttl: Optional[timedelta] = None,
     ) -> dict[str, dict]:
         """Send a GET request to all URLs or grab it locally if it already exists in the cache."""
 
@@ -120,7 +128,7 @@ class RedisCache:
 
         # Fetch from remote API
         urls_not_in_cache_coroutine = self._fetch_and_set_url_group(
-            urls_not_in_cache, custom_mimetype
+            urls_not_in_cache, custom_mimetype, ttl
         )
 
         # Fetch from local cache
@@ -140,12 +148,13 @@ class RedisCache:
         self,
         urls: list[str],
         custom_mimetype: Optional[str] = None,
+        ttl: Optional[timedelta] = None,
     ):
         results = await asyncio.gather(
             *(fetch_url(url, custom_mimetype=custom_mimetype) for url in urls)
         )
 
         for url, result in zip(urls, results):
-            await self.set(url, result)
+            await self.set(url, result, ttl)
 
         return dict(zip(urls, results))

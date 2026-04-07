@@ -36,10 +36,13 @@ class RISECache(RedisCache):
     """A cache implementation using Redis with ttl support"""
 
     def __init__(self, ttl: timedelta = timedelta(hours=72)):
+        # ttl here is the default for the cache if not specified
+        # otherwise all calls should support a ttl argument if relevant
+        #  in order to customize how long data stores in the cache
         super().__init__(ttl)
 
     async def get_or_fetch_all_pages(
-        self, base_url: str, force_fetch=False
+        self, base_url: str, force_fetch=False, ttl: Optional[timedelta] = None
     ) -> dict[Url, JsonPayload]:
         MAX_ITEMS_PER_PAGE: int
 
@@ -52,7 +55,7 @@ class RISECache(RedisCache):
             MAX_ITEMS_PER_PAGE = 100
 
         # Get the first response that contains the list of pages
-        response = await self.get_or_fetch_json(base_url)
+        response = await self.get_or_fetch_json(base_url, ttl=ttl)
 
         NOT_PAGINATED = "meta" not in response
         if NOT_PAGINATED:
@@ -78,7 +81,7 @@ class RISECache(RedisCache):
             elif not hasQueryParams:
                 urls.append(f"{base_url}?page={page}&itemsPerPage={MAX_ITEMS_PER_PAGE}")
 
-        pages = await self.get_or_fetch_group(urls, force_fetch=force_fetch)
+        pages = await self.get_or_fetch_group(urls, force_fetch=force_fetch, ttl=ttl)
         assert len(pages) == pages_to_complete
         return pages
 
@@ -143,12 +146,14 @@ class RISECache(RedisCache):
             raise e
 
     async def get_or_fetch_all_results(
-        self, catalogItemToResultUrl: dict[str, str]
+        self, catalogItemToResultUrl: dict[str, str], ttl: Optional[timedelta] = None
     ) -> dict[str, JsonPayload]:
         """Given a dictionary mapping catalog items to URLs, fetch all pages for each URL in parallel
         and return a dictionary mapping catalog items to their corresponding merged pages."""
         tasks = {
-            resultUrl: asyncio.create_task(self.get_or_fetch_all_pages(resultUrl))
+            resultUrl: asyncio.create_task(
+                self.get_or_fetch_all_pages(resultUrl, ttl=ttl)
+            )
             for _, resultUrl in catalogItemToResultUrl.items()
         }
 
