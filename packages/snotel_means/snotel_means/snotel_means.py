@@ -4,13 +4,12 @@
 import json
 import logging
 from pathlib import Path
-from typing import Literal, Optional, cast
+from typing import Literal, Optional
 
 from com.helpers import get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
 from com.protocols.providers import OAFProviderProtocol
-import geojson_pydantic
-from pygeoapi.provider.base import BaseProvider
+from pygeoapi.provider.base import BaseProvider, ProviderNoDataError, ProviderQueryError
 from pygeoapi.crs import crs_transform
 from com.geojson.helpers import (
     GeojsonFeatureDict,
@@ -21,7 +20,7 @@ from com.cache import RedisCache
 from awdb_com.types import StationDTO
 
 from snotel_means.lib.locations import (
-    SnowWaterEquivalentCollectionWithMetadata,
+    AllHuc6WithStationMetadata,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -67,43 +66,50 @@ class SnotelMeansProvider(BaseProvider, OAFProviderProtocol):
         skip_geometry: Optional[bool] = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
-        collection = SnowWaterEquivalentCollectionWithMetadata()
+        # I can add these, they are just not implemented at the moment
+        # since I don't believe they are needed anywhere and it simplifies the code
+        if properties or sortby or datetime_ or bbox or select_properties:
+            raise ProviderQueryError(
+                "`properties` and `sortby` and `datetime` and `bbox` and `select_properties` are not supported"
+            )
 
-        hucToAverage = collection.get_averages_by_huc6()
-        relevant_features: list[geojson_pydantic.Feature] = []
+        collection = AllHuc6WithStationMetadata(self.cache, HUC06_TO_FEATURE)
 
-        for huc6 in hucToAverage:
+        relevant_features: list[GeojsonFeatureDict] = []
+
+        for huc6 in collection.huc6List:
             if offset:
                 offset -= 1
                 continue
-            huc6_feature = HUC06_TO_FEATURE[huc6]
-            if itemId and huc6 != itemId:
+            if itemId and huc6.id != itemId:
                 continue
-            featureProperties: dict = huc6_feature["properties"] or {}
-            # we have to copy here since we're modifying the dict
-            # and we need our API to be threadsafe
-            mergedDict: dict = featureProperties.copy()
-            mergedDict.update(
-                {
-                    "current_snow_water_equivalent_relative_to_thirty_year_avg": hucToAverage[
-                        huc6
-                    ]
-                }
-            )
+            if huc6.station_list == []:
+                continue
+            calculation_result = huc6.get_basin_index_percentage()
+            if not calculation_result:
+                continue
             relevant_features.append(
-                geojson_pydantic.Feature(
-                    type="Feature",
-                    id=huc6,
-                    geometry=huc6_feature["geometry"] if not skip_geometry else None,
-                    properties=mergedDict,
-                )
+                {
+                    "type": "Feature",
+                    "id": huc6.id,
+                    "geometry": huc6.geometry if not skip_geometry else None,
+                    "properties": {
+                        "id": huc6.id,
+                        "name": huc6.name,
+                        "station_list": huc6.station_list,
+                        "current_snow_water_equivalent_relative_to_thirty_year_avg": calculation_result.basin_index,
+                        "basin_index": calculation_result.basin_index,
+                        "median_values": huc6.median_swe_values,
+                        "latest_values": huc6.latest_swe_values,
+                        "number_of_stations_used_for_basin_index_calculation": calculation_result.total_stations_used,
+                        "geoconnex_url": f"https://geoconnex.us/ref/hu06/{huc6.id}",
+                    },
+                }
             )
             if limit and len(relevant_features) >= limit:
                 break
             if itemId:
-                return cast(
-                    GeojsonFeatureDict, relevant_features[0].model_dump(by_alias=True)
-                )
+                return relevant_features[0]
 
         if resulttype == "hits":
             return {
@@ -111,13 +117,13 @@ class SnotelMeansProvider(BaseProvider, OAFProviderProtocol):
                 "features": [],
                 "numberMatched": len(relevant_features),
             }
+        if itemId and len(relevant_features) == 0:
+            raise ProviderNoDataError(f"No data found for id {itemId}")
 
-        return cast(
-            GeojsonFeatureCollectionDict,
-            geojson_pydantic.FeatureCollection(
-                type="FeatureCollection", features=relevant_features
-            ).model_dump(by_alias=True),
-        )
+        return {
+            "type": "FeatureCollection",
+            "features": relevant_features,
+        }
 
     @crs_transform
     def query(self, **kwargs):

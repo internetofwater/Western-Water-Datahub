@@ -12,7 +12,8 @@
         "PYGEOAPI_CONFIG": "${workspaceFolder}/pygeoapi.config.yml",
         "PYGEOAPI_OPENAPI": "${workspaceFolder}/local.openapi.yml",
         "REDIS_HOST": "127.0.0.1",
-        "REDIS_PORT": "6379"
+        "REDIS_PORT": "6379",
+        "FLASK_DEBUG": "1"
       },
       "args": ["run", "--host=127.0.0.1", "--port=5005"],
       "jinja": true,
