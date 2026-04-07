@@ -84,7 +84,8 @@ class Huc6WithStationMetadata:
         basin_index = (
             sum_of_observed_value_for_all_associated_stations
             / sum_of_median_swe_for_all_associated_stations
-        )
+        ) * 100
+
         return BasinIndexResult(
             total_stations_used=stations_used_for_basin_index_calc,
             basin_index=basin_index,
