@@ -607,6 +607,10 @@ resources:
         title: Documentation
         href: https://prism.oregonstate.edu/
       - type: application/html
+        rel: documentation
+        title: Code Documentation
+        href: https://code.usgs.gov/wma/nhgf/geo-data-portal/gdp_data_processing/-/blob/main/workflows/opendap/CIDA/PRISM_v2/prism_processing2_update.py?ref_type=heads
+      - type: application/html
         rel: canonical
         title: Data source
         href: https://usgs.osn.mghpcc.org/mdmf/gdp/PRISM_v2.zarr
