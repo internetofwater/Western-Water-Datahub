@@ -1,6 +1,7 @@
 # Variables
 PYGEOAPI_CONFIG = pygeoapi.config.yml
 PYGEOAPI_OPENAPI = local.openapi.yml
+PYGEOAPI_ONTOLOGY_GRAPH = pygeoapi-deployment/USBR_core.ttl
 
 # install dependencies
 # this project uses uv to manage dependencies
@@ -11,7 +12,7 @@ deps:
 dev: 	
 	test -f local.openapi.yml || OTEL_SDK_DISABLED=false uv run pygeoapi openapi generate $(PYGEOAPI_CONFIG) --output-file $(PYGEOAPI_OPENAPI)
 # 	we must be in the pygeoapi-deployment directory for the templates to have the right relative path
-	REDIS_HOST=127.0.0.1 REDIS_PORT=6379 PYGEOAPI_FLASK_CACHE_TYPE=REDIS OTEL_SDK_DISABLED=false PYGEOAPI_CONFIG=$(PYGEOAPI_CONFIG) PYGEOAPI_OPENAPI=$(PYGEOAPI_OPENAPI) uv run pygeoapi serve
+	REDIS_HOST=127.0.0.1 REDIS_PORT=6379 PYGEOAPI_FLASK_CACHE_TYPE=REDIS OTEL_SDK_DISABLED=false PYGEOAPI_CONFIG=$(PYGEOAPI_CONFIG) PYGEOAPI_OPENAPI=$(PYGEOAPI_OPENAPI) PYGEOAPI_ONTOLOGY_GRAPH=$(PYGEOAPI_ONTOLOGY_GRAPH) uv run pygeoapi serve
 
 devNoOTEL:
 	OTEL_SDK_DISABLED=true uv run pygeoapi openapi generate $(PYGEOAPI_CONFIG) --output-file $(PYGEOAPI_OPENAPI)
