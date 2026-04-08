@@ -112,6 +112,7 @@ class CovJSONBuilder:
                     "id": param_id,
                     "label": {"en": title},
                 },
+                "rise_parameter_id": f"https://data.usbr.gov/rise/api/parameter/{param_id}",  # pyright: ignore[reportAssignmentType]
             }
             paramNameToMetadata[param_id] = _param
 
@@ -120,7 +121,6 @@ class CovJSONBuilder:
     def _get_coverages(
         self,
         locationsWithResults: list[DataNeededForCovjson],
-        paramsToGeoJsonOutput: EDRFieldsMapping,
     ) -> list[CoverageDict]:
         """Return the data needed for the 'coverage' key in the covjson response"""
 
@@ -141,8 +141,10 @@ class CovJSONBuilder:
                         "shape": [len(param.timeseriesResults)],
                         "values": param.timeseriesResults,
                         "type": "NdArray",
+                        "rise_catalog_item_url": param.catalogItemId,
+                        "rise_result_url": param.resultUrl,
                     }
-                }
+                }  # pyright: ignore[reportAssignmentType] ignore the special additional rise urls; these are additive and dont affect the ability to parse the covjson
 
                 coverage_item = _generate_coverage_item(
                     location_feature.locationType,
@@ -166,13 +168,11 @@ class CovJSONBuilder:
             self._cache.get_or_fetch_parameters()
         )
         if select_properties:
-            paramIdToMetadata = {
-                k: v for k, v in paramIdToMetadata.items() if k in select_properties
-            }
-
-        templated_covjson["coverages"] = self._get_coverages(
-            location_response, paramIdToMetadata
-        )
+            for loc in location_response:
+                loc.parameters = [
+                    p for p in loc.parameters if p.parameterId in select_properties
+                ]
+        templated_covjson["coverages"] = self._get_coverages(location_response)
         templated_covjson["parameters"] = self._insert_parameter_metadata(
             paramIdToMetadata, location_response=location_response
         )

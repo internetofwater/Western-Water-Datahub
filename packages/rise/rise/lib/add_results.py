@@ -26,6 +26,8 @@ class ParameterWithResults(BaseModel):
     catalogItemId: str
     parameterId: str
 
+    resultUrl: str
+
     # We allow None since each coverage could have different length but they share the same x-axis
     # length; thus if a coverage is missing data, it needs to be explicitly filled in with None
     # unless the entire coverage is missing whereupon it will be entirely skipped
@@ -136,6 +138,7 @@ class LocationResultBuilder:
                     continue
                 paramAndResults.append(
                     ParameterWithResults(
+                        resultUrl=catalogUrlAsResultUrl,
                         catalogItemId=catalogItemUrl,
                         timeseriesResults=results,
                         timeseriesDates=dates,
