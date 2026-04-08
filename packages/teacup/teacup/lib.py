@@ -150,7 +150,7 @@ def create_results_table(pg_ds: gdal.Dataset) -> None:
     """)
 
 
-def run_location_load() -> None:
+def run_location_load(force_clean_layer=False) -> None:
     """
     Download and load location GeoJSON into PostGIS using ogr2ogr.
     """
@@ -173,6 +173,12 @@ def run_location_load() -> None:
     pg_ds = pg_driver.Open(POSTGRES_URL, 1)  # 1 for update mode
     if pg_ds is None:
         LOGGER.error("Could not open PostgreSQL database")
+
+    if force_clean_layer:
+        LOGGER.info(
+            "Force clean enabled: dropping and recreating teacup_locations table"
+        )
+        create_locations_table(pg_ds)
 
     pg_layer = pg_ds.GetLayerByName("teacup_locations")
 
