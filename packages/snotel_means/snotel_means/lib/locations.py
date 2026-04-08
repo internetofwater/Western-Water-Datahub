@@ -60,6 +60,10 @@ class Huc6WithStationMetadata:
             # clear why
             if "SNTL" not in station:
                 continue
+            # this is some special case station that is skipped for the kootenai
+            # huc06 for some unknown reason.
+            if "323:ID:SNTL" in station:
+                continue
 
             latest_swe = self.latest_swe_values.get(station)
             median_swe = self.median_swe_values.get(station)
