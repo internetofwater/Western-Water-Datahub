@@ -72,9 +72,13 @@ export const Metrics: React.FC<Props> = (props) => {
         <Stack className={styles.metricsWrapper}>
             <Text size="sm">
                 Data as of:{' '}
-                {dayjs(
-                    reservoirProperties[config.storageDateProperty] as string
-                ).format('MM/DD/YYYY')}
+                {reservoirProperties[config.storageDateProperty]
+                    ? dayjs(
+                          reservoirProperties[
+                              config.storageDateProperty
+                          ] as string
+                      ).format('MM/DD/YYYY')
+                    : 'N/A'}
             </Text>
             <Flex gap="var(--default-spacing)" className={styles.metrics}>
                 <Box className={styles.metricsGroup}>
