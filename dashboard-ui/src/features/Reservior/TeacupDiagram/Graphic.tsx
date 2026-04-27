@@ -25,7 +25,7 @@ import {
     getLowPercentileLabel,
 } from '@/features/Reservior/TeacupDiagram/consts';
 import {
-    calculateInnerTrapezoidHeight,
+    // calculateYPosition,
     calculateXPositionConstructor,
     addLineConstructor,
     addLabelConstructor,
@@ -34,6 +34,7 @@ import {
     addListeners,
     getHeight,
     getY,
+    calculateYPositionContructor,
 } from '@/features/Reservior/TeacupDiagram/utils';
 import { GeoJsonProperties } from 'geojson';
 import { ReservoirConfig } from '@/features/Map/types';
@@ -74,7 +75,7 @@ export const Graphic: React.FC<Props> = (props) => {
     const _graphicRef = graphicRef ?? useRef<SVGSVGElement>(null);
     const svgRef = useRef<SVGSVGElement>(null);
 
-    const [cutHeight, setCutHeight] = useState<number>();
+    const [capacityYPosition, setCapacityYPosition] = useState<number>();
     const [highPercentile, setHighPercentile] = useState<number>();
     const [average, setAverage] = useState<number>();
     const [lowPercentile, setLowPercentile] = useState<number>();
@@ -145,9 +146,11 @@ export const Graphic: React.FC<Props> = (props) => {
         const height = 107;
         const scale = 1;
 
-        const highPercentile = height - height * ninetiethPercentage;
-        const average = height - height * averagePercentage;
-        const lowPercentile = height - height * tenthPercentage;
+        const highPercentile = 1 - Number(ninetiethPercentage.toFixed(2));
+        const average = 1 - Number(averagePercentage.toFixed(2));
+        const lowPercentile = 1 - Number(tenthPercentage.toFixed(2));
+
+        console.log('Here', averagePercentage, average, height);
 
         if (hasHighPercentile && !isNaN(highPercentile)) {
             setHighPercentile(highPercentile);
@@ -163,14 +166,15 @@ export const Graphic: React.FC<Props> = (props) => {
 
         const textColor = colorScheme === 'light' ? '#000' : '#FFF';
 
-        // Calculate the height of the sub-trapezoid representing storage
-        const cutHeight = calculateInnerTrapezoidHeight(
-            size,
+        const calculateYPosition = calculateYPositionContructor(
             upperWidth,
             lowerWidth,
             height
         );
-        setCutHeight(cutHeight);
+
+        // Calculate the height of the sub-trapezoid representing storage
+        const capacityYPosition = calculateYPosition(size);
+        setCapacityYPosition(capacityYPosition);
 
         // Calculate points defining the primary (capacity) trapezoid
         const upperLeft: [number, number] = [0, 0];
@@ -186,14 +190,15 @@ export const Graphic: React.FC<Props> = (props) => {
 
         // Calculate the points of the inner (storage) trapezoid
         const baseCut =
-            upperWidth + (lowerWidth - upperWidth) * (cutHeight / height);
+            upperWidth +
+            (lowerWidth - upperWidth) * (capacityYPosition / height);
         const innerUpperLeft: [number, number] = [
             ((upperWidth - baseCut) / 2) * scale,
-            cutHeight * scale,
+            capacityYPosition * scale,
         ];
         const innerUpperRight: [number, number] = [
             ((upperWidth + baseCut) / 2) * scale,
-            cutHeight * scale,
+            capacityYPosition * scale,
         ];
 
         // Draw Full trapezoid
@@ -238,7 +243,9 @@ export const Graphic: React.FC<Props> = (props) => {
         const addLine = addLineConstructor(
             upperWidth,
             svgRef.current,
-            calculateXPosition
+            calculateXPosition,
+            calculateYPosition,
+            scale
         );
 
         const highPercentileLine = hasHighPercentile
@@ -255,10 +262,14 @@ export const Graphic: React.FC<Props> = (props) => {
             const addLabel = addLabelConstructor(
                 upperWidth,
                 svgRef.current,
-                calculateXPosition
+                calculateXPosition,
+                calculateYPosition
             );
 
-            const addText = addTextConstructor(svgRef.current);
+            const addText = addTextConstructor(
+                svgRef.current,
+                calculateYPosition
+            );
 
             // Add high percentile line and label
 
@@ -349,10 +360,10 @@ export const Graphic: React.FC<Props> = (props) => {
 
             const highPercentileY =
                 hasHighPercentile && highPercentileLine
-                    ? getY(highPercentileLine)
+                    ? calculateYPosition(highPercentile)
                     : -1;
-            const averageY = getY(averageLine);
-            const lowPercentileY = getY(lowPercentileLine);
+            const averageY = calculateYPosition(average);
+            const lowPercentileY = calculateYPosition(lowPercentile);
 
             const minSpacing = 9;
             averageAdjust = 0;
@@ -415,7 +426,7 @@ export const Graphic: React.FC<Props> = (props) => {
     }, [svgRef.current, colorScheme, reservoirProperties]);
 
     useEffect(() => {
-        if (isInvalidGraphic || !listeners || cutHeight === undefined) {
+        if (isInvalidGraphic || !listeners || capacityYPosition === undefined) {
             return;
         }
 
@@ -427,7 +438,7 @@ export const Graphic: React.FC<Props> = (props) => {
             propagateEventToContainerElemConstructor(
                 _capacityPolygonId,
                 _storagePolygonId,
-                cutHeight
+                capacityYPosition
             );
 
         const cleanups: (() => void)[] = [];

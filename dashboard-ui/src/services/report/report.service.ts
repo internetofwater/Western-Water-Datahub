@@ -13,8 +13,8 @@ import { ReservoirConfig } from '@/features/Map/types';
 import { getReservoirConfig } from '@/features/Map/utils';
 import {
     addLineConstructor,
-    calculateInnerTrapezoidHeight,
     calculateXPositionConstructor,
+    calculateYPositionContructor,
 } from '@/features/Reservior/TeacupDiagram/utils';
 import { Feature, GeoJsonProperties, Point } from 'geojson';
 import { Map } from 'mapbox-gl';
@@ -435,7 +435,7 @@ export class ReportService {
             Number(reservoir.properties![config.storageProperty]) /
             Number(reservoir.properties![config.capacityProperty]);
 
-        const nintiethPercentage =
+        const ninetiethPercentage =
             Number(reservoir.properties![config.ninetiethPercentileProperty]) /
             Number(reservoir.properties![config.capacityProperty]);
         const averagePercentage =
@@ -451,17 +451,16 @@ export class ReportService {
         const height = 107;
         const scale = 0.95;
 
-        const average = (height - height * averagePercentage) * scale;
-        const tenthPercentile = (height - height * tenthPercentage) * scale;
-        const ninetiethPercentile =
-            (height - height * nintiethPercentage) * scale;
+        const highPercentile = 1 - Number(ninetiethPercentage.toFixed(2));
+        const average = 1 - Number(averagePercentage.toFixed(2));
+        const lowPercentile = 1 - Number(tenthPercentage.toFixed(2));
 
-        const cutHeight = calculateInnerTrapezoidHeight(
-            size,
+        const calculateYPosition = calculateYPositionContructor(
             upperWidth,
             lowerWidth,
             height
         );
+        const cutHeight = calculateYPosition(size);
 
         const upperLeft: [number, number] = [0, 0];
         const upperRight: [number, number] = [upperWidth * scale, 0];
@@ -530,12 +529,13 @@ export class ReportService {
             upperWidth,
             svg,
             calculateXPosition,
+            calculateYPosition,
             scale
         );
 
-        addLine('ninetieth-percentile-line', ninetiethPercentile, '#fff');
+        addLine('ninetieth-percentile-line', highPercentile, '#fff');
         addLine('average-line', average, '#d0a02a');
-        addLine('tenth-percentile-line', tenthPercentile, '#fff');
+        addLine('tenth-percentile-line', lowPercentile, '#fff');
 
         return svg;
     }

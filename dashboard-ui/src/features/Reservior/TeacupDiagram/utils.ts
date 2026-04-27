@@ -9,21 +9,33 @@ import { TspanData } from '@/features/Reservior/TeacupDiagram/types';
  *
  * @function
  */
-export const calculateInnerTrapezoidHeight = (
-    size: number,
-    base1: number,
-    base2: number,
-    height: number
-): number => {
-    if (base1 === base2) return height / 2;
-    const sqrt2 = Math.SQRT2;
-    const numerator =
-        size *
-        height *
-        (2 * base1 - sqrt2 * Math.sqrt(base1 ** 2 + base2 ** 2));
-    const denominator = base1 - base2;
-    return numerator / denominator;
-};
+export const calculateYPositionContructor =
+    (base1: number, base2: number, height: number) =>
+    (size: number): number => {
+        if (base1 === base2) return height / 2;
+        const sqrt2 = Math.SQRT2;
+        const numerator =
+            size *
+            height *
+            (2 * base1 - sqrt2 * Math.sqrt(base1 ** 2 + base2 ** 2));
+        const denominator = base1 - base2;
+        return numerator / denominator;
+    };
+// export const calculateYPosition = (
+//     size: number,
+//     base1: number,
+//     base2: number,
+//     height: number
+// ): number => {
+//     if (base1 === base2) return height / 2;
+//     const sqrt2 = Math.SQRT2;
+//     const numerator =
+//         size *
+//         height *
+//         (2 * base1 - sqrt2 * Math.sqrt(base1 ** 2 + base2 ** 2));
+//     const denominator = base1 - base2;
+//     return numerator / denominator;
+// };
 
 /**
  *
@@ -49,6 +61,7 @@ export const addLineConstructor =
         width: number,
         svg: SVGElement,
         calculateXPosition: (value: number) => number,
+        calculateYPosition: (value: number) => number,
         scale: number = 1
     ) =>
     (id: string, value: number, color: string): SVGPathElement => {
@@ -58,18 +71,20 @@ export const addLineConstructor =
         );
         lineElement.setAttribute('id', id);
 
-        const lineStart = calculateXPosition(value);
+        const y = calculateYPosition(value);
+        const lineStart = calculateXPosition(y);
         const lineEnd = (width - lineStart) * scale;
 
         lineElement.setAttribute(
             'd',
-            `M${lineStart} ${value} H${lineStart} ${lineEnd}`
+            `M${lineStart} ${y} H${lineStart} ${lineEnd}`
         );
         lineElement.setAttribute('stroke-dasharray', '3,3');
         lineElement.setAttribute(
             'style',
             `fill:none;stroke:${color};stroke-width:3`
         );
+        lineElement.setAttribute('height', `3`);
         const ghostLine = document.createElementNS(
             'http://www.w3.org/2000/svg',
             'path'
@@ -119,7 +134,7 @@ const appendTspans = (textElement: SVGTextElement, tspanData: TspanData[]) => {
  * @function
  */
 export const addTextConstructor =
-    (svg: SVGElement) =>
+    (svg: SVGElement, calculateYPosition: (value: number) => number) =>
     (
         id: string,
         text: string,
@@ -136,8 +151,10 @@ export const addTextConstructor =
         // TODO: replace this if rendering issues appear
         textElement.innerHTML = text;
 
+        const y = calculateYPosition(position);
+
         textElement.setAttribute('x', '35%'); // (160 / 2) / 230 = ~0.35
-        textElement.setAttribute('y', `${position}`);
+        textElement.setAttribute('y', `${y}`);
         textElement.setAttribute('text-anchor', 'middle');
         textElement.setAttribute('font-size', '7px');
         textElement.setAttribute('font-weight', 'bold');
@@ -157,7 +174,8 @@ export const addLabelConstructor =
     (
         width: number,
         svg: SVGElement,
-        calculateXPosition: (value: number) => number
+        calculateXPosition: (value: number) => number,
+        calculateYPosition: (value: number) => number
     ) =>
     (
         id: string,
@@ -175,11 +193,12 @@ export const addLabelConstructor =
 
         appendTspans(textElement, text);
 
-        const lineStart = calculateXPosition(value);
+        const y = calculateYPosition(value);
+        const lineStart = calculateXPosition(y);
         const lineEnd = width - lineStart;
 
         textElement.setAttribute('x', `${lineEnd + 18}`);
-        textElement.setAttribute('y', `${value}`);
+        textElement.setAttribute('y', `${y}`);
         textElement.setAttribute('text-anchor', 'middle');
         textElement.setAttribute('font-size', '9px');
         if (bold) {
