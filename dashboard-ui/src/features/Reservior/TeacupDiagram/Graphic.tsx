@@ -365,7 +365,7 @@ export const Graphic: React.FC<Props> = (props) => {
             addText(
                 capacityTextId,
                 displayVolumeWithUnits(
-                    Number(reservoirProperties[config.capacityProperty])
+                    Number(reservoirProperties[config.storageProperty])
                 ),
 
                 0,
@@ -374,7 +374,7 @@ export const Graphic: React.FC<Props> = (props) => {
                 -2
             );
 
-            const minSpacing = 9;
+            const minSpacing = 12;
             averageAdjust = 0;
             // Check overlap with high percentile line
             if (
@@ -384,7 +384,7 @@ export const Graphic: React.FC<Props> = (props) => {
             ) {
                 averageAdjust +=
                     (highPercentileY <= averageY ? 1 : -1) *
-                    (minSpacing + 9 - Math.abs(highPercentileY - averageY));
+                    (minSpacing + 11 - Math.abs(highPercentileY - averageY));
             }
 
             // Check overlap with low percentile line
@@ -421,7 +421,7 @@ export const Graphic: React.FC<Props> = (props) => {
             addText(
                 storageTextId,
                 displayVolumeWithUnits(
-                    Number(reservoirProperties[config.storageProperty])
+                    Number(reservoirProperties[config.capacityProperty])
                 ),
                 1,
                 textColor,
