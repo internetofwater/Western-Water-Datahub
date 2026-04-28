@@ -140,7 +140,8 @@ export const addTextConstructor =
         text: string,
         position: number,
         color: string,
-        display: boolean = true
+        display: boolean = true,
+        adjust: number = 0
     ): SVGTextElement => {
         const textElement = document.createElementNS(
             'http://www.w3.org/2000/svg',
@@ -151,7 +152,7 @@ export const addTextConstructor =
         // TODO: replace this if rendering issues appear
         textElement.innerHTML = text;
 
-        const y = calculateYPosition(position);
+        const y = calculateYPosition(position) + adjust;
 
         textElement.setAttribute('x', '35%'); // (160 / 2) / 230 = ~0.35
         textElement.setAttribute('y', `${y}`);

@@ -33,7 +33,6 @@ import {
     propagateEventToContainerElemConstructor,
     addListeners,
     getHeight,
-    getY,
     calculateYPositionContructor,
 } from '@/features/Reservior/TeacupDiagram/utils';
 import { GeoJsonProperties } from 'geojson';
@@ -46,6 +45,7 @@ import {
     handleStorageEnter,
     handleStorageLeave,
 } from '@/features/Reservior/TeacupDiagram/listeners';
+import { displayVolumeWithUnits } from '@/utils/reservoirDataDisplay';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
@@ -150,8 +150,6 @@ export const Graphic: React.FC<Props> = (props) => {
         const average = 1 - Number(averagePercentage.toFixed(2));
         const lowPercentile = 1 - Number(tenthPercentage.toFixed(2));
 
-        console.log('Here', averagePercentage, average, height);
-
         if (hasHighPercentile && !isNaN(highPercentile)) {
             setHighPercentile(highPercentile);
         }
@@ -248,15 +246,15 @@ export const Graphic: React.FC<Props> = (props) => {
             scale
         );
 
-        const highPercentileLine = hasHighPercentile
-            ? addLine(highPercentileId, highPercentile, '#FFF')
-            : null;
-        const averageLine = addLine(averageId, average, '#d0a02a');
-        const lowPercentileLine = addLine(
-            lowPercentileId,
-            lowPercentile,
-            '#FFF'
-        );
+        if (hasHighPercentile) {
+            addLine(highPercentileId, highPercentile, '#FFF');
+        }
+        if (hasAverage) {
+            addLine(averageId, average, '#d0a02a');
+        }
+        if (hasLowPercentile) {
+            addLine(lowPercentileId, lowPercentile, '#FFF');
+        }
 
         if (labels) {
             const addLabel = addLabelConstructor(
@@ -273,18 +271,27 @@ export const Graphic: React.FC<Props> = (props) => {
 
             // Add high percentile line and label
 
+            const highPercentileY = hasHighPercentile
+                ? calculateYPosition(highPercentile)
+                : -1;
+            const averageY = calculateYPosition(average);
+            const lowPercentileY = calculateYPosition(lowPercentile);
+
             const highLabelTSpanData = hasHighPercentile
                 ? getHighPercentileLabel()
                 : [];
 
-            const highLabel = hasHighPercentile
-                ? addLabel(
-                      highPercentileLabelId,
-                      highLabelTSpanData,
-                      highPercentile,
-                      textColor
-                  )
-                : null;
+            const highLabel =
+                hasHighPercentile &&
+                highPercentileY < 100 &&
+                highPercentileY > 0
+                    ? addLabel(
+                          highPercentileLabelId,
+                          highLabelTSpanData,
+                          highPercentile,
+                          textColor
+                      )
+                    : null;
 
             // Add average line and label
 
@@ -293,14 +300,14 @@ export const Graphic: React.FC<Props> = (props) => {
             if (
                 hasAverage &&
                 hasHighPercentile &&
-                average - highPercentile < 40
+                averageY - highPercentileY < 40
             ) {
                 const height =
                     hasHighPercentile && highLabel ? getHeight(highLabel) : -1;
 
                 averageAdjust = Math.max(
                     0,
-                    height - (average - highPercentile + 1)
+                    height - (averageY - highPercentileY + 1)
                 );
             }
 
@@ -308,14 +315,17 @@ export const Graphic: React.FC<Props> = (props) => {
                 ? getAverageLabel(averageAdjust)
                 : [];
 
-            const averageLabel = hasAverage
-                ? addLabel(
-                      averageLabelId,
-                      averageLabelTSpanData,
-                      average,
-                      '#d0a02a'
-                  )
-                : null;
+            const averageLabel =
+                hasAverage &&
+                averageY + averageAdjust < 100 &&
+                averageY + averageAdjust > 0
+                    ? addLabel(
+                          averageLabelId,
+                          averageLabelTSpanData,
+                          average,
+                          '#d0a02a'
+                      )
+                    : null;
 
             // Add low percentile line and label
 
@@ -325,17 +335,21 @@ export const Graphic: React.FC<Props> = (props) => {
             if (
                 hasAverage &&
                 hasLowPercentile &&
-                lowPercentile - average < 40
+                lowPercentileY - averageY < 40
             ) {
                 const height =
                     hasAverage && averageLabel ? getHeight(averageLabel) : -1;
 
                 lowPercentileAdjust =
-                    Math.max(0, height - (lowPercentile - average + 1)) +
+                    Math.max(0, height - (lowPercentileY - averageY + 1)) +
                     averageAdjust;
             }
 
-            if (hasLowPercentile) {
+            if (
+                hasLowPercentile &&
+                lowPercentileY + lowPercentileAdjust < 100 &&
+                lowPercentileY + lowPercentileAdjust > 0
+            ) {
                 const lowLabelTSpanData =
                     getLowPercentileLabel(lowPercentileAdjust);
 
@@ -350,24 +364,18 @@ export const Graphic: React.FC<Props> = (props) => {
             // Total capacity of reservoir
             addText(
                 capacityTextId,
-                `${Number(
-                    reservoirProperties[config.capacityProperty]
-                ).toLocaleString('en-us')} acre-feet`,
-                -1,
-                textColor,
-                showLabels
-            );
+                displayVolumeWithUnits(
+                    Number(reservoirProperties[config.capacityProperty])
+                ),
 
-            const highPercentileY =
-                hasHighPercentile && highPercentileLine
-                    ? calculateYPosition(highPercentile)
-                    : -1;
-            const averageY = calculateYPosition(average);
-            const lowPercentileY = calculateYPosition(lowPercentile);
+                0,
+                textColor,
+                showLabels,
+                -2
+            );
 
             const minSpacing = 9;
             averageAdjust = 0;
-
             // Check overlap with high percentile line
             if (
                 hasAverage &&
@@ -395,28 +403,30 @@ export const Graphic: React.FC<Props> = (props) => {
             if (hasAverage) {
                 addText(
                     averageTextId,
-                    `${Math.round(
+                    displayVolumeWithUnits(
                         Number(
                             reservoirProperties[
                                 config.thirtyYearAverageProperty
                             ]
                         )
-                    ).toLocaleString('en-us')} acre-feet`,
-                    average - 2 + averageAdjust,
+                    ),
+                    average - 0.04,
                     '#d0a02a',
-                    showLabels
+                    showLabels,
+                    averageAdjust
                 );
             }
 
             // Current Storage of reservoir
             addText(
                 storageTextId,
-                `${Number(
-                    reservoirProperties[config.storageProperty]
-                ).toLocaleString('en-us')} acre-feet`,
-                height + 6,
+                displayVolumeWithUnits(
+                    Number(reservoirProperties[config.storageProperty])
+                ),
+                1,
                 textColor,
-                showLabels
+                showLabels,
+                30
             );
         }
 

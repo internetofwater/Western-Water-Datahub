@@ -363,28 +363,44 @@ export class ReportService {
             String(reservoir.properties![config.longLabelProperty])
         );
 
-        const lines = [
-            ...name,
-            `Storage: ${Number(
-                reservoir.properties![config.storageProperty]
-            ).toLocaleString('en-us')} / ${Number(
-                reservoir.properties![config.capacityProperty]
-            ).toLocaleString('en-us')} ac-ft`,
-            `${Math.round(
-                (Number(reservoir.properties![config.storageProperty]) /
-                    Number(reservoir.properties![config.capacityProperty])) *
-                    100
-            )} % Full - ${Math.round(
-                (Number(
-                    reservoir.properties![config.thirtyYearAverageProperty]
-                ) /
-                    Number(reservoir.properties![config.capacityProperty])) *
-                    100
-            )}% Avg`,
-            `Data as of ${dayjs(
-                String(reservoir.properties![config.storageDateProperty])
-            ).format('MMM DD, YYYY')}`,
-        ];
+        const storageNum = Number(
+            reservoir.properties![config.storageProperty]
+        );
+        const storage = isNaN(storageNum)
+            ? 'N/A'
+            : storageNum.toLocaleString('en-us');
+        const capacityNum = Number(
+            reservoir.properties![config.capacityProperty]
+        );
+        const capacity = isNaN(capacityNum)
+            ? 'N/A'
+            : capacityNum.toLocaleString('en-us');
+
+        const averageNum = Number(
+            reservoir.properties![config.thirtyYearAverageProperty]
+        );
+        const average = isNaN(averageNum)
+            ? 'N/A'
+            : averageNum.toLocaleString('en-us');
+
+        const lines = [...name, `Storage: ${storage} / ${capacity} ac-ft`];
+
+        if (storage !== 'N/A' && capacity !== 'N/A') {
+            let line = `${Math.round((storageNum / capacityNum) * 100)} % Full`;
+            if (average !== 'N/A') {
+                line += ` - ${Math.round(
+                    (averageNum / capacityNum) * 100
+                )}% Avg`;
+            }
+            lines.push(line);
+        }
+
+        const date = dayjs(
+            String(reservoir.properties![config.storageDateProperty])
+        );
+        if (date.isValid()) {
+            lines.push(`Data as of ${date.format('MMM DD, YYYY')}`);
+        }
 
         lines.forEach((text, i) => {
             const t = document.createElementNS(
