@@ -12,30 +12,21 @@ import { TspanData } from '@/features/Reservior/TeacupDiagram/types';
 export const calculateYPositionContructor =
     (base1: number, base2: number, height: number) =>
     (size: number): number => {
-        if (base1 === base2) return height / 2;
-        const sqrt2 = Math.SQRT2;
-        const numerator =
-            size *
-            height *
-            (2 * base1 - sqrt2 * Math.sqrt(base1 ** 2 + base2 ** 2));
-        const denominator = base1 - base2;
-        return numerator / denominator;
+        if (base1 === base2) return size * height;
+
+        const a = (base2 - base1) / (2 * height);
+        const b = base1;
+        const totalArea = ((base1 + base2) * height) / 2;
+
+        // Solve: a*y^2 + b*y = size * totalArea
+        const c = -size * totalArea;
+
+        const discriminant = b * b - 4 * a * c;
+
+        const y = (-b + Math.sqrt(discriminant)) / (2 * a);
+
+        return y;
     };
-// export const calculateYPosition = (
-//     size: number,
-//     base1: number,
-//     base2: number,
-//     height: number
-// ): number => {
-//     if (base1 === base2) return height / 2;
-//     const sqrt2 = Math.SQRT2;
-//     const numerator =
-//         size *
-//         height *
-//         (2 * base1 - sqrt2 * Math.sqrt(base1 ** 2 + base2 ** 2));
-//     const denominator = base1 - base2;
-//     return numerator / denominator;
-// };
 
 /**
  *

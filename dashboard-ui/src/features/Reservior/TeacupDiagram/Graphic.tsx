@@ -140,27 +140,31 @@ export const Graphic: React.FC<Props> = (props) => {
         const hasLowPercentile = !isNaN(tenthPercentage);
 
         // Determine basic dimensions of teacup trapezoid
-        const size = 1 - Number(storagePercentage.toFixed(2));
+        const size = 1 - storagePercentage;
         const upperWidth = 160;
         const lowerWidth = 64;
         const height = 107;
         const scale = 1;
 
-        const highPercentile = 1 - Number(ninetiethPercentage.toFixed(2));
-        const average = 1 - Number(averagePercentage.toFixed(2));
-        const lowPercentile = 1 - Number(tenthPercentage.toFixed(2));
+        const highPercentile = 1 - ninetiethPercentage;
+        const average = 1 - averagePercentage;
+        const lowPercentile = 1 - tenthPercentage;
 
         if (hasHighPercentile && !isNaN(highPercentile)) {
             setHighPercentile(highPercentile);
+        } else {
+            setHighPercentile(undefined);
         }
         if (hasAverage && !isNaN(average)) {
             setAverage(average);
+        } else {
+            setAverage(undefined);
         }
         if (hasLowPercentile && !isNaN(lowPercentile)) {
             setLowPercentile(lowPercentile);
+        } else {
+            setLowPercentile(undefined);
         }
-        setAverage(average);
-        setLowPercentile(lowPercentile);
 
         const textColor = colorScheme === 'light' ? '#000' : '#FFF';
 
