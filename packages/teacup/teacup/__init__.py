@@ -129,10 +129,15 @@ def create_table_schema():
 
 
 @click.command()
-def load_locations():
+@click.option(
+    "--force-clean-layer",
+    is_flag=True,
+    help="Force reload locations by recreating existing table",
+)
+def load_locations(force_clean_layer):
     """Load location GeoJSON into PostGIS using ogr2ogr."""
     try:
-        run_location_load()
+        run_location_load(force_clean_layer=force_clean_layer)
     except Exception as e:
         LOGGER.error(f"Error loading locations: {e}")
         LOGGER.info("Attempting to create table schema and retry loading locations.")
@@ -170,6 +175,9 @@ def load(start, end, url):
         click.echo(f"Loading: {csv_url}")
         p = mp.Process(target=run_subprocess, args=(csv_url,))
         p.start()
+
+    while len(mp.active_children()) > 0:
+        sleep(0.5)
 
     click.echo("All loading processes done.")
 

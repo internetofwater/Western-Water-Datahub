@@ -4,9 +4,12 @@
 name: Update pygeoapi dependency
 on:
   workflow_dispatch:
-#   schedule:
-#     #  Between 8AM and 6PM EST, Monday through Thursday 
-#     - cron: "0 13-23 * * 1-4"  
+  schedule:
+    # Once per day at 9 AM Eastern, Monday–Thursday
+    - cron: "0 14 * * 1-4"
+
+permissions:
+  contents: write
 
 jobs:
   update-dependency:

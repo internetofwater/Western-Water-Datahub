@@ -40,6 +40,9 @@ COPY pygeoapi.config.yml /opt/pygeoapi/local.config.yml
 # Set up environment
 ENV PATH="/opt/pygeoapi/.venv/bin:$PATH"
 
+# Define path to Ontology graph
+ENV PYGEOAPI_ONTOLOGY_GRAPH=/opt/pygeoapi/pygeoapi-deployment/USBR_core.ttl
+
 # WWDH uses a custom event loop; we define the
 # import path here
 ENV PYGEOAPI_CUSTOM_EVENT_LOOP_MODULE=com.env
