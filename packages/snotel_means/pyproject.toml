@@ -4,7 +4,7 @@
 [project]
 name = "snotel_means"
 version = "0.1.0"
-description = "Add your description here"
+description = "Calculate the basin index percentage (also known as the percent normal) of Snow Water Equivalent (SWE) for each HUC06 basin based on the values from all SNOTEL stations within that basin"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = []

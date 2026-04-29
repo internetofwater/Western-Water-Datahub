@@ -76,6 +76,8 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
     # before ending up in the locations geojson
     pg_layer.CreateField(ogr.FieldDefn("use_total_or_active_storage", ogr.OFTString))
 
+    pg_layer.CreateField(ogr.FieldDefn("source_url", ogr.OFTString))
+
     # Mark 'id' as the layer FID so it becomes the Postgres primary key
     try:
         pg_layer.SetFIDColumn("id")
@@ -240,6 +242,7 @@ def run_location_load(force_clean_layer=False) -> None:
         feature.SetField(
             "use_total_or_active_storage", row["use_total_or_active_storage"]
         )
+        feature.SetField("source_url", row.get("source_url") or "N/A")
 
         # Prefer geometry from the source GeoJSON feature (saved as src_feature).
         # Falls back to lon/lat if geometry is missing.
