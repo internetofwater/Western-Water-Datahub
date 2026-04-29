@@ -18,7 +18,7 @@ export const getTooltipContent = (
 ): ReactNode => {
     switch (layerId) {
         case String(LayerId.Snotel):
-            return 'The current average snow water equivalent across HUC6 basins as a percentage of the 30-year average (1991-2020).';
+            return 'The current median snow water equivalent across HUC6 basins as a percentage of the 30-year median (1991-2020).';
         case String(LayerId.NOAARiverForecast):
             return (
                 <>
