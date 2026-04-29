@@ -20,7 +20,7 @@ import {
     Text,
     Tooltip,
 } from '@mantine/core';
-import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from 'react';
 import { MAP_ID, SourceId } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { Feature, Point } from 'geojson';
@@ -38,6 +38,7 @@ import {
     displayVolume,
 } from '@/utils/reservoirDataDisplay';
 import { MAX_POSITIONS } from '@/services/report/report.consts';
+import debounce from 'lodash.debounce';
 
 type Props = {
     reservoirs: Feature<Point, OrganizedProperties>[];
@@ -70,6 +71,22 @@ export const Table: React.FC<Props> = (props) => {
     const { map } = useMap(MAP_ID);
 
     const { isFetchingReservoirs } = useLoading();
+
+    const handlePageSizeChange = (pageSize: number) => {
+        setPageSize(pageSize);
+        setPage(1);
+    };
+
+    const debouncePageSizeChange = useMemo(
+        () => debounce(handlePageSizeChange, 150),
+        [handlePageSizeChange]
+    );
+
+    useEffect(() => {
+        return () => {
+            debouncePageSizeChange.cancel();
+        };
+    }, []);
 
     useEffect(() => {
         if (initialLoad) {
@@ -116,11 +133,6 @@ export const Table: React.FC<Props> = (props) => {
             source,
         });
         setHighlight(null);
-    };
-
-    const handlePageSizeChange = (pageSize: number) => {
-        setPageSize(pageSize);
-        setPage(1);
     };
 
     const handleMouseOver = (feature: Feature<Point>) => {
@@ -421,14 +433,14 @@ export const Table: React.FC<Props> = (props) => {
                     size="xs"
                     className={styles.pageSizeInput}
                     label="Reservoirs per page"
-                    disabled={currentChunk.length === 0}
-                    {...(currentChunk.length === 0
+                    disabled={reservoirs.length === 0}
+                    {...(reservoirs.length === 0
                         ? {
                               'data-disabled': true,
                           }
                         : {})}
                     value={pageSize}
-                    onChange={(value) => handlePageSizeChange(Number(value))}
+                    onChange={(value) => debouncePageSizeChange(Number(value))}
                     min={1}
                     max={reservoirs.length}
                 />

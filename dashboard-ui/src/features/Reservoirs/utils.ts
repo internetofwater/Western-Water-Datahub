@@ -7,12 +7,17 @@ import { Feature, Point } from 'geojson';
 import { OrganizedProperties } from './types';
 
 export const chunk = <T>(array: T[], size: number): T[][] => {
-    if (!array.length) {
+    if (array.length === 0 || size === 0) {
         return [];
     }
-    const head = array.slice(0, size);
-    const tail = array.slice(size);
-    return [head, ...chunk(tail, size)];
+
+    const result: T[][] = [];
+
+    for (let i = 0; i < array.length; i += size) {
+        result.push(array.slice(i, i + size));
+    }
+
+    return result;
 };
 
 export const getKey = (

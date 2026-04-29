@@ -247,7 +247,7 @@ const ReferenceData: React.FC = () => {
                     />
                     <Entry
                         layerId={LayerId.BasinsReference}
-                        label="Show Basin (HUC02) Boundaries"
+                        label="Show Basin (HUC2) Boundaries"
                         onClick={handleBasinsReferenceChange}
                         toggleableLayers={toggleableLayers}
                         links={false}

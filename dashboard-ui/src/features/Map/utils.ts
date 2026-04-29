@@ -181,7 +181,11 @@ export const getReservoirIconImageExpression = (
         zoom, // for this zoom level
         [
             'case',
-            ['<', ['var', 'storage'], 0],
+            [
+                'any',
+                ['<', ['var', 'storage'], 0],
+                ['<', ['var', 'capacity'], 0],
+            ],
             'no-data',
             ['>=', ['var', 'capacity'], capacity],
             [
@@ -198,7 +202,7 @@ export const getReservoirIconImageExpression = (
         // Define variables for reuse in sub-expressions
         'let',
         'capacity', // var name
-        ['coalesce', ['get', config.capacityProperty], 1], // capacity variable value
+        ['coalesce', ['get', config.capacityProperty], -1], // capacity variable value
         'storage', // var name
         [
             '/',
@@ -302,6 +306,12 @@ export const getHighlightIcon = (
         zoom, // for this zoom level
         [
             'case',
+            [
+                'any',
+                ['<', ['var', 'storage'], 0],
+                ['<', ['var', 'capacity'], 0],
+            ],
+            'outline-large',
             ['>=', ['var', 'capacity'], capacity],
             ['case', ['<', ['var', 'storage'], 0], 'outline-large', 'outline'],
             'outline-large',
@@ -311,7 +321,7 @@ export const getHighlightIcon = (
     return [
         'let',
         'capacity',
-        ['coalesce', ['get', config.capacityProperty], 1],
+        ['coalesce', ['get', config.capacityProperty], -1],
         'storage', // var name
         [
             '/',
@@ -330,6 +340,12 @@ export const getReservoirSymbolSize = (
         zoom, // for this zoom level
         [
             'case',
+            [
+                'any',
+                ['<', ['var', 'storage'], 0],
+                ['<', ['var', 'capacity'], 0],
+            ],
+            defaultSize,
             ['>=', ['var', 'capacity'], capacity],
             [
                 'case',
@@ -344,7 +360,7 @@ export const getReservoirSymbolSize = (
     return [
         'let',
         'capacity',
-        ['coalesce', ['get', config.capacityProperty], 1],
+        ['coalesce', ['get', config.capacityProperty], -1],
         'storage', // var name
         [
             '/',

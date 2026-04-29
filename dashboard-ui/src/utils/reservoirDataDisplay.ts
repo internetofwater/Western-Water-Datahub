@@ -22,7 +22,7 @@ export const displayVolume = (volume: number) => {
         return 'N/A';
     }
 
-    return volume.toLocaleString('en-US');
+    return Math.round(volume).toLocaleString('en-US');
 };
 
 export const displayVolumeWithUnits = (volume: number) => {
