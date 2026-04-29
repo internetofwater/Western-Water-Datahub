@@ -7,7 +7,7 @@ import {
     addLabelConstructor,
     addLineConstructor,
     addTextConstructor,
-    calculateInnerTrapezoidHeight,
+    calculateYPosition,
     calculateXPositionConstructor,
     propagateEventToContainerElemConstructor,
 } from '@/features/Reservior/TeacupDiagram/utils';
@@ -16,11 +16,11 @@ import { getHighPercentileLabel } from '@/features/Reservior/TeacupDiagram/const
 describe('Reservoir Graphic Utils', () => {
     describe('calculateInnerTrapezoidHeight', () => {
         test('returns half the height when bases are equal', () => {
-            expect(calculateInnerTrapezoidHeight(0.5, 100, 100, 200)).toBe(100);
+            expect(calculateYPosition(0.5, 100, 100, 200)).toBe(100);
         });
 
         test('calculates correct height when bases differ', () => {
-            const result = calculateInnerTrapezoidHeight(0.5, 160, 64, 107);
+            const result = calculateYPosition(0.5, 160, 64, 107);
             expect(result).toBeCloseTo(42.5, 1);
         });
     });

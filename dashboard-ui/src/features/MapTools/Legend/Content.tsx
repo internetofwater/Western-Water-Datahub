@@ -92,7 +92,7 @@ export const Content: React.FC<Props> = (props) => {
                         <Line color="#54278f" />
                     </Box>
                     <Title order={4} size="h6">
-                        Basin (HUC02) Boundaries
+                        Basin (HUC2) Boundaries
                     </Title>
                 </Group>
             )}

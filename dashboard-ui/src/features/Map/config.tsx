@@ -235,7 +235,7 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
         case LayerId.Regions:
             return 'Regions';
         case LayerId.Snotel:
-            return 'NRCS SNOTEL Snow Water Equivalent (% of Average)';
+            return 'NRCS SNOTEL Snow Water Equivalent (% of Median)';
         case LayerId.NOAARiverForecast:
             return 'NOAA RFC Seasonal Water Supply Forecasts (% of Average)';
         case LayerId.USDroughtMonitor:
@@ -891,8 +891,8 @@ export const getLayerHoverFunction = (
                             const html = `
                                 <div>
                                   <strong>${name}</strong><br/>
-                                  <p>Huc06: ${huc06}</p>
-                                  <p>Change in Snow Water Equivalent: ${swe}%</p>
+                                  <p>HUC6: ${huc06}</p>
+                                  <p>% of Median Snow Water Equivalent: ${swe}%</p>
                                 </div>
                                 `;
 
@@ -1233,8 +1233,8 @@ export const getLayerMouseMoveFunction = (
                             const html = `
                             <div>
                               <strong>${name}</strong><br/>
-                              <p>Huc06: ${huc06}</p>
-                              <p>Change in Snow Water Equivalent: ${swe}%</p>
+                              <p>HUC6: ${huc06}</p>
+                              <p>% of Median Snow Water Equivalent: ${swe}%</p>
                             </div>
                             `;
 

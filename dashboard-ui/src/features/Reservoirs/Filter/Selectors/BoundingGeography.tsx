@@ -60,7 +60,7 @@ const data = [
     },
     {
         value: BoundingGeographyLevel.Basin,
-        label: 'Basin (HUC02)',
+        label: 'Basin (HUC2)',
     },
     {
         value: BoundingGeographyLevel.State,

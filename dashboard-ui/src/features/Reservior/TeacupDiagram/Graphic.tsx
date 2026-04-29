@@ -25,7 +25,7 @@ import {
     getLowPercentileLabel,
 } from '@/features/Reservior/TeacupDiagram/consts';
 import {
-    calculateInnerTrapezoidHeight,
+    // calculateYPosition,
     calculateXPositionConstructor,
     addLineConstructor,
     addLabelConstructor,
@@ -33,7 +33,7 @@ import {
     propagateEventToContainerElemConstructor,
     addListeners,
     getHeight,
-    getY,
+    calculateYPositionContructor,
 } from '@/features/Reservior/TeacupDiagram/utils';
 import { GeoJsonProperties } from 'geojson';
 import { ReservoirConfig } from '@/features/Map/types';
@@ -45,6 +45,7 @@ import {
     handleStorageEnter,
     handleStorageLeave,
 } from '@/features/Reservior/TeacupDiagram/listeners';
+import { displayVolumeWithUnits } from '@/utils/reservoirDataDisplay';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
@@ -74,7 +75,7 @@ export const Graphic: React.FC<Props> = (props) => {
     const _graphicRef = graphicRef ?? useRef<SVGSVGElement>(null);
     const svgRef = useRef<SVGSVGElement>(null);
 
-    const [cutHeight, setCutHeight] = useState<number>();
+    const [capacityYPosition, setCapacityYPosition] = useState<number>();
     const [highPercentile, setHighPercentile] = useState<number>();
     const [average, setAverage] = useState<number>();
     const [lowPercentile, setLowPercentile] = useState<number>();
@@ -133,44 +134,50 @@ export const Graphic: React.FC<Props> = (props) => {
             setIsInvalidGraphic(true);
             return;
         }
+        setIsInvalidGraphic(false);
 
         const hasHighPercentile = !isNaN(ninetiethPercentage);
         const hasAverage = !isNaN(averagePercentage);
         const hasLowPercentile = !isNaN(tenthPercentage);
 
         // Determine basic dimensions of teacup trapezoid
-        const size = 1 - Number(storagePercentage.toFixed(2));
+        const size = 1 - storagePercentage;
         const upperWidth = 160;
         const lowerWidth = 64;
         const height = 107;
         const scale = 1;
 
-        const highPercentile = height - height * ninetiethPercentage;
-        const average = height - height * averagePercentage;
-        const lowPercentile = height - height * tenthPercentage;
+        const highPercentile = 1 - ninetiethPercentage;
+        const average = 1 - averagePercentage;
+        const lowPercentile = 1 - tenthPercentage;
 
         if (hasHighPercentile && !isNaN(highPercentile)) {
             setHighPercentile(highPercentile);
+        } else {
+            setHighPercentile(undefined);
         }
         if (hasAverage && !isNaN(average)) {
             setAverage(average);
+        } else {
+            setAverage(undefined);
         }
         if (hasLowPercentile && !isNaN(lowPercentile)) {
             setLowPercentile(lowPercentile);
+        } else {
+            setLowPercentile(undefined);
         }
-        setAverage(average);
-        setLowPercentile(lowPercentile);
 
         const textColor = colorScheme === 'light' ? '#000' : '#FFF';
 
-        // Calculate the height of the sub-trapezoid representing storage
-        const cutHeight = calculateInnerTrapezoidHeight(
-            size,
+        const calculateYPosition = calculateYPositionContructor(
             upperWidth,
             lowerWidth,
             height
         );
-        setCutHeight(cutHeight);
+
+        // Calculate the height of the sub-trapezoid representing storage
+        const capacityYPosition = calculateYPosition(size);
+        setCapacityYPosition(capacityYPosition);
 
         // Calculate points defining the primary (capacity) trapezoid
         const upperLeft: [number, number] = [0, 0];
@@ -186,14 +193,15 @@ export const Graphic: React.FC<Props> = (props) => {
 
         // Calculate the points of the inner (storage) trapezoid
         const baseCut =
-            upperWidth + (lowerWidth - upperWidth) * (cutHeight / height);
+            upperWidth +
+            (lowerWidth - upperWidth) * (capacityYPosition / height);
         const innerUpperLeft: [number, number] = [
             ((upperWidth - baseCut) / 2) * scale,
-            cutHeight * scale,
+            capacityYPosition * scale,
         ];
         const innerUpperRight: [number, number] = [
             ((upperWidth + baseCut) / 2) * scale,
-            cutHeight * scale,
+            capacityYPosition * scale,
         ];
 
         // Draw Full trapezoid
@@ -238,42 +246,57 @@ export const Graphic: React.FC<Props> = (props) => {
         const addLine = addLineConstructor(
             upperWidth,
             svgRef.current,
-            calculateXPosition
+            calculateXPosition,
+            calculateYPosition,
+            scale
         );
 
-        const highPercentileLine = hasHighPercentile
-            ? addLine(highPercentileId, highPercentile, '#FFF')
-            : null;
-        const averageLine = addLine(averageId, average, '#d0a02a');
-        const lowPercentileLine = addLine(
-            lowPercentileId,
-            lowPercentile,
-            '#FFF'
-        );
+        if (hasHighPercentile) {
+            addLine(highPercentileId, highPercentile, '#FFF');
+        }
+        if (hasAverage) {
+            addLine(averageId, average, '#d0a02a');
+        }
+        if (hasLowPercentile) {
+            addLine(lowPercentileId, lowPercentile, '#FFF');
+        }
 
         if (labels) {
             const addLabel = addLabelConstructor(
                 upperWidth,
                 svgRef.current,
-                calculateXPosition
+                calculateXPosition,
+                calculateYPosition
             );
 
-            const addText = addTextConstructor(svgRef.current);
+            const addText = addTextConstructor(
+                svgRef.current,
+                calculateYPosition
+            );
 
             // Add high percentile line and label
+
+            const highPercentileY = hasHighPercentile
+                ? calculateYPosition(highPercentile)
+                : -1;
+            const averageY = calculateYPosition(average);
+            const lowPercentileY = calculateYPosition(lowPercentile);
 
             const highLabelTSpanData = hasHighPercentile
                 ? getHighPercentileLabel()
                 : [];
 
-            const highLabel = hasHighPercentile
-                ? addLabel(
-                      highPercentileLabelId,
-                      highLabelTSpanData,
-                      highPercentile,
-                      textColor
-                  )
-                : null;
+            const highLabel =
+                hasHighPercentile &&
+                highPercentileY < 100 &&
+                highPercentileY > 0
+                    ? addLabel(
+                          highPercentileLabelId,
+                          highLabelTSpanData,
+                          highPercentile,
+                          textColor
+                      )
+                    : null;
 
             // Add average line and label
 
@@ -282,14 +305,14 @@ export const Graphic: React.FC<Props> = (props) => {
             if (
                 hasAverage &&
                 hasHighPercentile &&
-                average - highPercentile < 40
+                averageY - highPercentileY < 40
             ) {
                 const height =
                     hasHighPercentile && highLabel ? getHeight(highLabel) : -1;
 
                 averageAdjust = Math.max(
                     0,
-                    height - (average - highPercentile + 1)
+                    height - (averageY - highPercentileY + 1)
                 );
             }
 
@@ -297,14 +320,17 @@ export const Graphic: React.FC<Props> = (props) => {
                 ? getAverageLabel(averageAdjust)
                 : [];
 
-            const averageLabel = hasAverage
-                ? addLabel(
-                      averageLabelId,
-                      averageLabelTSpanData,
-                      average,
-                      '#d0a02a'
-                  )
-                : null;
+            const averageLabel =
+                hasAverage &&
+                averageY + averageAdjust < 100 &&
+                averageY + averageAdjust > 0
+                    ? addLabel(
+                          averageLabelId,
+                          averageLabelTSpanData,
+                          average,
+                          '#d0a02a'
+                      )
+                    : null;
 
             // Add low percentile line and label
 
@@ -314,17 +340,21 @@ export const Graphic: React.FC<Props> = (props) => {
             if (
                 hasAverage &&
                 hasLowPercentile &&
-                lowPercentile - average < 40
+                lowPercentileY - averageY < 40
             ) {
                 const height =
                     hasAverage && averageLabel ? getHeight(averageLabel) : -1;
 
                 lowPercentileAdjust =
-                    Math.max(0, height - (lowPercentile - average + 1)) +
+                    Math.max(0, height - (lowPercentileY - averageY + 1)) +
                     averageAdjust;
             }
 
-            if (hasLowPercentile) {
+            if (
+                hasLowPercentile &&
+                lowPercentileY + lowPercentileAdjust < 100 &&
+                lowPercentileY + lowPercentileAdjust > 0
+            ) {
                 const lowLabelTSpanData =
                     getLowPercentileLabel(lowPercentileAdjust);
 
@@ -339,24 +369,18 @@ export const Graphic: React.FC<Props> = (props) => {
             // Total capacity of reservoir
             addText(
                 capacityTextId,
-                `${Number(
-                    reservoirProperties[config.capacityProperty]
-                ).toLocaleString('en-us')} acre-feet`,
-                -1,
+                displayVolumeWithUnits(
+                    Number(reservoirProperties[config.storageProperty])
+                ),
+
+                0,
                 textColor,
-                showLabels
+                showLabels,
+                -2
             );
 
-            const highPercentileY =
-                hasHighPercentile && highPercentileLine
-                    ? getY(highPercentileLine)
-                    : -1;
-            const averageY = getY(averageLine);
-            const lowPercentileY = getY(lowPercentileLine);
-
-            const minSpacing = 9;
+            const minSpacing = 12;
             averageAdjust = 0;
-
             // Check overlap with high percentile line
             if (
                 hasAverage &&
@@ -365,7 +389,7 @@ export const Graphic: React.FC<Props> = (props) => {
             ) {
                 averageAdjust +=
                     (highPercentileY <= averageY ? 1 : -1) *
-                    (minSpacing + 9 - Math.abs(highPercentileY - averageY));
+                    (minSpacing + 11 - Math.abs(highPercentileY - averageY));
             }
 
             // Check overlap with low percentile line
@@ -384,28 +408,30 @@ export const Graphic: React.FC<Props> = (props) => {
             if (hasAverage) {
                 addText(
                     averageTextId,
-                    `${Math.round(
+                    displayVolumeWithUnits(
                         Number(
                             reservoirProperties[
                                 config.thirtyYearAverageProperty
                             ]
                         )
-                    ).toLocaleString('en-us')} acre-feet`,
-                    average - 2 + averageAdjust,
+                    ),
+                    average - 0.04,
                     '#d0a02a',
-                    showLabels
+                    showLabels,
+                    averageAdjust
                 );
             }
 
             // Current Storage of reservoir
             addText(
                 storageTextId,
-                `${Number(
-                    reservoirProperties[config.storageProperty]
-                ).toLocaleString('en-us')} acre-feet`,
-                height + 6,
+                displayVolumeWithUnits(
+                    Number(reservoirProperties[config.capacityProperty])
+                ),
+                1,
                 textColor,
-                showLabels
+                showLabels,
+                30
             );
         }
 
@@ -415,7 +441,7 @@ export const Graphic: React.FC<Props> = (props) => {
     }, [svgRef.current, colorScheme, reservoirProperties]);
 
     useEffect(() => {
-        if (isInvalidGraphic || !listeners || cutHeight === undefined) {
+        if (isInvalidGraphic || !listeners || capacityYPosition === undefined) {
             return;
         }
 
@@ -427,7 +453,7 @@ export const Graphic: React.FC<Props> = (props) => {
             propagateEventToContainerElemConstructor(
                 _capacityPolygonId,
                 _storagePolygonId,
-                cutHeight
+                capacityYPosition
             );
 
         const cleanups: (() => void)[] = [];
@@ -528,27 +554,28 @@ export const Graphic: React.FC<Props> = (props) => {
         reservoirProperties![config.identifierProperty],
     ]);
 
-    if (isInvalidGraphic) {
-        return (
-            <Group h={127} justify="center" align="center" grow>
-                <Text size="sm">Missing required data</Text>
-            </Group>
-        );
-    }
-
     return (
-        <svg
-            data-testid="graphic-svg"
-            viewBox={`-5 -10 ${labels ? 220 : 170} 127`}
-            className={className}
-            ref={_graphicRef}
-        >
-            <defs>
-                <filter id="shadow">
-                    <feDropShadow dx="0.5" dy="0.4" stdDeviation="0.4" />
-                </filter>
-            </defs>
-            <g ref={svgRef} key={colorScheme}></g>
-        </svg>
+        <>
+            {isInvalidGraphic && (
+                <Group h={127} justify="center" align="center" grow>
+                    <Text size="sm">Missing required data</Text>
+                </Group>
+            )}
+
+            <svg
+                data-testid="graphic-svg"
+                viewBox={`-5 -10 ${labels ? 220 : 170} 127`}
+                className={className}
+                ref={_graphicRef}
+                style={{ display: isInvalidGraphic ? 'none' : 'block' }}
+            >
+                <defs>
+                    <filter id="shadow">
+                        <feDropShadow dx="0.5" dy="0.4" stdDeviation="0.4" />
+                    </filter>
+                </defs>
+                <g ref={svgRef} key={colorScheme}></g>
+            </svg>
+        </>
     );
 };
