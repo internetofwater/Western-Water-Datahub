@@ -134,6 +134,7 @@ export const Graphic: React.FC<Props> = (props) => {
             setIsInvalidGraphic(true);
             return;
         }
+        setIsInvalidGraphic(false);
 
         const hasHighPercentile = !isNaN(ninetiethPercentage);
         const hasAverage = !isNaN(averagePercentage);
@@ -553,27 +554,28 @@ export const Graphic: React.FC<Props> = (props) => {
         reservoirProperties![config.identifierProperty],
     ]);
 
-    if (isInvalidGraphic) {
-        return (
-            <Group h={127} justify="center" align="center" grow>
-                <Text size="sm">Missing required data</Text>
-            </Group>
-        );
-    }
-
     return (
-        <svg
-            data-testid="graphic-svg"
-            viewBox={`-5 -10 ${labels ? 220 : 170} 127`}
-            className={className}
-            ref={_graphicRef}
-        >
-            <defs>
-                <filter id="shadow">
-                    <feDropShadow dx="0.5" dy="0.4" stdDeviation="0.4" />
-                </filter>
-            </defs>
-            <g ref={svgRef} key={colorScheme}></g>
-        </svg>
+        <>
+            {isInvalidGraphic && (
+                <Group h={127} justify="center" align="center" grow>
+                    <Text size="sm">Missing required data</Text>
+                </Group>
+            )}
+
+            <svg
+                data-testid="graphic-svg"
+                viewBox={`-5 -10 ${labels ? 220 : 170} 127`}
+                className={className}
+                ref={_graphicRef}
+                style={{ display: isInvalidGraphic ? 'none' : 'block' }}
+            >
+                <defs>
+                    <filter id="shadow">
+                        <feDropShadow dx="0.5" dy="0.4" stdDeviation="0.4" />
+                    </filter>
+                </defs>
+                <g ref={svgRef} key={colorScheme}></g>
+            </svg>
+        </>
     );
 };
