@@ -181,7 +181,7 @@ resources:
       - type: application/html
         rel: documentation
         title: Documentation
-        href: https://www.nrcs.usda.gov/resources/data-and-reports/climatic-and-hydrologic-normals
+        href: https://github.com/internetofwater/Western-Water-Datahub/tree/main/packages/snotel_means
         hreflang: en-US
       - type: application/html
         rel: canonical
