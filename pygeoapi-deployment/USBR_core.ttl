@@ -31141,4 +31141,3 @@ rdfs:Resource rdfs:label "Resource" ;
 [] owl:minCardinality "0"^^xsd:nonNegativeInteger .
 
 [] owl:minCardinality "0"^^xsd:nonNegativeInteger .
-
