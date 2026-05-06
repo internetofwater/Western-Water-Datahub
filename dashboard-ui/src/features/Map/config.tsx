@@ -236,6 +236,8 @@ export const getLayerName = (layerId: LayerId | SubLayerId): string => {
             return 'Regions';
         case LayerId.Snotel:
             return 'NRCS SNOTEL Snow Water Equivalent (% of Median)';
+        case LayerId.SnotelHucSixMeans:
+            return 'NRCS SNOTEL Snow Water Equivalent (% of Median)';
         case LayerId.NOAARiverForecast:
             return 'NOAA RFC Seasonal Water Supply Forecasts (% of Average)';
         case LayerId.USDroughtMonitor:
@@ -755,6 +757,7 @@ export const getLayerHoverFunction = (
                 };
             case LayerId.TeacupEDRReservoirs:
                 return (e) => {
+                    hoverPopup.remove();
                     const feature = e.features?.[0] as Feature<Point>;
                     if (feature) {
                         useSessionStore.getState().setHighlight({
@@ -867,7 +870,7 @@ export const getLayerHoverFunction = (
                         {
                             layers: [
                                 LayerId.NOAARiverForecast,
-                                LayerId.ResvizEDRReservoirs,
+                                LayerId.TeacupEDRReservoirs,
                             ],
                         }
                     );
@@ -1099,6 +1102,7 @@ export const getLayerMouseMoveFunction = (
                 };
             case LayerId.TeacupEDRReservoirs:
                 return (e) => {
+                    hoverPopup.remove();
                     const feature = e.features?.[0] as Feature<Point>;
                     if (feature) {
                         useSessionStore.getState().setHighlight({
@@ -1209,7 +1213,7 @@ export const getLayerMouseMoveFunction = (
                         {
                             layers: [
                                 LayerId.NOAARiverForecast,
-                                LayerId.ResvizEDRReservoirs,
+                                LayerId.TeacupEDRReservoirs,
                             ],
                         }
                     );
