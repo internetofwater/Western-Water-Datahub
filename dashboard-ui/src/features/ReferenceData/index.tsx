@@ -103,7 +103,6 @@ const ReferenceData: React.FC = () => {
         updateNOAARFC(showNOAARFC, map);
 
         setToggleableLayers(LayerId.NOAARiverForecast, showNOAARFC);
-        // setShowNOAARFC(showNOAARFC);
     };
 
     const handleSnotelChange = (showSnotel: boolean) => {
@@ -113,8 +112,7 @@ const ReferenceData: React.FC = () => {
 
         updateSnotel(showSnotel, map);
 
-        setToggleableLayers(LayerId.Snotel, showSnotel);
-        // setShowSnotel(showSnotel);
+        setToggleableLayers(LayerId.SnotelHucSixMeans, showSnotel);
     };
 
     const handleRegionsReferenceChange = (showRegionsReference: boolean) => {
@@ -193,8 +191,8 @@ const ReferenceData: React.FC = () => {
                         toggleableLayers={toggleableLayers}
                     />
                     <Entry
-                        layerId={LayerId.Snotel}
-                        label={`Show ${getLayerName(LayerId.Snotel)}`}
+                        layerId={LayerId.SnotelHucSixMeans}
+                        label={`Show ${getLayerName(LayerId.SnotelHucSixMeans)}`}
                         onClick={handleSnotelChange}
                         toggleableLayers={toggleableLayers}
                     />
