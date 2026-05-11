@@ -51,6 +51,7 @@ import { BoundingGeographyLevel } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
 import debounce from 'lodash.debounce';
 import { SpriteService } from '@/services/sprite/sprite.service';
+import { customLoader } from '@/services/sprite/sprite.utils';
 
 type Props = {
     accessToken: string;
@@ -151,7 +152,7 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
-        spriteService.current.load(map, { onDemand: true });
+        spriteService.current.load(map, { customLoader: customLoader });
     }, [map, spriteService.current?.ready()]);
 
     useEffect(() => {
