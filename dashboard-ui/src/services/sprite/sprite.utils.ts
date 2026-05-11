@@ -101,12 +101,14 @@ export const customLoader = (
     const teacupHeight = 107;
     const bufferedTeacupHeight = teacupHeight + 1;
 
-    // Width: 162 (160 + 2px buffer) x 20 column = 3240
+    // Width: 162 (160 + 2px buffer) x 21 column = 3240
+    const width = bufferedTeacupWidth * 22;
     // Height: 109 (107 + 2px buffer) x 25 rows = 2725
-    const tempCanvas = new OffscreenCanvas(3240, 2725);
+    const height = bufferedTeacupHeight * 27;
+    const tempCanvas = new OffscreenCanvas(width, height);
     const tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
 
-    const overlayCanvas = new OffscreenCanvas(3240, 2725);
+    const overlayCanvas = new OffscreenCanvas(width, height);
     const overlayCtx = overlayCanvas.getContext('2d', {
         willReadFrequently: true,
     });
@@ -165,16 +167,18 @@ export const customLoader = (
                     const row = 160 + bufferedTeacupWidth * i;
                     const height = 107 + bufferedTeacupHeight * j;
 
+                    // At row 20, move to next column
+                    if (i === 20) {
+                        j += 1;
+                        i = 0;
+                    } else {
+                        i += 1;
+                    }
+
                     tempCtx.putImageData(teacupImageData, row, height);
 
                     overlayCtx.putImageData(averageImageData, row, height);
                     tempCtx.drawImage(overlayCanvas, 0, 0);
-
-                    // At row 20, move to next column
-                    if (i % 20 === 0) {
-                        j += 1;
-                    }
-                    i += 1;
 
                     const imageData = tempCtx.getImageData(
                         row,
@@ -183,6 +187,7 @@ export const customLoader = (
                         teacupHeight
                     );
 
+                    cache.set(id, imageData);
                     if (!map.hasImage(id)) {
                         map.addImage(id, imageData);
                     }
@@ -193,5 +198,10 @@ export const customLoader = (
 
     map.on('style.load', () => {
         blockingSet.clear();
+        for (const [id, imageData] of cache) {
+            if (!map.hasImage(id)) {
+                map.addImage(id, imageData);
+            }
+        }
     });
 };
