@@ -93,7 +93,7 @@ export const customLoader = (
     context: OffscreenCanvasRenderingContext2D
 ) => {
     const blockingSet = new Set<string>();
-    const cache = new Map<string, ImageData>();
+    const cache = new Map<string, { row: number; height: number }>();
 
     const teacupWidth = 160;
     const bufferedTeacupWidth = teacupWidth + 1;
@@ -101,9 +101,8 @@ export const customLoader = (
     const teacupHeight = 107;
     const bufferedTeacupHeight = teacupHeight + 1;
 
-    // Width: 162 (160 + 2px buffer) x 21 column = 3240
+    // Determine canvas width and height by number of loops possible
     const width = bufferedTeacupWidth * 22;
-    // Height: 109 (107 + 2px buffer) x 25 rows = 2725
     const height = bufferedTeacupHeight * 27;
     const tempCanvas = new OffscreenCanvas(width, height);
     const tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
@@ -124,9 +123,20 @@ export const customLoader = (
         if (!blockingSet.has(id)) {
             blockingSet.add(id);
             if (cache.has(id)) {
-                const imageData = cache.get(id);
-                if (imageData && !map.hasImage(id)) {
-                    map.addImage(id, imageData);
+                const position = cache.get(id);
+                if (position) {
+                    const { row, height } = position;
+
+                    const imageData = tempCtx.getImageData(
+                        row,
+                        height,
+                        teacupWidth,
+                        teacupHeight
+                    );
+
+                    if (imageData && !map.hasImage(id)) {
+                        map.addImage(id, imageData);
+                    }
                 }
             } else {
                 // We dont need the prefix
@@ -187,7 +197,7 @@ export const customLoader = (
                         teacupHeight
                     );
 
-                    cache.set(id, imageData);
+                    cache.set(id, { row, height });
                     if (!map.hasImage(id)) {
                         map.addImage(id, imageData);
                     }
@@ -198,8 +208,17 @@ export const customLoader = (
 
     map.on('style.load', () => {
         blockingSet.clear();
-        for (const [id, imageData] of cache) {
-            if (!map.hasImage(id)) {
+        for (const [id, position] of cache) {
+            const { row, height } = position;
+
+            const imageData = tempCtx.getImageData(
+                row,
+                height,
+                teacupWidth,
+                teacupHeight
+            );
+
+            if (imageData && !map.hasImage(id)) {
                 map.addImage(id, imageData);
             }
         }
