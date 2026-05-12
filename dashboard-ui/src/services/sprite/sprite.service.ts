@@ -4,8 +4,8 @@
  */
 
 import { Map } from 'mapbox-gl';
-import { TCoordinateMap } from './sprite.types';
-import { isCoordinateMap, loadImageFile } from './sprite.utils';
+import { TCoordinateMap } from '@/services/sprite/sprite.types';
+import { isCoordinateMap, loadImageFile } from '@/services/sprite/sprite.utils';
 
 type TLoadOptions = {
     onDemand?: boolean;

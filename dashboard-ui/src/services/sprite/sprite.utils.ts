@@ -12,7 +12,7 @@ import {
     TPosition,
     TSize,
     TSprite,
-} from './sprite.types';
+} from '@/services/sprite/sprite.types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
