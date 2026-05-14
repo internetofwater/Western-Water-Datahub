@@ -92,6 +92,7 @@ const MainMap: React.FC<Props> = (props) => {
     const setMapMoved = useSessionStore((state) => state.setMapMoved);
 
     const [shouldResize, setShouldResize] = useState(false);
+    const [isSpritesheetReady, setIsSpritesheetReady] = useState(false);
 
     const isMounted = useRef(true);
     const spriteService = useRef<SpriteService>(null);
@@ -119,23 +120,17 @@ const MainMap: React.FC<Props> = (props) => {
             '/sprite/teacups.json'
         );
 
-        const [spritesheetResult, coordinateMapResult] =
-            await Promise.allSettled([
-                spriteService.current.loadSpritesheet(),
-                spriteService.current.loadCoordinateMap(),
-            ]);
+        const results = await Promise.allSettled([
+            spriteService.current.loadSpritesheet(),
+            spriteService.current.loadCoordinateMap(),
+        ]);
 
         if (
-            spritesheetResult.status === 'fulfilled' &&
-            spritesheetResult.value
+            results.every(
+                (result) => result.status === 'fulfilled' && result.value
+            )
         ) {
-            console.log('Spritesheet loaded successfully');
-        }
-        if (
-            coordinateMapResult.status === 'fulfilled' &&
-            coordinateMapResult.value
-        ) {
-            console.log('Coordinate map loaded successfully');
+            setIsSpritesheetReady(true);
         }
     };
 
@@ -148,12 +143,12 @@ const MainMap: React.FC<Props> = (props) => {
     }, []);
 
     useEffect(() => {
-        if (!map || !spriteService.current?.ready()) {
+        if (!map || !isSpritesheetReady || !spriteService.current) {
             return;
         }
 
         spriteService.current.load(map, { customLoader: customLoader });
-    }, [map, spriteService.current?.ready()]);
+    }, [map, isSpritesheetReady]);
 
     useEffect(() => {
         return () => {
@@ -275,21 +270,14 @@ const MainMap: React.FC<Props> = (props) => {
         map.on('moveend', debouncedHandleMapMove);
         map.on('zoomend', debouncedHandleMapMove);
 
-        const testSet = new Set();
         loadImages(map);
-        // void loadTeacupsFromSpriteSheet(map);
         map.on('style.load', () => {
             loadImages(map);
-            testSet.clear();
         });
 
         const handleMapZoom = () => updateReservoirFilters(map);
 
         map.on('zoom', handleMapZoom);
-
-        // map.on('styleimagemissing', (e) => {
-        //     console.log('e', e);
-        // });
 
         // Resize and fit bounds to ensure consistent loading behavior in all screen sizes
         map.resize();
