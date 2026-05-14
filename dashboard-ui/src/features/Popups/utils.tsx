@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Feature, Point } from 'geojson';
+import { Feature, GeoJsonProperties, Geometry, Point } from 'geojson';
 import { ReservoirConfig } from '@/features/Map/types';
 import { MantineProvider } from '@mantine/core';
 import { ReservoirPopup } from '@/features/Popups/Reservoirs';
@@ -127,4 +127,19 @@ export const checkIsInHoverSpace = (
 
     // Screen position starts in top left, since popup is left-aligned, use 0
     return xInHoverSpace(x, 0) && yInHoverSpace(y, height);
+};
+
+export const getTopFeatureByProperty = <
+    T extends Geometry,
+    V extends GeoJsonProperties,
+>(
+    features: Feature<T, V>[],
+    property: string
+): Feature<T, V> => {
+    return features.reduce((top, current) => {
+        const topValue = Number(top?.properties?.[property]);
+        const currentValue = Number(current?.properties?.[property]);
+
+        return currentValue > topValue ? current : top;
+    }, features[0]);
 };

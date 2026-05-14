@@ -42,6 +42,7 @@ import {
 import { StateField } from '@/features/Map/types/state';
 import {
     checkIsInHoverSpace,
+    getTopFeatureByProperty,
     showReservoirPopup,
 } from '@/features/Popups/utils';
 import { Huc02BasinField } from '@/features/Map/types/basin';
@@ -761,7 +762,20 @@ export const getLayerHoverFunction = (
             case LayerId.TeacupEDRReservoirs:
                 return (e) => {
                     hoverPopup.remove();
-                    const feature = e.features?.[0] as Feature<Point>;
+
+                    const features = (e?.features ?? []).filter(
+                        (feature) =>
+                            feature.source &&
+                            feature.source ===
+                                (SourceId.TeacupEDRReservoirs as string)
+                    ) as Feature<Point>[];
+
+                    const property = getReservoirConfig(
+                        SourceId.TeacupEDRReservoirs
+                    )!.capacityProperty;
+
+                    const feature = getTopFeatureByProperty(features, property);
+
                     if (feature) {
                         const isInHoverSpace = checkIsInHoverSpace(e, map);
                         useSessionStore.getState().setHighlight({
@@ -1108,7 +1122,20 @@ export const getLayerMouseMoveFunction = (
             case LayerId.TeacupEDRReservoirs:
                 return (e) => {
                     hoverPopup.remove();
-                    const feature = e.features?.[0] as Feature<Point>;
+                    const features = (e?.features ?? []).filter(
+                        (feature) =>
+                            feature.source &&
+                            feature.source ===
+                                (SourceId.TeacupEDRReservoirs as string)
+                    ) as Feature<Point>[];
+
+                    const property = getReservoirConfig(
+                        SourceId.TeacupEDRReservoirs
+                    )!.capacityProperty;
+
+                    console.log('e.features', e.features, features);
+                    const feature = getTopFeatureByProperty(features, property);
+
                     if (feature) {
                         const isInHoverSpace = checkIsInHoverSpace(e, map);
                         useSessionStore.getState().setHighlight({
