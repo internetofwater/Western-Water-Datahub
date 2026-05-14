@@ -40,7 +40,10 @@ import {
     SnotelProperties,
 } from '@/features/Map/types/snotel';
 import { StateField } from '@/features/Map/types/state';
-import { showReservoirPopup } from '@/features/Popups/utils';
+import {
+    checkIsInHoverSpace,
+    showReservoirPopup,
+} from '@/features/Popups/utils';
 import { Huc02BasinField } from '@/features/Map/types/basin';
 import { Feature, Point, Polygon } from 'geojson';
 import { huc02Centers } from '@/data/huc02Centers';
@@ -760,11 +763,13 @@ export const getLayerHoverFunction = (
                     hoverPopup.remove();
                     const feature = e.features?.[0] as Feature<Point>;
                     if (feature) {
+                        const isInHoverSpace = checkIsInHoverSpace(e, map);
                         useSessionStore.getState().setHighlight({
                             config: getReservoirConfig(
                                 SourceId.TeacupEDRReservoirs
                             )!,
                             feature,
+                            inHoverSpace: isInHoverSpace,
                         });
                     }
                 };
@@ -1105,11 +1110,13 @@ export const getLayerMouseMoveFunction = (
                     hoverPopup.remove();
                     const feature = e.features?.[0] as Feature<Point>;
                     if (feature) {
+                        const isInHoverSpace = checkIsInHoverSpace(e, map);
                         useSessionStore.getState().setHighlight({
                             config: getReservoirConfig(
                                 SourceId.TeacupEDRReservoirs
                             )!,
                             feature,
+                            inHoverSpace: isInHoverSpace,
                         });
                     }
                 };

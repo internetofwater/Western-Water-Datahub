@@ -63,12 +63,13 @@ const Main: React.FC<Props> = (props) => {
                                     </Text>
                                 </Notification>
                             )}
+                            <Popups />
                         </Stack>
                     </Box>
                     <Box
                         className={`${styles.container} ${styles.left} ${styles.bottom}`}
                     >
-                        <Popups />
+                        <Popups alignBottom />
                     </Box>
 
                     <Loading desktop />

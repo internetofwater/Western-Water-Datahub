@@ -81,3 +81,50 @@ export const showSnotelPopup = (
         .setMaxWidth('fit-content')
         .addTo(map);
 };
+
+const getElemPixelSize = () => {
+    const remSize = getComputedStyle(document.documentElement).fontSize;
+
+    switch (remSize) {
+        case '12px':
+            return 12;
+        case '14px':
+            return 14;
+        default:
+        case '16px':
+            return 16;
+    }
+};
+
+const yInHoverSpace = (y: number, height: number): boolean => {
+    // Using bottom css value as defined in Main.module.css
+    const buffer = getElemPixelSize() * 2.25;
+    const elemHeight = 235;
+    const upper = height - buffer;
+    const lower = upper - elemHeight;
+
+    return y <= upper && y >= lower;
+};
+
+const xInHoverSpace = (x: number, width: number): boolean => {
+    // Using left css value as defined in Main.module.css
+    const buffer = getElemPixelSize() * 0.5;
+    const elemWidth = 620;
+    const left = width + buffer;
+    const right = left + elemWidth;
+
+    return x >= left && x <= right;
+};
+
+export const checkIsInHoverSpace = (
+    event: MapMouseEvent | MapTouchEvent,
+    map: Map
+): boolean => {
+    const container = map.getContainer();
+    const { x, y } = event.point;
+
+    const { offsetHeight: height } = container;
+
+    // Screen position starts in top left, since popup is left-aligned, use 0
+    return xInHoverSpace(x, 0) && yInHoverSpace(y, height);
+};

@@ -54,6 +54,7 @@ export type LegendEntry = {
 export type Highlight = {
     config: ReservoirConfig;
     feature: Feature<Point>;
+    inHoverSpace?: boolean; // Indicates that the feature on the map is currently under the typical hover popup location
 };
 
 export enum HelpTab {

@@ -26,9 +26,9 @@
     display: flex;
 }
 
-.container > div {
+/* .container > div {
     height: fit-content;
-}
+} */
 
 .left {
     left: 0.5rem;
