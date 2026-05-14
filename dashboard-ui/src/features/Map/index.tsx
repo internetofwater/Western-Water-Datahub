@@ -128,7 +128,8 @@ const MainMap: React.FC<Props> = (props) => {
         if (
             results.every(
                 (result) => result.status === 'fulfilled' && result.value
-            )
+            ) &&
+            isMounted.current
         ) {
             setIsSpritesheetReady(true);
         }
