@@ -77,22 +77,13 @@ export class SpriteService {
             const { id } = e;
             if (!blockingSet.has(id)) {
                 blockingSet.add(id);
-                const entry = Object.entries(coordinateMap.sprites).find(
-                    ([key]) => key === id
-                );
-                if (entry) {
-                    const [key, position] = entry;
-                    if (!map.hasImage(key)) {
-                        const { x, y, width, height } = position;
-                        const imageData = context.getImageData(
-                            x,
-                            y,
-                            width,
-                            height
-                        );
+                const position = coordinateMap.sprites[id];
 
-                        map.addImage(key, imageData);
-                    }
+                if (!map.hasImage(id)) {
+                    const { x, y, width, height } = position;
+                    const imageData = context.getImageData(x, y, width, height);
+
+                    map.addImage(id, imageData);
                 }
             }
         });
