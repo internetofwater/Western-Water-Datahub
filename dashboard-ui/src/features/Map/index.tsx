@@ -33,6 +33,7 @@ import {
     getHighlightIcon,
     getAllMapLayers,
     updateReservoirFilters,
+    // loadTeacupsFromSpriteSheet,
 } from '@/features/Map/utils';
 import { basemaps } from '@/components/Map/consts';
 import {
@@ -49,6 +50,8 @@ import { Huc02BasinField } from '@/features/Map/types/basin';
 import { BoundingGeographyLevel } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
 import debounce from 'lodash.debounce';
+import { SpriteService } from '@/services/sprite/sprite.service';
+import { customLoader } from '@/services/sprite/sprite.utils';
 
 type Props = {
     accessToken: string;
@@ -89,8 +92,10 @@ const MainMap: React.FC<Props> = (props) => {
     const setMapMoved = useSessionStore((state) => state.setMapMoved);
 
     const [shouldResize, setShouldResize] = useState(false);
+    const [isSpritesheetReady, setIsSpritesheetReady] = useState(false);
 
     const isMounted = useRef(true);
+    const spriteService = useRef<SpriteService>(null);
 
     useReservoirData();
 
@@ -109,11 +114,42 @@ const MainMap: React.FC<Props> = (props) => {
         [updateReservoirFilters]
     );
 
+    const loadSpriteSheet = async () => {
+        spriteService.current = new SpriteService(
+            '/sprite/teacups.png',
+            '/sprite/teacups.json'
+        );
+
+        const results = await Promise.allSettled([
+            spriteService.current.loadSpritesheet(),
+            spriteService.current.loadCoordinateMap(),
+        ]);
+
+        if (
+            results.every(
+                (result) => result.status === 'fulfilled' && result.value
+            ) &&
+            isMounted.current
+        ) {
+            setIsSpritesheetReady(true);
+        }
+    };
+
     useEffect(() => {
+        void loadSpriteSheet();
+
         return () => {
             isMounted.current = false;
         };
     }, []);
+
+    useEffect(() => {
+        if (!map || !isSpritesheetReady || !spriteService.current) {
+            return;
+        }
+
+        spriteService.current.load(map, { customLoader: customLoader });
+    }, [map, isSpritesheetReady]);
 
     useEffect(() => {
         return () => {
