@@ -74,7 +74,7 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
     # this will be of values "Total" / "Active"; the original CSV has some null values
     # for locations without any storage data in general; but it appears that this will be dropped
     # before ending up in the locations geojson
-    pg_layer.CreateField(ogr.FieldDefn("use_total_or_active_storage", ogr.OFTString))
+    pg_layer.CreateField(ogr.FieldDefn("storage_capacity_label", ogr.OFTString))
 
     # Mark 'id' as the layer FID so it becomes the Postgres primary key
     try:
@@ -238,9 +238,7 @@ def run_location_load(force_clean_layer=False) -> None:
         feature.SetField("reg_num", row["reg_num"])
         feature.SetField("total_capacity", row["total_capacity"])
         feature.SetField("active_capacity", row["active_capacity"])
-        feature.SetField(
-            "use_total_or_active_storage", row["use_total_or_active_storage"]
-        )
+        feature.SetField("storage_capacity_label", row["storage_capacity_label"])
 
         # Prefer geometry from the source GeoJSON feature (saved as src_feature).
         # Falls back to lon/lat if geometry is missing.
