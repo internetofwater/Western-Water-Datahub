@@ -8,7 +8,7 @@ from math import isnan
 from osgeo import ogr, gdal
 import requests
 from typing import Iterator
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 from teacup.env import POSTGRES_URL, LOCATION_GEOJSON_URL
 from teacup.mappings import LOCATION_IDS, DOI_REGIONS, STATE_MAPPING
@@ -66,6 +66,10 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
     pg_layer.CreateField(ogr.FieldDefn("popup_label", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("source_name", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("source_uri", ogr.OFTString))
+    pg_layer.CreateField(ogr.FieldDefn("source_api_url", ogr.OFTString))
+    pg_layer.CreateField(ogr.FieldDefn("wwdh_collection", ogr.OFTString))
+    pg_layer.CreateField(ogr.FieldDefn("wwdh_fid", ogr.OFTInteger))
+    pg_layer.CreateField(ogr.FieldDefn("wwdh_30yr_normal", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("huc6", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("huc12", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("state", ogr.OFTString))
@@ -225,6 +229,24 @@ def run_location_load(force_clean_layer=False) -> None:
         row["state"] = STATE_MAPPING[row["state"]]
         row.update(DOI_REGIONS[row["doiregion"]])
 
+        # Handle additional URLs
+        wwdh_url = urlparse(row["wwdh_30yr_api_url"] or "")
+        wwdh_collection = (
+            wwdh_url.path.rsplit("/")[-3] if len(wwdh_url.path.split("/")) > 2 else ""
+        )
+        wwdh_fid = (
+            wwdh_url.path.rsplit("/")[-1] if len(wwdh_url.path.split("/")) > 2 else None
+        )
+        row["wwdh_30yr_normal"] = (
+            wwdh_url.path
+            + "?datetime=1990-10-01/2020-10-01"
+            + "&parameter-name=Lake/Reservoir+Storage"
+            + "&limit=10950"
+        )
+        row["source_api_url"] = unquote(row["source_30yr_api_url"] or "").replace(
+            "[]", ""
+        )
+
         row["id"] = row["name"].replace(" ", "").replace(" ", ".")
 
         feature = ogr.Feature(pg_layer.GetLayerDefn())
@@ -233,6 +255,7 @@ def run_location_load(force_clean_layer=False) -> None:
         feature.SetField("popup_label", row["popup_label"])
         feature.SetField("source_uri", row["source_uri"])
         feature.SetField("source_name", row["source_name"])
+        feature.SetField("source_api_url", row["source_api_url"])
         feature.SetField("huc6", row["huc6"])
         feature.SetField("huc12", row["huc12"])
         feature.SetField("state", row["state"])
@@ -241,6 +264,11 @@ def run_location_load(force_clean_layer=False) -> None:
         feature.SetField("total_capacity", row["total_capacity"])
         feature.SetField("active_capacity", row["active_capacity"])
         feature.SetField("storage_capacity_label", row["storage_capacity_label"])
+
+        # Handle WWDH specific fields
+        feature.SetField("wwdh_collection", wwdh_collection)
+        feature.SetField("wwdh_fid", wwdh_fid)
+        feature.SetField("wwdh_30yr_normal", row["wwdh_30yr_normal"])
 
         # Prefer geometry from the source GeoJSON feature (saved as src_feature).
         # Falls back to lon/lat if geometry is missing.
