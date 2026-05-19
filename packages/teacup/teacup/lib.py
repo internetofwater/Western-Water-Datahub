@@ -8,6 +8,7 @@ from math import isnan
 from osgeo import ogr, gdal
 import requests
 from typing import Iterator
+from urllib.parse import unquote
 
 from teacup.env import POSTGRES_URL, LOCATION_GEOJSON_URL
 from teacup.mappings import LOCATION_IDS, DOI_REGIONS, STATE_MAPPING
@@ -17,6 +18,7 @@ class SourceName(StrEnum):
     USACE = "USACE"
     USGS = "USGS"
     RISE = "RISE"
+    RISE_PENDING = "RISE (Pending)"
     CDEC = "CDEC"
 
 
@@ -60,9 +62,9 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
 
     # Define fields
     pg_layer.CreateField(ogr.FieldDefn("id", ogr.OFTString))
-    pg_layer.CreateField(ogr.FieldDefn("name", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("map_label", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("popup_label", ogr.OFTString))
+    pg_layer.CreateField(ogr.FieldDefn("source_name", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("source_uri", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("huc6", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("huc12", ogr.OFTString))
@@ -87,7 +89,7 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
     pg_ds.ExecuteSQL("""
         ALTER TABLE teacup_locations ADD CONSTRAINT locations_id_unique UNIQUE (id);
         ALTER TABLE teacup_locations DROP CONSTRAINT teacup_locations_pkey;
-        ALTER TABLE teacup_locations ADD PRIMARY KEY (id)
+        ALTER TABLE teacup_locations ADD PRIMARY KEY (id);
     """)
 
 
@@ -227,10 +229,10 @@ def run_location_load(force_clean_layer=False) -> None:
 
         feature = ogr.Feature(pg_layer.GetLayerDefn())
         feature.SetField("id", row["id"])
-        feature.SetField("name", row["name"])
         feature.SetField("map_label", row["map_label"])
         feature.SetField("popup_label", row["popup_label"])
         feature.SetField("source_uri", row["source_uri"])
+        feature.SetField("source_name", row["source_name"])
         feature.SetField("huc6", row["huc6"])
         feature.SetField("huc12", row["huc12"])
         feature.SetField("state", row["state"])
@@ -271,6 +273,17 @@ def get_source_url(
     if source_name.startswith(SourceName.USGS):
         station_id = source_for_storage_data[-13:]
         return "https://waterdata.usgs.gov/monitoring-location/" + station_id
+
+    if source_name == SourceName.RISE_PENDING:
+        source_url = "https://data.usbr.gov/rise/api/location/" + str(
+            LOCATION_IDS.get(pref_name)
+        )
+        r = requests.get(source_url)
+        if r.status_code == 200:
+            return source_url
+        else:
+            LOGGER.warning(f"Unable to find {pref_name} in {source_name}")
+            return
 
     match source_name:
         case SourceName.USACE:
