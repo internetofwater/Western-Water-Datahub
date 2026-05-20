@@ -302,12 +302,10 @@ def get_source_url(
         station_id = source_for_storage_data[-13:]
         return "https://waterdata.usgs.gov/monitoring-location/" + station_id
 
+    location_id = LOCATION_IDS.get(pref_name)
     if source_name == SourceName.RISE_PENDING:
-        source_url = "https://data.usbr.gov/rise/api/location/" + str(
-            LOCATION_IDS.get(pref_name)
-        )
-        r = requests.get(source_url)
-        if r.status_code == 200:
+        source_url = f"https://data.usbr.gov/rise/api/location/{location_id}"
+        if file_exists(source_url):
             return source_url
         else:
             LOGGER.warning(f"Unable to find {pref_name} in {source_name}")
@@ -317,9 +315,7 @@ def get_source_url(
         case SourceName.USACE:
             return source_for_storage_data.split()[-1]
         case SourceName.RISE:
-            return "https://data.usbr.gov/rise/api/location/" + str(
-                LOCATION_IDS[pref_name]
-            )
+            return f"https://data.usbr.gov/rise/api/location/{location_id}"
         case SourceName.USACE | SourceName.CDEC:
             return source_for_storage_data
         case _:
@@ -357,7 +353,7 @@ def get_hu12(longitude: float, latitude: float) -> str | None:
 def file_exists(url: str) -> bool:
     """Check if the URL exists by requesting only the first byte."""
     try:
-        r = requests.get(url + "/", headers={"Range": "bytes=0-0"}, timeout=10)
+        r = requests.get(url, headers={"Range": "bytes=0-0"}, timeout=2)
         return r.status_code in (200, 206)
     except requests.RequestException:
         return False
