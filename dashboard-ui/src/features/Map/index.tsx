@@ -82,6 +82,7 @@ const MainMap: React.FC<Props> = (props) => {
     const reservoir = useMainStore((state) => state.reservoir);
     const setReservoir = useMainStore((state) => state.setReservoir);
     const basemap = useMainStore((state) => state.basemap);
+    const toggleableLayers = useMainStore((state) => state.toggleableLayers);
     const reservoirCollections = useMainStore(
         (state) => state.reservoirCollections
     );
@@ -618,6 +619,30 @@ const MainMap: React.FC<Props> = (props) => {
             }
         }
     }, [boundingGeographyLevel, showAllLabels, region, basin, state]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        Object.entries(toggleableLayers).forEach(([layer, visible]) => {
+            const visibility = visible ? 'visible' : 'none';
+            if (layer === String(LayerId.SnotelHucSixMeans)) {
+                map.setLayoutProperty(
+                    SubLayerId.SnotelBoundary,
+                    'visibility',
+                    visibility
+                );
+                map.setLayoutProperty(
+                    SubLayerId.SnotelFill,
+                    'visibility',
+                    visibility
+                );
+            } else {
+                map.setLayoutProperty(layer, 'visibility', visibility);
+            }
+        });
+    }, [toggleableLayers]);
 
     return (
         <>
