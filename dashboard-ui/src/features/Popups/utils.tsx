@@ -82,7 +82,13 @@ export const showSnotelPopup = (
         .addTo(map);
 };
 
-const getElemPixelSize = () => {
+/**
+ * Determines the base pixel size of the root `rem` unit.
+ * This is derived from the computed font-size of the document root.
+ *
+ * @returns {number} The pixel value of 1rem (normalized to 12, 14, or 16)
+ */
+const getElemPixelSize = (): number => {
     const remSize = getComputedStyle(document.documentElement).fontSize;
 
     switch (remSize) {
@@ -96,6 +102,15 @@ const getElemPixelSize = () => {
     }
 };
 
+/**
+ * Checks whether a given y coordinate falls within the vertical hover region.
+ * The region is calculated relative to the bottom of the container and accounts
+ * for a buffer plus a fixed element height.
+ *
+ * @param {number} y - y coordinate of the cursor (relative to container)
+ * @param {number} height - Height of the container element
+ * @returns {boolean} True if the y coordinate is within the hover region
+ */
 const yInHoverSpace = (y: number, height: number): boolean => {
     // Using bottom css value as defined in Main.module.css
     const buffer = getElemPixelSize() * 2.25;
@@ -106,6 +121,14 @@ const yInHoverSpace = (y: number, height: number): boolean => {
     return y <= upper && y >= lower;
 };
 
+/**
+ * Checks whether a given x coordinate falls within the horizontal hover region.
+ * The region is calculated from a left offset plus a fixed element width.
+ *
+ * @param {number} x - x coordinate of the cursor (relative to container)
+ * @param {number} width - Left offset baseline (typically 0 for left-aligned UI)
+ * @returns {boolean} True if the x coordinate is within the hover region
+ */
 const xInHoverSpace = (x: number, width: number): boolean => {
     // Using left css value as defined in Main.module.css
     const buffer = getElemPixelSize() * 0.5;
@@ -116,6 +139,14 @@ const xInHoverSpace = (x: number, width: number): boolean => {
     return x >= left && x <= right;
 };
 
+/**
+ * Determines whether a pointer event occurred within the defined hover region.
+ * Combines horizontal and vertical checks against the map container.
+ *
+ * @param {MapMouseEvent | MapTouchEvent} event - Mapbox pointer event
+ * @param {Map} map - Mapbox GL JS map instance
+ * @returns {boolean} True if the pointer is within the hover region
+ */
 export const checkIsInHoverSpace = (
     event: MapMouseEvent | MapTouchEvent,
     map: Map
@@ -129,6 +160,15 @@ export const checkIsInHoverSpace = (
     return xInHoverSpace(x, 0) && yInHoverSpace(y, height);
 };
 
+/**
+ * Returns the feature with the highest numeric value for a given property.
+ *
+ * @template T - Geometry type
+ * @template V - Properties type
+ * @param {Feature<T, V>[]} features - Array of GeoJSON features
+ * @param {string} property - Property key used for comparison
+ * @returns {Feature<T, V>} The feature with the highest property value
+ */
 export const getTopFeatureByProperty = <
     T extends Geometry,
     V extends GeoJsonProperties,

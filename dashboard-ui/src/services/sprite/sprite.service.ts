@@ -4,17 +4,8 @@
  */
 
 import { Map } from 'mapbox-gl';
-import { TCoordinateMap } from '@/services/sprite/sprite.types';
+import { TCoordinateMap, TLoadOptions } from '@/services/sprite/sprite.types';
 import { isCoordinateMap, loadImageFile } from '@/services/sprite/sprite.utils';
-
-type TLoadOptions = {
-    onDemand?: boolean;
-    customLoader?: (
-        map: Map,
-        coordinateMap: TCoordinateMap,
-        context: OffscreenCanvasRenderingContext2D
-    ) => void;
-};
 
 export class SpriteService {
     private sheetUrl: string;
@@ -27,6 +18,13 @@ export class SpriteService {
         this.coordinateMapUrl = coordinateMapUrl;
     }
 
+    /**
+     * Loads the coordinate map from the provided URL and stores in class variable.
+     *
+     * @public
+     * @async
+     * @returns {Promise<boolean>}
+     */
     public async loadCoordinateMap(): Promise<boolean> {
         if (this.coordinateMapUrl.length === 0) {
             // TODO: throw error?
@@ -44,6 +42,14 @@ export class SpriteService {
         return false;
     }
 
+    /**
+     * Loads the spritesheet from the provided URL, draws it onto an offscreen canvas,
+     * and stores the canvas context in a class variable.
+     *
+     * @public
+     * @async
+     * @returns {Promise<boolean>}
+     */
     public async loadSpritesheet(): Promise<boolean> {
         if (this.sheetUrl.length === 0) {
             // TODO: throw error?
@@ -63,10 +69,26 @@ export class SpriteService {
         return false;
     }
 
+    /**
+     * Indicate if the coordinate map and spritesheet canvas context exist.
+     *
+     * @public
+     * @returns {boolean}
+     */
     public ready(): boolean {
         return this.coordinateMap !== null && this.context !== null;
     }
 
+    /**
+     * Listens for missing icon event and attempts to extract the missing icon from the spritesheet.
+     *
+     * @private
+     * @param {Map} map - Mapbox GL JS map
+     * @param {TCoordinateMap} coordinateMap - JSON doc that provides the necessary info for
+     *  extracting icons from the Spritesheet canvas
+     * @param {OffscreenCanvasRenderingContext2D} context - Spritesheet canvas context (will read frequently)
+    
+     */
     private loadOnDemand(
         map: Map,
         coordinateMap: TCoordinateMap,
@@ -93,6 +115,15 @@ export class SpriteService {
         });
     }
 
+    /**
+     * Loads all icons listed in the coordinate map from the spriteshet into the Mapbox GL instance
+     *
+     * @private
+     * @param {Map} map - Mapbox GL JS map
+     * @param {TCoordinateMap} coordinateMap - JSON doc that provides the necessary info for
+     *  extracting icons from the Spritesheet canvas
+     * @param {OffscreenCanvasRenderingContext2D} context - Spritesheet canvas context (will read frequently)
+     */
     private loadImages(
         map: Map,
         coordinateMap: TCoordinateMap,
@@ -107,6 +138,14 @@ export class SpriteService {
         }
     }
 
+    /**
+     * Integrates SpriteService with Mapbox GL instance. Options allow loading icons when the map indicates
+     * an icon is missing or use of a custom loader function.
+     *
+     * @public
+     * @param {Map} map - Mapbox GL JS map
+     * @param {TLoadOptions} [options={ onDemand: false }]
+     */
     public load(map: Map, options: TLoadOptions = { onDemand: false }) {
         if (!this.coordinateMap) {
             throw new Error('Coordinate map has not been loaded');

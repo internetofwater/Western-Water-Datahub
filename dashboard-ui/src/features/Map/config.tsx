@@ -1133,7 +1133,6 @@ export const getLayerMouseMoveFunction = (
                         SourceId.TeacupEDRReservoirs
                     )!.capacityProperty;
 
-                    console.log('e.features', e.features, features);
                     const feature = getTopFeatureByProperty(features, property);
 
                     if (feature) {
