@@ -9,7 +9,7 @@ import { LayerType } from '@/components/Map/types';
 
 export const entries: TEntry[] = [
     {
-        id: LayerId.Snotel,
+        id: LayerId.SnotelHucSixMeans,
         type: LayerType.Fill,
         items: [
             {

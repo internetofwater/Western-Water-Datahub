@@ -208,9 +208,10 @@ def run_location_load(force_clean_layer=False) -> None:
         row["source_uri"] = get_source_url(source_name, source, pref_name)
 
         # Clean Total Capacity (cast to float)
-        row["total_capacity"] = float(
-            row["total_capacity"].replace(",", "").replace("--", "NaN")
-        )
+        try:
+            row["total_capacity"] = float(row["total_capacity"].replace(",", ""))
+        except (ValueError, AttributeError):
+            row["total_capacity"] = None
 
         # Shorten Column Names
         row["map_label"] = row.pop("preferred_label_for_map_and_table")
