@@ -8,6 +8,7 @@ from math import isnan
 from osgeo import ogr, gdal
 import requests
 from typing import Iterator
+from urllib.parse import unquote, urlparse
 
 from teacup.env import POSTGRES_URL, LOCATION_GEOJSON_URL
 from teacup.mappings import LOCATION_IDS, DOI_REGIONS, STATE_MAPPING
@@ -17,6 +18,7 @@ class SourceName(StrEnum):
     USACE = "USACE"
     USGS = "USGS"
     RISE = "RISE"
+    RISE_PENDING = "RISE (Pending)"
     CDEC = "CDEC"
 
 
@@ -60,10 +62,14 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
 
     # Define fields
     pg_layer.CreateField(ogr.FieldDefn("id", ogr.OFTString))
-    pg_layer.CreateField(ogr.FieldDefn("name", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("map_label", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("popup_label", ogr.OFTString))
+    pg_layer.CreateField(ogr.FieldDefn("source_name", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("source_uri", ogr.OFTString))
+    pg_layer.CreateField(ogr.FieldDefn("source_api_url", ogr.OFTString))
+    pg_layer.CreateField(ogr.FieldDefn("wwdh_collection", ogr.OFTString))
+    pg_layer.CreateField(ogr.FieldDefn("wwdh_fid", ogr.OFTInteger))
+    pg_layer.CreateField(ogr.FieldDefn("wwdh_30yr_normal", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("huc6", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("huc12", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("state", ogr.OFTString))
@@ -74,7 +80,7 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
     # this will be of values "Total" / "Active"; the original CSV has some null values
     # for locations without any storage data in general; but it appears that this will be dropped
     # before ending up in the locations geojson
-    pg_layer.CreateField(ogr.FieldDefn("use_total_or_active_storage", ogr.OFTString))
+    pg_layer.CreateField(ogr.FieldDefn("storage_capacity_label", ogr.OFTString))
 
     # Mark 'id' as the layer FID so it becomes the Postgres primary key
     try:
@@ -87,7 +93,7 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
     pg_ds.ExecuteSQL("""
         ALTER TABLE teacup_locations ADD CONSTRAINT locations_id_unique UNIQUE (id);
         ALTER TABLE teacup_locations DROP CONSTRAINT teacup_locations_pkey;
-        ALTER TABLE teacup_locations ADD PRIMARY KEY (id)
+        ALTER TABLE teacup_locations ADD PRIMARY KEY (id);
     """)
 
 
@@ -223,14 +229,39 @@ def run_location_load(force_clean_layer=False) -> None:
         row["state"] = STATE_MAPPING[row["state"]]
         row.update(DOI_REGIONS[row["doiregion"]])
 
+        # Handle additional URLs
+        wwdh_url = urlparse(row["wwdh_30yr_api_url"] or "")
+        wwdh_collection = None
+        wwdh_fid = None
+        wwdh_path = wwdh_url.path.rsplit("/")
+        if len(wwdh_path) > 2:
+            # If the path has an OGC-API URL structure
+            # extract collection and feature ID
+            wwdh_collection = wwdh_path[-3]
+            wwdh_fid = wwdh_path[-1]
+
+        row["wwdh_30yr_normal"] = (
+            wwdh_url.path
+            + "?datetime=1990-10-01/2020-10-01"
+            + "&parameter-name=Lake/Reservoir+Storage"
+            + "&limit=10950"
+        )
+        # The source_api_url has URL encoded brackets that
+        # do not affect behavior. Store the unquoted version
+        # and prune the brackets for cleaner display.
+        row["source_api_url"] = unquote(row["source_30yr_api_url"] or "").replace(
+            "[]", ""
+        )
+
         row["id"] = row["name"].replace(" ", "").replace(" ", ".")
 
         feature = ogr.Feature(pg_layer.GetLayerDefn())
         feature.SetField("id", row["id"])
-        feature.SetField("name", row["name"])
         feature.SetField("map_label", row["map_label"])
         feature.SetField("popup_label", row["popup_label"])
         feature.SetField("source_uri", row["source_uri"])
+        feature.SetField("source_name", row["source_name"])
+        feature.SetField("source_api_url", row["source_api_url"])
         feature.SetField("huc6", row["huc6"])
         feature.SetField("huc12", row["huc12"])
         feature.SetField("state", row["state"])
@@ -238,9 +269,12 @@ def run_location_load(force_clean_layer=False) -> None:
         feature.SetField("reg_num", row["reg_num"])
         feature.SetField("total_capacity", row["total_capacity"])
         feature.SetField("active_capacity", row["active_capacity"])
-        feature.SetField(
-            "use_total_or_active_storage", row["use_total_or_active_storage"]
-        )
+        feature.SetField("storage_capacity_label", row["storage_capacity_label"])
+
+        # Handle WWDH specific fields
+        feature.SetField("wwdh_collection", wwdh_collection)
+        feature.SetField("wwdh_fid", wwdh_fid)
+        feature.SetField("wwdh_30yr_normal", row["wwdh_30yr_normal"])
 
         # Prefer geometry from the source GeoJSON feature (saved as src_feature).
         # Falls back to lon/lat if geometry is missing.
@@ -274,13 +308,20 @@ def get_source_url(
         station_id = source_for_storage_data[-13:]
         return "https://waterdata.usgs.gov/monitoring-location/" + station_id
 
+    location_id = LOCATION_IDS.get(pref_name)
+    if source_name == SourceName.RISE_PENDING:
+        source_url = f"https://data.usbr.gov/rise/api/location/{location_id}"
+        if file_exists(source_url):
+            return source_url
+        else:
+            LOGGER.warning(f"Unable to find {pref_name} in {source_name}")
+            return
+
     match source_name:
         case SourceName.USACE:
             return source_for_storage_data.split()[-1]
         case SourceName.RISE:
-            return "https://data.usbr.gov/rise/api/location/" + str(
-                LOCATION_IDS[pref_name]
-            )
+            return f"https://data.usbr.gov/rise/api/location/{location_id}"
         case SourceName.USACE | SourceName.CDEC:
             return source_for_storage_data
         case _:
@@ -318,7 +359,7 @@ def get_hu12(longitude: float, latitude: float) -> str | None:
 def file_exists(url: str) -> bool:
     """Check if the URL exists by requesting only the first byte."""
     try:
-        r = requests.get(url + "/", headers={"Range": "bytes=0-0"}, timeout=10)
+        r = requests.get(url, headers={"Range": "bytes=0-0"}, timeout=2)
         return r.status_code in (200, 206)
     except requests.RequestException:
         return False
