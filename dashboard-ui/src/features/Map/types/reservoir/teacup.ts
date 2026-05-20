@@ -16,7 +16,7 @@ export enum TeacupReservoirField {
     RegionId = 'reg_num',
     State = 'state',
     Source = 'source_uri',
-    UseTotalOrActiveStorage = 'use_total_or_active_storage',
+    UseTotalOrActiveStorage = 'storage_capacity_label',
 
     Capacity = 'capacity',
     Storage = 'raw',

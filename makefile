@@ -7,6 +7,7 @@ PYGEOAPI_ONTOLOGY_GRAPH = pygeoapi-deployment/USBR_core.ttl
 # this project uses uv to manage dependencies
 deps:
 	uv sync --all-groups --locked --all-packages
+	uv pip install "GDAL==$$(gdal-config --version)"
 
 # serve the api (requires redis to be running)
 dev: 	
