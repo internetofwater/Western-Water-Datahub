@@ -116,12 +116,16 @@ export const customLoader = (
         return;
     }
 
+    const levels = [
+        100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15,
+        10, 5, 0,
+    ];
+
     let i = 0,
         j = 0;
-    map.on('styleimagemissing', (e) => {
-        const { id } = e;
-        if (!blockingSet.has(id)) {
-            blockingSet.add(id);
+    for (const storage of levels) {
+        for (const average of levels) {
+            const id = `teacup-${storage}-${average}`;
             if (cache.has(id)) {
                 const position = cache.get(id);
                 if (position) {
@@ -139,9 +143,6 @@ export const customLoader = (
                     }
                 }
             } else {
-                // We dont need the prefix
-                const [, storage, average] = id.split('-');
-
                 const teacupPosition =
                     coordinateMap.sprites[`teacup-${storage}`];
                 const averagePosition =
@@ -204,7 +205,7 @@ export const customLoader = (
                 }
             }
         }
-    });
+    }
 
     map.on('style.load', () => {
         blockingSet.clear();
