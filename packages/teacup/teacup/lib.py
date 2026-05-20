@@ -231,18 +231,24 @@ def run_location_load(force_clean_layer=False) -> None:
 
         # Handle additional URLs
         wwdh_url = urlparse(row["wwdh_30yr_api_url"] or "")
-        wwdh_collection = (
-            wwdh_url.path.rsplit("/")[-3] if len(wwdh_url.path.split("/")) > 2 else ""
-        )
-        wwdh_fid = (
-            wwdh_url.path.rsplit("/")[-1] if len(wwdh_url.path.split("/")) > 2 else None
-        )
+        wwdh_collection = None
+        wwdh_fid = None
+        wwdh_path = wwdh_url.path.rsplit("/")
+        if len(wwdh_path) > 2:
+            # If the path has an OGC-API URL structure
+            # extract collection and feature ID
+            wwdh_collection = wwdh_path[-3]
+            wwdh_fid = wwdh_path[-1]
+
         row["wwdh_30yr_normal"] = (
             wwdh_url.path
             + "?datetime=1990-10-01/2020-10-01"
             + "&parameter-name=Lake/Reservoir+Storage"
             + "&limit=10950"
         )
+        # The source_api_url has URL encoded brackets that
+        # do not affect behavior. Store the unquoted version
+        # and prune the brackets for cleaner display.
         row["source_api_url"] = unquote(row["source_30yr_api_url"] or "").replace(
             "[]", ""
         )
