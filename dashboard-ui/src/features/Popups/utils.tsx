@@ -112,8 +112,9 @@ const getElemPixelSize = (): number => {
  * @returns {boolean} True if the y coordinate is within the hover region
  */
 const yInHoverSpace = (y: number, height: number): boolean => {
-    // Using bottom css value as defined in Main.module.css
+    // Using bottom rem value as defined in Main.module.css, class: bottom
     const buffer = getElemPixelSize() * 2.25;
+    // Using height px value as defined in Popups.module.css, class: reservoirPopup
     const elemHeight = 235;
     const upper = height - buffer;
     const lower = upper - elemHeight;
@@ -130,8 +131,9 @@ const yInHoverSpace = (y: number, height: number): boolean => {
  * @returns {boolean} True if the x coordinate is within the hover region
  */
 const xInHoverSpace = (x: number, width: number): boolean => {
-    // Using left css value as defined in Main.module.css
+    // Using left rem value as defined in Main.module.css, class: left
     const buffer = getElemPixelSize() * 0.5;
+    // Using width px value as defined in Popups.module.css, class: reservoirPopup
     const elemWidth = 620;
     const left = width + buffer;
     const right = left + elemWidth;

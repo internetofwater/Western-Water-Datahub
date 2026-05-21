@@ -763,7 +763,7 @@ export const getLayerHoverFunction = (
                 return (e) => {
                     hoverPopup.remove();
 
-                    const features = (e?.features ?? []).filter(
+                    const features = (e.features ?? []).filter(
                         (feature) =>
                             feature.source &&
                             feature.source ===
@@ -1122,7 +1122,7 @@ export const getLayerMouseMoveFunction = (
             case LayerId.TeacupEDRReservoirs:
                 return (e) => {
                     hoverPopup.remove();
-                    const features = (e?.features ?? []).filter(
+                    const features = (e.features ?? []).filter(
                         (feature) =>
                             feature.source &&
                             feature.source ===

@@ -135,73 +135,19 @@ const loadImageAndCache = (
 };
 
 /**
- * Curried function that handles the logic for extracting icons and loading the
- * combined icon into the map. This function handles teacups that have no 30-year average value.
+ * Returns the correct teacup icon identifier based on whether average is available
  *
- * @param {number} teacupWidth - Width of a teacup icon
- * @param {number} teacupHeight - Height of a teacup icon
- * @param {MapboxMap} map - Mapbox GL JS map instance
- * @param {TCoordinateMap} coordinateMap - JSON doc that provides the necessary info for
- *  extracting icons from the Spritesheet canvas
- * @param {OffscreenCanvasRenderingContext2D} spritesheetContext - Spritesheet canvas context (will read frequently)
- * @param {Map<string, TLocation>} cache - Cache that matches an icon id with a position on the offscreen canvas
- * @param {OffscreenCanvasRenderingContext2D} mainCtx - Primary canvas context onto which all icons are drawn
- * @returns - A function the reduces the interface to only what changes between calls, the returned function returns
- * updated indexes
+ * @param {number} storage - Reservoir storage value (increments of 5 expected)
+ * @param {?number} [average] - Optional 30-year Average value (increments of 5 expected)
+ * @returns {string}
  */
-const loadTeacupsConstructor =
-    (
-        teacupWidth: number,
-        teacupHeight: number,
-        map: MapboxMap,
-        cache: Map<string, TLocation>,
-        coordinateMap: TCoordinateMap,
-        spritesheetContext: OffscreenCanvasRenderingContext2D,
-        mainCtx: OffscreenCanvasRenderingContext2D
-    ) =>
-    (storage: number, i: number, j: number): { i: number; j: number } => {
-        let nextI = i,
-            nextJ = j;
-        const bufferedTeacupWidth = teacupWidth + ICON_BUFFER;
-        const bufferedTeacupHeight = teacupHeight + ICON_BUFFER;
-        const id = `teacup-${storage}`;
-        if (cache.has(id)) {
-            loadFromCache(id, teacupWidth, teacupHeight, map, cache, mainCtx);
-        } else {
-            const teacupPosition = coordinateMap.sprites[`teacup-${storage}`];
+const getId = (storage: number, average?: number) => {
+    if (average !== undefined) {
+        return `teacup-${storage}-${average}`;
+    }
 
-            if (teacupPosition) {
-                const teacupImageData = getImage(
-                    teacupPosition,
-                    spritesheetContext
-                );
-
-                const { x, y } = getLocation(
-                    i,
-                    j,
-                    bufferedTeacupWidth,
-                    bufferedTeacupHeight
-                );
-
-                ({ i: nextI, j: nextJ } = updateIndexes(i, j));
-
-                mainCtx.putImageData(teacupImageData, x, y);
-
-                loadImageAndCache(
-                    id,
-                    x,
-                    y,
-                    teacupWidth,
-                    teacupHeight,
-                    map,
-                    cache,
-                    mainCtx
-                );
-            }
-        }
-
-        return { i: nextI, j: nextJ };
-    };
+    return `teacup-${storage}`;
+};
 
 /**
  * Curried function that handles the logic for extracting icons, layering them, and loading the
@@ -220,7 +166,7 @@ const loadTeacupsConstructor =
  * @returns - A function the reduces the interface to only what changes between calls, the returned function returns
  * updated indexes
  */
-const loadTeacupWithAveragesConstructor =
+const loadIconConstructor =
     (
         teacupWidth: number,
         teacupHeight: number,
@@ -232,35 +178,42 @@ const loadTeacupWithAveragesConstructor =
         mainCtx: OffscreenCanvasRenderingContext2D,
         overlayCtx: OffscreenCanvasRenderingContext2D
     ) =>
-    (
-        storage: number,
-        average: number,
-        i: number,
-        j: number
-    ): { i: number; j: number } => {
+    ({
+        storage,
+        average,
+        i,
+        j,
+    }: {
+        storage: number;
+        average?: number;
+        i: number;
+        j: number;
+    }): { i: number; j: number } => {
+        const hasAverage = average !== undefined;
+
         let nextI = i,
             nextJ = j;
         const bufferedTeacupWidth = teacupWidth + ICON_BUFFER;
         const bufferedTeacupHeight = teacupHeight + ICON_BUFFER;
 
-        const id = `teacup-${storage}-${average}`;
+        const id = getId(storage, average);
         if (cache.has(id)) {
             loadFromCache(id, teacupWidth, teacupHeight, map, cache, mainCtx);
         } else {
             const teacupPosition = coordinateMap.sprites[`teacup-${storage}`];
-            const averagePosition =
-                coordinateMap.sprites[`average-line-${average}`];
+            const averagePosition = hasAverage
+                ? coordinateMap.sprites[`average-line-${average}`]
+                : null;
 
-            if (teacupPosition && averagePosition) {
+            if (teacupPosition) {
                 const teacupImageData = getImage(
                     teacupPosition,
                     spritesheetContext
                 );
 
-                const averageImageData = getImage(
-                    averagePosition,
-                    spritesheetContext
-                );
+                const averageImageData = averagePosition
+                    ? getImage(averagePosition, spritesheetContext)
+                    : null;
 
                 const { x, y } = getLocation(
                     i,
@@ -273,8 +226,10 @@ const loadTeacupWithAveragesConstructor =
 
                 mainCtx.putImageData(teacupImageData, x, y);
 
-                overlayCtx.putImageData(averageImageData, x, y);
-                mainCtx.drawImage(overlayCanvas, 0, 0);
+                if (averageImageData) {
+                    overlayCtx.putImageData(averageImageData, x, y);
+                    mainCtx.drawImage(overlayCanvas, 0, 0);
+                }
 
                 loadImageAndCache(
                     id,
@@ -308,7 +263,6 @@ export const customLoader = (
     coordinateMap: TCoordinateMap,
     spritesheetContext: OffscreenCanvasRenderingContext2D
 ) => {
-    const blockingSet = new Set<string>();
     const cache = new Map<string, TLocation>();
 
     const teacupWidth = ICON_WIDTH;
@@ -332,16 +286,7 @@ export const customLoader = (
         return;
     }
 
-    const loadTeacup = loadTeacupsConstructor(
-        teacupWidth,
-        teacupHeight,
-        map,
-        cache,
-        coordinateMap,
-        spritesheetContext,
-        mainCtx
-    );
-    const loadTeacupWithAverages = loadTeacupWithAveragesConstructor(
+    const loadIcon = loadIconConstructor(
         teacupWidth,
         teacupHeight,
         map,
@@ -361,14 +306,13 @@ export const customLoader = (
     let i = 0,
         j = 0;
     for (const storage of levels) {
-        ({ i, j } = loadTeacup(storage, i, j));
+        ({ i, j } = loadIcon({ storage, i, j }));
         for (const average of levels) {
-            ({ i, j } = loadTeacupWithAverages(storage, average, i, j));
+            ({ i, j } = loadIcon({ storage, average, i, j }));
         }
     }
 
     map.on('style.load', () => {
-        blockingSet.clear();
         for (const [id, position] of cache) {
             const { x, y } = position;
 
