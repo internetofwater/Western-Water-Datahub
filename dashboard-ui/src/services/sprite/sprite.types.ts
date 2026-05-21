@@ -2,6 +2,7 @@
  * Copyright 2026 Lincoln Institute of Land Policy
  * SPDX-License-Identifier: MIT
  */
+import { Map } from 'mapbox-gl';
 
 export enum ELevel {
     One = '1x',
@@ -29,4 +30,13 @@ export type TCoordinateMap = {
     images: TImages;
     size: TSize;
     sprites: TSprite;
+};
+
+export type TLoadOptions = {
+    onDemand?: boolean;
+    customLoader?: (
+        map: Map,
+        coordinateMap: TCoordinateMap,
+        context: OffscreenCanvasRenderingContext2D
+    ) => void;
 };

@@ -51,7 +51,7 @@ import { BoundingGeographyLevel } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
 import debounce from 'lodash.debounce';
 import { SpriteService } from '@/services/sprite/sprite.service';
-import { customLoader } from '@/services/sprite/sprite.utils';
+import { customLoader } from '@/services/sprite/customLoader';
 
 type Props = {
     accessToken: string;

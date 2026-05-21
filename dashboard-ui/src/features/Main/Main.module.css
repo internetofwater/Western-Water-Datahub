@@ -26,10 +26,6 @@
     display: flex;
 }
 
-.container > div {
-    height: fit-content;
-}
-
 .left {
     left: 0.5rem;
     justify-self: flex-start;

@@ -40,7 +40,11 @@ import {
     SnotelProperties,
 } from '@/features/Map/types/snotel';
 import { StateField } from '@/features/Map/types/state';
-import { showReservoirPopup } from '@/features/Popups/utils';
+import {
+    checkIsInHoverSpace,
+    getTopFeatureByProperty,
+    showReservoirPopup,
+} from '@/features/Popups/utils';
 import { Huc02BasinField } from '@/features/Map/types/basin';
 import { Feature, Point, Polygon } from 'geojson';
 import { huc02Centers } from '@/data/huc02Centers';
@@ -758,13 +762,28 @@ export const getLayerHoverFunction = (
             case LayerId.TeacupEDRReservoirs:
                 return (e) => {
                     hoverPopup.remove();
-                    const feature = e.features?.[0] as Feature<Point>;
+
+                    const features = (e.features ?? []).filter(
+                        (feature) =>
+                            feature.source &&
+                            feature.source ===
+                                (SourceId.TeacupEDRReservoirs as string)
+                    ) as Feature<Point>[];
+
+                    const property = getReservoirConfig(
+                        SourceId.TeacupEDRReservoirs
+                    )!.capacityProperty;
+
+                    const feature = getTopFeatureByProperty(features, property);
+
                     if (feature) {
+                        const isInHoverSpace = checkIsInHoverSpace(e, map);
                         useSessionStore.getState().setHighlight({
                             config: getReservoirConfig(
                                 SourceId.TeacupEDRReservoirs
                             )!,
                             feature,
+                            inHoverSpace: isInHoverSpace,
                         });
                     }
                 };
@@ -1103,13 +1122,27 @@ export const getLayerMouseMoveFunction = (
             case LayerId.TeacupEDRReservoirs:
                 return (e) => {
                     hoverPopup.remove();
-                    const feature = e.features?.[0] as Feature<Point>;
+                    const features = (e.features ?? []).filter(
+                        (feature) =>
+                            feature.source &&
+                            feature.source ===
+                                (SourceId.TeacupEDRReservoirs as string)
+                    ) as Feature<Point>[];
+
+                    const property = getReservoirConfig(
+                        SourceId.TeacupEDRReservoirs
+                    )!.capacityProperty;
+
+                    const feature = getTopFeatureByProperty(features, property);
+
                     if (feature) {
+                        const isInHoverSpace = checkIsInHoverSpace(e, map);
                         useSessionStore.getState().setHighlight({
                             config: getReservoirConfig(
                                 SourceId.TeacupEDRReservoirs
                             )!,
                             feature,
+                            inHoverSpace: isInHoverSpace,
                         });
                     }
                 };
