@@ -148,7 +148,10 @@ export interface IGetCorridorParams extends IDataQueryParams {
     ['height-units']: string;
 }
 
-export type IGetLocationParams = Omit<IDataQueryParams, 'z'>;
+// TODO: improve approach to non-spec but still allowed params
+export type IGetLocationParams = Omit<IDataQueryParams, 'z'> & {
+    ownership?: string;
+};
 
 /**
  * Determines the return type based on the format.

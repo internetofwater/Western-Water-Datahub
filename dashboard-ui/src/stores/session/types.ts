@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 import { LoadingSlice } from '@/stores/session/slices/loading';
 import { NotificationsSlice } from '@/stores/session/slices/notifications';
 import { Feature, Point } from 'geojson';
@@ -52,8 +52,9 @@ export type LegendEntry = {
 };
 
 export type Highlight = {
-    config: ReservoirConfig;
+    config: ReservoirConfigProperties;
     feature: Feature<Point>;
+    inHoverSpace?: boolean; // Indicates that the feature on the map is currently under the typical hover popup location
 };
 
 export enum HelpTab {

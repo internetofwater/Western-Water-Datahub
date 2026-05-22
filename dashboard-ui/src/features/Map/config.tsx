@@ -40,7 +40,10 @@ import {
     SnotelProperties,
 } from '@/features/Map/types/snotel';
 import { StateField } from '@/features/Map/types/state';
-import { showReservoirPopup } from '@/features/Popups/utils';
+import {
+    checkIsInHoverSpace,
+    getTopFeatureByProperty,
+} from '@/features/Popups/utils';
 import { Huc02BasinField } from '@/features/Map/types/basin';
 import { Feature, Point, Polygon } from 'geojson';
 import { huc02Centers } from '@/data/huc02Centers';
@@ -524,7 +527,7 @@ export const getLayerConfig = (
                 type: LayerType.Symbol,
                 source: SourceId.TeacupEDRReservoirs,
                 layout: getReservoirSymbolLayout(
-                    getReservoirConfig(SourceId.TeacupEDRReservoirs)!
+                    getReservoirConfig(SourceId.TeacupEDRReservoirs)
                 ),
             };
         case SubLayerId.TeacupEDRReservoirLabels:
@@ -533,10 +536,10 @@ export const getLayerConfig = (
                 type: LayerType.Symbol,
                 source: SourceId.TeacupEDRReservoirs,
                 layout: getReservoirLabelLayout(
-                    getReservoirConfig(SourceId.TeacupEDRReservoirs)!
+                    getReservoirConfig(SourceId.TeacupEDRReservoirs)
                 ),
                 paint: getReservoirLabelPaint(
-                    getReservoirConfig(SourceId.TeacupEDRReservoirs)!
+                    getReservoirConfig(SourceId.TeacupEDRReservoirs)
                 ),
             };
 
@@ -731,40 +734,31 @@ export const getLayerHoverFunction = (
         container: HTMLDivElement
     ) => {
         switch (id) {
-            case LayerId.RiseEDRReservoirs:
-                return (e) => {
-                    showReservoirPopup(
-                        getReservoirConfig(SourceId.RiseEDRReservoirs)!,
-                        map,
-                        e,
-                        root,
-                        container,
-                        hoverPopup,
-                        false
-                    );
-                };
-            case LayerId.ResvizEDRReservoirs:
-                return (e) => {
-                    const feature = e.features?.[0] as Feature<Point>;
-                    if (feature) {
-                        useSessionStore.getState().setHighlight({
-                            config: getReservoirConfig(
-                                SourceId.ResvizEDRReservoirs
-                            )!,
-                            feature,
-                        });
-                    }
-                };
             case LayerId.TeacupEDRReservoirs:
                 return (e) => {
                     hoverPopup.remove();
-                    const feature = e.features?.[0] as Feature<Point>;
+
+                    const features = (e.features ?? []).filter(
+                        (feature) =>
+                            feature.source &&
+                            feature.source ===
+                                (SourceId.TeacupEDRReservoirs as string)
+                    ) as Feature<Point>[];
+
+                    const property = getReservoirConfig(
+                        SourceId.TeacupEDRReservoirs
+                    ).capacityProperty;
+
+                    const feature = getTopFeatureByProperty(features, property);
+
                     if (feature) {
+                        const isInHoverSpace = checkIsInHoverSpace(e, map);
                         useSessionStore.getState().setHighlight({
                             config: getReservoirConfig(
                                 SourceId.TeacupEDRReservoirs
-                            )!,
+                            ),
                             feature,
+                            inHoverSpace: isInHoverSpace,
                         });
                     }
                 };
@@ -1076,40 +1070,30 @@ export const getLayerMouseMoveFunction = (
         container: HTMLDivElement
     ) => {
         switch (id) {
-            case LayerId.RiseEDRReservoirs:
-                return (e) => {
-                    showReservoirPopup(
-                        getReservoirConfig(SourceId.RiseEDRReservoirs)!,
-                        map,
-                        e,
-                        root,
-                        container,
-                        hoverPopup,
-                        true
-                    );
-                };
-            case LayerId.ResvizEDRReservoirs:
-                return (e) => {
-                    const feature = e.features?.[0] as Feature<Point>;
-                    if (feature) {
-                        useSessionStore.getState().setHighlight({
-                            config: getReservoirConfig(
-                                SourceId.ResvizEDRReservoirs
-                            )!,
-                            feature,
-                        });
-                    }
-                };
             case LayerId.TeacupEDRReservoirs:
                 return (e) => {
                     hoverPopup.remove();
-                    const feature = e.features?.[0] as Feature<Point>;
+                    const features = (e.features ?? []).filter(
+                        (feature) =>
+                            feature.source &&
+                            feature.source ===
+                                (SourceId.TeacupEDRReservoirs as string)
+                    ) as Feature<Point>[];
+
+                    const property = getReservoirConfig(
+                        SourceId.TeacupEDRReservoirs
+                    ).capacityProperty;
+
+                    const feature = getTopFeatureByProperty(features, property);
+
                     if (feature) {
+                        const isInHoverSpace = checkIsInHoverSpace(e, map);
                         useSessionStore.getState().setHighlight({
                             config: getReservoirConfig(
                                 SourceId.TeacupEDRReservoirs
-                            )!,
+                            ),
                             feature,
+                            inHoverSpace: isInHoverSpace,
                         });
                     }
                 };

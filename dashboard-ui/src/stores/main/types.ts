@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { SourceId } from '@/features/Map/consts';
+import { ReservoirConfigId } from '@/features/Map/types';
 import { FeatureCollection, Point, GeoJsonProperties } from 'geojson';
 
 export enum Tools {
@@ -11,9 +11,9 @@ export enum Tools {
     Print = 'print',
 }
 
-export type ReservoirCollections = {
-    [key in SourceId]?: FeatureCollection<Point, GeoJsonProperties>;
-};
+export type ReservoirCollections = Partial<
+    Record<ReservoirConfigId, FeatureCollection<Point, GeoJsonProperties>>
+>;
 
 export type Reservoir = {
     identifier: string | number;

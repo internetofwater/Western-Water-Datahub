@@ -4,7 +4,7 @@
  */
 
 import { Stack, Text, Group, Box, Divider, Flex } from '@mantine/core';
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { GeoJsonProperties } from 'geojson';
 import dayjs from 'dayjs';
@@ -18,7 +18,7 @@ import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
-    config: ReservoirConfig;
+    config: ReservoirConfigProperties;
 };
 
 /**
@@ -37,7 +37,7 @@ export const Metrics: React.FC<Props> = (props) => {
     }
 
     const getLabel = (label: string) => {
-        if (config.id === SourceId.TeacupEDRReservoirs) {
+        if (config.source === SourceId.TeacupEDRReservoirs) {
             const totalOrActive = String(
                 reservoirProperties[
                     TeacupReservoirField.UseTotalOrActiveStorage

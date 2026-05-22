@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 import * as turf from '@turf/turf';
 import { Feature, GeoJsonProperties, Point } from 'geojson';
 import { Map } from 'mapbox-gl';
-import { MAX_POSITIONS } from './report.consts';
+import { MAX_POSITIONS } from '@/services/report/report.consts';
 
 export type IdentifiableProperties = {
-    configId: ReservoirConfig['id'];
+    source: ReservoirConfigProperties['source'];
 } & Record<string, string | number>;
 
 export const getClosestPoints = <V extends GeoJsonProperties>(
@@ -41,11 +41,11 @@ export const getClosestPoints = <V extends GeoJsonProperties>(
 
 export const getClosestPointsForConfig = (
     map: Map,
-    config: ReservoirConfig
+    config: ReservoirConfigProperties
 ): Feature<Point, IdentifiableProperties>[] => {
     const center = map.getCenter();
 
-    const _features = map.querySourceFeatures(config.id) as Feature<
+    const _features = map.querySourceFeatures(config.source) as Feature<
         Point,
         GeoJsonProperties
     >[];
@@ -55,7 +55,7 @@ export const getClosestPointsForConfig = (
         geometry: feature.geometry,
         properties: {
             ...feature.properties,
-            configId: config.id,
+            source: config.source,
         },
     }));
 
@@ -64,7 +64,7 @@ export const getClosestPointsForConfig = (
 
 export const getHighestCapacityReservoirs = (
     map: Map,
-    config: ReservoirConfig
+    config: ReservoirConfigProperties
 ): Feature<Point, IdentifiableProperties>[] => {
     const _features = map.queryRenderedFeatures({
         layers: [config.iconLayer],
@@ -75,7 +75,7 @@ export const getHighestCapacityReservoirs = (
         geometry: feature.geometry,
         properties: {
             ...feature.properties,
-            configId: config.id,
+            source: config.source,
         },
     }));
 
