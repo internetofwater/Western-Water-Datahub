@@ -24,13 +24,14 @@ import {
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { Chart as ChartJS, ChartData } from 'chart.js';
 import useMainStore from '@/stores/main';
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 
 type Props = {
     id: string | number;
     ref: RefObject<ChartJS<'line', Array<{ x: string; y: number }>> | null>;
-    config: ReservoirConfig;
+    config: ReservoirConfigProperties;
     currentDate: string | null;
+    source: string;
 };
 
 /**
@@ -38,7 +39,7 @@ type Props = {
  * @component
  */
 export const Chart: React.FC<Props> = (props) => {
-    const { ref, id, config, currentDate } = props;
+    const { ref, id, config, currentDate, source } = props;
 
     const [data, setData] = useState<Array<{ x: string; y: number }>>([]);
     const [loading, setLoading] = useState(true);
@@ -79,7 +80,7 @@ export const Chart: React.FC<Props> = (props) => {
 
             const coverageCollection =
                 await wwdhService.getLocation<CoverageCollection>(
-                    config.id,
+                    source,
                     String(id),
                     {
                         signal: controller.current.signal,

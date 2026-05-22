@@ -4,7 +4,7 @@
  */
 
 import { GeoJsonProperties } from 'geojson';
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 import { Card, Title, Text, Stack } from '@mantine/core';
 import styles from '@/features/Popups/Popups.module.css';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
@@ -13,7 +13,7 @@ import dayjs from 'dayjs';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
-    config: ReservoirConfig;
+    config: ReservoirConfigProperties;
 };
 
 export const ReservoirPopup: React.FC<Props> = (props) => {

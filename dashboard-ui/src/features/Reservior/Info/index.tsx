@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 import { Group, Flex, Text } from '@mantine/core';
 import { GeoJsonProperties } from 'geojson';
 import { useEffect, useState } from 'react';
@@ -15,7 +15,7 @@ import { Properties } from '@/components/Map/types';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
-    config: ReservoirConfig;
+    config: ReservoirConfigProperties;
 };
 
 const InfoWrapper: React.FC<Props> = (props) => {
@@ -59,7 +59,7 @@ const InfoWrapper: React.FC<Props> = (props) => {
 
     const isDataValid = (
         reservoirProperties: Properties,
-        config: ReservoirConfig
+        config: ReservoirConfigProperties
     ): boolean => Boolean(reservoirProperties[config.storageProperty]);
 
     if (!reservoirProperties) {

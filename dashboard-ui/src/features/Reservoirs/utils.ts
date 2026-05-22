@@ -4,7 +4,7 @@
  */
 
 import { Feature, Point } from 'geojson';
-import { OrganizedProperties } from './types';
+import { OrganizedProperties } from '@/features/Reservoirs/types';
 
 export const chunk = <T>(array: T[], size: number): T[][] => {
     if (array.length === 0 || size === 0) {
