@@ -7,7 +7,7 @@ import { ReservoirConfigProperties } from '@/features/Map/types';
 import * as turf from '@turf/turf';
 import { Feature, GeoJsonProperties, Point } from 'geojson';
 import { Map } from 'mapbox-gl';
-import { MAX_POSITIONS } from './report.consts';
+import { MAX_POSITIONS } from '@/services/report/report.consts';
 
 export type IdentifiableProperties = {
     source: ReservoirConfigProperties['source'];

@@ -39,7 +39,7 @@ import {
 } from '@/utils/reservoirDataDisplay';
 import { MAX_POSITIONS } from '@/services/report/report.consts';
 import debounce from 'lodash.debounce';
-import { ReservoirConfigId } from '../Map/types';
+import { ReservoirConfigId } from '@/features/Map/types';
 
 type Props = {
     reservoirs: Feature<Point, OrganizedProperties>[];

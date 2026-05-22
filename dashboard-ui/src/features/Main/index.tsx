@@ -12,9 +12,9 @@ import { MapTools } from '@/features/MapTools';
 import Panel from '@/features/Panel';
 import Popups from '@/features/Popups';
 import Reservoir from '@/features/Reservior';
-import Loading from '../Loading';
+import Loading from '@/features/Loading';
 import { useState } from 'react';
-import { MobilePanelButton } from '../MapTools/MobilePanelButton';
+import { MobilePanelButton } from '@/features/MapTools/MobilePanelButton';
 
 type Props = {
     accessToken: string;

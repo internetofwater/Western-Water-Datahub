@@ -12,7 +12,7 @@ import { Contact } from '@/features/Help/Contact';
 import styles from '@/features/Help/Help.module.css';
 import useSessionStore from '@/stores/session';
 import { HelpTab, Overlay } from '@/stores/session/types';
-import { Documentation } from './Documentation';
+import { Documentation } from '@/features/Help/Documentation';
 
 export const HELP_LOCAL_KEY = 'wwdh-show-help';
 

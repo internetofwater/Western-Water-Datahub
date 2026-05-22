@@ -25,8 +25,8 @@ import Report from '@/features/Reservoirs/Report';
 import { pointsWithinPolygon, polygon } from '@turf/turf';
 import { MAX_POSITIONS } from '@/services/report/report.consts';
 import useSessionStore from '@/stores/session';
-import { getKey } from './utils';
-import { ReservoirConfigId } from '../Map/types';
+import { getKey } from '@/features/Reservoirs/utils';
+import { ReservoirConfigId } from '@/features/Map/types';
 
 type Props = {
     accessToken: string;

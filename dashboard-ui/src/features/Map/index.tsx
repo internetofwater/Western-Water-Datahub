@@ -52,7 +52,7 @@ import useSessionStore from '@/stores/session';
 import debounce from 'lodash.debounce';
 import { SpriteService } from '@/services/sprite/sprite.service';
 import { customLoader } from '@/services/sprite/customLoader';
-import { ReservoirConfigId } from './types';
+import { ReservoirConfigId } from '@/features/Map/types';
 
 type Props = {
     accessToken: string;

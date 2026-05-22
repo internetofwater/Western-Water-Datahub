@@ -35,7 +35,7 @@ import debounce from 'lodash.debounce';
 import { useLoading } from '@/hooks/useLoading';
 import { Properties } from '@/components/Map/types';
 import Reset from '@/icons/Reset';
-import { TeacupReservoirField } from '../Map/types/reservoir/teacup';
+import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
 
 /**
  *
