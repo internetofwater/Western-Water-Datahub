@@ -13,8 +13,11 @@ import {
     SortOrder,
 } from '@/features/Reservoirs/types';
 import { Table } from '@/features/Reservoirs/Table';
-import { getReservoirConfig } from '@/features/Map/utils';
-import { MAP_ID, ReservoirConfigs, SourceId } from '@/features/Map/consts';
+import {
+    getAllReservoirConfigs,
+    getReservoirConfig,
+} from '@/features/Map/utils';
+import { MAP_ID } from '@/features/Map/consts';
 import dayjs from 'dayjs';
 import useMainStore from '@/stores/main';
 import { useMap } from '@/contexts/MapContexts';
@@ -23,6 +26,7 @@ import { pointsWithinPolygon, polygon } from '@turf/turf';
 import { MAX_POSITIONS } from '@/services/report/report.consts';
 import useSessionStore from '@/stores/session';
 import { getKey } from './utils';
+import { ReservoirConfigId } from '../Map/types';
 
 type Props = {
     accessToken: string;
@@ -100,7 +104,9 @@ const Reservoirs: React.FC<Props> = (props) => {
 
         return Object.entries(reservoirCollections).flatMap(
             ([collectionId, featureCollection]) => {
-                const config = getReservoirConfig(collectionId as SourceId);
+                const config = getReservoirConfig(
+                    collectionId as ReservoirConfigId
+                );
                 if (!config) return [];
 
                 return featureCollection.features
@@ -261,9 +267,9 @@ const Reservoirs: React.FC<Props> = (props) => {
 
         // Fallback, more expensive function call
         const renderedFeatures = map.queryRenderedFeatures({
-            layers: ReservoirConfigs.filter((config) =>
-                map.getLayer(config.iconLayer)
-            ).map((config) => config.iconLayer),
+            layers: getAllReservoirConfigs()
+                .filter((config) => map.getLayer(config.iconLayer))
+                .map((config) => config.iconLayer),
         });
 
         return filteredReservoirs.filter((reservoir) =>

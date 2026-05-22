@@ -16,12 +16,14 @@ export type SourceDataEvent = {
     target: Map;
 } & MapSourceDataEvent;
 
+export type ReservoirConfigId = SourceId.TeacupEDRReservoirs;
+
 /**
  *
  * @type
  */
-export type ReservoirConfig = {
-    id: SourceId;
+export type ReservoirConfigProperties = {
+    source: SourceId;
     storageProperty: string;
     capacityProperty: string;
     tenthPercentileProperty: string;

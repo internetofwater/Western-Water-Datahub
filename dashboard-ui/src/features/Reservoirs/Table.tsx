@@ -21,7 +21,7 @@ import {
     Tooltip,
 } from '@mantine/core';
 import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from 'react';
-import { MAP_ID, SourceId } from '@/features/Map/consts';
+import { MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { Feature, Point } from 'geojson';
 import { OrganizedProperties } from '@/features/Reservoirs/types';
@@ -39,6 +39,7 @@ import {
 } from '@/utils/reservoirDataDisplay';
 import { MAX_POSITIONS } from '@/services/report/report.consts';
 import debounce from 'lodash.debounce';
+import { ReservoirConfigId } from '../Map/types';
 
 type Props = {
     reservoirs: Feature<Point, OrganizedProperties>[];
@@ -141,7 +142,7 @@ export const Table: React.FC<Props> = (props) => {
         }
 
         const config = getReservoirConfig(
-            feature.properties.collectionId as SourceId
+            feature.properties.collectionId as ReservoirConfigId
         );
 
         if (config) {

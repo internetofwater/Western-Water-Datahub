@@ -10,7 +10,7 @@ import { Chart as ChartJS } from 'chart.js';
 import { createRoot } from 'react-dom/client';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
 import { GeoJsonProperties } from 'geojson';
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 
 /**
  * Creates an image from the current state of the Mapbox map.
@@ -295,14 +295,14 @@ const svgToBlob = (
  *
  * @function
  * @param {GeoJsonProperties} reservoirProperties - Properties of the currently selected reservoir feature.
- * @param {ReservoirConfig} config - Defines the property keys of the reservoir feature to use for creating the diagram.
+ * @param {ReservoirConfigProperties} config - Defines the property keys of the reservoir feature to use for creating the diagram.
  * @param {RefObject<SVGSVGElement | null>} graphicRef - Ref object used to hold the diagram svg.
  * @param {boolean} cancel - A flag indicating the calling component has unmounted.
  * @param {Dispatch<SetStateAction<Blob | null>>} setDiagramImage - A state setter function for the diagram image.
  */
 export const handleCreateDiagramImage = (
     reservoirProperties: GeoJsonProperties,
-    config: ReservoirConfig,
+    config: ReservoirConfigProperties,
     graphicRef: RefObject<SVGSVGElement | null>,
     cancel: boolean,
     setDiagramImage: Dispatch<SetStateAction<Blob | null>>

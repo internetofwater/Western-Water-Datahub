@@ -43,7 +43,6 @@ import { StateField } from '@/features/Map/types/state';
 import {
     checkIsInHoverSpace,
     getTopFeatureByProperty,
-    showReservoirPopup,
 } from '@/features/Popups/utils';
 import { Huc02BasinField } from '@/features/Map/types/basin';
 import { Feature, Point, Polygon } from 'geojson';
@@ -528,7 +527,7 @@ export const getLayerConfig = (
                 type: LayerType.Symbol,
                 source: SourceId.TeacupEDRReservoirs,
                 layout: getReservoirSymbolLayout(
-                    getReservoirConfig(SourceId.TeacupEDRReservoirs)!
+                    getReservoirConfig(SourceId.TeacupEDRReservoirs)
                 ),
             };
         case SubLayerId.TeacupEDRReservoirLabels:
@@ -537,10 +536,10 @@ export const getLayerConfig = (
                 type: LayerType.Symbol,
                 source: SourceId.TeacupEDRReservoirs,
                 layout: getReservoirLabelLayout(
-                    getReservoirConfig(SourceId.TeacupEDRReservoirs)!
+                    getReservoirConfig(SourceId.TeacupEDRReservoirs)
                 ),
                 paint: getReservoirLabelPaint(
-                    getReservoirConfig(SourceId.TeacupEDRReservoirs)!
+                    getReservoirConfig(SourceId.TeacupEDRReservoirs)
                 ),
             };
 
@@ -735,30 +734,6 @@ export const getLayerHoverFunction = (
         container: HTMLDivElement
     ) => {
         switch (id) {
-            case LayerId.RiseEDRReservoirs:
-                return (e) => {
-                    showReservoirPopup(
-                        getReservoirConfig(SourceId.RiseEDRReservoirs)!,
-                        map,
-                        e,
-                        root,
-                        container,
-                        hoverPopup,
-                        false
-                    );
-                };
-            case LayerId.ResvizEDRReservoirs:
-                return (e) => {
-                    const feature = e.features?.[0] as Feature<Point>;
-                    if (feature) {
-                        useSessionStore.getState().setHighlight({
-                            config: getReservoirConfig(
-                                SourceId.ResvizEDRReservoirs
-                            )!,
-                            feature,
-                        });
-                    }
-                };
             case LayerId.TeacupEDRReservoirs:
                 return (e) => {
                     hoverPopup.remove();
@@ -772,7 +747,7 @@ export const getLayerHoverFunction = (
 
                     const property = getReservoirConfig(
                         SourceId.TeacupEDRReservoirs
-                    )!.capacityProperty;
+                    ).capacityProperty;
 
                     const feature = getTopFeatureByProperty(features, property);
 
@@ -781,7 +756,7 @@ export const getLayerHoverFunction = (
                         useSessionStore.getState().setHighlight({
                             config: getReservoirConfig(
                                 SourceId.TeacupEDRReservoirs
-                            )!,
+                            ),
                             feature,
                             inHoverSpace: isInHoverSpace,
                         });
@@ -1095,30 +1070,6 @@ export const getLayerMouseMoveFunction = (
         container: HTMLDivElement
     ) => {
         switch (id) {
-            case LayerId.RiseEDRReservoirs:
-                return (e) => {
-                    showReservoirPopup(
-                        getReservoirConfig(SourceId.RiseEDRReservoirs)!,
-                        map,
-                        e,
-                        root,
-                        container,
-                        hoverPopup,
-                        true
-                    );
-                };
-            case LayerId.ResvizEDRReservoirs:
-                return (e) => {
-                    const feature = e.features?.[0] as Feature<Point>;
-                    if (feature) {
-                        useSessionStore.getState().setHighlight({
-                            config: getReservoirConfig(
-                                SourceId.ResvizEDRReservoirs
-                            )!,
-                            feature,
-                        });
-                    }
-                };
             case LayerId.TeacupEDRReservoirs:
                 return (e) => {
                     hoverPopup.remove();
@@ -1131,7 +1082,7 @@ export const getLayerMouseMoveFunction = (
 
                     const property = getReservoirConfig(
                         SourceId.TeacupEDRReservoirs
-                    )!.capacityProperty;
+                    ).capacityProperty;
 
                     const feature = getTopFeatureByProperty(features, property);
 
@@ -1140,7 +1091,7 @@ export const getLayerMouseMoveFunction = (
                         useSessionStore.getState().setHighlight({
                             config: getReservoirConfig(
                                 SourceId.TeacupEDRReservoirs
-                            )!,
+                            ),
                             feature,
                             inHoverSpace: isInHoverSpace,
                         });

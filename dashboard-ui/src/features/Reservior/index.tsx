@@ -5,7 +5,10 @@
 import { useRef } from 'react';
 import { ActionIcon, Divider, Group, Modal, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { ReservoirConfig } from '@/features/Map/types';
+import {
+    ReservoirConfigId,
+    ReservoirConfigProperties,
+} from '@/features/Map/types';
 import { SourceId } from '@/features/Map/consts';
 import {
     getReservoirConfig,
@@ -59,7 +62,7 @@ const Reservoir: React.FC = () => {
         useState<GeoJsonProperties>();
 
     const [reservoirId, setReservoirId] = useState<string | number>();
-    const [config, setConfig] = useState<ReservoirConfig>();
+    const [config, setConfig] = useState<ReservoirConfigProperties>();
     const [currentDate, setCurrentDate] = useState(reservoirDate);
     const [isLocation, setIsLocation] = useState(false);
 
@@ -94,7 +97,7 @@ const Reservoir: React.FC = () => {
             return;
         }
 
-        if (config.id === SourceId.TeacupEDRReservoirs) {
+        if (config.source === SourceId.TeacupEDRReservoirs) {
             const isItem = Boolean(
                 initialReservoirProperties[TeacupReservoirField.Item]
             );
@@ -114,7 +117,7 @@ const Reservoir: React.FC = () => {
         controller.current = new AbortController();
 
         const coverage = await wwdhService.getLocation<CoverageJSON>(
-            reservoir.source,
+            config.source,
             String(reservoirId),
             {
                 params: {
@@ -178,10 +181,10 @@ const Reservoir: React.FC = () => {
         }
 
         if (reservoir !== ReservoirDefault) {
-            const collection =
-                reservoirCollections[reservoir.source as SourceId];
+            const reservoirConfigId = reservoir.source as ReservoirConfigId;
+            const collection = reservoirCollections[reservoirConfigId];
 
-            const config = getReservoirConfig(reservoir.source as SourceId);
+            const config = getReservoirConfig(reservoirConfigId);
 
             if (collection && config) {
                 setConfig(config);
@@ -206,7 +209,7 @@ const Reservoir: React.FC = () => {
 
                     setReservoirId(id);
                     if (properties) {
-                        if (config.id === SourceId.TeacupEDRReservoirs) {
+                        if (config.source === SourceId.TeacupEDRReservoirs) {
                             const isLocation =
                                 !properties[TeacupReservoirField.Item];
                             setIsLocation(isLocation);
@@ -246,7 +249,8 @@ const Reservoir: React.FC = () => {
         const today = dayjs().format('YYYY-MM-DD');
 
         if (reservoir && initialReservoirProperties) {
-            const config = getReservoirConfig(reservoir.source as SourceId);
+            const reservoirConfigId = reservoir.source as ReservoirConfigId;
+            const config = getReservoirConfig(reservoirConfigId);
 
             if (config) {
                 const storedDate = initialReservoirProperties[
@@ -260,7 +264,7 @@ const Reservoir: React.FC = () => {
 
                 setCurrentDate(String(finalDate));
 
-                if (config.id === SourceId.TeacupEDRReservoirs) {
+                if (config.source === SourceId.TeacupEDRReservoirs) {
                     const isLocation =
                         Boolean(
                             initialReservoirProperties[
@@ -283,7 +287,12 @@ const Reservoir: React.FC = () => {
         setOverlay(null);
     };
 
-    if (!currentReservoirProperties || !config || !reservoirId) {
+    if (
+        !currentReservoirProperties ||
+        !config ||
+        !reservoirId ||
+        !reservoir?.source
+    ) {
         return null;
     }
 
@@ -340,6 +349,7 @@ const Reservoir: React.FC = () => {
                         id={reservoirId}
                         ref={chartRef}
                         config={config}
+                        source={reservoir.source}
                     />
                 ) : (
                     <Text ta={'center'} mt="14%">

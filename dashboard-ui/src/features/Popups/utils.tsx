@@ -4,7 +4,7 @@
  */
 
 import { Feature, GeoJsonProperties, Geometry, Point } from 'geojson';
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 import { MantineProvider } from '@mantine/core';
 import { ReservoirPopup } from '@/features/Popups/Reservoirs';
 import { Map, MapMouseEvent, MapTouchEvent, Popup } from 'mapbox-gl';
@@ -14,7 +14,7 @@ import { SnotelProperties, SnotelField } from '@/features/Map/types/snotel';
 import { SnotelPopup } from '@/features/Popups/Snotel';
 
 export const showReservoirPopup = (
-    config: ReservoirConfig,
+    config: ReservoirConfigProperties,
     map: Map,
     e: MapMouseEvent | MapTouchEvent,
     root: Root,

@@ -6,7 +6,7 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { render } from '@/utils/test-utils';
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 import { TeacupDiagram } from '@/features/Reservior/TeacupDiagram';
 import { getHeight, getY } from '@/features/Reservior/TeacupDiagram/utils';
 
@@ -20,7 +20,7 @@ const mockProps = {
         storageProperty: 'storage',
         thirtyYearAverageProperty: 'average',
         capacityProperty: 'capacity',
-    } as ReservoirConfig,
+    } as ReservoirConfigProperties,
     showLabels: true,
 };
 

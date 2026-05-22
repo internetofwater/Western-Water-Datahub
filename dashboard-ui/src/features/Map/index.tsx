@@ -14,7 +14,6 @@ import {
     INITIAL_CENTER,
     INITIAL_ZOOM,
     SourceId,
-    ReservoirConfigs,
     ValidBasins,
     LayerId,
 } from '@/features/Map/consts';
@@ -33,6 +32,7 @@ import {
     getHighlightIcon,
     getAllMapLayers,
     updateReservoirFilters,
+    getAllReservoirConfigs,
     // loadTeacupsFromSpriteSheet,
 } from '@/features/Map/utils';
 import { basemaps } from '@/components/Map/consts';
@@ -52,6 +52,7 @@ import useSessionStore from '@/stores/session';
 import debounce from 'lodash.debounce';
 import { SpriteService } from '@/services/sprite/sprite.service';
 import { customLoader } from '@/services/sprite/customLoader';
+import { ReservoirConfigId } from './types';
 
 type Props = {
     accessToken: string;
@@ -172,30 +173,6 @@ const MainMap: React.FC<Props> = (props) => {
     }, [shouldResize]);
 
     useEffect(() => {
-        const resvizData = reservoirCollections?.[SourceId.ResvizEDRReservoirs];
-
-        const isValidFeatureCollection =
-            resvizData?.type === 'FeatureCollection' &&
-            Array.isArray(resvizData.features);
-
-        if (!map || !isValidFeatureCollection) {
-            return;
-        }
-
-        const resVizSource = map.getSource<GeoJSONSource>(
-            SourceId.ResvizEDRReservoirs
-        );
-
-        if (!resVizSource) {
-            return;
-        }
-
-        resVizSource.setData(
-            reservoirCollections![SourceId.ResvizEDRReservoirs]!
-        );
-    }, [map, reservoirCollections?.[SourceId.ResvizEDRReservoirs]]);
-
-    useEffect(() => {
         const teacupData = reservoirCollections?.[SourceId.TeacupEDRReservoirs];
 
         const isValidFeatureCollection =
@@ -224,7 +201,7 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
-        const reservoirLayers = ReservoirConfigs.flatMap((config) =>
+        const reservoirLayers = getAllReservoirConfigs().flatMap((config) =>
             getAllMapLayers(config)
         );
         const handleReservoirsClick = (e: MapMouseEvent | MapTouchEvent) => {
@@ -245,7 +222,9 @@ const MainMap: React.FC<Props> = (props) => {
 
                 const feature = features[index];
 
-                const config = getReservoirConfig(feature.source as SourceId);
+                const config = getReservoirConfig(
+                    feature.source as ReservoirConfigId
+                );
 
                 if (config && feature.properties) {
                     const identifier = getReservoirIdentifier(
@@ -399,7 +378,7 @@ const MainMap: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
-        const reservoirLayers = ReservoirConfigs.flatMap((config) =>
+        const reservoirLayers = getAllReservoirConfigs().flatMap((config) =>
             getAllMapLayers(config)
         );
 
@@ -423,10 +402,12 @@ const MainMap: React.FC<Props> = (props) => {
         } else {
             map.on('click', handleClickOffReservoir);
             if (reservoirCollections) {
-                ReservoirConfigs.forEach((config) => {
-                    if (config.id === (reservoir.source as SourceId)) {
+                getAllReservoirConfigs().forEach((config) => {
+                    if (String(config.source) === reservoir.source) {
                         const collection =
-                            reservoirCollections[reservoir.source as SourceId];
+                            reservoirCollections[
+                                config.source as ReservoirConfigId
+                            ];
 
                         if (collection) {
                             const features = collection.features.filter(
