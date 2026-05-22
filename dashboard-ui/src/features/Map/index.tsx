@@ -52,6 +52,7 @@ import useSessionStore from '@/stores/session';
 import debounce from 'lodash.debounce';
 import { SpriteService } from '@/services/sprite/sprite.service';
 import { customLoader } from '@/services/sprite/sprite.utils';
+import { useHistoricalData } from '@/hooks/useHistoricalData';
 
 type Props = {
     accessToken: string;
@@ -99,6 +100,7 @@ const MainMap: React.FC<Props> = (props) => {
     const spriteService = useRef<SpriteService>(null);
 
     useReservoirData();
+    useHistoricalData();
 
     const handleMapMove = useCallback(() => {
         if (isMounted.current) {

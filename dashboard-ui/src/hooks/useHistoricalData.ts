@@ -18,7 +18,8 @@ import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
 import { RasterArrayTileSource } from 'mapbox-gl';
 import { getLayerName } from '@/features/Map/config';
 
-export const useHistoricalData = (date: string | null) => {
+export const useHistoricalData = () => {
+    const reservoirDate = useMainStore((state) => state.reservoirDate);
     const reservoirCollections = useMainStore(
         (state) => state.reservoirCollections
     );
@@ -185,6 +186,6 @@ export const useHistoricalData = (date: string | null) => {
             return;
         }
 
-        void updateData(date);
-    }, [date]);
+        void updateData(reservoirDate);
+    }, [reservoirDate]);
 };

@@ -11,13 +11,10 @@ import { useEffect } from 'react';
 import { useLoading } from '@/hooks/useLoading';
 import debounce from 'lodash.debounce';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
-import { useHistoricalData } from '@/hooks/useHistoricalData';
 
 export const ReservoirDateSelector: React.FC = () => {
     const reservoirDate = useMainStore((state) => state.reservoirDate);
     const setReservoirDate = useMainStore((state) => state.setReservoirDate);
-
-    useHistoricalData(reservoirDate);
 
     const { isFetchingReservoirs } = useLoading();
 
