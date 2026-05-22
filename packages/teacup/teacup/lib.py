@@ -82,6 +82,7 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
     # for locations without any storage data in general; but it appears that this will be dropped
     # before ending up in the locations geojson
     pg_layer.CreateField(ogr.FieldDefn("storage_capacity_label", ogr.OFTString))
+    pg_layer.CreateField(ogr.FieldDefn("capacity_value", ogr.OFTReal))
 
     # Mark 'id' as the layer FID so it becomes the Postgres primary key
     try:
@@ -272,7 +273,7 @@ def run_location_load(force_clean_layer=False) -> None:
         feature.SetField("total_capacity", row["total_capacity"])
         feature.SetField("active_capacity", row["active_capacity"])
         feature.SetField("storage_capacity_label", row["storage_capacity_label"])
-
+        feature.SetField("capacity_value", row["capacity_value"])
         # Handle WWDH specific fields
         feature.SetField("wwdh_collection", wwdh_collection)
         feature.SetField("wwdh_fid", wwdh_fid)
@@ -361,7 +362,7 @@ def get_hu12(longitude: float, latitude: float) -> str | None:
 def file_exists(url: str) -> bool:
     """Check if the URL exists by requesting only the first byte."""
     try:
-        r = requests.get(url, headers={"Range": "bytes=0-0"}, timeout=2)
+        r = requests.get(url, headers={"Range": "bytes=0-0"}, timeout=5)
         return r.status_code in (200, 206)
     except requests.RequestException:
         return False
