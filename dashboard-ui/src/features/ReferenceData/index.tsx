@@ -149,6 +149,8 @@ const ReferenceData: React.FC = () => {
     // Work around, Mantine bug applies data-disabled styling even when false
     // const snotelSwitchProps = isFetchingSnotel ? { 'data-disabled': true } : {};
 
+    const isReferenceDataDisabled = reservoirDate !== null;
+
     return (
         <Stack
             className={styles.wrapper}
@@ -161,12 +163,14 @@ const ReferenceData: React.FC = () => {
                         label={`Show ${getLayerName(LayerId.NOAARiverForecast)}`}
                         onClick={handleNOAARFCChange}
                         toggleableLayers={toggleableLayers}
+                        disabled={isReferenceDataDisabled}
                     />
                     <Entry
                         layerId={LayerId.SnotelHucSixMeans}
                         label={`Show ${getLayerName(LayerId.SnotelHucSixMeans)}`}
                         onClick={handleSnotelChange}
                         toggleableLayers={toggleableLayers}
+                        disabled={isReferenceDataDisabled}
                     />
                     <Divider size="md" />
                     <Stack gap="calc(var(--default-spacing) / 2)" w="100%">
@@ -178,6 +182,7 @@ const ReferenceData: React.FC = () => {
                                 disabled:
                                     reservoirDate !== null &&
                                     [
+                                        RasterBaseLayers.Drought,
                                         RasterBaseLayers.Precipitation,
                                         RasterBaseLayers.Temperature,
                                     ].includes(obj.id),
@@ -210,6 +215,7 @@ const ReferenceData: React.FC = () => {
                                 value={baseLayerOpacity}
                                 onChange={handleBaseLayerOpacityChange}
                                 label={(value) => `${Math.round(value * 100)}%`}
+                                disabled={isReferenceDataDisabled}
                             />
                         </Stack>
                     )}

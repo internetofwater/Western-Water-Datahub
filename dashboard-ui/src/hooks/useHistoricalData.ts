@@ -3,8 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useMap } from '@/contexts/MapContexts';
-import { LayerId, MAP_ID } from '@/features/Map/consts';
+import { LayerId } from '@/features/Map/consts';
 import useMainStore from '@/stores/main';
 import dayjs from 'dayjs';
 import { useEffect, useRef } from 'react';
@@ -15,8 +14,6 @@ import loadingManager from '@/managers/Loading.init';
 import { LoadingType, NotificationType } from '@/stores/session/types';
 import notificationManager from '@/managers/Notification.init';
 import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
-import { RasterArrayTileSource } from 'mapbox-gl';
-import { getLayerName } from '@/features/Map/config';
 
 export const useHistoricalData = () => {
     const reservoirDate = useMainStore((state) => state.reservoirDate);
@@ -27,22 +24,11 @@ export const useHistoricalData = () => {
         (state) => state.setReservoirCollections
     );
     const toggleableLayers = useMainStore((state) => state.toggleableLayers);
-    const setToggleableLayers = useMainStore(
-        (state) => state.setToggleableLayers
+    const setAllToggleableLayers = useMainStore(
+        (state) => state.setAllToggleableLayers
     );
 
     const controller = useRef<AbortController>(null);
-
-    const { map } = useMap(MAP_ID);
-
-    const getTilesUrl = (date: string | null) => {
-        if (date) {
-            // TODO: switch to datetime url var if possible
-            const [year, month, day] = date.split('-');
-            return `https://cache.wwdh.internetofwater.app/collections/us-historical-drought-monitor/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}&endyear=${year}&endmonth=${month}&endday=${day}`;
-        }
-        return 'https://cache.wwdh.internetofwater.app/collections/us-current-drought-monitor/map?f=png&bbox-crs=http://www.opengis.net/def/crs/EPSG/0/3857&bbox={bbox-epsg-3857}';
-    };
 
     const getMessages = (date: string | null) => {
         const formattedDate = dayjs(date).format('MM/DD/YYYY');
@@ -139,39 +125,28 @@ export const useHistoricalData = () => {
         }
     };
 
-    const updateBaseLayers = (date: string | null) => {
-        const getMessage = (layerId: LayerId) =>
-            `${getLayerName(layerId)} does not support historic data. This layer has been turned off.`;
-        if (toggleableLayers[LayerId.NOAATempSixToTen]) {
+    const updateReferenceDataLayers = (date: string | null) => {
+        if (date) {
+            // Disable data driven reference data layers
+            setAllToggleableLayers({
+                ...toggleableLayers,
+                [LayerId.NOAATempSixToTen]: false,
+                [LayerId.NOAAPrecipSixToTen]: false,
+                [LayerId.USDroughtMonitor]: false,
+                [LayerId.NOAARiverForecast]: false,
+                [LayerId.SnotelHucSixMeans]: false,
+            });
             notificationManager.show(
-                getMessage(LayerId.NOAATempSixToTen),
+                'Reference Data layers do not currently support historic data. These layers have been deactivated.',
                 NotificationType.Info,
                 10000
             );
-            setToggleableLayers(LayerId.NOAATempSixToTen, false);
-        }
-        if (toggleableLayers[LayerId.NOAAPrecipSixToTen]) {
-            notificationManager.show(
-                getMessage(LayerId.NOAAPrecipSixToTen),
-                NotificationType.Info,
-                10000
-            );
-            setToggleableLayers(LayerId.NOAAPrecipSixToTen, false);
-        }
-        if (map) {
-            const source = map.getSource<RasterArrayTileSource>(
-                SourceId.USDroughtMonitor
-            );
-            if (source) {
-                const tilesUrl = getTilesUrl(date);
-                source.setTiles([tilesUrl]);
-            }
         }
     };
 
     const updateData = async (date: string | null) => {
         await updateReservoirs(date);
-        updateBaseLayers(date);
+        updateReferenceDataLayers(date);
     };
 
     useEffect(() => {
