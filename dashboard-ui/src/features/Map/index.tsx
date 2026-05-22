@@ -51,6 +51,7 @@ import { BoundingGeographyLevel } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
 import debounce from 'lodash.debounce';
 import { SpriteService } from '@/services/sprite/sprite.service';
+import { useHistoricalData } from '@/hooks/useHistoricalData';
 import { customLoader } from '@/services/sprite/customLoader';
 import { ReservoirConfigId } from '@/features/Map/types';
 
@@ -83,6 +84,7 @@ const MainMap: React.FC<Props> = (props) => {
     const reservoir = useMainStore((state) => state.reservoir);
     const setReservoir = useMainStore((state) => state.setReservoir);
     const basemap = useMainStore((state) => state.basemap);
+    const toggleableLayers = useMainStore((state) => state.toggleableLayers);
     const reservoirCollections = useMainStore(
         (state) => state.reservoirCollections
     );
@@ -99,6 +101,7 @@ const MainMap: React.FC<Props> = (props) => {
     const spriteService = useRef<SpriteService>(null);
 
     useReservoirData();
+    useHistoricalData();
 
     const handleMapMove = useCallback(() => {
         if (isMounted.current) {
@@ -599,6 +602,30 @@ const MainMap: React.FC<Props> = (props) => {
             }
         }
     }, [boundingGeographyLevel, showAllLabels, region, basin, state]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        Object.entries(toggleableLayers).forEach(([layer, visible]) => {
+            const visibility = visible ? 'visible' : 'none';
+            if (layer === String(LayerId.SnotelHucSixMeans)) {
+                map.setLayoutProperty(
+                    SubLayerId.SnotelBoundary,
+                    'visibility',
+                    visibility
+                );
+                map.setLayoutProperty(
+                    SubLayerId.SnotelFill,
+                    'visibility',
+                    visibility
+                );
+            } else {
+                map.setLayoutProperty(layer, 'visibility', visibility);
+            }
+        });
+    }, [toggleableLayers]);
 
     return (
         <>

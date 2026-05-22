@@ -16,9 +16,17 @@ type Props = {
     onClick: (visible: boolean) => void;
     toggleableLayers: MainState['toggleableLayers'];
     links?: boolean;
+    disabled?: boolean;
 };
 export const Entry: React.FC<Props> = (props) => {
-    const { layerId, label, onClick, toggleableLayers, links = true } = props;
+    const {
+        layerId,
+        label,
+        onClick,
+        toggleableLayers,
+        links = true,
+        disabled = false,
+    } = props;
 
     const tooltipContent = getTooltipContent(layerId);
     const hasTooltip = Boolean(tooltipContent);
@@ -53,6 +61,7 @@ export const Entry: React.FC<Props> = (props) => {
                 aria-label={label}
                 checked={toggleableLayers[layerId]}
                 onClick={() => onClick(!toggleableLayers[layerId])}
+                disabled={disabled}
             />
             {links && <Links collectionId={layerId} />}
         </Stack>

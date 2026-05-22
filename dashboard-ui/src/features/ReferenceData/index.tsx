@@ -19,10 +19,7 @@ import { useEffect, useRef, useState } from 'react';
 import useMainStore from '@/stores/main';
 import {
     RasterVisibilityMap,
-    updateBaseLayer,
     updateBaseLayerOpacity,
-    updateNOAARFC,
-    updateSnotel,
 } from '@/features/ReferenceData/utils';
 import styles from '@/features/ReferenceData/ReferenceData.module.css';
 import { Links } from '@/features/ReferenceData/Links';
@@ -56,6 +53,7 @@ const ReferenceData: React.FC = () => {
     const [baseLayerOpacity, setBaseLayerOpacity] = useState(BaseLayerOpacity);
 
     const toggleableLayers = useMainStore((state) => state.toggleableLayers);
+    const reservoirDate = useMainStore((state) => state.reservoirDate);
     const setToggleableLayers = useMainStore(
         (state) => state.setToggleableLayers
     );
@@ -76,8 +74,6 @@ const ReferenceData: React.FC = () => {
         if (!map) {
             return;
         }
-
-        updateBaseLayer(baseLayer, map);
 
         const selectedVisibility = RasterVisibilityMap[baseLayer];
 
@@ -100,7 +96,6 @@ const ReferenceData: React.FC = () => {
         if (!map) {
             return;
         }
-        updateNOAARFC(showNOAARFC, map);
 
         setToggleableLayers(LayerId.NOAARiverForecast, showNOAARFC);
     };
@@ -110,8 +105,6 @@ const ReferenceData: React.FC = () => {
             return;
         }
 
-        updateSnotel(showSnotel, map);
-
         setToggleableLayers(LayerId.SnotelHucSixMeans, showSnotel);
     };
 
@@ -119,13 +112,6 @@ const ReferenceData: React.FC = () => {
         if (!map) {
             return;
         }
-        const visibility = showRegionsReference ? 'visible' : 'none';
-
-        map.setLayoutProperty(
-            LayerId.RegionsReference,
-            'visibility',
-            visibility
-        );
 
         setToggleableLayers(LayerId.RegionsReference, showRegionsReference);
     };
@@ -134,13 +120,6 @@ const ReferenceData: React.FC = () => {
         if (!map) {
             return;
         }
-        const visibility = showBasinsReference ? 'visible' : 'none';
-
-        map.setLayoutProperty(
-            LayerId.BasinsReference,
-            'visibility',
-            visibility
-        );
 
         setToggleableLayers(LayerId.BasinsReference, showBasinsReference);
     };
@@ -149,13 +128,6 @@ const ReferenceData: React.FC = () => {
         if (!map) {
             return;
         }
-        const visibility = showStatesReference ? 'visible' : 'none';
-
-        map.setLayoutProperty(
-            LayerId.StatesReference,
-            'visibility',
-            visibility
-        );
 
         setToggleableLayers(LayerId.StatesReference, showStatesReference);
     };
@@ -177,6 +149,8 @@ const ReferenceData: React.FC = () => {
     // Work around, Mantine bug applies data-disabled styling even when false
     // const snotelSwitchProps = isFetchingSnotel ? { 'data-disabled': true } : {};
 
+    const isReferenceDataDisabled = reservoirDate !== null;
+
     return (
         <Stack
             className={styles.wrapper}
@@ -189,12 +163,14 @@ const ReferenceData: React.FC = () => {
                         label={`Show ${getLayerName(LayerId.NOAARiverForecast)}`}
                         onClick={handleNOAARFCChange}
                         toggleableLayers={toggleableLayers}
+                        disabled={isReferenceDataDisabled}
                     />
                     <Entry
                         layerId={LayerId.SnotelHucSixMeans}
                         label={`Show ${getLayerName(LayerId.SnotelHucSixMeans)}`}
                         onClick={handleSnotelChange}
                         toggleableLayers={toggleableLayers}
+                        disabled={isReferenceDataDisabled}
                     />
                     <Divider size="md" />
                     <Stack gap="calc(var(--default-spacing) / 2)" w="100%">
@@ -203,6 +179,13 @@ const ReferenceData: React.FC = () => {
                             data={RasterBaseLayerIconObj.map((obj) => ({
                                 value: obj.id,
                                 label: obj.friendlyName,
+                                disabled:
+                                    reservoirDate !== null &&
+                                    [
+                                        RasterBaseLayers.Drought,
+                                        RasterBaseLayers.Precipitation,
+                                        RasterBaseLayers.Temperature,
+                                    ].includes(obj.id),
                             }))}
                             w="100%"
                             value={getBaseLayerValue()}
@@ -232,6 +215,7 @@ const ReferenceData: React.FC = () => {
                                 value={baseLayerOpacity}
                                 onChange={handleBaseLayerOpacityChange}
                                 label={(value) => `${Math.round(value * 100)}%`}
+                                disabled={isReferenceDataDisabled}
                             />
                         </Stack>
                     )}
