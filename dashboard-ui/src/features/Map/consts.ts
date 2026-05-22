@@ -231,15 +231,8 @@ export const ComplexReservoirProperties = [
 export const RISEEDRReservoirSource =
     'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?parameter-name=Lake/Reservoir+Storage&limit=10000&f=json';
 
-/**
- *
- * @constant
- */
-export const ResVizEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/resviz-edr/locations';
-
 export const TeacupEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/teacup-edr/items';
+    'https://cache.wwdh.internetofwater.app/collections/teacup-edr/items?ownership=Reclamation';
 
 /**
  *
@@ -274,6 +267,9 @@ export const ReservoirConfigs: Record<
         stateConnectorProperty: TeacupReservoirField.State,
         iconLayer: LayerId.TeacupEDRReservoirs,
         labelLayer: SubLayerId.TeacupEDRReservoirLabels,
+        params: {
+            ownership: 'Reclamation',
+        },
     },
 };
 
