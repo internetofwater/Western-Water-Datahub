@@ -97,6 +97,7 @@ export const useHistoricalData = () => {
             loadingMessage,
             LoadingType.Reservoirs
         );
+
         try {
             await fetchRiseReservoirLocations(
                 reservoirCollections![SourceId.TeacupEDRReservoirs]!,
@@ -136,11 +137,22 @@ export const useHistoricalData = () => {
                 [LayerId.NOAARiverForecast]: false,
                 [LayerId.SnotelHucSixMeans]: false,
             });
-            notificationManager.show(
-                'Reference Data layers do not currently support historic data. These layers have been deactivated.',
-                NotificationType.Info,
-                10000
-            );
+
+            // Dont show notification if not necessary
+            const hasReferenceDataActive =
+                toggleableLayers[LayerId.NOAATempSixToTen] ||
+                toggleableLayers[LayerId.NOAAPrecipSixToTen] ||
+                toggleableLayers[LayerId.USDroughtMonitor] ||
+                toggleableLayers[LayerId.NOAARiverForecast] ||
+                toggleableLayers[LayerId.SnotelHucSixMeans];
+
+            if (hasReferenceDataActive) {
+                notificationManager.show(
+                    'Reference Data layers do not currently support historic data. These layers have been deactivated.',
+                    NotificationType.Info,
+                    10000
+                );
+            }
         }
     };
 
