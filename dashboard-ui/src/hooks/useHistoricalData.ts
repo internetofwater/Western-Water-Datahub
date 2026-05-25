@@ -97,6 +97,7 @@ export const useHistoricalData = () => {
             loadingMessage,
             LoadingType.Reservoirs
         );
+
         try {
             await fetchRiseReservoirLocations(
                 reservoirCollections![SourceId.TeacupEDRReservoirs]!,

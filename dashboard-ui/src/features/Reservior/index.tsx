@@ -85,7 +85,8 @@ const Reservoir: React.FC = () => {
             !reservoirId ||
             !currentDate ||
             !initialReservoirProperties ||
-            !config
+            !config ||
+            !opened
         ) {
             return;
         }
@@ -116,48 +117,68 @@ const Reservoir: React.FC = () => {
         );
 
         controller.current = new AbortController();
+        try {
+            const coverage = await wwdhService.getLocation<CoverageJSON>(
+                config.source,
+                String(reservoirId),
+                {
+                    params: {
+                        limit: 1,
+                        datetime: currentDate,
+                    },
+                    signal: controller.current.signal,
+                }
+            );
 
-        const coverage = await wwdhService.getLocation<CoverageJSON>(
-            config.source,
-            String(reservoirId),
-            {
-                params: {
-                    limit: 1,
-                    datetime: currentDate,
-                },
-                signal: controller.current.signal,
+            const newProperties: Properties = {};
+
+            // Set Storage
+            newProperties[config.storageProperty] =
+                coverage.ranges[config.storageProperty]?.values?.[0];
+            // 10th Percentile
+            newProperties[config.tenthPercentileProperty] =
+                coverage.ranges[config.tenthPercentileProperty]?.values?.[0];
+            // 90th Percentile
+            newProperties[config.ninetiethPercentileProperty] =
+                coverage.ranges[
+                    config.ninetiethPercentileProperty
+                ]?.values?.[0];
+            // 30-year Average
+            newProperties[config.thirtyYearAverageProperty] =
+                coverage.ranges[config.thirtyYearAverageProperty]?.values?.[0];
+            newProperties[config.storageDateProperty] =
+                coverage.domain.axes.t.values?.[0] ?? currentDate;
+
+            if (isMounted.current) {
+                setCurrentReservoirProperties({
+                    ...initialReservoirProperties,
+                    ...newProperties,
+                });
+                notificationManager.show(
+                    `Updated data for reservoir: ${name}, to date: ${dayjs(currentDate).format('MM/DD/YYYY')}`,
+                    NotificationType.Info,
+                    10000
+                );
             }
-        );
-
-        loadingManager.remove(loadingInstance);
-        notificationManager.show(
-            `Updated data for reservoir: ${name}, to date: ${dayjs(currentDate).format('MM/DD/YYYY')}`,
-            NotificationType.Info,
-            10000
-        );
-
-        const newProperties: Properties = {};
-
-        // Set Storage
-        newProperties[config.storageProperty] =
-            coverage.ranges[config.storageProperty]?.values?.[0];
-        // 10th Percentile
-        newProperties[config.tenthPercentileProperty] =
-            coverage.ranges[config.tenthPercentileProperty]?.values?.[0];
-        // 90th Percentile
-        newProperties[config.ninetiethPercentileProperty] =
-            coverage.ranges[config.ninetiethPercentileProperty]?.values?.[0];
-        // 30-year Average
-        newProperties[config.thirtyYearAverageProperty] =
-            coverage.ranges[config.thirtyYearAverageProperty]?.values?.[0];
-        newProperties[config.storageDateProperty] =
-            coverage.domain.axes.t.values?.[0] ?? currentDate;
-
-        if (isMounted.current) {
-            setCurrentReservoirProperties({
-                ...initialReservoirProperties,
-                ...newProperties,
-            });
+        } catch (error) {
+            if ((error as Error)?.name !== 'AbortError') {
+                console.error(
+                    'Failed to update reservoir storage data:',
+                    error
+                );
+            } else if (
+                (error as Error)?.message &&
+                !(error as Error)?.message.includes('AbortError')
+            ) {
+                const _error = error as Error;
+                notificationManager.show(
+                    `Error: ${_error.message}`,
+                    NotificationType.Error,
+                    10000
+                );
+            }
+        } finally {
+            loadingManager.remove(loadingInstance);
         }
     };
 
@@ -305,6 +326,7 @@ const Reservoir: React.FC = () => {
         <Modal
             centered
             size="auto"
+            keepMounted={false}
             classNames={{
                 content: styles.content,
                 body: styles.body,

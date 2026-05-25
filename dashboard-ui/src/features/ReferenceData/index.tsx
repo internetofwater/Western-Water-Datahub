@@ -192,11 +192,13 @@ const ReferenceData: React.FC = () => {
                             aria-label="Select a Base Layer"
                             placeholder="Select a Base Layer"
                             label={'Base Layer'}
-                            onChange={(_value) =>
-                                handleBaseLayerChange(
-                                    _value as RasterBaseLayers
-                                )
-                            }
+                            onChange={(value) => {
+                                if (value) {
+                                    handleBaseLayerChange(
+                                        value as RasterBaseLayers
+                                    );
+                                }
+                            }}
                         />
 
                         {getBaseLayerValue() !== RasterBaseLayers.None && (
