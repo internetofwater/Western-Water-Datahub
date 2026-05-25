@@ -13,6 +13,7 @@ import {
 } from '@/features/Reservior/Chart/utils';
 import { CoverageCollection } from '@/services/edr.service';
 import {
+    Anchor,
     Box,
     Group,
     Radio,
@@ -25,6 +26,7 @@ import styles from '@/features/Reservior/Reservoir.module.css';
 import { Chart as ChartJS, ChartData } from 'chart.js';
 import useMainStore from '@/stores/main';
 import { ReservoirConfigProperties } from '@/features/Map/types';
+import { buildLocationUrl } from '@/utils/edrUrl';
 
 type Props = {
     id: string | number;
@@ -45,6 +47,7 @@ export const Chart: React.FC<Props> = (props) => {
     const [loading, setLoading] = useState(true);
     const [range, setRange] = useState<DateRange>(1);
     const [error, setError] = useState('');
+    const [locationUrl, setLocationUrl] = useState<string>();
 
     const setChartUpdate = useMainStore((state) => state.setChartUpdate);
 
@@ -78,18 +81,21 @@ export const Chart: React.FC<Props> = (props) => {
 
             const dateRange = getDateRange(reservoirDate, range);
 
+            const stringId = String(id);
+
+            const params = {
+                'parameter-name': 'raw',
+                limit: dateRange.days,
+                ...config.params,
+                datetime: dateRange.startDate + '/' + dateRange.endDate,
+            };
             const coverageCollection =
                 await wwdhService.getLocation<CoverageCollection>(
                     source,
                     String(id),
                     {
                         signal: controller.current.signal,
-                        params: {
-                            limit: dateRange.days,
-                            ...config.params,
-                            datetime:
-                                dateRange.startDate + '/' + dateRange.endDate,
-                        },
+                        params,
                     }
                 );
 
@@ -97,6 +103,18 @@ export const Chart: React.FC<Props> = (props) => {
                 coverageCollection,
                 config.chartLabel
             );
+
+            const locationUrl = buildLocationUrl(
+                source,
+                stringId,
+                params,
+                null,
+                null,
+                false,
+                true
+            );
+
+            setLocationUrl(locationUrl);
 
             if (isMounted.current) {
                 setData(data);
@@ -142,9 +160,24 @@ export const Chart: React.FC<Props> = (props) => {
     return (
         <Stack gap="var(--default-spacing)">
             <Group justify="space-between">
-                <Title order={3} size="h5">
-                    Storage Volume (acre-feet)
-                </Title>
+                <Group gap="var(--default-spacing)" align="center">
+                    <Title order={3} size="h5">
+                        Storage Volume (acre-feet)
+                    </Title>
+                    {locationUrl && (
+                        <Anchor
+                            target="_blank"
+                            href={locationUrl}
+                            title="The data used to populate this chart."
+                            size="lg"
+                            mb="-0.25rem"
+                            c="#0098c7"
+                        >
+                            Data
+                        </Anchor>
+                    )}
+                </Group>
+
                 <Group>
                     <Radio
                         label="Past year"

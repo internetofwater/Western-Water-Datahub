@@ -8,13 +8,13 @@ import { Group, Flex, Text } from '@mantine/core';
 import { GeoJsonProperties } from 'geojson';
 import { useEffect, useState } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
-import { Metrics } from '@/features/Reservior/Info/Metrics';
+import { ExtendedProperties, Metrics } from '@/features/Reservior/Info/Metrics';
 import { TeacupDiagram } from '@/features/Reservior/TeacupDiagram';
 import { Legend } from '@/features/Reservior/Info/Legend';
 import { Properties } from '@/components/Map/types';
 
 type Props = {
-    reservoirProperties: GeoJsonProperties;
+    reservoirProperties: GeoJsonProperties & ExtendedProperties;
     config: ReservoirConfigProperties;
 };
 
