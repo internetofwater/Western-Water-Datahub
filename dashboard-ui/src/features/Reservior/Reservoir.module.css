@@ -23,6 +23,10 @@
     overflow-x: hidden;
 }
 
+.dataLink {
+    margin-bottom: -0.25rem;
+}
+
 .graphicLegendColor {
     width: 1.25rem;
     height: 1.25rem;

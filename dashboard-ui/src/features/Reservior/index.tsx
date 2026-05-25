@@ -36,6 +36,7 @@ import { useLoading } from '@/hooks/useLoading';
 import { Properties } from '@/components/Map/types';
 import Reset from '@/icons/Reset';
 import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
+import { ExtendedProperties } from './Info/Metrics';
 
 /**
  *
@@ -57,9 +58,9 @@ const Reservoir: React.FC = () => {
         useRef<ChartJS<'line', Array<{ x: string; y: number }>>>(null);
 
     const [initialReservoirProperties, setInitialReservoirProperties] =
-        useState<GeoJsonProperties>();
+        useState<GeoJsonProperties & ExtendedProperties>();
     const [currentReservoirProperties, setCurrentReservoirProperties] =
-        useState<GeoJsonProperties>();
+        useState<GeoJsonProperties & ExtendedProperties>();
 
     const [reservoirId, setReservoirId] = useState<string | number>();
     const [config, setConfig] = useState<ReservoirConfigProperties>();
@@ -224,8 +225,12 @@ const Reservoir: React.FC = () => {
                         setCurrentDate(currentDate);
                     }
 
-                    setInitialReservoirProperties(properties);
-                    setCurrentReservoirProperties(properties);
+                    setInitialReservoirProperties(
+                        properties as GeoJsonProperties & ExtendedProperties
+                    );
+                    setCurrentReservoirProperties(
+                        properties as GeoJsonProperties & ExtendedProperties
+                    );
                 }
                 open();
                 setOverlay(Overlay.Detail);
