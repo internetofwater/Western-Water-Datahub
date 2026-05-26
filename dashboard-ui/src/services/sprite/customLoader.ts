@@ -17,6 +17,8 @@ const ICON_WIDTH = 160;
 
 const ICON_HEIGHT = 107;
 
+const ROWS = 22;
+
 /**
  * Get the position of a previously loaded icon from the cache, extract it from the canvas, and load into map.
  *
@@ -41,9 +43,10 @@ const loadFromCache = (
 
         const imageData = ctx.getImageData(x, y, width, height);
 
-        if (imageData && !map.hasImage(id)) {
-            map.addImage(id, imageData);
+        if (map.hasImage(id)) {
+            map.removeImage(id);
         }
+        map.addImage(id, imageData);
     }
 };
 
@@ -77,8 +80,8 @@ const getLocation = (
     bufferedWidth: number,
     bufferedHeight: number
 ): { x: number; y: number } => {
-    const x = ICON_WIDTH + bufferedWidth * i;
-    const y = ICON_HEIGHT + bufferedHeight * j;
+    const x = bufferedWidth * i;
+    const y = bufferedHeight * j;
 
     return { x, y };
 };
@@ -94,7 +97,8 @@ const updateIndexes = (i: number, j: number): { i: number; j: number } => {
     let safeI = i,
         safeJ = j;
     // At row 20, move to next column
-    if (safeI === 20) {
+    // Starting from 0 so subtract 1
+    if (safeI === ROWS - 1) {
         safeJ += 1;
         safeI = 0;
     } else {
@@ -128,8 +132,14 @@ const loadImageAndCache = (
 ) => {
     const imageData = ctx.getImageData(x, y, width, height);
 
-    cache.set(id, { x, y });
-    if (imageData && !map.hasImage(id)) {
+    const safeX = x;
+    const safeY = y;
+    cache.set(id, { x: safeX, y: safeY });
+    if (imageData) {
+        if (map.hasImage(id)) {
+            map.removeImage(id);
+        }
+
         map.addImage(id, imageData);
     }
 };
@@ -227,8 +237,27 @@ const loadIconConstructor =
                 mainCtx.putImageData(teacupImageData, x, y);
 
                 if (averageImageData) {
+                    // Clear context
+                    overlayCtx.clearRect(
+                        0,
+                        0,
+                        overlayCanvas.width,
+                        overlayCanvas.height
+                    );
+                    // Add average line image at specific x/y
                     overlayCtx.putImageData(averageImageData, x, y);
-                    mainCtx.drawImage(overlayCanvas, 0, 0);
+                    // Draw onto correct location in the main canvas
+                    mainCtx.drawImage(
+                        overlayCanvas,
+                        x,
+                        y,
+                        teacupWidth,
+                        teacupHeight,
+                        x,
+                        y,
+                        teacupWidth,
+                        teacupHeight
+                    );
                 }
 
                 loadImageAndCache(
@@ -264,6 +293,10 @@ export const customLoader = (
     spritesheetContext: OffscreenCanvasRenderingContext2D
 ) => {
     const cache = new Map<string, TLocation>();
+    const levels = [
+        100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15,
+        10, 5, 0,
+    ];
 
     const teacupWidth = ICON_WIDTH;
     const bufferedTeacupWidth = teacupWidth + ICON_BUFFER;
@@ -272,8 +305,11 @@ export const customLoader = (
     const bufferedTeacupHeight = teacupHeight + ICON_BUFFER;
 
     // Determine canvas width and height by number of loops possible
-    const width = bufferedTeacupWidth * 22;
-    const height = bufferedTeacupHeight * 27;
+    const totalIcons = levels.length + levels.length * levels.length; // 462
+    const columns = Math.ceil(totalIcons / ROWS);
+    const width = bufferedTeacupWidth * columns;
+
+    const height = bufferedTeacupHeight * ROWS;
     const mainCanvas = new OffscreenCanvas(width, height);
     const mainCtx = mainCanvas.getContext('2d', { willReadFrequently: true });
 
@@ -298,11 +334,6 @@ export const customLoader = (
         overlayCtx
     );
 
-    const levels = [
-        100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15,
-        10, 5, 0,
-    ];
-
     let i = 0,
         j = 0;
     for (const storage of levels) {
@@ -323,9 +354,10 @@ export const customLoader = (
                 teacupHeight
             );
 
-            if (imageData && !map.hasImage(id)) {
-                map.addImage(id, imageData);
+            if (map.hasImage(id)) {
+                map.removeImage(id);
             }
+            map.addImage(id, imageData);
         }
     });
 };
