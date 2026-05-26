@@ -651,7 +651,7 @@ const updateTeacupProperties = (feature: Feature<Point, GeoJsonProperties>) => {
     if (feature.properties) {
 
         updatedProps[TeacupReservoirField.Capacity] = Number(
-            feature.properties[TeacupReservoirField.CapcityValue]
+            feature.properties[TeacupReservoirField.CapacityValue]
         );
 
         // Huc06 is given as a URI
