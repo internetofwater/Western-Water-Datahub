@@ -101,10 +101,12 @@ export class SpriteService {
                 blockingSet.add(id);
                 const position = coordinateMap.sprites[id];
 
-                if (!map.hasImage(id)) {
-                    const { x, y, width, height } = position;
-                    const imageData = context.getImageData(x, y, width, height);
+                const { x, y, width, height } = position;
+                const imageData = context.getImageData(x, y, width, height);
 
+                if (map.hasImage(id)) {
+                    map.updateImage(id, imageData);
+                } else {
                     map.addImage(id, imageData);
                 }
             }
@@ -130,9 +132,11 @@ export class SpriteService {
         context: OffscreenCanvasRenderingContext2D
     ) {
         for (const [key, position] of Object.entries(coordinateMap.sprites)) {
-            if (!map.hasImage(key)) {
-                const { x, y, width, height } = position;
-                const imageData = context.getImageData(x, y, width, height);
+            const { x, y, width, height } = position;
+            const imageData = context.getImageData(x, y, width, height);
+            if (map.hasImage(key)) {
+                map.updateImage(key, imageData);
+            } else {
                 map.addImage(key, imageData);
             }
         }

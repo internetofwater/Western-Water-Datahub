@@ -44,9 +44,10 @@ const loadFromCache = (
         const imageData = ctx.getImageData(x, y, width, height);
 
         if (map.hasImage(id)) {
-            map.removeImage(id);
+            map.updateImage(id, imageData);
+        } else {
+            map.addImage(id, imageData);
         }
-        map.addImage(id, imageData);
     }
 };
 
@@ -355,9 +356,10 @@ export const customLoader = (
             );
 
             if (map.hasImage(id)) {
-                map.removeImage(id);
+                map.updateImage(id, imageData);
+            } else {
+                map.addImage(id, imageData);
             }
-            map.addImage(id, imageData);
         }
     });
 };
