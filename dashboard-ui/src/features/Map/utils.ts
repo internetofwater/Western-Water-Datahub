@@ -649,29 +649,10 @@ const updateTeacupProperties = (feature: Feature<Point, GeoJsonProperties>) => {
     };
 
     if (feature.properties) {
-        const useTotal =
-            String(
-                feature.properties[TeacupReservoirField.UseTotalOrActiveStorage]
-            ) === 'Total';
-        if (useTotal) {
-            const totalCapacity = feature.properties[
-                TeacupReservoirField.TotalCapacity
-            ]
-                ? Number(feature.properties[TeacupReservoirField.TotalCapacity])
-                : undefined;
 
-            updatedProps[TeacupReservoirField.Capacity] = totalCapacity;
-        } else {
-            const activeCapacity = feature.properties[
-                TeacupReservoirField.ActiveCapacity
-            ]
-                ? Number(
-                      feature.properties[TeacupReservoirField.ActiveCapacity]
-                  )
-                : undefined;
-
-            updatedProps[TeacupReservoirField.Capacity] = activeCapacity;
-        }
+        updatedProps[TeacupReservoirField.Capacity] = Number(
+            feature.properties[TeacupReservoirField.CapcityValue]
+        );
 
         // Huc06 is given as a URI
         const huc06URI = String(feature.properties[TeacupReservoirField.Huc06]);
