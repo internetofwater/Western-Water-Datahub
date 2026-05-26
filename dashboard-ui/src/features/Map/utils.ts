@@ -241,7 +241,7 @@ export const getReservoirIconImageExpression = (
             0.95,
             '95',
             1.0,
-            '100,',
+            '100',
         ], // average variable value
         // Primary expression
         [
@@ -649,7 +649,6 @@ const updateTeacupProperties = (feature: Feature<Point, GeoJsonProperties>) => {
     };
 
     if (feature.properties) {
-
         updatedProps[TeacupReservoirField.Capacity] = Number(
             feature.properties[TeacupReservoirField.CapacityValue]
         );
