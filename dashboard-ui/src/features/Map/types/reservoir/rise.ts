@@ -21,7 +21,7 @@ export enum RiseReservoirField {
     DeadCapacity = 'Dead Capacity',
     DeadCapacityElevation = 'Dead Capacity Elevation',
     InactiveCapacityElevation = 'Inactive Capacity Elevation',
-    LiveCapacity = 'Live Capcity',
+    LiveCapacity = 'Live Capacity',
     MaxWaterSurfaceElevation = 'Maximum Water Surface Elevation',
     SurchargeCapacity = 'Surcharge Capacity',
     TotalCapacity = 'Total Capacity',
