@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Stack, Text, Group, Box, Divider, Flex } from '@mantine/core';
-import { ReservoirConfig } from '@/features/Map/types';
+import { Stack, Text, Group, Box, Divider, Flex, Anchor } from '@mantine/core';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { GeoJsonProperties } from 'geojson';
 import dayjs from 'dayjs';
@@ -15,10 +15,33 @@ import {
 } from '@/utils/reservoirDataDisplay';
 import { SourceId } from '@/features/Map/consts';
 import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
+import { useEffect, useState } from 'react';
+import { buildItemUrl } from '@/utils/edrUrl';
+
+// TODO: move these to the config object
+export type ExtendedProperties = {
+    source_uri: string;
+    source_name: string;
+    wwdh_collection: string;
+    wwdh_fid: string;
+};
+
+// TODO: remove once backend support added
+const buildSourceUrl = (
+    source_name: string,
+    source_uri: string,
+    wwdh_fid: string
+) => {
+    if (source_name === 'USGS') {
+        return source_uri;
+    } else if (source_name === 'RISE') {
+        return `https://data.usbr.gov/rise/api/location?id=${wwdh_fid}`;
+    }
+};
 
 type Props = {
-    reservoirProperties: GeoJsonProperties;
-    config: ReservoirConfig;
+    reservoirProperties: GeoJsonProperties & ExtendedProperties;
+    config: ReservoirConfigProperties;
 };
 
 /**
@@ -28,16 +51,35 @@ type Props = {
 export const Metrics: React.FC<Props> = (props) => {
     const { reservoirProperties, config } = props;
 
+    const [itemUrl, setItemUrl] = useState<string>();
+    const [sourceUrl, setSourceUrl] = useState<string>();
+
     const verticalDivider = useMediaQuery(
         '(min-width: 664px) and (max-width: 866px)'
     );
+
+    useEffect(() => {
+        const id = String(reservoirProperties[config.identifierProperty]);
+
+        const itemUrl = buildItemUrl(config.source, id);
+
+        setItemUrl(itemUrl);
+
+        const sourceName = reservoirProperties['source_name'];
+        const sourceUri = reservoirProperties['source_uri'];
+        const wwdhFid = reservoirProperties['wwdh_fid'];
+
+        const sourceUrl = buildSourceUrl(sourceName, sourceUri, wwdhFid);
+
+        setSourceUrl(sourceUrl);
+    }, [reservoirProperties]);
 
     if (!reservoirProperties) {
         return null;
     }
 
     const getLabel = (label: string) => {
-        if (config.id === SourceId.TeacupEDRReservoirs) {
+        if (config.source === SourceId.TeacupEDRReservoirs) {
             const totalOrActive = String(
                 reservoirProperties[
                     TeacupReservoirField.UseTotalOrActiveStorage
@@ -143,6 +185,33 @@ export const Metrics: React.FC<Props> = (props) => {
                     </Group>
                 </Box>
             </Flex>
+            {(itemUrl || sourceUrl) && (
+                <Group gap="var(--default-spacing)">
+                    {itemUrl && (
+                        <Anchor
+                            target="_blank"
+                            href={itemUrl}
+                            title="This reservoir in the API."
+                            size="lg"
+                            c="#0098c7"
+                        >
+                            API
+                        </Anchor>
+                    )}
+                    <Divider orientation="vertical" />
+                    {sourceUrl && (
+                        <Anchor
+                            target="_blank"
+                            href={sourceUrl}
+                            title="The original source of data for this reservoir."
+                            size="lg"
+                            c="#0098c7"
+                        >
+                            Source
+                        </Anchor>
+                    )}
+                </Group>
+            )}
         </Stack>
     );
 };

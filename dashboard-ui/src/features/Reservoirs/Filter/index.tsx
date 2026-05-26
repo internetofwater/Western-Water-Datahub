@@ -4,7 +4,15 @@
  */
 
 import useMainStore from '@/stores/main';
-import { ActionIcon, Box, Group, Stack, Switch, Title } from '@mantine/core';
+import {
+    ActionIcon,
+    Box,
+    Divider,
+    Group,
+    Stack,
+    Switch,
+    Title,
+} from '@mantine/core';
 import { BoundingGeography } from '@/features/Reservoirs/Filter/Selectors/BoundingGeography';
 import { BoundingGeographyLevel } from '@/stores/main/types';
 import { Region } from '@/features/Reservoirs/Filter/Selectors/Region';
@@ -154,6 +162,7 @@ export const Filter: React.FC<Props> = (props) => {
                 </ActionIcon>
             </Group>
             <BoundingGeography />
+            <Divider my="calc(var(--default-spacing) / 2)" />
             <Group
                 gap="var(--default-spacing)"
                 mt="calc(var(--default-spacing) / 2)"

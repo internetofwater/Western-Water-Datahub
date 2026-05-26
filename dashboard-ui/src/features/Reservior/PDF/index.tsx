@@ -20,7 +20,7 @@ import {
 } from '@/features/Reservior/PDF/utils';
 import useMainStore from '@/stores/main';
 import { GeoJsonProperties } from 'geojson';
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 
 type Props = {
     accessToken: string;
@@ -30,7 +30,7 @@ type Props = {
         'line',
         Array<{ x: string; y: number }>
     > | null>;
-    config: ReservoirConfig;
+    config: ReservoirConfigProperties;
 };
 
 const PDF: React.FC<Props> = (props) => {

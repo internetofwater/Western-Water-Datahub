@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 import { GeoJsonProperties } from 'geojson';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
 import useMainStore from '@/stores/main';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
-    config: ReservoirConfig;
+    config: ReservoirConfigProperties;
     showLabels: boolean;
     labels?: boolean;
     listeners?: boolean;

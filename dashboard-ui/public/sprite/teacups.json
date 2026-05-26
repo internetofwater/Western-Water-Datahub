@@ -1,0 +1,270 @@
+{
+  "images": {
+    "1x": "teacups.png",
+    "2x": "teacups@2x.png"
+  },
+  "size": {
+    "1x": {
+      "width": 970,
+      "height": 761
+    },
+    "2x": {
+      "width": 1930,
+      "height": 1510
+    }
+  },
+  "sprites": {
+    "average-line-0": {
+      "x": 0,
+      "y": 0,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-10": {
+      "x": 162,
+      "y": 0,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-100": {
+      "x": 0,
+      "y": 109,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-15": {
+      "x": 162,
+      "y": 109,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-20": {
+      "x": 324,
+      "y": 0,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-25": {
+      "x": 324,
+      "y": 109,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-30": {
+      "x": 0,
+      "y": 218,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-35": {
+      "x": 162,
+      "y": 218,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-40": {
+      "x": 324,
+      "y": 218,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-45": {
+      "x": 0,
+      "y": 327,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-5": {
+      "x": 162,
+      "y": 327,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-50": {
+      "x": 324,
+      "y": 327,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-55": {
+      "x": 486,
+      "y": 0,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-60": {
+      "x": 486,
+      "y": 109,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-65": {
+      "x": 486,
+      "y": 218,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-70": {
+      "x": 486,
+      "y": 327,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-75": {
+      "x": 0,
+      "y": 436,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-80": {
+      "x": 162,
+      "y": 436,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-85": {
+      "x": 324,
+      "y": 436,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-90": {
+      "x": 486,
+      "y": 436,
+      "width": 160,
+      "height": 107
+    },
+    "average-line-95": {
+      "x": 648,
+      "y": 0,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-0": {
+      "x": 648,
+      "y": 109,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-10": {
+      "x": 648,
+      "y": 218,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-100": {
+      "x": 648,
+      "y": 327,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-15": {
+      "x": 648,
+      "y": 436,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-20": {
+      "x": 0,
+      "y": 545,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-25": {
+      "x": 162,
+      "y": 545,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-30": {
+      "x": 324,
+      "y": 545,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-35": {
+      "x": 486,
+      "y": 545,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-40": {
+      "x": 648,
+      "y": 545,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-45": {
+      "x": 0,
+      "y": 654,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-5": {
+      "x": 162,
+      "y": 654,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-50": {
+      "x": 324,
+      "y": 654,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-55": {
+      "x": 486,
+      "y": 654,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-60": {
+      "x": 648,
+      "y": 654,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-65": {
+      "x": 810,
+      "y": 0,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-70": {
+      "x": 810,
+      "y": 109,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-75": {
+      "x": 810,
+      "y": 218,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-80": {
+      "x": 810,
+      "y": 327,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-85": {
+      "x": 810,
+      "y": 436,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-90": {
+      "x": 810,
+      "y": 545,
+      "width": 160,
+      "height": 107
+    },
+    "teacup-95": {
+      "x": 810,
+      "y": 654,
+      "width": 160,
+      "height": 107
+    }
+  }
+}

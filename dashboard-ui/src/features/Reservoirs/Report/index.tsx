@@ -24,11 +24,11 @@ import { loadTeacups } from '@/features/Map/utils';
 import { Feature, Point } from 'geojson';
 import styles from '@/features/Reservoirs/Report/Report.module.css';
 import { OrganizedProperties } from '@/features/Reservoirs/types';
-import { formatOptions } from '../Filter/Selectors/utils';
+import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
 import { useLoading } from '@/hooks/useLoading';
 import Select from '@/components/Select';
 import { MAX_POSITIONS } from '@/services/report/report.consts';
-import { getKey } from '../utils';
+import { getKey } from '@/features/Reservoirs/utils';
 
 type Props = {
     accessToken: string;

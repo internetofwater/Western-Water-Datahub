@@ -14,7 +14,6 @@ import {
     INITIAL_CENTER,
     INITIAL_ZOOM,
     SourceId,
-    ReservoirConfigs,
     ValidBasins,
     LayerId,
 } from '@/features/Map/consts';
@@ -33,6 +32,8 @@ import {
     getHighlightIcon,
     getAllMapLayers,
     updateReservoirFilters,
+    getAllReservoirConfigs,
+    // loadTeacupsFromSpriteSheet,
 } from '@/features/Map/utils';
 import { basemaps } from '@/components/Map/consts';
 import {
@@ -49,6 +50,10 @@ import { Huc02BasinField } from '@/features/Map/types/basin';
 import { BoundingGeographyLevel } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
 import debounce from 'lodash.debounce';
+import { SpriteService } from '@/services/sprite/sprite.service';
+import { useHistoricalData } from '@/hooks/useHistoricalData';
+import { customLoader } from '@/services/sprite/customLoader';
+import { ReservoirConfigId } from '@/features/Map/types';
 
 type Props = {
     accessToken: string;
@@ -79,6 +84,7 @@ const MainMap: React.FC<Props> = (props) => {
     const reservoir = useMainStore((state) => state.reservoir);
     const setReservoir = useMainStore((state) => state.setReservoir);
     const basemap = useMainStore((state) => state.basemap);
+    const toggleableLayers = useMainStore((state) => state.toggleableLayers);
     const reservoirCollections = useMainStore(
         (state) => state.reservoirCollections
     );
@@ -89,10 +95,13 @@ const MainMap: React.FC<Props> = (props) => {
     const setMapMoved = useSessionStore((state) => state.setMapMoved);
 
     const [shouldResize, setShouldResize] = useState(false);
+    const [isSpritesheetReady, setIsSpritesheetReady] = useState(false);
 
     const isMounted = useRef(true);
+    const spriteService = useRef<SpriteService>(null);
 
     useReservoirData();
+    useHistoricalData();
 
     const handleMapMove = useCallback(() => {
         if (isMounted.current) {
@@ -109,11 +118,42 @@ const MainMap: React.FC<Props> = (props) => {
         [updateReservoirFilters]
     );
 
+    const loadSpriteSheet = async () => {
+        spriteService.current = new SpriteService(
+            '/sprite/teacups.png',
+            '/sprite/teacups.json'
+        );
+
+        const results = await Promise.allSettled([
+            spriteService.current.loadSpritesheet(),
+            spriteService.current.loadCoordinateMap(),
+        ]);
+
+        if (
+            results.every(
+                (result) => result.status === 'fulfilled' && result.value
+            ) &&
+            isMounted.current
+        ) {
+            setIsSpritesheetReady(true);
+        }
+    };
+
     useEffect(() => {
+        void loadSpriteSheet();
+
         return () => {
             isMounted.current = false;
         };
     }, []);
+
+    useEffect(() => {
+        if (!map || !isSpritesheetReady || !spriteService.current) {
+            return;
+        }
+
+        spriteService.current.load(map, { customLoader: customLoader });
+    }, [map, isSpritesheetReady]);
 
     useEffect(() => {
         return () => {
@@ -134,30 +174,6 @@ const MainMap: React.FC<Props> = (props) => {
 
         map.resize();
     }, [shouldResize]);
-
-    useEffect(() => {
-        const resvizData = reservoirCollections?.[SourceId.ResvizEDRReservoirs];
-
-        const isValidFeatureCollection =
-            resvizData?.type === 'FeatureCollection' &&
-            Array.isArray(resvizData.features);
-
-        if (!map || !isValidFeatureCollection) {
-            return;
-        }
-
-        const resVizSource = map.getSource<GeoJSONSource>(
-            SourceId.ResvizEDRReservoirs
-        );
-
-        if (!resVizSource) {
-            return;
-        }
-
-        resVizSource.setData(
-            reservoirCollections![SourceId.ResvizEDRReservoirs]!
-        );
-    }, [map, reservoirCollections?.[SourceId.ResvizEDRReservoirs]]);
 
     useEffect(() => {
         const teacupData = reservoirCollections?.[SourceId.TeacupEDRReservoirs];
@@ -188,7 +204,7 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
-        const reservoirLayers = ReservoirConfigs.flatMap((config) =>
+        const reservoirLayers = getAllReservoirConfigs().flatMap((config) =>
             getAllMapLayers(config)
         );
         const handleReservoirsClick = (e: MapMouseEvent | MapTouchEvent) => {
@@ -209,7 +225,9 @@ const MainMap: React.FC<Props> = (props) => {
 
                 const feature = features[index];
 
-                const config = getReservoirConfig(feature.source as SourceId);
+                const config = getReservoirConfig(
+                    feature.source as ReservoirConfigId
+                );
 
                 if (config && feature.properties) {
                     const identifier = getReservoirIdentifier(
@@ -363,7 +381,7 @@ const MainMap: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
-        const reservoirLayers = ReservoirConfigs.flatMap((config) =>
+        const reservoirLayers = getAllReservoirConfigs().flatMap((config) =>
             getAllMapLayers(config)
         );
 
@@ -387,10 +405,12 @@ const MainMap: React.FC<Props> = (props) => {
         } else {
             map.on('click', handleClickOffReservoir);
             if (reservoirCollections) {
-                ReservoirConfigs.forEach((config) => {
-                    if (config.id === (reservoir.source as SourceId)) {
+                getAllReservoirConfigs().forEach((config) => {
+                    if (String(config.source) === reservoir.source) {
                         const collection =
-                            reservoirCollections[reservoir.source as SourceId];
+                            reservoirCollections[
+                                config.source as ReservoirConfigId
+                            ];
 
                         if (collection) {
                             const features = collection.features.filter(
@@ -582,6 +602,30 @@ const MainMap: React.FC<Props> = (props) => {
             }
         }
     }, [boundingGeographyLevel, showAllLabels, region, basin, state]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        Object.entries(toggleableLayers).forEach(([layer, visible]) => {
+            const visibility = visible ? 'visible' : 'none';
+            if (layer === String(LayerId.SnotelHucSixMeans)) {
+                map.setLayoutProperty(
+                    SubLayerId.SnotelBoundary,
+                    'visibility',
+                    visibility
+                );
+                map.setLayoutProperty(
+                    SubLayerId.SnotelFill,
+                    'visibility',
+                    visibility
+                );
+            } else {
+                map.setLayoutProperty(layer, 'visibility', visibility);
+            }
+        });
+    }, [toggleableLayers]);
 
     return (
         <>

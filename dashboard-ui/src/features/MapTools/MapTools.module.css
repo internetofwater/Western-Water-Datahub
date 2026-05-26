@@ -40,6 +40,10 @@
     width: 215px;
 }
 
+.downloadButton {
+    width: 82%;
+}
+
 .left {
     position: absolute;
     top: var(--default-spacing);

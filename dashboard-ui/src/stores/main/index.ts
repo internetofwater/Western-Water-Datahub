@@ -60,6 +60,9 @@ export interface MainState {
         [LayerId.StatesReference]: boolean;
     };
     setToggleableLayers: (layer: string, visible: boolean) => void;
+    setAllToggleableLayers: (
+        toggleableLayers: MainState['toggleableLayers']
+    ) => void;
     // Selected date for reservoir data
     reservoirDate: string | null;
     setReservoirDate: (reservoirDate: MainState['reservoirDate']) => void;
@@ -112,6 +115,7 @@ const useMainStore = create<MainState>()((set) => ({
                 [layer]: visible,
             },
         })),
+    setAllToggleableLayers: (toggleableLayers) => set({ toggleableLayers }),
     reservoirDate: null,
     setReservoirDate: (reservoirDate) => set({ reservoirDate }),
     tools: {

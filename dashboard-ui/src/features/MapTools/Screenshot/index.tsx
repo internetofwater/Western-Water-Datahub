@@ -40,6 +40,7 @@ import { toJpeg } from 'html-to-image';
 import notificationManager from '@/managers/Notification.init';
 import useMainStore from '@/stores/main';
 import dayjs from 'dayjs';
+import Reset from '@/icons/Reset';
 
 /**
  *
@@ -119,6 +120,19 @@ const Screenshot: React.FC = () => {
         }
     }, [overlay]);
 
+    useEffect(() => {
+        if (!map || !show) {
+            return;
+        }
+
+        let cancel = false;
+        void handleScreenshot(map, cancel, setSrc, setLoading);
+
+        return () => {
+            cancel = true;
+        };
+    }, [show]);
+
     const downloadDataUrl = (dataUrl: string, filename: string) => {
         const a = document.createElement('a');
         a.href = dataUrl;
@@ -161,6 +175,14 @@ const Screenshot: React.FC = () => {
         }
     };
 
+    const handleReload = () => {
+        if (!map) {
+            return;
+        }
+
+        void handleScreenshot(map, false, setSrc, setLoading);
+    };
+
     const handleShow = (show: boolean) => {
         setOverlay(show ? Overlay.Screenshot : null);
         setShow(show);
@@ -171,6 +193,10 @@ const Screenshot: React.FC = () => {
         setName(name);
     };
 
+    const handleImageDownload = () => {
+        void downloadImage();
+    };
+
     return (
         <Popover
             opened={show}
@@ -178,7 +204,6 @@ const Screenshot: React.FC = () => {
             closeOnClickOutside={false}
             position="left-start"
             shadow="md"
-            zIndex={99999}
         >
             <PopoverTarget>
                 <Tooltip label="Show screenshot tool" disabled={show}>
@@ -227,13 +252,28 @@ const Screenshot: React.FC = () => {
                             value={name}
                             onChange={handleNameChange}
                         />
-                        <Button
-                            variant="default"
-                            onClick={() => void downloadImage()}
-                            disabled={loading}
+                        <Group
+                            gap="var(--default-spacing)"
+                            justify="space-between"
                         >
-                            Download
-                        </Button>
+                            <Button
+                                variant="default"
+                                className={styles.downloadButton}
+                                onClick={handleImageDownload}
+                                disabled={loading}
+                            >
+                                Download
+                            </Button>
+                            <Tooltip label="Refresh screenshot">
+                                <ActionIcon
+                                    size="md"
+                                    classNames={{ icon: styles.actionIcon }}
+                                    onClick={handleReload}
+                                >
+                                    <Reset />
+                                </ActionIcon>
+                            </Tooltip>
+                        </Group>
                     </Stack>
                 ) : (
                     <Loader color="#0183a1" type="dots" />
