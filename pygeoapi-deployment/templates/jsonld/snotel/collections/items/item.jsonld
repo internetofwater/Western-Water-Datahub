@@ -8,7 +8,16 @@
     }
   ],
   "type": ["schema:Place", "hyf:HydrometricFeature"],
-  "@id": "{{ data['@id'] | safe }}",
+  {# This template is used for both snotel and awdb_forecasts. awdb_forecasts source forecast data from 
+  USGS and do not appear to have any other upstream sources; as such, it is safe to simplify match on 'USGS' in
+  the id name. You could also do the same thing for SNTL for SNOTEL
+  #}
+  {% if 'USGS' in (data['id'] | string) %}
+  "@id": "https://geoconnex.us/wwdh/awdb_forecasts/{{ data['id'] | safe }}",
+  {% else %}
+  "@id": "https://geoconnex.us/wwdh/snotel/{{ data['id'] | safe }}",
+  {% endif %}
+
   "schema:identifier": {{ data["id"] | tojson }},
   "schema:name": "{{ data['name'] }}",
   {% if data["description"] %}

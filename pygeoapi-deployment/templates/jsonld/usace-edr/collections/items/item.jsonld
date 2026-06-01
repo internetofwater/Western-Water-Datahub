@@ -4,7 +4,7 @@
         "gsp": "http://www.opengis.net/ont/geosparql#"
     },
     "@type": "schema:Place",
-    "@id": "{{data["@id"]}}",
+    "@id": "https://geoconnex.us/wwdh/usace/{{data["location_code"]}}",
     "schema:name": "{{data["public_name"]}}",
     "schema:identifier": "{{data["id"]}}",
     "schema:dateModified": "{{data["dataUpdated"]}}",
