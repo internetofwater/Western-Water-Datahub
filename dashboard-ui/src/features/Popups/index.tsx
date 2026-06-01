@@ -6,10 +6,20 @@
 import useSessionStore from '@/stores/session';
 import { Hover } from '@/features/Popups/Reservoir/Hover';
 
-const Popups: React.FC = () => {
+type Props = {
+    alignBottom?: boolean;
+};
+
+const Popups: React.FC<Props> = (props) => {
+    const { alignBottom = false } = props;
+
     const hoverFeature = useSessionStore((state) => state.highlight);
 
-    if (!hoverFeature) {
+    if (
+        !hoverFeature ||
+        (alignBottom && hoverFeature.inHoverSpace) ||
+        (!alignBottom && !hoverFeature.inHoverSpace)
+    ) {
         return null;
     }
 

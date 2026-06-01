@@ -21,7 +21,7 @@ export const Documentation: React.FC = () => {
             mt="calc(var(--default-spacing) * 2)"
         >
             {sections.map((section, index) => (
-                <Fragment>
+                <Fragment key={`documentation-entry-${index}`}>
                     {index > 0 && <Divider />}
                     <Stack
                         key={section.id}

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 import { Graphic } from '@/features/Reservior/TeacupDiagram/Graphic';
 import useMainStore from '@/stores/main';
 import { Card, Stack, Title, Text, Group, Box } from '@mantine/core';
@@ -20,7 +20,7 @@ import { SourceId } from '@/features/Map/consts';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
-    config: ReservoirConfig;
+    config: ReservoirConfigProperties;
 };
 
 export const Hover: React.FC<Props> = (props) => {
@@ -48,7 +48,7 @@ export const Hover: React.FC<Props> = (props) => {
     const percentOfAverage = (storage / average) * 100;
 
     const getLabel = (label: string) => {
-        if (config.id === SourceId.TeacupEDRReservoirs) {
+        if (config.source === SourceId.TeacupEDRReservoirs) {
             const totalOrActive = String(
                 reservoirProperties[
                     TeacupReservoirField.UseTotalOrActiveStorage

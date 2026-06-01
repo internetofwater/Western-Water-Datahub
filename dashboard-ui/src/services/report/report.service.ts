@@ -3,14 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { LayerId, SubLayerId } from '@/features/Map/consts';
 import {
-    LayerId,
-    ReservoirConfigs,
-    SourceId,
-    SubLayerId,
-} from '@/features/Map/consts';
-import { ReservoirConfig } from '@/features/Map/types';
-import { getReservoirConfig } from '@/features/Map/utils';
+    ReservoirConfigId,
+    ReservoirConfigProperties,
+} from '@/features/Map/types';
+import {
+    getAllReservoirConfigs,
+    getReservoirConfig,
+} from '@/features/Map/utils';
 import {
     addLineConstructor,
     calculateXPositionConstructor,
@@ -44,7 +45,7 @@ export class ReportService {
         for (let i = 0; i < reservoirs.length; i++) {
             const reservoir = reservoirs[i];
             const config = getReservoirConfig(
-                reservoir.properties.sourceId as SourceId
+                reservoir.properties.sourceId as ReservoirConfigId
             );
             if (config) {
                 const mapPositionCircle = this.createCircle(i);
@@ -160,7 +161,7 @@ export class ReportService {
         map.setLayoutProperty(SubLayerId.BasinsBoundary, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.StatesFill, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.StatesBoundary, 'visibility', 'none');
-        ReservoirConfigs.forEach((config) => {
+        getAllReservoirConfigs().forEach((config) => {
             [config.iconLayer, config.labelLayer].forEach((layerId) => {
                 if (map.getLayer(layerId)) {
                     map.setLayoutProperty(layerId, 'visibility', 'none');
@@ -343,7 +344,7 @@ export class ReportService {
     }
 
     private createInfoBox(
-        config: ReservoirConfig,
+        config: ReservoirConfigProperties,
         reservoir: Feature<Point, GeoJsonProperties>
     ): SVGSVGElement {
         const svg = document.createElementNS(
@@ -444,7 +445,7 @@ export class ReportService {
     }
 
     private createReservoirSVG(
-        config: ReservoirConfig,
+        config: ReservoirConfigProperties,
         reservoir: Feature<Point, GeoJsonProperties>
     ): SVGSVGElement {
         const storagePercentage =

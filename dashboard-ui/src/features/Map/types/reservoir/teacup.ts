@@ -10,13 +10,14 @@ export enum TeacupReservoirField {
     PopupLabel = 'popup_label',
     TotalCapacity = 'total_capacity',
     ActiveCapacity = 'active_capacity',
+    CapacityValue = 'capacity_value',
     Huc06 = 'huc6',
     Huc12 = 'huc12',
     RegionName = 'reg_name',
     RegionId = 'reg_num',
     State = 'state',
     Source = 'source_uri',
-    UseTotalOrActiveStorage = 'use_total_or_active_storage',
+    UseTotalOrActiveStorage = 'storage_capacity_label',
 
     Capacity = 'capacity',
     Storage = 'raw',
@@ -35,6 +36,7 @@ export type TeacupReservoirProperties = {
     [TeacupReservoirField.PopupLabel]: string;
     [TeacupReservoirField.TotalCapacity]: number;
     [TeacupReservoirField.ActiveCapacity]: number;
+    [TeacupReservoirField.CapacityValue]: number;
     [TeacupReservoirField.Huc06]: number;
     [TeacupReservoirField.Huc12]: number;
     [TeacupReservoirField.RegionName]: string;

@@ -13,7 +13,11 @@ import {
     PaintSpecification,
     Popup,
 } from 'mapbox-gl';
-import { SourceDataEvent, ReservoirConfig } from '@/features/Map/types';
+import {
+    SourceDataEvent,
+    ReservoirConfigProperties,
+    ReservoirConfigId,
+} from '@/features/Map/types';
 import {
     ComplexReservoirProperties,
     INITIAL_CENTER,
@@ -59,11 +63,6 @@ import { ReservoirDefault } from '@/stores/main/consts';
  * @function
  */
 export const loadTeacups = (map: Map) => {
-    const teacupLevels = [
-        100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15,
-        10, 5, 0,
-    ];
-
     if (!map.hasImage('default')) {
         map.loadImage('/map-icons/default.png', (error, image) => {
             if (error) throw error;
@@ -100,31 +99,6 @@ export const loadTeacups = (map: Map) => {
             map.addImage('outline-large', image);
         });
     }
-
-    teacupLevels.forEach((storage) => {
-        const id = `teacup-${storage}`;
-        if (!map.hasImage(id)) {
-            map.loadImage(`/map-icons/${id}.png`, (error, image) => {
-                if (error) throw error;
-                if (!image) {
-                    throw new Error(`Image not found: ${id}.png`);
-                }
-                map.addImage(id, image);
-            });
-        }
-        teacupLevels.forEach((average) => {
-            const id = `teacup-${storage}-${average}`;
-            if (!map.hasImage(id)) {
-                map.loadImage(`/map-icons/${id}.png`, (error, image) => {
-                    if (error) throw error;
-                    if (!image) {
-                        throw new Error(`Image not found: ${id}.png`);
-                    }
-                    map.addImage(id, image);
-                });
-            }
-        });
-    });
 
     map.triggerRepaint();
 };
@@ -166,8 +140,14 @@ export const isSourceDataLoaded = (
  *
  * @function
  */
-export const getReservoirConfig = (id: SourceId): ReservoirConfig | null => {
-    return ReservoirConfigs.find((config) => config.id === id) ?? null;
+export const getReservoirConfig = (
+    id: ReservoirConfigId
+): ReservoirConfigProperties => {
+    return ReservoirConfigs[id];
+};
+
+export const getAllReservoirConfigs = () => {
+    return Object.values(ReservoirConfigs);
 };
 
 /**
@@ -175,7 +155,7 @@ export const getReservoirConfig = (id: SourceId): ReservoirConfig | null => {
  * @function
  */
 export const getReservoirIconImageExpression = (
-    config: ReservoirConfig
+    config: ReservoirConfigProperties
 ): ExpressionSpecification => {
     const zoomSteps = ZoomCapacityArray.flatMap(([zoom, capacity]) => [
         zoom, // for this zoom level
@@ -261,7 +241,7 @@ export const getReservoirIconImageExpression = (
             0.95,
             '95',
             1.0,
-            '100,',
+            '100',
         ], // average variable value
         // Primary expression
         [
@@ -283,7 +263,7 @@ export const findReservoirIndex = (
     identifier: string
 ) => {
     const index = features.findIndex((feature) => {
-        const config = getReservoirConfig(feature.source as SourceId);
+        const config = getReservoirConfig(feature.source as ReservoirConfigId);
         if (feature?.properties && config) {
             return (
                 String(
@@ -300,7 +280,7 @@ export const findReservoirIndex = (
 };
 
 export const getHighlightIcon = (
-    config: ReservoirConfig
+    config: ReservoirConfigProperties
 ): ExpressionSpecification => {
     const zoomSteps = ZoomCapacityArray.flatMap(([zoom, capacity]) => [
         zoom, // for this zoom level
@@ -333,7 +313,7 @@ export const getHighlightIcon = (
 };
 
 export const getReservoirSymbolSize = (
-    config: ReservoirConfig,
+    config: ReservoirConfigProperties,
     defaultSize: number = 0.4
 ): ExpressionSpecification => {
     const zoomSteps = ZoomCapacityArray.flatMap(([zoom, capacity]) => [
@@ -372,13 +352,13 @@ export const getReservoirSymbolSize = (
 };
 
 export const getReservoirSymbolSortKey = (
-    config: ReservoirConfig
+    config: ReservoirConfigProperties
 ): ExpressionSpecification => {
     return ['coalesce', ['get', config.capacityProperty], 1];
 };
 
 export const getReservoirSymbolLayout = (
-    config: ReservoirConfig
+    config: ReservoirConfigProperties
 ): LayoutSpecification => {
     return {
         'icon-image': getReservoirIconImageExpression(config),
@@ -399,7 +379,7 @@ export const getReservoirSymbolLayout = (
 };
 
 export const getReservoirLabelLayout = (
-    config: ReservoirConfig
+    config: ReservoirConfigProperties
 ): LayoutSpecification => {
     const handleNoData = (expresssion: ExpressionSpecification) => [
         'case',
@@ -476,7 +456,7 @@ export const getReservoirLabelLayout = (
 };
 
 export const getReservoirLabelPaint = (
-    config: ReservoirConfig
+    config: ReservoirConfigProperties
 ): PaintSpecification => {
     return {
         'text-color': '#000',
@@ -507,7 +487,7 @@ export const getReservoirLabelPaint = (
 };
 
 export const getReservoirFilter = (
-    config: ReservoirConfig
+    config: ReservoirConfigProperties
 ): FilterSpecification => {
     const dataProperties = [
         config.capacityProperty,
@@ -527,7 +507,7 @@ export const getReservoirFilter = (
 };
 
 export const getReservoirLabelFilter = (
-    config: ReservoirConfig
+    config: ReservoirConfigProperties
 ): FilterSpecification => {
     return [
         'in',
@@ -564,7 +544,7 @@ export const getDefaultGeoJSON = (): FeatureCollection<
 };
 
 export const isReservoirIdentifier = (
-    config: ReservoirConfig,
+    config: ReservoirConfigProperties,
     properties: GeoJsonProperties,
     id: string | number,
     identifier: string | number
@@ -575,7 +555,7 @@ export const isReservoirIdentifier = (
 };
 
 export const getReservoirIdentifier = (
-    config: ReservoirConfig,
+    config: ReservoirConfigProperties,
     properties: GeoJsonProperties,
     id: string | number
 ): string | number => {
@@ -669,29 +649,9 @@ const updateTeacupProperties = (feature: Feature<Point, GeoJsonProperties>) => {
     };
 
     if (feature.properties) {
-        const useTotal =
-            String(
-                feature.properties[TeacupReservoirField.UseTotalOrActiveStorage]
-            ) === 'Total';
-        if (useTotal) {
-            const totalCapacity = feature.properties[
-                TeacupReservoirField.TotalCapacity
-            ]
-                ? Number(feature.properties[TeacupReservoirField.TotalCapacity])
-                : undefined;
-
-            updatedProps[TeacupReservoirField.Capacity] = totalCapacity;
-        } else {
-            const activeCapacity = feature.properties[
-                TeacupReservoirField.ActiveCapacity
-            ]
-                ? Number(
-                      feature.properties[TeacupReservoirField.ActiveCapacity]
-                  )
-                : undefined;
-
-            updatedProps[TeacupReservoirField.Capacity] = activeCapacity;
-        }
+        updatedProps[TeacupReservoirField.Capacity] = Number(
+            feature.properties[TeacupReservoirField.CapacityValue]
+        );
 
         // Huc06 is given as a URI
         const huc06URI = String(feature.properties[TeacupReservoirField.Huc06]);
@@ -793,8 +753,8 @@ export const appendTeacupDataProperties = async (
 };
 
 export const getBoundingGeographyFilter = (
-    config: ReservoirConfig,
-    property: keyof ReservoirConfig,
+    config: ReservoirConfigProperties,
+    property: keyof ReservoirConfigProperties,
     value: string | number | string[] | number[],
     applyLabelFilter: boolean = false
 ): FilterSpecification => {
@@ -802,48 +762,6 @@ export const getBoundingGeographyFilter = (
 
     // Normalize value into array
     const values = Array.isArray(value) ? value : [value];
-
-    // Handle basin HUC06 identifiers
-    if (
-        config.id === SourceId.ResvizEDRReservoirs &&
-        property === 'basinConnectorProperty'
-    ) {
-        const values = Array.isArray(value) ? value : [value];
-
-        const scalarMatches = [
-            'any',
-            ...values.map((v) => [
-                '==',
-                ['slice', ['to-string', prop], 0, 2],
-                v,
-            ]),
-        ];
-
-        const arrayMatches = [
-            'any',
-            ...values.map((v) => [
-                'in',
-                v,
-                ['slice', ['to-string', prop], 0, 2],
-            ]),
-        ];
-
-        const matchExpression: FilterSpecification = [
-            'case',
-            ['==', ['typeof', prop], 'array'],
-            arrayMatches,
-            [
-                'any',
-                ['==', ['typeof', prop], 'string'],
-                ['==', ['typeof', prop], 'number'],
-            ],
-            scalarMatches,
-            false,
-        ];
-
-        return matchExpression;
-        // return ['all', getReservoirFilter(config), matchExpression];
-    }
 
     const scalarMatches = applyLabelFilter
         ? [
@@ -916,7 +834,7 @@ export const getAndDisplaySnotelChart = async (
     }
 };
 
-export const getAllMapLayers = (config: ReservoirConfig) => {
+export const getAllMapLayers = (config: ReservoirConfigProperties) => {
     return [config.iconLayer, config.labelLayer];
 };
 
@@ -945,7 +863,7 @@ const ZOOM_MID = 6;
 
 const getProperty = (
     boundingGeographyLevel: BoundingGeographyLevel
-): keyof ReservoirConfig => {
+): keyof ReservoirConfigProperties => {
     switch (boundingGeographyLevel) {
         case BoundingGeographyLevel.Region:
             return 'regionConnectorProperty';
@@ -1060,7 +978,7 @@ export const updateReservoirFilters = (map: Map) => {
 
     const applyLabelSettings = applyLabelSettingsConstructor(map);
 
-    ReservoirConfigs.forEach((config) => {
+    getAllReservoirConfigs().forEach((config) => {
         //    - If geography active: filter to geography
         //    - Else: either hideNoData filter or no filter
         const iconBaseFilter: FilterSpecification | null | undefined =

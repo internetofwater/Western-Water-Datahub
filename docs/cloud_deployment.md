@@ -13,10 +13,10 @@ flowchart LR
     subgraph Backend
         Pygeoapi["pygeoapi OGC API Features / OGC EDR Backend"]
 
-        subgraph "Source Integrations"
-            RedisSource1["Proxy Integration A (Redis Cache → Upstream API)"]
-            RedisSource2["Proxy Integration B (Redis Cache → Upstream API)"]
-            PostgresSource["Crawl Integration C (PostgreSQL Database)"]
+        subgraph "Source Integrations (<i> Non-Exhaustive</i>)"
+            RedisSource1["Proxy Integration A (<i>example: SNOTEL API</i>)<br/>(Redis Cache over Upstream API)"]
+            RedisSource2["Proxy Integration B (<i>example: NOAA River Forecast Center API</i>)<br/>(Redis Cache over Upstream API)"]
+            PostgresSource["Crawl Integration C </br> (<i>example: Reservoir Teacup EDR</i>) <br/> (Stored in PostgreSQL Database)"]
         end
 
         OpenTelemetry[/"(Optional) OpenTelemetry monitoring from cloud provider"/]
@@ -26,7 +26,7 @@ flowchart LR
         Redis["Redis Cache"]
         UpstreamAPI["Upstream API (External)"]
         Postgres["PostgreSQL Database"]
-        Crawler["Crawler (Fetches Remote Data → PostgreSQL)"]
+        Crawler["Crawler (Fetches remote data on a schedule; stores in PostgreSQL)"]
     end
 
     DashboardUI --> Pygeoapi
@@ -36,7 +36,7 @@ flowchart LR
     Pygeoapi --> PostgresSource
 
     RedisSource1 -- "Geometry, parameters, and other metadata is cached" --> Redis
-    RedisSource1 -- "Timeseries data fetch (generally not cached)" --> UpstreamAPI
+    RedisSource1 -- "Timeseries data fetch (generally not cached to ensure real time, latest data)" --> UpstreamAPI
     RedisSource2 --> Redis
     Redis --> UpstreamAPI
 

@@ -6,7 +6,10 @@
 import { basemaps } from '@/components/Map/consts';
 import { BasemapId } from '@/components/Map/types';
 import { ExpressionSpecification } from 'mapbox-gl';
-import { ReservoirConfig } from '@/features/Map/types';
+import {
+    ReservoirConfigId,
+    ReservoirConfigProperties,
+} from '@/features/Map/types';
 import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
 import { BBox } from 'geojson';
 
@@ -228,15 +231,8 @@ export const ComplexReservoirProperties = [
 export const RISEEDRReservoirSource =
     'https://cache.wwdh.internetofwater.app/collections/rise-edr/locations?parameter-name=Lake/Reservoir+Storage&limit=10000&f=json';
 
-/**
- *
- * @constant
- */
-export const ResVizEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/resviz-edr/locations';
-
 export const TeacupEDRReservoirSource =
-    'https://cache.wwdh.internetofwater.app/collections/teacup-edr/items';
+    'https://cache.wwdh.internetofwater.app/collections/teacup-edr/items?ownership=Reclamation';
 
 /**
  *
@@ -249,49 +245,12 @@ export const RegionsSource =
  *
  * @constant
  */
-export const ReservoirConfigs: ReservoirConfig[] = [
-    // {
-    //     id: SourceId.RiseEDRReservoirs,
-    //     storageProperty: RiseReservoirField.LiveCapacity, // Mock value, stand in for current storage
-    //     capacityProperty: RiseReservoirField.ActiveCapacity,
-    //     tenthPercentileProperty: RiseReservoirField.ActiveCapacity,
-    //     ninetiethPercentileProperty: RiseReservoirField.ActiveCapacity,
-    //     thirtyYearAverageProperty: RiseReservoirField.ActiveCapacity,
-    //     identifierProperty: RiseReservoirField.Id,
-    //     identifierType: 'number',
-    //     labelProperty: RiseReservoirField.AssetNameInTessel,
-    //     chartLabel: 'Lake/Reservoir Storage',
-    //     regionConnectorProperty: RiseReservoirField.LocationUnifiedRegionNames,
-    //     connectedLayers: [
-    //         LayerId.RiseEDRReservoirs,
-    //         SubLayerId.RiseEDRReservoirLabels,
-    //     ],
-    //     params: {
-    //         'parameter-name': 'Lake/Reservoir+Storage',
-    //     },
-    // },
-    // {
-    //     id: SourceId.ResvizEDRReservoirs,
-    //     storageProperty: ResvizReservoirField.Storage,
-    //     capacityProperty: ResvizReservoirField.MaxCapacity,
-    //     tenthPercentileProperty: ResvizReservoirField.TenthPercentile,
-    //     ninetiethPercentileProperty: ResvizReservoirField.NinetiethPercentile,
-    //     thirtyYearAverageProperty: ResvizReservoirField.StorageAverage,
-    //     storageDateProperty: ResvizReservoirField.StorageDate,
-    //     identifierProperty: ResvizReservoirField.MonitoringLocationId,
-    //     identifierType: 'number',
-    //     labelProperty: ResvizReservoirField.SiteName,
-    //     chartLabel: ResvizReservoirField.Storage,
-    //     regionConnectorProperty: ResvizReservoirField.DoiRegionName,
-    //     basinConnectorProperty: ResvizReservoirField.Huc06,
-    //     stateConnectorProperty: ResvizReservoirField.State,
-    //     connectedLayers: [
-    //         LayerId.ResvizEDRReservoirs,
-    //         SubLayerId.ResvizEDRReservoirLabels,
-    //     ],
-    // },
-    {
-        id: SourceId.TeacupEDRReservoirs,
+export const ReservoirConfigs: Record<
+    ReservoirConfigId,
+    ReservoirConfigProperties
+> = {
+    [SourceId.TeacupEDRReservoirs]: {
+        source: SourceId.TeacupEDRReservoirs,
         storageProperty: TeacupReservoirField.Storage,
         capacityProperty: TeacupReservoirField.Capacity,
         tenthPercentileProperty: TeacupReservoirField.TenthPercentile,
@@ -308,8 +267,11 @@ export const ReservoirConfigs: ReservoirConfig[] = [
         stateConnectorProperty: TeacupReservoirField.State,
         iconLayer: LayerId.TeacupEDRReservoirs,
         labelLayer: SubLayerId.TeacupEDRReservoirLabels,
+        params: {
+            ownership: 'Reclamation',
+        },
     },
-];
+};
 
 export const BaseLayerOpacity = 0.5;
 

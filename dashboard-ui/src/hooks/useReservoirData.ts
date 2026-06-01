@@ -7,10 +7,10 @@ import { useEffect, useRef } from 'react';
 import wwdhService from '@/services/init/wwdh.init';
 import { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
 import useMainStore from '@/stores/main';
-import { MAP_ID, ReservoirConfigs, SourceId } from '@/features/Map/consts';
+import { MAP_ID, SourceId } from '@/features/Map/consts';
 import {
-    appendResvizDataProperties,
     appendTeacupDataProperties,
+    getAllReservoirConfigs,
     getFeatures,
 } from '@/features/Map/utils';
 import { ReservoirCollections } from '@/stores/main/types';
@@ -19,6 +19,7 @@ import { LoadingType, NotificationType } from '@/stores/session/types';
 import notificationManager from '@/managers/Notification.init';
 import { useMap } from '@/contexts/MapContexts';
 import { Map } from 'mapbox-gl';
+import { ReservoirConfigId } from '@/features/Map/types';
 
 export const useReservoirData = () => {
     const reservoirCollections = useMainStore(
@@ -43,16 +44,16 @@ export const useReservoirData = () => {
             controller.current = new AbortController();
             const reservoirCollections: ReservoirCollections = {};
 
-            for (const config of ReservoirConfigs) {
+            for (const config of getAllReservoirConfigs()) {
                 let currentFeatureCollection;
                 currentFeatureCollection = getFeatures<
                     Point,
                     GeoJsonProperties
-                >(map, config.id);
+                >(map, config.source);
                 if (!currentFeatureCollection) {
                     currentFeatureCollection = await wwdhService.getItems<
                         FeatureCollection<Point, GeoJsonProperties>
-                    >(config.id, {
+                    >(config.source, {
                         signal: controller.current.signal,
                         params: config.params,
                     });
@@ -61,39 +62,12 @@ export const useReservoirData = () => {
                 if (!currentFeatureCollection) {
                     console.error(
                         'Unable to retrieve basic feature collection for: ',
-                        config.id
+                        config.source
                     );
                     continue;
                 }
 
-                if (config.id === SourceId.ResvizEDRReservoirs) {
-                    const processedResult = await appendResvizDataProperties(
-                        currentFeatureCollection
-                    );
-                    const reservoirCollection = {
-                        ...processedResult,
-                        features: processedResult.features.map((feature) => {
-                            const newProperties: GeoJsonProperties = {};
-                            for (const key in feature.properties) {
-                                const newKey = key.replace(
-                                    /resviz_stations./g,
-                                    ''
-                                );
-                                newProperties[newKey] = feature.properties[
-                                    key
-                                ] as string | number;
-                            }
-
-                            return {
-                                ...feature,
-                                properties: newProperties,
-                            };
-                        }),
-                    };
-
-                    reservoirCollections[config.id] = reservoirCollection;
-                }
-                if (config.id === SourceId.TeacupEDRReservoirs) {
+                if (config.source === SourceId.TeacupEDRReservoirs) {
                     const reservoirCollection =
                         await appendTeacupDataProperties(
                             currentFeatureCollection,
@@ -103,7 +77,8 @@ export const useReservoirData = () => {
                             }
                         );
 
-                    reservoirCollections[config.id] = reservoirCollection;
+                    reservoirCollections[config.source as ReservoirConfigId] =
+                        reservoirCollection;
                 }
             }
 

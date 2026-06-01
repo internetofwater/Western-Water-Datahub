@@ -36,7 +36,7 @@ import {
     calculateYPositionContructor,
 } from '@/features/Reservior/TeacupDiagram/utils';
 import { GeoJsonProperties } from 'geojson';
-import { ReservoirConfig } from '@/features/Map/types';
+import { ReservoirConfigProperties } from '@/features/Map/types';
 import {
     handleAverageLineEnter,
     handleAverageLineLeave,
@@ -49,7 +49,7 @@ import { displayVolumeWithUnits } from '@/utils/reservoirDataDisplay';
 
 type Props = {
     reservoirProperties: GeoJsonProperties;
-    config: ReservoirConfig;
+    config: ReservoirConfigProperties;
     showLabels: boolean;
     labels?: boolean;
     listeners: boolean;

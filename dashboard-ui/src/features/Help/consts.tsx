@@ -231,7 +231,7 @@ export const sections: GlossarySection[] = [
                                 An area of the landscape that drains to a
                                 portion of the stream network, such as a basin
                                 or watershed. Hydrologic Units are defined by
-                                the United States Geological Survey’s Watershed
+                                the United States Geological Survey's Watershed
                                 Boundary Dataset (WBD). The Watershed Boundary
                                 Dataset divides and sub-divides the United
                                 States into successively smaller hydrologic
@@ -240,7 +240,7 @@ export const sections: GlossarySection[] = [
                                 area (regions) to progressively smaller areas.
                                 Each hydrologic unit is identified by a
                                 unique&nbsp;
-                                <Text {...content} fw={700}>
+                                <Text {...content} fw={700} component="strong">
                                     hydrologic unit code (HUC)
                                 </Text>
                                 &nbsp;consisting of two to 12 digits based on
@@ -284,7 +284,7 @@ export const sections: GlossarySection[] = [
                         id: 'reservoir-storage',
                         content: (
                             <Text {...content}>
-                                <Text {...content} fw={700}>
+                                <Text {...content} fw={700} component="strong">
                                     Reservoir storage
                                 </Text>
                                 &nbsp;tells you how much water is stored in the
@@ -301,7 +301,7 @@ export const sections: GlossarySection[] = [
                         id: 'reservoir-capacity',
                         content: (
                             <Text {...content}>
-                                <Text {...content} fw={700}>
+                                <Text {...content} fw={700} component="strong">
                                     Reservoir capacity
                                 </Text>
                                 &nbsp;values shown along with the reservoir
@@ -318,7 +318,7 @@ export const sections: GlossarySection[] = [
                             <Text {...content}>
                                 Combining reservoir storage with capacity gives
                                 you the{' '}
-                                <Text {...content} fw={700}>
+                                <Text {...content} fw={700} component="strong">
                                     percent full
                                 </Text>
                                 , which helps you understand the amount of
@@ -341,7 +341,7 @@ export const sections: GlossarySection[] = [
                                 Combining reservoir storage with the historical
                                 average storage for the specified date gives you
                                 the{' '}
-                                <Text {...content} fw={700}>
+                                <Text {...content} fw={700} component="strong">
                                     percent of average
                                 </Text>
                                 , which helps you understand the amount of
@@ -379,16 +379,16 @@ export const sections: GlossarySection[] = [
                                 between two reservoir storage levels. The
                                 dashboard shows either Total Capacity or Active
                                 Capacity, depending on the reservoir.
-                                <Text {...content} fw={700}>
+                                <Text {...content} fw={700} component="strong">
                                     Total Capacity
                                 </Text>
                                 &nbsp;is the total volume of water that can be
                                 impounded by the reservoir, not including&nbsp;
-                                <Text {...content} fs="italic">
+                                <Text {...content} fs="italic" component="i">
                                     surcharge capacity
                                 </Text>
                                 .&nbsp;
-                                <Text {...content} fw={700}>
+                                <Text {...content} fw={700} component="strong">
                                     Active Capacity
                                 </Text>
                                 &nbsp;is the volume of water that can be
@@ -405,7 +405,7 @@ export const sections: GlossarySection[] = [
                                 date. The dashboard shows either Total Storage
                                 or Active Storage, depending on the
                                 reservoir.&nbsp;
-                                <Text {...content} fw={700}>
+                                <Text {...content} fw={700} component="strong">
                                     Total Storage
                                 </Text>
                                 &nbsp;is the total volume of water stored in the
@@ -413,12 +413,12 @@ export const sections: GlossarySection[] = [
                                 may include storage in the surcharge capacity,
                                 above the uncontrolled spillway crest or the top
                                 of the spillway gates.&nbsp;
-                                <Text {...content} fw={700}>
+                                <Text {...content} fw={700} component="strong">
                                     Active Storage
                                 </Text>
                                 &nbsp;is the volume of water stored in the
                                 reservoir above the top of&nbsp;
-                                <Text {...content} fs="italic">
+                                <Text {...content} fs="italic" component="i">
                                     inactive storage capacity
                                 </Text>
                                 &nbsp;on the indicated date. Active storage may
@@ -485,29 +485,29 @@ export const sections: GlossarySection[] = [
                             <Text {...content}>
                                 The total volume of water that can be impounded
                                 by the reservoir, not including&nbsp;
-                                <Text {...content} fs="italic">
+                                <Text {...content} fs="italic" component="i">
                                     surcharge capacity
                                 </Text>
                                 . The elevation associated with the total
                                 capacity is typically the elevation of the&nbsp;
-                                <Text {...content} fs="italic">
+                                <Text {...content} fs="italic" component="i">
                                     uncontrolled spillway crest
                                 </Text>
                                 &nbsp;or the top of the&nbsp;
-                                <Text {...content} fs="italic">
+                                <Text {...content} fs="italic" component="i">
                                     spillway gates
                                 </Text>
                                 . Total capacity is the reservoir capacity up to
                                 the highest of the top of active&nbsp;
-                                <Text {...content} fs="italic">
+                                <Text {...content} fs="italic" component="i">
                                     conservation capacity
                                 </Text>
                                 ,&nbsp;
-                                <Text {...content} fs="italic">
+                                <Text {...content} fs="italic" component="i">
                                     joint use capacity
                                 </Text>
                                 &nbsp;(if present), and&nbsp;
-                                <Text {...content} fs="italic">
+                                <Text {...content} fs="italic" component="i">
                                     exclusive flood control capacity
                                 </Text>
                                 (if present).
@@ -525,19 +525,19 @@ export const sections: GlossarySection[] = [
                                 water quality, flood control, and other
                                 purposes. Active capacity is the reservoir
                                 capacity between the top of the&nbsp;
-                                <Text {...content} fs="italic">
+                                <Text {...content} fs="italic" component="i">
                                     inactive storage capacity
                                 </Text>
                                 &nbsp;and the highest of the top of the&nbsp;
-                                <Text {...content} fs="italic">
+                                <Text {...content} fs="italic" component="i">
                                     active conservation capacity
                                 </Text>
                                 ,&nbsp;
-                                <Text {...content} fs="italic">
+                                <Text {...content} fs="italic" component="i">
                                     joint use capacity
                                 </Text>
                                 &nbsp;(if present), and&nbsp;
-                                <Text {...content} fs="italic">
+                                <Text {...content} fs="italic" component="i">
                                     exclusive flood control capacity
                                 </Text>
                                 &nbsp;(if present).
@@ -676,7 +676,7 @@ export const questions: QA[] = [
         ),
         bullets: [
             <Text {...subSectionDescription}>
-                <Text {...subSectionDescription} fw={700}>
+                <Text {...subSectionDescription} fw={700} component="strong">
                     Storage data for the reservoir is not yet available from the
                     Hub.
                 </Text>
@@ -686,7 +686,7 @@ export const questions: QA[] = [
                 details view of the reservoir.
             </Text>,
             <Text {...subSectionDescription}>
-                <Text {...subSectionDescription} fw={700}>
+                <Text {...subSectionDescription} fw={700} component="strong">
                     Storage data for the reservoir is not available for the
                     selected date.
                 </Text>
@@ -775,7 +775,7 @@ export const contacts: Contact[] = [
             <Text {...content}>
                 For questions or feedback on the Western Water Data Dashboard,
                 please contact the Bureau of Reclamation at{' '}
-                <Text {...content} c="blue">
+                <Text {...content} c="blue" span>
                     data@usbr.gov
                 </Text>
                 .
