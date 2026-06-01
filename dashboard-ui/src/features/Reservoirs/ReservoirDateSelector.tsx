@@ -16,7 +16,7 @@ export const ReservoirDateSelector: React.FC = () => {
     const reservoirDate = useMainStore((state) => state.reservoirDate);
     const setReservoirDate = useMainStore((state) => state.setReservoirDate);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
     const handleCheckboxChange = (checked: boolean) => {
         if (checked) {
@@ -44,6 +44,7 @@ export const ReservoirDateSelector: React.FC = () => {
     }, []);
 
     const hasReservoirDate = reservoirDate !== null;
+    const isDisabled = isFetchingReservoirs || isGeneratingReport;
 
     return (
         <Group gap="calc(var(--default-spacing) / 1)" align="flex-end">
@@ -52,7 +53,7 @@ export const ReservoirDateSelector: React.FC = () => {
                     size="xs"
                     className={styles.multiselect}
                     valueFormat="MM/DD/YYYY"
-                    disabled={isFetchingReservoirs}
+                    disabled={isDisabled}
                     value={dayjs(reservoirDate).toDate()}
                     maxDate={new Date()}
                     label="Reservoir Storage Date"
@@ -65,8 +66,8 @@ export const ReservoirDateSelector: React.FC = () => {
                 mb={hasReservoirDate ? '0.4375rem' : 0}
                 classNames={{ label: styles.label }}
                 checked={!hasReservoirDate}
-                disabled={isFetchingReservoirs}
-                data-disabled={isFetchingReservoirs}
+                disabled={isDisabled}
+                data-disabled={isDisabled}
                 label="Latest Storage Value"
                 onChange={() => handleCheckboxChange(!hasReservoirDate)}
             />

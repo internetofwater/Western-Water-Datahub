@@ -84,7 +84,7 @@ export const BoundingGeography: React.FC = () => {
     const setBasin = useMainStore((state) => state.setBasin);
     const setState = useMainStore((state) => state.setState);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
     useEffect(() => {
         if (!map) {
@@ -110,6 +110,8 @@ export const BoundingGeography: React.FC = () => {
         setBoundingGeographyLevel(value as BoundingGeographyLevel);
     };
 
+    const isDisabled = isFetchingReservoirs || isGeneratingReport;
+
     return (
         <RadioGroup
             size="xs"
@@ -121,8 +123,8 @@ export const BoundingGeography: React.FC = () => {
                     <Radio
                         size="xs"
                         classNames={{ label: styles.label }}
-                        disabled={isFetchingReservoirs}
-                        data-disabled={isFetchingReservoirs}
+                        disabled={isDisabled}
+                        data-disabled={isDisabled}
                         key={`radio-geobound-${label}`}
                         value={value}
                         label={label}

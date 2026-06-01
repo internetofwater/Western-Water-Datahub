@@ -33,7 +33,7 @@ export const Region: React.FC = () => {
     const [regionOptions, setRegionOptions] = useState<ComboboxData>([]);
     const [loading, setLoading] = useState(true);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
@@ -116,6 +116,8 @@ export const Region: React.FC = () => {
         };
     }, []);
 
+    const isDisabled = isFetchingReservoirs || isGeneratingReport;
+
     return (
         <>
             {loading || regionOptions.length === 0 ? (
@@ -128,7 +130,7 @@ export const Region: React.FC = () => {
                     size="xs"
                     id="regionSelector"
                     className={styles.multiselect}
-                    disabled={isFetchingReservoirs}
+                    disabled={isDisabled}
                     data={regionOptions}
                     value={region}
                     data-testid="region-select"
