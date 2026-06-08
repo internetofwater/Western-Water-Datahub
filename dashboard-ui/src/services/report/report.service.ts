@@ -18,7 +18,7 @@ import {
     calculateYPositionContructor,
 } from '@/features/Reservior/TeacupDiagram/utils';
 import { Feature, GeoJsonProperties, Point } from 'geojson';
-import { Map } from 'mapbox-gl';
+import { Map, ScaleControl } from 'mapbox-gl';
 import { bbox, featureCollection } from '@turf/turf';
 import dayjs from 'dayjs';
 import { OrganizedProperties } from '@/features/Reservoirs/types';
@@ -659,11 +659,21 @@ export class ReportService {
         context.drawImage(mapCanvas, 0, 0);
         context.restore();
 
+        const legendPosition = { x: 1297, y: 519 };
+
         if (reportLegend) {
             context.drawImage(
                 reportLegend,
-                1297,
-                519,
+                legendPosition.x,
+                legendPosition.y,
+                legendWidth,
+                legendHeight
+            );
+
+            this.drawScale(
+                map,
+                context,
+                legendPosition,
                 legendWidth,
                 legendHeight
             );
@@ -693,5 +703,65 @@ export class ReportService {
             }, 'image/png');
         };
         img.src = url;
+    }
+
+    private drawScale(
+        map: Map,
+        context: OffscreenCanvasRenderingContext2D,
+        legendPosition: { x: number; y: number },
+        legendWidth: number,
+        legendHeight: number
+    ) {
+        // Add scale control
+        map.addControl(new ScaleControl());
+
+        // Get scale HTML element
+        const scaleElement = map
+            .getContainer()
+            .querySelector('.mapboxgl-ctrl-scale');
+
+        // No-op if scale HTML element is missing
+        if (!scaleElement) {
+            console.error('Failed to add map scale');
+            return;
+        }
+
+        const scaleWidth = scaleElement.clientWidth;
+        const scaleLabel = scaleElement.textContent;
+
+        const scaleOffsetY = 15;
+        const labelOffset = 15;
+
+        const minX = legendPosition.x + legendWidth / 2 - scaleWidth / 2;
+        const maxX = minX + scaleWidth;
+        const midX = (minX + maxX) / 2;
+
+        const midY = legendPosition.y + legendHeight - scaleOffsetY;
+
+        const tickHeight = 5;
+
+        context.strokeStyle = 'black';
+        context.lineWidth = 2;
+
+        // Draw lines
+        context.beginPath();
+        context.moveTo(minX, midY);
+        context.lineTo(maxX, midY);
+
+        context.moveTo(minX, midY - tickHeight);
+        context.lineTo(minX, midY + tickHeight);
+
+        context.moveTo(maxX, midY - tickHeight);
+        context.lineTo(maxX, midY + tickHeight);
+
+        context.stroke();
+
+        // Draw label
+        context.font = '10px sans-serif';
+        context.fillStyle = 'black';
+        context.textAlign = 'center';
+        context.textBaseline = 'top';
+
+        context.fillText(scaleLabel, midX, midY - labelOffset);
     }
 }
