@@ -707,7 +707,7 @@ export class ReportService {
 
     private drawScale(
         map: Map,
-        context: OffscreenCanvasRenderingContext2D,
+        context: CanvasRenderingContext2D,
         legendPosition: { x: number; y: number },
         legendWidth: number,
         legendHeight: number
@@ -722,6 +722,7 @@ export class ReportService {
 
         // No-op if scale HTML element is missing
         if (!scaleElement) {
+            // eslint-disable-next-line no-console
             console.error('Failed to add map scale');
             return;
         }
