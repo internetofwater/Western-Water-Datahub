@@ -659,7 +659,10 @@ export class ReportService {
         context.drawImage(mapCanvas, 0, 0);
         context.restore();
 
-        const legendPosition = { x: 1297, y: 519 };
+        const legendPosition = {
+            x: width - legendWidth - 20,
+            y: height - legendHeight - 20,
+        };
 
         if (reportLegend) {
             context.drawImage(
