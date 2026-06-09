@@ -27,7 +27,11 @@ import { OrganizedProperties } from '@/features/Reservoirs/types';
 import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
 import { useLoading } from '@/hooks/useLoading';
 import Select from '@/components/Select';
-import { MAX_POSITIONS } from '@/services/report/report.consts';
+import {
+    MAP_CONTAINER_HEIGHT,
+    MAP_CONTAINER_WIDTH,
+    MAX_POSITIONS,
+} from '@/services/report/report.consts';
 import { getKey } from '@/features/Reservoirs/utils';
 
 type Props = {
@@ -143,8 +147,8 @@ const Report: React.FC<Props> = (props) => {
         document.body.appendChild(hidden);
 
         container.current = document.createElement('div');
-        container.current.style.width = '1650px';
-        container.current.style.height = '1275px';
+        container.current.style.width = `${MAP_CONTAINER_WIDTH}px`;
+        container.current.style.height = `${MAP_CONTAINER_HEIGHT}px`;
         hidden.appendChild(container.current);
         cloneMap.current = new Map({
             accessToken: accessToken,

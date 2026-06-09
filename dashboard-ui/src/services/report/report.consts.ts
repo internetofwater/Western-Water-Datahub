@@ -47,11 +47,16 @@
 //     { x: 60, y: 240 }, // Top left
 // ];
 
+// Aspect ratio matches paper letter dimensions
+// 1650px / 1275px = 11" / 8.5" = 1.29
+export const MAP_CONTAINER_WIDTH = 1650;
+export const MAP_CONTAINER_HEIGHT = 1275;
+
 const OFFSET_X = 50;
 const OFFSET_Y = 25;
 
-const WIDTH_X = 1650 / 6; // 6 across 1650px map canvas width
-const WIDTH_Y = 1275 / 5; // 5 across 1275px map canvas height
+const WIDTH_X = MAP_CONTAINER_WIDTH / 6;
+const WIDTH_Y = MAP_CONTAINER_HEIGHT / 5;
 
 export const RESERVOIR_POSITIONS = [
     // Top
