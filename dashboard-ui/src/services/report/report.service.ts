@@ -763,6 +763,8 @@ export class ReportService {
         context.textAlign = 'center';
         context.textBaseline = 'top';
 
-        context.fillText(scaleLabel, midX, midY - labelOffset);
+        if (scaleLabel) {
+            context.fillText(scaleLabel, midX, midY - labelOffset);
+        }
     }
 }
