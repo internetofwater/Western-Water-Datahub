@@ -143,8 +143,8 @@ const Report: React.FC<Props> = (props) => {
         document.body.appendChild(hidden);
 
         container.current = document.createElement('div');
-        container.current.style.width = '1600px';
-        container.current.style.height = '900px';
+        container.current.style.width = '1650px';
+        container.current.style.height = '1275px';
         hidden.appendChild(container.current);
         cloneMap.current = new Map({
             accessToken: accessToken,
