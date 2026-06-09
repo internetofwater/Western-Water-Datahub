@@ -47,26 +47,34 @@
 //     { x: 60, y: 240 }, // Top left
 // ];
 
+const OFFSET_X = 50;
+const OFFSET_Y = 25;
+
+const WIDTH_X = 1650 / 6; // 6 across 1650px map canvas width
+const WIDTH_Y = 1275 / 5; // 5 across 1275px map canvas height
+
 export const RESERVOIR_POSITIONS = [
     // Top
-    { x: 60, y: 20 },
-    { x: 310, y: 20 },
-    { x: 560, y: 20 },
-    { x: 810, y: 20 },
-    { x: 1060, y: 20 },
-    // { x: 1310, y: 20 }, // Top Right
-    { x: 1310, y: 20 }, // Top Right
-    // Right most
-    { x: 1400, y: 250 },
+    { x: OFFSET_X + 0 * WIDTH_X, y: OFFSET_Y },
+    { x: OFFSET_X + 1 * WIDTH_X, y: OFFSET_Y },
+    { x: OFFSET_X + 2 * WIDTH_X, y: OFFSET_Y },
+    { x: OFFSET_X + 3 * WIDTH_X, y: OFFSET_Y },
+    { x: OFFSET_X + 4 * WIDTH_X, y: OFFSET_Y },
+    { x: OFFSET_X + 5 * WIDTH_X, y: OFFSET_Y },
+
+    // Right
+    { x: OFFSET_X + 5 * WIDTH_X, y: OFFSET_Y + 1 * WIDTH_Y },
+
+    // Left
+    { x: OFFSET_X, y: OFFSET_Y + 1 * WIDTH_Y },
+    { x: OFFSET_X, y: OFFSET_Y + 2 * WIDTH_Y },
+    { x: OFFSET_X, y: OFFSET_Y + 3 * WIDTH_Y },
+    { x: OFFSET_X, y: OFFSET_Y + 4 * WIDTH_Y },
+
     // Bottom
-    { x: 1050, y: 675 },
-    { x: 800, y: 675 },
-    { x: 550, y: 675 },
-    { x: 300, y: 675 },
-    // left
-    { x: 60, y: 675 },
-    { x: 60, y: 460 },
-    { x: 60, y: 240 }, // Top left
+    { x: OFFSET_X + 1 * WIDTH_X, y: OFFSET_Y + 4 * WIDTH_Y },
+    { x: OFFSET_X + 2 * WIDTH_X, y: OFFSET_Y + 4 * WIDTH_Y },
+    { x: OFFSET_X + 3 * WIDTH_X, y: OFFSET_Y + 4 * WIDTH_Y },
 ];
 
 export const MAX_POSITIONS = RESERVOIR_POSITIONS.length;
