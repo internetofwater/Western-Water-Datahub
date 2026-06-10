@@ -18,7 +18,7 @@ import {
     calculateYPositionContructor,
 } from '@/features/Reservior/TeacupDiagram/utils';
 import { Feature, GeoJsonProperties, Point } from 'geojson';
-import { Map, ScaleControl } from 'mapbox-gl';
+import { Map } from 'mapbox-gl';
 import { bbox, featureCollection } from '@turf/turf';
 import dayjs from 'dayjs';
 import { OrganizedProperties } from '@/features/Reservoirs/types';
@@ -658,9 +658,6 @@ export class ReportService {
         legendWidth: number,
         legendHeight: number
     ) {
-        // Add scale control
-        map.addControl(new ScaleControl());
-
         // Get scale HTML element
         const scaleElement = map
             .getContainer()

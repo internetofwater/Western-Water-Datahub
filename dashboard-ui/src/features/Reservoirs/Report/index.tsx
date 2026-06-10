@@ -22,7 +22,7 @@ import {
     TCallbackResponse,
 } from '@/services/report/report.service';
 import { useEffect, useRef, useState } from 'react';
-import { Map } from 'mapbox-gl';
+import { Map, ScaleControl } from 'mapbox-gl';
 import { Feature, Point } from 'geojson';
 import styles from '@/features/Reservoirs/Report/Report.module.css';
 import { OrganizedProperties } from '@/features/Reservoirs/types';
@@ -120,9 +120,6 @@ const Report: React.FC<Props> = (props) => {
             }
         }
 
-        cloneMap.current.setCenter(map.getCenter());
-        cloneMap.current.setZoom(Math.max(map.getZoom() - 0.5, 0));
-
         cloneMap.current.setStyle(map.getStyle());
         createReport(
             cloneMap.current,
@@ -194,6 +191,9 @@ const Report: React.FC<Props> = (props) => {
             projection: map.getProjection(),
             preserveDrawingBuffer: true,
         });
+
+        // Add scale control
+        cloneMap.current.addControl(new ScaleControl());
 
         // loadTeacups(cloneMap.current);
         cloneMap.current.once('load', () => {

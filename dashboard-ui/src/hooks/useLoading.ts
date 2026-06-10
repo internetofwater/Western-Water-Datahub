@@ -28,7 +28,14 @@ export const useLoading = () => {
         setIsGeneratingReport(loadingManager.has({ type: LoadingType.Report }));
     }, [loadingInstances]);
 
+    const isLoading =
+        isFetchingReservoirs ||
+        isFetchingSnotel ||
+        isFetchingSingleReservoir ||
+        isGeneratingReport;
+
     return {
+        isLoading,
         isGeneratingReport,
         isFetchingReservoirs,
         isFetchingSnotel,
