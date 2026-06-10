@@ -209,7 +209,8 @@ def run_location_load(force_clean_layer=False) -> None:
             )
             continue
 
-        if row.get("post_review_decision") == "Do Not Include":
+        review_decision = row.get("post_review_decision", "").lower()
+        if review_decision == "do not include":
             LOGGER.error(
                 f"Skipping {row.get('preferred_label_for_map_and_table')} based on post review decision"
             )
