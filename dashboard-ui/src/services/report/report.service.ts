@@ -653,7 +653,7 @@ export class ReportService {
 
     private drawScale(
         map: Map,
-        context: CanvasRenderingContext2D,
+        context: OffscreenCanvasRenderingContext2D,
         legendPosition: { x: number; y: number },
         legendWidth: number,
         legendHeight: number
