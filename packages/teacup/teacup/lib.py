@@ -209,6 +209,13 @@ def run_location_load(force_clean_layer=False) -> None:
             )
             continue
 
+        review_decision = row.get("post_review_decision", "").lower()
+        if review_decision == "do not include":
+            LOGGER.error(
+                f"Skipping {row.get('preferred_label_for_map_and_table')} based on post review decision"
+            )
+            continue
+
         # Handle source URL
         source = row["source_for_storage_data"]
         source_name = row["source_name"]
