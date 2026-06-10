@@ -77,6 +77,7 @@ export class ReportService {
                 const position = RESERVOIR_POSITIONS[i];
 
                 const reservoirSVG = this.createReservoirSVG(config, reservoir);
+
                 svgOverlay = this.drawSVGAtPosition(
                     position,
                     reservoirSVG,
@@ -88,39 +89,42 @@ export class ReportService {
                 // Draw this svg, then calculate the width in the dom to reposition
                 svgOverlay = this.drawSVG(infoSVG, svgOverlay);
 
-                const { width: infoBoxWidth } = infoSVG.getBoundingClientRect();
+                // Bounding rect wont reflect bounds accurately until end of next frame
+                requestAnimationFrame(() => {
+                    const { width: infoBoxWidth } =
+                        infoSVG.getBoundingClientRect();
 
-                const infoBoxPosition = {
-                    x: position.x - Math.abs(160 - infoBoxWidth) / 2,
-                    y:
-                        position.y +
-                        (Number(reservoirSVG.getAttribute('height')) ?? 0),
-                };
+                    const infoBoxPosition = {
+                        x: position.x - Math.abs(160 - infoBoxWidth) / 2,
+                        y:
+                            position.y +
+                            (Number(reservoirSVG.getAttribute('height')) ?? 0),
+                    };
 
-                this.repostion(infoBoxPosition, infoSVG);
+                    this.repostion(infoBoxPosition, infoSVG);
+                    const indicatorCircle = this.createCircle(i);
+                    const indicatorPosition = {
+                        x: position.x - Math.abs(160 - infoBoxWidth) / 2 - 2, // position at bottom left corner
+                        y:
+                            position.y +
+                            (Number(reservoirSVG.getAttribute('height')) ?? 0) -
+                            2,
+                    };
 
-                const indicatorCircle = this.createCircle(i);
-                const indicatorPosition = {
-                    x: position.x - Math.abs(160 - infoBoxWidth) / 2 - 2, // position at bottom left corner
-                    y:
-                        position.y +
-                        (Number(reservoirSVG.getAttribute('height')) ?? 0) -
-                        2,
-                };
+                    svgOverlay = this.drawSVGAtPosition(
+                        indicatorPosition,
+                        indicatorCircle,
+                        svgOverlay
+                    );
 
-                svgOverlay = this.drawSVGAtPosition(
-                    indicatorPosition,
-                    indicatorCircle,
-                    svgOverlay
-                );
+                    const infoTag = this.createTag(i);
 
-                const infoTag = this.createTag(i);
-
-                svgOverlay = this.drawSVGAtPosition(
-                    indicatorPosition,
-                    infoTag,
-                    svgOverlay
-                );
+                    svgOverlay = this.drawSVGAtPosition(
+                        indicatorPosition,
+                        infoTag,
+                        svgOverlay
+                    );
+                });
             }
         }
 
@@ -602,7 +606,7 @@ export class ReportService {
 
         const img = new Image();
         img.onload = () => {
-            context.drawImage(img, 0, 0);
+            context.drawImage(img, 0, 0, width, height);
             URL.revokeObjectURL(url);
 
             canvas
