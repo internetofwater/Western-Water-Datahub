@@ -569,6 +569,9 @@ export const getLayerConfig = (
                 id: LayerId.USDroughtMonitor,
                 type: LayerType.Raster,
                 source: SourceId.USDroughtMonitor,
+                layout: {
+                    visibility: 'visible', // Must be defined to be detected correctly in the report
+                },
                 paint: {
                     'raster-opacity': BaseLayerOpacity,
                 },

@@ -23,13 +23,15 @@ const data = [
 export const SortBy: React.FC<Props> = (props) => {
     const { sortBy, handleChange } = props;
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
+
+    const isDisabled = isFetchingReservoirs || isGeneratingReport;
 
     return (
         <Select
             size="xs"
             className={styles.sortBySelect}
-            disabled={isFetchingReservoirs}
+            disabled={isDisabled}
             label="Sort by"
             value={sortBy}
             onChange={(value) => handleChange(value as SortByType)}

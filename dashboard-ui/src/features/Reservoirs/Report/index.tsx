@@ -17,10 +17,12 @@ import {
 } from '@mantine/core';
 import { MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
-import { ReportService } from '@/services/report/report.service';
+import {
+    ReportService,
+    TCallbackResponse,
+} from '@/services/report/report.service';
 import { useEffect, useRef, useState } from 'react';
-import { Map } from 'mapbox-gl';
-import { loadTeacups } from '@/features/Map/utils';
+import { Map, ScaleControl } from 'mapbox-gl';
 import { Feature, Point } from 'geojson';
 import styles from '@/features/Reservoirs/Report/Report.module.css';
 import { OrganizedProperties } from '@/features/Reservoirs/types';
@@ -29,6 +31,9 @@ import { useLoading } from '@/hooks/useLoading';
 import Select from '@/components/Select';
 import { MAX_POSITIONS } from '@/services/report/report.consts';
 import { getKey } from '@/features/Reservoirs/utils';
+import notificationManager from '@/managers/Notification.init';
+import { LoadingType, NotificationType } from '@/stores/session/types';
+import loadingManager from '@/managers/Loading.init';
 
 type Props = {
     accessToken: string;
@@ -55,20 +60,48 @@ const Report: React.FC<Props> = (props) => {
 
     const cloneMap = useRef<Map>(null);
     const container = useRef<HTMLDivElement>(null);
-    const isMounted = useRef(true);
 
     const { map } = useMap(MAP_ID);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
+
+    const createReport = (
+        map: Map,
+        features: Feature<Point, OrganizedProperties>[],
+        container: HTMLDivElement,
+        loadingInstance: string
+    ) => {
+        const callback = (response: TCallbackResponse) => {
+            const { success, message } = response;
+
+            if (success) {
+                notificationManager.show(
+                    message,
+                    NotificationType.Success,
+                    5000
+                );
+            } else {
+                notificationManager.show(message, NotificationType.Error, 7500);
+            }
+            loadingManager.remove(loadingInstance);
+        };
+
+        new ReportService().report(map, features, container, callback);
+    };
 
     const handleClick = () => {
         if (!map || !cloneMap.current || !isMapLoaded || !container.current) {
             return;
         }
 
-        cloneMap.current.setStyle(map.getStyle());
-        cloneMap.current.setCenter(map.getCenter());
-        cloneMap.current.setZoom(Math.max(map.getZoom() - 0.5, 0));
+        if (isGeneratingReport || isFetchingReservoirs) {
+            return;
+        }
+
+        const loadingInstance = loadingManager.add(
+            'Generating Reservoirs Report.',
+            LoadingType.Report
+        );
 
         const selectionSet = new Set(selectedReservoirs);
 
@@ -87,10 +120,12 @@ const Report: React.FC<Props> = (props) => {
             }
         }
 
-        void new ReportService().report(
+        cloneMap.current.setStyle(map.getStyle());
+        createReport(
             cloneMap.current,
             features,
-            container.current
+            container.current,
+            loadingInstance
         );
     };
 
@@ -132,10 +167,9 @@ const Report: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
+        let isMounted = true;
+
         const hidden = document.createElement('div');
-
-        // height: 0, width: 0, overflow: 'hidden'
-
         hidden.style.width = '0';
         hidden.style.height = '0';
         hidden.style.overflow = 'hidden';
@@ -155,22 +189,23 @@ const Report: React.FC<Props> = (props) => {
             bearing: map.getBearing(),
             pitch: map.getPitch(),
             projection: map.getProjection(),
+            preserveDrawingBuffer: true,
         });
 
-        loadTeacups(cloneMap.current);
+        // Add scale control
+        cloneMap.current.addControl(new ScaleControl());
+
+        // loadTeacups(cloneMap.current);
         cloneMap.current.once('load', () => {
-            if (isMounted.current) {
+            if (isMounted) {
                 setIsMapLoaded(true);
             }
         });
-    }, [map]);
 
-    useEffect(() => {
-        isMounted.current = true;
         return () => {
-            isMounted.current = false;
+            isMounted = false;
         };
-    }, []);
+    }, [map]);
 
     // const filter: OptionsFilter = ({ options }) => {
     //     return (options as ComboboxItem[]).filter((option) =>
@@ -178,7 +213,10 @@ const Report: React.FC<Props> = (props) => {
     //     );
     // };
 
-    const labelsSwitchProps = isFetchingReservoirs
+    const areControlsDisabled = isFetchingReservoirs || isGeneratingReport;
+    const isButtonDisabled = areControlsDisabled || !isMapLoaded;
+
+    const labelsSwitchProps = areControlsDisabled
         ? { 'data-disabled': true }
         : {};
 
@@ -214,7 +252,7 @@ const Report: React.FC<Props> = (props) => {
                             value={selectedReservoirs}
                             // filter={filter}
                             onChange={onSelectedReservoirsChange}
-                            disabled={isFetchingReservoirs}
+                            disabled={areControlsDisabled}
                         />
                         <Group
                             justify="space-between"
@@ -223,7 +261,7 @@ const Report: React.FC<Props> = (props) => {
                             <Switch
                                 size="xs"
                                 mt="calc(var(--default-spacing) / 2)"
-                                disabled={isFetchingReservoirs}
+                                disabled={areControlsDisabled}
                                 classNames={{ label: styles.label }}
                                 label="Select reservoirs from table"
                                 checked={pickFromTable}
@@ -234,7 +272,13 @@ const Report: React.FC<Props> = (props) => {
                                 }
                                 {...labelsSwitchProps}
                             />
-                            <Button onClick={handleClick}>Generate</Button>
+                            <Button
+                                onClick={handleClick}
+                                disabled={isButtonDisabled}
+                                data-disabled={isButtonDisabled}
+                            >
+                                Generate
+                            </Button>
                         </Group>
                     </Stack>
                 </AccordionPanel>

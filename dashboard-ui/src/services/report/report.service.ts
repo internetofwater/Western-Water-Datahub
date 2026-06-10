@@ -18,7 +18,7 @@ import {
     calculateYPositionContructor,
 } from '@/features/Reservior/TeacupDiagram/utils';
 import { Feature, GeoJsonProperties, Point } from 'geojson';
-import { Map, ScaleControl } from 'mapbox-gl';
+import { Map } from 'mapbox-gl';
 import { bbox, featureCollection } from '@turf/turf';
 import dayjs from 'dayjs';
 import { OrganizedProperties } from '@/features/Reservoirs/types';
@@ -28,11 +28,17 @@ import {
     TAGS,
 } from '@/services/report/report.consts';
 
+export type TCallbackResponse = {
+    success: boolean;
+    message: string;
+};
+
 export class ReportService {
-    public async report(
+    public report(
         map: Map,
         reservoirs: Feature<Point, OrganizedProperties>[],
-        container: HTMLDivElement
+        container: HTMLDivElement,
+        callback?: (response: TCallbackResponse) => void
     ) {
         this.positionView(map, reservoirs);
         this.modifyLayers(map);
@@ -40,8 +46,6 @@ export class ReportService {
         svgOverlay.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
         svgOverlay.setAttribute('font', '"Geist", "Geist Fallback"');
 
-        // const reservoirsInCircle = this.sortReservoirs(map, reservoirs);
-        //const reservoir of reservoirsInCircle
         for (let i = 0; i < reservoirs.length; i++) {
             const reservoir = reservoirs[i];
             const config = getReservoirConfig(
@@ -73,6 +77,7 @@ export class ReportService {
                 const position = RESERVOIR_POSITIONS[i];
 
                 const reservoirSVG = this.createReservoirSVG(config, reservoir);
+
                 svgOverlay = this.drawSVGAtPosition(
                     position,
                     reservoirSVG,
@@ -84,49 +89,50 @@ export class ReportService {
                 // Draw this svg, then calculate the width in the dom to reposition
                 svgOverlay = this.drawSVG(infoSVG, svgOverlay);
 
-                const { width: infoBoxWidth } = infoSVG.getBoundingClientRect();
+                // Bounding rect wont reflect bounds accurately until end of next frame
+                requestAnimationFrame(() => {
+                    const { width: infoBoxWidth } =
+                        infoSVG.getBoundingClientRect();
 
-                const infoBoxPosition = {
-                    x: position.x - Math.abs(160 - infoBoxWidth) / 2,
-                    y:
-                        position.y +
-                        (Number(reservoirSVG.getAttribute('height')) ?? 0),
-                };
+                    const infoBoxPosition = {
+                        x: position.x - Math.abs(160 - infoBoxWidth) / 2,
+                        y:
+                            position.y +
+                            (Number(reservoirSVG.getAttribute('height')) ?? 0),
+                    };
 
-                this.repostion(infoBoxPosition, infoSVG);
+                    this.repostion(infoBoxPosition, infoSVG);
+                    const indicatorCircle = this.createCircle(i);
+                    const indicatorPosition = {
+                        x: position.x - Math.abs(160 - infoBoxWidth) / 2 - 2, // position at bottom left corner
+                        y:
+                            position.y +
+                            (Number(reservoirSVG.getAttribute('height')) ?? 0) -
+                            2,
+                    };
 
-                const indicatorCircle = this.createCircle(i);
-                const indicatorPosition = {
-                    x: position.x - Math.abs(160 - infoBoxWidth) / 2 - 2, // position at bottom left corner
-                    y:
-                        position.y +
-                        (Number(reservoirSVG.getAttribute('height')) ?? 0) -
-                        2,
-                };
+                    svgOverlay = this.drawSVGAtPosition(
+                        indicatorPosition,
+                        indicatorCircle,
+                        svgOverlay
+                    );
 
-                svgOverlay = this.drawSVGAtPosition(
-                    indicatorPosition,
-                    indicatorCircle,
-                    svgOverlay
-                );
+                    const infoTag = this.createTag(i);
 
-                const infoTag = this.createTag(i);
-
-                svgOverlay = this.drawSVGAtPosition(
-                    indicatorPosition,
-                    infoTag,
-                    svgOverlay
-                );
+                    svgOverlay = this.drawSVGAtPosition(
+                        indicatorPosition,
+                        infoTag,
+                        svgOverlay
+                    );
+                });
             }
         }
 
         // Wait for map to render
-        map.setBearing(map.getBearing());
-        await new Promise((resolve) => map.once('render', resolve));
-        await new Promise(requestAnimationFrame);
-
-        // Combine map canvas and SVG overlay
-        this.exportCombinedImage(map, svgOverlay);
+        map.triggerRepaint();
+        map.once('idle', () => {
+            this.exportCombinedImage(map, svgOverlay, callback);
+        });
     }
 
     private positionView(map: Map, reservoirs: Feature<Point>[]) {
@@ -150,6 +156,7 @@ export class ReportService {
                 },
                 maxZoom: 16,
                 duration: 0,
+                animate: false,
             }
         );
     }
@@ -161,13 +168,13 @@ export class ReportService {
         map.setLayoutProperty(SubLayerId.BasinsBoundary, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.StatesFill, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.StatesBoundary, 'visibility', 'none');
-        getAllReservoirConfigs().forEach((config) => {
+        for (const config of getAllReservoirConfigs()) {
             [config.iconLayer, config.labelLayer].forEach((layerId) => {
                 if (map.getLayer(layerId)) {
                     map.setLayoutProperty(layerId, 'visibility', 'none');
                 }
             });
-        });
+        }
     }
 
     private addSVGLayer(container: HTMLElement): SVGSVGElement {
@@ -186,98 +193,11 @@ export class ReportService {
         return svg;
     }
 
-    private sortReservoirs<T extends GeoJsonProperties>(
-        map: Map,
-        reservoirs: Feature<Point, T>[]
-    ): Feature<Point, T>[] {
-        const TWO_PI = Math.PI * 2;
-
-        type Projected = {
-            res: Feature<Point, T>;
-            x: number;
-            y: number;
-            theta: number; // Angle position around center point
-            absDy: number; // Normalized position between top and bottom
-            r: number; // Radius, distance to center point
-        };
-
-        // Project lat-lngs to x & y
-        const pts: Projected[] = reservoirs.map((res) => {
-            const [lng, lat] = res.geometry.coordinates;
-            const { x, y } = map.project([lng, lat]);
-            return { res, x, y, theta: 0, absDy: 0, r: 0 };
-        });
-
-        // Determine center point of provided points
-        const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
-        const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
-
-        // This is a screen grid so top left corner is (0, 0)
-        // Inverting the y allows us to interact with these coordinates
-        // using more basic math
-        for (const p of pts) {
-            const dx = p.x - cx;
-            const dyMath = cy - p.y; // Invert y
-            let theta = Math.atan2(dyMath, dx);
-            // tan(theta) = opposite(dyMath, dx)
-            if (theta < 0) {
-                theta += TWO_PI;
-            }
-            p.theta = theta;
-            p.absDy = Math.abs(p.y - cy);
-            p.r = Math.hypot(dx, p.y - cy);
+    private getDevicePixelRatio(): number {
+        if (window?.devicePixelRatio) {
+            return 1 / window.devicePixelRatio;
         }
-
-        // Locate east-most point that is closest to the center Y point
-        pts.sort((a, b) => {
-            if (a.absDy !== b.absDy) {
-                return a.absDy - b.absDy;
-            }
-
-            const ax = a.x - cx;
-            const bx = b.x - cx;
-
-            if (ax >= 0 !== bx >= 0) {
-                return ax >= 0 ? -1 : 1;
-            }
-
-            if (ax !== bx) {
-                return bx - ax;
-            }
-
-            if (a.r !== b.r) {
-                return a.r - b.r;
-            }
-            return 0;
-        });
-
-        const theta0 = pts[0].theta;
-
-        // Sort points counter-clockwise starting from most centered/east-most point
-        pts.sort((a, b) => {
-            const da = (a.theta - theta0 + TWO_PI) % TWO_PI;
-            const db = (b.theta - theta0 + TWO_PI) % TWO_PI;
-
-            if (da !== db) {
-                return da - db;
-            }
-
-            if (a.r !== b.r) {
-                return a.r - b.r;
-            }
-
-            const ax = a.x - cx,
-                ay = a.y - cy;
-            const bx = b.x - cx,
-                by = b.y - cy;
-            // prefer east
-            if (ax !== bx) {
-                return bx - ax;
-            }
-            return ay - by; // then north (smaller y)
-        });
-
-        return pts.map((p) => p.res);
+        return 1;
     }
 
     private createCircle(index: number): SVGCircleElement {
@@ -288,7 +208,11 @@ export class ReportService {
 
         const color = TAG_COLORS[index];
 
-        circle.setAttribute('stroke', `#000`);
+        // circle.setAttribute('stroke', `#000`);
+        circle.setAttribute(
+            'stroke',
+            `color-mix(in srgb, ${color} 70%, black)`
+        );
 
         circle.setAttribute('stroke-width', `3`);
 
@@ -630,10 +554,16 @@ export class ReportService {
         return { id: 'none-legend', w: 293, h: 228 };
     }
 
-    private exportCombinedImage(map: Map, svgOverlay: SVGSVGElement) {
+    private exportCombinedImage(
+        map: Map,
+        svgOverlay: SVGSVGElement,
+        callback?: (response: TCallbackResponse) => void
+    ) {
         const mapCanvas = map.getCanvas();
-        const width = mapCanvas.width;
-        const height = mapCanvas.height;
+        const devicePixelRatio = this.getDevicePixelRatio();
+
+        const width = mapCanvas.width * devicePixelRatio;
+        const height = mapCanvas.height * devicePixelRatio;
 
         const {
             id: legendId,
@@ -645,9 +575,7 @@ export class ReportService {
             legendId
         ) as HTMLImageElement | null;
 
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
+        const canvas = new OffscreenCanvas(width, height);
         const context = canvas.getContext('2d');
         if (!context) {
             return;
@@ -656,7 +584,7 @@ export class ReportService {
         // Draw map canvas
         context.save();
         context.globalCompositeOperation = 'source-over';
-        context.drawImage(mapCanvas, 0, 0);
+        context.drawImage(mapCanvas, 0, 0, width, height);
         context.restore();
 
         const legendPosition = { x: 1297, y: 519 };
@@ -688,33 +616,48 @@ export class ReportService {
 
         const img = new Image();
         img.onload = () => {
-            context.drawImage(img, 0, 0);
+            context.drawImage(img, 0, 0, width, height);
             URL.revokeObjectURL(url);
 
-            canvas.toBlob((blob) => {
-                if (blob) {
+            canvas
+                .convertToBlob()
+                .then((blob) => {
                     const a = document.createElement('a');
                     a.href = URL.createObjectURL(blob);
                     a.download = 'report.png';
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
-                }
-            }, 'image/png');
+
+                    if (callback) {
+                        callback({
+                            success: true,
+                            message: 'Report generated successfully.',
+                        });
+                    }
+                    return blob;
+                })
+                .catch((error) => {
+                    console.error('Issue creating report: ', error);
+                    if (callback) {
+                        callback({
+                            success: false,
+                            message:
+                                'Error encountered converting report to png.',
+                        });
+                    }
+                });
         };
         img.src = url;
     }
 
     private drawScale(
         map: Map,
-        context: CanvasRenderingContext2D,
+        context: OffscreenCanvasRenderingContext2D,
         legendPosition: { x: number; y: number },
         legendWidth: number,
         legendHeight: number
     ) {
-        // Add scale control
-        map.addControl(new ScaleControl());
-
         // Get scale HTML element
         const scaleElement = map
             .getContainer()

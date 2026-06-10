@@ -28,7 +28,7 @@ export const State: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [stateOptions, setStateOptions] = useState<ComboboxData>([]);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
@@ -108,6 +108,8 @@ export const State: React.FC = () => {
         };
     }, []);
 
+    const isDisabled = isFetchingReservoirs || isGeneratingReport;
+
     return (
         <>
             {loading || stateOptions.length === 0 ? (
@@ -120,7 +122,7 @@ export const State: React.FC = () => {
                     size="xs"
                     id="stateSelector"
                     className={styles.multiselect}
-                    disabled={isFetchingReservoirs}
+                    disabled={isDisabled}
                     data={stateOptions}
                     value={state}
                     aria-label="Select a State"

@@ -15,6 +15,7 @@ export const useLoading = () => {
     const [isFetchingSnotel, setIsFetchingSnotel] = useState(false);
     const [isFetchingSingleReservoir, setIsFetchingSingleReservoir] =
         useState(false);
+    const [isGeneratingReport, setIsGeneratingReport] = useState(false);
 
     useEffect(() => {
         setIsFetchingReservoirs(
@@ -24,9 +25,18 @@ export const useLoading = () => {
         setIsFetchingSingleReservoir(
             loadingManager.has({ type: LoadingType.SingleReservoir })
         );
+        setIsGeneratingReport(loadingManager.has({ type: LoadingType.Report }));
     }, [loadingInstances]);
 
+    const isLoading =
+        isFetchingReservoirs ||
+        isFetchingSnotel ||
+        isFetchingSingleReservoir ||
+        isGeneratingReport;
+
     return {
+        isLoading,
+        isGeneratingReport,
         isFetchingReservoirs,
         isFetchingSnotel,
         isFetchingSingleReservoir,

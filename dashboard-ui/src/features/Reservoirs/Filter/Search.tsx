@@ -18,7 +18,7 @@ export const Search: React.FC<Props> = (props) => {
 
     const [localSearch, setLocalSearch] = useState(search);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -30,10 +30,12 @@ export const Search: React.FC<Props> = (props) => {
         };
     }, [localSearch]);
 
+    const isDisabled = isFetchingReservoirs || isGeneratingReport;
+
     return (
         <TextInput
             size="xs"
-            disabled={isFetchingReservoirs}
+            disabled={isDisabled}
             className={styles.searchInput}
             label={'Reservoir'}
             placeholder="Search by name"

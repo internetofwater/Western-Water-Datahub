@@ -71,7 +71,7 @@ export const Table: React.FC<Props> = (props) => {
 
     const { map } = useMap(MAP_ID);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
     const handlePageSizeChange = (pageSize: number) => {
         setPageSize(pageSize);
@@ -327,9 +327,10 @@ export const Table: React.FC<Props> = (props) => {
                                                         <Checkbox
                                                             size="xs"
                                                             disabled={
-                                                                !selectedReservoir &&
-                                                                selectedReservoirs.length ===
-                                                                    MAX_POSITIONS
+                                                                isGeneratingReport ||
+                                                                (!selectedReservoir &&
+                                                                    selectedReservoirs.length ===
+                                                                        MAX_POSITIONS)
                                                             }
                                                             checked={
                                                                 selectedReservoir
@@ -401,6 +402,9 @@ export const Table: React.FC<Props> = (props) => {
                                                 >
                                                     <ActionIcon
                                                         title={`Go to ${name} on the map`}
+                                                        disabled={
+                                                            isGeneratingReport
+                                                        }
                                                         onClick={(e) =>
                                                             handleViewOnMap(
                                                                 e,
@@ -434,7 +438,7 @@ export const Table: React.FC<Props> = (props) => {
                     size="xs"
                     className={styles.pageSizeInput}
                     label="Reservoirs per page"
-                    disabled={reservoirs.length === 0}
+                    disabled={reservoirs.length === 0 || isGeneratingReport}
                     {...(reservoirs.length === 0
                         ? {
                               'data-disabled': true,
@@ -447,6 +451,7 @@ export const Table: React.FC<Props> = (props) => {
                 />
                 <Pagination
                     size="sm"
+                    disabled={isGeneratingReport}
                     total={chunkedLocations.length}
                     value={page}
                     onChange={setPage}

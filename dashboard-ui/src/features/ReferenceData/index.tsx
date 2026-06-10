@@ -25,6 +25,7 @@ import styles from '@/features/ReferenceData/ReferenceData.module.css';
 import { Links } from '@/features/ReferenceData/Links';
 import { Entry } from '@/features/ReferenceData/Entry';
 import { getLayerName } from '@/features/Map/config';
+import { useLoading } from '@/hooks/useLoading';
 
 const RasterBaseLayerIconObj = [
     {
@@ -59,6 +60,8 @@ const ReferenceData: React.FC = () => {
     );
 
     const { map } = useMap(MAP_ID);
+
+    const { isGeneratingReport } = useLoading();
 
     const isMounted = useRef(true);
 
@@ -149,7 +152,8 @@ const ReferenceData: React.FC = () => {
     // Work around, Mantine bug applies data-disabled styling even when false
     // const snotelSwitchProps = isFetchingSnotel ? { 'data-disabled': true } : {};
 
-    const isReferenceDataDisabled = reservoirDate !== null;
+    const isReferenceDataDisabled =
+        reservoirDate !== null || isGeneratingReport;
 
     return (
         <Stack
@@ -180,7 +184,7 @@ const ReferenceData: React.FC = () => {
                                 value: obj.id,
                                 label: obj.friendlyName,
                                 disabled:
-                                    reservoirDate !== null &&
+                                    isReferenceDataDisabled &&
                                     [
                                         RasterBaseLayers.Drought,
                                         RasterBaseLayers.Precipitation,
