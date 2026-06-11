@@ -273,7 +273,7 @@ def run_location_load(force_clean_layer=False) -> None:
         feature.SetField("source_uri", row["source_uri"])
         feature.SetField("source_name", row["source_name"])
         feature.SetField("source_api_url", row["source_api_url"])
-        feature.SetField("reservoir_notes", row["reservoir_notes")
+        feature.SetField("reservoir_notes", row["reservoir_notes"])
         feature.SetField("huc6", row["huc6"])
         feature.SetField("huc12", row["huc12"])
         feature.SetField("state", row["state"])
