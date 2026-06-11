@@ -47,7 +47,11 @@ export const ReservoirDateSelector: React.FC = () => {
     const isDisabled = isFetchingReservoirs || isGeneratingReport;
 
     return (
-        <Stack gap="calc(var(--default-spacing) / 4)" align="flex-start">
+        <Stack
+            gap="calc(var(--default-spacing) / 4)"
+            align="flex-start"
+            mt="var(--default-spacing)"
+        >
             <Checkbox
                 size="xs"
                 className={styles.dateCheckbox}
@@ -60,7 +64,7 @@ export const ReservoirDateSelector: React.FC = () => {
             />
             {hasReservoirDate && (
                 <DateInput
-                    size="xs"
+                    size="sm"
                     classNames={{ input: styles.multiselect }}
                     valueFormat="MM/DD/YYYY"
                     placeholder="MM/DD/YYYY"

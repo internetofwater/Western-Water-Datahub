@@ -92,7 +92,7 @@ export const Filter: React.FC<Props> = (props) => {
                 justify="space-between"
                 mt="calc(var(--default-spacing) / 2)"
             >
-                <Title order={3} size="h5">
+                <Title order={3} size="h4">
                     Filters
                 </Title>
                 <Box component="span" className={styles.filterIcon}>
@@ -100,6 +100,7 @@ export const Filter: React.FC<Props> = (props) => {
                 </Box>
             </Group>
             <ReservoirDateSelector />
+            <Divider my="calc(var(--default-spacing) / 2)" />
             <Group
                 gap="var(--default-spacing)"
                 my="calc(var(--default-spacing) / 2)"
