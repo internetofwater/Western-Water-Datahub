@@ -103,7 +103,6 @@ export const Filter: React.FC<Props> = (props) => {
             <Divider my="calc(var(--default-spacing) / 2)" />
             <Group
                 gap="var(--default-spacing)"
-                my="calc(var(--default-spacing) / 2)"
                 align="flex-start"
                 wrap="nowrap"
             >
