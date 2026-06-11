@@ -402,8 +402,8 @@ def create_feature(pg_layer, row, parameter: str):
         assert row[p_val] >= 0, "Value is negative"
     except (ValueError, TypeError, AssertionError):
         LOGGER.warning(
-            f"Skipping invalid value {row[p_val]} "
-            f"on {row['DataDate']} from {row['SiteName']}"
+            f"Skipping invalid {p_val} from {row['SiteName']}"
+            f" on {row['DataDate']} with value: {row[p_val]}"
         )
         return
 

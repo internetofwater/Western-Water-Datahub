@@ -70,6 +70,8 @@ def run_subprocess(csv_url: str):
     pg_layer = pg_ds.GetLayerByName("teacup")
 
     # Process source 'layer'
+    pg_layer.StartTransaction()
+    count = 0
     for feature in layer:
         try:
             row = {
@@ -90,6 +92,13 @@ def run_subprocess(csv_url: str):
             )
             continue
 
+        value_checks = [isnan(float(row["DataValue"])), float(row["DataValue"]) < 0]
+        if any(value_checks):
+            LOGGER.error(
+                f"Skipping {row['DataValue']} on {row['DataDate']} from {row['SiteName']}"
+            )
+            continue
+
         try:
             row["DataDate"] = datetime.strptime(row["DataDate"], "%m/%d/%Y").strftime(
                 "%Y-%m-%d"
@@ -98,10 +107,6 @@ def run_subprocess(csv_url: str):
             LOGGER.error(
                 f"Skipping invalid date {row['DataDate']} from {row['SiteName']}"
             )
-            continue
-
-        if isnan(float(row["DataValue"])):
-            LOGGER.error(f"Skipping NaN on {row['DataDate']} from {row['SiteName']}")
             continue
 
         LOGGER.debug(
@@ -120,6 +125,17 @@ def run_subprocess(csv_url: str):
         create_feature(pg_layer, row, "p10")
         # Upsert 90th percentile value
         create_feature(pg_layer, row, "p90")
+
+        count += 4  # 4 features created per row (raw, avg, p10, p90)
+        if count % 10000 == 0:
+            try:
+                LOGGER.info(f"Committed {count} features to database...")
+                pg_layer.CommitTransaction()
+                pg_layer.StartTransaction()
+            except RuntimeError as e:
+                LOGGER.error(e)
+
+    pg_layer.CommitTransaction()
 
 
 @click.command()
