@@ -200,6 +200,24 @@ export class ReportService {
         return 1;
     }
 
+    private invertHexToBW(
+        hex: string,
+        ): string {
+        hex = hex.replace(/^#/, '');
+
+        if (hex.length !== 6) {
+            throw new Error('Invalid hex color');
+        }
+
+        const r = parseInt(hex.slice(0, 2), 16);
+        const g = parseInt(hex.slice(2, 4), 16);
+        const b = parseInt(hex.slice(4, 6), 16);
+
+        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+        return luminance > 128 ? '#000000' : '#ffffff';
+ 
+    }
+    
     private createCircle(index: number): SVGCircleElement {
         const circle = document.createElementNS(
             'http://www.w3.org/2000/svg',
@@ -230,9 +248,10 @@ export class ReportService {
         );
         tag.textContent = TAGS[index].toUpperCase();
 
+        const color = this.invertHexToBW(TAG_COLORS[index]);
         tag.setAttribute('text-anchor', 'middle');
         tag.setAttribute('dominant-baseline', 'middle');
-        tag.setAttribute('fill', '#000');
+        tag.setAttribute('fill', color);
         tag.setAttribute('font-size', '14');
         tag.setAttribute('font-weight', 'bold');
         tag.setAttribute('font-family', 'sans-serif');
