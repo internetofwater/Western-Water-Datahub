@@ -92,13 +92,6 @@ def run_subprocess(csv_url: str):
             )
             continue
 
-        value_checks = [isnan(float(row["DataValue"])), float(row["DataValue"]) < 0]
-        if any(value_checks):
-            LOGGER.error(
-                f"Skipping {row['DataValue']} on {row['DataDate']} from {row['SiteName']}"
-            )
-            continue
-
         try:
             row["DataDate"] = datetime.strptime(row["DataDate"], "%m/%d/%Y").strftime(
                 "%Y-%m-%d"
@@ -106,6 +99,13 @@ def run_subprocess(csv_url: str):
         except ValueError:
             LOGGER.error(
                 f"Skipping invalid date {row['DataDate']} from {row['SiteName']}"
+            )
+            continue
+
+        value_checks = [isnan(float(row["DataValue"])), float(row["DataValue"]) < 0]
+        if any(value_checks):
+            LOGGER.error(
+                f"Skipping {row['DataValue']} on {row['DataDate']} from {row['SiteName']}"
             )
             continue
 
