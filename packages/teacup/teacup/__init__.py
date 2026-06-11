@@ -129,8 +129,8 @@ def run_subprocess(csv_url: str):
         count += 4  # 4 features created per row (raw, avg, p10, p90)
         if count % 10000 == 0:
             try:
-                LOGGER.info(f"Committed {count} features to database...")
                 pg_layer.CommitTransaction()
+                LOGGER.info(f"Committed {count} features to database...")
                 pg_layer.StartTransaction()
             except RuntimeError as e:
                 LOGGER.error(e)
