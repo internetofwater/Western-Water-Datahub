@@ -8,10 +8,10 @@ export const joinSentence = (parts: string[], conjunction: string): string => {
         return '';
     }
     if (parts.length === 1) {
-        return `${parts[0]}.`;
+        return `${parts[0]}`;
     }
     if (parts.length === 2) {
-        return `${parts[0]}, ${conjunction} ${parts[1]}.`;
+        return `${parts[0]}, ${conjunction} ${parts[1]}`;
     }
-    return `${parts.slice(0, -1).join(', ')}, ${conjunction} ${parts[parts.length - 1]}.`;
+    return `${parts.slice(0, -1).join(', ')}, ${conjunction} ${parts[parts.length - 1]}`;
 };
