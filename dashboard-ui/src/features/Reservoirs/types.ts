@@ -34,3 +34,14 @@ export type OrganizedProperties = {
 };
 
 export type OrganizedFeature = Feature<Point, OrganizedProperties>;
+
+export type Filters = {
+    search: string;
+    sortBy: SortBy;
+    sortOrder: SortOrder;
+    hideNoData: boolean;
+    limitByExtent: boolean;
+    region: string[];
+    basin: string[];
+    state: string[];
+};

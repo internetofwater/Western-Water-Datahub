@@ -369,6 +369,9 @@ const Reservoirs: React.FC<Props> = (props) => {
                     sortOrder,
                     hideNoData,
                     limitByExtent,
+                    region,
+                    basin,
+                    state,
                 }}
             />
             {filteredReservoirs && (

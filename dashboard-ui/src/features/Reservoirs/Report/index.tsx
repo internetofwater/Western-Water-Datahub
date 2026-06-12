@@ -28,58 +28,17 @@ import { useEffect, useRef, useState } from 'react';
 import { Map, ScaleControl } from 'mapbox-gl';
 import { Feature, Point } from 'geojson';
 import styles from '@/features/Reservoirs/Report/Report.module.css';
-import { OrganizedProperties } from '@/features/Reservoirs/types';
+import { Filters, OrganizedProperties } from '@/features/Reservoirs/types';
 import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
-import { SortBy as SortByType, SortOrder } from '@/features/Reservoirs/types';
 import { useLoading } from '@/hooks/useLoading';
 import Select from '@/components/Select';
 import { MAX_POSITIONS } from '@/services/report/report.consts';
-import {
-    getKey,
-    getSortByLabel,
-    getSortOrderLabel,
-} from '@/features/Reservoirs/utils';
+import { getKey } from '@/features/Reservoirs/utils';
 import notificationManager from '@/managers/Notification.init';
 import { LoadingType, NotificationType } from '@/stores/session/types';
 import loadingManager from '@/managers/Loading.init';
-import { joinSentence } from '@/utils/joinSentence';
 import Info from '@/icons/Info';
-
-const getMessage = (
-    filters: Filters,
-    freezeSelection: boolean,
-    count: number
-): string => {
-    if (freezeSelection) {
-        return 'Custom reservoir selection.';
-    }
-
-    const parts: string[] = [];
-    parts.push(
-        `Showing the top ${count} reservoirs based on their ${getSortByLabel(filters.sortBy)} value in ${getSortOrderLabel(filters.sortOrder)} order`
-    );
-    if (filters.search.length > 0) {
-        parts.push(`that match the search term: ${filters.search}`);
-    }
-
-    if (filters.hideNoData) {
-        parts.push('only reservoirs that have data');
-    }
-
-    if (filters.limitByExtent) {
-        parts.push('are visible on the map to the right');
-    }
-
-    return joinSentence(parts, 'and');
-};
-
-type Filters = {
-    search: string;
-    sortBy: SortByType;
-    sortOrder: SortOrder;
-    hideNoData: boolean;
-    limitByExtent: boolean;
-};
+import { TooltipDetail } from './TooltipDetail';
 
 type Props = {
     accessToken: string;
@@ -109,7 +68,6 @@ const Report: React.FC<Props> = (props) => {
     const [isMapLoaded, setIsMapLoaded] = useState(false);
 
     const [options, setOptions] = useState<ComboboxItem[]>([]);
-    const [message, setMessage] = useState('');
 
     const cloneMap = useRef<Map>(null);
     const container = useRef<HTMLDivElement>(null);
@@ -261,15 +219,6 @@ const Report: React.FC<Props> = (props) => {
         };
     }, [map]);
 
-    useEffect(() => {
-        const message = getMessage(
-            filters,
-            freezeSelection,
-            selectedReservoirs.length
-        );
-        setMessage(message);
-    }, [filters, selectedReservoirs, freezeSelection]);
-
     // const filter: OptionsFilter = ({ options }) => {
     //     return (options as ComboboxItem[]).filter((option) =>
     //         reservoirs.some((reservoir) => getKey(reservoir) === option.value)
@@ -325,10 +274,12 @@ const Report: React.FC<Props> = (props) => {
                                 reservoir(s)
                             </Text>
                             {freezeSelection ? (
-                                <Text size="xs">{message}</Text>
+                                <Text size="xs">
+                                    Custom reservoir selection.
+                                </Text>
                             ) : (
                                 <Tooltip
-                                    label={message}
+                                    label={<TooltipDetail filters={filters} />}
                                     multiline
                                     position="top-start"
                                 >
