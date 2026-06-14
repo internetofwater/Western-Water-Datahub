@@ -5,17 +5,34 @@
 
 import { useEffect, useState } from 'react';
 import { Filters } from '../types';
-import { List, Text } from '@mantine/core';
+import { ComboboxItem, List, Text } from '@mantine/core';
 import { getSortByLabel, getSortOrderLabel } from '../utils';
 import { joinSentence } from '@/utils/joinSentence';
+import useMainStore from '@/stores/main';
 
 const getGeoBoundBullet = (
     bounds: Filters['region' | 'basin' | 'state'],
-    title: string
+    title: string = ''
 ) => {
-    const label = bounds.length === 1 ? title : `${title}s`;
+    if (title.length > 0) {
+        const label = bounds.length === 1 ? title : `${title}s`;
 
-    return `Reservoirs within the ${joinSentence(bounds, 'and')} ${label}`;
+        return `Reservoirs within the ${joinSentence(bounds, 'and')} ${label}`;
+    }
+
+    return `Reservoirs within ${joinSentence(bounds, 'and')}`;
+};
+
+const getLabels = (values: string[], options: ComboboxItem[]) => {
+    return values.map((value) => {
+        const option = options.find((option) => option.value === value);
+
+        if (option) {
+            return option.label;
+        }
+
+        return value;
+    });
 };
 
 type Props = {
@@ -24,6 +41,10 @@ type Props = {
 
 export const TooltipDetail: React.FC<Props> = (props) => {
     const { filters } = props;
+
+    const regionOptions = useMainStore((state) => state.regionOptions);
+    const basinOptions = useMainStore((state) => state.basinOptions);
+    const stateOptions = useMainStore((state) => state.stateOptions);
 
     const [bullets, setBullets] = useState<string[]>([]);
 
@@ -45,15 +66,18 @@ export const TooltipDetail: React.FC<Props> = (props) => {
         }
 
         if (filters.region.length > 0) {
-            bullets.push(getGeoBoundBullet(filters.region, 'region'));
+            const labels = getLabels(filters.region, regionOptions);
+            bullets.push(getGeoBoundBullet(labels, 'region'));
         }
 
         if (filters.basin.length > 0) {
-            bullets.push(getGeoBoundBullet(filters.basin, 'basin'));
+            const labels = getLabels(filters.basin, basinOptions);
+            bullets.push(getGeoBoundBullet(labels, 'basin'));
         }
 
         if (filters.state.length > 0) {
-            bullets.push(getGeoBoundBullet(filters.state, 'state'));
+            const labels = getLabels(filters.state, stateOptions);
+            bullets.push(getGeoBoundBullet(labels));
         }
 
         setBullets(bullets);
@@ -62,7 +86,7 @@ export const TooltipDetail: React.FC<Props> = (props) => {
     return (
         <>
             <Text size="sm">
-                Showing the top reservoirs as they are shown in the table based
+                Showing the top reservoirs as they appear in the table, based
                 on:
             </Text>
             <List size="sm">

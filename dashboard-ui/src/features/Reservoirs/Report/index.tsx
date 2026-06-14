@@ -307,7 +307,9 @@ const Report: React.FC<Props> = (props) => {
                                 <Switch
                                     size="xs"
                                     mt="calc(var(--default-spacing) / 2)"
-                                    disabled={areControlsDisabled}
+                                    disabled={
+                                        areControlsDisabled || pickFromTable
+                                    }
                                     classNames={{ label: styles.label }}
                                     label={
                                         <Tooltip
@@ -317,7 +319,7 @@ const Report: React.FC<Props> = (props) => {
                                         >
                                             {/*  */}
                                             <Text size="xs" mt="-0.125rem">
-                                                Freeze Selection
+                                                Freeze selection
                                                 <Box
                                                     ml="calc(var(--default-spacing) / 2)"
                                                     component="span"
@@ -341,7 +343,7 @@ const Report: React.FC<Props> = (props) => {
                                     mt="calc(var(--default-spacing) / 2)"
                                     disabled={areControlsDisabled}
                                     classNames={{ label: styles.label }}
-                                    label="Select Reservoirs from Table"
+                                    label="Select reservoirs from the table"
                                     checked={pickFromTable}
                                     onClick={(event) =>
                                         onPickFromTableChange(

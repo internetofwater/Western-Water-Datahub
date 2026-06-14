@@ -46,8 +46,8 @@ export const getSortByLabel = (sortBy: SortBy): string => {
 export const getSortOrderLabel = (sortOrder: SortOrder): string => {
     switch (sortOrder) {
         case 'asc':
-            return 'Ascending';
+            return 'ascending (smallest to largest)';
         case 'desc':
-            return 'Descending';
+            return 'descending (largest to smallest)';
     }
 };

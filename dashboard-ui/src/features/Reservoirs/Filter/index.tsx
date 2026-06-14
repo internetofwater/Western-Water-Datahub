@@ -194,7 +194,7 @@ export const Filter: React.FC<Props> = (props) => {
                     mt="calc(var(--default-spacing) / 2)"
                     disabled={isDisabled}
                     classNames={{ label: styles.label }}
-                    label="Hide Reservoirs not on Map"
+                    label="Hide reservoirs that are offscreen"
                     checked={limitByExtent}
                     onClick={(event) =>
                         onLimitByExtentChange(event.currentTarget.checked)
