@@ -36,7 +36,7 @@ import { useLoading } from '@/hooks/useLoading';
 import { Properties } from '@/components/Map/types';
 import Reset from '@/icons/Reset';
 import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
-import { ExtendedProperties } from './Info/Metrics';
+import { ExtendedProperties } from '@/features/Reservior/Info/Metrics';
 
 /**
  *

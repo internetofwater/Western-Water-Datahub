@@ -7,6 +7,7 @@ import { Select } from '@mantine/core';
 import { SortBy as SortByType } from '@/features/Reservoirs/types';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import { useLoading } from '@/hooks/useLoading';
+import { getSortByLabel } from '@/features/Reservoirs/utils';
 
 type Props = {
     sortBy: SortByType;
@@ -14,10 +15,16 @@ type Props = {
 };
 
 const data = [
-    { value: SortByType.Capacity, label: 'Capacity' },
-    { value: SortByType.Storage, label: 'Storage' },
-    { value: SortByType.PercentFull, label: 'Percent of Full' },
-    { value: SortByType.PercentAverage, label: 'Percent of Average' },
+    { value: SortByType.Capacity, label: getSortByLabel(SortByType.Capacity) },
+    { value: SortByType.Storage, label: getSortByLabel(SortByType.Storage) },
+    {
+        value: SortByType.PercentFull,
+        label: getSortByLabel(SortByType.PercentFull),
+    },
+    {
+        value: SortByType.PercentAverage,
+        label: getSortByLabel(SortByType.PercentAverage),
+    },
 ];
 
 export const SortBy: React.FC<Props> = (props) => {

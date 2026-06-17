@@ -51,6 +51,8 @@ const Reservoirs: React.FC<Props> = (props) => {
     const [limitByExtent, setLimitByExtent] = useState(false);
     // Select reservoirs for the report from the table
     const [pickFromTable, setPickFromTable] = useState(false);
+    // Manual selection
+    const [freezeSelection, setFreezeSelection] = useState(false);
 
     // Reservoirs included in the report
     const [selectedReservoirs, setSelectedReservoirs] = useState<string[]>([]);
@@ -280,7 +282,7 @@ const Reservoirs: React.FC<Props> = (props) => {
     }, [showByExtent, filteredReservoirs]);
 
     useEffect(() => {
-        if (pickFromTable) {
+        if (freezeSelection) {
             return;
         }
 
@@ -316,7 +318,7 @@ const Reservoirs: React.FC<Props> = (props) => {
         }
 
         setSelectedReservoirs(newSelectedReservoirs);
-    }, [limitedReservoirs]);
+    }, [freezeSelection, limitedReservoirs]);
 
     const handleSearchChange = (search: string) => setSearch(search);
     const handleSortByChange = (sortBy: SortBy) => setSortBy(sortBy);
@@ -326,10 +328,17 @@ const Reservoirs: React.FC<Props> = (props) => {
         setHideNoData(hideNoData);
     const handleLimitByExtentChange = (limitByExtent: boolean) =>
         setLimitByExtent(limitByExtent);
-    const handlePickFromTableChange = (pickFromTable: boolean) =>
+    const handlePickFromTableChange = (pickFromTable: boolean) => {
+        if (pickFromTable) {
+            setFreezeSelection(true);
+        }
         setPickFromTable(pickFromTable);
-    const handleSelectedReservoirsChange = (selectedReservoirs: string[]) =>
+    };
+    const handleSelectedReservoirsChange = (selectedReservoirs: string[]) => {
         setSelectedReservoirs(selectedReservoirs);
+    };
+    const handleFreezeSelectionChange = (freezeSelection: boolean) =>
+        setFreezeSelection(freezeSelection);
 
     return (
         <>
@@ -350,8 +359,20 @@ const Reservoirs: React.FC<Props> = (props) => {
                 reservoirs={limitedReservoirs}
                 pickFromTable={pickFromTable}
                 onPickFromTableChange={handlePickFromTableChange}
+                freezeSelection={freezeSelection}
+                onFreezeSelectionChange={handleFreezeSelectionChange}
                 selectedReservoirs={selectedReservoirs}
                 onSelectedReservoirsChange={handleSelectedReservoirsChange}
+                filters={{
+                    search,
+                    sortBy,
+                    sortOrder,
+                    hideNoData,
+                    limitByExtent,
+                    region,
+                    basin,
+                    state,
+                }}
             />
             {filteredReservoirs && (
                 <Table

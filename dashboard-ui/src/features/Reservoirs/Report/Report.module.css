@@ -36,6 +36,13 @@
     padding-inline-end: calc(var(--default-spacing) * 0.75);
 }
 
+.labelIcon > svg {
+    fill: var(--mantine-color-text);
+    stroke: var(--mantine-color-text);
+    width: 0.9rem;
+    height: auto;
+}
+
 [data-mantine-color-scheme='dark'] .control {
     background-color: var(--mantine-color-dark-4);
 }

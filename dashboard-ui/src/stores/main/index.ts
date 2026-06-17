@@ -13,17 +13,24 @@ import {
     Tools,
 } from '@/stores/main/types';
 import { ReservoirDefault } from '@/stores/main/consts';
+import { ComboboxItem } from '@mantine/core';
 
 export interface MainState {
     // Selected Region filter
     region: string[];
     setRegion: (region: MainState['region']) => void;
+    regionOptions: ComboboxItem[];
+    setRegionOptions: (regionOptions: MainState['regionOptions']) => void;
     // Selected Basin
     basin: string[];
     setBasin: (basin: MainState['basin']) => void;
+    basinOptions: ComboboxItem[];
+    setBasinOptions: (basinOptions: MainState['basinOptions']) => void;
     // Selected State
     state: string[];
     setState: (state: MainState['state']) => void;
+    stateOptions: ComboboxItem[];
+    setStateOptions: (stateOptions: MainState['stateOptions']) => void;
     // Reservoir selected from table or map
     reservoir: Reservoir | null;
     setReservoir: (reservoir: MainState['reservoir']) => void;
@@ -80,10 +87,16 @@ export interface MainState {
 const useMainStore = create<MainState>()((set) => ({
     region: [],
     setRegion: (region) => set({ region }),
+    regionOptions: [],
+    setRegionOptions: (regionOptions) => set({ regionOptions }),
     basin: [],
     setBasin: (basin) => set({ basin }),
+    basinOptions: [],
+    setBasinOptions: (basinOptions) => set({ basinOptions }),
     state: [],
     setState: (state) => set({ state }),
+    stateOptions: [],
+    setStateOptions: (stateOptions) => set({ stateOptions }),
     reservoir: ReservoirDefault,
     setReservoir: (reservoir) => set({ reservoir }),
     boundingGeographyLevel: BoundingGeographyLevel.Region,

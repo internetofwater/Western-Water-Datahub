@@ -14,6 +14,9 @@ import {
     Stack,
     Switch,
     Title,
+    Text,
+    Tooltip,
+    Box,
 } from '@mantine/core';
 import { MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
@@ -25,7 +28,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Map, ScaleControl } from 'mapbox-gl';
 import { Feature, Point } from 'geojson';
 import styles from '@/features/Reservoirs/Report/Report.module.css';
-import { OrganizedProperties } from '@/features/Reservoirs/types';
+import { Filters, OrganizedProperties } from '@/features/Reservoirs/types';
 import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
 import { useLoading } from '@/hooks/useLoading';
 import Select from '@/components/Select';
@@ -34,14 +37,19 @@ import { getKey } from '@/features/Reservoirs/utils';
 import notificationManager from '@/managers/Notification.init';
 import { LoadingType, NotificationType } from '@/stores/session/types';
 import loadingManager from '@/managers/Loading.init';
+import Info from '@/icons/Info';
+import { TooltipDetail } from '@/features/Reservoirs/Report/TooltipDetail';
 
 type Props = {
     accessToken: string;
     reservoirs: Feature<Point, OrganizedProperties>[];
     pickFromTable: boolean;
     onPickFromTableChange: (pickFromTable: boolean) => void;
+    freezeSelection: boolean;
+    onFreezeSelectionChange: (freezeSelection: boolean) => void;
     selectedReservoirs: string[];
     onSelectedReservoirsChange: (selectedReservoirs: string[]) => void;
+    filters: Filters;
 };
 
 const Report: React.FC<Props> = (props) => {
@@ -50,8 +58,11 @@ const Report: React.FC<Props> = (props) => {
         reservoirs,
         pickFromTable,
         onPickFromTableChange,
+        freezeSelection,
+        onFreezeSelectionChange,
         selectedReservoirs,
         onSelectedReservoirsChange,
+        filters,
     } = props;
 
     const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -153,7 +164,7 @@ const Report: React.FC<Props> = (props) => {
     }, [reservoirs]);
 
     useEffect(() => {
-        if (pickFromTable) {
+        if (freezeSelection) {
             return;
         }
 
@@ -167,6 +178,7 @@ const Report: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
+
         let isMounted = true;
 
         const hidden = document.createElement('div');
@@ -252,26 +264,95 @@ const Report: React.FC<Props> = (props) => {
                             value={selectedReservoirs}
                             // filter={filter}
                             onChange={onSelectedReservoirsChange}
+                            onFocus={() => onFreezeSelectionChange(true)}
+                            onDropdownOpen={() => onFreezeSelectionChange(true)}
                             disabled={areControlsDisabled}
                         />
+                        <Group justify="space-between">
+                            <Text size="xs">
+                                {selectedReservoirs.length} / {MAX_POSITIONS}{' '}
+                                reservoir(s)
+                            </Text>
+                            {freezeSelection ? (
+                                <Text size="xs">
+                                    Custom reservoir selection.
+                                </Text>
+                            ) : (
+                                <Tooltip
+                                    label={<TooltipDetail filters={filters} />}
+                                    multiline
+                                    position="top-start"
+                                >
+                                    <Text size="xs">
+                                        Why are these reservoirs selected?
+                                        <Box
+                                            ml="calc(var(--default-spacing) / 2)"
+                                            component="span"
+                                            className={styles.labelIcon}
+                                        >
+                                            <Info />
+                                        </Box>
+                                    </Text>
+                                </Tooltip>
+                            )}
+                        </Group>
                         <Group
                             justify="space-between"
                             gap={'var(--default-spacing)'}
                         >
-                            <Switch
-                                size="xs"
-                                mt="calc(var(--default-spacing) / 2)"
-                                disabled={areControlsDisabled}
-                                classNames={{ label: styles.label }}
-                                label="Select reservoirs from table"
-                                checked={pickFromTable}
-                                onClick={(event) =>
-                                    onPickFromTableChange(
-                                        event.currentTarget.checked
-                                    )
-                                }
-                                {...labelsSwitchProps}
-                            />
+                            <Stack
+                                gap={'var(--default-spacing)'}
+                                align="flex-start"
+                            >
+                                <Switch
+                                    size="xs"
+                                    mt="calc(var(--default-spacing) / 2)"
+                                    disabled={
+                                        areControlsDisabled || pickFromTable
+                                    }
+                                    classNames={{ label: styles.label }}
+                                    label={
+                                        <Tooltip
+                                            label="Manually select reservoirs to show in the report"
+                                            multiline
+                                            position="top-start"
+                                        >
+                                            {/*  */}
+                                            <Text size="xs" mt="-0.125rem">
+                                                Freeze selection
+                                                <Box
+                                                    ml="calc(var(--default-spacing) / 2)"
+                                                    component="span"
+                                                    className={styles.labelIcon}
+                                                >
+                                                    <Info />
+                                                </Box>
+                                            </Text>
+                                        </Tooltip>
+                                    }
+                                    checked={freezeSelection}
+                                    onClick={(event) =>
+                                        onFreezeSelectionChange(
+                                            event.currentTarget.checked
+                                        )
+                                    }
+                                    {...labelsSwitchProps}
+                                />
+                                <Switch
+                                    size="xs"
+                                    mt="calc(var(--default-spacing) / 2)"
+                                    disabled={areControlsDisabled}
+                                    classNames={{ label: styles.label }}
+                                    label="Select reservoirs from the table"
+                                    checked={pickFromTable}
+                                    onClick={(event) =>
+                                        onPickFromTableChange(
+                                            event.currentTarget.checked
+                                        )
+                                    }
+                                    {...labelsSwitchProps}
+                                />
+                            </Stack>
                             <Button
                                 onClick={handleClick}
                                 disabled={isButtonDisabled}
