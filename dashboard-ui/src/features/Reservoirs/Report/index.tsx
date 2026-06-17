@@ -38,7 +38,7 @@ import notificationManager from '@/managers/Notification.init';
 import { LoadingType, NotificationType } from '@/stores/session/types';
 import loadingManager from '@/managers/Loading.init';
 import Info from '@/icons/Info';
-import { TooltipDetail } from './TooltipDetail';
+import { TooltipDetail } from '@/features/Reservoirs/Report/TooltipDetail';
 
 type Props = {
     accessToken: string;

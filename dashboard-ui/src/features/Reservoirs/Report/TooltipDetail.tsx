@@ -4,9 +4,9 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Filters } from '../types';
+import { Filters } from '@/features/Reservoirs/types';
 import { ComboboxItem, List, Text } from '@mantine/core';
-import { getSortByLabel, getSortOrderLabel } from '../utils';
+import { getSortByLabel, getSortOrderLabel } from '@/features/Reservoirs/utils';
 import { joinSentence } from '@/utils/joinSentence';
 import useMainStore from '@/stores/main';
 
@@ -27,11 +27,7 @@ const getLabels = (values: string[], options: ComboboxItem[]) => {
     return values.map((value) => {
         const option = options.find((option) => option.value === value);
 
-        if (option) {
-            return option.label;
-        }
-
-        return value;
+        return option?.label || value;
     });
 };
 

@@ -7,7 +7,7 @@ import { Select } from '@mantine/core';
 import { SortBy as SortByType } from '@/features/Reservoirs/types';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import { useLoading } from '@/hooks/useLoading';
-import { getSortByLabel } from '../utils';
+import { getSortByLabel } from '@/features/Reservoirs/utils';
 
 type Props = {
     sortBy: SortByType;
