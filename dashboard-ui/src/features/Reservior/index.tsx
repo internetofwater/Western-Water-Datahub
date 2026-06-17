@@ -43,8 +43,10 @@ import { useLoading } from '@/hooks/useLoading';
 import { Properties } from '@/components/Map/types';
 import Reset from '@/icons/Reset';
 import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
-import { ExtendedProperties } from './Info/Metrics';
-import { isDataValid } from './utils';
+import { ExtendedProperties } from '@/features/Reservior/Info/Metrics';
+import { isDataValid } from '@/features/Reservior/utils';
+
+const RESERVOIR_DEFAULT_TITLE = 'Reservoir';
 
 /**
  *
@@ -74,8 +76,8 @@ const Reservoir: React.FC = () => {
     const [config, setConfig] = useState<ReservoirConfigProperties>();
     const [currentDate, setCurrentDate] = useState(reservoirDate);
     const [isLocation, setIsLocation] = useState(false);
-    const [title, setTitle] = useState('Reservoir');
-    const [shortTitle, setShortTitle] = useState('Reservoir');
+    const [title, setTitle] = useState(RESERVOIR_DEFAULT_TITLE);
+    const [shortTitle, setShortTitle] = useState(RESERVOIR_DEFAULT_TITLE);
     const [dataIsValid, setDataIsValid] = useState(false);
 
     const controller = useRef<AbortController>(null);
@@ -302,12 +304,14 @@ const Reservoir: React.FC = () => {
         }
 
         const title = String(
-            currentReservoirProperties[config.longLabelProperty] ?? 'Reservoir'
+            currentReservoirProperties[config.longLabelProperty] ??
+                RESERVOIR_DEFAULT_TITLE
         );
         setTitle(title);
 
         const shortTitle = String(
-            currentReservoirProperties[config.shortLabelProperty] ?? 'Reservoir'
+            currentReservoirProperties[config.shortLabelProperty] ??
+                RESERVOIR_DEFAULT_TITLE
         );
         setShortTitle(shortTitle);
 
