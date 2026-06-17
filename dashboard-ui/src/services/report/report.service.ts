@@ -203,10 +203,18 @@ export class ReportService {
     private invertHexToBW(
         hex: string,
         ): string {
+
+        // Validate hex color format
+        if (!/^#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(hex)) {
+            throw new Error('Invalid hex color');
+        }
+
+        // Remove the '#' if present
         hex = hex.replace(/^#/, '');
 
-        if (hex.length !== 6) {
-            throw new Error('Invalid hex color');
+        // Expand shorthand form (e.g. "FFF") to full form (e.g. "FFFFFF")
+        if (hex.length === 3 || hex.length === 4) {
+            hex = hex.split('').map((char) => char + char).join('');
         }
 
         const r = parseInt(hex.slice(0, 2), 16);
