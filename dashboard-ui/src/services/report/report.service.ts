@@ -222,7 +222,7 @@ export class ReportService {
         const b = parseInt(hex.slice(4, 6), 16);
 
         // Partial implementation of relative luminance calculation
-        // that does not caclulated gamma correction.
+        // that does not caclulate gamma correction
         // https://www.w3.org/TR/WCAG20/#relativeluminancedef
         const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
         return luminance > 128 ? '#000000' : '#ffffff';
