@@ -3,7 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 import { useRef } from 'react';
-import { ActionIcon, Divider, Group, Modal, Text } from '@mantine/core';
+import {
+    ActionIcon,
+    Divider,
+    Group,
+    Modal,
+    Text,
+    Tooltip,
+} from '@mantine/core';
 import { useEffect, useState } from 'react';
 import {
     ReservoirConfigId,
@@ -37,6 +44,9 @@ import { Properties } from '@/components/Map/types';
 import Reset from '@/icons/Reset';
 import { TeacupReservoirField } from '@/features/Map/types/reservoir/teacup';
 import { ExtendedProperties } from '@/features/Reservior/Info/Metrics';
+import { isDataValid } from '@/features/Reservior/utils';
+
+const RESERVOIR_DEFAULT_TITLE = 'Reservoir';
 
 /**
  *
@@ -66,6 +76,9 @@ const Reservoir: React.FC = () => {
     const [config, setConfig] = useState<ReservoirConfigProperties>();
     const [currentDate, setCurrentDate] = useState(reservoirDate);
     const [isLocation, setIsLocation] = useState(false);
+    const [title, setTitle] = useState(RESERVOIR_DEFAULT_TITLE);
+    const [shortTitle, setShortTitle] = useState(RESERVOIR_DEFAULT_TITLE);
+    const [dataIsValid, setDataIsValid] = useState(false);
 
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
@@ -166,6 +179,20 @@ const Reservoir: React.FC = () => {
                     'Failed to update reservoir storage data:',
                     error
                 );
+                setCurrentReservoirProperties({
+                    [config.longLabelProperty]: String(
+                        initialReservoirProperties[config.longLabelProperty]
+                    ),
+                    [TeacupReservoirField.UseTotalOrActiveStorage]: String(
+                        initialReservoirProperties[
+                            TeacupReservoirField.UseTotalOrActiveStorage
+                        ]
+                    ),
+                    source_name: initialReservoirProperties.source_name,
+                    source_uri: initialReservoirProperties.source_uri,
+                    wwdh_collection: initialReservoirProperties.wwdh_collection,
+                    wwdh_fid: initialReservoirProperties.wwdh_fid,
+                } as GeoJsonProperties & ExtendedProperties);
             } else if (
                 (error as Error)?.message &&
                 !(error as Error)?.message.includes('AbortError')
@@ -271,6 +298,27 @@ const Reservoir: React.FC = () => {
         }
     }, [overlay]);
 
+    useEffect(() => {
+        if (!currentReservoirProperties || !config) {
+            return;
+        }
+
+        const title = String(
+            currentReservoirProperties[config.longLabelProperty] ??
+                RESERVOIR_DEFAULT_TITLE
+        );
+        setTitle(title);
+
+        const shortTitle = String(
+            currentReservoirProperties[config.shortLabelProperty] ??
+                RESERVOIR_DEFAULT_TITLE
+        );
+        setShortTitle(shortTitle);
+
+        const dataIsValid = isDataValid(currentReservoirProperties, config);
+        setDataIsValid(dataIsValid);
+    }, [currentReservoirProperties]);
+
     const handleSetToDefault = () => {
         const today = dayjs().format('YYYY-MM-DD');
 
@@ -334,15 +382,13 @@ const Reservoir: React.FC = () => {
             }}
             opened={opened}
             onClose={handleClose}
-            title={
-                String(currentReservoirProperties[config.longLabelProperty]) ??
-                ''
-            }
+            title={title}
         >
             <>
                 <Info
                     reservoirProperties={currentReservoirProperties}
                     config={config}
+                    isLoading={isFetchingSingleReservoir}
                 />
                 {isLocation && (
                     <Group gap="var(--default-spacing)" align="flex-end">
@@ -351,21 +397,32 @@ const Reservoir: React.FC = () => {
                             className={styles.dateSelector}
                             valueFormat="MM/DD/YYYY"
                             disabled={isFetchingSingleReservoir}
+                            description="View historical data for this reservoir"
                             value={
                                 currentDate
                                     ? dayjs(currentDate).toDate()
                                     : undefined
                             }
                             maxDate={new Date()}
-                            label="Reservoir Storage Date"
+                            label={`${shortTitle} Storage Date`}
                             onChange={debouncedHandleDateChange}
                         />
-                        <ActionIcon
-                            classNames={{ icon: styles.actionIcon }}
-                            onClick={handleSetToDefault}
+                        <Tooltip
+                            label={
+                                reservoirDate
+                                    ? 'Reset data to the selected date'
+                                    : 'Reset data to the latest available'
+                            }
+                            position="top-start"
                         >
-                            <Reset />
-                        </ActionIcon>
+                            <ActionIcon
+                                classNames={{ icon: styles.actionIcon }}
+                                onClick={handleSetToDefault}
+                                disabled={isFetchingSingleReservoir}
+                            >
+                                <Reset />
+                            </ActionIcon>
+                        </Tooltip>
                     </Group>
                 )}
 
@@ -377,6 +434,7 @@ const Reservoir: React.FC = () => {
                         ref={chartRef}
                         config={config}
                         source={reservoir.source}
+                        isDataValid={dataIsValid}
                     />
                 ) : (
                     <Text ta={'center'} mt="14%">

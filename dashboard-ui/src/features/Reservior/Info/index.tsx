@@ -4,22 +4,23 @@
  */
 
 import { ReservoirConfigProperties } from '@/features/Map/types';
-import { Group, Flex, Text } from '@mantine/core';
+import { Group, Flex, Text, Skeleton } from '@mantine/core';
 import { GeoJsonProperties } from 'geojson';
 import { useEffect, useState } from 'react';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { ExtendedProperties, Metrics } from '@/features/Reservior/Info/Metrics';
 import { TeacupDiagram } from '@/features/Reservior/TeacupDiagram';
 import { Legend } from '@/features/Reservior/Info/Legend';
-import { Properties } from '@/components/Map/types';
+import { isDataValid } from '@/features/Reservior/utils';
 
 type Props = {
     reservoirProperties: GeoJsonProperties & ExtendedProperties;
     config: ReservoirConfigProperties;
+    isLoading: boolean;
 };
 
 const InfoWrapper: React.FC<Props> = (props) => {
-    const { reservoirProperties, config } = props;
+    const { reservoirProperties, config, isLoading } = props;
 
     const [showLabels, setShowLabels] = useState(true);
     const [excludedEntries, setExcludedEntries] = useState<string[]>([]);
@@ -57,11 +58,6 @@ const InfoWrapper: React.FC<Props> = (props) => {
         setShowLabels(showLabels);
     };
 
-    const isDataValid = (
-        reservoirProperties: Properties,
-        config: ReservoirConfigProperties
-    ): boolean => Boolean(reservoirProperties[config.storageProperty]);
-
     if (!reservoirProperties) {
         return null;
     }
@@ -81,11 +77,13 @@ const InfoWrapper: React.FC<Props> = (props) => {
                                 onChange={handleLabelsChange}
                                 excludeEntries={excludedEntries}
                             />
-                            <TeacupDiagram
-                                reservoirProperties={reservoirProperties}
-                                config={config}
-                                showLabels={showLabels}
-                            />
+                            <Skeleton visible={isLoading}>
+                                <TeacupDiagram
+                                    reservoirProperties={reservoirProperties}
+                                    config={config}
+                                    showLabels={showLabels}
+                                />
+                            </Skeleton>
                         </>
                     ) : (
                         <Text ta={'center'}>
@@ -97,6 +95,7 @@ const InfoWrapper: React.FC<Props> = (props) => {
                 <Metrics
                     reservoirProperties={reservoirProperties}
                     config={config}
+                    isLoading={isLoading}
                 />
             </Group>
         </>

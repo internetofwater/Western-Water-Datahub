@@ -116,7 +116,7 @@ const Panel: React.FC<Props> = (props) => {
                 {items.map(({ title, content }) => (
                     <AccordionItem key={title} value={title}>
                         <AccordionControl>
-                            <Title order={2} size="h4">
+                            <Title order={2} size="h3">
                                 {title}
                             </Title>
                         </AccordionControl>

@@ -709,13 +709,17 @@ export const appendTeacupDataProperties = async (
             // 30-year Average
             updatedProperties[TeacupReservoirField.StorageAverage] = undefined;
             updatedProperties[TeacupReservoirField.StorageDate] = undefined;
-            updatedProperties[TeacupReservoirField.Item] = true;
+            if (feature.properties?.[TeacupReservoirField.Item] === undefined) {
+                updatedProperties[TeacupReservoirField.Item] = true;
+            }
 
             return {
                 ...feature,
                 properties: updatedProperties,
             };
-        } else {
+        } else if (
+            feature.properties?.[TeacupReservoirField.Item] === undefined
+        ) {
             // Mark that this is a location, not item
             updatedProperties[TeacupReservoirField.Item] = false;
         }
