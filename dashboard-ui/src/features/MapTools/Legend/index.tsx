@@ -111,30 +111,35 @@ const Legend: React.FC = () => {
                     src="report-legends/drought-legend.png"
                     id="drought-legend"
                     alt=""
+                    loading="lazy"
                     aria-hidden
                 />
                 <img
                     src="report-legends/precip-legend.png"
                     id="precip-legend"
                     alt=""
+                    loading="lazy"
                     aria-hidden
                 />
                 <img
                     src="report-legends/temp-legend.png"
                     id="temp-legend"
                     alt=""
+                    loading="lazy"
                     aria-hidden
                 />
                 <img
                     src="report-legends/none-legend.png"
                     id="none-legend"
                     alt=""
+                    loading="lazy"
                     aria-hidden
                 />
                 <img
                     src="mapbox-logo-white.png"
                     id="mapbox-logo"
                     alt=""
+                    loading="lazy"
                     aria-hidden
                 />
             </Box>
