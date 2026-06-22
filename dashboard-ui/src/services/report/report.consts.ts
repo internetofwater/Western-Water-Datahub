@@ -13,10 +13,10 @@ export const RESERVOIR_POSITIONS = [
     // Right most
     { x: 920, y: 240 }, // E
     // Bottom
-    { x: 640, y: 690 }, // F
-    { x: 360, y: 690 }, // G
+    { x: 640, y: 685 }, // F
+    { x: 360, y: 685 }, // G
     // left
-    { x: 80, y: 690 }, // H
+    { x: 80, y: 685 }, // H
     { x: 80, y: 460 }, // I
     { x: 80, y: 240 }, // Top left, J
 ];

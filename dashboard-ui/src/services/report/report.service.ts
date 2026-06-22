@@ -45,7 +45,7 @@ export class ReportService {
         let svgOverlay = this.addSVGLayer(container);
 
         svgOverlay.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-        svgOverlay.setAttribute('font', '"Geist", "Geist Fallback"');
+        svgOverlay.setAttribute('font-family', 'Arial, Helvetica, sans-serif');
 
         const root = { x: 0, y: 0 };
         const { innerRect, outerRect } = this.createBorders();
@@ -324,7 +324,7 @@ export class ReportService {
         svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
         svg.setAttribute('fill', 'black');
-        svg.setAttribute('font-size', '16px');
+        svg.setAttribute('font-size', '14px');
 
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         svg.appendChild(g);
@@ -417,9 +417,11 @@ export class ReportService {
         config: ReservoirConfigProperties,
         reservoir: Feature<Point, GeoJsonProperties>
     ): SVGSVGElement {
-        const storagePercentage =
+        const storagePercentage = Math.min(
             Number(reservoir.properties![config.storageProperty]) /
-            Number(reservoir.properties![config.capacityProperty]);
+                Number(reservoir.properties![config.capacityProperty]),
+            1
+        );
 
         const ninetiethPercentage =
             Number(reservoir.properties![config.ninetiethPercentileProperty]) /
@@ -448,8 +450,8 @@ export class ReportService {
         );
         const cutHeight = calculateYPosition(size);
 
-        const upperLeft: [number, number] = [2, 2];
-        const upperRight: [number, number] = [upperWidth * scale, 2];
+        const upperLeft: [number, number] = [0, 0];
+        const upperRight: [number, number] = [upperWidth * scale, 0];
         const lowerRight: [number, number] = [
             ((upperWidth + lowerWidth) / 2) * scale,
             height * scale,
@@ -483,21 +485,50 @@ export class ReportService {
         svg.setAttribute('width', upperWidth.toString());
         svg.setAttribute('height', height.toString());
 
+        const strokeWidth = 2;
+        // Add padding to show full outline polygon
+        svg.setAttribute(
+            'viewBox',
+            `${-strokeWidth} ${-strokeWidth} ${upperWidth + strokeWidth * 2} ${height + strokeWidth * 2}`
+        );
+
+        // Border, drawn first to not obscure other elems
+        const outlinePolygon = document.createElementNS(
+            svg.namespaceURI,
+            'polygon'
+        );
+
+        outlinePolygon.setAttribute('fill', 'none');
+        outlinePolygon.setAttribute('stroke', '#000');
+        outlinePolygon.setAttribute('stroke-width', `${strokeWidth * 2}`); // Stroke is middle positioned, double to place 2px outside
+        outlinePolygon.setAttribute('stroke-linejoin', 'miter');
+        outlinePolygon.setAttribute('vector-effect', 'non-scaling-stroke'); // Ensures consistency in stroke width across all scales
+
+        outlinePolygon.setAttribute(
+            'points',
+            `${upperLeft.join(',')} ${upperRight.join(',')} ${lowerRight.join(',')} ${lowerLeft.join(',')}`
+        );
+
+        svg.appendChild(outlinePolygon);
+
+        // Capacity shape
         const outerPolygon = document.createElementNS(
             svg.namespaceURI,
             'polygon'
         );
         outerPolygon.setAttribute('fill', '#a6d5e3');
-        // outerPolygon.setAttribute('stroke', '#000');
         outerPolygon.setAttribute(
             'points',
             `${upperLeft.join(',')} ${upperRight.join(',')} ${lowerRight.join(
                 ','
             )} ${lowerLeft.join(',')}`
         );
+        outerPolygon.setAttribute('shape-rendering', 'geometricPrecision'); // Smooths polygon edge (no stair step)
+
         svg.appendChild(outerPolygon);
 
         if (storagePercentage !== 0) {
+            // Storage shape
             const innerPolygon = document.createElementNS(
                 svg.namespaceURI,
                 'polygon'
@@ -509,6 +540,8 @@ export class ReportService {
                     ','
                 )} ${lowerRight.join(',')} ${lowerLeft.join(',')}`
             );
+            innerPolygon.setAttribute('shape-rendering', 'geometricPrecision');
+
             svg.appendChild(innerPolygon);
         }
 
