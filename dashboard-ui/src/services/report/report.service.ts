@@ -114,7 +114,7 @@ export class ReportService {
                         y:
                             position.y +
                             (Number(reservoirSVG.getAttribute('height')) ?? 0) -
-                            2,
+                            6,
                     };
 
                     svgOverlay = this.drawSVGAtPosition(
@@ -155,10 +155,10 @@ export class ReportService {
             // Fit padding to dimension of shapes
             {
                 padding: {
-                    top: 250,
-                    left: 210,
-                    right: 210,
-                    bottom: 250,
+                    top: 270,
+                    left: 230,
+                    right: 230,
+                    bottom: 270,
                 },
                 maxZoom: 16,
                 duration: 0,
@@ -184,7 +184,7 @@ export class ReportService {
     }
 
     private createBorders() {
-        const outerRectWidth = 40;
+        const outerRectWidth = 50;
         const innerRectWidth = 5;
         const unit = 'px';
 
@@ -295,7 +295,7 @@ export class ReportService {
         for (const word of text.split(' ')) {
             line += word + ' ';
 
-            if (line.length > 16) {
+            if (line.length > 22) {
                 lines.push(line);
                 line = '';
             }
@@ -324,7 +324,7 @@ export class ReportService {
         svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
         svg.setAttribute('fill', 'black');
-        svg.setAttribute('font-size', '12');
+        svg.setAttribute('font-size', '16px');
 
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         svg.appendChild(g);
@@ -395,7 +395,7 @@ export class ReportService {
                 'rect'
             );
 
-            const width = Math.min(bbox.width + 16, 200);
+            const width = Math.min(bbox.width + 16, 250);
             rect.setAttribute('x', `${bbox.x - 8}`);
             rect.setAttribute('y', `${bbox.y - 8}`);
             rect.setAttribute('width', `${width}`);
@@ -448,8 +448,8 @@ export class ReportService {
         );
         const cutHeight = calculateYPosition(size);
 
-        const upperLeft: [number, number] = [0, 0];
-        const upperRight: [number, number] = [upperWidth * scale, 0];
+        const upperLeft: [number, number] = [2, 2];
+        const upperRight: [number, number] = [upperWidth * scale, 2];
         const lowerRight: [number, number] = [
             ((upperWidth + lowerWidth) / 2) * scale,
             height * scale,
@@ -488,6 +488,7 @@ export class ReportService {
             'polygon'
         );
         outerPolygon.setAttribute('fill', '#a6d5e3');
+        // outerPolygon.setAttribute('stroke', '#000');
         outerPolygon.setAttribute(
             'points',
             `${upperLeft.join(',')} ${upperRight.join(',')} ${lowerRight.join(
@@ -642,7 +643,7 @@ export class ReportService {
         const img = new Image();
         img.onload = () => {
             context.drawImage(img, 0, 0, width, height);
-            const legendPosition = { x: 1297, y: 519 };
+            const legendPosition = { x: 864, y: 519 };
 
             if (reportLegend) {
                 context.drawImage(
