@@ -203,6 +203,14 @@ export class ReportService {
     private invertHexToBW(
         hex: string,
         ): string {
+        /**
+         * Returns black (`#000000`) for light colors and white (`#ffffff`) for dark colors
+         * using a simplified luminance calculation and a threshold of 128.
+         *
+         * Luminance is approximated using the WCAG coefficients (0.2126, 0.7152, 0.0722)
+         * applied to RGB values without gamma correction. Any alpha channel present in the
+         * input is ignored.
+         */
 
         // Validate hex color format
         if (!/^#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(hex)) {
