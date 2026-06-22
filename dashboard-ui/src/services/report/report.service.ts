@@ -43,8 +43,14 @@ export class ReportService {
         this.positionView(map, reservoirs);
         this.modifyLayers(map);
         let svgOverlay = this.addSVGLayer(container);
+
         svgOverlay.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
         svgOverlay.setAttribute('font', '"Geist", "Geist Fallback"');
+
+        const root = { x: 0, y: 0 };
+        const { innerRect, outerRect } = this.createBorders();
+        svgOverlay = this.drawSVGAtPosition(root, outerRect, svgOverlay);
+        svgOverlay = this.drawSVGAtPosition(root, innerRect, svgOverlay);
 
         for (let i = 0; i < reservoirs.length; i++) {
             const reservoir = reservoirs[i];
@@ -175,6 +181,45 @@ export class ReportService {
                 }
             });
         }
+    }
+
+    private createBorders() {
+        const outerRectWidth = 40;
+        const innerRectWidth = 5;
+        const unit = 'px';
+
+        const outerRect = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'rect'
+        );
+
+        outerRect.setAttribute('width', '100%');
+        outerRect.setAttribute('height', '100%');
+        outerRect.setAttribute('x', `0`);
+        outerRect.setAttribute('y', `0`);
+        outerRect.setAttribute('fill', 'none');
+        outerRect.setAttribute('stroke', '#0081a1');
+        outerRect.setAttribute('stroke-width', `${outerRectWidth}${unit}`);
+
+        const innerRect = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'rect'
+        );
+        innerRect.setAttribute(
+            'width',
+            `calc(100% - ${outerRectWidth}${unit})`
+        );
+        innerRect.setAttribute(
+            'height',
+            `calc(100% - ${outerRectWidth}${unit})`
+        );
+        innerRect.setAttribute('x', `${outerRectWidth / 2}`);
+        innerRect.setAttribute('y', `${outerRectWidth / 2}`);
+        innerRect.setAttribute('fill', 'none');
+        innerRect.setAttribute('stroke', '#c2850c');
+        innerRect.setAttribute('stroke-width', `${innerRectWidth}${unit}`);
+
+        return { outerRect, innerRect };
     }
 
     private addSVGLayer(container: HTMLElement): SVGSVGElement {
@@ -587,26 +632,6 @@ export class ReportService {
         context.drawImage(mapCanvas, 0, 0, width, height);
         context.restore();
 
-        const legendPosition = { x: 1297, y: 519 };
-
-        if (reportLegend) {
-            context.drawImage(
-                reportLegend,
-                legendPosition.x,
-                legendPosition.y,
-                legendWidth,
-                legendHeight
-            );
-
-            this.drawScale(
-                map,
-                context,
-                legendPosition,
-                legendWidth,
-                legendHeight
-            );
-        }
-
         // Serialize SVG and draw it on canvas
         const svgData = new XMLSerializer().serializeToString(svgOverlay);
         const svgBlob = new Blob([svgData], {
@@ -617,6 +642,25 @@ export class ReportService {
         const img = new Image();
         img.onload = () => {
             context.drawImage(img, 0, 0, width, height);
+            const legendPosition = { x: 1297, y: 519 };
+
+            if (reportLegend) {
+                context.drawImage(
+                    reportLegend,
+                    legendPosition.x,
+                    legendPosition.y,
+                    legendWidth,
+                    legendHeight
+                );
+
+                this.drawScale(
+                    map,
+                    context,
+                    legendPosition,
+                    legendWidth,
+                    legendHeight
+                );
+            }
             URL.revokeObjectURL(url);
 
             canvas
