@@ -42,12 +42,12 @@ export const TAGS = [
 
 export const TAG_COLORS = [
     // USBR Brand Colors
+    '#E7F6F8',
     '#FFBE2E',
     '#59B9DE',
     '#DEC69A',
     '#204E34',
     '#54278F',
-    '#E7F6F8',
     '#EF5E25',
     '#0081A1',
     // Other Colors

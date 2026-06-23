@@ -246,9 +246,8 @@ export class ReportService {
         return 1;
     }
 
-    private invertHexToBW(
-        hex: string,
-        ): string {
+    private invertHexToBW(hex: string): string {
+        let safeHex = hex;
         /**
          * Returns black (`#000000`) for light colors and white (`#ffffff`) for dark colors
          * using a simplified luminance calculation and a threshold of 128.
@@ -259,30 +258,36 @@ export class ReportService {
          */
 
         // Validate hex color format
-        if (!/^#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(hex)) {
+        if (
+            !/^#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(
+                hex
+            )
+        ) {
             throw new Error('Invalid hex color');
         }
 
         // Remove the '#' if present
-        hex = hex.replace(/^#/, '');
+        safeHex = safeHex.replace(/^#/, '');
 
         // Expand shorthand form (e.g. "FFF") to full form (e.g. "FFFFFF")
-        if (hex.length === 3 || hex.length === 4) {
-            hex = hex.split('').map((char) => char + char).join('');
+        if (safeHex.length === 3 || safeHex.length === 4) {
+            safeHex = safeHex
+                .split('')
+                .map((char) => char + char)
+                .join('');
         }
 
-        const r = parseInt(hex.slice(0, 2), 16);
-        const g = parseInt(hex.slice(2, 4), 16);
-        const b = parseInt(hex.slice(4, 6), 16);
+        const r = parseInt(safeHex.slice(0, 2), 16);
+        const g = parseInt(safeHex.slice(2, 4), 16);
+        const b = parseInt(safeHex.slice(4, 6), 16);
 
         // Partial implementation of relative luminance calculation
         // that does not caclulate gamma correction
         // https://www.w3.org/TR/WCAG20/#relativeluminancedef
         const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
         return luminance > 128 ? '#000000' : '#ffffff';
- 
     }
-    
+
     private createCircle(index: number): SVGCircleElement {
         const circle = document.createElementNS(
             'http://www.w3.org/2000/svg',
@@ -426,15 +431,48 @@ export class ReportService {
             g.appendChild(t);
         });
 
+        const defs = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'defs'
+        );
+        const dropShadowId = `drop-shadow-${reservoir.properties![config.identifierProperty]}`;
+        const filter = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'filter'
+        );
+        filter.setAttribute('id', dropShadowId);
+        filter.setAttribute('x', '-20%');
+        filter.setAttribute('y', '-20%');
+        filter.setAttribute('width', '140%');
+        filter.setAttribute('height', '140%');
+
+        const shadow = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'feDropShadow'
+        );
+        shadow.setAttribute('dx', '0');
+        shadow.setAttribute('dy', '2');
+        shadow.setAttribute('stdDeviation', '3');
+        shadow.setAttribute('flood-color', '#000');
+        shadow.setAttribute('flood-opacity', '0.3');
+
+        filter.appendChild(shadow);
+        defs.appendChild(filter);
+        svg.appendChild(defs);
+
         requestAnimationFrame(() => {
             const bbox = g.getBBox();
+
+            const padding = 16;
+            const shadowPad = 12;
 
             const rect = document.createElementNS(
                 'http://www.w3.org/2000/svg',
                 'rect'
             );
 
-            const width = Math.min(bbox.width + 16, 250);
+            const width = Math.min(bbox.width + padding, 250);
+            const height = bbox.height + padding;
             rect.setAttribute('x', `${bbox.x - 8}`);
             rect.setAttribute('y', `${bbox.y - 8}`);
             rect.setAttribute('width', `${width}`);
@@ -442,11 +480,18 @@ export class ReportService {
             rect.setAttribute('fill', '#fff');
             rect.setAttribute('rx', '6');
             rect.setAttribute('ry', '6');
+            // Apply dropshadow
+            rect.setAttribute('filter', `url(#${dropShadowId})`);
 
             svg.insertBefore(rect, g);
 
-            svg.setAttribute('width', `${width}`);
-            svg.setAttribute('height', `${bbox.height + 16}`);
+            svg.setAttribute(
+                'viewBox',
+                `0 0 ${width + shadowPad * 2} ${height + shadowPad * 2}`
+            );
+
+            svg.setAttribute('width', `${width + shadowPad * 2}`);
+            svg.setAttribute('height', `${height + shadowPad * 2}`);
         });
 
         return svg;
