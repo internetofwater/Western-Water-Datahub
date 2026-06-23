@@ -40,8 +40,8 @@ export class ReportService {
         container: HTMLDivElement,
         callback?: (response: TCallbackResponse) => void
     ) {
-        container.style.minWidth = '1600px';
-        container.style.minHeight = '900px';
+        container.style.width = '1600px';
+        container.style.height = '900px';
         this.positionView(map, reservoirs);
         this.modifyLayers(map);
         let svgOverlay = this.addSVGLayer(container);
@@ -188,8 +188,8 @@ export class ReportService {
         svg.style.position = 'absolute';
         svg.style.top = '0';
         svg.style.left = '0';
-        svg.style.width = '100%';
-        svg.style.height = '100%';
+        svg.style.width = '1600px';
+        svg.style.height = '900px';
         container.appendChild(svg);
 
         return svg;
