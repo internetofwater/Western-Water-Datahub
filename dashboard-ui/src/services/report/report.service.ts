@@ -40,6 +40,8 @@ export class ReportService {
         container: HTMLDivElement,
         callback?: (response: TCallbackResponse) => void
     ) {
+        container.style.minWidth = '1600px';
+        container.style.minHeight = '900px';
         this.positionView(map, reservoirs);
         this.modifyLayers(map);
         let svgOverlay = this.addSVGLayer(container);
