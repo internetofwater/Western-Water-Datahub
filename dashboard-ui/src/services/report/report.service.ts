@@ -34,15 +34,24 @@ export type TCallbackResponse = {
 };
 
 export class ReportService {
+    /**
+     * Generate a png report reflecting user choices in the dashboard showcasing current reservoir conditions
+     *
+     * @public
+     * @param {Map} map - Map instance to modify for creating report imagery
+     * @param {Feature<Point, OrganizedProperties>[]} reservoirs - List of reservoirs to include in report
+     * @param {(string | null)} date - Currently selected reservoir date or null for latest date
+     * @param {?(response: TCallbackResponse) => void} [callback] - Callback function called after successful download
+     */
     public report(
         map: Map,
         reservoirs: Feature<Point, OrganizedProperties>[],
-        container: HTMLDivElement,
         date: string | null,
         callback?: (response: TCallbackResponse) => void
     ) {
         this.positionView(map, reservoirs);
         this.modifyLayers(map);
+        const container = map.getContainer();
         let svgOverlay = this.addSVGLayer(container);
 
         svgOverlay.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -53,17 +62,23 @@ export class ReportService {
         svgOverlay = this.drawSVGAtPosition(root, outerRect, svgOverlay);
         svgOverlay = this.drawSVGAtPosition(root, innerRect, svgOverlay);
 
-        for (let i = 0; i < reservoirs.length; i++) {
+        // Draw in reverse order to place alphabetical tags on top
+        for (let i = reservoirs.length - 1; i >= 0; i--) {
             const reservoir = reservoirs[i];
             const config = getReservoirConfig(
                 reservoir.properties.sourceId as ReservoirConfigId
             );
             if (config) {
-                const mapPositionCircle = this.createCircle(i);
+                // Geographic position of reservoir
                 const point = reservoir.geometry.coordinates as [
                     number,
                     number,
                 ];
+                // In report position of supplemental reservoir information (graphic, card, tag)
+                const position = RESERVOIR_POSITIONS[i];
+
+                // Draw color indicator of reservoir geographic position
+                const mapPositionCircle = this.createCircle(i);
 
                 svgOverlay = this.drawSVGAtPoint(
                     map,
@@ -72,6 +87,7 @@ export class ReportService {
                     svgOverlay
                 );
 
+                // Draw character indicator of reservoir geographic position
                 const mapTag = this.createTag(i);
 
                 svgOverlay = this.drawSVGAtPoint(
@@ -81,8 +97,7 @@ export class ReportService {
                     svgOverlay
                 );
 
-                const position = RESERVOIR_POSITIONS[i];
-
+                // Draw teacup graphic
                 const reservoirSVG = this.createReservoirSVG(config, reservoir);
 
                 svgOverlay = this.drawSVGAtPosition(
@@ -91,6 +106,7 @@ export class ReportService {
                     svgOverlay
                 );
 
+                // Draw information box
                 const infoSVG = this.createInfoBox(config, reservoir);
 
                 // Draw this svg, then calculate the width in the dom to reposition
@@ -109,6 +125,8 @@ export class ReportService {
                     };
 
                     this.repostion(infoBoxPosition, infoSVG);
+
+                    // Create duplicate of color indicator to prevent mutation
                     const indicatorCircle = this.createCircle(i);
                     const indicatorPosition = {
                         x: position.x - Math.abs(160 - infoBoxWidth) / 2 - 2, // position at bottom left corner
@@ -124,6 +142,7 @@ export class ReportService {
                         svgOverlay
                     );
 
+                    // Create duplicate of tag indicator to prevent mutation
                     const infoTag = this.createTag(i);
 
                     svgOverlay = this.drawSVGAtPosition(
@@ -135,6 +154,7 @@ export class ReportService {
             }
         }
 
+        // Force refresh of map state
         // Wait for map to render
         map.triggerRepaint();
         map.once('idle', () => {
@@ -158,7 +178,7 @@ export class ReportService {
                 padding: {
                     top: 270,
                     left: 230,
-                    right: 230,
+                    right: 320,
                     bottom: 270,
                 },
                 maxZoom: 16,
@@ -296,7 +316,6 @@ export class ReportService {
 
         const color = TAG_COLORS[index];
 
-        // circle.setAttribute('stroke', `#000`);
         circle.setAttribute(
             'stroke',
             `color-mix(in srgb, ${color} 70%, black)`
@@ -325,9 +344,6 @@ export class ReportService {
         tag.setAttribute('font-size', '14');
         tag.setAttribute('font-weight', 'bold');
         tag.setAttribute('font-family', 'sans-serif');
-
-        // tag.setAttribute('dx', '-3');
-        // tag.setAttribute('dy', '3');
 
         return tag;
     }
@@ -367,7 +383,7 @@ export class ReportService {
 
         svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-        svg.setAttribute('fill', 'black');
+        svg.setAttribute('fill', '#000');
         svg.setAttribute('font-size', '14px');
 
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -845,6 +861,7 @@ export class ReportService {
             context.drawImage(img, 0, 0, width, height);
             const legendPosition = { x: 864, y: 509 };
 
+            const formattedDate = this.formateDate(date);
             if (reportLegend) {
                 context.drawImage(
                     reportLegend,
@@ -854,7 +871,6 @@ export class ReportService {
                     legendHeight
                 );
 
-                const formattedDate = this.formateDate(date);
                 this.drawDate(
                     formattedDate,
                     context,
@@ -877,7 +893,7 @@ export class ReportService {
                 .then((blob) => {
                     const a = document.createElement('a');
                     a.href = URL.createObjectURL(blob);
-                    a.download = 'report.png';
+                    a.download = `Reservoir Conditions Report - ${formattedDate}.png`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);

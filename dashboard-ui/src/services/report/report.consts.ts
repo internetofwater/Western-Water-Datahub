@@ -42,17 +42,17 @@ export const TAGS = [
 
 export const TAG_COLORS = [
     // USBR Brand Colors
-    '#E7F6F8',
-    '#FFBE2E',
-    '#59B9DE',
-    '#DEC69A',
-    '#204E34',
-    '#54278F',
-    '#EF5E25',
-    '#0081A1',
+    '#E7F6F8', // A
+    '#FFBE2E', // B
+    '#59B9DE', // C
+    '#DEC69A', // D
+    '#204E34', // E
+    '#54278F', // F
+    '#0081A1', // G
+    '#EF5E25', // H
     // Other Colors
-    '#A168A5',
-    '#6FAA23',
+    '#A168A5', // I
+    '#6FAA23', // J
     '#62737A',
     '#FAED4E',
     '#EE4BFA',
