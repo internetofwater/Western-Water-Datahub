@@ -197,11 +197,11 @@ class MainManager {
     switch (collectionType) {
       case CollectionType.EDR:
         if (ItemsOnlyCollections.includes(collectionId)) {
-          return await this.fetchItems(collectionId, parameterNames, bbox, signal, next);
+          return await this.fetchItems(collectionId, parameterNames, signal, next);
         }
         return await this.fetchLocations(collectionId, parameterNames, bbox, signal, next);
       case CollectionType.Features:
-        return await this.fetchItems(collectionId, parameterNames, bbox, signal, next);
+        return await this.fetchItems(collectionId, parameterNames, signal, next);
       case CollectionType.EDRGrid:
         if (!bbox) {
           throw new Error('No BBox provided for Grid layer');
@@ -290,9 +290,9 @@ class MainManager {
   >(
     collectionId: ICollection['id'],
     parameterNames?: string[],
-    bbox?: BBox,
     signal?: AbortSignal,
-    next?: string
+    next?: string,
+    bbox?: BBox | null
   ): Promise<ExtendedFeatureCollection<T, V>> {
     const data = await wwdhService.getItems<ExtendedFeatureCollection<T, V>>(
       collectionId,
@@ -300,7 +300,7 @@ class MainManager {
         signal,
         params: {
           limit: 2000,
-          bbox,
+          ...bbox ? {"bbox": bbox} : {},
           ...(parameterNames && parameterNames.length > 0
             ? { 'parameter-name': parameterNames.join(',') }
             : {}),
