@@ -38,6 +38,7 @@ export class ReportService {
         map: Map,
         reservoirs: Feature<Point, OrganizedProperties>[],
         container: HTMLDivElement,
+        date: string | null,
         callback?: (response: TCallbackResponse) => void
     ) {
         this.positionView(map, reservoirs);
@@ -137,7 +138,7 @@ export class ReportService {
         // Wait for map to render
         map.triggerRepaint();
         map.once('idle', () => {
-            this.exportCombinedImage(map, svgOverlay, callback);
+            this.exportCombinedImage(map, svgOverlay, date, callback);
         });
     }
 
@@ -633,9 +634,92 @@ export class ReportService {
         return { id: 'none-legend', w: 293, h: 228 };
     }
 
+    private formateDate(date: string | null) {
+        const day = date && dayjs(date).isValid() ? dayjs(date) : dayjs();
+
+        return day.format('MMMM D, YYYY');
+    }
+
+    private drawDate(
+        date: string,
+        context: OffscreenCanvasRenderingContext2D,
+        legendPosition: { x: number; y: number }, // TODO: define this type
+        legendWidth: number
+    ) {
+        const { x: legendX, y: legendY } = legendPosition;
+
+        const x = legendX + legendWidth - 150;
+        const y = legendY + 55;
+
+        context.font = '12px sans-serif';
+        context.fillStyle = '#FFF';
+        context.fillText(date, x, y);
+    }
+
+    private drawScale(
+        map: Map,
+        context: OffscreenCanvasRenderingContext2D,
+        legendPosition: { x: number; y: number },
+        legendWidth: number,
+        legendHeight: number
+    ) {
+        // Get scale HTML element
+        const scaleElement = map
+            .getContainer()
+            .querySelector('.mapboxgl-ctrl-scale');
+
+        // No-op if scale HTML element is missing
+        if (!scaleElement) {
+            // eslint-disable-next-line no-console
+            console.error('Failed to add map scale');
+            return;
+        }
+
+        const scaleWidth = scaleElement.clientWidth;
+        const scaleLabel = scaleElement.textContent;
+
+        const scaleOffsetY = 15;
+        const labelOffset = 15;
+
+        const minX = legendPosition.x + legendWidth / 2 - scaleWidth / 2;
+        const maxX = minX + scaleWidth;
+        const midX = (minX + maxX) / 2;
+
+        const midY = legendPosition.y + legendHeight - scaleOffsetY;
+
+        const tickHeight = 5;
+
+        context.strokeStyle = '#000';
+        context.lineWidth = 2;
+
+        // Draw lines
+        context.beginPath();
+        context.moveTo(minX, midY);
+        context.lineTo(maxX, midY);
+
+        context.moveTo(minX, midY - tickHeight);
+        context.lineTo(minX, midY + tickHeight);
+
+        context.moveTo(maxX, midY - tickHeight);
+        context.lineTo(maxX, midY + tickHeight);
+
+        context.stroke();
+
+        // Draw label
+        context.font = '10px sans-serif';
+        context.fillStyle = '#000';
+        context.textAlign = 'center';
+        context.textBaseline = 'top';
+
+        if (scaleLabel) {
+            context.fillText(scaleLabel, midX, midY - labelOffset);
+        }
+    }
+
     private exportCombinedImage(
         map: Map,
         svgOverlay: SVGSVGElement,
+        date: string | null,
         callback?: (response: TCallbackResponse) => void
     ) {
         const mapCanvas = map.getCanvas();
@@ -676,7 +760,7 @@ export class ReportService {
         const img = new Image();
         img.onload = () => {
             context.drawImage(img, 0, 0, width, height);
-            const legendPosition = { x: 864, y: 519 };
+            const legendPosition = { x: 864, y: 509 };
 
             if (reportLegend) {
                 context.drawImage(
@@ -685,6 +769,14 @@ export class ReportService {
                     legendPosition.y,
                     legendWidth,
                     legendHeight
+                );
+
+                const formattedDate = this.formateDate(date);
+                this.drawDate(
+                    formattedDate,
+                    context,
+                    legendPosition,
+                    legendWidth
                 );
 
                 this.drawScale(
@@ -727,65 +819,5 @@ export class ReportService {
                 });
         };
         img.src = url;
-    }
-
-    private drawScale(
-        map: Map,
-        context: OffscreenCanvasRenderingContext2D,
-        legendPosition: { x: number; y: number },
-        legendWidth: number,
-        legendHeight: number
-    ) {
-        // Get scale HTML element
-        const scaleElement = map
-            .getContainer()
-            .querySelector('.mapboxgl-ctrl-scale');
-
-        // No-op if scale HTML element is missing
-        if (!scaleElement) {
-            // eslint-disable-next-line no-console
-            console.error('Failed to add map scale');
-            return;
-        }
-
-        const scaleWidth = scaleElement.clientWidth;
-        const scaleLabel = scaleElement.textContent;
-
-        const scaleOffsetY = 15;
-        const labelOffset = 15;
-
-        const minX = legendPosition.x + legendWidth / 2 - scaleWidth / 2;
-        const maxX = minX + scaleWidth;
-        const midX = (minX + maxX) / 2;
-
-        const midY = legendPosition.y + legendHeight - scaleOffsetY;
-
-        const tickHeight = 5;
-
-        context.strokeStyle = 'black';
-        context.lineWidth = 2;
-
-        // Draw lines
-        context.beginPath();
-        context.moveTo(minX, midY);
-        context.lineTo(maxX, midY);
-
-        context.moveTo(minX, midY - tickHeight);
-        context.lineTo(minX, midY + tickHeight);
-
-        context.moveTo(maxX, midY - tickHeight);
-        context.lineTo(maxX, midY + tickHeight);
-
-        context.stroke();
-
-        // Draw label
-        context.font = '10px sans-serif';
-        context.fillStyle = 'black';
-        context.textAlign = 'center';
-        context.textBaseline = 'top';
-
-        if (scaleLabel) {
-            context.fillText(scaleLabel, midX, midY - labelOffset);
-        }
     }
 }

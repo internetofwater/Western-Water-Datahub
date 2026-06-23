@@ -39,6 +39,7 @@ import { LoadingType, NotificationType } from '@/stores/session/types';
 import loadingManager from '@/managers/Loading.init';
 import Info from '@/icons/Info';
 import { TooltipDetail } from '@/features/Reservoirs/Report/TooltipDetail';
+import useMainStore from '@/stores/main';
 
 type Props = {
     accessToken: string;
@@ -64,6 +65,8 @@ const Report: React.FC<Props> = (props) => {
         onSelectedReservoirsChange,
         filters,
     } = props;
+
+    const reservoirDate = useMainStore((state) => state.reservoirDate);
 
     const [isMapLoaded, setIsMapLoaded] = useState(false);
 
@@ -97,7 +100,13 @@ const Report: React.FC<Props> = (props) => {
             loadingManager.remove(loadingInstance);
         };
 
-        new ReportService().report(map, features, container, callback);
+        new ReportService().report(
+            map,
+            features,
+            container,
+            reservoirDate,
+            callback
+        );
     };
 
     const handleClick = () => {
