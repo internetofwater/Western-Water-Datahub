@@ -246,6 +246,43 @@ export class ReportService {
         return 1;
     }
 
+    private invertHexToBW(
+        hex: string,
+        ): string {
+        /**
+         * Returns black (`#000000`) for light colors and white (`#ffffff`) for dark colors
+         * using a simplified luminance calculation and a threshold of 128.
+         *
+         * Luminance is approximated using the WCAG coefficients (0.2126, 0.7152, 0.0722)
+         * applied to RGB values without gamma correction. Any alpha channel present in the
+         * input is ignored.
+         */
+
+        // Validate hex color format
+        if (!/^#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(hex)) {
+            throw new Error('Invalid hex color');
+        }
+
+        // Remove the '#' if present
+        hex = hex.replace(/^#/, '');
+
+        // Expand shorthand form (e.g. "FFF") to full form (e.g. "FFFFFF")
+        if (hex.length === 3 || hex.length === 4) {
+            hex = hex.split('').map((char) => char + char).join('');
+        }
+
+        const r = parseInt(hex.slice(0, 2), 16);
+        const g = parseInt(hex.slice(2, 4), 16);
+        const b = parseInt(hex.slice(4, 6), 16);
+
+        // Partial implementation of relative luminance calculation
+        // that does not caclulate gamma correction
+        // https://www.w3.org/TR/WCAG20/#relativeluminancedef
+        const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        return luminance > 128 ? '#000000' : '#ffffff';
+ 
+    }
+    
     private createCircle(index: number): SVGCircleElement {
         const circle = document.createElementNS(
             'http://www.w3.org/2000/svg',
@@ -276,9 +313,10 @@ export class ReportService {
         );
         tag.textContent = TAGS[index].toUpperCase();
 
+        const color = this.invertHexToBW(TAG_COLORS[index]);
         tag.setAttribute('text-anchor', 'middle');
         tag.setAttribute('dominant-baseline', 'middle');
-        tag.setAttribute('fill', '#000');
+        tag.setAttribute('fill', color);
         tag.setAttribute('font-size', '14');
         tag.setAttribute('font-weight', 'bold');
         tag.setAttribute('font-family', 'sans-serif');
