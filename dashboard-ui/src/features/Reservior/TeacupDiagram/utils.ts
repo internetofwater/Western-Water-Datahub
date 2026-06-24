@@ -10,7 +10,7 @@ import { TspanData } from '@/features/Reservior/TeacupDiagram/types';
  * @function
  */
 export const calculateYPositionContructor =
-    (base1: number, base2: number, height: number) =>
+    (base1: number, base2: number, height: number, offset: number = 0) =>
     (size: number): number => {
         if (base1 === base2) return size * height;
 
@@ -25,7 +25,7 @@ export const calculateYPositionContructor =
 
         const y = (-b + Math.sqrt(discriminant)) / (2 * a);
 
-        return y;
+        return y + offset;
     };
 
 /**

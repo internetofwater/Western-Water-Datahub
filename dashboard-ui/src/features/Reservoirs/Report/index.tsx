@@ -39,6 +39,7 @@ import { LoadingType, NotificationType } from '@/stores/session/types';
 import loadingManager from '@/managers/Loading.init';
 import Info from '@/icons/Info';
 import { TooltipDetail } from '@/features/Reservoirs/Report/TooltipDetail';
+import useMainStore from '@/stores/main';
 
 type Props = {
     accessToken: string;
@@ -65,12 +66,13 @@ const Report: React.FC<Props> = (props) => {
         filters,
     } = props;
 
+    const reservoirDate = useMainStore((state) => state.reservoirDate);
+
     const [isMapLoaded, setIsMapLoaded] = useState(false);
 
     const [options, setOptions] = useState<ComboboxItem[]>([]);
 
     const cloneMap = useRef<Map>(null);
-    const container = useRef<HTMLDivElement>(null);
 
     const { map } = useMap(MAP_ID);
 
@@ -79,7 +81,6 @@ const Report: React.FC<Props> = (props) => {
     const createReport = (
         map: Map,
         features: Feature<Point, OrganizedProperties>[],
-        container: HTMLDivElement,
         loadingInstance: string
     ) => {
         const callback = (response: TCallbackResponse) => {
@@ -97,11 +98,11 @@ const Report: React.FC<Props> = (props) => {
             loadingManager.remove(loadingInstance);
         };
 
-        new ReportService().report(map, features, container, callback);
+        new ReportService().report(map, features, reservoirDate, callback);
     };
 
     const handleClick = () => {
-        if (!map || !cloneMap.current || !isMapLoaded || !container.current) {
+        if (!map || !cloneMap.current || !isMapLoaded) {
             return;
         }
 
@@ -132,12 +133,7 @@ const Report: React.FC<Props> = (props) => {
         }
 
         cloneMap.current.setStyle(map.getStyle());
-        createReport(
-            cloneMap.current,
-            features,
-            container.current,
-            loadingInstance
-        );
+        createReport(cloneMap.current, features, loadingInstance);
     };
 
     useEffect(() => {
@@ -188,13 +184,14 @@ const Report: React.FC<Props> = (props) => {
 
         document.body.appendChild(hidden);
 
-        container.current = document.createElement('div');
-        container.current.style.width = '1600px';
-        container.current.style.height = '900px';
-        hidden.appendChild(container.current);
+        const container = document.createElement('div');
+        // Aspect ratio of 1 h : 1.29 w to match a landscape 8.5" h : 11" w physical letter page
+        container.style.width = '1165px';
+        container.style.height = '900px';
+        hidden.appendChild(container);
         cloneMap.current = new Map({
             accessToken: accessToken,
-            container: container.current,
+            container: container,
             center: map.getCenter(),
             style: map.getStyle(),
             zoom: map.getZoom(),
