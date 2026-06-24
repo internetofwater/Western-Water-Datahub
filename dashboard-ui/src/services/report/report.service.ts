@@ -177,7 +177,7 @@ export class ReportService {
             {
                 padding: {
                     top: 270,
-                    left: 230,
+                    left: 300,
                     right: 320,
                     bottom: 270,
                 },
@@ -349,27 +349,47 @@ export class ReportService {
     }
 
     private breakLines(text: string): string[] {
-        const lines = [];
-        let line = '';
+        const splitIndex = text.indexOf('(');
 
-        for (const word of text.split(' ')) {
-            line += word + ' ';
+        const wrap = (input: string): string[] => {
+            const lines: string[] = [];
+            let line = '';
 
-            if (line.length > 22) {
-                lines.push(line);
-                line = '';
+            for (const word of input.split(' ')) {
+                const next = (line + word + ' ').trim();
+
+                if (next.length > 22 && line.length > 0) {
+                    lines.push(line.trim());
+                    line = word + ' ';
+                } else {
+                    line += word + ' ';
+                }
             }
+
+            if (line.trim().length > 0) {
+                lines.push(line.trim());
+            }
+
+            return lines;
+        };
+
+        // Contains "("
+        if (splitIndex !== -1) {
+            const firstPart = text.slice(0, splitIndex).trim();
+            const secondPart = text.slice(splitIndex).trim();
+
+            const firstLines = wrap(firstPart);
+            const secondLines = wrap(secondPart);
+
+            // Only take first line of each side to guarantee 2 total lines
+            return [
+                firstLines.join(' '), // merge if wrapped internally
+                secondLines.join(' '),
+            ];
         }
 
-        if (lines.length === 0) {
-            return [text];
-        }
-
-        if (line.length > 0) {
-            lines.push(line);
-        }
-
-        return lines;
+        // No "("
+        return wrap(text);
     }
 
     private createInfoBox(
@@ -492,7 +512,7 @@ export class ReportService {
             rect.setAttribute('x', `${bbox.x - 8}`);
             rect.setAttribute('y', `${bbox.y - 8}`);
             rect.setAttribute('width', `${width}`);
-            rect.setAttribute('height', `${bbox.height + 16}`);
+            rect.setAttribute('height', `${height}`);
             rect.setAttribute('fill', '#fff');
             rect.setAttribute('rx', '6');
             rect.setAttribute('ry', '6');
@@ -733,7 +753,7 @@ export class ReportService {
         return { id: 'none-legend', w: 293, h: 228 };
     }
 
-    private formateDate(date: string | null) {
+    private formatDate(date: string | null) {
         const day = date && dayjs(date).isValid() ? dayjs(date) : dayjs();
 
         return day.format('MMMM D, YYYY');
@@ -859,9 +879,12 @@ export class ReportService {
         const img = new Image();
         img.onload = () => {
             context.drawImage(img, 0, 0, width, height);
-            const legendPosition = { x: 864, y: 509 };
+            const legendPosition = {
+                x: width - legendWidth - 12,
+                y: height - legendHeight - 12,
+            };
 
-            const formattedDate = this.formateDate(date);
+            const formattedDate = this.formatDate(date);
             if (reportLegend) {
                 context.drawImage(
                     reportLegend,

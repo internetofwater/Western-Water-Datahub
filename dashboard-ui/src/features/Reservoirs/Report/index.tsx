@@ -185,6 +185,7 @@ const Report: React.FC<Props> = (props) => {
         document.body.appendChild(hidden);
 
         const container = document.createElement('div');
+        // Aspect ratio of 1 h : 1.29 w to match a landscape 8.5" h : 11" w physical letter page
         container.style.width = '1165px';
         container.style.height = '900px';
         hidden.appendChild(container);
