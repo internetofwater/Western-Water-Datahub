@@ -215,7 +215,7 @@ const ReferenceData: React.FC = () => {
                                             </Text>
                                         </Tooltip>
                                     }
-                                    aria-label="Toggle active to show NOAA RFC Points curated by USBR staff"
+                                    aria-label="Toggle active to show forecast points used by USBR for water supply operations planning."
                                     checked={showUSBRCuratedNOAARFC}
                                     onChange={() =>
                                         setShowUSBRCuratedNOAARFC(
