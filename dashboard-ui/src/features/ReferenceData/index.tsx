@@ -194,15 +194,17 @@ const ReferenceData: React.FC = () => {
                                 mb="var(--default-spacing)"
                             >
                                 <Checkbox
-                                    size="sm"
+                                    size="xs"
                                     label={
                                         <Tooltip
-                                            label="Show NOAA RFC Points curated by USBR staff"
+                                            label="NOAA RFC seasonal water supply forecast points used by USBR for water supply operations planning."
                                             position="top-start"
                                             multiline
                                         >
-                                            <Text size="sm" mt="-0.1rem">
-                                                Show USBR Points of Interest
+                                            <Text size="sm" mt="-0.15rem">
+                                                Only Show Forecast Points used
+                                                by USBR for Water Supply
+                                                Operations
                                                 <Box
                                                     ml="calc(var(--default-spacing) / 2)"
                                                     component="span"

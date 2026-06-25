@@ -63,7 +63,11 @@ export const Entry: React.FC<Props> = (props) => {
                 onClick={() => onClick(!toggleableLayers[layerId])}
                 disabled={disabled}
             />
-            {links && <Links collectionId={layerId} />}
+            {links && (
+                <Box ml="calc(var(--default-spacing) * 6)">
+                    <Links collectionId={layerId} />
+                </Box>
+            )}
         </Stack>
     );
 };
