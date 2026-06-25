@@ -5,6 +5,7 @@
 import { useRef } from 'react';
 import {
     ActionIcon,
+    Box,
     Divider,
     Group,
     Modal,
@@ -76,9 +77,6 @@ const Reservoir: React.FC = () => {
     const [config, setConfig] = useState<ReservoirConfigProperties>();
     const [currentDate, setCurrentDate] = useState(reservoirDate);
     const [isLocation, setIsLocation] = useState(false);
-    const [title, setTitle] = useState(RESERVOIR_DEFAULT_TITLE);
-    const [shortTitle, setShortTitle] = useState(RESERVOIR_DEFAULT_TITLE);
-    const [dataIsValid, setDataIsValid] = useState(false);
 
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
@@ -298,27 +296,6 @@ const Reservoir: React.FC = () => {
         }
     }, [overlay]);
 
-    useEffect(() => {
-        if (!currentReservoirProperties || !config) {
-            return;
-        }
-
-        const title = String(
-            currentReservoirProperties[config.longLabelProperty] ??
-                RESERVOIR_DEFAULT_TITLE
-        );
-        setTitle(title);
-
-        const shortTitle = String(
-            currentReservoirProperties[config.shortLabelProperty] ??
-                RESERVOIR_DEFAULT_TITLE
-        );
-        setShortTitle(shortTitle);
-
-        const dataIsValid = isDataValid(currentReservoirProperties, config);
-        setDataIsValid(dataIsValid);
-    }, [currentReservoirProperties]);
-
     const handleSetToDefault = () => {
         const today = dayjs().format('YYYY-MM-DD');
 
@@ -370,6 +347,22 @@ const Reservoir: React.FC = () => {
         return null;
     }
 
+    const title = String(
+        currentReservoirProperties[config.longLabelProperty] ??
+            RESERVOIR_DEFAULT_TITLE
+    );
+
+    const shortTitle = String(
+        currentReservoirProperties[config.shortLabelProperty] ??
+            RESERVOIR_DEFAULT_TITLE
+    );
+
+    const dataIsValid = isDataValid(currentReservoirProperties, config);
+
+    const notes = String(
+        currentReservoirProperties[TeacupReservoirField.ReservoirNotes]
+    );
+
     return (
         <Modal
             centered
@@ -390,41 +383,51 @@ const Reservoir: React.FC = () => {
                     config={config}
                     isLoading={isFetchingSingleReservoir}
                 />
-                {isLocation && (
-                    <Group gap="var(--default-spacing)" align="flex-end">
-                        <DateInput
-                            size="xs"
-                            className={styles.dateSelector}
-                            valueFormat="MM/DD/YYYY"
-                            disabled={isFetchingSingleReservoir}
-                            description="View historical data for this reservoir"
-                            value={
-                                currentDate
-                                    ? dayjs(currentDate).toDate()
-                                    : undefined
-                            }
-                            maxDate={new Date()}
-                            label={`${shortTitle} Storage Date`}
-                            onChange={debouncedHandleDateChange}
-                        />
-                        <Tooltip
-                            label={
-                                reservoirDate
-                                    ? 'Reset data to the selected date'
-                                    : 'Reset data to the latest available'
-                            }
-                            position="top-start"
-                        >
-                            <ActionIcon
-                                classNames={{ icon: styles.actionIcon }}
-                                onClick={handleSetToDefault}
+                <Group
+                    className={styles.dateNotesWrapper}
+                    justify="space-between"
+                    align="flex-end"
+                >
+                    {isLocation && (
+                        <Group gap="var(--default-spacing)" align="flex-end">
+                            <DateInput
+                                size="xs"
+                                className={styles.dateSelector}
+                                valueFormat="MM/DD/YYYY"
                                 disabled={isFetchingSingleReservoir}
+                                description="View historical data for this reservoir"
+                                value={
+                                    currentDate
+                                        ? dayjs(currentDate).toDate()
+                                        : undefined
+                                }
+                                maxDate={new Date()}
+                                label={`${shortTitle} Storage Date`}
+                                onChange={debouncedHandleDateChange}
+                            />
+                            <Tooltip
+                                label={
+                                    reservoirDate
+                                        ? 'Reset data to the selected date'
+                                        : 'Reset data to the latest available'
+                                }
+                                position="top-start"
                             >
-                                <Reset />
-                            </ActionIcon>
-                        </Tooltip>
-                    </Group>
-                )}
+                                <ActionIcon
+                                    classNames={{ icon: styles.actionIcon }}
+                                    onClick={handleSetToDefault}
+                                    disabled={isFetchingSingleReservoir}
+                                >
+                                    <Reset />
+                                </ActionIcon>
+                            </Tooltip>
+                        </Group>
+                    )}
+                    {/* Redundant ml to handle case with no date */}
+                    <Box ml="auto" maw="40%">
+                        <Text size="sm">{notes}</Text>
+                    </Box>
+                </Group>
 
                 <Divider my="var(--default-spacing)" />
                 {isLocation ? (
