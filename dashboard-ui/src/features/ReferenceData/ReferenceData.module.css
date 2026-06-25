@@ -11,9 +11,17 @@
     max-width: 250px;
 }
 
+.smallIcon > svg,
 .labelIcon > svg {
     fill: var(--mantine-color-text);
     stroke: var(--mantine-color-text);
-    width: 1rem;
     height: auto;
+}
+
+.labelIcon > svg {
+    width: 1rem;
+}
+
+.smallIcon > svg {
+    width: 0.875rem;
 }
