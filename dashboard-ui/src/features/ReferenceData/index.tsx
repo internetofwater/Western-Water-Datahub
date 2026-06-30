@@ -4,6 +4,8 @@
  */
 
 import {
+    Box,
+    Checkbox,
     Divider,
     Group,
     Loader,
@@ -11,6 +13,7 @@ import {
     Slider,
     Stack,
     Text,
+    Tooltip,
 } from '@mantine/core';
 import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
@@ -26,6 +29,7 @@ import { Links } from '@/features/ReferenceData/Links';
 import { Entry } from '@/features/ReferenceData/Entry';
 import { getLayerName } from '@/features/Map/config';
 import { useLoading } from '@/hooks/useLoading';
+import Info from '@/icons/Info';
 
 const RasterBaseLayerIconObj = [
     {
@@ -58,6 +62,8 @@ const ReferenceData: React.FC = () => {
     const setToggleableLayers = useMainStore(
         (state) => state.setToggleableLayers
     );
+
+    const [showUSBRCuratedNOAARFC, setShowUSBRCuratedNOAARFC] = useState(false);
 
     const { map } = useMap(MAP_ID);
 
@@ -148,6 +154,18 @@ const ReferenceData: React.FC = () => {
         return RasterBaseLayers.None;
     };
 
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        const filter = showUSBRCuratedNOAARFC
+            ? ['boolean', ['get', 'is_usbr_curated']]
+            : null;
+
+        map.setFilter(LayerId.NOAARiverForecast, filter);
+    }, [showUSBRCuratedNOAARFC]);
+
     // TODO: address through styling if bug occurs >1 place, assess if upgrade to next Mantine v
     // Work around, Mantine bug applies data-disabled styling even when false
     // const snotelSwitchProps = isFetchingSnotel ? { 'data-disabled': true } : {};
@@ -169,6 +187,49 @@ const ReferenceData: React.FC = () => {
                         toggleableLayers={toggleableLayers}
                         disabled={isReferenceDataDisabled}
                     />
+                    {toggleableLayers[LayerId.NOAARiverForecast] && (
+                        <>
+                            <Stack
+                                ml="calc(var(--default-spacing) * 5)"
+                                mb="var(--default-spacing)"
+                            >
+                                <Checkbox
+                                    size="xs"
+                                    label={
+                                        <Tooltip
+                                            label="NOAA RFC seasonal water supply forecast points used by USBR for water supply operations planning."
+                                            position="top-start"
+                                            multiline
+                                        >
+                                            <Text
+                                                size="sm"
+                                                mt="-0.15rem"
+                                                className={styles.noaaSublabel}
+                                            >
+                                                Only show points used by USBR
+                                                for water supply forecasting
+                                                <Box
+                                                    ml="calc(var(--default-spacing) / 2)"
+                                                    component="span"
+                                                    className={styles.smallIcon}
+                                                >
+                                                    <Info />
+                                                </Box>
+                                            </Text>
+                                        </Tooltip>
+                                    }
+                                    aria-label="Toggle active to show forecast points used by USBR for water supply operations planning."
+                                    checked={showUSBRCuratedNOAARFC}
+                                    onChange={() =>
+                                        setShowUSBRCuratedNOAARFC(
+                                            !showUSBRCuratedNOAARFC
+                                        )
+                                    }
+                                    disabled={isReferenceDataDisabled}
+                                />
+                            </Stack>
+                        </>
+                    )}
                     <Entry
                         layerId={LayerId.SnotelHucSixMeans}
                         label={`Show ${getLayerName(LayerId.SnotelHucSixMeans)}`}
