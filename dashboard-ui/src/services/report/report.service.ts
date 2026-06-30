@@ -261,7 +261,7 @@ export class ReportService {
 
     private getDevicePixelRatio(): number {
         if (window?.devicePixelRatio) {
-            return 1 / window.devicePixelRatio;
+            return window.devicePixelRatio;
         }
         return 1;
     }
