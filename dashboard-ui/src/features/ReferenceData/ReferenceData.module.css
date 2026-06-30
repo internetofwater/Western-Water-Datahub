@@ -25,3 +25,7 @@
 .smallIcon > svg {
     width: 0.875rem;
 }
+
+.noaaSublabel {
+    white-space: nowrap;
+}

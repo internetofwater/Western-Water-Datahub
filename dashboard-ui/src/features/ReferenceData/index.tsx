@@ -190,7 +190,7 @@ const ReferenceData: React.FC = () => {
                     {toggleableLayers[LayerId.NOAARiverForecast] && (
                         <>
                             <Stack
-                                ml="calc(var(--default-spacing) * 5.5)"
+                                ml="calc(var(--default-spacing) * 5)"
                                 mb="var(--default-spacing)"
                             >
                                 <Checkbox
@@ -201,7 +201,11 @@ const ReferenceData: React.FC = () => {
                                             position="top-start"
                                             multiline
                                         >
-                                            <Text size="sm" mt="-0.15rem">
+                                            <Text
+                                                size="sm"
+                                                mt="-0.15rem"
+                                                className={styles.noaaSublabel}
+                                            >
                                                 Only show points used by USBR
                                                 for water supply forecasting
                                                 <Box
