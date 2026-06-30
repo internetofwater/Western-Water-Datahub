@@ -190,7 +190,7 @@ const ReferenceData: React.FC = () => {
                     {toggleableLayers[LayerId.NOAARiverForecast] && (
                         <>
                             <Stack
-                                ml="calc(var(--default-spacing) * 6)"
+                                ml="calc(var(--default-spacing) * 5.5)"
                                 mb="var(--default-spacing)"
                             >
                                 <Checkbox
@@ -202,9 +202,8 @@ const ReferenceData: React.FC = () => {
                                             multiline
                                         >
                                             <Text size="sm" mt="-0.15rem">
-                                                Only Show Forecast Points used
-                                                by USBR for Water Supply
-                                                Operations
+                                                Only show points used by USBR
+                                                for water supply forecasting
                                                 <Box
                                                     ml="calc(var(--default-spacing) / 2)"
                                                     component="span"
