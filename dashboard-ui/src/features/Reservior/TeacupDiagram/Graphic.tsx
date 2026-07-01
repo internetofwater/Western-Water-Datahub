@@ -212,12 +212,14 @@ export const Graphic: React.FC<Props> = (props) => {
         capacity.setAttribute('id', capacityPolygonId);
         capacity.setAttribute('fill', capacityFill);
         capacity.setAttribute('filter', 'url(#shadow)');
+        capacity.setAttribute('shape-rendering', 'crispEdges'); // Smooths polygon edge (no stair step)
         capacity.setAttribute(
             'points',
             `${upperLeft.join(',')} ${upperRight.join(',')} ${lowerRight.join(
                 ','
             )} ${lowerLeft.join(',')}`
         );
+
         svgRef.current.appendChild(capacity);
 
         // Draw inner trapezoid
@@ -227,6 +229,8 @@ export const Graphic: React.FC<Props> = (props) => {
         );
         storage.setAttribute('id', storagePolygonId);
         storage.setAttribute('fill', storageFill);
+        storage.setAttribute('shape-rendering', 'crispEdges'); // Smooths polygon edge (no stair step)
+
         // storage.setAttribute('class', 'grow');
         storage.setAttribute(
             'points',
@@ -366,6 +370,16 @@ export const Graphic: React.FC<Props> = (props) => {
                 );
             }
 
+            // Edge case: incorrect data resulting in all labels rendering offscreen
+            // Show just average label as fallback
+            if (
+                highPercentileY < 0 &&
+                lowPercentileY < 0 &&
+                averageY + averageAdjust < 0
+            ) {
+                addLabel(averageLabelId, averageLabelTSpanData, 0.1, '#d0a02a');
+            }
+
             // Total capacity of reservoir
             addText(
                 capacityTextId,
@@ -376,34 +390,9 @@ export const Graphic: React.FC<Props> = (props) => {
                 0,
                 textColor,
                 showLabels,
-                -2
+                -2,
+                '#000'
             );
-
-            const minSpacing = 12;
-            averageAdjust = 0;
-            // Check overlap with high percentile line
-            if (
-                hasAverage &&
-                hasHighPercentile &&
-                Math.abs(highPercentileY - averageY) < minSpacing
-            ) {
-                averageAdjust +=
-                    (highPercentileY <= averageY ? 1 : -1) *
-                    (minSpacing + 11 - Math.abs(highPercentileY - averageY));
-            }
-
-            // Check overlap with low percentile line
-            if (
-                hasAverage &&
-                hasLowPercentile &&
-                Math.abs(lowPercentileY - averageY + averageAdjust) < minSpacing
-            ) {
-                averageAdjust +=
-                    (lowPercentileY <= averageY ? 1 : -1) *
-                    (minSpacing +
-                        9 -
-                        Math.abs(lowPercentileY - averageY + averageAdjust));
-            }
 
             if (hasAverage) {
                 addText(
@@ -415,10 +404,11 @@ export const Graphic: React.FC<Props> = (props) => {
                             ]
                         )
                     ),
-                    average - 0.04,
+                    Math.max(0.09, average - 0.04),
                     '#d0a02a',
                     showLabels,
-                    averageAdjust
+                    0, // No adjust, simply limit the average position
+                    '#000'
                 );
             }
 
@@ -431,7 +421,8 @@ export const Graphic: React.FC<Props> = (props) => {
                 1,
                 textColor,
                 showLabels,
-                30
+                30,
+                '#000'
             );
         }
 

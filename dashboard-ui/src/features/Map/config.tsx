@@ -314,6 +314,7 @@ export const getLayerConfig = (
                 type: LayerType.Line,
                 source: SourceId.Regions,
                 layout: {
+                    visibility: 'none',
                     'line-cap': 'round',
                     'line-join': 'round',
                 },
