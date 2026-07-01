@@ -191,10 +191,19 @@ export class ReportService {
     private modifyLayers(map: Map) {
         map.setLayoutProperty(SubLayerId.RegionsFill, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.RegionsBoundary, 'visibility', 'none');
+        map.setLayoutProperty(SubLayerId.RegionLabels, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.BasinsFill, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.BasinsBoundary, 'visibility', 'none');
+        map.setLayoutProperty(SubLayerId.BasinLabels, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.StatesFill, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.StatesBoundary, 'visibility', 'none');
+        map.setLayoutProperty(SubLayerId.StateLabels, 'visibility', 'none');
+        map.setLayoutProperty(LayerId.NOAARiverForecast, 'visibility', 'none');
+        map.setLayoutProperty(SubLayerId.SnotelFill, 'visibility', 'none');
+        map.setLayoutProperty(SubLayerId.SnotelBoundary, 'visibility', 'none');
+        map.setLayoutProperty(LayerId.RegionsReference, 'visibility', 'none');
+        map.setLayoutProperty(LayerId.BasinsReference, 'visibility', 'none');
+        map.setLayoutProperty(LayerId.StatesReference, 'visibility', 'none');
         for (const config of getAllReservoirConfigs()) {
             [config.iconLayer, config.labelLayer].forEach((layerId) => {
                 if (map.getLayer(layerId)) {
@@ -754,25 +763,44 @@ export class ReportService {
     }
 
     private formatDate(date: string | null) {
-        const day = date && dayjs(date).isValid() ? dayjs(date) : dayjs();
+        return date && dayjs(date).isValid()
+            ? dayjs(date).format('MMMM D, YYYY')
+            : 'latest measurement';
+    }
 
-        return day.format('MMMM D, YYYY');
+    private drawTitle(
+        context: OffscreenCanvasRenderingContext2D,
+        legendPosition: { x: number; y: number } // TODO: define this type
+    ) {
+        const { x: legendX, y: legendY } = legendPosition;
+
+        context.font = '700 18px sans-serif';
+        context.fillStyle = '#FFF';
+
+        const x = legendX + 170;
+        let y = legendY + 22;
+
+        context.fillText('Reservoir', x, y);
+
+        y += 24;
+
+        context.fillText('Conditions', x, y);
     }
 
     private drawDate(
         date: string,
         context: OffscreenCanvasRenderingContext2D,
         legendPosition: { x: number; y: number }, // TODO: define this type
-        legendWidth: number
+        legendHeight: number
     ) {
         const { x: legendX, y: legendY } = legendPosition;
 
-        const x = legendX + legendWidth - 150;
-        const y = legendY + 55;
+        const x = legendX + 8;
+        const y = legendY + legendHeight - 8;
 
         context.font = '12px sans-serif';
         context.fillStyle = '#FFF';
-        context.fillText(date, x, y);
+        context.fillText(`Reservoir storage as of ${date}`, x, y);
     }
 
     private drawScale(
@@ -797,7 +825,7 @@ export class ReportService {
         const scaleWidth = scaleElement.clientWidth;
         const scaleLabel = scaleElement.textContent;
 
-        const scaleOffsetY = 15;
+        const scaleOffsetY = 40;
         const labelOffset = 15;
 
         const minX = legendPosition.x + legendWidth / 2 - scaleWidth / 2;
@@ -894,11 +922,13 @@ export class ReportService {
                     legendHeight
                 );
 
+                this.drawTitle(context, legendPosition);
+
                 this.drawDate(
                     formattedDate,
                     context,
                     legendPosition,
-                    legendWidth
+                    legendHeight
                 );
 
                 this.drawScale(
@@ -916,7 +946,7 @@ export class ReportService {
                 .then((blob) => {
                     const a = document.createElement('a');
                     a.href = URL.createObjectURL(blob);
-                    a.download = `Reservoir Conditions Report - ${formattedDate}.png`;
+                    a.download = `Reservoir Conditions Report - ${date ? formattedDate : `${dayjs().format('MMMM D, YYYY')} (Latest Measurement).png`}`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
