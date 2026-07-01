@@ -281,85 +281,84 @@ export const Graphic: React.FC<Props> = (props) => {
             // Add high percentile line and label
 
             const highPercentileY = hasHighPercentile
-                ? calculateYPosition(highPercentile)
-                : -1;
-            const averageY = calculateYPosition(average);
-            const lowPercentileY = calculateYPosition(lowPercentile);
+                ? Math.max(0.01, calculateYPosition(highPercentile))
+                : null;
+
+            const averageY = hasAverage ? calculateYPosition(average) : null;
+
+            const lowPercentileY = hasLowPercentile
+                ? calculateYPosition(lowPercentile)
+                : null;
+
+            let adjustedAvgY = averageY;
+            let adjustedLowY = lowPercentileY;
+
+            const MIN_GAP = 4;
 
             const highLabelTSpanData = hasHighPercentile
                 ? getHighPercentileLabel()
                 : [];
 
             const highLabel =
-                hasHighPercentile &&
-                highPercentileY < 100 &&
-                highPercentileY > 0
+                hasHighPercentile && highPercentileY && highPercentileY < 100
                     ? addLabel(
                           highPercentileLabelId,
                           highLabelTSpanData,
-                          highPercentile,
+                          Math.max(0, highPercentile),
                           textColor
                       )
                     : null;
 
-            // Add average line and label
-
             // Adjust the average label position if too close to high percentile label
-            let averageAdjust = 0;
-            if (
-                hasAverage &&
-                hasHighPercentile &&
-                averageY - highPercentileY < 40
-            ) {
-                const height =
-                    hasHighPercentile && highLabel ? getHeight(highLabel) : -1;
+            const highLabelHeight =
+                hasHighPercentile && highLabel ? getHeight(highLabel) : 0;
 
-                averageAdjust = Math.max(
-                    0,
-                    height - (averageY - highPercentileY + 1)
-                );
+            let averageAdjust = 0;
+
+            if (
+                highPercentileY !== null &&
+                adjustedAvgY !== null &&
+                averageY !== null &&
+                adjustedAvgY - highPercentileY < highLabelHeight
+            ) {
+                adjustedAvgY = highPercentileY + highLabelHeight + MIN_GAP;
+                averageAdjust = adjustedAvgY - averageY;
             }
 
-            const averageLabelTSpanData = hasAverage
-                ? getAverageLabel(averageAdjust)
-                : [];
+            const averageLabelTSpanData = hasAverage ? getAverageLabel(0) : [];
 
-            const averageLabel =
-                hasAverage && averageY + averageAdjust < 100
-                    ? addLabel(
-                          averageLabelId,
-                          averageLabelTSpanData,
-                          Math.max(0, average),
-                          '#d0a02a'
-                      )
-                    : null;
+            const averageLabel = hasAverage
+                ? addLabel(
+                      averageLabelId,
+                      averageLabelTSpanData,
+                      average + averageAdjust / 100,
+                      '#d0a02a'
+                  )
+                : null;
 
             // Add low percentile line and label
 
             // Adjust the low percentile label position if too close to average label
             // Handle if average is also too close to high percentile
+
+            const averageLabelHeight =
+                hasAverage && averageLabel ? getHeight(averageLabel) : 0;
+
             let lowPercentileAdjust = 0;
+
             if (
-                hasAverage &&
-                hasLowPercentile &&
-                lowPercentileY - averageY < 40
+                adjustedAvgY !== null &&
+                adjustedLowY !== null &&
+                lowPercentileY !== null &&
+                adjustedLowY - adjustedAvgY < averageLabelHeight
             ) {
-                const height =
-                    hasAverage && averageLabel
-                        ? getHeight(averageLabel) + 4
-                        : -1;
-
-                lowPercentileAdjust =
-                    Math.max(0, height - (lowPercentileY - averageY + 1)) +
-                    averageAdjust;
-
-                if (averageY + averageAdjust < 0) {
-                    lowPercentileAdjust += 8;
-                }
+                adjustedLowY = adjustedAvgY + averageLabelHeight + MIN_GAP;
+                lowPercentileAdjust = adjustedLowY - lowPercentileY;
             }
 
             if (
                 hasLowPercentile &&
+                lowPercentileY !== null &&
                 lowPercentileY + lowPercentileAdjust < 100 &&
                 lowPercentileY + lowPercentileAdjust > 0
             ) {
@@ -371,17 +370,6 @@ export const Graphic: React.FC<Props> = (props) => {
                     lowPercentile + lowPercentileAdjust / 100,
                     textColor
                 );
-            }
-
-            // Edge case: incorrect data resulting in all labels rendering offscreen
-            // Show just average label as fallback
-            if (
-                highPercentileY < 0 &&
-                lowPercentileY < 0 &&
-                averageY + averageAdjust < 0 &&
-                !averageLabel
-            ) {
-                addLabel(averageLabelId, averageLabelTSpanData, 0.1, '#d0a02a');
             }
 
             // Total capacity of reservoir
