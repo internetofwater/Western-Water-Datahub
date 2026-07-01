@@ -360,7 +360,7 @@ const Reservoir: React.FC = () => {
     const dataIsValid = isDataValid(currentReservoirProperties, config);
 
     const notes = String(
-        currentReservoirProperties[TeacupReservoirField.ReservoirNotes]
+        currentReservoirProperties[TeacupReservoirField.ReservoirNotes] ?? ''
     );
 
     return (

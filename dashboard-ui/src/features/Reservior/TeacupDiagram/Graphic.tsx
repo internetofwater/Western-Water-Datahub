@@ -325,13 +325,11 @@ export const Graphic: React.FC<Props> = (props) => {
                 : [];
 
             const averageLabel =
-                hasAverage &&
-                averageY + averageAdjust < 100 &&
-                averageY + averageAdjust > 0
+                hasAverage && averageY + averageAdjust < 100
                     ? addLabel(
                           averageLabelId,
                           averageLabelTSpanData,
-                          average,
+                          Math.max(0, average),
                           '#d0a02a'
                       )
                     : null;
@@ -347,11 +345,17 @@ export const Graphic: React.FC<Props> = (props) => {
                 lowPercentileY - averageY < 40
             ) {
                 const height =
-                    hasAverage && averageLabel ? getHeight(averageLabel) : -1;
+                    hasAverage && averageLabel
+                        ? getHeight(averageLabel) + 4
+                        : -1;
 
                 lowPercentileAdjust =
                     Math.max(0, height - (lowPercentileY - averageY + 1)) +
                     averageAdjust;
+
+                if (averageY + averageAdjust < 0) {
+                    lowPercentileAdjust += 8;
+                }
             }
 
             if (
@@ -359,13 +363,12 @@ export const Graphic: React.FC<Props> = (props) => {
                 lowPercentileY + lowPercentileAdjust < 100 &&
                 lowPercentileY + lowPercentileAdjust > 0
             ) {
-                const lowLabelTSpanData =
-                    getLowPercentileLabel(lowPercentileAdjust);
+                const lowLabelTSpanData = getLowPercentileLabel(0);
 
                 addLabel(
                     lowPercentileLabelId,
                     lowLabelTSpanData,
-                    lowPercentile,
+                    lowPercentile + lowPercentileAdjust / 100,
                     textColor
                 );
             }
@@ -375,7 +378,8 @@ export const Graphic: React.FC<Props> = (props) => {
             if (
                 highPercentileY < 0 &&
                 lowPercentileY < 0 &&
-                averageY + averageAdjust < 0
+                averageY + averageAdjust < 0 &&
+                !averageLabel
             ) {
                 addLabel(averageLabelId, averageLabelTSpanData, 0.1, '#d0a02a');
             }
