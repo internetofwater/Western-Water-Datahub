@@ -27,6 +27,8 @@ import { MAX_POSITIONS } from '@/services/report/report.consts';
 import useSessionStore from '@/stores/session';
 import { getKey } from '@/features/Reservoirs/utils';
 import { ReservoirConfigId } from '@/features/Map/types';
+import { useMediaQuery } from '@mantine/hooks';
+import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
 
 type Props = {
     accessToken: string;
@@ -62,6 +64,8 @@ const Reservoirs: React.FC<Props> = (props) => {
     const { reservoirCollections } = useReservoirData();
 
     const { map } = useMap(MAP_ID);
+
+    const mobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
     const getSortByProperty = (sortBy: SortBy): keyof OrganizedProperties => {
         switch (sortBy) {
@@ -320,6 +324,16 @@ const Reservoirs: React.FC<Props> = (props) => {
         setSelectedReservoirs(newSelectedReservoirs);
     }, [freezeSelection, limitedReservoirs]);
 
+    useEffect(() => {
+        if (freezeSelection && mobile) {
+            setFreezeSelection(false);
+        }
+
+        if (pickFromTable && mobile) {
+            setPickFromTable(false);
+        }
+    }, [mobile]);
+
     const handleSearchChange = (search: string) => setSearch(search);
     const handleSortByChange = (sortBy: SortBy) => setSortBy(sortBy);
     const handleSortOrderChange = (sortOrder: SortOrder) =>
@@ -354,26 +368,28 @@ const Reservoirs: React.FC<Props> = (props) => {
                 limitByExtent={limitByExtent}
                 onLimitByExtentChange={handleLimitByExtentChange}
             />
-            <Report
-                accessToken={accessToken}
-                reservoirs={limitedReservoirs}
-                pickFromTable={pickFromTable}
-                onPickFromTableChange={handlePickFromTableChange}
-                freezeSelection={freezeSelection}
-                onFreezeSelectionChange={handleFreezeSelectionChange}
-                selectedReservoirs={selectedReservoirs}
-                onSelectedReservoirsChange={handleSelectedReservoirsChange}
-                filters={{
-                    search,
-                    sortBy,
-                    sortOrder,
-                    hideNoData,
-                    limitByExtent,
-                    region,
-                    basin,
-                    state,
-                }}
-            />
+            {!mobile && (
+                <Report
+                    accessToken={accessToken}
+                    reservoirs={limitedReservoirs}
+                    pickFromTable={pickFromTable}
+                    onPickFromTableChange={handlePickFromTableChange}
+                    freezeSelection={freezeSelection}
+                    onFreezeSelectionChange={handleFreezeSelectionChange}
+                    selectedReservoirs={selectedReservoirs}
+                    onSelectedReservoirsChange={handleSelectedReservoirsChange}
+                    filters={{
+                        search,
+                        sortBy,
+                        sortOrder,
+                        hideNoData,
+                        limitByExtent,
+                        region,
+                        basin,
+                        state,
+                    }}
+                />
+            )}
             {filteredReservoirs && (
                 <Table
                     reservoirs={limitedReservoirs}

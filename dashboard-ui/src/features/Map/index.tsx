@@ -41,6 +41,7 @@ import {
     LngLatLike,
     MapMouseEvent,
     MapTouchEvent,
+    Point,
 } from 'mapbox-gl';
 import { useReservoirData } from '@/hooks/useReservoirData';
 import { RegionField } from '@/features/Map/types/region';
@@ -54,6 +55,8 @@ import { SpriteService } from '@/services/sprite/sprite.service';
 import { useHistoricalData } from '@/hooks/useHistoricalData';
 import { customLoader } from '@/services/sprite/customLoader';
 import { ReservoirConfigId } from '@/features/Map/types';
+import { useMediaQuery } from '@mantine/hooks';
+import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
 
 type Props = {
     accessToken: string;
@@ -100,8 +103,57 @@ const MainMap: React.FC<Props> = (props) => {
     const isMounted = useRef(true);
     const spriteService = useRef<SpriteService>(null);
 
+    const mobile = useMediaQuery(MOBILE_MEDIA_QUERY);
+
     useReservoirData();
     useHistoricalData();
+
+    const handleReservoirsInteraction = (
+        reservoirLayers: string[],
+        e: MapMouseEvent | MapTouchEvent
+    ) => {
+        if (!map) {
+            return;
+        }
+
+        const features = map.queryRenderedFeatures(e.point, {
+            layers: reservoirLayers,
+        });
+
+        if (features && features.length) {
+            // If the user has a hover popup open to a particular feature
+            // Find that feature and select it
+            const identifier = container
+                ? container.getAttribute('data-identifier')
+                : null;
+
+            const index = identifier
+                ? findReservoirIndex(features, identifier)
+                : 0;
+
+            const feature = features[index];
+
+            const config = getReservoirConfig(
+                feature.source as ReservoirConfigId
+            );
+
+            if (config && feature.properties) {
+                const identifier = getReservoirIdentifier(
+                    config,
+                    feature.properties,
+                    feature.id!
+                );
+
+                setReservoir({
+                    identifier:
+                        config.identifierType === 'number'
+                            ? Number(identifier)
+                            : identifier,
+                    source: feature.source as SourceId,
+                });
+            }
+        }
+    };
 
     const handleMapMove = useCallback(() => {
         if (isMounted.current) {
@@ -204,51 +256,6 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
-        const reservoirLayers = getAllReservoirConfigs().flatMap((config) =>
-            getAllMapLayers(config)
-        );
-        const handleReservoirsClick = (e: MapMouseEvent | MapTouchEvent) => {
-            const features = map.queryRenderedFeatures(e.point, {
-                layers: reservoirLayers,
-            });
-
-            if (features && features.length) {
-                // If the user has a hover popup open to a particular feature
-                // Find that feature and select it
-                const identifier = container
-                    ? container.getAttribute('data-identifier')
-                    : null;
-
-                const index = identifier
-                    ? findReservoirIndex(features, identifier)
-                    : 0;
-
-                const feature = features[index];
-
-                const config = getReservoirConfig(
-                    feature.source as ReservoirConfigId
-                );
-
-                if (config && feature.properties) {
-                    const identifier = getReservoirIdentifier(
-                        config,
-                        feature.properties,
-                        feature.id!
-                    );
-
-                    setReservoir({
-                        identifier:
-                            config.identifierType === 'number'
-                                ? Number(identifier)
-                                : identifier,
-                        source: feature.source as SourceId,
-                    });
-                }
-            }
-        };
-
-        map.on('click', reservoirLayers, handleReservoirsClick);
-        map.on('touchend', reservoirLayers, handleReservoirsClick);
         // Detect map movements, update features connected to map extent
         map.on('moveend', debouncedHandleMapMove);
         map.on('zoomend', debouncedHandleMapMove);
@@ -276,13 +283,70 @@ const MainMap: React.FC<Props> = (props) => {
         );
 
         return () => {
-            map.off('click', reservoirLayers, handleReservoirsClick);
-            map.off('touchend', reservoirLayers, handleReservoirsClick);
             map.off('moveend', debouncedHandleMapMove);
             map.off('zoomend', debouncedHandleMapMove);
             map.off('zoom', handleMapZoom);
         };
     }, [map]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        // Enable/disable mobile features, convert to Boolean to force undefined -> false
+        // map.setCooperativeGestures(Boolean(mobile));
+
+        const reservoirLayers = getAllReservoirConfigs().flatMap((config) =>
+            getAllMapLayers(config)
+        );
+
+        if (mobile) {
+            let touchStartPosition: Point | null = null;
+
+            // Track starting position of map touch
+            const onTouchStart = (e: MapTouchEvent) => {
+                touchStartPosition = e.point;
+            };
+
+            const onTouchEnd = (e: MapTouchEvent) => {
+                if (!touchStartPosition) {
+                    return;
+                }
+
+                const driftX = Math.abs(e.point.x - touchStartPosition.x);
+                const driftY = Math.abs(e.point.y - touchStartPosition.y);
+                const tolerance = 5;
+
+                // Determine if user is panning by detecting finger drop
+                // If not allow reservoir touch to proceed
+                if (driftX < tolerance && driftY < tolerance) {
+                    handleReservoirsInteraction(reservoirLayers, e);
+                }
+
+                touchStartPosition = null;
+            };
+
+            map.on('touchstart', reservoirLayers, onTouchStart);
+
+            map.on('touchend', reservoirLayers, onTouchEnd);
+
+            return () => {
+                map.off('touchstart', reservoirLayers, onTouchStart);
+
+                map.off('touchend', reservoirLayers, onTouchEnd);
+            };
+        }
+
+        const onClick = (e: MapMouseEvent) =>
+            handleReservoirsInteraction(reservoirLayers, e);
+
+        map.on('click', reservoirLayers, onClick);
+
+        return () => {
+            map.off('click', reservoirLayers, onClick);
+        };
+    }, [map, mobile]);
 
     useEffect(() => {
         if (!map) {

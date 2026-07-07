@@ -9,11 +9,12 @@ import styles from '@/features/MapTools/MapTools.module.css';
 import useSessionStore from '@/stores/session';
 import { Overlay } from '@/stores/session/types';
 import { useMediaQuery } from '@mantine/hooks';
+import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
 
 export const MobilePanelButton: React.FC = () => {
     const setOverlay = useSessionStore((state) => state.setOverlay);
 
-    const mobile = useMediaQuery('(max-width: 899px)');
+    const mobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
     const handleClick = () => {
         setOverlay(Overlay.Controls);

@@ -191,7 +191,6 @@ export const Filter: React.FC<Props> = (props) => {
                 />
                 <Switch
                     size="xs"
-                    mt="calc(var(--default-spacing) / 2)"
                     disabled={isDisabled}
                     classNames={{ label: styles.label }}
                     label="Hide off-screen reservoirs"

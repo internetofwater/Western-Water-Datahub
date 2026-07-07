@@ -24,6 +24,7 @@ import X from '@/icons/X';
 import { useMediaQuery } from '@mantine/hooks';
 import useSessionStore from '@/stores/session';
 import { Overlay } from '@/stores/session/types';
+import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
 
 type Props = {
     accessToken: string;
@@ -37,7 +38,7 @@ const Panel: React.FC<Props> = (props) => {
 
     const [show, setShow] = useState(true);
 
-    const mobile = useMediaQuery('(max-width: 899px)');
+    const mobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
     const firstClose = useRef(true);
 
