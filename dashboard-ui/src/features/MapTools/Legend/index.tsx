@@ -23,6 +23,7 @@ import { Overlay } from '@/stores/session/types';
 import { useMediaQuery } from '@mantine/hooks';
 import { Content } from '@/features/MapTools/Legend/Content';
 import { entries } from '@/features/MapTools/Legend/consts';
+import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
 
 const Legend: React.FC = () => {
     const toggleableLayers = useMainStore((state) => state.toggleableLayers);
@@ -30,7 +31,7 @@ const Legend: React.FC = () => {
     const overlay = useSessionStore((state) => state.overlay);
     const setOverlay = useSessionStore((state) => state.setOverlay);
 
-    const mobile = useMediaQuery('(max-width: 899px)');
+    const mobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
     const [show, setShow] = useState(false);
 

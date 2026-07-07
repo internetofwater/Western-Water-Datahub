@@ -41,6 +41,7 @@ import notificationManager from '@/managers/Notification.init';
 import useMainStore from '@/stores/main';
 import dayjs from 'dayjs';
 import Reset from '@/icons/Reset';
+import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
 
 /**
  *
@@ -56,7 +57,7 @@ const Screenshot: React.FC = () => {
 
     const reservoirDate = useMainStore((state) => state.reservoirDate);
 
-    const mobile = useMediaQuery('(max-width: 899px)');
+    const mobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
     const [show, setShow] = useState(false);
 
