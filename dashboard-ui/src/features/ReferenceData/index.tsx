@@ -190,22 +190,19 @@ const ReferenceData: React.FC = () => {
                     {toggleableLayers[LayerId.NOAARiverForecast] && (
                         <>
                             <Stack
-                                ml="calc(var(--default-spacing) * 5)"
+                                ml="calc(var(--default-spacing) * 6)"
                                 mb="var(--default-spacing)"
                             >
                                 <Checkbox
                                     size="xs"
+                                    classNames={{ label: styles.noaaSubLabel }}
                                     label={
                                         <Tooltip
                                             label="NOAA RFC seasonal water supply forecast points used by USBR for water supply operations planning."
                                             position="top-start"
                                             multiline
                                         >
-                                            <Text
-                                                size="sm"
-                                                mt="-0.15rem"
-                                                className={styles.noaaSublabel}
-                                            >
+                                            <Text size="sm" mt="-0.15rem">
                                                 Only show points used by USBR
                                                 for water supply forecasting
                                                 <Box
