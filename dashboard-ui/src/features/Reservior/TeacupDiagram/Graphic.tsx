@@ -383,7 +383,7 @@ export const Graphic: React.FC<Props> = (props) => {
                 textColor,
                 showLabels,
                 -2,
-                '#000'
+                colorScheme === 'light' ? undefined : '#000'
             );
 
             if (hasAverage) {
