@@ -29,7 +29,11 @@ DOI_REGIONS = {
     },
 }
 
-# Mappings from resviz CSV to RISE stations
+# Mappings from teacup-generator CSV data
+# to RISE stations as mapped in the locations.csv
+# of teacup-generator. This is because the observation
+# CSV only has plain text identifiers.
+#
 LOCATION_IDS = {
     "Agate": 7166,
     "Alcova": 259,
@@ -63,6 +67,7 @@ LOCATION_IDS = {
     "Canyon Ferry": 269,
     "Causey": 289,
     "Carter Lake": 288,
+    "Cheney": 7083,
     "Choke Canyon": 291,
     "Clark Canyon": 294,
     "Clear Lake": 3702,
@@ -110,7 +115,7 @@ LOCATION_IDS = {
     "Harry Strunk (Medicine Creek Dam)": 3650,
     "Havasu (Parker Dam)": 3515,
     "Haystack": 7179,
-    "Helena Valley": 295,
+    "Helena Valley": 7301,
     "Henry Hagg (Scoggins Dam)": 3651,
     "Heron": 365,
     "Horsetooth": 369,
@@ -131,6 +136,7 @@ LOCATION_IDS = {
     "Keyhole": 388,
     "Kirwin": 391,
     "Kortes": 3281,
+    "Lake Of The Arbuckles (Arbuckle Dam)": 7303,
     "Lake Alice": 266,
     "Lemon": 395,
     "Lewiston": 397,
@@ -149,6 +155,7 @@ LOCATION_IDS = {
     "McPhee": 410,
     "Mead (Hoover Dam)": 3154,
     "Meeks Cabin": 411,
+    "Meredith (Sanford Dam)": 7302,
     "Merritt": 418,
     "Millerton (Friant Dam)": 413,
     "Minatare": 399,
@@ -181,6 +188,7 @@ LOCATION_IDS = {
     "Pueblo": 445,
     "Red Fleet": 447,
     "Ridgway": 448,
+    "Rifle Gap": 7326,
     "Rimrock (Tieton Dam)": 7169,
     "Ririe": 7197,
     "Rockport (Wanship Dam)": 453,
@@ -209,11 +217,13 @@ LOCATION_IDS = {
     "Trinity": 3203,
     "Tschida (Heart Butte Dam)": 402,
     "Turquoise (Sugar Loaf Dam)": 498,
+    "Twin Buttes": 7304,
     "Twin Lakes": 499,
     "Unity": 3671,
     "Upper Stillwater": 500,
     "Utah Lake": 3206,
     "Vallecito": 501,
+    "Vega": 7327,
     "Waconda (Glen Elder Dam)": 504,
     "Walcott (Minidoka Dam)": 7191,
     "Warm Springs": 3672,

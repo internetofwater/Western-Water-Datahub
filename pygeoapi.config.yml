@@ -800,6 +800,32 @@ resources:
         id_field: OBJECTID
         title_field: REG_NAME
 
+  area-office-regions:
+    type: collection
+    title: USBR Area Office Regional Boundaries
+    description: contains the boundaries for each of the area offices in the US Bureau of Reclamation
+    provider-name:
+      - BOR
+      - USBR
+      - DOI
+    flask_cache:
+      ttl_seconds: 360000 # 100 hours since regions will rarely have any significant change
+    keywords:
+      - doi
+      - boundaries
+    extents: *default-extent
+    links:
+      - type: application/html
+        title: Documentation
+        rel: documentation
+        href: https://www.usbr.gov/main/offices.html
+    providers:
+      - type: feature
+        name: ESRI
+        data: https://services1.arcgis.com/ixD30sld6F8MQ7V5/ArcGIS/rest/services/AreaBoundaries/FeatureServer/0
+        id_field: OBJECTID
+        title_field: NAME
+
   noaa-river-stage-forecast-day-1: &default-river-stage
     type: collection
     title: NOAA National Water Prediction Service River Stage Forecast Day 1

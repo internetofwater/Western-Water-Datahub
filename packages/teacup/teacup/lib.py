@@ -71,6 +71,7 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
     pg_layer.CreateField(ogr.FieldDefn("wwdh_collection", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("wwdh_fid", ogr.OFTInteger))
     pg_layer.CreateField(ogr.FieldDefn("wwdh_30yr_normal", ogr.OFTString))
+    pg_layer.CreateField(ogr.FieldDefn("reservoir_notes", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("huc6", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("huc12", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("state", ogr.OFTString))
@@ -209,6 +210,13 @@ def run_location_load(force_clean_layer=False) -> None:
             )
             continue
 
+        review_decision = row.get("post_review_decision", "").lower()
+        if review_decision == "do not include":
+            LOGGER.error(
+                f"Skipping {row.get('preferred_label_for_map_and_table')} based on post review decision"
+            )
+            continue
+
         # Handle source URL
         source = row["source_for_storage_data"]
         source_name = row["source_name"]
@@ -265,6 +273,7 @@ def run_location_load(force_clean_layer=False) -> None:
         feature.SetField("source_uri", row["source_uri"])
         feature.SetField("source_name", row["source_name"])
         feature.SetField("source_api_url", row["source_api_url"])
+        feature.SetField("reservoir_notes", row["reservoir_notes"])
         feature.SetField("huc6", row["huc6"])
         feature.SetField("huc12", row["huc12"])
         feature.SetField("state", row["state"])
@@ -393,8 +402,8 @@ def create_feature(pg_layer, row, parameter: str):
         assert row[p_val] >= 0, "Value is negative"
     except (ValueError, TypeError, AssertionError):
         LOGGER.warning(
-            f"Skipping invalid value {row[p_val]} "
-            f"on {row['DataDate']} from {row['SiteName']}"
+            f"Skipping invalid {p_val} from {row['SiteName']}"
+            f" on {row['DataDate']} with value: {row[p_val]}"
         )
         return
 

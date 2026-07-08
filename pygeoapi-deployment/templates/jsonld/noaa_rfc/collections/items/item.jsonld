@@ -7,7 +7,7 @@
         }
     ],
     "type":"schema:Place",
-    "@id":"{{ data['@id'] }}",
+    "@id":"https://geoconnex.us/wwdh/noaa_rfc/{{ data['id'] }}",
     "schema:name": {{ data['espname'] | tojson }},
     "gsp:hasGeometry": {{ data["gsp:hasGeometry"] | to_json }},
     "schema:geo": {{ data["schema:geo"] | to_json }},

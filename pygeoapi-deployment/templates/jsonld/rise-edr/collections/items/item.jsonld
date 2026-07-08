@@ -10,7 +10,7 @@
     "type": ["schema:Place",      
             "hyf:HY_HydroLocation"
             ],
-    "@id": "{{ data["@id"] | safe }}",
+    "@id": "https://geoconnex.us/wwdh/rise/{{ data["id"] | safe }}",
     "schema:identifier": {{ data["id"] | safe }},
     "schema:name": "{{ data["name" ] }}",
     {% if data["description"] %}
