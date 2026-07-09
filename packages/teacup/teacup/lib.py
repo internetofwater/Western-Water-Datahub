@@ -77,6 +77,7 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
     pg_layer.CreateField(ogr.FieldDefn("state", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("reg_name", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("reg_num", ogr.OFTInteger))
+    pg_layer.CreateField(ogr.FieldDefn("live_capacity", ogr.OFTReal))
     pg_layer.CreateField(ogr.FieldDefn("total_capacity", ogr.OFTReal))
     pg_layer.CreateField(ogr.FieldDefn("active_capacity", ogr.OFTReal))
     # this will be of values "Total" / "Active"; the original CSV has some null values
@@ -279,6 +280,7 @@ def run_location_load(force_clean_layer=False) -> None:
         feature.SetField("state", row["state"])
         feature.SetField("reg_name", row["reg_name"])
         feature.SetField("reg_num", row["reg_num"])
+        feature.SetField("live_capacity", row["live_capacity"])
         feature.SetField("total_capacity", row["total_capacity"])
         feature.SetField("active_capacity", row["active_capacity"])
         feature.SetField("storage_capacity_label", row["storage_capacity_label"])
