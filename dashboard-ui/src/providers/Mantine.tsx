@@ -3,7 +3,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { createTheme, MantineProvider } from '@mantine/core';
+import {
+    Checkbox,
+    createTheme,
+    MantineProvider,
+    Radio,
+    Switch,
+} from '@mantine/core';
 import { PropsWithChildren } from 'react';
 
 const theme = createTheme({
@@ -21,6 +27,29 @@ const theme = createTheme({
             '#00769A',
             '#0098C7',
         ],
+    },
+    components: {
+        Radio: Radio.extend({
+            styles: {
+                label: {
+                    paddingInlineStart: 'var(--default-spacing)',
+                },
+            },
+        }),
+        Checkbox: Checkbox.extend({
+            styles: {
+                label: {
+                    paddingInlineStart: 'var(--default-spacing)',
+                },
+            },
+        }),
+        Switch: Switch.extend({
+            styles: {
+                label: {
+                    paddingInlineStart: 'var(--default-spacing)',
+                },
+            },
+        }),
     },
 });
 

@@ -20,6 +20,7 @@ export enum LoadingType {
     NOAA = 'noaa',
     Chart = 'chart',
     SingleReservoir = 'single-date',
+    Report = 'report',
 }
 
 export enum Overlay {

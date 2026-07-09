@@ -314,6 +314,7 @@ export const getLayerConfig = (
                 type: LayerType.Line,
                 source: SourceId.Regions,
                 layout: {
+                    visibility: 'none',
                     'line-cap': 'round',
                     'line-join': 'round',
                 },
@@ -569,6 +570,9 @@ export const getLayerConfig = (
                 id: LayerId.USDroughtMonitor,
                 type: LayerType.Raster,
                 source: SourceId.USDroughtMonitor,
+                layout: {
+                    visibility: 'visible', // Must be defined to be detected correctly in the report
+                },
                 paint: {
                     'raster-opacity': BaseLayerOpacity,
                 },

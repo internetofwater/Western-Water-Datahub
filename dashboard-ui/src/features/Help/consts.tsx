@@ -101,7 +101,7 @@ export const sections: GlossarySection[] = [
                                         'https://www.cbrfc.noaa.gov/dbdata/station/espgraph/list/esplist.html'
                                     )}
                                     . The historical averaging period is
-                                    1991-2020 (Calendar Years).Forecasts
+                                    1991-2020 (Calendar Years). Forecasts
                                     typically represent unregulated streamflow,
                                     meaning they do not account for the water
                                     that may be diverted into or out of the
@@ -378,7 +378,7 @@ export const sections: GlossarySection[] = [
                                 of the reservoir to a specified storage level or
                                 between two reservoir storage levels. The
                                 dashboard shows either Total Capacity or Active
-                                Capacity, depending on the reservoir.
+                                Capacity, depending on the reservoir.&nbsp;
                                 <Text {...content} fw={700} component="strong">
                                     Total Capacity
                                 </Text>
@@ -442,7 +442,7 @@ export const sections: GlossarySection[] = [
                             </Text>
                         ),
                         content:
-                            'The storage volume below which only 10% of historical observations fall for the specified date, based on the 30-year period (October 1 1990 - September 30, 2020). Storage at or below this level indicates unusually low conditions.',
+                            'The storage volume below which only 10% of historical observations fall for the specified date, based on the 30-year period (October 1, 1990 - September 30, 2020). Storage at or below this level indicates unusually low conditions.',
                     },
                     {
                         id: 'high-nine-pct',
@@ -452,7 +452,7 @@ export const sections: GlossarySection[] = [
                             </Text>
                         ),
                         content:
-                            'The storage volume below which 90% of historical observations fall for the specified date, based on the 30-year period (October 1, 1990 - September 30 2020). Storage at or above this level indicates unusually high conditions.',
+                            'The storage volume below which 90% of historical observations fall for the specified date, based on the 30-year period (October 1, 1990 - September 30, 2020). Storage at or above this level indicates unusually high conditions.',
                     },
                     {
                         id: 'pct-full',
@@ -510,7 +510,7 @@ export const sections: GlossarySection[] = [
                                 <Text {...content} fs="italic" component="i">
                                     exclusive flood control capacity
                                 </Text>
-                                (if present).
+                                &nbsp;(if present).
                             </Text>
                         ),
                     },

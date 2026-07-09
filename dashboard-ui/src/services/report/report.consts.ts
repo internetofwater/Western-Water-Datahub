@@ -3,70 +3,22 @@
  * SPDX-License-Identifier: MIT
  */
 
-// Counter clockwise from legend
-// export const RESERVOIR_POSITIONS = [
-//     // Right most
-//     { x: 1400, y: 300 },
-//     // Top
-//     { x: 1400, y: 90 }, // Top Right
-//     { x: 1150, y: 20 },
-//     { x: 900, y: 20 },
-//     { x: 650, y: 20 },
-//     { x: 400, y: 20 },
-//     { x: 150, y: 20 },
-//     // left
-//     { x: 60, y: 250 }, // Top left
-//     { x: 60, y: 500 },
-
-//     // Bottom
-//     { x: 300, y: 675 },
-//     { x: 550, y: 675 },
-//     { x: 800, y: 675 },
-//     { x: 1050, y: 675 },
-// ];
-
-// Clockwise from top left (old positions)
-// export const RESERVOIR_POSITIONS = [
-//     // Top
-//     { x: 150, y: 20 },
-//     { x: 400, y: 20 },
-//     { x: 650, y: 20 },
-//     { x: 900, y: 20 },
-//     { x: 1150, y: 20 },
-//     { x: 1400, y: 90 }, // Top Right
-//     // Right most
-//     { x: 1400, y: 300 },
-//     // Bottom
-//     { x: 1050, y: 675 },
-//     { x: 800, y: 675 },
-//     { x: 550, y: 675 },
-//     { x: 300, y: 675 },
-//     // left
-//     { x: 60, y: 675 },
-//     { x: 60, y: 460 },
-//     { x: 60, y: 240 }, // Top left
-// ];
-
+// Clockwise from top left
 export const RESERVOIR_POSITIONS = [
     // Top
-    { x: 60, y: 20 },
-    { x: 310, y: 20 },
-    { x: 560, y: 20 },
-    { x: 810, y: 20 },
-    { x: 1060, y: 20 },
-    // { x: 1310, y: 20 }, // Top Right
-    { x: 1310, y: 20 }, // Top Right
+    { x: 80, y: 15 }, // A
+    { x: 360, y: 15 }, // B
+    { x: 640, y: 15 }, // C
+    { x: 920, y: 15 }, // Top Right, D
     // Right most
-    { x: 1400, y: 250 },
+    { x: 920, y: 240 }, // E
     // Bottom
-    { x: 1050, y: 675 },
-    { x: 800, y: 675 },
-    { x: 550, y: 675 },
-    { x: 300, y: 675 },
+    { x: 640, y: 685 }, // F
+    { x: 360, y: 685 }, // G
     // left
-    { x: 60, y: 675 },
-    { x: 60, y: 460 },
-    { x: 60, y: 240 }, // Top left
+    { x: 80, y: 685 }, // H
+    { x: 80, y: 460 }, // I
+    { x: 80, y: 240 }, // Top left, J
 ];
 
 export const MAX_POSITIONS = RESERVOIR_POSITIONS.length;
@@ -89,18 +41,20 @@ export const TAGS = [
 ];
 
 export const TAG_COLORS = [
-    '#9DFA57',
-    '#EE4BFA',
-    '#FAAB4B',
-    '#A168A5',
-    '#4BC2FA',
-    '#087F2F',
+    // USBR Brand Colors
+    '#E7F6F8', // A
+    '#FFBE2E', // B
+    '#59B9DE', // C
+    '#DEC69A', // D
+    '#204E34', // E
+    '#54278F', // F
+    '#0081A1', // G
+    '#EF5E25', // H
+    // Other Colors
+    '#A168A5', // I
+    '#6FAA23', // J
     '#62737A',
-    '#3966D5',
-    '#6FAA23',
-    '#FF570E',
-    '#CFF9E0',
-    '#997B60',
-    '#7328A4',
     '#FAED4E',
+    '#EE4BFA',
+    '#9DFA57',
 ];

@@ -63,7 +63,12 @@ export const Entry: React.FC<Props> = (props) => {
                 onClick={() => onClick(!toggleableLayers[layerId])}
                 disabled={disabled}
             />
-            {links && <Links collectionId={layerId} />}
+            {links && (
+                // Inset links to align with label
+                <Box ml="calc(var(--default-spacing) * 6)">
+                    <Links collectionId={layerId} />
+                </Box>
+            )}
         </Stack>
     );
 };

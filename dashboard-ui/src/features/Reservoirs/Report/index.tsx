@@ -14,29 +14,43 @@ import {
     Stack,
     Switch,
     Title,
+    Text,
+    Tooltip,
+    Box,
 } from '@mantine/core';
 import { MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
-import { ReportService } from '@/services/report/report.service';
+import {
+    ReportService,
+    TCallbackResponse,
+} from '@/services/report/report.service';
 import { useEffect, useRef, useState } from 'react';
-import { Map } from 'mapbox-gl';
-import { loadTeacups } from '@/features/Map/utils';
+import { Map, ScaleControl } from 'mapbox-gl';
 import { Feature, Point } from 'geojson';
 import styles from '@/features/Reservoirs/Report/Report.module.css';
-import { OrganizedProperties } from '@/features/Reservoirs/types';
+import { Filters, OrganizedProperties } from '@/features/Reservoirs/types';
 import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
 import { useLoading } from '@/hooks/useLoading';
 import Select from '@/components/Select';
 import { MAX_POSITIONS } from '@/services/report/report.consts';
 import { getKey } from '@/features/Reservoirs/utils';
+import notificationManager from '@/managers/Notification.init';
+import { LoadingType, NotificationType } from '@/stores/session/types';
+import loadingManager from '@/managers/Loading.init';
+import Info from '@/icons/Info';
+import { TooltipDetail } from '@/features/Reservoirs/Report/TooltipDetail';
+import useMainStore from '@/stores/main';
 
 type Props = {
     accessToken: string;
     reservoirs: Feature<Point, OrganizedProperties>[];
     pickFromTable: boolean;
     onPickFromTableChange: (pickFromTable: boolean) => void;
+    freezeSelection: boolean;
+    onFreezeSelectionChange: (freezeSelection: boolean) => void;
     selectedReservoirs: string[];
     onSelectedReservoirsChange: (selectedReservoirs: string[]) => void;
+    filters: Filters;
 };
 
 const Report: React.FC<Props> = (props) => {
@@ -45,30 +59,61 @@ const Report: React.FC<Props> = (props) => {
         reservoirs,
         pickFromTable,
         onPickFromTableChange,
+        freezeSelection,
+        onFreezeSelectionChange,
         selectedReservoirs,
         onSelectedReservoirsChange,
+        filters,
     } = props;
+
+    const reservoirDate = useMainStore((state) => state.reservoirDate);
 
     const [isMapLoaded, setIsMapLoaded] = useState(false);
 
     const [options, setOptions] = useState<ComboboxItem[]>([]);
 
     const cloneMap = useRef<Map>(null);
-    const container = useRef<HTMLDivElement>(null);
-    const isMounted = useRef(true);
 
     const { map } = useMap(MAP_ID);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
+
+    const createReport = (
+        map: Map,
+        features: Feature<Point, OrganizedProperties>[],
+        loadingInstance: string
+    ) => {
+        const callback = (response: TCallbackResponse) => {
+            const { success, message } = response;
+
+            if (success) {
+                notificationManager.show(
+                    message,
+                    NotificationType.Success,
+                    5000
+                );
+            } else {
+                notificationManager.show(message, NotificationType.Error, 7500);
+            }
+            loadingManager.remove(loadingInstance);
+        };
+
+        new ReportService().report(map, features, reservoirDate, callback);
+    };
 
     const handleClick = () => {
-        if (!map || !cloneMap.current || !isMapLoaded || !container.current) {
+        if (!map || !cloneMap.current || !isMapLoaded) {
             return;
         }
 
-        cloneMap.current.setStyle(map.getStyle());
-        cloneMap.current.setCenter(map.getCenter());
-        cloneMap.current.setZoom(Math.max(map.getZoom() - 0.5, 0));
+        if (isGeneratingReport || isFetchingReservoirs) {
+            return;
+        }
+
+        const loadingInstance = loadingManager.add(
+            'Generating Reservoirs Report.',
+            LoadingType.Report
+        );
 
         const selectionSet = new Set(selectedReservoirs);
 
@@ -87,11 +132,8 @@ const Report: React.FC<Props> = (props) => {
             }
         }
 
-        void new ReportService().report(
-            cloneMap.current,
-            features,
-            container.current
-        );
+        cloneMap.current.setStyle(map.getStyle());
+        createReport(cloneMap.current, features, loadingInstance);
     };
 
     useEffect(() => {
@@ -118,7 +160,7 @@ const Report: React.FC<Props> = (props) => {
     }, [reservoirs]);
 
     useEffect(() => {
-        if (pickFromTable) {
+        if (freezeSelection) {
             return;
         }
 
@@ -132,45 +174,47 @@ const Report: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
+
+        let isMounted = true;
+
         const hidden = document.createElement('div');
-
-        // height: 0, width: 0, overflow: 'hidden'
-
         hidden.style.width = '0';
         hidden.style.height = '0';
         hidden.style.overflow = 'hidden';
 
         document.body.appendChild(hidden);
 
-        container.current = document.createElement('div');
-        container.current.style.width = '1600px';
-        container.current.style.height = '900px';
-        hidden.appendChild(container.current);
+        const container = document.createElement('div');
+        // Aspect ratio of 1 h : 1.29 w to match a landscape 8.5" h : 11" w physical letter page
+        container.style.width = '1165px';
+        container.style.height = '900px';
+        hidden.appendChild(container);
         cloneMap.current = new Map({
             accessToken: accessToken,
-            container: container.current,
+            container: container,
             center: map.getCenter(),
             style: map.getStyle(),
             zoom: map.getZoom(),
             bearing: map.getBearing(),
             pitch: map.getPitch(),
             projection: map.getProjection(),
+            preserveDrawingBuffer: true,
         });
 
-        loadTeacups(cloneMap.current);
+        // Add scale control
+        cloneMap.current.addControl(new ScaleControl());
+
+        // loadTeacups(cloneMap.current);
         cloneMap.current.once('load', () => {
-            if (isMounted.current) {
+            if (isMounted) {
                 setIsMapLoaded(true);
             }
         });
-    }, [map]);
 
-    useEffect(() => {
-        isMounted.current = true;
         return () => {
-            isMounted.current = false;
+            isMounted = false;
         };
-    }, []);
+    }, [map]);
 
     // const filter: OptionsFilter = ({ options }) => {
     //     return (options as ComboboxItem[]).filter((option) =>
@@ -178,7 +222,10 @@ const Report: React.FC<Props> = (props) => {
     //     );
     // };
 
-    const labelsSwitchProps = isFetchingReservoirs
+    const areControlsDisabled = isFetchingReservoirs || isGeneratingReport;
+    const isButtonDisabled = areControlsDisabled || !isMapLoaded;
+
+    const labelsSwitchProps = areControlsDisabled
         ? { 'data-disabled': true }
         : {};
 
@@ -214,27 +261,102 @@ const Report: React.FC<Props> = (props) => {
                             value={selectedReservoirs}
                             // filter={filter}
                             onChange={onSelectedReservoirsChange}
-                            disabled={isFetchingReservoirs}
+                            onFocus={() => onFreezeSelectionChange(true)}
+                            onDropdownOpen={() => onFreezeSelectionChange(true)}
+                            disabled={areControlsDisabled}
                         />
+                        <Group justify="space-between">
+                            <Text size="xs">
+                                {selectedReservoirs.length} / {MAX_POSITIONS}{' '}
+                                reservoir(s)
+                            </Text>
+                            {freezeSelection ? (
+                                <Text size="xs">
+                                    Custom reservoir selection.
+                                </Text>
+                            ) : (
+                                <Tooltip
+                                    label={<TooltipDetail filters={filters} />}
+                                    multiline
+                                    position="top-start"
+                                >
+                                    <Text size="xs">
+                                        Why are these reservoirs selected?
+                                        <Box
+                                            ml="calc(var(--default-spacing) / 2)"
+                                            component="span"
+                                            className={styles.labelIcon}
+                                        >
+                                            <Info />
+                                        </Box>
+                                    </Text>
+                                </Tooltip>
+                            )}
+                        </Group>
                         <Group
                             justify="space-between"
                             gap={'var(--default-spacing)'}
                         >
-                            <Switch
-                                size="xs"
-                                mt="calc(var(--default-spacing) / 2)"
-                                disabled={isFetchingReservoirs}
-                                classNames={{ label: styles.label }}
-                                label="Select reservoirs from table"
-                                checked={pickFromTable}
-                                onClick={(event) =>
-                                    onPickFromTableChange(
-                                        event.currentTarget.checked
-                                    )
-                                }
-                                {...labelsSwitchProps}
-                            />
-                            <Button onClick={handleClick}>Generate</Button>
+                            <Stack
+                                gap={'var(--default-spacing)'}
+                                align="flex-start"
+                            >
+                                <Switch
+                                    size="xs"
+                                    mt="calc(var(--default-spacing) / 2)"
+                                    disabled={
+                                        areControlsDisabled || pickFromTable
+                                    }
+                                    classNames={{ label: styles.label }}
+                                    label={
+                                        <Tooltip
+                                            label="Manually select reservoirs to show in the report"
+                                            multiline
+                                            position="top-start"
+                                        >
+                                            {/*  */}
+                                            <Text size="xs" mt="-0.125rem">
+                                                Freeze selection
+                                                <Box
+                                                    ml="calc(var(--default-spacing) / 2)"
+                                                    component="span"
+                                                    className={styles.labelIcon}
+                                                >
+                                                    <Info />
+                                                </Box>
+                                            </Text>
+                                        </Tooltip>
+                                    }
+                                    checked={freezeSelection}
+                                    onClick={(event) =>
+                                        onFreezeSelectionChange(
+                                            event.currentTarget.checked
+                                        )
+                                    }
+                                    {...labelsSwitchProps}
+                                />
+                                <Switch
+                                    size="xs"
+                                    mt="calc(var(--default-spacing) / 2)"
+                                    disabled={areControlsDisabled}
+                                    classNames={{ label: styles.label }}
+                                    label="Select reservoirs from the table"
+                                    checked={pickFromTable}
+                                    onClick={(event) =>
+                                        onPickFromTableChange(
+                                            event.currentTarget.checked
+                                        )
+                                    }
+                                    {...labelsSwitchProps}
+                                />
+                            </Stack>
+                            <Button
+                                onClick={handleClick}
+                                disabled={isButtonDisabled}
+                                data-disabled={isButtonDisabled}
+                            >
+                                Generate
+                            </Button>
                         </Group>
                     </Stack>
                 </AccordionPanel>

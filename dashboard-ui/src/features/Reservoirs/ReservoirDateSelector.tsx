@@ -4,7 +4,7 @@
  */
 
 import useMainStore from '@/stores/main';
-import { Checkbox, Group } from '@mantine/core';
+import { Checkbox, Stack } from '@mantine/core';
 import { DateInput, DateValue } from '@mantine/dates';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
@@ -16,7 +16,7 @@ export const ReservoirDateSelector: React.FC = () => {
     const reservoirDate = useMainStore((state) => state.reservoirDate);
     const setReservoirDate = useMainStore((state) => state.setReservoirDate);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
     const handleCheckboxChange = (checked: boolean) => {
         if (checked) {
@@ -44,32 +44,42 @@ export const ReservoirDateSelector: React.FC = () => {
     }, []);
 
     const hasReservoirDate = reservoirDate !== null;
+    const isDisabled = isFetchingReservoirs || isGeneratingReport;
 
     return (
-        <Group gap="calc(var(--default-spacing) / 1)" align="flex-end">
-            {hasReservoirDate && (
-                <DateInput
-                    size="xs"
-                    className={styles.multiselect}
-                    valueFormat="MM/DD/YYYY"
-                    disabled={isFetchingReservoirs}
-                    value={dayjs(reservoirDate).toDate()}
-                    maxDate={new Date()}
-                    label="Reservoir Storage Date"
-                    onChange={debouncedHandleReservoirDateChange}
-                />
-            )}
+        <Stack
+            gap="calc(var(--default-spacing) / 4)"
+            align="flex-start"
+            mt="var(--default-spacing)"
+        >
             <Checkbox
                 size="xs"
                 className={styles.dateCheckbox}
-                mb={hasReservoirDate ? '0.4375rem' : 0}
                 classNames={{ label: styles.label }}
                 checked={!hasReservoirDate}
-                disabled={isFetchingReservoirs}
-                data-disabled={isFetchingReservoirs}
-                label="Latest Storage Value"
+                disabled={isDisabled}
+                data-disabled={isDisabled}
+                label="Show most recent data"
                 onChange={() => handleCheckboxChange(!hasReservoirDate)}
             />
-        </Group>
+            {hasReservoirDate && (
+                <DateInput
+                    size="sm"
+                    classNames={{ input: styles.multiselect }}
+                    valueFormat="MM/DD/YYYY"
+                    placeholder="MM/DD/YYYY"
+                    disabled={isDisabled || !hasReservoirDate}
+                    value={
+                        reservoirDate
+                            ? dayjs(reservoirDate).toDate()
+                            : undefined
+                    }
+                    maxDate={new Date()}
+                    label="Reservoir Storage Date"
+                    description="Search for reservoir data on a specific date"
+                    onChange={debouncedHandleReservoirDateChange}
+                />
+            )}
+        </Stack>
     );
 };

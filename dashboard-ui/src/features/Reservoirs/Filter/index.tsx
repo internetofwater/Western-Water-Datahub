@@ -60,7 +60,7 @@ export const Filter: React.FC<Props> = (props) => {
     const showAllLabels = useMainStore((state) => state.showAllLabels);
     const setShowAllLabels = useMainStore((state) => state.setShowAllLabels);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
     const handleLabelsChange = () => {
         setShowAllLabels(!showAllLabels);
@@ -80,9 +80,9 @@ export const Filter: React.FC<Props> = (props) => {
         }
     };
 
-    const labelsSwitchProps = isFetchingReservoirs
-        ? { 'data-disabled': true }
-        : {};
+    const isDisabled = isFetchingReservoirs || isGeneratingReport;
+
+    const labelsSwitchProps = isDisabled ? { 'data-disabled': true } : {};
     return (
         <Stack
             gap="calc(var(--default-spacing) / 2)"
@@ -92,7 +92,7 @@ export const Filter: React.FC<Props> = (props) => {
                 justify="space-between"
                 mt="calc(var(--default-spacing) / 2)"
             >
-                <Title order={3} size="h5">
+                <Title order={3} size="h4">
                     Filters
                 </Title>
                 <Box component="span" className={styles.filterIcon}>
@@ -100,9 +100,9 @@ export const Filter: React.FC<Props> = (props) => {
                 </Box>
             </Group>
             <ReservoirDateSelector />
+            <Divider my="calc(var(--default-spacing) / 2)" />
             <Group
                 gap="var(--default-spacing)"
-                my="calc(var(--default-spacing) / 2)"
                 align="flex-start"
                 wrap="nowrap"
             >
@@ -143,7 +143,7 @@ export const Filter: React.FC<Props> = (props) => {
                 <SortBy sortBy={sortBy} handleChange={handleSortByChange} />
                 <ActionIcon
                     size="sm"
-                    disabled={isFetchingReservoirs}
+                    disabled={isDisabled}
                     variant="filled"
                     className={`${styles.sortOrderButton} ${
                         sortOrder === 'asc' ? styles.rotate180 : ''
@@ -170,7 +170,7 @@ export const Filter: React.FC<Props> = (props) => {
                 {boundingGeographyLevel !== BoundingGeographyLevel.None && (
                     <Switch
                         size="xs"
-                        disabled={isFetchingReservoirs}
+                        disabled={isDisabled}
                         classNames={{ label: styles.label }}
                         label={getLabel(boundingGeographyLevel)}
                         checked={showAllLabels}
@@ -180,7 +180,7 @@ export const Filter: React.FC<Props> = (props) => {
                 )}
                 <Switch
                     size="xs"
-                    disabled={isFetchingReservoirs}
+                    disabled={isDisabled}
                     classNames={{ label: styles.label }}
                     label={'Hide reservoirs with no data'}
                     checked={hideNoData}
@@ -191,10 +191,9 @@ export const Filter: React.FC<Props> = (props) => {
                 />
                 <Switch
                     size="xs"
-                    mt="calc(var(--default-spacing) / 2)"
-                    disabled={isFetchingReservoirs}
+                    disabled={isDisabled}
                     classNames={{ label: styles.label }}
-                    label="Hide Reservoirs not on Map"
+                    label="Hide off-screen reservoirs"
                     checked={limitByExtent}
                     onClick={(event) =>
                         onLimitByExtentChange(event.currentTarget.checked)

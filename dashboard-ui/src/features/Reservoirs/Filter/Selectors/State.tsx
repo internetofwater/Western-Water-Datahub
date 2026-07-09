@@ -5,7 +5,7 @@
 
 'use client';
 
-import { ComboboxData, MultiSelect, Skeleton } from '@mantine/core';
+import { MultiSelect, Skeleton } from '@mantine/core';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId, ValidStates } from '@/features/Map/consts';
 import { useEffect, useRef, useState } from 'react';
@@ -22,13 +22,14 @@ import { useLoading } from '@/hooks/useLoading';
 export const State: React.FC = () => {
     const state = useMainStore((state) => state.state);
     const setState = useMainStore((state) => state.setState);
+    const stateOptions = useMainStore((state) => state.stateOptions);
+    const setStateOptions = useMainStore((state) => state.setStateOptions);
 
     const { map } = useMap(MAP_ID);
 
     const [loading, setLoading] = useState(true);
-    const [stateOptions, setStateOptions] = useState<ComboboxData>([]);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
@@ -108,6 +109,8 @@ export const State: React.FC = () => {
         };
     }, []);
 
+    const isDisabled = isFetchingReservoirs || isGeneratingReport;
+
     return (
         <>
             {loading || stateOptions.length === 0 ? (
@@ -120,7 +123,7 @@ export const State: React.FC = () => {
                     size="xs"
                     id="stateSelector"
                     className={styles.multiselect}
-                    disabled={isFetchingReservoirs}
+                    disabled={isDisabled}
                     data={stateOptions}
                     value={state}
                     aria-label="Select a State"

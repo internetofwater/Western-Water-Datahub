@@ -4,8 +4,8 @@
  */
 
 .body {
-    height: min(80vh, 735px);
-    max-height: 735px;
+    height: min(80vh, 45.9375rem);
+    max-height: 45.9375rem;
 }
 
 .chartWrapper {
@@ -17,14 +17,18 @@
 }
 
 .content {
-    width: min(80vw, 1265px);
-    height: 800px;
-    max-width: 1265px;
+    width: min(80vw, 79.0625rem);
+    height: 52.25rem;
+    max-width: 79.0625rem;
     overflow-x: hidden;
 }
 
 .dataLink {
     margin-bottom: -0.25rem;
+}
+
+.dateNotesWrapper {
+    height: 4.4375rem;
 }
 
 .graphicLegendColor {

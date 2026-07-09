@@ -5,7 +5,7 @@
 
 'use client';
 
-import { ComboboxData, MultiSelect, Skeleton } from '@mantine/core';
+import { MultiSelect, Skeleton } from '@mantine/core';
 import useMainStore from '@/stores/main';
 import { useEffect, useRef, useState } from 'react';
 import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
@@ -29,11 +29,12 @@ const fixLabel = (label: string) => {
 export const Region: React.FC = () => {
     const region = useMainStore((state) => state.region);
     const setRegion = useMainStore((state) => state.setRegion);
+    const regionOptions = useMainStore((state) => state.regionOptions);
+    const setRegionOptions = useMainStore((state) => state.setRegionOptions);
 
-    const [regionOptions, setRegionOptions] = useState<ComboboxData>([]);
     const [loading, setLoading] = useState(true);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
@@ -116,6 +117,8 @@ export const Region: React.FC = () => {
         };
     }, []);
 
+    const isDisabled = isFetchingReservoirs || isGeneratingReport;
+
     return (
         <>
             {loading || regionOptions.length === 0 ? (
@@ -128,7 +131,7 @@ export const Region: React.FC = () => {
                     size="xs"
                     id="regionSelector"
                     className={styles.multiselect}
-                    disabled={isFetchingReservoirs}
+                    disabled={isDisabled}
                     data={regionOptions}
                     value={region}
                     data-testid="region-select"

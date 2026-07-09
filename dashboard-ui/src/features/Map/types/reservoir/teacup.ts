@@ -18,6 +18,7 @@ export enum TeacupReservoirField {
     State = 'state',
     Source = 'source_uri',
     UseTotalOrActiveStorage = 'storage_capacity_label',
+    ReservoirNotes = 'reservoir_notes',
 
     Capacity = 'capacity',
     Storage = 'raw',
@@ -25,8 +26,8 @@ export enum TeacupReservoirField {
     NinetiethPercentile = 'p90',
     StorageAverage = 'avg',
     StorageDate = 'storage_date',
-    Huc02 = 'huc02', // Client side property for easier filtering by huc02
-    Item = 'item', // Client side property to determine if this res is a location
+    Huc02 = 'huc02', // Clientside property for easier filtering by huc02
+    Item = 'item', // Clientside property to determine if this res is a location
 }
 
 export type TeacupReservoirProperties = {

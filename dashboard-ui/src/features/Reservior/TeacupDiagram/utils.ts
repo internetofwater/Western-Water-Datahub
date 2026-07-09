@@ -10,7 +10,7 @@ import { TspanData } from '@/features/Reservior/TeacupDiagram/types';
  * @function
  */
 export const calculateYPositionContructor =
-    (base1: number, base2: number, height: number) =>
+    (base1: number, base2: number, height: number, offset: number = 0) =>
     (size: number): number => {
         if (base1 === base2) return size * height;
 
@@ -25,7 +25,7 @@ export const calculateYPositionContructor =
 
         const y = (-b + Math.sqrt(discriminant)) / (2 * a);
 
-        return y;
+        return y + offset;
     };
 
 /**
@@ -130,9 +130,10 @@ export const addTextConstructor =
         id: string,
         text: string,
         position: number,
-        color: string,
+        fill: string,
         display: boolean = true,
-        adjust: number = 0
+        adjust: number = 0,
+        stroke?: string
     ): SVGTextElement => {
         const textElement = document.createElementNS(
             'http://www.w3.org/2000/svg',
@@ -150,7 +151,12 @@ export const addTextConstructor =
         textElement.setAttribute('text-anchor', 'middle');
         textElement.setAttribute('font-size', '7px');
         textElement.setAttribute('font-weight', 'bold');
-        textElement.setAttribute('fill', color);
+        textElement.setAttribute('fill', fill);
+        if (stroke) {
+            textElement.setAttribute('paint-order', 'stroke');
+            textElement.setAttribute('stroke-weight', '1px');
+            textElement.setAttribute('stroke', stroke);
+        }
         textElement.setAttribute('display', display ? 'inline' : 'none');
 
         svg.appendChild(textElement);

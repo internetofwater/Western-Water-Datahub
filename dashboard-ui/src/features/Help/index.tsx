@@ -13,6 +13,7 @@ import styles from '@/features/Help/Help.module.css';
 import useSessionStore from '@/stores/session';
 import { HelpTab, Overlay } from '@/stores/session/types';
 import { Documentation } from '@/features/Help/Documentation';
+import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
 
 export const HELP_LOCAL_KEY = 'wwdh-show-help';
 
@@ -29,7 +30,7 @@ const Help: React.FC = () => {
     // TODO: investigate issues with initial load
     const [initialLoad, setInitialLoad] = useState(true);
 
-    const mobile = useMediaQuery('(max-width: 899px)');
+    const mobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
     useEffect(() => {
         const stored = localStorage.getItem(HELP_LOCAL_KEY);

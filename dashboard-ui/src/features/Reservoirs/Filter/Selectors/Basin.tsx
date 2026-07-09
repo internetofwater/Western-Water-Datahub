@@ -5,7 +5,7 @@
 
 'use client';
 
-import { ComboboxData, MultiSelect, Skeleton } from '@mantine/core';
+import { MultiSelect, Skeleton } from '@mantine/core';
 import useMainStore from '@/stores/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId, ValidBasins } from '@/features/Map/consts';
@@ -27,11 +27,12 @@ export const Basin: React.FC = () => {
 
     const basin = useMainStore((state) => state.basin);
     const setBasin = useMainStore((state) => state.setBasin);
+    const basinOptions = useMainStore((state) => state.basinOptions);
+    const setBasinOptions = useMainStore((state) => state.setBasinOptions);
 
     const [loading, setLoading] = useState(true);
-    const [basinOptions, setBasinOptions] = useState<ComboboxData>([]);
 
-    const { isFetchingReservoirs } = useLoading();
+    const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
     const controller = useRef<AbortController>(null);
     const isMounted = useRef(true);
@@ -79,9 +80,10 @@ export const Basin: React.FC = () => {
                     { defaultLabel: '', defaultValue: '', noDefault: true }
                 );
 
+                setBasinOptions(basinOptions);
+
                 if (isMounted.current) {
                     setLoading(false);
-                    setBasinOptions(basinOptions);
                 }
             }
         } catch (error) {
@@ -110,6 +112,8 @@ export const Basin: React.FC = () => {
         };
     }, []);
 
+    const isDisabled = isFetchingReservoirs || isGeneratingReport;
+
     return (
         <>
             {loading || basinOptions.length === 0 ? (
@@ -122,7 +126,7 @@ export const Basin: React.FC = () => {
                     size="xs"
                     id="basinSelector"
                     className={styles.multiselect}
-                    disabled={isFetchingReservoirs}
+                    disabled={isDisabled}
                     searchable
                     data={basinOptions}
                     value={basin}

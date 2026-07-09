@@ -3,7 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Stack, Text, Group, Box, Divider, Flex, Anchor } from '@mantine/core';
+import {
+    Stack,
+    Text,
+    Group,
+    Divider,
+    Flex,
+    Anchor,
+    Skeleton,
+} from '@mantine/core';
 import { ReservoirConfigProperties } from '@/features/Map/types';
 import styles from '@/features/Reservior/Reservoir.module.css';
 import { GeoJsonProperties } from 'geojson';
@@ -42,6 +50,7 @@ const buildSourceUrl = (
 type Props = {
     reservoirProperties: GeoJsonProperties & ExtendedProperties;
     config: ReservoirConfigProperties;
+    isLoading: boolean;
 };
 
 /**
@@ -49,7 +58,7 @@ type Props = {
  * @component
  */
 export const Metrics: React.FC<Props> = (props) => {
-    const { reservoirProperties, config } = props;
+    const { reservoirProperties, config, isLoading } = props;
 
     const [itemUrl, setItemUrl] = useState<string>();
     const [sourceUrl, setSourceUrl] = useState<string>();
@@ -110,80 +119,116 @@ export const Metrics: React.FC<Props> = (props) => {
         size: 'lg',
     };
 
+    const textGroup = {
+        gap: 'calc(var(--default-spacing) / 2)',
+        justify: 'flex-start',
+        h: '1.85rem',
+    };
+
     return (
         <Stack className={styles.metricsWrapper}>
-            <Text size="sm">
-                Data as of:{' '}
-                {reservoirProperties[config.storageDateProperty]
-                    ? dayjs(
-                          reservoirProperties[
-                              config.storageDateProperty
-                          ] as string
-                      ).format('MM/DD/YYYY')
-                    : 'N/A'}
-            </Text>
+            <Group gap="calc(var(--default-spacing) / 2)" justify="flex-start">
+                <Text size="sm">Data as of: </Text>
+                <Skeleton width="30%" visible={isLoading}>
+                    <Text size="sm">
+                        {reservoirProperties[config.storageDateProperty]
+                            ? dayjs(
+                                  reservoirProperties[
+                                      config.storageDateProperty
+                                  ] as string
+                              ).format('MM/DD/YYYY')
+                            : 'N/A'}
+                    </Text>
+                </Skeleton>
+            </Group>
             <Flex gap="var(--default-spacing)" className={styles.metrics}>
-                <Box className={styles.metricsGroup}>
-                    <Group gap="xs" justify="flex-start">
+                <Stack
+                    gap="calc(var(--default-spacing) / 2)"
+                    className={styles.metricsGroup}
+                >
+                    <Group {...textGroup}>
                         <Text {...text} fw={700}>
                             {getLabel('Storage')}:
                         </Text>
-                        <Text {...text}>{displayVolumeWithUnits(storage)}</Text>
+                        <Skeleton width="fit-content" visible={isLoading}>
+                            <Text {...text}>
+                                {displayVolumeWithUnits(storage)}
+                            </Text>
+                        </Skeleton>
                     </Group>
 
-                    <Group gap="xs" justify="flex-start">
+                    <Group {...textGroup}>
                         <Text {...text} fw={700}>
                             Percent Full:
                         </Text>
-                        <Text {...text}>{displayPercentage(percentFull)}</Text>
+                        <Skeleton width="fit-content" visible={isLoading}>
+                            <Text {...text}>
+                                {displayPercentage(percentFull)}
+                            </Text>
+                        </Skeleton>
                     </Group>
-                    <Group gap="xs" justify="flex-start">
+                    <Group {...textGroup}>
                         <Text {...text} fw={700}>
                             Percent of Average:
                         </Text>
-                        <Text {...text}>
-                            {displayPercentage(percentOfAverage)}
-                        </Text>
+                        <Skeleton width="fit-content" visible={isLoading}>
+                            <Text {...text}>
+                                {displayPercentage(percentOfAverage)}
+                            </Text>
+                        </Skeleton>
                     </Group>
-                </Box>
+                </Stack>
                 {verticalDivider ? (
                     <Divider orientation="vertical" />
                 ) : (
                     <Divider w="100%" />
                 )}
 
-                <Box className={styles.metricsGroup}>
-                    <Group gap="xs" justify="flex-start">
+                <Stack
+                    gap="calc(var(--default-spacing) / 2)"
+                    className={styles.metricsGroup}
+                >
+                    <Group {...textGroup}>
                         <Text {...text} fw={700}>
                             {getLabel('Capacity')}:
                         </Text>
-                        <Text {...text}>
-                            {displayVolumeWithUnits(capacity)}
-                        </Text>
+                        <Skeleton width="fit-content" visible={isLoading}>
+                            <Text {...text}>
+                                {displayVolumeWithUnits(capacity)}
+                            </Text>
+                        </Skeleton>
                     </Group>
-                    <Group gap="xs" justify="flex-start">
+                    <Group {...textGroup}>
                         <Text {...text} fw={700}>
                             30-year Average:
                         </Text>
-                        <Text {...text}>{displayVolumeWithUnits(average)}</Text>
+                        <Skeleton width="fit-content" visible={isLoading}>
+                            <Text {...text}>
+                                {displayVolumeWithUnits(average)}
+                            </Text>
+                        </Skeleton>
                     </Group>
-                    <Group gap="xs" justify="flex-start">
+                    <Group {...textGroup}>
                         <Text {...text} fw={700}>
                             High (90<sup>th</sup> Percentile):
                         </Text>
-                        <Text {...text}>
-                            {displayVolumeWithUnits(ninetiethPercentile)}
-                        </Text>
+                        <Skeleton width="fit-content" visible={isLoading}>
+                            <Text {...text}>
+                                {displayVolumeWithUnits(ninetiethPercentile)}
+                            </Text>
+                        </Skeleton>
                     </Group>
-                    <Group gap="xs" justify="flex-start">
+                    <Group {...textGroup}>
                         <Text {...text} fw={700}>
                             Low (10<sup>th</sup> Percentile):
                         </Text>
-                        <Text {...text}>
-                            {displayVolumeWithUnits(tenthPercentile)}
-                        </Text>
+                        <Skeleton width="fit-content" visible={isLoading}>
+                            <Text {...text}>
+                                {displayVolumeWithUnits(tenthPercentile)}
+                            </Text>
+                        </Skeleton>
                     </Group>
-                </Box>
+                </Stack>
             </Flex>
             {(itemUrl || sourceUrl) && (
                 <Group gap="var(--default-spacing)">

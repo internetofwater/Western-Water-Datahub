@@ -27,6 +27,7 @@ import Basemap from '@/icons/Basemap';
 import useSessionStore from '@/stores/session';
 import { Overlay } from '@/stores/session/types';
 import { useMediaQuery } from '@mantine/hooks';
+import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
 
 /**
  *
@@ -39,7 +40,7 @@ export const Selector: React.FC = () => {
     const overlay = useSessionStore((state) => state.overlay);
     const setOverlay = useSessionStore((state) => state.setOverlay);
 
-    const mobile = useMediaQuery('(max-width: 899px)');
+    const mobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
     const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
 

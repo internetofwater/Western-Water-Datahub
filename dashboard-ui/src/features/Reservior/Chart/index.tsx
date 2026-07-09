@@ -34,6 +34,7 @@ type Props = {
     config: ReservoirConfigProperties;
     currentDate: string | null;
     source: string;
+    isDataValid: boolean;
 };
 
 /**
@@ -41,7 +42,7 @@ type Props = {
  * @component
  */
 export const Chart: React.FC<Props> = (props) => {
-    const { ref, id, config, currentDate, source } = props;
+    const { ref, id, config, currentDate, source, isDataValid } = props;
 
     const [data, setData] = useState<Array<{ x: string; y: number }>>([]);
     const [loading, setLoading] = useState(true);
@@ -73,22 +74,31 @@ export const Chart: React.FC<Props> = (props) => {
         reservoirDate: string | null,
         range: DateRange
     ) => {
+        const stringId = String(id);
+        const dateRange = getDateRange(reservoirDate, range);
+        const params = {
+            'parameter-name': 'raw',
+            limit: dateRange.days,
+            ...config.params,
+            datetime: dateRange.startDate + '/' + dateRange.endDate,
+        };
+        const locationUrl = buildLocationUrl(
+            source,
+            stringId,
+            params,
+            null,
+            null,
+            false,
+            true
+        );
+
+        setLocationUrl(locationUrl);
         try {
             if (isMounted.current) {
                 setLoading(true);
             }
             controller.current = new AbortController();
 
-            const dateRange = getDateRange(reservoirDate, range);
-
-            const stringId = String(id);
-
-            const params = {
-                'parameter-name': 'raw',
-                limit: dateRange.days,
-                ...config.params,
-                datetime: dateRange.startDate + '/' + dateRange.endDate,
-            };
             const coverageCollection =
                 await wwdhService.getLocation<CoverageCollection>(
                     source,
@@ -104,18 +114,6 @@ export const Chart: React.FC<Props> = (props) => {
                 config.chartLabel
             );
 
-            const locationUrl = buildLocationUrl(
-                source,
-                stringId,
-                params,
-                null,
-                null,
-                false,
-                true
-            );
-
-            setLocationUrl(locationUrl);
-
             if (isMounted.current) {
                 setData(data);
                 setLoading(false);
@@ -127,16 +125,28 @@ export const Chart: React.FC<Props> = (props) => {
             ) {
                 console.log('Fetch request canceled');
             } else {
+                if (isMounted.current) {
+                    setError('No data found.');
+                    setLoading(false);
+                }
+
                 if ((error as Error)?.message) {
                     if (isMounted.current) {
                         const _error = error as Error;
                         setError(_error.message);
-                        setLoading(false);
                     }
                 }
             }
         }
     };
+
+    useEffect(() => {
+        if (isDataValid) {
+            setError('');
+        } else {
+            setError('No Storage Measurement on this date');
+        }
+    }, [isDataValid]);
 
     useEffect(() => {
         setError('');
@@ -177,33 +187,37 @@ export const Chart: React.FC<Props> = (props) => {
                         </Anchor>
                     )}
                 </Group>
-
-                <Group>
-                    <Radio
-                        label="Past year"
-                        data-testid="1-year-radio"
-                        checked={range === 1}
-                        onChange={() => setRange(1)}
-                    />
-                    <Radio
-                        label="Past 5 years"
-                        data-testid="5-year-radio"
-                        checked={range === 5}
-                        onChange={() => setRange(5)}
-                    />
-                    <Radio
-                        label="Past 10 years"
-                        data-testid="10-year-radio"
-                        checked={range === 10}
-                        onChange={() => setRange(10)}
-                    />
-                    <Radio
-                        label="Past 30 years"
-                        data-testid="30-year-radio"
-                        checked={range === 30}
-                        onChange={() => setRange(30)}
-                    />
-                </Group>
+                <Radio.Group
+                    value={String(range)}
+                    onChange={(range) => setRange(Number(range) as DateRange)}
+                >
+                    <Group gap="var(--default-spacing)">
+                        <Radio
+                            label="Past year"
+                            data-testid="1-year-radio"
+                            value={'1'}
+                            disabled={loading}
+                        />
+                        <Radio
+                            label="Past 5 years"
+                            data-testid="5-year-radio"
+                            value={'5'}
+                            disabled={loading}
+                        />
+                        <Radio
+                            label="Past 10 years"
+                            data-testid="10-year-radio"
+                            value={'10'}
+                            disabled={loading}
+                        />
+                        <Radio
+                            label="Past 30 years"
+                            data-testid="30-year-radio"
+                            value="30"
+                            disabled={loading}
+                        />
+                    </Group>
+                </Radio.Group>
             </Group>
             <Space h="sm" />
             <Skeleton visible={loading}>

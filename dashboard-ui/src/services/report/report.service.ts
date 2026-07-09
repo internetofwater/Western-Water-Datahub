@@ -28,31 +28,57 @@ import {
     TAGS,
 } from '@/services/report/report.consts';
 
+export type TCallbackResponse = {
+    success: boolean;
+    message: string;
+};
+
 export class ReportService {
-    public async report(
+    /**
+     * Generate a png report reflecting user choices in the dashboard showcasing current reservoir conditions
+     *
+     * @public
+     * @param {Map} map - Map instance to modify for creating report imagery
+     * @param {Feature<Point, OrganizedProperties>[]} reservoirs - List of reservoirs to include in report
+     * @param {(string | null)} date - Currently selected reservoir date or null for latest date
+     * @param {?(response: TCallbackResponse) => void} [callback] - Callback function called after successful download
+     */
+    public report(
         map: Map,
         reservoirs: Feature<Point, OrganizedProperties>[],
-        container: HTMLDivElement
+        date: string | null,
+        callback?: (response: TCallbackResponse) => void
     ) {
         this.positionView(map, reservoirs);
         this.modifyLayers(map);
+        const container = map.getContainer();
         let svgOverlay = this.addSVGLayer(container);
-        svgOverlay.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-        svgOverlay.setAttribute('font', '"Geist", "Geist Fallback"');
 
-        // const reservoirsInCircle = this.sortReservoirs(map, reservoirs);
-        //const reservoir of reservoirsInCircle
-        for (let i = 0; i < reservoirs.length; i++) {
+        svgOverlay.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        svgOverlay.setAttribute('font-family', 'Arial, Helvetica, sans-serif');
+
+        const root = { x: 0, y: 0 };
+        const { innerRect, outerRect } = this.createBorders();
+        svgOverlay = this.drawSVGAtPosition(root, outerRect, svgOverlay);
+        svgOverlay = this.drawSVGAtPosition(root, innerRect, svgOverlay);
+
+        // Draw in reverse order to place alphabetical tags on top
+        for (let i = reservoirs.length - 1; i >= 0; i--) {
             const reservoir = reservoirs[i];
             const config = getReservoirConfig(
                 reservoir.properties.sourceId as ReservoirConfigId
             );
             if (config) {
-                const mapPositionCircle = this.createCircle(i);
+                // Geographic position of reservoir
                 const point = reservoir.geometry.coordinates as [
                     number,
                     number,
                 ];
+                // In report position of supplemental reservoir information (graphic, card, tag)
+                const position = RESERVOIR_POSITIONS[i];
+
+                // Draw color indicator of reservoir geographic position
+                const mapPositionCircle = this.createCircle(i);
 
                 svgOverlay = this.drawSVGAtPoint(
                     map,
@@ -61,6 +87,7 @@ export class ReportService {
                     svgOverlay
                 );
 
+                // Draw character indicator of reservoir geographic position
                 const mapTag = this.createTag(i);
 
                 svgOverlay = this.drawSVGAtPoint(
@@ -70,63 +97,69 @@ export class ReportService {
                     svgOverlay
                 );
 
-                const position = RESERVOIR_POSITIONS[i];
-
+                // Draw teacup graphic
                 const reservoirSVG = this.createReservoirSVG(config, reservoir);
+
                 svgOverlay = this.drawSVGAtPosition(
                     position,
                     reservoirSVG,
                     svgOverlay
                 );
 
+                // Draw information box
                 const infoSVG = this.createInfoBox(config, reservoir);
 
                 // Draw this svg, then calculate the width in the dom to reposition
                 svgOverlay = this.drawSVG(infoSVG, svgOverlay);
 
-                const { width: infoBoxWidth } = infoSVG.getBoundingClientRect();
+                // Bounding rect wont reflect bounds accurately until end of next frame
+                requestAnimationFrame(() => {
+                    const { width: infoBoxWidth } =
+                        infoSVG.getBoundingClientRect();
 
-                const infoBoxPosition = {
-                    x: position.x - Math.abs(160 - infoBoxWidth) / 2,
-                    y:
-                        position.y +
-                        (Number(reservoirSVG.getAttribute('height')) ?? 0),
-                };
+                    const infoBoxPosition = {
+                        x: position.x - Math.abs(160 - infoBoxWidth) / 2,
+                        y:
+                            position.y +
+                            (Number(reservoirSVG.getAttribute('height')) ?? 0),
+                    };
 
-                this.repostion(infoBoxPosition, infoSVG);
+                    this.repostion(infoBoxPosition, infoSVG);
 
-                const indicatorCircle = this.createCircle(i);
-                const indicatorPosition = {
-                    x: position.x - Math.abs(160 - infoBoxWidth) / 2 - 2, // position at bottom left corner
-                    y:
-                        position.y +
-                        (Number(reservoirSVG.getAttribute('height')) ?? 0) -
-                        2,
-                };
+                    // Create duplicate of color indicator to prevent mutation
+                    const indicatorCircle = this.createCircle(i);
+                    const indicatorPosition = {
+                        x: position.x - Math.abs(160 - infoBoxWidth) / 2 - 2, // position at bottom left corner
+                        y:
+                            position.y +
+                            (Number(reservoirSVG.getAttribute('height')) ?? 0) -
+                            6,
+                    };
 
-                svgOverlay = this.drawSVGAtPosition(
-                    indicatorPosition,
-                    indicatorCircle,
-                    svgOverlay
-                );
+                    svgOverlay = this.drawSVGAtPosition(
+                        indicatorPosition,
+                        indicatorCircle,
+                        svgOverlay
+                    );
 
-                const infoTag = this.createTag(i);
+                    // Create duplicate of tag indicator to prevent mutation
+                    const infoTag = this.createTag(i);
 
-                svgOverlay = this.drawSVGAtPosition(
-                    indicatorPosition,
-                    infoTag,
-                    svgOverlay
-                );
+                    svgOverlay = this.drawSVGAtPosition(
+                        indicatorPosition,
+                        infoTag,
+                        svgOverlay
+                    );
+                });
             }
         }
 
+        // Force refresh of map state
         // Wait for map to render
-        map.setBearing(map.getBearing());
-        await new Promise((resolve) => map.once('render', resolve));
-        await new Promise(requestAnimationFrame);
-
-        // Combine map canvas and SVG overlay
-        this.exportCombinedImage(map, svgOverlay);
+        map.triggerRepaint();
+        map.once('idle', () => {
+            this.exportCombinedImage(map, svgOverlay, date, callback);
+        });
     }
 
     private positionView(map: Map, reservoirs: Feature<Point>[]) {
@@ -143,13 +176,14 @@ export class ReportService {
             // Fit padding to dimension of shapes
             {
                 padding: {
-                    top: 250,
-                    left: 210,
-                    right: 210,
-                    bottom: 250,
+                    top: 270,
+                    left: 300,
+                    right: 320,
+                    bottom: 270,
                 },
                 maxZoom: 16,
                 duration: 0,
+                animate: false,
             }
         );
     }
@@ -157,17 +191,65 @@ export class ReportService {
     private modifyLayers(map: Map) {
         map.setLayoutProperty(SubLayerId.RegionsFill, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.RegionsBoundary, 'visibility', 'none');
+        map.setLayoutProperty(SubLayerId.RegionLabels, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.BasinsFill, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.BasinsBoundary, 'visibility', 'none');
+        map.setLayoutProperty(SubLayerId.BasinLabels, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.StatesFill, 'visibility', 'none');
         map.setLayoutProperty(SubLayerId.StatesBoundary, 'visibility', 'none');
-        getAllReservoirConfigs().forEach((config) => {
+        map.setLayoutProperty(SubLayerId.StateLabels, 'visibility', 'none');
+        map.setLayoutProperty(LayerId.NOAARiverForecast, 'visibility', 'none');
+        map.setLayoutProperty(SubLayerId.SnotelFill, 'visibility', 'none');
+        map.setLayoutProperty(SubLayerId.SnotelBoundary, 'visibility', 'none');
+        map.setLayoutProperty(LayerId.RegionsReference, 'visibility', 'none');
+        map.setLayoutProperty(LayerId.BasinsReference, 'visibility', 'none');
+        map.setLayoutProperty(LayerId.StatesReference, 'visibility', 'none');
+        for (const config of getAllReservoirConfigs()) {
             [config.iconLayer, config.labelLayer].forEach((layerId) => {
                 if (map.getLayer(layerId)) {
                     map.setLayoutProperty(layerId, 'visibility', 'none');
                 }
             });
-        });
+        }
+    }
+
+    private createBorders() {
+        const outerRectWidth = 50;
+        const innerRectWidth = 5;
+        const unit = 'px';
+
+        const outerRect = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'rect'
+        );
+
+        outerRect.setAttribute('width', '100%');
+        outerRect.setAttribute('height', '100%');
+        outerRect.setAttribute('x', `0`);
+        outerRect.setAttribute('y', `0`);
+        outerRect.setAttribute('fill', 'none');
+        outerRect.setAttribute('stroke', '#0081a1');
+        outerRect.setAttribute('stroke-width', `${outerRectWidth}${unit}`);
+
+        const innerRect = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'rect'
+        );
+        innerRect.setAttribute(
+            'width',
+            `calc(100% - ${outerRectWidth}${unit})`
+        );
+        innerRect.setAttribute(
+            'height',
+            `calc(100% - ${outerRectWidth}${unit})`
+        );
+        innerRect.setAttribute('x', `${outerRectWidth / 2}`);
+        innerRect.setAttribute('y', `${outerRectWidth / 2}`);
+        innerRect.setAttribute('fill', 'none');
+        innerRect.setAttribute('stroke', '#c2850c');
+        innerRect.setAttribute('stroke-width', `${innerRectWidth}${unit}`);
+
+        return { outerRect, innerRect };
     }
 
     private addSVGLayer(container: HTMLElement): SVGSVGElement {
@@ -186,98 +268,53 @@ export class ReportService {
         return svg;
     }
 
-    private sortReservoirs<T extends GeoJsonProperties>(
-        map: Map,
-        reservoirs: Feature<Point, T>[]
-    ): Feature<Point, T>[] {
-        const TWO_PI = Math.PI * 2;
+    private getDevicePixelRatio(): number {
+        if (window?.devicePixelRatio) {
+            return 1 / window.devicePixelRatio;
+        }
+        return 1;
+    }
 
-        type Projected = {
-            res: Feature<Point, T>;
-            x: number;
-            y: number;
-            theta: number; // Angle position around center point
-            absDy: number; // Normalized position between top and bottom
-            r: number; // Radius, distance to center point
-        };
+    private invertHexToBW(hex: string): string {
+        let safeHex = hex;
+        /**
+         * Returns black (`#000000`) for light colors and white (`#ffffff`) for dark colors
+         * using a simplified luminance calculation and a threshold of 128.
+         *
+         * Luminance is approximated using the WCAG coefficients (0.2126, 0.7152, 0.0722)
+         * applied to RGB values without gamma correction. Any alpha channel present in the
+         * input is ignored.
+         */
 
-        // Project lat-lngs to x & y
-        const pts: Projected[] = reservoirs.map((res) => {
-            const [lng, lat] = res.geometry.coordinates;
-            const { x, y } = map.project([lng, lat]);
-            return { res, x, y, theta: 0, absDy: 0, r: 0 };
-        });
-
-        // Determine center point of provided points
-        const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
-        const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
-
-        // This is a screen grid so top left corner is (0, 0)
-        // Inverting the y allows us to interact with these coordinates
-        // using more basic math
-        for (const p of pts) {
-            const dx = p.x - cx;
-            const dyMath = cy - p.y; // Invert y
-            let theta = Math.atan2(dyMath, dx);
-            // tan(theta) = opposite(dyMath, dx)
-            if (theta < 0) {
-                theta += TWO_PI;
-            }
-            p.theta = theta;
-            p.absDy = Math.abs(p.y - cy);
-            p.r = Math.hypot(dx, p.y - cy);
+        // Validate hex color format
+        if (
+            !/^#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(
+                hex
+            )
+        ) {
+            throw new Error('Invalid hex color');
         }
 
-        // Locate east-most point that is closest to the center Y point
-        pts.sort((a, b) => {
-            if (a.absDy !== b.absDy) {
-                return a.absDy - b.absDy;
-            }
+        // Remove the '#' if present
+        safeHex = safeHex.replace(/^#/, '');
 
-            const ax = a.x - cx;
-            const bx = b.x - cx;
+        // Expand shorthand form (e.g. "FFF") to full form (e.g. "FFFFFF")
+        if (safeHex.length === 3 || safeHex.length === 4) {
+            safeHex = safeHex
+                .split('')
+                .map((char) => char + char)
+                .join('');
+        }
 
-            if (ax >= 0 !== bx >= 0) {
-                return ax >= 0 ? -1 : 1;
-            }
+        const r = parseInt(safeHex.slice(0, 2), 16);
+        const g = parseInt(safeHex.slice(2, 4), 16);
+        const b = parseInt(safeHex.slice(4, 6), 16);
 
-            if (ax !== bx) {
-                return bx - ax;
-            }
-
-            if (a.r !== b.r) {
-                return a.r - b.r;
-            }
-            return 0;
-        });
-
-        const theta0 = pts[0].theta;
-
-        // Sort points counter-clockwise starting from most centered/east-most point
-        pts.sort((a, b) => {
-            const da = (a.theta - theta0 + TWO_PI) % TWO_PI;
-            const db = (b.theta - theta0 + TWO_PI) % TWO_PI;
-
-            if (da !== db) {
-                return da - db;
-            }
-
-            if (a.r !== b.r) {
-                return a.r - b.r;
-            }
-
-            const ax = a.x - cx,
-                ay = a.y - cy;
-            const bx = b.x - cx,
-                by = b.y - cy;
-            // prefer east
-            if (ax !== bx) {
-                return bx - ax;
-            }
-            return ay - by; // then north (smaller y)
-        });
-
-        return pts.map((p) => p.res);
+        // Partial implementation of relative luminance calculation
+        // that does not caclulate gamma correction
+        // https://www.w3.org/TR/WCAG20/#relativeluminancedef
+        const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        return luminance > 128 ? '#000000' : '#ffffff';
     }
 
     private createCircle(index: number): SVGCircleElement {
@@ -288,7 +325,10 @@ export class ReportService {
 
         const color = TAG_COLORS[index];
 
-        circle.setAttribute('stroke', `#000`);
+        circle.setAttribute(
+            'stroke',
+            `color-mix(in srgb, ${color} 70%, black)`
+        );
 
         circle.setAttribute('stroke-width', `3`);
 
@@ -306,41 +346,59 @@ export class ReportService {
         );
         tag.textContent = TAGS[index].toUpperCase();
 
+        const color = this.invertHexToBW(TAG_COLORS[index]);
         tag.setAttribute('text-anchor', 'middle');
         tag.setAttribute('dominant-baseline', 'middle');
-        tag.setAttribute('fill', '#000');
+        tag.setAttribute('fill', color);
         tag.setAttribute('font-size', '14');
         tag.setAttribute('font-weight', 'bold');
         tag.setAttribute('font-family', 'sans-serif');
-
-        // tag.setAttribute('dx', '-3');
-        // tag.setAttribute('dy', '3');
 
         return tag;
     }
 
     private breakLines(text: string): string[] {
-        const lines = [];
-        let line = '';
+        const splitIndex = text.indexOf('(');
 
-        for (const word of text.split(' ')) {
-            line += word + ' ';
+        const wrap = (input: string): string[] => {
+            const lines: string[] = [];
+            let line = '';
 
-            if (line.length > 16) {
-                lines.push(line);
-                line = '';
+            for (const word of input.split(' ')) {
+                const next = (line + word + ' ').trim();
+
+                if (next.length > 22 && line.length > 0) {
+                    lines.push(line.trim());
+                    line = word + ' ';
+                } else {
+                    line += word + ' ';
+                }
             }
+
+            if (line.trim().length > 0) {
+                lines.push(line.trim());
+            }
+
+            return lines;
+        };
+
+        // Contains "("
+        if (splitIndex !== -1) {
+            const firstPart = text.slice(0, splitIndex).trim();
+            const secondPart = text.slice(splitIndex).trim();
+
+            const firstLines = wrap(firstPart);
+            const secondLines = wrap(secondPart);
+
+            // Only take first line of each side to guarantee 2 total lines
+            return [
+                firstLines.join(' '), // merge if wrapped internally
+                secondLines.join(' '),
+            ];
         }
 
-        if (lines.length === 0) {
-            return [text];
-        }
-
-        if (line.length > 0) {
-            lines.push(line);
-        }
-
-        return lines;
+        // No "("
+        return wrap(text);
     }
 
     private createInfoBox(
@@ -354,8 +412,8 @@ export class ReportService {
 
         svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-        svg.setAttribute('fill', 'black');
-        svg.setAttribute('font-size', '12');
+        svg.setAttribute('fill', '#000');
+        svg.setAttribute('font-size', '14px');
 
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         svg.appendChild(g);
@@ -418,27 +476,67 @@ export class ReportService {
             g.appendChild(t);
         });
 
+        const defs = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'defs'
+        );
+        const dropShadowId = `drop-shadow-${reservoir.properties![config.identifierProperty]}`;
+        const filter = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'filter'
+        );
+        filter.setAttribute('id', dropShadowId);
+        filter.setAttribute('x', '-20%');
+        filter.setAttribute('y', '-20%');
+        filter.setAttribute('width', '140%');
+        filter.setAttribute('height', '140%');
+
+        const shadow = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'feDropShadow'
+        );
+        shadow.setAttribute('dx', '0');
+        shadow.setAttribute('dy', '2');
+        shadow.setAttribute('stdDeviation', '3');
+        shadow.setAttribute('flood-color', '#000');
+        shadow.setAttribute('flood-opacity', '0.3');
+
+        filter.appendChild(shadow);
+        defs.appendChild(filter);
+        svg.appendChild(defs);
+
         requestAnimationFrame(() => {
             const bbox = g.getBBox();
+
+            const padding = 16;
+            const shadowPad = 12;
 
             const rect = document.createElementNS(
                 'http://www.w3.org/2000/svg',
                 'rect'
             );
 
-            const width = Math.min(bbox.width + 16, 200);
+            const width = Math.min(bbox.width + padding, 250);
+            const height = bbox.height + padding;
             rect.setAttribute('x', `${bbox.x - 8}`);
             rect.setAttribute('y', `${bbox.y - 8}`);
             rect.setAttribute('width', `${width}`);
-            rect.setAttribute('height', `${bbox.height + 16}`);
+            rect.setAttribute('height', `${height}`);
             rect.setAttribute('fill', '#fff');
             rect.setAttribute('rx', '6');
             rect.setAttribute('ry', '6');
+            // Apply dropshadow
+            rect.setAttribute('filter', `url(#${dropShadowId})`);
 
             svg.insertBefore(rect, g);
 
-            svg.setAttribute('width', `${width}`);
-            svg.setAttribute('height', `${bbox.height + 16}`);
+            svg.setAttribute(
+                'viewBox',
+                `0 0 ${width + shadowPad * 2} ${height + shadowPad * 2}`
+            );
+
+            svg.setAttribute('width', `${width + shadowPad * 2}`);
+            svg.setAttribute('height', `${height + shadowPad * 2}`);
         });
 
         return svg;
@@ -448,9 +546,11 @@ export class ReportService {
         config: ReservoirConfigProperties,
         reservoir: Feature<Point, GeoJsonProperties>
     ): SVGSVGElement {
-        const storagePercentage =
+        const storagePercentage = Math.min(
             Number(reservoir.properties![config.storageProperty]) /
-            Number(reservoir.properties![config.capacityProperty]);
+                Number(reservoir.properties![config.capacityProperty]),
+            1
+        );
 
         const ninetiethPercentage =
             Number(reservoir.properties![config.ninetiethPercentileProperty]) /
@@ -514,6 +614,33 @@ export class ReportService {
         svg.setAttribute('width', upperWidth.toString());
         svg.setAttribute('height', height.toString());
 
+        const strokeWidth = 2;
+        // Add padding to show full outline polygon
+        svg.setAttribute(
+            'viewBox',
+            `${-strokeWidth} ${-strokeWidth} ${upperWidth + strokeWidth * 2} ${height + strokeWidth * 2}`
+        );
+
+        // Border, drawn first to not obscure other elems
+        const outlinePolygon = document.createElementNS(
+            svg.namespaceURI,
+            'polygon'
+        );
+
+        outlinePolygon.setAttribute('fill', 'none');
+        outlinePolygon.setAttribute('stroke', '#000');
+        outlinePolygon.setAttribute('stroke-width', `${strokeWidth * 2}`); // Stroke is middle positioned, double to place 2px outside
+        outlinePolygon.setAttribute('stroke-linejoin', 'miter');
+        outlinePolygon.setAttribute('vector-effect', 'non-scaling-stroke'); // Ensures consistency in stroke width across all scales
+
+        outlinePolygon.setAttribute(
+            'points',
+            `${upperLeft.join(',')} ${upperRight.join(',')} ${lowerRight.join(',')} ${lowerLeft.join(',')}`
+        );
+
+        svg.appendChild(outlinePolygon);
+
+        // Capacity shape
         const outerPolygon = document.createElementNS(
             svg.namespaceURI,
             'polygon'
@@ -525,9 +652,12 @@ export class ReportService {
                 ','
             )} ${lowerLeft.join(',')}`
         );
+        outerPolygon.setAttribute('shape-rendering', 'geometricPrecision'); // Smooths polygon edge (no stair step)
+
         svg.appendChild(outerPolygon);
 
         if (storagePercentage !== 0) {
+            // Storage shape
             const innerPolygon = document.createElementNS(
                 svg.namespaceURI,
                 'polygon'
@@ -539,6 +669,8 @@ export class ReportService {
                     ','
                 )} ${lowerRight.join(',')} ${lowerLeft.join(',')}`
             );
+            innerPolygon.setAttribute('shape-rendering', 'geometricPrecision');
+
             svg.appendChild(innerPolygon);
         }
 
@@ -630,10 +762,118 @@ export class ReportService {
         return { id: 'none-legend', w: 293, h: 228 };
     }
 
-    private exportCombinedImage(map: Map, svgOverlay: SVGSVGElement) {
+    private formatDate(date: string | null) {
+        return date && dayjs(date).isValid()
+            ? dayjs(date).format('MMMM D, YYYY')
+            : 'latest measurement';
+    }
+
+    private drawTitle(
+        context: OffscreenCanvasRenderingContext2D,
+        legendPosition: { x: number; y: number } // TODO: define this type
+    ) {
+        const { x: legendX, y: legendY } = legendPosition;
+
+        context.font = '700 18px sans-serif';
+        context.fillStyle = '#FFF';
+
+        const x = legendX + 170;
+        let y = legendY + 22;
+
+        context.fillText('Reservoir', x, y);
+
+        y += 24;
+
+        context.fillText('Conditions', x, y);
+    }
+
+    private drawDate(
+        date: string,
+        context: OffscreenCanvasRenderingContext2D,
+        legendPosition: { x: number; y: number }, // TODO: define this type
+        legendHeight: number
+    ) {
+        const { x: legendX, y: legendY } = legendPosition;
+
+        const x = legendX + 8;
+        const y = legendY + legendHeight - 8;
+
+        context.font = '12px sans-serif';
+        context.fillStyle = '#FFF';
+        context.fillText(`Reservoir storage as of ${date}`, x, y);
+    }
+
+    private drawScale(
+        map: Map,
+        context: OffscreenCanvasRenderingContext2D,
+        legendPosition: { x: number; y: number },
+        legendWidth: number,
+        legendHeight: number
+    ) {
+        // Get scale HTML element
+        const scaleElement = map
+            .getContainer()
+            .querySelector('.mapboxgl-ctrl-scale');
+
+        // No-op if scale HTML element is missing
+        if (!scaleElement) {
+            // eslint-disable-next-line no-console
+            console.error('Failed to add map scale');
+            return;
+        }
+
+        const scaleWidth = scaleElement.clientWidth;
+        const scaleLabel = scaleElement.textContent;
+
+        const scaleOffsetY = 40;
+        const labelOffset = 15;
+
+        const minX = legendPosition.x + legendWidth / 2 - scaleWidth / 2;
+        const maxX = minX + scaleWidth;
+        const midX = (minX + maxX) / 2;
+
+        const midY = legendPosition.y + legendHeight - scaleOffsetY;
+
+        const tickHeight = 5;
+
+        context.strokeStyle = '#000';
+        context.lineWidth = 2;
+
+        // Draw lines
+        context.beginPath();
+        context.moveTo(minX, midY);
+        context.lineTo(maxX, midY);
+
+        context.moveTo(minX, midY - tickHeight);
+        context.lineTo(minX, midY + tickHeight);
+
+        context.moveTo(maxX, midY - tickHeight);
+        context.lineTo(maxX, midY + tickHeight);
+
+        context.stroke();
+
+        // Draw label
+        context.font = '10px sans-serif';
+        context.fillStyle = '#000';
+        context.textAlign = 'center';
+        context.textBaseline = 'top';
+
+        if (scaleLabel) {
+            context.fillText(scaleLabel, midX, midY - labelOffset);
+        }
+    }
+
+    private exportCombinedImage(
+        map: Map,
+        svgOverlay: SVGSVGElement,
+        date: string | null,
+        callback?: (response: TCallbackResponse) => void
+    ) {
         const mapCanvas = map.getCanvas();
-        const width = mapCanvas.width;
-        const height = mapCanvas.height;
+        const devicePixelRatio = this.getDevicePixelRatio();
+
+        const width = mapCanvas.width * devicePixelRatio;
+        const height = mapCanvas.height * devicePixelRatio;
 
         const {
             id: legendId,
@@ -645,9 +885,7 @@ export class ReportService {
             legendId
         ) as HTMLImageElement | null;
 
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
+        const canvas = new OffscreenCanvas(width, height);
         const context = canvas.getContext('2d');
         if (!context) {
             return;
@@ -656,18 +894,8 @@ export class ReportService {
         // Draw map canvas
         context.save();
         context.globalCompositeOperation = 'source-over';
-        context.drawImage(mapCanvas, 0, 0);
+        context.drawImage(mapCanvas, 0, 0, width, height);
         context.restore();
-
-        if (reportLegend) {
-            context.drawImage(
-                reportLegend,
-                1297,
-                519,
-                legendWidth,
-                legendHeight
-            );
-        }
 
         // Serialize SVG and draw it on canvas
         const svgData = new XMLSerializer().serializeToString(svgOverlay);
@@ -678,19 +906,69 @@ export class ReportService {
 
         const img = new Image();
         img.onload = () => {
-            context.drawImage(img, 0, 0);
+            context.drawImage(img, 0, 0, width, height);
+            const legendPosition = {
+                x: width - legendWidth - 12,
+                y: height - legendHeight - 12,
+            };
+
+            const formattedDate = this.formatDate(date);
+            if (reportLegend) {
+                context.drawImage(
+                    reportLegend,
+                    legendPosition.x,
+                    legendPosition.y,
+                    legendWidth,
+                    legendHeight
+                );
+
+                this.drawTitle(context, legendPosition);
+
+                this.drawDate(
+                    formattedDate,
+                    context,
+                    legendPosition,
+                    legendHeight
+                );
+
+                this.drawScale(
+                    map,
+                    context,
+                    legendPosition,
+                    legendWidth,
+                    legendHeight
+                );
+            }
             URL.revokeObjectURL(url);
 
-            canvas.toBlob((blob) => {
-                if (blob) {
+            canvas
+                .convertToBlob()
+                .then((blob) => {
                     const a = document.createElement('a');
                     a.href = URL.createObjectURL(blob);
-                    a.download = 'report.png';
+                    a.download = `Reservoir Conditions Report - ${date ? formattedDate : `${dayjs().format('MMMM D, YYYY')} (Latest Measurement).png`}`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
-                }
-            }, 'image/png');
+
+                    if (callback) {
+                        callback({
+                            success: true,
+                            message: 'Report generated successfully.',
+                        });
+                    }
+                    return blob;
+                })
+                .catch((error) => {
+                    console.error('Issue creating report: ', error);
+                    if (callback) {
+                        callback({
+                            success: false,
+                            message:
+                                'Error encountered converting report to png.',
+                        });
+                    }
+                });
         };
         img.src = url;
     }
