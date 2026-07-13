@@ -22,6 +22,18 @@ export const BoundingGeometryVisibilityMap: {
     [BoundingGeographyLevel.Region]: {
         [SubLayerId.RegionsFill]: true,
         [SubLayerId.RegionsBoundary]: true,
+        [SubLayerId.ManagingRegionsFill]: true,
+        [SubLayerId.ManagingRegionsBoundary]: true,
+        [SubLayerId.BasinsFill]: false,
+        [SubLayerId.BasinsBoundary]: false,
+        [SubLayerId.StatesFill]: false,
+        [SubLayerId.StatesBoundary]: false,
+    },
+    [BoundingGeographyLevel.ManagingRegion]: {
+        [SubLayerId.RegionsFill]: false,
+        [SubLayerId.RegionsBoundary]: false,
+        [SubLayerId.ManagingRegionsFill]: true,
+        [SubLayerId.ManagingRegionsBoundary]: true,
         [SubLayerId.BasinsFill]: false,
         [SubLayerId.BasinsBoundary]: false,
         [SubLayerId.StatesFill]: false,
@@ -30,6 +42,8 @@ export const BoundingGeometryVisibilityMap: {
     [BoundingGeographyLevel.Basin]: {
         [SubLayerId.RegionsFill]: false,
         [SubLayerId.RegionsBoundary]: false,
+        [SubLayerId.ManagingRegionsFill]: true,
+        [SubLayerId.ManagingRegionsBoundary]: true,
         [SubLayerId.BasinsFill]: true,
         [SubLayerId.BasinsBoundary]: true,
         [SubLayerId.StatesFill]: false,
@@ -38,6 +52,8 @@ export const BoundingGeometryVisibilityMap: {
     [BoundingGeographyLevel.State]: {
         [SubLayerId.RegionsFill]: false,
         [SubLayerId.RegionsBoundary]: false,
+        [SubLayerId.ManagingRegionsFill]: true,
+        [SubLayerId.ManagingRegionsBoundary]: true,
         [SubLayerId.BasinsFill]: false,
         [SubLayerId.BasinsBoundary]: false,
         [SubLayerId.StatesFill]: true,
@@ -46,6 +62,8 @@ export const BoundingGeometryVisibilityMap: {
     [BoundingGeographyLevel.None]: {
         [SubLayerId.RegionsFill]: false,
         [SubLayerId.RegionsBoundary]: false,
+        [SubLayerId.ManagingRegionsFill]: true,
+        [SubLayerId.ManagingRegionsBoundary]: true,
         [SubLayerId.BasinsFill]: false,
         [SubLayerId.BasinsBoundary]: false,
         [SubLayerId.StatesFill]: false,
@@ -57,6 +75,10 @@ const data = [
     {
         value: BoundingGeographyLevel.Region,
         label: 'DOI Region',
+    },
+    {
+        value: BoundingGeographyLevel.ManagingRegion,
+        label: 'Managing Region',
     },
     {
         value: BoundingGeographyLevel.Basin,

@@ -52,6 +52,8 @@ import { regionCenters } from '@/data/regionCenters';
 import { RegionField } from '@/features/Map/types/region';
 import useSessionStore from '@/stores/session';
 import useMainStore from '@/stores/main';
+import { ManagingRegionField } from './types/managingRegion';
+import { managingRegionCenters } from '@/data/managingRegionCenters';
 
 /**********************************************************************
  * Define the various datasources this map will use
@@ -77,6 +79,23 @@ export const sourceConfigs: SourceConfig[] = [
         definition: {
             type: 'geojson',
             data: regionCenters,
+            cluster: false,
+        },
+    },
+    {
+        id: SourceId.ManagingRegions,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: 'https://cache.wwdh.internetofwater.app/collections/doi-reclamation-managing-regions/items?f=json',
+        },
+    },
+    {
+        id: SourceId.ManagingRegionCenters,
+        type: Sources.GeoJSON,
+        definition: {
+            type: 'geojson',
+            data: managingRegionCenters,
             cluster: false,
         },
     },
@@ -367,6 +386,72 @@ export const getLayerConfig = (
                 paint: {
                     'line-opacity': 1,
                     'line-color': getLayerColor(LayerId.RegionsReference),
+                    'line-width': 3,
+                },
+            };
+        case LayerId.ManagingRegions:
+            return null;
+        case SubLayerId.ManagingRegionsBoundary:
+            return {
+                id: SubLayerId.ManagingRegionsBoundary,
+                type: LayerType.Line,
+                source: SourceId.ManagingRegions,
+                layout: {
+                    visibility: 'none',
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                },
+                paint: {
+                    'line-opacity': 1,
+                    'line-color': getLayerColor(LayerId.ManagingRegions),
+                    'line-width': 3,
+                },
+            };
+        case SubLayerId.ManagingRegionsFill:
+            return {
+                id: SubLayerId.ManagingRegionsFill,
+                type: LayerType.Fill,
+                source: SourceId.ManagingRegions,
+                paint: {
+                    'fill-color': getLayerColor(LayerId.ManagingRegions),
+                    'fill-opacity': 0,
+                },
+            };
+        case SubLayerId.ManagingRegionLabels:
+            return {
+                id: SubLayerId.ManagingRegionLabels,
+                type: LayerType.Symbol,
+                source: SourceId.ManagingRegionCenters,
+                layout: {
+                    'text-field': ['get', ManagingRegionField.Name], // TODO
+                    'text-font': ['Arial Unicode MS Bold'],
+                    'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                    'text-size': 22,
+                    'text-allow-overlap': true,
+                    'text-ignore-placement': true,
+                },
+                paint: {
+                    'text-color': '#000',
+                    'text-opacity': 0,
+                    'text-halo-color': '#fff',
+                    'text-halo-width': 2,
+                },
+            };
+        case LayerId.ManagingRegionsReference:
+            return {
+                id: LayerId.ManagingRegionsReference,
+                type: LayerType.Line,
+                source: SourceId.ManagingRegions,
+                layout: {
+                    visibility: 'none',
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                },
+                paint: {
+                    'line-opacity': 1,
+                    'line-color': getLayerColor(
+                        LayerId.ManagingRegionsReference
+                    ),
                     'line-width': 3,
                 },
             };
@@ -797,6 +882,41 @@ export const getLayerHoverFunction = (
                         }
                     }
                 };
+            case SubLayerId.ManagingRegionsFill:
+                return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
+                    const zoom = map.getZoom();
+                    if (zoom < 12) {
+                        const feature = e.features?.[0] as
+                            | Feature<Polygon>
+                            | undefined;
+                        if (feature && feature.properties) {
+                            map.getCanvas().style.cursor = 'pointer';
+                            const id = feature.properties[
+                                ManagingRegionField.ObjectId
+                            ] as string;
+                            map.setPaintProperty(
+                                SubLayerId.ManagingRegionLabels,
+                                'text-opacity',
+                                [
+                                    'case',
+                                    [
+                                        '==',
+                                        ['get', ManagingRegionField.ObjectId],
+                                        id,
+                                    ],
+                                    1,
+                                    0,
+                                ]
+                            );
+                        }
+                    }
+                };
             case SubLayerId.BasinsFill:
                 return (e) => {
                     const showAllLabels = useMainStore.getState().showAllLabels;
@@ -1005,6 +1125,22 @@ export const getLayerCustomHoverExitFunction = (
                         0
                     );
                 };
+            case SubLayerId.ManagingRegionsFill:
+                return () => {
+                    map.getCanvas().style.cursor = '';
+
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
+                    map.setPaintProperty(
+                        SubLayerId.ManagingRegionLabels,
+                        'text-opacity',
+                        0
+                    );
+                };
             case SubLayerId.BasinsFill:
                 return () => {
                     map.getCanvas().style.cursor = '';
@@ -1125,6 +1261,41 @@ export const getLayerMouseMoveFunction = (
                                 [
                                     'case',
                                     ['==', ['get', RegionField.RegNum], id],
+                                    1,
+                                    0,
+                                ]
+                            );
+                        }
+                    }
+                };
+            case SubLayerId.ManagingRegionsFill:
+                return (e) => {
+                    const showAllLabels = useMainStore.getState().showAllLabels;
+
+                    if (showAllLabels) {
+                        return;
+                    }
+
+                    const zoom = map.getZoom();
+                    if (zoom < 12) {
+                        const feature = e.features?.[0] as
+                            | Feature<Polygon>
+                            | undefined;
+                        if (feature && feature.properties) {
+                            map.getCanvas().style.cursor = 'pointer';
+                            const id = feature.properties[
+                                ManagingRegionField.ObjectId
+                            ] as string;
+                            map.setPaintProperty(
+                                SubLayerId.ManagingRegionLabels,
+                                'text-opacity',
+                                [
+                                    'case',
+                                    [
+                                        '==',
+                                        ['get', ManagingRegionField.ObjectId],
+                                        id,
+                                    ],
                                     1,
                                     0,
                                 ]
@@ -1586,6 +1757,35 @@ export const layerDefinitions: MainLayerDefinition[] = [
         ],
     },
     {
+        id: LayerId.ManagingRegions,
+        config: getLayerConfig(LayerId.ManagingRegions),
+        controllable: false,
+        legend: false,
+        subLayers: [
+            {
+                id: SubLayerId.ManagingRegionsBoundary,
+                config: getLayerConfig(SubLayerId.ManagingRegionsBoundary),
+                controllable: false,
+                legend: false,
+            },
+            {
+                id: SubLayerId.ManagingRegionsFill,
+                config: getLayerConfig(SubLayerId.ManagingRegionsFill),
+                controllable: false,
+                legend: false,
+                hoverFunction: getLayerHoverFunction(
+                    SubLayerId.ManagingRegionsFill
+                ),
+                mouseMoveFunction: getLayerMouseMoveFunction(
+                    SubLayerId.ManagingRegionsFill
+                ),
+                customHoverExitFunction: getLayerCustomHoverExitFunction(
+                    SubLayerId.ManagingRegionsFill
+                ),
+            },
+        ],
+    },
+    {
         id: LayerId.Basins,
         config: getLayerConfig(LayerId.Basins),
         controllable: false,
@@ -1677,6 +1877,12 @@ export const layerDefinitions: MainLayerDefinition[] = [
     {
         id: SubLayerId.RegionLabels,
         config: getLayerConfig(SubLayerId.RegionLabels),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: SubLayerId.ManagingRegionLabels,
+        config: getLayerConfig(SubLayerId.ManagingRegionLabels),
         controllable: false,
         legend: false,
     },

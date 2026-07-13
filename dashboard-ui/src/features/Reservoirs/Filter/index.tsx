@@ -26,6 +26,7 @@ import Up from '@/icons/Up';
 import FilterIcon from '@/icons/Filter';
 import { useLoading } from '@/hooks/useLoading';
 import { ReservoirDateSelector } from '@/features/Reservoirs/ReservoirDateSelector';
+import { ManagingRegion } from './Selectors/ManagingRegion';
 
 type Props = {
     search: string;
@@ -70,6 +71,8 @@ export const Filter: React.FC<Props> = (props) => {
         switch (boundingGeographyLevel) {
             case BoundingGeographyLevel.Region:
                 return 'Show Region Labels';
+            case BoundingGeographyLevel.ManagingRegion:
+                return 'Show Managing Region Labels';
             case BoundingGeographyLevel.Basin:
                 return 'Show Basin Labels';
             case BoundingGeographyLevel.State:
@@ -116,6 +119,17 @@ export const Filter: React.FC<Props> = (props) => {
                     }}
                 >
                     <Region />
+                </Box>
+                <Box
+                    style={{
+                        display:
+                            boundingGeographyLevel ===
+                            BoundingGeographyLevel.ManagingRegion
+                                ? 'block'
+                                : 'none',
+                    }}
+                >
+                    <ManagingRegion />
                 </Box>
                 <Box
                     style={{

@@ -21,6 +21,13 @@ export interface MainState {
     setRegion: (region: MainState['region']) => void;
     regionOptions: ComboboxItem[];
     setRegionOptions: (regionOptions: MainState['regionOptions']) => void;
+    // Selected Region filter
+    managingRegion: string[];
+    setManagingRegion: (region: MainState['managingRegion']) => void;
+    managingRegionOptions: ComboboxItem[];
+    setManagingRegionOptions: (
+        regionOptions: MainState['managingRegionOptions']
+    ) => void;
     // Selected Basin
     basin: string[];
     setBasin: (basin: MainState['basin']) => void;
@@ -63,6 +70,7 @@ export interface MainState {
         [LayerId.NOAAPrecipSixToTen]: boolean;
         [LayerId.NOAATempSixToTen]: boolean;
         [LayerId.RegionsReference]: boolean;
+        [LayerId.ManagingRegionsReference]: boolean;
         [LayerId.BasinsReference]: boolean;
         [LayerId.StatesReference]: boolean;
     };
@@ -89,6 +97,11 @@ const useMainStore = create<MainState>()((set) => ({
     setRegion: (region) => set({ region }),
     regionOptions: [],
     setRegionOptions: (regionOptions) => set({ regionOptions }),
+    managingRegion: [],
+    setManagingRegion: (managingRegion) => set({ managingRegion }),
+    managingRegionOptions: [],
+    setManagingRegionOptions: (managingRegionOptions) =>
+        set({ managingRegionOptions }),
     basin: [],
     setBasin: (basin) => set({ basin }),
     basinOptions: [],
@@ -118,6 +131,7 @@ const useMainStore = create<MainState>()((set) => ({
         [LayerId.NOAAPrecipSixToTen]: false,
         [LayerId.NOAATempSixToTen]: false,
         [LayerId.RegionsReference]: false,
+        [LayerId.ManagingRegionsReference]: false,
         [LayerId.BasinsReference]: false,
         [LayerId.StatesReference]: false,
     },

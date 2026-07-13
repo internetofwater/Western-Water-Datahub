@@ -22,6 +22,7 @@ export type Reservoir = {
 
 export enum BoundingGeographyLevel {
     Region = 'region',
+    ManagingRegion = 'managing-region',
     Basin = 'basin',
     State = 'state',
     None = 'none',
