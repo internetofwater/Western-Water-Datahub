@@ -329,6 +329,9 @@ export const getLayerConfig = (
                 id: SubLayerId.RegionsFill,
                 type: LayerType.Fill,
                 source: SourceId.Regions,
+                layout: {
+                    visibility: 'none',
+                },
                 paint: {
                     'fill-color': getLayerColor(LayerId.Regions),
                     'fill-opacity': 0,
