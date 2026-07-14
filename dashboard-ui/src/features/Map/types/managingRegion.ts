@@ -4,8 +4,8 @@
  */
 export enum ManagingRegionField {
     ObjectId = 'OBJECTID_1',
-    Name = 'REGION',
-    RegionAbbreviation = 'REGION_ABBREVIATION',
+    Name = 'managingregion',
+    RegionAbbreviation = 'abbreviation',
     GlobalID = 'GlobalID',
 }
 

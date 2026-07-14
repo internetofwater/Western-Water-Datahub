@@ -293,6 +293,8 @@ export const getLayerColor = (
             return '#000';
         case LayerId.Basins:
             return '#000';
+        case LayerId.ManagingRegions:
+            return '#000';
         case LayerId.RiseEDRReservoirs:
             return '#00F';
         case LayerId.States:
@@ -348,6 +350,9 @@ export const getLayerConfig = (
                 id: SubLayerId.RegionsFill,
                 type: LayerType.Fill,
                 source: SourceId.Regions,
+                layout: {
+                    visibility: 'none',
+                },
                 paint: {
                     'fill-color': getLayerColor(LayerId.Regions),
                     'fill-opacity': 0,
@@ -412,6 +417,9 @@ export const getLayerConfig = (
                 id: SubLayerId.ManagingRegionsFill,
                 type: LayerType.Fill,
                 source: SourceId.ManagingRegions,
+                layout: {
+                    visibility: 'none',
+                },
                 paint: {
                     'fill-color': getLayerColor(LayerId.ManagingRegions),
                     'fill-opacity': 0,
@@ -898,7 +906,7 @@ export const getLayerHoverFunction = (
                         if (feature && feature.properties) {
                             map.getCanvas().style.cursor = 'pointer';
                             const id = feature.properties[
-                                ManagingRegionField.ObjectId
+                                ManagingRegionField.RegionAbbreviation
                             ] as string;
                             map.setPaintProperty(
                                 SubLayerId.ManagingRegionLabels,
@@ -907,7 +915,10 @@ export const getLayerHoverFunction = (
                                     'case',
                                     [
                                         '==',
-                                        ['get', ManagingRegionField.ObjectId],
+                                        [
+                                            'get',
+                                            ManagingRegionField.RegionAbbreviation,
+                                        ],
                                         id,
                                     ],
                                     1,
@@ -1284,7 +1295,7 @@ export const getLayerMouseMoveFunction = (
                         if (feature && feature.properties) {
                             map.getCanvas().style.cursor = 'pointer';
                             const id = feature.properties[
-                                ManagingRegionField.ObjectId
+                                ManagingRegionField.RegionAbbreviation
                             ] as string;
                             map.setPaintProperty(
                                 SubLayerId.ManagingRegionLabels,
@@ -1293,7 +1304,10 @@ export const getLayerMouseMoveFunction = (
                                     'case',
                                     [
                                         '==',
-                                        ['get', ManagingRegionField.ObjectId],
+                                        [
+                                            'get',
+                                            ManagingRegionField.RegionAbbreviation,
+                                        ],
                                         id,
                                     ],
                                     1,
@@ -1521,7 +1535,11 @@ export const getLayerClickFunction = (
                         }
                     }
                 };
-
+            case SubLayerId.ManagingRegionsFill:
+                return (e) => {
+                    const { features } = e;
+                    console.log('features', e, e.point, features);
+                };
             case LayerId.NOAARiverForecast:
                 return (e) => {
                     hoverPopup.remove();
@@ -1773,6 +1791,9 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 config: getLayerConfig(SubLayerId.ManagingRegionsFill),
                 controllable: false,
                 legend: false,
+                clickFunction: getLayerClickFunction(
+                    SubLayerId.ManagingRegionsFill
+                ),
                 hoverFunction: getLayerHoverFunction(
                     SubLayerId.ManagingRegionsFill
                 ),

@@ -72,12 +72,15 @@ export const ManagingRegion: React.FC = () => {
                 signal: controller.current.signal,
             });
 
-            console.log('HERE', managingRegionCollection);
-
             if (managingRegionCollection.features.length) {
                 const basinOptions = formatOptions(
                     managingRegionCollection.features,
-                    (feature) => String(feature.id),
+                    (feature) =>
+                        String(
+                            feature?.properties?.[
+                                ManagingRegionField.RegionAbbreviation
+                            ]
+                        ),
                     (feature) =>
                         String(feature?.properties?.[ManagingRegionField.Name]),
                     { defaultLabel: '', defaultValue: '', noDefault: true }
@@ -135,7 +138,7 @@ export const ManagingRegion: React.FC = () => {
                     value={managingRegion}
                     aria-label="Select a Region"
                     placeholder="Select a region"
-                    label="Filter by Managing Region"
+                    label="Filter by Region"
                     onChange={(value: string[]) => {
                         if (value) {
                             setManagingRegion(value);

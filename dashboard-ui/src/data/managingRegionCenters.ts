@@ -12,57 +12,57 @@ export const managingRegionCenters: FeatureCollection<Point> = {
         {
             type: 'Feature',
             properties: {
-                [ManagingRegionField.ObjectId]: 1,
+                [ManagingRegionField.RegionAbbreviation]: 'UCB',
                 [ManagingRegionField.Name]: 'Upper Colorado Basin',
             },
             geometry: {
                 type: 'Point',
-                coordinates: [-101.0817, 46.9738],
+                coordinates: [-110.23976158144376, 39.29006838088944],
             },
         },
         {
             type: 'Feature',
             properties: {
-                [ManagingRegionField.ObjectId]: 2,
-                [ManagingRegionField.Name]:
-                    'Arkansas - Rio Grande - Texas Gulf',
-            },
-            geometry: {
-                type: 'Point',
-                coordinates: [-98.8068, 32.4998],
-            },
-        },
-        {
-            type: 'Feature',
-            properties: {
-                [ManagingRegionField.ObjectId]: 3,
-                [ManagingRegionField.Name]: 'Upper Colorado Basin',
-            },
-            geometry: {
-                type: 'Point',
-                coordinates: [-108.1286, 39.6615],
-            },
-        },
-        {
-            type: 'Feature',
-            properties: {
-                [ManagingRegionField.ObjectId]: 4,
-                [ManagingRegionField.Name]: 'Lower Colorado Basin',
-            },
-            geometry: {
-                type: 'Point',
-                coordinates: [-113.5361, 34.6394],
-            },
-        },
-        {
-            type: 'Feature',
-            properties: {
-                [ManagingRegionField.ObjectId]: 5,
+                [ManagingRegionField.RegionAbbreviation]: 'CPN',
                 [ManagingRegionField.Name]: 'Columbia - Pacific Northwest',
             },
             geometry: {
                 type: 'Point',
-                coordinates: [-118.702, 45.8915],
+                coordinates: [-118.57462350662891, 45.34871252235524],
+            },
+        },
+        {
+            type: 'Feature',
+            properties: {
+                [ManagingRegionField.RegionAbbreviation]: 'CGB',
+                [ManagingRegionField.Name]: 'California-Great Basin',
+            },
+            geometry: {
+                type: 'Point',
+                coordinates: [-120.2021582733806, 40.33536183639052],
+            },
+        },
+        {
+            type: 'Feature',
+            properties: {
+                [ManagingRegionField.RegionAbbreviation]: 'MB/ART',
+                [ManagingRegionField.Name]:
+                    'Missouri Basin and Arkansas-Rio Grande-Texas Gulf',
+            },
+            geometry: {
+                type: 'Point',
+                coordinates: [-103.54762219249345, 45.32613349005564],
+            },
+        },
+        {
+            type: 'Feature',
+            properties: {
+                [ManagingRegionField.RegionAbbreviation]: 'LCB',
+                [ManagingRegionField.Name]: 'Lower Colorado Basin',
+            },
+            geometry: {
+                type: 'Point',
+                coordinates: [-113.20152774329691, 34.39957581265004],
             },
         },
     ],

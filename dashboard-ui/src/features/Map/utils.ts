@@ -871,6 +871,8 @@ const getProperty = (
     switch (boundingGeographyLevel) {
         case BoundingGeographyLevel.Region:
             return 'regionConnectorProperty';
+        case BoundingGeographyLevel.ManagingRegion:
+            return 'managingRegionConnectorProperty';
         case BoundingGeographyLevel.Basin:
             return 'basinConnectorProperty';
         default:
@@ -881,6 +883,7 @@ const getProperty = (
 
 const getFilterValue = (
     region: string[],
+    managingRegion: string[],
     basin: string[],
     state: string[],
     boundingGeographyLevel: BoundingGeographyLevel
@@ -890,6 +893,12 @@ const getFilterValue = (
         region.length > 0
     ) {
         return region;
+    }
+    if (
+        boundingGeographyLevel === BoundingGeographyLevel.ManagingRegion &&
+        managingRegion.length > 0
+    ) {
+        return managingRegion;
     }
     if (
         boundingGeographyLevel === BoundingGeographyLevel.Basin &&
@@ -958,6 +967,7 @@ export const updateReservoirFilters = (map: Map) => {
     const {
         boundingGeographyLevel,
         region = [],
+        managingRegion = [],
         basin = [],
         state = [],
         reservoir,
@@ -965,15 +975,17 @@ export const updateReservoirFilters = (map: Map) => {
     const { hideNoData } = useSessionStore.getState();
 
     const hasBoundingGeography =
-        (region?.length ?? 0) > 0 ||
-        (basin?.length ?? 0) > 0 ||
-        (state?.length ?? 0) > 0;
+        region.length > 0 ||
+        managingRegion.length > 0 ||
+        basin.length > 0 ||
+        state.length > 0;
 
     const property = getProperty(boundingGeographyLevel);
     const filterValue = getFilterValue(
-        region ?? [],
-        basin ?? [],
-        state ?? [],
+        region,
+        managingRegion,
+        basin,
+        state,
         boundingGeographyLevel
     );
 

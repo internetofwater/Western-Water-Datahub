@@ -271,6 +271,8 @@ export const ReservoirConfigs: Record<
         longLabelProperty: TeacupReservoirField.PopupLabel,
         chartLabel: TeacupReservoirField.Storage,
         regionConnectorProperty: TeacupReservoirField.RegionName,
+        managingRegionConnectorProperty:
+            TeacupReservoirField.ManagingRegionAbbreviation,
         basinConnectorProperty: TeacupReservoirField.Huc02,
         stateConnectorProperty: TeacupReservoirField.State,
         iconLayer: LayerId.TeacupEDRReservoirs,

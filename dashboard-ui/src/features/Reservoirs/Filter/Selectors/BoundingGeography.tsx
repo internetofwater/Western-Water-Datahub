@@ -22,8 +22,8 @@ export const BoundingGeometryVisibilityMap: {
     [BoundingGeographyLevel.Region]: {
         [SubLayerId.RegionsFill]: true,
         [SubLayerId.RegionsBoundary]: true,
-        [SubLayerId.ManagingRegionsFill]: true,
-        [SubLayerId.ManagingRegionsBoundary]: true,
+        [SubLayerId.ManagingRegionsFill]: false,
+        [SubLayerId.ManagingRegionsBoundary]: false,
         [SubLayerId.BasinsFill]: false,
         [SubLayerId.BasinsBoundary]: false,
         [SubLayerId.StatesFill]: false,
@@ -42,8 +42,8 @@ export const BoundingGeometryVisibilityMap: {
     [BoundingGeographyLevel.Basin]: {
         [SubLayerId.RegionsFill]: false,
         [SubLayerId.RegionsBoundary]: false,
-        [SubLayerId.ManagingRegionsFill]: true,
-        [SubLayerId.ManagingRegionsBoundary]: true,
+        [SubLayerId.ManagingRegionsFill]: false,
+        [SubLayerId.ManagingRegionsBoundary]: false,
         [SubLayerId.BasinsFill]: true,
         [SubLayerId.BasinsBoundary]: true,
         [SubLayerId.StatesFill]: false,
@@ -52,8 +52,8 @@ export const BoundingGeometryVisibilityMap: {
     [BoundingGeographyLevel.State]: {
         [SubLayerId.RegionsFill]: false,
         [SubLayerId.RegionsBoundary]: false,
-        [SubLayerId.ManagingRegionsFill]: true,
-        [SubLayerId.ManagingRegionsBoundary]: true,
+        [SubLayerId.ManagingRegionsFill]: false,
+        [SubLayerId.ManagingRegionsBoundary]: false,
         [SubLayerId.BasinsFill]: false,
         [SubLayerId.BasinsBoundary]: false,
         [SubLayerId.StatesFill]: true,
@@ -62,8 +62,8 @@ export const BoundingGeometryVisibilityMap: {
     [BoundingGeographyLevel.None]: {
         [SubLayerId.RegionsFill]: false,
         [SubLayerId.RegionsBoundary]: false,
-        [SubLayerId.ManagingRegionsFill]: true,
-        [SubLayerId.ManagingRegionsBoundary]: true,
+        [SubLayerId.ManagingRegionsFill]: false,
+        [SubLayerId.ManagingRegionsBoundary]: false,
         [SubLayerId.BasinsFill]: false,
         [SubLayerId.BasinsBoundary]: false,
         [SubLayerId.StatesFill]: false,

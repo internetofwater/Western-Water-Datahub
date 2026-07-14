@@ -36,6 +36,7 @@ export type ReservoirConfigProperties = {
     longLabelProperty: string;
     chartLabel: string;
     regionConnectorProperty: string;
+    managingRegionConnectorProperty: string;
     basinConnectorProperty: string;
     stateConnectorProperty: string;
     iconLayer: LayerId | SubLayerId;

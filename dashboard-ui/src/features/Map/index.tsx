@@ -57,6 +57,7 @@ import { customLoader } from '@/services/sprite/customLoader';
 import { ReservoirConfigId } from '@/features/Map/types';
 import { useMediaQuery } from '@mantine/hooks';
 import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
+import { ManagingRegionField } from './types/managingRegion';
 
 type Props = {
     accessToken: string;
@@ -80,6 +81,8 @@ const MainMap: React.FC<Props> = (props) => {
     );
     const region = useMainStore((state) => state.region);
     const setRegion = useMainStore((state) => state.setRegion);
+    const managingRegion = useMainStore((state) => state.managingRegion);
+    const setManagingRegion = useMainStore((state) => state.setManagingRegion);
     const basin = useMainStore((state) => state.basin);
     const setBasin = useMainStore((state) => state.setBasin);
     const state = useMainStore((state) => state.state);
@@ -389,6 +392,30 @@ const MainMap: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
+        if (managingRegion.length === 0) {
+            // Unset Filter
+            map.setFilter(SubLayerId.ManagingRegionsFill, null);
+            map.setFilter(SubLayerId.ManagingRegionsBoundary, null);
+        } else {
+            map.setFilter(SubLayerId.ManagingRegionsFill, [
+                'in',
+                ['get', ManagingRegionField.RegionAbbreviation],
+                ['literal', managingRegion],
+            ]);
+            map.setFilter(SubLayerId.ManagingRegionsBoundary, [
+                'in',
+                ['get', ManagingRegionField.RegionAbbreviation],
+                ['literal', managingRegion],
+            ]);
+        }
+
+        updateReservoirFilters(map);
+    }, [managingRegion]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
         if (basin.length === 0) {
             // Unset Filter
             map.setFilter(SubLayerId.BasinsFill, [
@@ -456,6 +483,7 @@ const MainMap: React.FC<Props> = (props) => {
                 });
                 if (!features.length) {
                     setRegion([]);
+                    setManagingRegion([]);
                     setBasin([]);
                     setState([]);
                     setReservoir(ReservoirDefault);
@@ -602,6 +630,13 @@ const MainMap: React.FC<Props> = (props) => {
         if (map.getLayer(SubLayerId.RegionLabels)) {
             map.setPaintProperty(SubLayerId.RegionLabels, 'text-opacity', 0);
         }
+        if (map.getLayer(SubLayerId.ManagingRegionLabels)) {
+            map.setPaintProperty(
+                SubLayerId.ManagingRegionLabels,
+                'text-opacity',
+                0
+            );
+        }
         if (map.getLayer(SubLayerId.BasinLabels)) {
             map.setPaintProperty(SubLayerId.BasinLabels, 'text-opacity', 0);
         }
@@ -623,6 +658,31 @@ const MainMap: React.FC<Props> = (props) => {
                 } else {
                     map.setPaintProperty(
                         SubLayerId.RegionLabels,
+                        'text-opacity',
+                        1
+                    );
+                }
+            }
+            if (
+                boundingGeographyLevel ===
+                    BoundingGeographyLevel.ManagingRegion &&
+                map.getLayer(SubLayerId.ManagingRegionLabels)
+            ) {
+                if (managingRegion.length > 0) {
+                    map.setPaintProperty(
+                        SubLayerId.ManagingRegionLabels,
+                        'text-opacity',
+                        [
+                            'match',
+                            ['get', ManagingRegionField.RegionAbbreviation],
+                            managingRegion,
+                            1,
+                            0,
+                        ]
+                    );
+                } else {
+                    map.setPaintProperty(
+                        SubLayerId.ManagingRegionLabels,
                         'text-opacity',
                         1
                     );
@@ -665,7 +725,14 @@ const MainMap: React.FC<Props> = (props) => {
                 }
             }
         }
-    }, [boundingGeographyLevel, showAllLabels, region, basin, state]);
+    }, [
+        boundingGeographyLevel,
+        showAllLabels,
+        region,
+        managingRegion,
+        basin,
+        state,
+    ]);
 
     useEffect(() => {
         if (!map) {
