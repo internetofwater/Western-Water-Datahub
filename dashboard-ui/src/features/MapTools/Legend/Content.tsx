@@ -86,6 +86,16 @@ export const Content: React.FC<Props> = (props) => {
                     </Title>
                 </Group>
             )}
+            {toggleableLayers[LayerId.ManagingRegionsReference] && (
+                <Group gap="calc(var(--default-spacing) / 2)">
+                    <Box className={styles.iconBackground}>
+                        <Line color="#A10039" />
+                    </Box>
+                    <Title order={4} size="h6">
+                        Managing Region Boundaries
+                    </Title>
+                </Group>
+            )}
             {toggleableLayers[LayerId.BasinsReference] && (
                 <Group gap="calc(var(--default-spacing) / 2)">
                     <Box className={styles.iconBackground}>

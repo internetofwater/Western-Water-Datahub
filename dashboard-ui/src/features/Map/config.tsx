@@ -301,6 +301,8 @@ export const getLayerColor = (
             return '#000';
         case LayerId.RegionsReference:
             return '#ef5e25';
+        case LayerId.ManagingRegionsReference:
+            return '#A10039';
         case LayerId.BasinsReference:
             return '#54278f';
         case LayerId.StatesReference:
@@ -1708,6 +1710,12 @@ export const layerDefinitions: MainLayerDefinition[] = [
     {
         id: LayerId.RegionsReference,
         config: getLayerConfig(LayerId.RegionsReference),
+        controllable: false,
+        legend: false,
+    },
+    {
+        id: LayerId.ManagingRegionsReference,
+        config: getLayerConfig(LayerId.ManagingRegionsReference),
         controllable: false,
         legend: false,
     },
