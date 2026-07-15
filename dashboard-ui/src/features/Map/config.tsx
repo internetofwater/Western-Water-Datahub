@@ -1537,11 +1537,6 @@ export const getLayerClickFunction = (
                         }
                     }
                 };
-            case SubLayerId.ManagingRegionsFill:
-                return (e) => {
-                    const { features } = e;
-                    console.log('features', e, e.point, features);
-                };
             case LayerId.NOAARiverForecast:
                 return (e) => {
                     hoverPopup.remove();
@@ -1799,9 +1794,6 @@ export const layerDefinitions: MainLayerDefinition[] = [
                 config: getLayerConfig(SubLayerId.ManagingRegionsFill),
                 controllable: false,
                 legend: false,
-                clickFunction: getLayerClickFunction(
-                    SubLayerId.ManagingRegionsFill
-                ),
                 hoverFunction: getLayerHoverFunction(
                     SubLayerId.ManagingRegionsFill
                 ),
