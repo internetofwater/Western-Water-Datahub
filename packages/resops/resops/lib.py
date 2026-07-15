@@ -255,7 +255,8 @@ class LocationCollection:
 
 def load_thirty_year_averages() -> dict:
     thirty_year_averages_path = (
-        pathlib.Path(__file__).parent.parent / "30_year_averages_by_nid_id.json"
+        pathlib.Path(__file__).parent.parent
+        / "30_year_averages_by_nid_id_filtered_out_bor_usace.json"
     )
 
     with thirty_year_averages_path.open() as f:
