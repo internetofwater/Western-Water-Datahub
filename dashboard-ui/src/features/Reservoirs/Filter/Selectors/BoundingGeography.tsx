@@ -13,6 +13,7 @@ import useMainStore from '@/stores/main';
 import { useEffect } from 'react';
 import { useLoading } from '@/hooks/useLoading';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
+import { getBoundingGeographyLabel } from '@/utils/getBoundingGeographyLabel';
 
 export const BoundingGeometryVisibilityMap: {
     [key in BoundingGeographyLevel]: {
@@ -74,23 +75,23 @@ export const BoundingGeometryVisibilityMap: {
 const data = [
     {
         value: BoundingGeographyLevel.Region,
-        label: 'DOI Region',
+        label: getBoundingGeographyLabel(BoundingGeographyLevel.Region),
     },
     {
         value: BoundingGeographyLevel.ManagingRegion,
-        label: 'Managing Region',
+        label: getBoundingGeographyLabel(BoundingGeographyLevel.ManagingRegion),
     },
     {
         value: BoundingGeographyLevel.Basin,
-        label: 'Basin (HUC2)',
+        label: getBoundingGeographyLabel(BoundingGeographyLevel.Basin),
     },
     {
         value: BoundingGeographyLevel.State,
-        label: 'State',
+        label: getBoundingGeographyLabel(BoundingGeographyLevel.State),
     },
     {
         value: BoundingGeographyLevel.None,
-        label: 'None',
+        label: getBoundingGeographyLabel(BoundingGeographyLevel.None),
     },
 ];
 

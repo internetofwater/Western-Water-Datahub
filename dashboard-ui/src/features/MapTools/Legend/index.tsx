@@ -27,6 +27,9 @@ import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
 
 const Legend: React.FC = () => {
     const toggleableLayers = useMainStore((state) => state.toggleableLayers);
+    const boundingGeographyLevel = useMainStore(
+        (state) => state.boundingGeographyLevel
+    );
 
     const overlay = useSessionStore((state) => state.overlay);
     const setOverlay = useSessionStore((state) => state.setOverlay);
@@ -89,6 +92,7 @@ const Legend: React.FC = () => {
                     <Content
                         entries={entries}
                         toggleableLayers={toggleableLayers}
+                        boundingGeographyLevel={boundingGeographyLevel}
                     />
                 </PopoverDropdown>
             </Popover>
@@ -106,6 +110,7 @@ const Legend: React.FC = () => {
                     <Content
                         entries={entries}
                         toggleableLayers={toggleableLayers}
+                        boundingGeographyLevel={boundingGeographyLevel}
                     />
                 </Box>
                 <img

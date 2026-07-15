@@ -30,6 +30,8 @@ import { Entry } from '@/features/ReferenceData/Entry';
 import { getLayerName } from '@/features/Map/config';
 import { useLoading } from '@/hooks/useLoading';
 import Info from '@/icons/Info';
+import { getBoundingGeographyLabel } from '@/utils/getBoundingGeographyLabel';
+import { BoundingGeographyLevel } from '@/stores/main/types';
 
 const RasterBaseLayerIconObj = [
     {
@@ -257,28 +259,28 @@ const ReferenceData: React.FC = () => {
                     <Divider size="md" />
                     <Entry
                         layerId={LayerId.RegionsReference}
-                        label="Show DOI Region Boundaries"
+                        label={`Show ${getBoundingGeographyLabel(BoundingGeographyLevel.Region)} Boundaries`}
                         onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
                         links={false}
                     />
                     <Entry
                         layerId={LayerId.ManagingRegionsReference}
-                        label="Show Managing Region Boundaries"
+                        label={`Show ${getBoundingGeographyLabel(BoundingGeographyLevel.ManagingRegion)} Boundaries`}
                         onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
                         links={false}
                     />
                     <Entry
                         layerId={LayerId.BasinsReference}
-                        label="Show Basin (HUC2) Boundaries"
+                        label={`Show ${getBoundingGeographyLabel(BoundingGeographyLevel.Basin)} Boundaries`}
                         onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
                         links={false}
                     />
                     <Entry
                         layerId={LayerId.StatesReference}
-                        label="Show State Boundaries"
+                        label={`Show ${getBoundingGeographyLabel(BoundingGeographyLevel.State)} Boundaries`}
                         onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
                         links={false}

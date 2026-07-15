@@ -120,4 +120,6 @@
 .wrapper {
     display: flex;
     max-width: 18.25rem;
+    max-height: calc(100vh - 5.6875rem);
+    overflow-y: auto;
 }
