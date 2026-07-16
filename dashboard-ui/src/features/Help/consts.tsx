@@ -15,6 +15,8 @@ import {
 import GitHub from '@/icons/logos/Github';
 import { LayerId } from '@/features/Map/consts';
 import { getLayerName } from '@/features/Map/config';
+import { getBoundingGeographyLabel } from '@/utils/getBoundingGeographyLabel';
+import { BoundingGeographyLevel } from '@/stores/main/types';
 
 export type GlossaryBase = {
     id: string;
@@ -188,19 +190,25 @@ export const sections: GlossarySection[] = [
                 entries: [
                     {
                         id: LayerId.RegionsReference,
-                        label: 'DOI Region Boundaries',
+                        label: `${getBoundingGeographyLabel(BoundingGeographyLevel.Region)} Boundaries`,
                         content:
                             'The boundaries of Department of the Interior (DOI) Unified Regions. The dashboard only displays the boundaries of the DOI regions in the western US (Columbia-Pacific Northwest, California-Great Basin, Missouri Basin, Upper Colorado Basin, Lower Colorado Basin, and Arkansas-Rio Grande-Texas Gulf).',
                     },
                     {
+                        id: LayerId.ManagingRegionsReference,
+                        label: `${getBoundingGeographyLabel(BoundingGeographyLevel.ManagingRegion)} Boundaries`,
+                        content:
+                            'The boundaries of the Department of the Interior Regions that are responsible for managing Bureau of Reclamation assets.',
+                    },
+                    {
                         id: LayerId.BasinsReference,
-                        label: 'Basin (HUC2) Boundaries',
+                        label: `${getBoundingGeographyLabel(BoundingGeographyLevel.Basin)} Boundaries`,
                         content:
                             'The boundaries of 2-digit Hydrologic Units. Although the Watershed Boundary Dataset refers to these as “Regions”, they are labeled as “Basin (HUC2) Boundaries” in the Dashboard to avoid confusion with the DOI Region Boundaries.',
                     },
                     {
                         id: LayerId.StatesReference,
-                        label: 'State Boundaries',
+                        label: `${getBoundingGeographyLabel(BoundingGeographyLevel.State)} Boundaries`,
                         content:
                             'The boundaries of U.S. states. Only the 17 western states are displayed.',
                     },

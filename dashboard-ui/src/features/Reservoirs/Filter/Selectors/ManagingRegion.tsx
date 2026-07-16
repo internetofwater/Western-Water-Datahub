@@ -8,27 +8,31 @@
 import { MultiSelect, Skeleton } from '@mantine/core';
 import useMainStore from '@/stores/main';
 import { useMap } from '@/contexts/MapContexts';
-import { MAP_ID, SourceId, ValidBasins } from '@/features/Map/consts';
+import { MAP_ID, SourceId } from '@/features/Map/consts';
 import { useEffect, useState } from 'react';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
-import geoconnexService from '@/services/init/geoconnex.init';
 import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
 import { FeatureCollection, Polygon } from 'geojson';
-import {
-    Huc02BasinField,
-    Huc06BasinProperties,
-} from '@/features/Map/types/basin';
 import { SourceDataEvent } from '@/features/Map/types';
 import { isSourceDataLoaded } from '@/features/Map/utils';
 import { useLoading } from '@/hooks/useLoading';
+import wwdhService from '@/services/init/wwdh.init';
+import {
+    ManagingRegionField,
+    ManagingRegionProperties,
+} from '@/features/Map/types/managingRegion';
 
-export const Basin: React.FC = () => {
+export const ManagingRegion: React.FC = () => {
     const { map } = useMap(MAP_ID);
 
-    const basin = useMainStore((state) => state.basin);
-    const setBasin = useMainStore((state) => state.setBasin);
-    const basinOptions = useMainStore((state) => state.basinOptions);
-    const setBasinOptions = useMainStore((state) => state.setBasinOptions);
+    const managingRegion = useMainStore((state) => state.managingRegion);
+    const setManagingRegion = useMainStore((state) => state.setManagingRegion);
+    const managingRegionOptions = useMainStore(
+        (state) => state.managingRegionOptions
+    );
+    const setManagingRegionOptions = useMainStore(
+        (state) => state.setManagingRegionOptions
+    );
 
     const [loading, setLoading] = useState(true);
 
@@ -40,7 +44,7 @@ export const Basin: React.FC = () => {
         }
         // Ensure both map and populating fetch are finished
         const sourceCallback = (e: SourceDataEvent) => {
-            if (isSourceDataLoaded(map, SourceId.Basins, e)) {
+            if (isSourceDataLoaded(map, SourceId.ManagingRegions, e)) {
                 map.off('sourcedata', sourceCallback); //remove event listener
             }
         };
@@ -57,31 +61,35 @@ export const Basin: React.FC = () => {
 
         const controller = new AbortController();
 
-        geoconnexService
-            .getItems<FeatureCollection<Polygon, Huc06BasinProperties>>(
-                SourceId.Basins,
+        wwdhService
+            .getItems<FeatureCollection<Polygon, ManagingRegionProperties>>(
+                SourceId.ManagingRegions,
                 {
                     params: {
-                        bbox: [-125, 24, -96.5, 49],
-                        skipGeometry: true,
+                        f: 'json',
                     },
                     signal: controller.signal,
                 }
             )
             .then((featureCollection) => {
                 if (featureCollection.features.length > 0) {
-                    const basinOptions = formatOptions(
-                        featureCollection.features.filter((feature) =>
-                            ValidBasins.includes(String(feature.id))
-                        ),
-                        (feature) => String(feature.id),
+                    const managingRegionOptions = formatOptions(
+                        featureCollection.features,
                         (feature) =>
-                            String(feature?.properties?.[Huc02BasinField.Name]),
+                            String(
+                                feature?.properties?.[
+                                    ManagingRegionField.RegionAbbreviation
+                                ]
+                            ),
+                        (feature) =>
+                            String(
+                                feature?.properties?.[ManagingRegionField.Name]
+                            ),
                         { defaultLabel: '', defaultValue: '', noDefault: true }
                     );
 
                     if (isMounted) {
-                        setBasinOptions(basinOptions);
+                        setManagingRegionOptions(managingRegionOptions);
                     }
                 }
             })
@@ -116,7 +124,7 @@ export const Basin: React.FC = () => {
 
     return (
         <>
-            {loading || basinOptions.length === 0 ? (
+            {loading || managingRegionOptions.length === 0 ? (
                 <Skeleton
                     height={54} // Default dimensions of select
                     width={155}
@@ -124,15 +132,15 @@ export const Basin: React.FC = () => {
             ) : (
                 <MultiSelect
                     size="xs"
-                    id="basinSelector"
+                    id="managingRegionSelector"
                     className={styles.multiselect}
                     disabled={isDisabled}
-                    data={basinOptions}
-                    value={basin}
-                    aria-label="Select a Basin"
-                    placeholder="Select a basin"
-                    label="Filter by Geography"
-                    onChange={setBasin}
+                    data={managingRegionOptions}
+                    value={managingRegion}
+                    aria-label="Select a Region"
+                    placeholder="Select a region"
+                    label="Filter by Region"
+                    onChange={setManagingRegion}
                     searchable
                     clearable
                 />

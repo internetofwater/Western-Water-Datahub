@@ -38,6 +38,7 @@ const Reservoirs: React.FC<Props> = (props) => {
     const { accessToken } = props;
 
     const region = useMainStore((state) => state.region);
+    const managingRegion = useMainStore((state) => state.managingRegion);
     const basin = useMainStore((state) => state.basin);
     const state = useMainStore((state) => state.state);
 
@@ -132,6 +133,9 @@ const Reservoirs: React.FC<Props> = (props) => {
                         const regionConnector = getString(
                             config.regionConnectorProperty
                         );
+                        const managingRegionConnector = getString(
+                            config.managingRegionConnectorProperty
+                        );
                         const basinConnector = getString(
                             config.basinConnectorProperty
                         );
@@ -161,6 +165,7 @@ const Reservoirs: React.FC<Props> = (props) => {
                                 percentFull: (storage / capacity) * 100,
                                 percentAverage: (storage / average) * 100,
                                 sourceId: collectionId,
+                                managingRegionConnector,
                                 regionConnector,
                                 basinConnector,
                                 stateConnector,
@@ -198,6 +203,14 @@ const Reservoirs: React.FC<Props> = (props) => {
             );
         }
 
+        if (managingRegion.length > 0) {
+            filterFunctions.push((feature) =>
+                managingRegion.includes(
+                    feature.properties.managingRegionConnector
+                )
+            );
+        }
+
         if (basin.length > 0) {
             filterFunctions.push((feature) =>
                 basin.includes(feature.properties.basinConnector.slice(0, 2))
@@ -221,6 +234,7 @@ const Reservoirs: React.FC<Props> = (props) => {
         organizedReservoirs,
         search,
         region,
+        managingRegion,
         basin,
         state,
         sortBy,
@@ -385,6 +399,7 @@ const Reservoirs: React.FC<Props> = (props) => {
                         hideNoData,
                         limitByExtent,
                         region,
+                        managingRegion,
                         basin,
                         state,
                     }}

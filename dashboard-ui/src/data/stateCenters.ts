@@ -12,7 +12,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Washington',
-                stusps: 'WA',
+                uri: 'https://geoconnex.us/ref/states/53',
             },
             geometry: {
                 type: 'Point',
@@ -24,7 +24,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Oregon',
-                stusps: 'OR',
+                uri: 'https://geoconnex.us/ref/states/41',
             },
             geometry: {
                 type: 'Point',
@@ -35,7 +35,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'California',
-                stusps: 'CA',
+                uri: 'https://geoconnex.us/ref/states/06',
             },
             geometry: {
                 type: 'Point',
@@ -46,7 +46,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Idaho',
-                stusps: 'ID',
+                uri: 'https://geoconnex.us/ref/states/16',
             },
             geometry: {
                 type: 'Point',
@@ -58,7 +58,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Nevada',
-                stusps: 'NV',
+                uri: 'https://geoconnex.us/ref/states/32',
             },
             geometry: {
                 type: 'Point',
@@ -70,7 +70,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Montana',
-                stusps: 'MT',
+                uri: 'https://geoconnex.us/ref/states/30',
             },
             geometry: {
                 type: 'Point',
@@ -81,7 +81,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Wyoming',
-                stusps: 'WY',
+                uri: 'https://geoconnex.us/ref/states/56',
             },
             geometry: {
                 type: 'Point',
@@ -93,7 +93,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Utah',
-                stusps: 'UT',
+                uri: 'https://geoconnex.us/ref/states/49',
             },
             geometry: {
                 type: 'Point',
@@ -104,7 +104,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Arizona',
-                stusps: 'AZ',
+                uri: 'https://geoconnex.us/ref/states/04',
             },
             geometry: {
                 type: 'Point',
@@ -115,7 +115,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Colorado',
-                stusps: 'CO',
+                uri: 'https://geoconnex.us/ref/states/08',
             },
             geometry: {
                 type: 'Point',
@@ -126,7 +126,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'New Mexico',
-                stusps: 'NM',
+                uri: 'https://geoconnex.us/ref/states/35',
             },
             geometry: {
                 type: 'Point',
@@ -137,7 +137,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'North Dakota',
-                stusps: 'ND',
+                uri: 'https://geoconnex.us/ref/states/38',
             },
             geometry: {
                 type: 'Point',
@@ -149,7 +149,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'South Dakota',
-                stusps: 'SD',
+                uri: 'https://geoconnex.us/ref/states/46',
             },
             geometry: {
                 type: 'Point',
@@ -160,7 +160,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Nebraska',
-                stusps: 'NE',
+                uri: 'https://geoconnex.us/ref/states/31',
             },
             geometry: {
                 type: 'Point',
@@ -171,7 +171,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Oklahoma',
-                stusps: 'OK',
+                uri: 'https://geoconnex.us/ref/states/40',
             },
             geometry: {
                 type: 'Point',
@@ -182,7 +182,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Kansas',
-                stusps: 'KS',
+                uri: 'https://geoconnex.us/ref/states/20',
             },
             geometry: {
                 type: 'Point',
@@ -193,7 +193,7 @@ export const stateCenters: FeatureCollection<Point> = {
             type: 'Feature',
             properties: {
                 name: 'Texas',
-                stusps: 'TX',
+                uri: 'https://geoconnex.us/ref/states/48',
             },
             geometry: {
                 type: 'Point',

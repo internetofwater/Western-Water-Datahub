@@ -15,6 +15,7 @@ export enum TeacupReservoirField {
     Huc12 = 'huc12',
     RegionName = 'reg_name',
     RegionId = 'reg_num',
+    ManagingRegionAbbreviation = 'mng_reg_abbr',
     State = 'state',
     Source = 'source_uri',
     UseTotalOrActiveStorage = 'storage_capacity_label',
@@ -42,6 +43,7 @@ export type TeacupReservoirProperties = {
     [TeacupReservoirField.Huc12]: number;
     [TeacupReservoirField.RegionName]: string;
     [TeacupReservoirField.RegionId]: number;
+    [TeacupReservoirField.ManagingRegionAbbreviation]: string;
     [TeacupReservoirField.State]: string;
     [TeacupReservoirField.Source]: string;
     [TeacupReservoirField.UseTotalOrActiveStorage]: string;

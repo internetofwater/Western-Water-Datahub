@@ -17,7 +17,7 @@ export const Teacups: React.FC = () => {
                 <Image
                     src="/map-icons/teacup-65-50.png"
                     alt="Reservoir Teacup Icon"
-                    h={60}
+                    h={50}
                     w="auto"
                     fit="contain"
                 />

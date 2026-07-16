@@ -8,7 +8,7 @@
 import { MultiSelect, Skeleton } from '@mantine/core';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId, ValidStates } from '@/features/Map/consts';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import { SourceDataEvent } from '@/features/Map/types';
 import { isSourceDataLoaded } from '@/features/Map/utils';
@@ -31,9 +31,6 @@ export const State: React.FC = () => {
 
     const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
-    const controller = useRef<AbortController>(null);
-    const isMounted = useRef(true);
-
     useEffect(() => {
         if (!map) {
             return;
@@ -53,58 +50,65 @@ export const State: React.FC = () => {
         };
     }, [map]);
 
-    const getBasinOptions = async () => {
-        try {
-            controller.current = new AbortController();
+    useEffect(() => {
+        let isMounted = true;
 
-            const stateFeatureCollection = await geoconnexService.getItems<
-                FeatureCollection<Polygon, StateProperties>
-            >(SourceId.States, {
-                params: {
-                    bbox: [-125, 24, -96.5, 49],
-                    skipGeometry: true,
-                },
-                signal: controller.current.signal,
+        const controller = new AbortController();
+
+        geoconnexService
+            .getItems<FeatureCollection<Polygon, StateProperties>>(
+                SourceId.States,
+                {
+                    params: {
+                        bbox: [-125, 24, -96.5, 49],
+                        skipGeometry: true,
+                    },
+                    signal: controller.signal,
+                }
+            )
+            .then((featureCollection) => {
+                if (featureCollection.features.length > 0) {
+                    const stateOptions = formatOptions(
+                        featureCollection.features.filter((feature) =>
+                            ValidStates.includes(
+                                feature.properties[StateField.Acronym]
+                            )
+                        ),
+                        (feature) =>
+                            String(feature?.properties?.[StateField.Uri]),
+                        (feature) =>
+                            String(feature?.properties?.[StateField.Name]),
+                        { defaultLabel: '', defaultValue: '', noDefault: true }
+                    );
+
+                    if (isMounted) {
+                        setStateOptions(stateOptions);
+                    }
+                }
+            })
+            .catch((error) => {
+                if (
+                    (error as Error)?.name === 'AbortError' ||
+                    (typeof error === 'string' && error === 'Component unmount')
+                ) {
+                    console.log('Fetch request canceled');
+                } else {
+                    if ((error as Error)?.message) {
+                        const _error = error as Error;
+                        console.error(_error);
+                    }
+                }
+            })
+            .finally(() => {
+                if (isMounted) {
+                    setLoading(false);
+                }
             });
 
-            if (stateFeatureCollection.features.length) {
-                const basinOptions = formatOptions(
-                    stateFeatureCollection.features.filter((feature) =>
-                        ValidStates.includes(
-                            feature.properties[StateField.Acronym]
-                        )
-                    ),
-                    (feature) => String(feature?.properties?.[StateField.Uri]),
-                    (feature) => String(feature?.properties?.[StateField.Name]),
-                    { defaultLabel: '', defaultValue: '', noDefault: true }
-                );
-
-                if (isMounted.current) {
-                    setStateOptions(basinOptions);
-                }
-            }
-        } catch (error) {
-            if (
-                (error as Error)?.name === 'AbortError' ||
-                (typeof error === 'string' && error === 'Component unmount')
-            ) {
-                console.log('Fetch request canceled');
-            } else {
-                if ((error as Error)?.message) {
-                    const _error = error as Error;
-                    console.error(_error);
-                }
-            }
-        }
-    };
-
-    useEffect(() => {
-        isMounted.current = true;
-        void getBasinOptions();
         return () => {
-            isMounted.current = false;
-            if (controller.current) {
-                controller.current.abort('Component unmount');
+            isMounted = false;
+            if (controller) {
+                controller.abort('Component unmount');
             }
         };
     }, []);
@@ -129,13 +133,7 @@ export const State: React.FC = () => {
                     aria-label="Select a State"
                     placeholder="Select a State"
                     label="Filter by State"
-                    onChange={(_value) => {
-                        if (_value) {
-                            setState(_value);
-                        } else {
-                            setState([]);
-                        }
-                    }}
+                    onChange={setState}
                     searchable
                     clearable
                 />

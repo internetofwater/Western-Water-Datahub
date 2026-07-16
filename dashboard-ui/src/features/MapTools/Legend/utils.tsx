@@ -35,6 +35,8 @@ export const getTooltipContent = (
             return '';
         case String(LayerId.RegionsReference):
             return 'The boundaries of the Department of the Interior Unified Regions in the western U.S.';
+        case String(LayerId.ManagingRegionsReference):
+            return 'The boundaries of the Department of the Interior Regions that are responsible for managing Bureau of Reclamation assets.';
         case String(LayerId.BasinsReference):
             return 'The boundaries of 2-digit Hydrologic Units.';
         case String(LayerId.StatesReference):

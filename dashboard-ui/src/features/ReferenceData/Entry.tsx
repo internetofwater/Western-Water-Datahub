@@ -13,7 +13,10 @@ import { MainState } from '@/stores/main';
 type Props = {
     layerId: keyof MainState['toggleableLayers'];
     label: string;
-    onClick: (visible: boolean) => void;
+    onClick: (
+        layerId: keyof MainState['toggleableLayers'],
+        visible: boolean
+    ) => void;
     toggleableLayers: MainState['toggleableLayers'];
     links?: boolean;
     disabled?: boolean;
@@ -60,7 +63,7 @@ export const Entry: React.FC<Props> = (props) => {
                 }
                 aria-label={label}
                 checked={toggleableLayers[layerId]}
-                onClick={() => onClick(!toggleableLayers[layerId])}
+                onClick={() => onClick(layerId, !toggleableLayers[layerId])}
                 disabled={disabled}
             />
             {links && (

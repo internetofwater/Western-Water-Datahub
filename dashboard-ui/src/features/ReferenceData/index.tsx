@@ -19,7 +19,7 @@ import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { RasterBaseLayers } from '@/features/Map/types';
 import { useEffect, useRef, useState } from 'react';
-import useMainStore from '@/stores/main';
+import useMainStore, { MainState } from '@/stores/main';
 import {
     RasterVisibilityMap,
     updateBaseLayerOpacity,
@@ -30,6 +30,8 @@ import { Entry } from '@/features/ReferenceData/Entry';
 import { getLayerName } from '@/features/Map/config';
 import { useLoading } from '@/hooks/useLoading';
 import Info from '@/icons/Info';
+import { getBoundingGeographyLabel } from '@/utils/getBoundingGeographyLabel';
+import { BoundingGeographyLevel } from '@/stores/main/types';
 
 const RasterBaseLayerIconObj = [
     {
@@ -101,44 +103,15 @@ const ReferenceData: React.FC = () => {
         setBaseLayerOpacity(baseLayerOpacity);
     };
 
-    const handleNOAARFCChange = (showNOAARFC: boolean) => {
+    const handleLayerVisibilityChange = (
+        layerId: keyof MainState['toggleableLayers'],
+        visible: boolean
+    ) => {
         if (!map) {
             return;
         }
 
-        setToggleableLayers(LayerId.NOAARiverForecast, showNOAARFC);
-    };
-
-    const handleSnotelChange = (showSnotel: boolean) => {
-        if (!map) {
-            return;
-        }
-
-        setToggleableLayers(LayerId.SnotelHucSixMeans, showSnotel);
-    };
-
-    const handleRegionsReferenceChange = (showRegionsReference: boolean) => {
-        if (!map) {
-            return;
-        }
-
-        setToggleableLayers(LayerId.RegionsReference, showRegionsReference);
-    };
-
-    const handleBasinsReferenceChange = (showBasinsReference: boolean) => {
-        if (!map) {
-            return;
-        }
-
-        setToggleableLayers(LayerId.BasinsReference, showBasinsReference);
-    };
-
-    const handleStatesReferenceChange = (showStatesReference: boolean) => {
-        if (!map) {
-            return;
-        }
-
-        setToggleableLayers(LayerId.StatesReference, showStatesReference);
+        setToggleableLayers(layerId, visible);
     };
 
     const getBaseLayerValue = (): RasterBaseLayers => {
@@ -183,7 +156,7 @@ const ReferenceData: React.FC = () => {
                     <Entry
                         layerId={LayerId.NOAARiverForecast}
                         label={`Show ${getLayerName(LayerId.NOAARiverForecast)}`}
-                        onClick={handleNOAARFCChange}
+                        onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
                         disabled={isReferenceDataDisabled}
                     />
@@ -230,7 +203,7 @@ const ReferenceData: React.FC = () => {
                     <Entry
                         layerId={LayerId.SnotelHucSixMeans}
                         label={`Show ${getLayerName(LayerId.SnotelHucSixMeans)}`}
-                        onClick={handleSnotelChange}
+                        onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
                         disabled={isReferenceDataDisabled}
                     />
@@ -286,22 +259,29 @@ const ReferenceData: React.FC = () => {
                     <Divider size="md" />
                     <Entry
                         layerId={LayerId.RegionsReference}
-                        label="Show DOI Region Boundaries"
-                        onClick={handleRegionsReferenceChange}
+                        label={`Show ${getBoundingGeographyLabel(BoundingGeographyLevel.Region)} Boundaries`}
+                        onClick={handleLayerVisibilityChange}
+                        toggleableLayers={toggleableLayers}
+                        links={false}
+                    />
+                    <Entry
+                        layerId={LayerId.ManagingRegionsReference}
+                        label={`Show ${getBoundingGeographyLabel(BoundingGeographyLevel.ManagingRegion)} Boundaries`}
+                        onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
                         links={false}
                     />
                     <Entry
                         layerId={LayerId.BasinsReference}
-                        label="Show Basin (HUC2) Boundaries"
-                        onClick={handleBasinsReferenceChange}
+                        label={`Show ${getBoundingGeographyLabel(BoundingGeographyLevel.Basin)} Boundaries`}
+                        onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
                         links={false}
                     />
                     <Entry
                         layerId={LayerId.StatesReference}
-                        label="Show State Boundaries"
-                        onClick={handleStatesReferenceChange}
+                        label={`Show ${getBoundingGeographyLabel(BoundingGeographyLevel.State)} Boundaries`}
+                        onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
                         links={false}
                     />

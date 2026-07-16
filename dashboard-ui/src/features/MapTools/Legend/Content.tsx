@@ -9,7 +9,15 @@ import { Gradient } from '@/features/MapTools/Legend/Gradient';
 import styles from '@/features/MapTools/Legend/Legend.module.css';
 import { getLayerName } from '@/features/Map/config';
 import { MainState } from '@/stores/main';
-import { Box, Divider, Group, Stack, Title, Tooltip } from '@mantine/core';
+import {
+    Box,
+    Divider,
+    Group,
+    Stack,
+    Title,
+    TitleProps,
+    Tooltip,
+} from '@mantine/core';
 import {
     getTooltipContent,
     isGradientEntry,
@@ -21,17 +29,29 @@ import { Teacups } from '@/features/MapTools/Legend/Teacups';
 import { LayerId } from '@/features/Map/consts';
 import { Items } from '@/features/MapTools/Legend/Items';
 import { Groups } from '@/features/MapTools/Legend/Groups';
+import { BoundingGeographyLevel } from '@/stores/main/types';
+import { getBoundingGeographyLabel } from '@/utils/getBoundingGeographyLabel';
 
 type Props = {
     entries: TEntry[];
     toggleableLayers: MainState['toggleableLayers'];
+    boundingGeographyLevel: BoundingGeographyLevel;
 };
 
 export const Content: React.FC<Props> = (props) => {
-    const { entries, toggleableLayers } = props;
+    const { entries, toggleableLayers, boundingGeographyLevel } = props;
+
+    const titleProps: TitleProps = {
+        order: 4,
+        size: 'h6',
+        maw: '85%',
+    };
 
     return (
-        <Stack className={styles.wrapper}>
+        <Stack
+            className={styles.wrapper}
+            gap="calc(var(--default-spacing) * 2)"
+        >
             <Teacups />
             <Divider />
             {entries
@@ -76,13 +96,40 @@ export const Content: React.FC<Props> = (props) => {
                         {isGroupsEntry(entry) && <Groups entry={entry} />}
                     </li>
                 ))}
+            {boundingGeographyLevel !== BoundingGeographyLevel.None && (
+                <Group gap="calc(var(--default-spacing) / 2)">
+                    <Box className={styles.iconBackground}>
+                        <Line color="#000" />
+                    </Box>
+                    <Title {...titleProps}>
+                        {getBoundingGeographyLabel(boundingGeographyLevel)}{' '}
+                        Filter Boundaries
+                    </Title>
+                </Group>
+            )}
             {toggleableLayers[LayerId.RegionsReference] && (
                 <Group gap="calc(var(--default-spacing) / 2)">
                     <Box className={styles.iconBackground}>
                         <Line color="#ef5e25" />
                     </Box>
-                    <Title order={4} size="h6">
-                        DOI Region Boundaries
+                    <Title {...titleProps}>
+                        {getBoundingGeographyLabel(
+                            BoundingGeographyLevel.Region
+                        )}{' '}
+                        Reference Boundaries
+                    </Title>
+                </Group>
+            )}
+            {toggleableLayers[LayerId.ManagingRegionsReference] && (
+                <Group gap="calc(var(--default-spacing) / 2)">
+                    <Box className={styles.iconBackground}>
+                        <Line color="#A10039" />
+                    </Box>
+                    <Title {...titleProps}>
+                        {getBoundingGeographyLabel(
+                            BoundingGeographyLevel.ManagingRegion
+                        )}{' '}
+                        Reference Boundaries
                     </Title>
                 </Group>
             )}
@@ -91,8 +138,11 @@ export const Content: React.FC<Props> = (props) => {
                     <Box className={styles.iconBackground}>
                         <Line color="#54278f" />
                     </Box>
-                    <Title order={4} size="h6">
-                        Basin (HUC2) Boundaries
+                    <Title {...titleProps}>
+                        {getBoundingGeographyLabel(
+                            BoundingGeographyLevel.Basin
+                        )}{' '}
+                        Reference Boundaries
                     </Title>
                 </Group>
             )}
@@ -101,8 +151,11 @@ export const Content: React.FC<Props> = (props) => {
                     <Box className={styles.iconBackground}>
                         <Line color="#34a37e" />
                     </Box>
-                    <Title order={4} size="h6">
-                        State Boundaries
+                    <Title {...titleProps}>
+                        {getBoundingGeographyLabel(
+                            BoundingGeographyLevel.State
+                        )}{' '}
+                        Reference Boundaries
                     </Title>
                 </Group>
             )}
