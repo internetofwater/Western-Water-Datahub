@@ -649,80 +649,62 @@ const MainMap: React.FC<Props> = (props) => {
                 boundingGeographyLevel === BoundingGeographyLevel.Region &&
                 map.getLayer(SubLayerId.RegionLabels)
             ) {
-                if (region.length > 0) {
-                    map.setPaintProperty(
-                        SubLayerId.RegionLabels,
-                        'text-opacity',
-                        ['match', ['get', RegionField.Name], region, 1, 0]
-                    );
-                } else {
-                    map.setPaintProperty(
-                        SubLayerId.RegionLabels,
-                        'text-opacity',
-                        1
-                    );
-                }
+                map.setPaintProperty(
+                    SubLayerId.RegionLabels,
+                    'text-opacity',
+                    region.length > 0
+                        ? ['match', ['get', RegionField.Name], region, 1, 0]
+                        : 1
+                );
             }
             if (
                 boundingGeographyLevel ===
                     BoundingGeographyLevel.ManagingRegion &&
                 map.getLayer(SubLayerId.ManagingRegionLabels)
             ) {
-                if (managingRegion.length > 0) {
-                    map.setPaintProperty(
-                        SubLayerId.ManagingRegionLabels,
-                        'text-opacity',
-                        [
-                            'match',
-                            ['get', ManagingRegionField.RegionAbbreviation],
-                            managingRegion,
-                            1,
-                            0,
-                        ]
-                    );
-                } else {
-                    map.setPaintProperty(
-                        SubLayerId.ManagingRegionLabels,
-                        'text-opacity',
-                        1
-                    );
-                }
+                map.setPaintProperty(
+                    SubLayerId.ManagingRegionLabels,
+                    'text-opacity',
+                    managingRegion.length > 0
+                        ? [
+                              'match',
+                              ['get', ManagingRegionField.RegionAbbreviation],
+                              managingRegion,
+                              1,
+                              0,
+                          ]
+                        : 1
+                );
             }
             if (
                 boundingGeographyLevel === BoundingGeographyLevel.Basin &&
                 map.getLayer(SubLayerId.BasinLabels)
             ) {
-                if (basin.length > 0) {
-                    map.setPaintProperty(
-                        SubLayerId.BasinLabels,
-                        'text-opacity',
-                        ['match', ['get', Huc02BasinField.Id], basin, 1, 0]
-                    );
-                } else {
-                    map.setPaintProperty(
-                        SubLayerId.BasinLabels,
-                        'text-opacity',
-                        1
-                    );
-                }
+                map.setPaintProperty(
+                    SubLayerId.BasinLabels,
+                    'text-opacity',
+                    basin.length > 0
+                        ? [
+                              'match',
+                              ['to-string', ['get', Huc02BasinField.Id]],
+                              basin,
+                              1,
+                              0,
+                          ]
+                        : 1
+                );
             }
             if (
                 boundingGeographyLevel === BoundingGeographyLevel.State &&
                 map.getLayer(SubLayerId.StateLabels)
             ) {
-                if (state.length > 0) {
-                    map.setPaintProperty(
-                        SubLayerId.StateLabels,
-                        'text-opacity',
-                        ['match', ['get', StateField.Acronym], state, 1, 0]
-                    );
-                } else {
-                    map.setPaintProperty(
-                        SubLayerId.StateLabels,
-                        'text-opacity',
-                        1
-                    );
-                }
+                map.setPaintProperty(
+                    SubLayerId.StateLabels,
+                    'text-opacity',
+                    state.length > 0
+                        ? ['match', ['get', StateField.Uri], state, 1, 0]
+                        : 1
+                );
             }
         }
     }, [

@@ -965,6 +965,8 @@ export const getLayerHoverFunction = (
                         return;
                     }
 
+                    console.log('e.features', e.features);
+
                     const zoom = map.getZoom();
                     if (zoom < 12) {
                         const feature = e.features?.[0] as

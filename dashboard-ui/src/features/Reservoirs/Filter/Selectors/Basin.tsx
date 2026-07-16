@@ -9,7 +9,7 @@ import { MultiSelect, Skeleton } from '@mantine/core';
 import useMainStore from '@/stores/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId, ValidBasins } from '@/features/Map/consts';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import geoconnexService from '@/services/init/geoconnex.init';
 import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
@@ -34,9 +34,6 @@ export const Basin: React.FC = () => {
 
     const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
-    const controller = useRef<AbortController>(null);
-    const isMounted = useRef(true);
-
     useEffect(() => {
         if (!map) {
             return;
@@ -55,59 +52,62 @@ export const Basin: React.FC = () => {
         };
     }, [map]);
 
-    const getBasinOptions = async () => {
-        try {
-            controller.current = new AbortController();
+    useEffect(() => {
+        let isMounted = true;
 
-            const basinFeatureCollection = await geoconnexService.getItems<
-                FeatureCollection<Polygon, Huc06BasinProperties>
-            >(SourceId.Basins, {
-                params: {
-                    bbox: [-125, 24, -96.5, 49],
-                    skipGeometry: true,
-                },
-                signal: controller.current.signal,
-            });
+        const controller = new AbortController();
 
-            if (basinFeatureCollection.features.length) {
-                const basinOptions = formatOptions(
-                    basinFeatureCollection.features.filter((feature) =>
-                        ValidBasins.includes(String(feature.id))
-                    ),
-                    (feature) => String(feature.id),
-                    (feature) =>
-                        String(feature?.properties?.[Huc02BasinField.Name]),
-                    { defaultLabel: '', defaultValue: '', noDefault: true }
-                );
+        geoconnexService
+            .getItems<FeatureCollection<Polygon, Huc06BasinProperties>>(
+                SourceId.Basins,
+                {
+                    params: {
+                        bbox: [-125, 24, -96.5, 49],
+                        skipGeometry: true,
+                    },
+                    signal: controller.signal,
+                }
+            )
+            .then((featureCollection) => {
+                if (featureCollection.features.length > 0) {
+                    const basinOptions = formatOptions(
+                        featureCollection.features.filter((feature) =>
+                            ValidBasins.includes(String(feature.id))
+                        ),
+                        (feature) => String(feature.id),
+                        (feature) =>
+                            String(feature?.properties?.[Huc02BasinField.Name]),
+                        { defaultLabel: '', defaultValue: '', noDefault: true }
+                    );
 
-                setBasinOptions(basinOptions);
-
-                if (isMounted.current) {
+                    if (isMounted) {
+                        setBasinOptions(basinOptions);
+                    }
+                }
+            })
+            .catch((error) => {
+                if (
+                    (error as Error)?.name === 'AbortError' ||
+                    (typeof error === 'string' && error === 'Component unmount')
+                ) {
+                    console.log('Fetch request canceled');
+                } else {
+                    if ((error as Error)?.message) {
+                        const _error = error as Error;
+                        console.error(_error);
+                    }
+                }
+            })
+            .finally(() => {
+                if (isMounted) {
                     setLoading(false);
                 }
-            }
-        } catch (error) {
-            if (
-                (error as Error)?.name === 'AbortError' ||
-                (typeof error === 'string' && error === 'Component unmount')
-            ) {
-                console.log('Fetch request canceled');
-            } else {
-                if ((error as Error)?.message) {
-                    const _error = error as Error;
-                    console.error(_error);
-                }
-            }
-        }
-    };
+            });
 
-    useEffect(() => {
-        isMounted.current = true;
-        void getBasinOptions();
         return () => {
-            isMounted.current = false;
-            if (controller.current) {
-                controller.current.abort('Component unmount');
+            isMounted = false;
+            if (controller) {
+                controller.abort('Component unmount');
             }
         };
     }, []);
@@ -127,19 +127,13 @@ export const Basin: React.FC = () => {
                     id="basinSelector"
                     className={styles.multiselect}
                     disabled={isDisabled}
-                    searchable
                     data={basinOptions}
                     value={basin}
                     aria-label="Select a Basin"
                     placeholder="Select a basin"
                     label="Filter by Geography"
-                    onChange={(value: string[]) => {
-                        if (value) {
-                            setBasin(value);
-                        } else {
-                            setBasin([]);
-                        }
-                    }}
+                    onChange={setBasin}
+                    searchable
                     clearable
                 />
             )}

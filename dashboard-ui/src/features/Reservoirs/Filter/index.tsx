@@ -26,7 +26,7 @@ import Up from '@/icons/Up';
 import FilterIcon from '@/icons/Filter';
 import { useLoading } from '@/hooks/useLoading';
 import { ReservoirDateSelector } from '@/features/Reservoirs/ReservoirDateSelector';
-import { ManagingRegion } from './Selectors/ManagingRegion';
+import { ManagingRegion } from '@/features/Reservoirs/Filter/Selectors/ManagingRegion';
 import { getBoundingGeographyLabel } from '@/utils/getBoundingGeographyLabel';
 
 type Props = {
@@ -93,11 +93,7 @@ export const Filter: React.FC<Props> = (props) => {
             </Group>
             <ReservoirDateSelector />
             <Divider my="calc(var(--default-spacing) / 2)" />
-            <Group
-                gap="var(--default-spacing)"
-                align="flex-start"
-                wrap="nowrap"
-            >
+            <Group gap="var(--default-spacing)" align="flex-end" wrap="nowrap">
                 <Box
                     style={{
                         display:

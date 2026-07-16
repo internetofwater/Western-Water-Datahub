@@ -9,7 +9,7 @@ import { MultiSelect, Skeleton } from '@mantine/core';
 import useMainStore from '@/stores/main';
 import { useMap } from '@/contexts/MapContexts';
 import { MAP_ID, SourceId } from '@/features/Map/consts';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 import { formatOptions } from '@/features/Reservoirs/Filter/Selectors/utils';
 import { FeatureCollection, Polygon } from 'geojson';
@@ -38,9 +38,6 @@ export const ManagingRegion: React.FC = () => {
 
     const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
-    const controller = useRef<AbortController>(null);
-    const isMounted = useRef(true);
-
     useEffect(() => {
         if (!map) {
             return;
@@ -59,61 +56,66 @@ export const ManagingRegion: React.FC = () => {
         };
     }, [map]);
 
-    const getBasinOptions = async () => {
-        try {
-            controller.current = new AbortController();
+    useEffect(() => {
+        let isMounted = true;
 
-            const managingRegionCollection = await wwdhService.getItems<
-                FeatureCollection<Polygon, ManagingRegionProperties>
-            >(SourceId.ManagingRegions, {
-                params: {
-                    f: 'json',
-                },
-                signal: controller.current.signal,
-            });
+        const controller = new AbortController();
 
-            if (managingRegionCollection.features.length) {
-                const basinOptions = formatOptions(
-                    managingRegionCollection.features,
-                    (feature) =>
-                        String(
-                            feature?.properties?.[
-                                ManagingRegionField.RegionAbbreviation
-                            ]
-                        ),
-                    (feature) =>
-                        String(feature?.properties?.[ManagingRegionField.Name]),
-                    { defaultLabel: '', defaultValue: '', noDefault: true }
-                );
+        wwdhService
+            .getItems<FeatureCollection<Polygon, ManagingRegionProperties>>(
+                SourceId.ManagingRegions,
+                {
+                    params: {
+                        f: 'json',
+                    },
+                    signal: controller.signal,
+                }
+            )
+            .then((featureCollection) => {
+                if (featureCollection.features.length > 0) {
+                    const managingRegionOptions = formatOptions(
+                        featureCollection.features,
+                        (feature) =>
+                            String(
+                                feature?.properties?.[
+                                    ManagingRegionField.RegionAbbreviation
+                                ]
+                            ),
+                        (feature) =>
+                            String(
+                                feature?.properties?.[ManagingRegionField.Name]
+                            ),
+                        { defaultLabel: '', defaultValue: '', noDefault: true }
+                    );
 
-                setManagingRegionOptions(basinOptions);
-
-                if (isMounted.current) {
+                    if (isMounted) {
+                        setManagingRegionOptions(managingRegionOptions);
+                    }
+                }
+            })
+            .catch((error) => {
+                if (
+                    (error as Error)?.name === 'AbortError' ||
+                    (typeof error === 'string' && error === 'Component unmount')
+                ) {
+                    console.log('Fetch request canceled');
+                } else {
+                    if ((error as Error)?.message) {
+                        const _error = error as Error;
+                        console.error(_error);
+                    }
+                }
+            })
+            .finally(() => {
+                if (isMounted) {
                     setLoading(false);
                 }
-            }
-        } catch (error) {
-            if (
-                (error as Error)?.name === 'AbortError' ||
-                (typeof error === 'string' && error === 'Component unmount')
-            ) {
-                console.log('Fetch request canceled');
-            } else {
-                if ((error as Error)?.message) {
-                    const _error = error as Error;
-                    console.error(_error);
-                }
-            }
-        }
-    };
+            });
 
-    useEffect(() => {
-        isMounted.current = true;
-        void getBasinOptions();
         return () => {
-            isMounted.current = false;
-            if (controller.current) {
-                controller.current.abort('Component unmount');
+            isMounted = false;
+            if (controller) {
+                controller.abort('Component unmount');
             }
         };
     }, []);
@@ -133,19 +135,13 @@ export const ManagingRegion: React.FC = () => {
                     id="managingRegionSelector"
                     className={styles.multiselect}
                     disabled={isDisabled}
-                    searchable
                     data={managingRegionOptions}
                     value={managingRegion}
                     aria-label="Select a Region"
                     placeholder="Select a region"
                     label="Filter by Region"
-                    onChange={(value: string[]) => {
-                        if (value) {
-                            setManagingRegion(value);
-                        } else {
-                            setManagingRegion([]);
-                        }
-                    }}
+                    onChange={setManagingRegion}
+                    searchable
                     clearable
                 />
             )}
