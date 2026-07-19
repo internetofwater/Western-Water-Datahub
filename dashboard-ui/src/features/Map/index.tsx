@@ -170,7 +170,7 @@ const MainMap: React.FC<Props> = (props) => {
         }
     }, [isMounted, setMapMoved]);
 
-    const throttledHandleMapMove = useMemo(
+    const debouncedHandleMapMove = useMemo(
         () => debounce(handleMapMove, 150),
         [handleMapMove]
     );
@@ -222,15 +222,15 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
-        map.on('moveend', throttledHandleMapMove);
-        map.on('zoomend', throttledHandleMapMove);
+        map.on('moveend', debouncedHandleMapMove);
+        map.on('zoomend', debouncedHandleMapMove);
 
         return () => {
-            map.off('moveend', throttledHandleMapMove);
-            map.off('zoomend', throttledHandleMapMove);
-            throttledHandleMapMove.cancel();
+            map.off('moveend', debouncedHandleMapMove);
+            map.off('zoomend', debouncedHandleMapMove);
+            debouncedHandleMapMove.cancel();
         };
-    }, [map, throttledHandleMapMove]);
+    }, [map, debouncedHandleMapMove]);
 
     useEffect(() => {
         if (!map) {
@@ -303,8 +303,6 @@ const MainMap: React.FC<Props> = (props) => {
                 animate: false,
             }
         );
-
-        return () => {};
     }, [map]);
 
     useEffect(() => {
