@@ -932,5 +932,5 @@ resources:
         name: ESRI
         # Very similar as the one above, yet it contains additional info like the regions' official abbreviation
         data: https://services1.arcgis.com/ixD30sld6F8MQ7V5/ArcGIS/rest/services/ReclamationBoundariesFL/FeatureServer/0
-        id_field: OBJECTID_1
-        title_field: REGION
+        id_field: abbreviation
+        title_field: managingregion
