@@ -500,9 +500,10 @@ export const sections: GlossarySection[] = [
                                     or Active Capacity, depending on the
                                     reservoir.
                                 </Text>
-                                <List>
+                                {/* TODO: restructure for better overflow protection */}
+                                <List pr="lg">
                                     <List.Item>
-                                        <Text {...content}>
+                                        <Text {...subSectionDescription}>
                                             <Text
                                                 {...subSectionDescription}
                                                 fw={700}
@@ -568,7 +569,7 @@ export const sections: GlossarySection[] = [
                                         </Text>
                                     </List.Item>
                                     <List.Item>
-                                        <Text {...content}>
+                                        <Text {...subSectionDescription}>
                                             <Text
                                                 {...subSectionDescription}
                                                 fw={700}
@@ -579,15 +580,15 @@ export const sections: GlossarySection[] = [
                                             The part of the total reservoir
                                             capacity that can be withdrawn by
                                             gravity. Live capacity is equal to
-                                            the{' '}
+                                            the&nbsp;
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
                                                 component="i"
                                             >
                                                 total capacity
-                                            </Text>{' '}
-                                            minus the{' '}
+                                            </Text>
+                                            &nbsp;minus the&nbsp;
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
@@ -599,7 +600,7 @@ export const sections: GlossarySection[] = [
                                         </Text>
                                     </List.Item>
                                     <List.Item>
-                                        <Text {...content}>
+                                        <Text {...subSectionDescription}>
                                             <Text
                                                 {...subSectionDescription}
                                                 fw={700}
