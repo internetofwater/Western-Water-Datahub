@@ -7,6 +7,7 @@ import { ReactNode } from 'react';
 import {
     Anchor,
     AnchorProps,
+    List,
     Stack,
     Text,
     TextProps,
@@ -87,49 +88,66 @@ export const sections: GlossarySection[] = [
                         id: LayerId.NOAARiverForecast,
                         label: getLayerName(LayerId.NOAARiverForecast),
                         content: (
-                            <>
-                                <Text {...content}>
-                                    The forecasted seasonal streamflow volume at
-                                    each forecast point divided by the average
-                                    streamflow volume for the season at that
-                                    forecast point, expressed as a percentage.
-                                    Forecasts are provided by the National
-                                    Oceanic and Atmospheric Administration
-                                    (NOAA) River Forecast Centers (RFCs). The
-                                    season is typically April 1 through July 31,
-                                    but&nbsp;
-                                    {getAnchor(
-                                        'differs for some forecast points',
-                                        'https://www.cbrfc.noaa.gov/dbdata/station/espgraph/list/esplist.html'
-                                    )}
-                                    . The historical averaging period is
-                                    1991-2020 (Calendar Years). Forecasts
-                                    typically represent unregulated streamflow,
-                                    meaning they do not account for the water
-                                    that may be diverted into or out of the
-                                    stream, or stored in reservoirs upstream
-                                    during the runoff season. To learn more
-                                    about water supply forecasts, and how they
-                                    are developed, visit the following websites:
-                                </Text>
-                                <br />
+                            <Text {...content}>
+                                The forecasted seasonal streamflow volume at
+                                each forecast point divided by the average
+                                streamflow volume for the season at that
+                                forecast point, expressed as a percentage.
+                                Forecasts are provided by the National Oceanic
+                                and Atmospheric Administration (NOAA) River
+                                Forecast Centers (RFCs). The season is typically
+                                April 1 through July 31, but&nbsp;
                                 {getAnchor(
-                                    'Colorado Basin River Forecast Center',
-                                    'https://www.cbrfc.noaa.gov/wsup/doc/doc.html'
+                                    'differs for some forecast points',
+                                    'https://www.cbrfc.noaa.gov/dbdata/station/espgraph/list/esplist.html'
                                 )}
-                                <br />
+                                . The historical averaging period is calendar
+                                years 1991-2020. Forecasts typically represent
+                                unregulated streamflow, meaning they do not
+                                account for the water that may be diverted into
+                                or out of the stream, or stored in reservoirs
+                                upstream during the runoff season. For more
+                                information, see&nbsp;
                                 {getAnchor(
-                                    'Northwest River Forecast Center',
-                                    'https://www.nwrfc.noaa.gov/ws/ws_info.php'
+                                    'Source',
+                                    'https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html'
                                 )}
-                            </>
+                                &nbsp;|&nbsp;
+                                {getAnchor(
+                                    'Methodology',
+                                    'https://www.cbrfc.noaa.gov/wsup/graph/west/map/help.html'
+                                )}
+                            </Text>
                         ),
                     },
                     {
                         id: LayerId.Snotel,
                         label: getLayerName(LayerId.Snotel),
-                        content:
-                            'The average snow water equivalent across each 6-digit Hydrologic Unit divided by the 30-year average for that basin, expressed as a percentage. The 30-year averaging period is 1991-2020. Snow Water Equivalent (SWE) is a measurement of the amount of water contained in a snowpack. It is the depth of water that would theoretically result if the whole snowpack instantaneously melted.',
+                        content: (
+                            <Text {...content}>
+                                The sum of observed snow water equivalent for
+                                each station within a 6-digit Hydrologic Unit
+                                divided by the sum of the 30-year median for
+                                each station within that basin, expressed as a
+                                percentage. The 30-year averaging period is
+                                water years 1991-2020. Snow Water Equivalent
+                                (SWE) is a measurement of the amount of water
+                                contained in a snowpack. It is the depth of
+                                water that would theoretically result if the
+                                whole snowpack instantaneously melted. For more
+                                information, see&nbsp;
+                                {getAnchor(
+                                    'Source',
+                                    'https://nwcc-apps.sc.egov.usda.gov/imap/#version=2&elements=&networks=!&states=!&basins=!&hucs=&minElevation=&maxElevation=&elementSelectType=any&activeOnly=true&activeForecastPointsOnly=true&hucLabels=false&hucIdLabels=false&hucParameterLabels=true&stationLabels=&overlays=&overlays=&basinOpacity=75&basinNoDataOpacity=25&basemapOpacity=100&maskOpacity=0&mode=data&openSections=networks&controlsOpen=true&popup=&popupMulti=&popupBasin=&base=esriNgwm&displayType=basinstation&basinType=6&dataElement=WTEQ&depth=-8&parameter=PCTMED&frequency=DAILY&duration=I&customDuration=&dayPart=E&year=2026&month=7&day=19&monthPart=E&forecastPubMonth=6&forecastPubDay=1&forecastExceedance=50&useMixedPast=true&seqColor=1&divColor=7&scaleType=D&scaleMin=&scaleMax=&referencePeriodType=POR&referenceBegin=1991&referenceEnd=2020&minimumYears=20&hucAssociations=true&lat=42.300&lon=-114.300&zoom=4.5'
+                                )}
+                                &nbsp;|&nbsp;
+                                {getAnchor(
+                                    'Methodology',
+                                    'https://github.com/internetofwater/Western-Water-Datahub/tree/main/packages/snotel_means'
+                                )}
+                            </Text>
+                        ),
+                        // 'The average snow water equivalent across each 6-digit Hydrologic Unit divided by the 30-year average for that basin, expressed as a percentage. The 30-year averaging period is 1991-2020. Snow Water Equivalent (SWE) is a measurement of the amount of water contained in a snowpack. It is the depth of water that would theoretically result if the whole snowpack instantaneously melted.',
                     },
                 ],
             },
@@ -137,6 +155,32 @@ export const sections: GlossarySection[] = [
                 id: 'base-layers',
                 label: 'Base Layers',
                 entries: [
+                    {
+                        id: LayerId.USDroughtMonitor,
+                        label: getLayerName(LayerId.USDroughtMonitor),
+                        content: (
+                            <Text {...content}>
+                                The current U.S. Drought Monitor map. The U.S.
+                                Drought Monitor identifies areas in drought and
+                                labels them by intensity. The map uses four
+                                categories of drought, from D1—the least
+                                intense—to D4, the most. It also highlights
+                                areas with no drought and uses the D0 category
+                                to indicate abnormally dry areas that could be
+                                entering or recovering from drought. For more
+                                information, see&nbsp;
+                                {getAnchor(
+                                    'Source',
+                                    'https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3'
+                                )}
+                                &nbsp;|&nbsp;
+                                {getAnchor(
+                                    'Methodology',
+                                    'https://droughtmonitor.unl.edu/About/AbouttheData.aspx'
+                                )}
+                            </Text>
+                        ),
+                    },
                     {
                         id: LayerId.NOAAPrecipSixToTen,
                         label: getLayerName(LayerId.NOAAPrecipSixToTen),
@@ -146,8 +190,7 @@ export const sections: GlossarySection[] = [
                                 NOAA National Weather Service Climate Prediction
                                 Center. The map indicates the probability
                                 (percent chance) of precipitation above, near,
-                                or below normal. For more information, see
-                                &nbsp;
+                                or below normal. For more information, see&nbsp;
                                 {getAnchor(
                                     'Source',
                                     'https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/1'
@@ -189,28 +232,93 @@ export const sections: GlossarySection[] = [
                 label: 'Boundaries',
                 entries: [
                     {
-                        id: LayerId.RegionsReference,
-                        label: `${getBoundingGeographyLabel(BoundingGeographyLevel.Region)} Boundaries`,
-                        content:
-                            'The boundaries of Department of the Interior (DOI) Unified Regions. The dashboard only displays the boundaries of the DOI regions in the western US (Columbia-Pacific Northwest, California-Great Basin, Missouri Basin, Upper Colorado Basin, Lower Colorado Basin, and Arkansas-Rio Grande-Texas Gulf).',
-                    },
-                    {
                         id: LayerId.ManagingRegionsReference,
                         label: `${getBoundingGeographyLabel(BoundingGeographyLevel.ManagingRegion)} Boundaries`,
-                        content:
-                            'The boundaries of the Department of the Interior Regions that are responsible for managing Bureau of Reclamation assets.',
+                        content: (
+                            <Text {...content}>
+                                The Department of Interior Unified Regions that
+                                are responsible for managing Bureau of
+                                Reclamation assets. For more information,
+                                see&nbsp;
+                                {getAnchor(
+                                    'API',
+                                    'https://api.wwdh.internetofwater.app/collections/doi-reclamation-managing-regions'
+                                )}
+                                &nbsp;|&nbsp;
+                                {getAnchor(
+                                    'Source',
+                                    'https://www.arcgis.com/home/item.html?id=1835dcafa71c40eb81fb152406e41230#overview'
+                                )}
+                            </Text>
+                        ),
+                    },
+                    {
+                        id: LayerId.RegionsReference,
+                        label: `${getBoundingGeographyLabel(BoundingGeographyLevel.Region)} Boundaries`,
+                        content: (
+                            <Text {...content}>
+                                The boundaries of Department of the Interior
+                                (DOI) Unified Regions. The dashboard only
+                                displays the boundaries of the DOI regions in
+                                the western US (Columbia-Pacific Northwest,
+                                California-Great Basin, Missouri Basin, Upper
+                                Colorado Basin, Lower Colorado Basin, and
+                                Arkansas-Rio Grande-Texas Gulf). For more
+                                information, see&nbsp;
+                                {getAnchor(
+                                    'API',
+                                    'https://api.wwdh.internetofwater.app/collections/doi-regions/items'
+                                )}
+                                &nbsp;|&nbsp;
+                                {getAnchor(
+                                    'Source',
+                                    'https://services1.arcgis.com/ixD30sld6F8MQ7V5/ArcGIS/rest/services/DOI_12_Unified_Regions_20180801/FeatureServer/0'
+                                )}
+                            </Text>
+                        ),
                     },
                     {
                         id: LayerId.BasinsReference,
                         label: `${getBoundingGeographyLabel(BoundingGeographyLevel.Basin)} Boundaries`,
-                        content:
-                            'The boundaries of 2-digit Hydrologic Units. Although the Watershed Boundary Dataset refers to these as “Regions”, they are labeled as “Basin (HUC2) Boundaries” in the Dashboard to avoid confusion with the DOI Region Boundaries.',
+                        content: (
+                            <Text {...content}>
+                                The boundaries of 2-digit Hydrologic Units.
+                                Although the Watershed Boundary Dataset refers
+                                to these as “Regions”, they are labeled as
+                                “Basin (HUC2) Boundaries” in the Dashboard to
+                                avoid confusion with the DOI Region Boundaries.
+                                For more information, see&nbsp;
+                                {getAnchor(
+                                    'API',
+                                    'https://reference.geoconnex.us/collections/hu02'
+                                )}
+                                &nbsp;|&nbsp;
+                                {getAnchor(
+                                    'Source',
+                                    'https://www.usgs.gov/national-hydrography/access-national-hydrography-products'
+                                )}
+                            </Text>
+                        ),
                     },
                     {
                         id: LayerId.StatesReference,
                         label: `${getBoundingGeographyLabel(BoundingGeographyLevel.State)} Boundaries`,
-                        content:
-                            'The boundaries of U.S. states. Only the 17 western states are displayed.',
+                        content: (
+                            <Text {...content}>
+                                The boundaries of U.S. states. Only the 17
+                                western states are displayed. For more
+                                information, see&nbsp;
+                                {getAnchor(
+                                    'API',
+                                    'https://reference.geoconnex.us/collections/states'
+                                )}
+                                &nbsp;|&nbsp;
+                                {getAnchor(
+                                    'Source',
+                                    'https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html'
+                                )}
+                            </Text>
+                        ),
                     },
                 ],
             },
@@ -283,7 +391,7 @@ export const sections: GlossarySection[] = [
         id: 'understanding',
         label: 'Understanding Reservoir Information in the Dashboard',
         description:
-            "You can use the reservoir information in the Dashboard to get an understanding of water supply and flood conditions across the West for the selected date. Here's how it works:",
+            "You can use the reservoir information in the Dashboard to get an understanding of water storage conditions across the West for the selected date. Here's how it works:",
         subSections: [
             {
                 id: 'understanding-inner',
@@ -312,11 +420,12 @@ export const sections: GlossarySection[] = [
                                 <Text {...content} fw={700} component="strong">
                                     Reservoir capacity
                                 </Text>
-                                &nbsp;values shown along with the reservoir
-                                storage values provide context for the storage
-                                values, indicating the amount of water that can
-                                be stored in a reservoir based on physical
-                                constraints and operating agreements.
+                                &nbsp;values for water supply are shown along
+                                with the reservoir storage values to provide
+                                context for the storage values, indicating the
+                                amount of water that can be stored in a
+                                reservoir based on physical constraints and
+                                operating agreements.
                             </Text>
                         ),
                     },
@@ -379,29 +488,170 @@ export const sections: GlossarySection[] = [
                         id: 'capacity',
                         label: 'Capacity',
                         content: (
-                            <Text {...content}>
-                                The volume of water a reservoir can hold.
-                                Capacities are defined for specified portions of
-                                the reservoir, typically either from the bottom
-                                of the reservoir to a specified storage level or
-                                between two reservoir storage levels. The
-                                dashboard shows either Total Capacity or Active
-                                Capacity, depending on the reservoir.&nbsp;
-                                <Text {...content} fw={700} component="strong">
-                                    Total Capacity
+                            <>
+                                <Text {...content}>
+                                    The volume of water the reservoir can hold.
+                                    Capacities are defined for specified
+                                    portions of the reservoir, typically either
+                                    from the bottom of the reservoir to a
+                                    specified storage level or between two
+                                    reservoir storage levels. The dashboard
+                                    shows either Total Capacity, Live Capacity,
+                                    or Active Capacity, depending on the
+                                    reservoir.
                                 </Text>
-                                &nbsp;is the total volume of water that can be
-                                impounded by the reservoir, not including&nbsp;
-                                <Text {...content} fs="italic" component="i">
-                                    surcharge capacity
-                                </Text>
-                                .&nbsp;
-                                <Text {...content} fw={700} component="strong">
-                                    Active Capacity
-                                </Text>
-                                &nbsp;is the volume of water that can be
-                                regulated by the reservoir.
-                            </Text>
+                                <List>
+                                    <List.Item>
+                                        <Text {...content}>
+                                            <Text
+                                                {...subSectionDescription}
+                                                fw={700}
+                                                component="strong"
+                                            >
+                                                Total Capacity:
+                                            </Text>
+                                            The total volume of water that can
+                                            be impounded by the reservoir, not
+                                            including&nbsp;
+                                            <Text
+                                                {...subSectionDescription}
+                                                fs="italic"
+                                                component="i"
+                                            >
+                                                surcharge capacity
+                                            </Text>
+                                            . The elevation associated with the
+                                            total capacity is typically the
+                                            elevation of the&nbsp;
+                                            <Text
+                                                {...subSectionDescription}
+                                                fs="italic"
+                                                component="i"
+                                            >
+                                                uncontrolled spillway crest
+                                            </Text>
+                                            &nbsp;or the top of the&nbsp;
+                                            <Text
+                                                {...subSectionDescription}
+                                                fs="italic"
+                                                component="i"
+                                            >
+                                                spillway gates
+                                            </Text>
+                                            . Total capacity is the reservoir
+                                            capacity up to the highest of the
+                                            top of active&nbsp;
+                                            <Text
+                                                {...subSectionDescription}
+                                                fs="italic"
+                                                component="i"
+                                            >
+                                                conservation capacity
+                                            </Text>
+                                            ,&nbsp;
+                                            <Text
+                                                {...subSectionDescription}
+                                                fs="italic"
+                                                component="i"
+                                            >
+                                                joint use capacity
+                                            </Text>
+                                            &nbsp;(if present), and&nbsp;
+                                            <Text
+                                                {...subSectionDescription}
+                                                fs="italic"
+                                                component="i"
+                                            >
+                                                exclusive flood control capacity
+                                            </Text>
+                                            &nbsp;(if present).
+                                        </Text>
+                                    </List.Item>
+                                    <List.Item>
+                                        <Text {...content}>
+                                            <Text
+                                                {...subSectionDescription}
+                                                fw={700}
+                                                component="strong"
+                                            >
+                                                Live Capacity:
+                                            </Text>
+                                            The part of the total reservoir
+                                            capacity that can be withdrawn by
+                                            gravity. Live capacity is equal to
+                                            the{' '}
+                                            <Text
+                                                {...subSectionDescription}
+                                                fs="italic"
+                                                component="i"
+                                            >
+                                                total capacity
+                                            </Text>{' '}
+                                            minus the{' '}
+                                            <Text
+                                                {...subSectionDescription}
+                                                fs="italic"
+                                                component="i"
+                                            >
+                                                dead capacity
+                                            </Text>
+                                            .
+                                        </Text>
+                                    </List.Item>
+                                    <List.Item>
+                                        <Text {...content}>
+                                            <Text
+                                                {...subSectionDescription}
+                                                fw={700}
+                                                component="strong"
+                                            >
+                                                Active Capacity:
+                                            </Text>
+                                            The volume of water regulated by the
+                                            reservoir for irrigation, power,
+                                            municipal and industrial use, fish
+                                            and wildlife, navigation,
+                                            recreation, water quality, flood
+                                            control, and other purposes. Active
+                                            capacity is the reservoir capacity
+                                            between the top of the&nbsp;
+                                            <Text
+                                                {...subSectionDescription}
+                                                fs="italic"
+                                                component="i"
+                                            >
+                                                inactive storage capacity
+                                            </Text>
+                                            &nbsp;and the highest of the top of
+                                            the&nbsp;
+                                            <Text
+                                                {...subSectionDescription}
+                                                fs="italic"
+                                                component="i"
+                                            >
+                                                active conservation capacity
+                                            </Text>
+                                            ,&nbsp;
+                                            <Text
+                                                {...subSectionDescription}
+                                                fs="italic"
+                                                component="i"
+                                            >
+                                                joint use capacity
+                                            </Text>
+                                            &nbsp;(if present), and&nbsp;
+                                            <Text
+                                                {...subSectionDescription}
+                                                fs="italic"
+                                                component="i"
+                                            >
+                                                exclusive flood control capacity
+                                            </Text>
+                                            &nbsp;(if present).
+                                        </Text>
+                                    </List.Item>
+                                </List>
+                            </>
                         ),
                     },
                     {
@@ -487,72 +737,6 @@ export const sections: GlossarySection[] = [
                             'The reservoir capacity provided for use in passing the inflow design flood through the reservoir. It is the reservoir capacity between the maximum water surface elevation and the highest of the following elevations: (1) the top of exclusive flood control capacity, (2) top of joint use capacity, or (3) top of active conservation capacity.',
                     },
                     {
-                        id: 'total-cap',
-                        label: 'Total Capacity',
-                        content: (
-                            <Text {...content}>
-                                The total volume of water that can be impounded
-                                by the reservoir, not including&nbsp;
-                                <Text {...content} fs="italic" component="i">
-                                    surcharge capacity
-                                </Text>
-                                . The elevation associated with the total
-                                capacity is typically the elevation of the&nbsp;
-                                <Text {...content} fs="italic" component="i">
-                                    uncontrolled spillway crest
-                                </Text>
-                                &nbsp;or the top of the&nbsp;
-                                <Text {...content} fs="italic" component="i">
-                                    spillway gates
-                                </Text>
-                                . Total capacity is the reservoir capacity up to
-                                the highest of the top of active&nbsp;
-                                <Text {...content} fs="italic" component="i">
-                                    conservation capacity
-                                </Text>
-                                ,&nbsp;
-                                <Text {...content} fs="italic" component="i">
-                                    joint use capacity
-                                </Text>
-                                &nbsp;(if present), and&nbsp;
-                                <Text {...content} fs="italic" component="i">
-                                    exclusive flood control capacity
-                                </Text>
-                                &nbsp;(if present).
-                            </Text>
-                        ),
-                    },
-                    {
-                        id: 'active-cap',
-                        label: 'Active Capacity',
-                        content: (
-                            <Text {...content}>
-                                The volume of water regulated by the reservoir
-                                for irrigation, power, municipal and industrial
-                                use, fish and wildlife, navigation, recreation,
-                                water quality, flood control, and other
-                                purposes. Active capacity is the reservoir
-                                capacity between the top of the&nbsp;
-                                <Text {...content} fs="italic" component="i">
-                                    inactive storage capacity
-                                </Text>
-                                &nbsp;and the highest of the top of the&nbsp;
-                                <Text {...content} fs="italic" component="i">
-                                    active conservation capacity
-                                </Text>
-                                ,&nbsp;
-                                <Text {...content} fs="italic" component="i">
-                                    joint use capacity
-                                </Text>
-                                &nbsp;(if present), and&nbsp;
-                                <Text {...content} fs="italic" component="i">
-                                    exclusive flood control capacity
-                                </Text>
-                                &nbsp;(if present).
-                            </Text>
-                        ),
-                    },
-                    {
                         id: 'excl-fld-contr-cap',
                         label: 'Exclusive Flood Control Capacity',
                         content:
@@ -585,6 +769,13 @@ export const sections: GlossarySection[] = [
                 ],
             },
         ],
+    },
+    {
+        id: 'data-sources-and-methods',
+        label: 'Data Sources and Methods',
+        description:
+            'The dashboard is powered by an Open Geospatial Consortium (OGC) Application Programming Interface (API) instance built in a pygeoapi server. Clicking ‘API’ links will take you to the specific page for the relevant data. These pages provide the raw data and metadata (often in JSON or HTML formats), allowing you to see how the information is structured or to use it directly in your own scripts and GIS software.',
+        subSections: [],
     },
 ];
 
@@ -715,11 +906,25 @@ export const questions: QA[] = [
             <Stack gap="var(--default-spacing)">
                 <Text {...subSectionDescription}>
                     You can access almost all the data in the dashboard from the
-                    Western Water Data Hub.
+                    Western Water Data Hub. Click the 'API' links to access the
+                    data in the Hub API.
                 </Text>
                 <Text {...subSectionDescription}>
-                    The only data that is not available from the Hub is the
-                    reservoir capacities, which are available…
+                    You can also access the original sources for almost all the
+                    data. Click the 'Source' links to access the original source
+                    data.
+                </Text>
+                <Text {...subSectionDescription}>
+                    The only data that is not available from the Hub or original
+                    source is the reservoir capacities, which were manually
+                    compiled from various sources including Reclamation's
+                    Enterprise Asset Registry and the US Army Corps of Engineers
+                    Access2Water system. The compiled capacities are available
+                    {getAnchor(
+                        'here',
+                        'https://api.wwdh.internetofwater.app/collections/teacup-edr/items?f=csv'
+                    )}
+                    .
                 </Text>
             </Stack>
         ),
