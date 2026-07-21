@@ -6,7 +6,13 @@
 'use client';
 
 import Map from '@/components/Map';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { layerDefinitions, sourceConfigs } from '@/features/Map/config';
 import {
     MAP_ID,
@@ -50,7 +56,6 @@ import { StateField } from '@/features/Map/types/state';
 import { Huc02BasinField } from '@/features/Map/types/basin';
 import { BoundingGeographyLevel } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
-import debounce from 'lodash.debounce';
 import { SpriteService } from '@/services/sprite/sprite.service';
 import { useHistoricalData } from '@/hooks/useHistoricalData';
 import { customLoader } from '@/services/sprite/customLoader';
@@ -58,6 +63,7 @@ import { ReservoirConfigId } from '@/features/Map/types';
 import { useMediaQuery } from '@mantine/hooks';
 import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
 import { ManagingRegionField } from '@/features/Map/types/managingRegion';
+import debounce from 'lodash.debounce';
 
 type Props = {
     accessToken: string;
@@ -164,13 +170,14 @@ const MainMap: React.FC<Props> = (props) => {
         }
     }, [isMounted, setMapMoved]);
 
-    const debouncedHandleMapMove = useCallback(debounce(handleMapMove, 150), [
-        handleMapMove,
-    ]);
+    const debouncedHandleMapMove = useMemo(
+        () => debounce(handleMapMove, 150),
+        [handleMapMove]
+    );
 
-    const debouncedHandleMapZoom = useCallback(
-        debounce(updateReservoirFilters, 75),
-        [updateReservoirFilters]
+    const debouncedHandleMapZoom = useMemo(
+        () => debounce(() => updateReservoirFilters(map), 250),
+        [map, updateReservoirFilters]
     );
 
     const loadSpriteSheet = async () => {
@@ -211,12 +218,32 @@ const MainMap: React.FC<Props> = (props) => {
     }, [map, isSpritesheetReady]);
 
     useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        map.on('moveend', debouncedHandleMapMove);
+        map.on('zoomend', debouncedHandleMapMove);
+
         return () => {
+            map.off('moveend', debouncedHandleMapMove);
+            map.off('zoomend', debouncedHandleMapMove);
             debouncedHandleMapMove.cancel();
-            debouncedHandleMapZoom.cancel();
-            isMounted.current = false;
         };
-    }, [debouncedHandleMapMove, debouncedHandleMapZoom]);
+    }, [map, debouncedHandleMapMove]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        map.on('zoom', debouncedHandleMapZoom);
+
+        return () => {
+            map.off('zoom', debouncedHandleMapZoom);
+            debouncedHandleMapZoom.cancel();
+        };
+    }, [map, debouncedHandleMapZoom]);
 
     useEffect(() => {
         setShouldResize(loadingInstances.length > 0);
@@ -259,18 +286,10 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
-        // Detect map movements, update features connected to map extent
-        map.on('moveend', debouncedHandleMapMove);
-        map.on('zoomend', debouncedHandleMapMove);
-
         loadImages(map);
         map.on('style.load', () => {
             loadImages(map);
         });
-
-        const handleMapZoom = () => updateReservoirFilters(map);
-
-        map.on('zoom', handleMapZoom);
 
         // Resize and fit bounds to ensure consistent loading behavior in all screen sizes
         map.resize();
@@ -284,12 +303,6 @@ const MainMap: React.FC<Props> = (props) => {
                 animate: false,
             }
         );
-
-        return () => {
-            map.off('moveend', debouncedHandleMapMove);
-            map.off('zoomend', debouncedHandleMapMove);
-            map.off('zoom', handleMapZoom);
-        };
     }, [map]);
 
     useEffect(() => {

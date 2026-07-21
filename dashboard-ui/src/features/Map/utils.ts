@@ -480,7 +480,6 @@ export const getReservoirLabelPaint = (
                 ]),
             ],
         ],
-
         'text-halo-color': '#fff',
         'text-halo-width': 2,
     };
@@ -524,6 +523,7 @@ export const getReservoirLabelFilter = (
                 'FlamingGorge',
                 'ElephantButte',
                 'NewMelones',
+                'HungryHorse',
             ],
         ],
     ];
@@ -863,7 +863,7 @@ export const getFeatures = <T extends Geometry, V extends GeoJsonProperties>(
 };
 
 const ZOOM_HIGH = 8;
-const ZOOM_MID = 6;
+const ZOOM_MID = 5;
 
 const getProperty = (
     boundingGeographyLevel: BoundingGeographyLevel
@@ -956,11 +956,23 @@ const allOf = (
     return undefined;
 };
 
+/**
+ * Determines which state of zoom the dashboard is in. At ZOOM_MID forced display of reservoir labels ends and
+ * capacity determined logic takes over. At ZOOM_HIGH, all reservoir icons and labels are displayed, regardless of
+ * capacity. Use greater than or equal to mirror step expression.
+ *
+ * @param {number} zoom
+ * @returns {("high" | "mid" | "low")}
+ */
 const getZoomBucket = (zoom: number) => {
-    return zoom > ZOOM_HIGH ? 'high' : zoom > ZOOM_MID ? 'mid' : 'low';
+    return zoom >= ZOOM_HIGH ? 'high' : zoom >= ZOOM_MID ? 'mid' : 'low';
 };
 
-export const updateReservoirFilters = (map: Map) => {
+export const updateReservoirFilters = (map: Map | null) => {
+    if (!map) {
+        return;
+    }
+
     const zoom = map.getZoom();
     const zoomBucket = getZoomBucket(zoom);
 
