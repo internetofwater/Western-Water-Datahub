@@ -64,7 +64,7 @@ export interface MainState {
     setChartUpdate: (chartUpdate: MainState['chartUpdate']) => void;
     // Reference data layers that can be toggled on/off
     toggleableLayers: {
-        [LayerId.SnotelHucSixMeans]: boolean;
+        [LayerId.Snotel]: boolean;
         [LayerId.NOAARiverForecast]: boolean;
         [LayerId.USDroughtMonitor]: boolean;
         [LayerId.NOAAPrecipSixToTen]: boolean;
@@ -125,7 +125,7 @@ const useMainStore = create<MainState>()((set) => ({
     chartUpdate: 0,
     setChartUpdate: (chartUpdate) => set({ chartUpdate }),
     toggleableLayers: {
-        [LayerId.SnotelHucSixMeans]: false,
+        [LayerId.Snotel]: false,
         [LayerId.NOAARiverForecast]: false,
         [LayerId.USDroughtMonitor]: true,
         [LayerId.NOAAPrecipSixToTen]: false,

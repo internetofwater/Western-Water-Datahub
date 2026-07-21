@@ -52,7 +52,7 @@ import { regionCenters } from '@/data/regionCenters';
 import { RegionField } from '@/features/Map/types/region';
 import useSessionStore from '@/stores/session';
 import useMainStore from '@/stores/main';
-import { ManagingRegionField } from './types/managingRegion';
+import { ManagingRegionField } from '@/features/Map/types/managingRegion';
 import { managingRegionCenters } from '@/data/managingRegionCenters';
 
 /**********************************************************************

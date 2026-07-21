@@ -5,87 +5,101 @@
 
 import wwdhService from '@/services/init/wwdh.init';
 import { Anchor, Divider, Group } from '@mantine/core';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+
+export type TManualLinks = {
+    apiLink?: string;
+    sourceLink?: string;
+    documentationLink?: string;
+};
 
 type Props = {
     collectionId: string;
+    manualLinks?: TManualLinks;
 };
 
 export const Links: React.FC<Props> = (props) => {
-    const { collectionId } = props;
+    const { collectionId, manualLinks = {} } = props;
 
+    const [apiLink, setApiLink] = useState('');
     const [sourceLink, setSourceLink] = useState('');
     const [documentationLink, setDocuLink] = useState('');
 
-    const isMounted = useRef(true);
-    const controller = useRef<AbortController>(null);
+    useEffect(() => {
+        if (Object.keys(manualLinks).length > 0) {
+            return;
+        }
 
-    const getLinks = async (collectionId: string) => {
-        try {
-            controller.current = new AbortController();
+        let isMounted = true;
 
-            const id = collectionId.replace('dash-', '');
+        const controller = new AbortController();
 
-            const collection = await wwdhService.getCollection(id, {
-                signal: controller.current.signal,
+        // Remove dashboard source specifier from source id
+        const id = collectionId.replace('dash-', '');
+
+        wwdhService
+            .getCollection(id, {
+                signal: controller.signal,
+            })
+            .then((collection) => {
+                if (collection) {
+                    const apiLink =
+                        collection.links.find(
+                            (link) =>
+                                link.rel === 'alternate' &&
+                                link.type === 'text/html'
+                        )?.href ?? '';
+                    const sourceLink =
+                        collection.links.find(
+                            (link) => link.rel === 'canonical'
+                        )?.href ?? '';
+                    const documentationLink =
+                        collection.links.find(
+                            (link) => link.rel === 'documentation'
+                        )?.href ?? '';
+                    if (isMounted) {
+                        setApiLink(apiLink);
+                        setSourceLink(sourceLink);
+                        setDocuLink(documentationLink);
+                    }
+                }
+            })
+            .catch((error) => {
+                if (
+                    (error as Error)?.name === 'AbortError' ||
+                    (typeof error === 'string' && error === 'Component unmount')
+                ) {
+                    console.log('Fetch request canceled');
+                } else {
+                    if ((error as Error)?.message) {
+                        const _error = error as Error;
+                        console.error(_error);
+                    }
+                }
             });
 
-            if (collection) {
-                // const collectionLink =
-                // collection.links.find(
-                //   (link) => link.rel === "alternate" && link.type === "text/html",
-                // )?.href ?? "";
-                const sourceLink =
-                    collection.links.find((link) => link.rel === 'canonical')
-                        ?.href ?? '';
-                const documentationLink =
-                    collection.links.find(
-                        (link) => link.rel === 'documentation'
-                    )?.href ?? '';
-                if (isMounted.current) {
-                    setSourceLink(sourceLink);
-                    setDocuLink(documentationLink);
-                }
-            }
-        } catch (error) {
-            if (
-                (error as Error)?.name === 'AbortError' ||
-                (typeof error === 'string' && error === 'Component unmount')
-            ) {
-                console.log('Fetch request canceled');
-            } else {
-                if ((error as Error)?.message) {
-                    const _error = error as Error;
-                    console.error(_error);
-                }
-            }
-        }
-    };
-
-    useEffect(() => {
-        isMounted.current = true;
-
         return () => {
-            isMounted.current = false;
-            if (controller.current) {
-                controller.current.abort();
+            isMounted = false;
+            if (controller) {
+                controller.abort();
             }
         };
-    }, []);
-
-    useEffect(() => {
-        void getLinks(collectionId);
     }, [collectionId]);
+
     const links = [
-        // { label: "API", href: collectionLink, title: "This dataset in the API" },
+        {
+            label: 'API',
+            href: manualLinks?.apiLink ?? apiLink,
+            title: 'This dataset in the API',
+        },
         {
             label: 'Source',
-            href: sourceLink,
+            href: manualLinks?.sourceLink ?? sourceLink,
             title: 'Original source of pre-transformed data',
         },
         {
             label: 'Methodology',
-            href: documentationLink,
+            href: manualLinks?.documentationLink ?? documentationLink,
             title: 'The methodology of the original source data',
         },
     ].filter((link) => link.href?.length > 0);
