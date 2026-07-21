@@ -511,9 +511,9 @@ export const sections: GlossarySection[] = [
                                             >
                                                 Total Capacity:
                                             </Text>
-                                            The total volume of water that can
-                                            be impounded by the reservoir, not
-                                            including&nbsp;
+                                            &nbsp;The total volume of water that
+                                            can be impounded by the reservoir,
+                                            not including&nbsp;
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
@@ -577,10 +577,10 @@ export const sections: GlossarySection[] = [
                                             >
                                                 Live Capacity:
                                             </Text>
-                                            The part of the total reservoir
-                                            capacity that can be withdrawn by
-                                            gravity. Live capacity is equal to
-                                            the&nbsp;
+                                            &nbsp;The part of the total
+                                            reservoir capacity that can be
+                                            withdrawn by gravity. Live capacity
+                                            is equal to the&nbsp;
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
@@ -608,10 +608,10 @@ export const sections: GlossarySection[] = [
                                             >
                                                 Active Capacity:
                                             </Text>
-                                            The volume of water regulated by the
-                                            reservoir for irrigation, power,
-                                            municipal and industrial use, fish
-                                            and wildlife, navigation,
+                                            &nbsp;The volume of water regulated
+                                            by the reservoir for irrigation,
+                                            power, municipal and industrial use,
+                                            fish and wildlife, navigation,
                                             recreation, water quality, flood
                                             control, and other purposes. Active
                                             capacity is the reservoir capacity
