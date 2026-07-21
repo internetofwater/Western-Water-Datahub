@@ -247,7 +247,7 @@ const ReferenceData: React.FC = () => {
                                                     ? 'inline-block'
                                                     : 'none',
                                             }}
-                                            className={`${styles.labelIcon} ${styles.dimmed}`}
+                                            className={styles.dimmedIcon}
                                         >
                                             <Info />
                                         </Box>
