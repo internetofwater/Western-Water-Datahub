@@ -11,6 +11,11 @@
     max-width: 250px;
 }
 
+.dimmed {
+    fill: var(--mantine-color-dimmed);
+    stroke: var(--mantine-color-dimmed);
+}
+
 .smallIcon > svg,
 .labelIcon > svg {
     fill: var(--mantine-color-text);

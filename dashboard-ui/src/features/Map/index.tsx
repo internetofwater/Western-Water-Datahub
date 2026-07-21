@@ -57,7 +57,7 @@ import { customLoader } from '@/services/sprite/customLoader';
 import { ReservoirConfigId } from '@/features/Map/types';
 import { useMediaQuery } from '@mantine/hooks';
 import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
-import { ManagingRegionField } from './types/managingRegion';
+import { ManagingRegionField } from '@/features/Map/types/managingRegion';
 
 type Props = {
     accessToken: string;
@@ -723,7 +723,7 @@ const MainMap: React.FC<Props> = (props) => {
 
         Object.entries(toggleableLayers).forEach(([layer, visible]) => {
             const visibility = visible ? 'visible' : 'none';
-            if (layer === String(LayerId.SnotelHucSixMeans)) {
+            if (layer === String(LayerId.Snotel)) {
                 map.setLayoutProperty(
                     SubLayerId.SnotelBoundary,
                     'visibility',
