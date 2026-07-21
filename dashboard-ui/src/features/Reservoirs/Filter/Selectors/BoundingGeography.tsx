@@ -74,12 +74,12 @@ export const BoundingGeometryVisibilityMap: {
 
 const data = [
     {
-        value: BoundingGeographyLevel.Region,
-        label: getBoundingGeographyLabel(BoundingGeographyLevel.Region),
-    },
-    {
         value: BoundingGeographyLevel.ManagingRegion,
         label: getBoundingGeographyLabel(BoundingGeographyLevel.ManagingRegion),
+    },
+    {
+        value: BoundingGeographyLevel.Region,
+        label: getBoundingGeographyLabel(BoundingGeographyLevel.Region),
     },
     {
         value: BoundingGeographyLevel.Basin,
