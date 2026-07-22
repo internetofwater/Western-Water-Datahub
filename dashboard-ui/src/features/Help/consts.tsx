@@ -934,7 +934,7 @@ export const questions: QA[] = [
                 sources is available{' '}
                 {getAnchor(
                     'here',
-                    'https://api.wwdh.internetofwater.app/collections/teacup-edr/items?f=csv'
+                    'https://github.com/cgs-earth/teacup-generator/blob/main/R-workflow/config/locations.csv'
                 )}
                 .
             </Text>
