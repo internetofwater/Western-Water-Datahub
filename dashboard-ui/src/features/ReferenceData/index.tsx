@@ -237,7 +237,7 @@ const ReferenceData: React.FC = () => {
                                     position="top-start"
                                     multiline
                                 >
-                                    <Text size="sm">
+                                    <Text size="sm" component="span">
                                         What is this?
                                         <Box
                                             ml="calc(var(--default-spacing) / 2)"
