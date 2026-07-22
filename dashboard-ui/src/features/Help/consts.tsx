@@ -96,7 +96,7 @@ export const sections: GlossarySection[] = [
                                 Forecasts are provided by the National Oceanic
                                 and Atmospheric Administration (NOAA) River
                                 Forecast Centers (RFCs). The season is typically
-                                April 1 through July 31, but&nbsp;
+                                April 1 through July 31, but{' '}
                                 {getAnchor(
                                     'differs for some forecast points',
                                     'https://www.cbrfc.noaa.gov/dbdata/station/espgraph/list/esplist.html'
@@ -107,12 +107,12 @@ export const sections: GlossarySection[] = [
                                 account for the water that may be diverted into
                                 or out of the stream, or stored in reservoirs
                                 upstream during the runoff season. For more
-                                information, see&nbsp;
+                                information, see{' '}
                                 {getAnchor(
                                     'Source',
                                     'https://www.cbrfc.noaa.gov/wsup/graph/west/map/esp_map.html'
-                                )}
-                                &nbsp;|&nbsp;
+                                )}{' '}
+                                |{' '}
                                 {getAnchor(
                                     'Methodology',
                                     'https://www.cbrfc.noaa.gov/wsup/graph/west/map/help.html'
@@ -135,12 +135,12 @@ export const sections: GlossarySection[] = [
                                 contained in a snowpack. It is the depth of
                                 water that would theoretically result if the
                                 whole snowpack instantaneously melted. For more
-                                information, see&nbsp;
+                                information, see{' '}
                                 {getAnchor(
                                     'Source',
                                     'https://nwcc-apps.sc.egov.usda.gov/imap/#version=2&elements=&networks=!&states=!&basins=!&hucs=&minElevation=&maxElevation=&elementSelectType=any&activeOnly=true&activeForecastPointsOnly=true&hucLabels=false&hucIdLabels=false&hucParameterLabels=true&stationLabels=&overlays=&overlays=&basinOpacity=75&basinNoDataOpacity=25&basemapOpacity=100&maskOpacity=0&mode=data&openSections=networks&controlsOpen=true&popup=&popupMulti=&popupBasin=&base=esriNgwm&displayType=basinstation&basinType=6&dataElement=WTEQ&depth=-8&parameter=PCTMED&frequency=DAILY&duration=I&customDuration=&dayPart=E&year=2026&month=7&day=19&monthPart=E&forecastPubMonth=6&forecastPubDay=1&forecastExceedance=50&useMixedPast=true&seqColor=1&divColor=7&scaleType=D&scaleMin=&scaleMax=&referencePeriodType=POR&referenceBegin=1991&referenceEnd=2020&minimumYears=20&hucAssociations=true&lat=42.300&lon=-114.300&zoom=4.5'
-                                )}
-                                &nbsp;|&nbsp;
+                                )}{' '}
+                                |{' '}
                                 {getAnchor(
                                     'Methodology',
                                     'https://github.com/internetofwater/Western-Water-Datahub/tree/main/packages/snotel_means'
@@ -168,12 +168,12 @@ export const sections: GlossarySection[] = [
                                 areas with no drought and uses the D0 category
                                 to indicate abnormally dry areas that could be
                                 entering or recovering from drought. For more
-                                information, see&nbsp;
+                                information, see{' '}
                                 {getAnchor(
                                     'Source',
                                     'https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3'
-                                )}
-                                &nbsp;|&nbsp;
+                                )}{' '}
+                                |{' '}
                                 {getAnchor(
                                     'Methodology',
                                     'https://droughtmonitor.unl.edu/About/AbouttheData.aspx'
@@ -190,12 +190,12 @@ export const sections: GlossarySection[] = [
                                 NOAA National Weather Service Climate Prediction
                                 Center. The map indicates the probability
                                 (percent chance) of precipitation above, near,
-                                or below normal. For more information, see&nbsp;
+                                or below normal. For more information, see{' '}
                                 {getAnchor(
                                     'Source',
                                     'https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/1'
-                                )}
-                                &nbsp;|&nbsp;
+                                )}{' '}
+                                |{' '}
                                 {getAnchor(
                                     'Methodology',
                                     'https://www.cpc.ncep.noaa.gov/products/predictions/610day/index.php'
@@ -212,12 +212,12 @@ export const sections: GlossarySection[] = [
                                 NOAA National Weather Service Climate Prediction
                                 Center. The map indicates the probability
                                 (percent chance) of temperatures above, near, or
-                                below normal. For more information, see&nbsp;
+                                below normal. For more information, see{' '}
                                 {getAnchor(
                                     'Source',
                                     'https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/cpc_6_10_day_outlk/MapServer/0'
-                                )}
-                                &nbsp;|&nbsp;
+                                )}{' '}
+                                |{' '}
                                 {getAnchor(
                                     'Methodology',
                                     'https://www.cpc.ncep.noaa.gov/products/predictions/610day/index.php'
@@ -238,13 +238,12 @@ export const sections: GlossarySection[] = [
                             <Text {...content}>
                                 The Department of Interior Unified Regions that
                                 are responsible for managing Bureau of
-                                Reclamation assets. For more information,
-                                see&nbsp;
+                                Reclamation assets. For more information, see{' '}
                                 {getAnchor(
                                     'API',
                                     'https://api.wwdh.internetofwater.app/collections/doi-reclamation-managing-regions'
-                                )}
-                                &nbsp;|&nbsp;
+                                )}{' '}
+                                |{' '}
                                 {getAnchor(
                                     'Source',
                                     'https://www.arcgis.com/home/item.html?id=1835dcafa71c40eb81fb152406e41230#overview'
@@ -264,12 +263,12 @@ export const sections: GlossarySection[] = [
                                 California-Great Basin, Missouri Basin, Upper
                                 Colorado Basin, Lower Colorado Basin, and
                                 Arkansas-Rio Grande-Texas Gulf). For more
-                                information, see&nbsp;
+                                information, see{' '}
                                 {getAnchor(
                                     'API',
                                     'https://api.wwdh.internetofwater.app/collections/doi-regions/items'
-                                )}
-                                &nbsp;|&nbsp;
+                                )}{' '}
+                                |{' '}
                                 {getAnchor(
                                     'Source',
                                     'https://services1.arcgis.com/ixD30sld6F8MQ7V5/ArcGIS/rest/services/DOI_12_Unified_Regions_20180801/FeatureServer/0'
@@ -287,12 +286,12 @@ export const sections: GlossarySection[] = [
                                 to these as “Regions”, they are labeled as
                                 “Basin (HUC2) Boundaries” in the Dashboard to
                                 avoid confusion with the DOI Region Boundaries.
-                                For more information, see&nbsp;
+                                For more information, see{' '}
                                 {getAnchor(
                                     'API',
                                     'https://reference.geoconnex.us/collections/hu02'
-                                )}
-                                &nbsp;|&nbsp;
+                                )}{' '}
+                                |{' '}
                                 {getAnchor(
                                     'Source',
                                     'https://www.usgs.gov/national-hydrography/access-national-hydrography-products'
@@ -307,12 +306,12 @@ export const sections: GlossarySection[] = [
                             <Text {...content}>
                                 The boundaries of U.S. states. Only the 17
                                 western states are displayed. For more
-                                information, see&nbsp;
+                                information, see{' '}
                                 {getAnchor(
                                     'API',
                                     'https://reference.geoconnex.us/collections/states'
-                                )}
-                                &nbsp;|&nbsp;
+                                )}{' '}
+                                |{' '}
                                 {getAnchor(
                                     'Source',
                                     'https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html'
@@ -354,15 +353,14 @@ export const sections: GlossarySection[] = [
                                 units. Hydrologic units are arranged or nested
                                 within each other, from the largest geographic
                                 area (regions) to progressively smaller areas.
-                                Each hydrologic unit is identified by a
-                                unique&nbsp;
+                                Each hydrologic unit is identified by a unique{' '}
                                 <Text {...content} fw={700} component="strong">
                                     hydrologic unit code (HUC)
-                                </Text>
-                                &nbsp;consisting of two to 12 digits based on
-                                the levels of classification in the hydrologic
-                                unit system. For more information about
-                                hydrologic units and HUCs, see&nbsp;
+                                </Text>{' '}
+                                consisting of two to 12 digits based on the
+                                levels of classification in the hydrologic unit
+                                system. For more information about hydrologic
+                                units and HUCs, see{' '}
                                 {getAnchor(
                                     'Hydrologic Units of the United States',
                                     'https://water.usgs.gov/themes/hydrologic-units/'
@@ -402,8 +400,8 @@ export const sections: GlossarySection[] = [
                             <Text {...content}>
                                 <Text {...content} fw={700} component="strong">
                                     Reservoir storage
-                                </Text>
-                                &nbsp;tells you how much water is stored in the
+                                </Text>{' '}
+                                tells you how much water is stored in the
                                 reservoir on the selected date. Depending on the
                                 reservoir and its authorized purposes, this
                                 water may be used for irrigation, power,
@@ -419,13 +417,12 @@ export const sections: GlossarySection[] = [
                             <Text {...content}>
                                 <Text {...content} fw={700} component="strong">
                                     Reservoir capacity
-                                </Text>
-                                &nbsp;values for water supply are shown along
-                                with the reservoir storage values to provide
-                                context for the storage values, indicating the
-                                amount of water that can be stored in a
-                                reservoir based on physical constraints and
-                                operating agreements.
+                                </Text>{' '}
+                                values for water supply are shown along with the
+                                reservoir storage values to provide context for
+                                the storage values, indicating the amount of
+                                water that can be stored in a reservoir based on
+                                physical constraints and operating agreements.
                             </Text>
                         ),
                     },
@@ -477,10 +474,10 @@ export const sections: GlossarySection[] = [
                     <Text {...subSectionDescription}>
                         <Text {...subSectionDescription} fw={700} span>
                             Wondering what all these terms mean?
-                        </Text>
-                        &nbsp;Here are the key reservoir storage and capacity
-                        terms you'll see in the Dashboard, followed by
-                        additional definitions of reservoir capacity terms.
+                        </Text>{' '}
+                        Here are the key reservoir storage and capacity terms
+                        you'll see in the Dashboard, followed by additional
+                        definitions of reservoir capacity terms.
                     </Text>
                 ),
                 entries: [
@@ -510,10 +507,10 @@ export const sections: GlossarySection[] = [
                                                 component="strong"
                                             >
                                                 Total Capacity:
-                                            </Text>
-                                            &nbsp;The total volume of water that
-                                            can be impounded by the reservoir,
-                                            not including&nbsp;
+                                            </Text>{' '}
+                                            The total volume of water that can
+                                            be impounded by the reservoir, not
+                                            including{' '}
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
@@ -523,15 +520,15 @@ export const sections: GlossarySection[] = [
                                             </Text>
                                             . The elevation associated with the
                                             total capacity is typically the
-                                            elevation of the&nbsp;
+                                            elevation of the{' '}
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
                                                 component="i"
                                             >
                                                 uncontrolled spillway crest
-                                            </Text>
-                                            &nbsp;or the top of the&nbsp;
+                                            </Text>{' '}
+                                            or the top of the{' '}
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
@@ -541,7 +538,7 @@ export const sections: GlossarySection[] = [
                                             </Text>
                                             . Total capacity is the reservoir
                                             capacity up to the highest of the
-                                            top of active&nbsp;
+                                            top of active{' '}
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
@@ -549,23 +546,23 @@ export const sections: GlossarySection[] = [
                                             >
                                                 conservation capacity
                                             </Text>
-                                            ,&nbsp;
+                                            ,{' '}
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
                                                 component="i"
                                             >
                                                 joint use capacity
-                                            </Text>
-                                            &nbsp;(if present), and&nbsp;
+                                            </Text>{' '}
+                                            (if present), and{' '}
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
                                                 component="i"
                                             >
                                                 exclusive flood control capacity
-                                            </Text>
-                                            &nbsp;(if present).
+                                            </Text>{' '}
+                                            (if present).
                                         </Text>
                                     </List.Item>
                                     <List.Item>
@@ -576,19 +573,19 @@ export const sections: GlossarySection[] = [
                                                 component="strong"
                                             >
                                                 Live Capacity:
-                                            </Text>
-                                            &nbsp;The part of the total
-                                            reservoir capacity that can be
-                                            withdrawn by gravity. Live capacity
-                                            is equal to the&nbsp;
+                                            </Text>{' '}
+                                            The part of the total reservoir
+                                            capacity that can be withdrawn by
+                                            gravity. Live capacity is equal to
+                                            the{' '}
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
                                                 component="i"
                                             >
                                                 total capacity
-                                            </Text>
-                                            &nbsp;minus the&nbsp;
+                                            </Text>{' '}
+                                            minus the{' '}
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
@@ -607,24 +604,23 @@ export const sections: GlossarySection[] = [
                                                 component="strong"
                                             >
                                                 Active Capacity:
-                                            </Text>
-                                            &nbsp;The volume of water regulated
-                                            by the reservoir for irrigation,
-                                            power, municipal and industrial use,
-                                            fish and wildlife, navigation,
+                                            </Text>{' '}
+                                            The volume of water regulated by the
+                                            reservoir for irrigation, power,
+                                            municipal and industrial use, fish
+                                            and wildlife, navigation,
                                             recreation, water quality, flood
                                             control, and other purposes. Active
                                             capacity is the reservoir capacity
-                                            between the top of the&nbsp;
+                                            between the top of the{' '}
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
                                                 component="i"
                                             >
                                                 inactive storage capacity
-                                            </Text>
-                                            &nbsp;and the highest of the top of
-                                            the&nbsp;
+                                            </Text>{' '}
+                                            and the highest of the top of the{' '}
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
@@ -632,23 +628,23 @@ export const sections: GlossarySection[] = [
                                             >
                                                 active conservation capacity
                                             </Text>
-                                            ,&nbsp;
+                                            ,{' '}
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
                                                 component="i"
                                             >
                                                 joint use capacity
-                                            </Text>
-                                            &nbsp;(if present), and&nbsp;
+                                            </Text>{' '}
+                                            (if present), and{' '}
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
                                                 component="i"
                                             >
                                                 exclusive flood control capacity
-                                            </Text>
-                                            &nbsp;(if present).
+                                            </Text>{' '}
+                                            (if present).
                                         </Text>
                                     </List.Item>
                                 </List>
@@ -662,25 +658,24 @@ export const sections: GlossarySection[] = [
                             <Text {...content}>
                                 The reservoir storage volume on the indicated
                                 date. The dashboard shows either Total Storage
-                                or Active Storage, depending on the
-                                reservoir.&nbsp;
+                                or Active Storage, depending on the reservoir.{' '}
                                 <Text {...content} fw={700} component="strong">
                                     Total Storage
-                                </Text>
-                                &nbsp;is the total volume of water stored in the
+                                </Text>{' '}
+                                is the total volume of water stored in the
                                 reservoir on the indicated date. Total storage
                                 may include storage in the surcharge capacity,
                                 above the uncontrolled spillway crest or the top
-                                of the spillway gates.&nbsp;
+                                of the spillway gates.{' '}
                                 <Text {...content} fw={700} component="strong">
                                     Active Storage
-                                </Text>
-                                &nbsp;is the volume of water stored in the
-                                reservoir above the top of&nbsp;
+                                </Text>{' '}
+                                is the volume of water stored in the reservoir
+                                above the top of{' '}
                                 <Text {...content} fs="italic" component="i">
                                     inactive storage capacity
-                                </Text>
-                                &nbsp;on the indicated date. Active storage may
+                                </Text>{' '}
+                                on the indicated date. Active storage may
                                 include storage in the surcharge capacity, above
                                 the uncontrolled spillway crest or the top of
                                 the spillway gates.
@@ -794,30 +789,30 @@ export const questions: QA[] = [
         answer: (
             <Stack gap="var(--default-spacing)">
                 <Text {...subSectionDescription}>
-                    Reservoir storage data is primarily sourced from the&nbsp;
+                    Reservoir storage data is primarily sourced from the{' '}
                     {getAnchor(
                         'Reclamation Information Sharing Environment (RISE)',
                         'https://data.usbr.gov/'
-                    )}
-                    &nbsp;system via the Western Water Data Hub. Data for US
-                    Army Corps of Engineers reservoirs comes from&nbsp;
+                    )}{' '}
+                    system via the Western Water Data Hub. Data for US Army
+                    Corps of Engineers reservoirs comes from{' '}
                     {getAnchor(
                         "USACE's Access2Water",
                         'https://water.usace.army.mil/'
-                    )}
-                    &nbsp;system via the Hub. In a few cases, reservoir storage
-                    data comes from the&nbsp;
+                    )}{' '}
+                    system via the Hub. In a few cases, reservoir storage data
+                    comes from the{' '}
                     {getAnchor(
                         "US Geological Survey's Water Data for the Nation",
                         'https://waterdata.usgs.gov/'
-                    )}
-                    &nbsp;via the Hub or from the&nbsp;
+                    )}{' '}
+                    via the Hub or from the{' '}
                     {getAnchor(
                         'California Data Exchange Center (CDEC)',
                         'https://cdec.water.ca.gov/'
-                    )}
-                    &nbsp;via the Hub. Additional information on these data
-                    sources is available from the Hub.
+                    )}{' '}
+                    via the Hub. Additional information on these data sources is
+                    available from the Hub.
                 </Text>
                 <Text {...subSectionDescription}>
                     Reservoir storage data is generally obtained from the Hub as
@@ -879,18 +874,18 @@ export const questions: QA[] = [
                 <Text {...subSectionDescription} fw={700} component="strong">
                     Storage data for the reservoir is not yet available from the
                     Hub.
-                </Text>
-                &nbsp;In these cases, the reservoir will appear as a gray icon
-                on the map, storage values on the teacup diagram will be listed
-                as N/A, and there will be no time series available in the
-                details view of the reservoir.
+                </Text>{' '}
+                In these cases, the reservoir will appear as a gray icon on the
+                map, storage values on the teacup diagram will be listed as N/A,
+                and there will be no time series available in the details view
+                of the reservoir.
             </Text>,
             <Text {...subSectionDescription}>
                 <Text {...subSectionDescription} fw={700} component="strong">
                     Storage data for the reservoir is not available for the
                     selected date.
-                </Text>
-                &nbsp;Data may be unavailable due to reporting delays, seasonal
+                </Text>{' '}
+                Data may be unavailable due to reporting delays, seasonal
                 operations, or quality-control issues, all controlled by the
                 data provider. In these cases, the reservoir will appear as a
                 gray icon on the map and storage values on the teacup diagram
@@ -920,7 +915,7 @@ export const questions: QA[] = [
                     source is the reservoir capacities, which were manually
                     compiled from various sources including Reclamation's
                     Enterprise Asset Registry and the US Army Corps of Engineers
-                    Access2Water system. The compiled capacities are available
+                    Access2Water system. The compiled capacities are available{' '}
                     {getAnchor(
                         'here',
                         'https://api.wwdh.internetofwater.app/collections/teacup-edr/items?f=csv'

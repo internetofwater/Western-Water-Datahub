@@ -107,19 +107,6 @@ export const Content: React.FC<Props> = (props) => {
                     </Title>
                 </Group>
             )}
-            {toggleableLayers[LayerId.RegionsReference] && (
-                <Group gap="calc(var(--default-spacing) / 2)">
-                    <Box className={styles.iconBackground}>
-                        <Line color="#ef5e25" />
-                    </Box>
-                    <Title {...titleProps}>
-                        {getBoundingGeographyLabel(
-                            BoundingGeographyLevel.Region
-                        )}{' '}
-                        Reference Boundaries
-                    </Title>
-                </Group>
-            )}
             {toggleableLayers[LayerId.ManagingRegionsReference] && (
                 <Group gap="calc(var(--default-spacing) / 2)">
                     <Box className={styles.iconBackground}>
@@ -128,6 +115,19 @@ export const Content: React.FC<Props> = (props) => {
                     <Title {...titleProps}>
                         {getBoundingGeographyLabel(
                             BoundingGeographyLevel.ManagingRegion
+                        )}{' '}
+                        Reference Boundaries
+                    </Title>
+                </Group>
+            )}
+            {toggleableLayers[LayerId.RegionsReference] && (
+                <Group gap="calc(var(--default-spacing) / 2)">
+                    <Box className={styles.iconBackground}>
+                        <Line color="#ef5e25" />
+                    </Box>
+                    <Title {...titleProps}>
+                        {getBoundingGeographyLabel(
+                            BoundingGeographyLevel.Region
                         )}{' '}
                         Reference Boundaries
                     </Title>
