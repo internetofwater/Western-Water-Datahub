@@ -12,7 +12,7 @@ export const getBoundingGeographyLabel = (
         case BoundingGeographyLevel.Region:
             return 'DOI Region';
         case BoundingGeographyLevel.ManagingRegion:
-            return 'Managing Region';
+            return 'Reclamation Managing Region';
         case BoundingGeographyLevel.Basin:
             return 'Basin (HUC2)';
         case BoundingGeographyLevel.State:
