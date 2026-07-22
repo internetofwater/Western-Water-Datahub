@@ -47,6 +47,22 @@ export const Content: React.FC<Props> = (props) => {
         maw: '85%',
     };
 
+    const getBoundingGeographyLayerId = (
+        boundingGeographyLevel: BoundingGeographyLevel
+    ): LayerId => {
+        switch (boundingGeographyLevel) {
+            case BoundingGeographyLevel.ManagingRegion:
+                return LayerId.ManagingRegionsReference;
+            case BoundingGeographyLevel.Region:
+                return LayerId.RegionsReference;
+            case BoundingGeographyLevel.Basin:
+                return LayerId.BasinsReference;
+            default:
+            case BoundingGeographyLevel.State:
+                return LayerId.StatesReference;
+        }
+    };
+
     return (
         <Stack
             className={styles.wrapper}
@@ -101,10 +117,41 @@ export const Content: React.FC<Props> = (props) => {
                     <Box className={styles.iconBackground}>
                         <Line color="#000" />
                     </Box>
-                    <Title {...titleProps}>
-                        {getBoundingGeographyLabel(boundingGeographyLevel)}{' '}
-                        Filter Boundaries
-                    </Title>
+                    <Tooltip
+                        label={getTooltipContent(
+                            getBoundingGeographyLayerId(boundingGeographyLevel)
+                        )}
+                        disabled={
+                            !getTooltipContent(
+                                getBoundingGeographyLayerId(
+                                    boundingGeographyLevel
+                                )
+                            )
+                        }
+                        position="top-start"
+                        multiline
+                    >
+                        <Title {...titleProps}>
+                            {getBoundingGeographyLabel(boundingGeographyLevel)}{' '}
+                            Filter Boundaries
+                            <Box
+                                component="span"
+                                ml="calc(var(--default-spacing) / 2)"
+                                style={{
+                                    display: getTooltipContent(
+                                        getBoundingGeographyLayerId(
+                                            boundingGeographyLevel
+                                        )
+                                    )
+                                        ? 'inline-block'
+                                        : 'none',
+                                }}
+                                className={styles.listItemIconWrapper}
+                            >
+                                <Info />
+                            </Box>
+                        </Title>
+                    </Tooltip>
                 </Group>
             )}
             {toggleableLayers[LayerId.ManagingRegionsReference] && (
@@ -112,12 +159,37 @@ export const Content: React.FC<Props> = (props) => {
                     <Box className={styles.iconBackground}>
                         <Line color="#A10039" />
                     </Box>
-                    <Title {...titleProps}>
-                        {getBoundingGeographyLabel(
-                            BoundingGeographyLevel.ManagingRegion
-                        )}{' '}
-                        Reference Boundaries
-                    </Title>
+                    <Tooltip
+                        label={getTooltipContent(
+                            LayerId.ManagingRegionsReference
+                        )}
+                        disabled={
+                            !getTooltipContent(LayerId.ManagingRegionsReference)
+                        }
+                        position="top-start"
+                        multiline
+                    >
+                        <Title {...titleProps}>
+                            {getBoundingGeographyLabel(
+                                BoundingGeographyLevel.ManagingRegion
+                            )}{' '}
+                            Reference Boundaries
+                            <Box
+                                component="span"
+                                ml="calc(var(--default-spacing) / 2)"
+                                style={{
+                                    display: getTooltipContent(
+                                        LayerId.ManagingRegionsReference
+                                    )
+                                        ? 'inline-block'
+                                        : 'none',
+                                }}
+                                className={styles.listItemIconWrapper}
+                            >
+                                <Info />
+                            </Box>
+                        </Title>
+                    </Tooltip>
                 </Group>
             )}
             {toggleableLayers[LayerId.RegionsReference] && (
@@ -125,12 +197,33 @@ export const Content: React.FC<Props> = (props) => {
                     <Box className={styles.iconBackground}>
                         <Line color="#ef5e25" />
                     </Box>
-                    <Title {...titleProps}>
-                        {getBoundingGeographyLabel(
-                            BoundingGeographyLevel.Region
-                        )}{' '}
-                        Reference Boundaries
-                    </Title>
+                    <Tooltip
+                        label={getTooltipContent(LayerId.RegionsReference)}
+                        disabled={!getTooltipContent(LayerId.RegionsReference)}
+                        position="top-start"
+                        multiline
+                    >
+                        <Title {...titleProps}>
+                            {getBoundingGeographyLabel(
+                                BoundingGeographyLevel.Region
+                            )}{' '}
+                            Reference Boundaries
+                            <Box
+                                component="span"
+                                ml="calc(var(--default-spacing) / 2)"
+                                style={{
+                                    display: getTooltipContent(
+                                        LayerId.RegionsReference
+                                    )
+                                        ? 'inline-block'
+                                        : 'none',
+                                }}
+                                className={styles.listItemIconWrapper}
+                            >
+                                <Info />
+                            </Box>
+                        </Title>
+                    </Tooltip>
                 </Group>
             )}
             {toggleableLayers[LayerId.BasinsReference] && (
@@ -138,12 +231,33 @@ export const Content: React.FC<Props> = (props) => {
                     <Box className={styles.iconBackground}>
                         <Line color="#54278f" />
                     </Box>
-                    <Title {...titleProps}>
-                        {getBoundingGeographyLabel(
-                            BoundingGeographyLevel.Basin
-                        )}{' '}
-                        Reference Boundaries
-                    </Title>
+                    <Tooltip
+                        label={getTooltipContent(LayerId.BasinsReference)}
+                        disabled={!getTooltipContent(LayerId.BasinsReference)}
+                        position="top-start"
+                        multiline
+                    >
+                        <Title {...titleProps}>
+                            {getBoundingGeographyLabel(
+                                BoundingGeographyLevel.Basin
+                            )}{' '}
+                            Reference Boundaries
+                            <Box
+                                component="span"
+                                ml="calc(var(--default-spacing) / 2)"
+                                style={{
+                                    display: getTooltipContent(
+                                        LayerId.BasinsReference
+                                    )
+                                        ? 'inline-block'
+                                        : 'none',
+                                }}
+                                className={styles.listItemIconWrapper}
+                            >
+                                <Info />
+                            </Box>
+                        </Title>
+                    </Tooltip>
                 </Group>
             )}
             {toggleableLayers[LayerId.StatesReference] && (
@@ -151,12 +265,33 @@ export const Content: React.FC<Props> = (props) => {
                     <Box className={styles.iconBackground}>
                         <Line color="#34a37e" />
                     </Box>
-                    <Title {...titleProps}>
-                        {getBoundingGeographyLabel(
-                            BoundingGeographyLevel.State
-                        )}{' '}
-                        Reference Boundaries
-                    </Title>
+                    <Tooltip
+                        label={getTooltipContent(LayerId.StatesReference)}
+                        disabled={!getTooltipContent(LayerId.StatesReference)}
+                        position="top-start"
+                        multiline
+                    >
+                        <Title {...titleProps}>
+                            {getBoundingGeographyLabel(
+                                BoundingGeographyLevel.State
+                            )}{' '}
+                            Reference Boundaries
+                            <Box
+                                component="span"
+                                ml="calc(var(--default-spacing) / 2)"
+                                style={{
+                                    display: getTooltipContent(
+                                        LayerId.StatesReference
+                                    )
+                                        ? 'inline-block'
+                                        : 'none',
+                                }}
+                                className={styles.listItemIconWrapper}
+                            >
+                                <Info />
+                            </Box>
+                        </Title>
+                    </Tooltip>
                 </Group>
             )}
         </Stack>

@@ -8,9 +8,6 @@ export enum TeacupReservoirField {
     Name = 'name',
     MapLabel = 'map_label',
     PopupLabel = 'popup_label',
-    TotalCapacity = 'total_capacity',
-    ActiveCapacity = 'active_capacity',
-    LiveCapacity = 'live_capacity',
     CapacityValue = 'capacity_value',
     Huc06 = 'huc6',
     Huc12 = 'huc12',
@@ -37,9 +34,6 @@ export type TeacupReservoirProperties = {
     [TeacupReservoirField.Name]: string;
     [TeacupReservoirField.MapLabel]: string;
     [TeacupReservoirField.PopupLabel]: string;
-    [TeacupReservoirField.TotalCapacity]: number;
-    [TeacupReservoirField.ActiveCapacity]: number;
-    [TeacupReservoirField.LiveCapacity]: number;
     [TeacupReservoirField.CapacityValue]: number;
     [TeacupReservoirField.Huc06]: number;
     [TeacupReservoirField.Huc12]: number;
