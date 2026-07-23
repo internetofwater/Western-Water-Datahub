@@ -147,7 +147,6 @@ export const sections: GlossarySection[] = [
                                 )}
                             </Text>
                         ),
-                        // 'The average snow water equivalent across each 6-digit Hydrologic Unit divided by the 30-year average for that basin, expressed as a percentage. The 30-year averaging period is 1991-2020. Snow Water Equivalent (SWE) is a measurement of the amount of water contained in a snowpack. It is the depth of water that would theoretically result if the whole snowpack instantaneously melted.',
                     },
                 ],
             },
@@ -514,7 +513,7 @@ export const sections: GlossarySection[] = [
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
-                                                component="i"
+                                                component="em"
                                             >
                                                 surcharge capacity
                                             </Text>
@@ -524,7 +523,7 @@ export const sections: GlossarySection[] = [
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
-                                                component="i"
+                                                component="em"
                                             >
                                                 uncontrolled spillway crest
                                             </Text>{' '}
@@ -532,7 +531,7 @@ export const sections: GlossarySection[] = [
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
-                                                component="i"
+                                                component="em"
                                             >
                                                 spillway gates
                                             </Text>
@@ -542,7 +541,7 @@ export const sections: GlossarySection[] = [
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
-                                                component="i"
+                                                component="em"
                                             >
                                                 conservation capacity
                                             </Text>
@@ -550,7 +549,7 @@ export const sections: GlossarySection[] = [
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
-                                                component="i"
+                                                component="em"
                                             >
                                                 joint use capacity
                                             </Text>{' '}
@@ -558,7 +557,7 @@ export const sections: GlossarySection[] = [
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
-                                                component="i"
+                                                component="em"
                                             >
                                                 exclusive flood control capacity
                                             </Text>{' '}
@@ -581,7 +580,7 @@ export const sections: GlossarySection[] = [
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
-                                                component="i"
+                                                component="em"
                                             >
                                                 total capacity
                                             </Text>{' '}
@@ -589,7 +588,7 @@ export const sections: GlossarySection[] = [
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
-                                                component="i"
+                                                component="em"
                                             >
                                                 dead capacity
                                             </Text>
@@ -616,7 +615,7 @@ export const sections: GlossarySection[] = [
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
-                                                component="i"
+                                                component="em"
                                             >
                                                 inactive storage capacity
                                             </Text>{' '}
@@ -624,7 +623,7 @@ export const sections: GlossarySection[] = [
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
-                                                component="i"
+                                                component="em"
                                             >
                                                 active conservation capacity
                                             </Text>
@@ -632,7 +631,7 @@ export const sections: GlossarySection[] = [
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
-                                                component="i"
+                                                component="em"
                                             >
                                                 joint use capacity
                                             </Text>{' '}
@@ -640,7 +639,7 @@ export const sections: GlossarySection[] = [
                                             <Text
                                                 {...subSectionDescription}
                                                 fs="italic"
-                                                component="i"
+                                                component="em"
                                             >
                                                 exclusive flood control capacity
                                             </Text>{' '}
@@ -672,7 +671,7 @@ export const sections: GlossarySection[] = [
                                 </Text>{' '}
                                 is the volume of water stored in the reservoir
                                 above the top of{' '}
-                                <Text {...content} fs="italic" component="i">
+                                <Text {...content} fs="italic" component="em">
                                     inactive storage capacity
                                 </Text>{' '}
                                 on the indicated date. Active storage may
