@@ -162,10 +162,10 @@ export const sections: GlossarySection[] = [
                                 The current U.S. Drought Monitor map. The U.S.
                                 Drought Monitor identifies areas in drought and
                                 labels them by intensity. The map uses four
-                                categories of drought, from D1—the least
-                                intense—to D4, the most. It also highlights
-                                areas with no drought and uses the D0 category
-                                to indicate abnormally dry areas that could be
+                                categories of drought, from D1 (least intense)
+                                to D4 (most intense). It also highlights areas
+                                with no drought and uses the D0 category to
+                                indicate abnormally dry areas that could be
                                 entering or recovering from drought. For more
                                 information, see{' '}
                                 {getAnchor(
@@ -258,7 +258,7 @@ export const sections: GlossarySection[] = [
                                 The boundaries of Department of the Interior
                                 (DOI) Unified Regions. The dashboard only
                                 displays the boundaries of the DOI regions in
-                                the western US (Columbia-Pacific Northwest,
+                                the western U.S. (Columbia-Pacific Northwest,
                                 California-Great Basin, Missouri Basin, Upper
                                 Colorado Basin, Lower Colorado Basin, and
                                 Arkansas-Rio Grande-Texas Gulf). For more
@@ -793,7 +793,7 @@ export const questions: QA[] = [
                         'Reclamation Information Sharing Environment (RISE)',
                         'https://data.usbr.gov/'
                     )}{' '}
-                    system via the Western Water Data Hub. Data for US Army
+                    system via the Western Water Data Hub. Data for U.S. Army
                     Corps of Engineers reservoirs comes from{' '}
                     {getAnchor(
                         "USACE's Access2Water",
@@ -802,7 +802,7 @@ export const questions: QA[] = [
                     system via the Hub. In a few cases, reservoir storage data
                     comes from the{' '}
                     {getAnchor(
-                        "US Geological Survey's Water Data for the Nation",
+                        "U.S. Geological Survey's Water Data for the Nation",
                         'https://waterdata.usgs.gov/'
                     )}{' '}
                     via the Hub or from the{' '}
@@ -913,8 +913,9 @@ export const questions: QA[] = [
                     The only data that is not available from the Hub or original
                     source is the reservoir capacities, which were manually
                     compiled from various sources including Reclamation's
-                    Enterprise Asset Registry and the US Army Corps of Engineers
-                    Access2Water system. The compiled capacities are available{' '}
+                    Enterprise Asset Registry and the U.S. Army Corps of
+                    Engineers Access2Water system. The compiled capacities are
+                    available{' '}
                     {getAnchor(
                         'here',
                         'https://api.wwdh.internetofwater.app/collections/teacup-edr/items?f=csv'
