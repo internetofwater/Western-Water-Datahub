@@ -25,6 +25,8 @@ export const US_BBOX: BBox = [-171.791111, 18.91619, -66.96466, 71.357764];
 export enum SourceId {
     Regions = 'regions',
     RegionCenters = 'regions-center',
+    ManagingRegions = 'doi-reclamation-managing-regions',
+    ManagingRegionCenters = 'doi-reclamation-managing-regions-center',
     Basins = 'hu02',
     BasinCenters = 'hu02-center',
     States = 'states',
@@ -46,6 +48,8 @@ export enum SourceId {
 export enum LayerId {
     Regions = 'dash-regions-main',
     RegionsReference = 'dash-regions-reference',
+    ManagingRegions = 'dash-managing-regions-main',
+    ManagingRegionsReference = 'dash-managing-regions-reference',
     Basins = 'dash-basins-main',
     BasinsReference = 'dash-basins-reference',
     States = 'dash-states-main',
@@ -68,6 +72,10 @@ export enum SubLayerId {
     RegionsBoundary = 'dash-regions-boundary',
     RegionsFill = 'dash-regions-fill',
     RegionLabels = 'dash-regions-labels',
+
+    ManagingRegionsBoundary = 'dash-managing-regions-boundary',
+    ManagingRegionsFill = 'dash-managing-regions-fill',
+    ManagingRegionLabels = 'dash-managing-regions-labels',
 
     BasinsBoundary = 'dash-basins-boundary',
     BasinsFill = 'dash-basins-fill',
@@ -263,6 +271,8 @@ export const ReservoirConfigs: Record<
         longLabelProperty: TeacupReservoirField.PopupLabel,
         chartLabel: TeacupReservoirField.Storage,
         regionConnectorProperty: TeacupReservoirField.RegionName,
+        managingRegionConnectorProperty:
+            TeacupReservoirField.ManagingRegionAbbreviation,
         basinConnectorProperty: TeacupReservoirField.Huc02,
         stateConnectorProperty: TeacupReservoirField.State,
         iconLayer: LayerId.TeacupEDRReservoirs,

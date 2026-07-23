@@ -6,7 +6,13 @@
 'use client';
 
 import Map from '@/components/Map';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { layerDefinitions, sourceConfigs } from '@/features/Map/config';
 import {
     MAP_ID,
@@ -50,13 +56,14 @@ import { StateField } from '@/features/Map/types/state';
 import { Huc02BasinField } from '@/features/Map/types/basin';
 import { BoundingGeographyLevel } from '@/stores/main/types';
 import useSessionStore from '@/stores/session';
-import debounce from 'lodash.debounce';
 import { SpriteService } from '@/services/sprite/sprite.service';
 import { useHistoricalData } from '@/hooks/useHistoricalData';
 import { customLoader } from '@/services/sprite/customLoader';
 import { ReservoirConfigId } from '@/features/Map/types';
 import { useMediaQuery } from '@mantine/hooks';
 import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
+import { ManagingRegionField } from '@/features/Map/types/managingRegion';
+import debounce from 'lodash.debounce';
 
 type Props = {
     accessToken: string;
@@ -80,6 +87,8 @@ const MainMap: React.FC<Props> = (props) => {
     );
     const region = useMainStore((state) => state.region);
     const setRegion = useMainStore((state) => state.setRegion);
+    const managingRegion = useMainStore((state) => state.managingRegion);
+    const setManagingRegion = useMainStore((state) => state.setManagingRegion);
     const basin = useMainStore((state) => state.basin);
     const setBasin = useMainStore((state) => state.setBasin);
     const state = useMainStore((state) => state.state);
@@ -161,13 +170,14 @@ const MainMap: React.FC<Props> = (props) => {
         }
     }, [isMounted, setMapMoved]);
 
-    const debouncedHandleMapMove = useCallback(debounce(handleMapMove, 150), [
-        handleMapMove,
-    ]);
+    const debouncedHandleMapMove = useMemo(
+        () => debounce(handleMapMove, 150),
+        [handleMapMove]
+    );
 
-    const debouncedHandleMapZoom = useCallback(
-        debounce(updateReservoirFilters, 75),
-        [updateReservoirFilters]
+    const debouncedHandleMapZoom = useMemo(
+        () => debounce(() => updateReservoirFilters(map), 250),
+        [map, updateReservoirFilters]
     );
 
     const loadSpriteSheet = async () => {
@@ -208,12 +218,32 @@ const MainMap: React.FC<Props> = (props) => {
     }, [map, isSpritesheetReady]);
 
     useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        map.on('moveend', debouncedHandleMapMove);
+        map.on('zoomend', debouncedHandleMapMove);
+
         return () => {
+            map.off('moveend', debouncedHandleMapMove);
+            map.off('zoomend', debouncedHandleMapMove);
             debouncedHandleMapMove.cancel();
-            debouncedHandleMapZoom.cancel();
-            isMounted.current = false;
         };
-    }, [debouncedHandleMapMove, debouncedHandleMapZoom]);
+    }, [map, debouncedHandleMapMove]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+
+        map.on('zoom', debouncedHandleMapZoom);
+
+        return () => {
+            map.off('zoom', debouncedHandleMapZoom);
+            debouncedHandleMapZoom.cancel();
+        };
+    }, [map, debouncedHandleMapZoom]);
 
     useEffect(() => {
         setShouldResize(loadingInstances.length > 0);
@@ -256,18 +286,10 @@ const MainMap: React.FC<Props> = (props) => {
             return;
         }
 
-        // Detect map movements, update features connected to map extent
-        map.on('moveend', debouncedHandleMapMove);
-        map.on('zoomend', debouncedHandleMapMove);
-
         loadImages(map);
         map.on('style.load', () => {
             loadImages(map);
         });
-
-        const handleMapZoom = () => updateReservoirFilters(map);
-
-        map.on('zoom', handleMapZoom);
 
         // Resize and fit bounds to ensure consistent loading behavior in all screen sizes
         map.resize();
@@ -281,12 +303,6 @@ const MainMap: React.FC<Props> = (props) => {
                 animate: false,
             }
         );
-
-        return () => {
-            map.off('moveend', debouncedHandleMapMove);
-            map.off('zoomend', debouncedHandleMapMove);
-            map.off('zoom', handleMapZoom);
-        };
     }, [map]);
 
     useEffect(() => {
@@ -389,6 +405,30 @@ const MainMap: React.FC<Props> = (props) => {
         if (!map) {
             return;
         }
+        if (managingRegion.length === 0) {
+            // Unset Filter
+            map.setFilter(SubLayerId.ManagingRegionsFill, null);
+            map.setFilter(SubLayerId.ManagingRegionsBoundary, null);
+        } else {
+            map.setFilter(SubLayerId.ManagingRegionsFill, [
+                'in',
+                ['get', ManagingRegionField.RegionAbbreviation],
+                ['literal', managingRegion],
+            ]);
+            map.setFilter(SubLayerId.ManagingRegionsBoundary, [
+                'in',
+                ['get', ManagingRegionField.RegionAbbreviation],
+                ['literal', managingRegion],
+            ]);
+        }
+
+        updateReservoirFilters(map);
+    }, [managingRegion]);
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
         if (basin.length === 0) {
             // Unset Filter
             map.setFilter(SubLayerId.BasinsFill, [
@@ -456,6 +496,7 @@ const MainMap: React.FC<Props> = (props) => {
                 });
                 if (!features.length) {
                     setRegion([]);
+                    setManagingRegion([]);
                     setBasin([]);
                     setState([]);
                     setReservoir(ReservoirDefault);
@@ -602,6 +643,13 @@ const MainMap: React.FC<Props> = (props) => {
         if (map.getLayer(SubLayerId.RegionLabels)) {
             map.setPaintProperty(SubLayerId.RegionLabels, 'text-opacity', 0);
         }
+        if (map.getLayer(SubLayerId.ManagingRegionLabels)) {
+            map.setPaintProperty(
+                SubLayerId.ManagingRegionLabels,
+                'text-opacity',
+                0
+            );
+        }
         if (map.getLayer(SubLayerId.BasinLabels)) {
             map.setPaintProperty(SubLayerId.BasinLabels, 'text-opacity', 0);
         }
@@ -614,58 +662,72 @@ const MainMap: React.FC<Props> = (props) => {
                 boundingGeographyLevel === BoundingGeographyLevel.Region &&
                 map.getLayer(SubLayerId.RegionLabels)
             ) {
-                if (region.length > 0) {
-                    map.setPaintProperty(
-                        SubLayerId.RegionLabels,
-                        'text-opacity',
-                        ['match', ['get', RegionField.Name], region, 1, 0]
-                    );
-                } else {
-                    map.setPaintProperty(
-                        SubLayerId.RegionLabels,
-                        'text-opacity',
-                        1
-                    );
-                }
+                map.setPaintProperty(
+                    SubLayerId.RegionLabels,
+                    'text-opacity',
+                    region.length > 0
+                        ? ['match', ['get', RegionField.Name], region, 1, 0]
+                        : 1
+                );
+            }
+            if (
+                boundingGeographyLevel ===
+                    BoundingGeographyLevel.ManagingRegion &&
+                map.getLayer(SubLayerId.ManagingRegionLabels)
+            ) {
+                map.setPaintProperty(
+                    SubLayerId.ManagingRegionLabels,
+                    'text-opacity',
+                    managingRegion.length > 0
+                        ? [
+                              'match',
+                              ['get', ManagingRegionField.RegionAbbreviation],
+                              managingRegion,
+                              1,
+                              0,
+                          ]
+                        : 1
+                );
             }
             if (
                 boundingGeographyLevel === BoundingGeographyLevel.Basin &&
                 map.getLayer(SubLayerId.BasinLabels)
             ) {
-                if (basin.length > 0) {
-                    map.setPaintProperty(
-                        SubLayerId.BasinLabels,
-                        'text-opacity',
-                        ['match', ['get', Huc02BasinField.Id], basin, 1, 0]
-                    );
-                } else {
-                    map.setPaintProperty(
-                        SubLayerId.BasinLabels,
-                        'text-opacity',
-                        1
-                    );
-                }
+                map.setPaintProperty(
+                    SubLayerId.BasinLabels,
+                    'text-opacity',
+                    basin.length > 0
+                        ? [
+                              'match',
+                              ['to-string', ['get', Huc02BasinField.Id]],
+                              basin,
+                              1,
+                              0,
+                          ]
+                        : 1
+                );
             }
             if (
                 boundingGeographyLevel === BoundingGeographyLevel.State &&
                 map.getLayer(SubLayerId.StateLabels)
             ) {
-                if (state.length > 0) {
-                    map.setPaintProperty(
-                        SubLayerId.StateLabels,
-                        'text-opacity',
-                        ['match', ['get', StateField.Acronym], state, 1, 0]
-                    );
-                } else {
-                    map.setPaintProperty(
-                        SubLayerId.StateLabels,
-                        'text-opacity',
-                        1
-                    );
-                }
+                map.setPaintProperty(
+                    SubLayerId.StateLabels,
+                    'text-opacity',
+                    state.length > 0
+                        ? ['match', ['get', StateField.Uri], state, 1, 0]
+                        : 1
+                );
             }
         }
-    }, [boundingGeographyLevel, showAllLabels, region, basin, state]);
+    }, [
+        boundingGeographyLevel,
+        showAllLabels,
+        region,
+        managingRegion,
+        basin,
+        state,
+    ]);
 
     useEffect(() => {
         if (!map) {
@@ -674,7 +736,7 @@ const MainMap: React.FC<Props> = (props) => {
 
         Object.entries(toggleableLayers).forEach(([layer, visible]) => {
             const visibility = visible ? 'visible' : 'none';
-            if (layer === String(LayerId.SnotelHucSixMeans)) {
+            if (layer === String(LayerId.Snotel)) {
                 map.setLayoutProperty(
                     SubLayerId.SnotelBoundary,
                     'visibility',

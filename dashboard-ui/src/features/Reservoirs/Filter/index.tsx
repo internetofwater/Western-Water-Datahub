@@ -26,6 +26,8 @@ import Up from '@/icons/Up';
 import FilterIcon from '@/icons/Filter';
 import { useLoading } from '@/hooks/useLoading';
 import { ReservoirDateSelector } from '@/features/Reservoirs/ReservoirDateSelector';
+import { ManagingRegion } from '@/features/Reservoirs/Filter/Selectors/ManagingRegion';
+import { getBoundingGeographyLabel } from '@/utils/getBoundingGeographyLabel';
 
 type Props = {
     search: string;
@@ -67,17 +69,7 @@ export const Filter: React.FC<Props> = (props) => {
     };
 
     const getLabel = (boundingGeographyLevel: BoundingGeographyLevel) => {
-        switch (boundingGeographyLevel) {
-            case BoundingGeographyLevel.Region:
-                return 'Show Region Labels';
-            case BoundingGeographyLevel.Basin:
-                return 'Show Basin Labels';
-            case BoundingGeographyLevel.State:
-                return 'Show State Labels';
-            case BoundingGeographyLevel.None:
-            default:
-                return 'Show Labels';
-        }
+        return `Show ${getBoundingGeographyLabel(boundingGeographyLevel)} Labels`;
     };
 
     const isDisabled = isFetchingReservoirs || isGeneratingReport;
@@ -101,11 +93,7 @@ export const Filter: React.FC<Props> = (props) => {
             </Group>
             <ReservoirDateSelector />
             <Divider my="calc(var(--default-spacing) / 2)" />
-            <Group
-                gap="var(--default-spacing)"
-                align="flex-start"
-                wrap="nowrap"
-            >
+            <Group gap="var(--default-spacing)" align="flex-end" wrap="nowrap">
                 <Box
                     style={{
                         display:
@@ -116,6 +104,17 @@ export const Filter: React.FC<Props> = (props) => {
                     }}
                 >
                     <Region />
+                </Box>
+                <Box
+                    style={{
+                        display:
+                            boundingGeographyLevel ===
+                            BoundingGeographyLevel.ManagingRegion
+                                ? 'block'
+                                : 'none',
+                    }}
+                >
+                    <ManagingRegion />
                 </Box>
                 <Box
                     style={{

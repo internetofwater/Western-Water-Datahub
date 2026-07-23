@@ -39,6 +39,9 @@ export const TooltipDetail: React.FC<Props> = (props) => {
     const { filters } = props;
 
     const regionOptions = useMainStore((state) => state.regionOptions);
+    const managingRegionOptions = useMainStore(
+        (state) => state.managingRegionOptions
+    );
     const basinOptions = useMainStore((state) => state.basinOptions);
     const stateOptions = useMainStore((state) => state.stateOptions);
 
@@ -64,6 +67,14 @@ export const TooltipDetail: React.FC<Props> = (props) => {
         if (filters.region.length > 0) {
             const labels = getLabels(filters.region, regionOptions);
             bullets.push(getGeoBoundBullet(labels, 'region'));
+        }
+
+        if (filters.managingRegion.length > 0) {
+            const labels = getLabels(
+                filters.managingRegion,
+                managingRegionOptions
+            );
+            bullets.push(getGeoBoundBullet(labels, 'managing region'));
         }
 
         if (filters.basin.length > 0) {

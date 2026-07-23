@@ -89,12 +89,10 @@ export const Metrics: React.FC<Props> = (props) => {
 
     const getLabel = (label: string) => {
         if (config.source === SourceId.TeacupEDRReservoirs) {
-            const totalOrActive = String(
-                reservoirProperties[
-                    TeacupReservoirField.UseTotalOrActiveStorage
-                ]
+            const capacityType = String(
+                reservoirProperties[TeacupReservoirField.CapacityTypeLabel]
             );
-            return `${label} (${totalOrActive})`;
+            return `${label} (${capacityType})`;
         }
 
         return label;

@@ -28,6 +28,7 @@ export type OrganizedProperties = {
     percentFull: number;
     percentAverage: number;
     regionConnector: string;
+    managingRegionConnector: string;
     basinConnector: string;
     stateConnector: string;
     sourceId: string;
@@ -42,6 +43,7 @@ export type Filters = {
     hideNoData: boolean;
     limitByExtent: boolean;
     region: string[];
+    managingRegion: string[];
     basin: string[];
     state: string[];
 };

@@ -135,7 +135,7 @@ export const useHistoricalData = () => {
                 [LayerId.NOAAPrecipSixToTen]: false,
                 [LayerId.USDroughtMonitor]: false,
                 [LayerId.NOAARiverForecast]: false,
-                [LayerId.SnotelHucSixMeans]: false,
+                [LayerId.Snotel]: false,
             });
 
             // Dont show notification if not necessary
@@ -144,7 +144,7 @@ export const useHistoricalData = () => {
                 toggleableLayers[LayerId.NOAAPrecipSixToTen] ||
                 toggleableLayers[LayerId.USDroughtMonitor] ||
                 toggleableLayers[LayerId.NOAARiverForecast] ||
-                toggleableLayers[LayerId.SnotelHucSixMeans];
+                toggleableLayers[LayerId.Snotel];
 
             if (hasReferenceDataActive) {
                 notificationManager.show(

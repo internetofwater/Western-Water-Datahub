@@ -480,7 +480,6 @@ export const getReservoirLabelPaint = (
                 ]),
             ],
         ],
-
         'text-halo-color': '#fff',
         'text-halo-width': 2,
     };
@@ -524,6 +523,7 @@ export const getReservoirLabelFilter = (
                 'FlamingGorge',
                 'ElephantButte',
                 'NewMelones',
+                'HungryHorse',
             ],
         ],
     ];
@@ -863,7 +863,7 @@ export const getFeatures = <T extends Geometry, V extends GeoJsonProperties>(
 };
 
 const ZOOM_HIGH = 8;
-const ZOOM_MID = 6;
+const ZOOM_MID = 5;
 
 const getProperty = (
     boundingGeographyLevel: BoundingGeographyLevel
@@ -871,6 +871,8 @@ const getProperty = (
     switch (boundingGeographyLevel) {
         case BoundingGeographyLevel.Region:
             return 'regionConnectorProperty';
+        case BoundingGeographyLevel.ManagingRegion:
+            return 'managingRegionConnectorProperty';
         case BoundingGeographyLevel.Basin:
             return 'basinConnectorProperty';
         default:
@@ -881,6 +883,7 @@ const getProperty = (
 
 const getFilterValue = (
     region: string[],
+    managingRegion: string[],
     basin: string[],
     state: string[],
     boundingGeographyLevel: BoundingGeographyLevel
@@ -890,6 +893,12 @@ const getFilterValue = (
         region.length > 0
     ) {
         return region;
+    }
+    if (
+        boundingGeographyLevel === BoundingGeographyLevel.ManagingRegion &&
+        managingRegion.length > 0
+    ) {
+        return managingRegion;
     }
     if (
         boundingGeographyLevel === BoundingGeographyLevel.Basin &&
@@ -947,17 +956,30 @@ const allOf = (
     return undefined;
 };
 
+/**
+ * Determines which state of zoom the dashboard is in. At ZOOM_MID forced display of reservoir labels ends and
+ * capacity determined logic takes over. At ZOOM_HIGH, all reservoir icons and labels are displayed, regardless of
+ * capacity. Use greater than or equal to mirror step expression.
+ *
+ * @param {number} zoom
+ * @returns {("high" | "mid" | "low")}
+ */
 const getZoomBucket = (zoom: number) => {
-    return zoom > ZOOM_HIGH ? 'high' : zoom > ZOOM_MID ? 'mid' : 'low';
+    return zoom >= ZOOM_HIGH ? 'high' : zoom >= ZOOM_MID ? 'mid' : 'low';
 };
 
-export const updateReservoirFilters = (map: Map) => {
+export const updateReservoirFilters = (map: Map | null) => {
+    if (!map) {
+        return;
+    }
+
     const zoom = map.getZoom();
     const zoomBucket = getZoomBucket(zoom);
 
     const {
         boundingGeographyLevel,
         region = [],
+        managingRegion = [],
         basin = [],
         state = [],
         reservoir,
@@ -965,15 +987,17 @@ export const updateReservoirFilters = (map: Map) => {
     const { hideNoData } = useSessionStore.getState();
 
     const hasBoundingGeography =
-        (region?.length ?? 0) > 0 ||
-        (basin?.length ?? 0) > 0 ||
-        (state?.length ?? 0) > 0;
+        region.length > 0 ||
+        managingRegion.length > 0 ||
+        basin.length > 0 ||
+        state.length > 0;
 
     const property = getProperty(boundingGeographyLevel);
     const filterValue = getFilterValue(
-        region ?? [],
-        basin ?? [],
-        state ?? [],
+        region,
+        managingRegion,
+        basin,
+        state,
         boundingGeographyLevel
     );
 

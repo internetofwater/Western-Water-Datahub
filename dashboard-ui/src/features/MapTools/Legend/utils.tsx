@@ -18,7 +18,7 @@ export const getTooltipContent = (
 ): ReactNode => {
     switch (layerId) {
         case String(LayerId.Snotel):
-            return 'The current median snow water equivalent across HUC6 basins as a percentage of the 30-year median (1991-2020).';
+            return 'The current median snow water equivalent across HUC6 basins as a percentage of the 30-year median (water years 1991-2020).';
         case String(LayerId.NOAARiverForecast):
             return (
                 <>
@@ -27,14 +27,16 @@ export const getTooltipContent = (
                         volume at forecast points as a percentage
                     </Text>
                     <Text size="sm">
-                        of the 30-year average seasonal streamflow (WY
-                        1991-2020) for each forecast point.
+                        of the 30-year average seasonal streamflow (calendar
+                        years 1991-2020) for each forecast point.
                     </Text>
                 </>
             );
             return '';
         case String(LayerId.RegionsReference):
             return 'The boundaries of the Department of the Interior Unified Regions in the western U.S.';
+        case String(LayerId.ManagingRegionsReference):
+            return 'The boundaries of the Department of the Interior Regions that are responsible for managing Bureau of Reclamation assets.';
         case String(LayerId.BasinsReference):
             return 'The boundaries of 2-digit Hydrologic Units.';
         case String(LayerId.StatesReference):
@@ -46,7 +48,7 @@ export const getTooltipContent = (
         case String(LayerId.NOAATempSixToTen):
             return 'The probability of temperatures above, near, or below normal for the period 6-10 days from now.';
         case 'capacity':
-            return 'The amount of water that can be stored in a reservoir based on physical constraints and operating agreements.';
+            return 'The amount of water that can be stored in the reservoir based on physical constraints and operating agreements.';
         case 'storage':
             return 'The reservoir storage volume on the indicated date.';
         case 'average':

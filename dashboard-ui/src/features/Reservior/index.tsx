@@ -181,9 +181,9 @@ const Reservoir: React.FC = () => {
                     [config.longLabelProperty]: String(
                         initialReservoirProperties[config.longLabelProperty]
                     ),
-                    [TeacupReservoirField.UseTotalOrActiveStorage]: String(
+                    [TeacupReservoirField.CapacityTypeLabel]: String(
                         initialReservoirProperties[
-                            TeacupReservoirField.UseTotalOrActiveStorage
+                            TeacupReservoirField.CapacityTypeLabel
                         ]
                     ),
                     source_name: initialReservoirProperties.source_name,

@@ -19,7 +19,7 @@ import { BaseLayerOpacity, LayerId, MAP_ID } from '@/features/Map/consts';
 import { useMap } from '@/contexts/MapContexts';
 import { RasterBaseLayers } from '@/features/Map/types';
 import { useEffect, useRef, useState } from 'react';
-import useMainStore from '@/stores/main';
+import useMainStore, { MainState } from '@/stores/main';
 import {
     RasterVisibilityMap,
     updateBaseLayerOpacity,
@@ -30,6 +30,9 @@ import { Entry } from '@/features/ReferenceData/Entry';
 import { getLayerName } from '@/features/Map/config';
 import { useLoading } from '@/hooks/useLoading';
 import Info from '@/icons/Info';
+import { getBoundingGeographyLabel } from '@/utils/getBoundingGeographyLabel';
+import { BoundingGeographyLevel } from '@/stores/main/types';
+import { getTooltipContent } from '@/features/MapTools/Legend/utils';
 
 const RasterBaseLayerIconObj = [
     {
@@ -101,44 +104,15 @@ const ReferenceData: React.FC = () => {
         setBaseLayerOpacity(baseLayerOpacity);
     };
 
-    const handleNOAARFCChange = (showNOAARFC: boolean) => {
+    const handleLayerVisibilityChange = (
+        layerId: keyof MainState['toggleableLayers'],
+        visible: boolean
+    ) => {
         if (!map) {
             return;
         }
 
-        setToggleableLayers(LayerId.NOAARiverForecast, showNOAARFC);
-    };
-
-    const handleSnotelChange = (showSnotel: boolean) => {
-        if (!map) {
-            return;
-        }
-
-        setToggleableLayers(LayerId.SnotelHucSixMeans, showSnotel);
-    };
-
-    const handleRegionsReferenceChange = (showRegionsReference: boolean) => {
-        if (!map) {
-            return;
-        }
-
-        setToggleableLayers(LayerId.RegionsReference, showRegionsReference);
-    };
-
-    const handleBasinsReferenceChange = (showBasinsReference: boolean) => {
-        if (!map) {
-            return;
-        }
-
-        setToggleableLayers(LayerId.BasinsReference, showBasinsReference);
-    };
-
-    const handleStatesReferenceChange = (showStatesReference: boolean) => {
-        if (!map) {
-            return;
-        }
-
-        setToggleableLayers(LayerId.StatesReference, showStatesReference);
+        setToggleableLayers(layerId, visible);
     };
 
     const getBaseLayerValue = (): RasterBaseLayers => {
@@ -173,6 +147,8 @@ const ReferenceData: React.FC = () => {
     const isReferenceDataDisabled =
         reservoirDate !== null || isGeneratingReport;
 
+    const rasterLayerTooltip = getTooltipContent(getBaseLayerValue());
+
     return (
         <Stack
             className={styles.wrapper}
@@ -183,7 +159,7 @@ const ReferenceData: React.FC = () => {
                     <Entry
                         layerId={LayerId.NOAARiverForecast}
                         label={`Show ${getLayerName(LayerId.NOAARiverForecast)}`}
-                        onClick={handleNOAARFCChange}
+                        onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
                         disabled={isReferenceDataDisabled}
                     />
@@ -228,9 +204,9 @@ const ReferenceData: React.FC = () => {
                         </>
                     )}
                     <Entry
-                        layerId={LayerId.SnotelHucSixMeans}
-                        label={`Show ${getLayerName(LayerId.SnotelHucSixMeans)}`}
-                        onClick={handleSnotelChange}
+                        layerId={LayerId.Snotel}
+                        label={`Show ${getLayerName(LayerId.Snotel)}`}
+                        onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
                         disabled={isReferenceDataDisabled}
                     />
@@ -254,6 +230,30 @@ const ReferenceData: React.FC = () => {
                             aria-label="Select a Base Layer"
                             placeholder="Select a Base Layer"
                             label={'Base Layer'}
+                            description={
+                                <Tooltip
+                                    label={rasterLayerTooltip}
+                                    disabled={!rasterLayerTooltip}
+                                    position="top-start"
+                                    multiline
+                                >
+                                    <Text size="sm" component="span">
+                                        What is this?
+                                        <Box
+                                            ml="calc(var(--default-spacing) / 2)"
+                                            component="span"
+                                            style={{
+                                                display: rasterLayerTooltip
+                                                    ? 'inline-block'
+                                                    : 'none',
+                                            }}
+                                            className={styles.dimmedIcon}
+                                        >
+                                            <Info />
+                                        </Box>
+                                    </Text>
+                                </Tooltip>
+                            }
                             onChange={(value) => {
                                 if (value) {
                                     handleBaseLayerChange(
@@ -285,25 +285,52 @@ const ReferenceData: React.FC = () => {
                     )}
                     <Divider size="md" />
                     <Entry
-                        layerId={LayerId.RegionsReference}
-                        label="Show DOI Region Boundaries"
-                        onClick={handleRegionsReferenceChange}
+                        layerId={LayerId.ManagingRegionsReference}
+                        label={`Show ${getBoundingGeographyLabel(BoundingGeographyLevel.ManagingRegion)} Boundaries`}
+                        onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
-                        links={false}
+                        links={{
+                            apiLink:
+                                'https://api.wwdh.internetofwater.app/collections/doi-reclamation-managing-regions',
+                            sourceLink:
+                                'https://www.arcgis.com/home/item.html?id=1835dcafa71c40eb81fb152406e41230#overview',
+                        }}
+                    />
+                    <Entry
+                        layerId={LayerId.RegionsReference}
+                        label={`Show ${getBoundingGeographyLabel(BoundingGeographyLevel.Region)} Boundaries`}
+                        onClick={handleLayerVisibilityChange}
+                        toggleableLayers={toggleableLayers}
+                        links={{
+                            apiLink:
+                                'https://api.wwdh.internetofwater.app/collections/doi-regions/items',
+                            sourceLink:
+                                'https://services1.arcgis.com/ixD30sld6F8MQ7V5/ArcGIS/rest/services/DOI_12_Unified_Regions_20180801/FeatureServer/0',
+                        }}
                     />
                     <Entry
                         layerId={LayerId.BasinsReference}
-                        label="Show Basin (HUC2) Boundaries"
-                        onClick={handleBasinsReferenceChange}
+                        label={`Show ${getBoundingGeographyLabel(BoundingGeographyLevel.Basin)} Boundaries`}
+                        onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
-                        links={false}
+                        links={{
+                            apiLink:
+                                'https://reference.geoconnex.us/collections/hu02',
+                            sourceLink:
+                                'https://www.usgs.gov/national-hydrography/access-national-hydrography-products',
+                        }}
                     />
                     <Entry
                         layerId={LayerId.StatesReference}
-                        label="Show State Boundaries"
-                        onClick={handleStatesReferenceChange}
+                        label={`Show ${getBoundingGeographyLabel(BoundingGeographyLevel.State)} Boundaries`}
+                        onClick={handleLayerVisibilityChange}
                         toggleableLayers={toggleableLayers}
-                        links={false}
+                        links={{
+                            apiLink:
+                                'https://reference.geoconnex.us/collections/states',
+                            sourceLink:
+                                'https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html',
+                        }}
                     />
                 </>
             ) : (

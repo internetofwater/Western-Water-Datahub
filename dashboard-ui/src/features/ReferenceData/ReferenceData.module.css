@@ -11,17 +11,28 @@
     max-width: 250px;
 }
 
+.dimmedIcon > svg {
+    fill: var(--mantine-color-dimmed);
+    stroke: var(--mantine-color-dimmed);
+}
+
+.dimmedIcon > svg,
+.smallIcon > svg,
+.labelIcon > svg {
+    height: auto;
+}
+
 .smallIcon > svg,
 .labelIcon > svg {
     fill: var(--mantine-color-text);
     stroke: var(--mantine-color-text);
-    height: auto;
 }
 
 .labelIcon > svg {
     width: 1rem;
 }
 
+.dimmedIcon > svg,
 .smallIcon > svg {
     width: 0.875rem;
 }
