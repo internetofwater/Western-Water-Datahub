@@ -632,7 +632,7 @@ resources:
   resviz-edr:
     type: collection
     title: USBR Reservoir Storage Levels (resviz)
-    description: contains current and average storage levels for USBR reservoirs dervied from the USBR resviz endpoint
+    description: contains current and average storage levels for USBR reservoirs derived from the USBR resviz endpoint
     visibility: hidden
     # cache for 1 hour to reduce
     # unnecessary requests to the db
