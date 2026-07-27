@@ -737,11 +737,8 @@ resources:
         table: teacup
         properties:
           - teacup_locations.id
-          - teacup_locations.name
           - teacup_locations.map_label
           - teacup_locations.popup_label
-          - teacup_locations.total_capacity
-          - teacup_locations.active_capacity
           - teacup_locations.huc6
           - teacup_locations.huc12
           - teacup_locations.reg_name
