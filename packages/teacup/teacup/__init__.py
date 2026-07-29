@@ -127,7 +127,7 @@ def run_subprocess(csv_url: str):
         create_feature(pg_layer, row, "p90")
 
         count += 4  # 4 features created per row (raw, avg, p10, p90)
-        if count % 10000 == 0:
+        if count % 1000 == 0:
             try:
                 pg_layer.CommitTransaction()
                 LOGGER.info(f"Committed {count} features to database...")
