@@ -915,29 +915,14 @@ export const questions: QA[] = [
                     compiled from various sources including Reclamation's
                     Enterprise Asset Registry and the U.S. Army Corps of
                     Engineers Access2Water system. The compiled capacities are
-                    available{' '}
+                    available in{' '}
                     {getAnchor(
-                        'here',
+                        'this csv file',
                         'https://api.wwdh.internetofwater.app/collections/teacup-edr/items?f=csv'
                     )}
                     .
                 </Text>
             </Stack>
-        ),
-    },
-    {
-        id: 'get-reservoir-list',
-        question: 'Is there a list of reservoirs and data sources?',
-        answer: (
-            <Text {...subSectionDescription}>
-                The list of reservoirs and their associated ultimate data
-                sources is available{' '}
-                {getAnchor(
-                    'here',
-                    'https://github.com/cgs-earth/teacup-generator/blob/main/R-workflow/config/locations.csv'
-                )}
-                .
-            </Text>
         ),
     },
     {
