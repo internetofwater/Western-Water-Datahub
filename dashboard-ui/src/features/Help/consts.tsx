@@ -475,7 +475,7 @@ export const sections: GlossarySection[] = [
                             Wondering what all these terms mean?
                         </Text>{' '}
                         Here are the key reservoir storage and capacity terms
-                        you'll see in the Dashboard, followed by additional
+                        you'll see in the dashboard, followed by additional
                         definitions of reservoir capacity terms.
                     </Text>
                 ),
@@ -835,7 +835,7 @@ export const questions: QA[] = [
     },
     {
         id: 'how-often',
-        question: 'How often is the Dashboard updated?',
+        question: 'How often is the dashboard updated?',
         answer: (
             <Stack gap="var(--default-spacing)">
                 <Text {...subSectionDescription}>
