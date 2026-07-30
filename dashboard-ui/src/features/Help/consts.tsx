@@ -78,7 +78,7 @@ export const sections: GlossarySection[] = [
         id: 'reference-data-base-layers',
         label: 'Reference Data and Base Layers',
         description:
-            'The Dashboard can display various types of reference data and base layers to provide additional context for reservoir conditions.',
+            'The dashboard can display various types of reference data and base layers to provide additional context for reservoir conditions.',
         subSections: [
             {
                 id: 'reference-data',
@@ -283,7 +283,7 @@ export const sections: GlossarySection[] = [
                                 The boundaries of 2-digit Hydrologic Units.
                                 Although the Watershed Boundary Dataset refers
                                 to these as “Regions”, they are labeled as
-                                “Basin (HUC2) Boundaries” in the Dashboard to
+                                “Basin (HUC2) Boundaries” in the dashboard to
                                 avoid confusion with the DOI Region Boundaries.
                                 For more information, see{' '}
                                 {getAnchor(
@@ -326,7 +326,7 @@ export const sections: GlossarySection[] = [
         id: 'glossary',
         label: 'Glossary',
         description:
-            "The glossary contains definitions for general terms you'll encounter throughout the Dashboard.",
+            "The glossary contains definitions for general terms you'll encounter throughout the dashboard.",
         subSections: [
             {
                 id: 'glossary-inner',
@@ -386,9 +386,9 @@ export const sections: GlossarySection[] = [
     },
     {
         id: 'understanding',
-        label: 'Understanding Reservoir Information in the Dashboard',
+        label: 'Understanding Reservoir Information in the dashboard',
         description:
-            "You can use the reservoir information in the Dashboard to get an understanding of water storage conditions across the West for the selected date. Here's how it works:",
+            "You can use the reservoir information in the dashboard to get an understanding of water storage conditions across the West for the selected date. Here's how it works:",
         subSections: [
             {
                 id: 'understanding-inner',
@@ -854,7 +854,7 @@ export const questions: QA[] = [
                     source system.
                 </Text>
                 <Text {...subSectionDescription}>
-                    Selecting the “Latest Storage Value” option in the Dashboard
+                    Selecting the “Latest Storage Value” option in the dashboard
                     will show the most recent available value.
                 </Text>
             </Stack>
