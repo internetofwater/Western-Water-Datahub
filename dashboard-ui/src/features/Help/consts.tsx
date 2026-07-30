@@ -386,7 +386,7 @@ export const sections: GlossarySection[] = [
     },
     {
         id: 'understanding',
-        label: 'Understanding Reservoir Information in the dashboard',
+        label: 'Understanding Reservoir Information in the Dashboard',
         description:
             "You can use the reservoir information in the dashboard to get an understanding of water storage conditions across the West for the selected date. Here's how it works:",
         subSections: [
