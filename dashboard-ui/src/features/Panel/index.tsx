@@ -25,6 +25,7 @@ import { useMediaQuery } from '@mantine/hooks';
 import useSessionStore from '@/stores/session';
 import { Overlay } from '@/stores/session/types';
 import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
+import { Badge } from '@/components/Badge';
 
 type Props = {
     accessToken: string;
@@ -91,6 +92,7 @@ const Panel: React.FC<Props> = (props) => {
             className={styles.panel}
             style={{ display: show ? 'block' : 'none' }}
         >
+            <Badge />
             <Header />
             <ActionIcon
                 size="sm"
