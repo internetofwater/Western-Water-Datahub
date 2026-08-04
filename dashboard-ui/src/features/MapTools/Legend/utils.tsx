@@ -34,13 +34,13 @@ export const getTooltipContent = (
             );
             return '';
         case String(LayerId.RegionsReference):
-            return 'The boundaries of the Department of the Interior Unified Regions in the western U.S.';
+            return 'The boundaries of the Department of the Interior Unified Regions in the Western U.S.';
         case String(LayerId.ManagingRegionsReference):
             return 'The boundaries of the Department of the Interior Regions that are responsible for managing Bureau of Reclamation assets.';
         case String(LayerId.BasinsReference):
             return 'The boundaries of 2-digit Hydrologic Units.';
         case String(LayerId.StatesReference):
-            return 'The boundaries of the 17 western U.S. states.';
+            return 'The boundaries of the 17 Western U.S. states.';
         case String(LayerId.USDroughtMonitor):
             return 'The current drought intensity, ranging from D0 (abnormally dry) to D4 (exceptional drought).';
         case String(LayerId.NOAAPrecipSixToTen):
