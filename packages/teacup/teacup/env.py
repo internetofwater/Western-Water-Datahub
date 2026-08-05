@@ -20,4 +20,4 @@ POSTGRES_URL = str(
     f"PG:dbname={POSTGRES_DB} host={POSTGRES_HOST} port={POSTGRES_PORT} user={POSTGRES_USER} password={POSTGRES_PASSWORD}"  # noqa
 )
 
-OGR_BATCH_SIZE = os.getenv("OGR_BATCH_SIZE", 1000)
+OGR_BATCH_SIZE = int(os.getenv("OGR_BATCH_SIZE", 1000))
