@@ -13,7 +13,7 @@ from osgeo import ogr
 import os
 from time import sleep
 
-from teacup.env import BASE_URL, POSTGRES_URL
+from teacup.env import BASE_URL, OGR_BATCH_SIZE, POSTGRES_URL
 from teacup.lib import (
     create_feature,
     date_range,
@@ -127,7 +127,7 @@ def run_subprocess(csv_url: str):
         create_feature(pg_layer, row, "p90")
 
         count += 4  # 4 features created per row (raw, avg, p10, p90)
-        if count % 1000 == 0:
+        if count % OGR_BATCH_SIZE == 0:
             try:
                 pg_layer.CommitTransaction()
                 LOGGER.info(f"Committed {count} features to database...")
@@ -177,7 +177,7 @@ def load(start, end, url):
         return
 
     today = date.today()
-    start_date = dateparse(start).date() if start else today - timedelta(days=2)
+    start_date = dateparse(start).date() if start else today - timedelta(days=1)
     end_date = dateparse(end).date() if end else today
 
     for dt in date_range(start_date, end_date):
