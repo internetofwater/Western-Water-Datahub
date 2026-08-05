@@ -429,16 +429,10 @@ def create_feature(pg_ds, row, parameter: str):
             '{parameter}'
         )
         ON CONFLICT (id)
-        DO UPDATE SET
-            value = EXCLUDED.value,
-            data_date = EXCLUDED.data_date,
-            monitoring_location_id = EXCLUDED.monitoring_location_id,
-            parameter_id = EXCLUDED.parameter_id;
+        DO UPDATE SET value = EXCLUDED.value;
     """
 
     try:
         pg_ds.ExecuteSQL(sql)
     except RuntimeError as e:
         LOGGER.error(e)
-    finally:
-        feature = None  # Release feature
