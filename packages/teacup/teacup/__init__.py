@@ -118,13 +118,13 @@ def run_subprocess(csv_url: str):
             continue
 
         # Upsert data value
-        create_feature(pg_layer, row, "raw")
+        create_feature(pg_ds, row, "raw")
         # Upsert average value
-        create_feature(pg_layer, row, "avg")
+        create_feature(pg_ds, row, "avg")
         # Upsert 10th percentile value
-        create_feature(pg_layer, row, "p10")
+        create_feature(pg_ds, row, "p10")
         # Upsert 90th percentile value
-        create_feature(pg_layer, row, "p90")
+        create_feature(pg_ds, row, "p90")
 
         count += 4  # 4 features created per row (raw, avg, p10, p90)
         if count % OGR_BATCH_SIZE == 0:
