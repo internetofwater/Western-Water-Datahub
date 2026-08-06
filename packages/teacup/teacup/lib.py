@@ -387,7 +387,7 @@ def date_range(start_date: date, end_date: date) -> Iterator[date]:
         yield start_date + timedelta(n)
 
 
-def create_feature(pg_layer, row, parameter: str):
+def create_feature(pg_ds, row, parameter: str):
     """Create postgres feature from a CSV row"""
 
     match parameter:
@@ -411,17 +411,28 @@ def create_feature(pg_layer, row, parameter: str):
         )
         return
 
-    feature = ogr.Feature(pg_layer.GetLayerDefn())
     id = f"{row['SiteId']}.{row['DataDate']}.{parameter}"
-    feature.SetField("id", id)
-    feature.SetField("value", row[p_val])
-    feature.SetField("data_date", row["DataDate"])
-    feature.SetField("monitoring_location_id", row["SiteId"])
-    feature.SetField("parameter_id", parameter)
+
+    sql = f"""
+        INSERT INTO teacup (
+            id,
+            value,
+            data_date,
+            monitoring_location_id,
+            parameter_id
+        )
+        VALUES (
+            '{id}',
+            {row[p_val]},
+            '{row["DataDate"]}',
+            '{row["SiteId"]}',
+            '{parameter}'
+        )
+        ON CONFLICT (id)
+        DO UPDATE SET value = EXCLUDED.value;
+    """
 
     try:
-        pg_layer.CreateFeature(feature)
+        pg_ds.ExecuteSQL(sql)
     except RuntimeError as e:
         LOGGER.error(e)
-    finally:
-        feature = None  # Release feature
