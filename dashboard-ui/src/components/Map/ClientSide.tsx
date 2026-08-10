@@ -72,7 +72,7 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
                 ...options,
                 container: mapContainerRef.current,
                 customAttribution:
-                    'Powered by <a href="https://www.esri.com" >Esri</a>',
+                    'Powered by <a href="https://www.esri.com" >Esri</a> | © 2026 Lincoln Institute of Land Policy Center for Geospatial Solutions',
             });
             const hoverPopup = new mapboxgl.Popup({
                 closeButton: false,
