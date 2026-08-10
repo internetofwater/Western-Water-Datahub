@@ -22,7 +22,6 @@ import {
     IControl,
     ControlPosition,
     MapTouchEvent,
-    AttributionControlOptions,
 } from 'mapbox-gl';
 import { Root } from 'react-dom/client';
 
@@ -178,7 +177,6 @@ export interface MapComponentProps {
         navigationControl?: NavigationControlOptions | boolean;
         scaleControl?: ScaleControlOptions | boolean;
         fullscreenControl?: FullscreenControlOptions | boolean;
-        attributionControl?: AttributionControlOptions | boolean;
     };
     customControls?: ICustomControl[];
 }

@@ -771,11 +771,6 @@ const MainMap: React.FC<Props> = (props) => {
                 controls={{
                     // scaleControl: true,
                     navigationControl: true,
-                    attributionControl: {
-                        compact: true,
-                        customAttribution:
-                            '© 2026 Lincoln Institute of Land Policy Center for Geospatial Solutions',
-                    },
                 }}
             />
         </>
