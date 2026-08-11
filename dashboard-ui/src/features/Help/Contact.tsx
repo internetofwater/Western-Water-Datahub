@@ -4,7 +4,7 @@
  */
 
 import { Anchor, Box, Flex, Grid, Paper, Stack, Text } from '@mantine/core';
-import { contacts, content } from '@/features/Help/consts';
+import { contacts } from '@/features/Help/consts';
 import styles from '@/features/Help/Help.module.css';
 
 export const Contact: React.FC = () => {
