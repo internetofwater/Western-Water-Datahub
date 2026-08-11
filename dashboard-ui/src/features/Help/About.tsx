@@ -45,7 +45,7 @@ export const About: React.FC<Props> = (props) => {
                     The Western Water Data Dashboard displays reservoir storage
                     conditions and other water-related information to support
                     understanding and management of water resources in the
-                    western United States. The dashboard focuses on reservoirs
+                    Western United States. The dashboard focuses on reservoirs
                     of interest to the Bureau of Reclamation.
                 </Text>
                 <Text {...paragraph}>
@@ -56,8 +56,8 @@ export const About: React.FC<Props> = (props) => {
                 </Text>
                 <Text {...paragraph}>
                     The dashboard also provides detailed teacup diagrams and
-                    historical reservoir storage timeseries plots for individual
-                    reservoirs.
+                    historical reservoir storage time series plots for
+                    individual reservoirs.
                 </Text>
                 <Text {...paragraph}>
                     You can use the dashboard to create customized reports

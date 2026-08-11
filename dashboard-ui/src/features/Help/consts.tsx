@@ -259,7 +259,7 @@ export const sections: GlossarySection[] = [
                                 The boundaries of Department of the Interior
                                 (DOI) Unified Regions. The dashboard only
                                 displays the boundaries of the DOI regions in
-                                the western U.S. (Columbia-Pacific Northwest,
+                                the Western U.S. (Columbia-Pacific Northwest,
                                 California-Great Basin, Missouri Basin, Upper
                                 Colorado Basin, Lower Colorado Basin, and
                                 Arkansas-Rio Grande-Texas Gulf). For more
@@ -305,7 +305,7 @@ export const sections: GlossarySection[] = [
                         content: (
                             <Text {...content}>
                                 The boundaries of U.S. states. Only the 17
-                                western states are displayed. For more
+                                Western states are displayed. For more
                                 information, see{' '}
                                 {getAnchor(
                                     'API',
