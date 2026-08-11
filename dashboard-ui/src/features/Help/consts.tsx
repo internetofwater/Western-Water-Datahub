@@ -957,7 +957,7 @@ type Contact = {
     featured?: boolean;
     body: ReactNode;
     link?: {
-        label: string;
+        text: string;
         href: string;
     };
 };
@@ -1005,7 +1005,7 @@ export const contacts: Contact[] = [
             </Text>
         ),
         link: {
-            label: 'Email Bureau of Reclamation',
+            text: 'Email Bureau of Reclamation',
             href: 'mailto:data@usbr.gov',
         },
     },
@@ -1021,7 +1021,7 @@ export const contacts: Contact[] = [
             </Text>
         ),
         link: {
-            label: 'View Repository',
+            text: 'View Repository',
             href: 'https://github.com/internetofwater/Western-Water-Datahub',
         },
     },

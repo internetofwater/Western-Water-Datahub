@@ -47,12 +47,12 @@ export const Contact: React.FC = () => {
                                 <Anchor
                                     className={styles.contactLink}
                                     href={contact.link.href}
-                                    title={contact.link.label}
+                                    title={contact.link.text}
                                     size="sm"
                                     c="blue.8"
                                     lineClamp={1}
                                 >
-                                    {contact.link.label}
+                                    {contact.link.text}
                                 </Anchor>
                             )}
                         </Flex>
