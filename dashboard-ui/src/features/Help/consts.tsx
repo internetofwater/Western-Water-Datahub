@@ -975,7 +975,7 @@ export const contacts: Contact[] = [
                     href="https://internetofwater.org/internet-of-water-principles/"
                     c="blue.8"
                 >
-                    Internet of Water principles
+                    Internet of Water Principles
                 </Anchor>{' '}
                 for interoperable water data. Application design and development
                 provided by the{' '}

@@ -78,7 +78,6 @@ export const Badge: React.FunctionComponent = () => {
                     >
                         Internet of Water Principles
                     </Anchor>
-                    .
                 </Text>
             </HoverCard.Dropdown>
         </HoverCard>
