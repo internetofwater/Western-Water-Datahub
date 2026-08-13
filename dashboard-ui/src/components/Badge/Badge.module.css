@@ -4,6 +4,8 @@
  */
 
 .badge {
+    --badge-scale: 1.25;
+
     --badge-bookmark-bg: #e5e5e5;
     --badge-bookmark-bg-active: #ffdba8; /* IoW Orange (light variant) */
 
@@ -15,11 +17,14 @@
 
     cursor: pointer;
 
+    transform: scale(var(--badge-scale));
+    transform-origin: left top;
+
     transition: transform 200ms ease;
 }
 
 .badge.active {
-    transform: translateX(2px);
+    transform: translateX(2px) scale(var(--badge-scale));
 }
 
 .bookmark {
