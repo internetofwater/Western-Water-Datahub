@@ -10,6 +10,7 @@ import {
     AccordionPanel,
     ActionIcon,
     Group,
+    Image,
     Paper,
     Title,
 } from '@mantine/core';
@@ -133,8 +134,12 @@ const Panel: React.FC<Props> = (props) => {
                 py="var(--default-spacing)"
                 className={styles.footer}
             >
-                <Help />
-                <DarkModeToggle />
+                <Image src="/developed-by-cgs-logo-color.png" h="2.4rem" />
+
+                <Group gap="xs">
+                    <DarkModeToggle />
+                    <Help />
+                </Group>
             </Group>
         </Paper>
     );
