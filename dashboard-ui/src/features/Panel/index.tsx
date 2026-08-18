@@ -137,14 +137,16 @@ const Panel: React.FC<Props> = (props) => {
                 py="var(--default-spacing)"
                 className={styles.footer}
             >
-                <Image
-                    src={
-                        colorScheme === 'light'
-                            ? '/cgs-logo-color.png'
-                            : '/cgs-logo-color-white.png'
-                    }
-                    h="2.4rem"
-                />
+                <a href="https://cgsearth.org">
+                    <Image
+                        src={
+                            colorScheme === 'light'
+                                ? '/cgs-logo-color.png'
+                                : '/cgs-logo-color-white.png'
+                        }
+                        h="2.4rem"
+                    />
+                </a>
 
                 <Group gap="xs">
                     <DarkModeToggle />
