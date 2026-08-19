@@ -23,30 +23,26 @@ logging:
 metadata:
   identification:
     title: Western Water Datahub
-    description: The Western Water Datahub is an implementation of OGC API - EDR supported by the United States Bureau of Reclamation.
+    description: 'The Western Water Data API provides streamlined access to water-related data for the western United States from multiple data providers and sources through Open Geospatial Consortium (OGC) Application Programming Interface (API) standards, making it easier to retrieve and work with data from a variety of providers and data sources. The API powers the Western Water Data Hub (https://wwdh.internetofwater.app/) and its Dashboard (https://dashboard.wwdh.internetofwater.app/), which offer a user-friendly interface for browsing data sources, previewing available data, and building API requests. See https://ksonda.github.io/wwdh-edr-docs/ for API documentation. Note: the API is currently in active development. Some features may not work as expected and the presentation and availability of data may change.'
     keywords:
-      - usbr
       - wwdh
       - iow
+      - edr
+      - water
     keywords_type: theme
     terms_of_service: https://opensource.org/license/MIT
-    url: https://github.com/internetofwater/WWDH
+    url: https://ksonda.github.io/wwdh-edr-docs/
   license:
     name: MIT License
     url: https://opensource.org/license/MIT
   provider:
-    name: Internet of Water
-    url: https://github.com/internetofwater/WWDH
+    name: Center for Geospatial Solutions
+    url: https://cgsearth.org
   contact:
-    address: 113 Brattle St
-    city: Cambridge
-    stateorprovince: Massachussetts
-    postalcode: 02138
-    country: USA
-    email: bwebb@lincolninst.edu
+    email: cgs@lincolninst.edu
     url: https://cgsearth.org
     role: pointOfContact
-    name: Benjamin Webb
+    name: Center for Geospatial Solutions
 
 resources:
   rise-edr:
@@ -702,7 +698,7 @@ resources:
     type: collection
     title: USBR Reservoir Storage Levels (Teacup)
     description: contains current and average storage levels from reservoirs in RISE (~191), USACE (6), USGS (6) and CDEC (1) with historical statistics based on 30 water years (1990-2020)
-    hidden: True
+    visibility: hidden
     provider-name:
       - DERIVED
     keywords:
@@ -877,7 +873,7 @@ resources:
     type: collection
     title: ResOpsUS 30 Year Storage Info for USACE Reservoirs
     description: contains data on all reservoirs maintained by the US Army Corps of Engineers (USACE) present within the ResOpsUS dataset. Each feature includes the 30 year averages for storage levels on each day. This data is historical and spans until 2020. Each feature is identified according to the National Inventory of Dams (NID) ID.
-    hidden: True
+    visibility: hidden
     provider-name:
       - DERIVED
     keywords:
