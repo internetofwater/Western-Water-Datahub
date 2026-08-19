@@ -92,11 +92,13 @@ const Help: React.FC = () => {
                 classNames={{ header: styles.modalHeader }}
                 opened={opened}
                 onClose={handleClose}
+                keepMounted
             >
                 <Tabs
                     value={helpTab}
                     className={`${styles.modalBody} ${styles.tabs}`}
                     onChange={(tab) => setHelpTab(tab as HelpTab)}
+                    keepMounted
                 >
                     <Tabs.List className={styles.tabsList} grow>
                         <Tabs.Tab value={HelpTab.About}>
