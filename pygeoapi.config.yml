@@ -23,7 +23,7 @@ logging:
 metadata:
   identification:
     title: Western Water Datahub
-    description: The Western Water Data API provides streamlined access to water-related data for the western United States from multiple data providers and sources through Open Geospatial Consortium (OGC) Application Programming Interface (API) standards, making it easier to retrieve and work with data from a variety of providers and data sources. The API powers the Western Water Data Hub (https://wwdh.internetofwater.app/) and its Dashboard (https://dashboard.wwdh.internetofwater.app/), which offer a user-friendly interface for browsing data sources, previewing available data, and building API requests. See https://ksonda.github.io/wwdh-edr-docs/ for API documentation. Note: the API is currently in active development. Some features may not work as expected and the presentation and availability of data may change.
+    description: 'The Western Water Data API provides streamlined access to water-related data for the western United States from multiple data providers and sources through Open Geospatial Consortium (OGC) Application Programming Interface (API) standards, making it easier to retrieve and work with data from a variety of providers and data sources. The API powers the Western Water Data Hub (https://wwdh.internetofwater.app/) and its Dashboard (https://dashboard.wwdh.internetofwater.app/), which offer a user-friendly interface for browsing data sources, previewing available data, and building API requests. See https://ksonda.github.io/wwdh-edr-docs/ for API documentation. Note: the API is currently in active development. Some features may not work as expected and the presentation and availability of data may change.'
     keywords:
       - wwdh
       - iow
