@@ -31,7 +31,7 @@
     justify-self: flex-start;
 }
 
-.betaDescription {
+.description {
     color: var(--mantine-color-default-color);
 }
 
@@ -65,6 +65,11 @@
     overflow: hidden;
 }
 
+.notification {
+    width: 70%;
+    max-width: calc(100% - 3.625rem);
+}
+
 .primaryWrapper {
     flex: 1;
     display: flex;
@@ -96,6 +101,6 @@
     }
 
     .notification {
-        max-width: calc(100svw - 3.625rem);
+        width: unset;
     }
 }
