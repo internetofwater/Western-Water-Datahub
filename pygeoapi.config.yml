@@ -698,7 +698,7 @@ resources:
     type: collection
     title: USBR Reservoir Storage Levels (Teacup)
     description: contains current and average storage levels from reservoirs in RISE (~191), USACE (6), USGS (6) and CDEC (1) with historical statistics based on 30 water years (1990-2020)
-    hidden: True
+    visibility: hidden
     provider-name:
       - DERIVED
     keywords:
@@ -873,7 +873,7 @@ resources:
     type: collection
     title: ResOpsUS 30 Year Storage Info for USACE Reservoirs
     description: contains data on all reservoirs maintained by the US Army Corps of Engineers (USACE) present within the ResOpsUS dataset. Each feature includes the 30 year averages for storage levels on each day. This data is historical and spans until 2020. Each feature is identified according to the National Inventory of Dams (NID) ID.
-    hidden: True
+    visibility: hidden
     provider-name:
       - DERIVED
     keywords:
