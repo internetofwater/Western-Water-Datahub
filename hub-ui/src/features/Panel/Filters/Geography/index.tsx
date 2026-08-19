@@ -3,27 +3,26 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useState } from "react";
-import { Box, Group, Stack, Title, VisuallyHidden } from "@mantine/core";
-import Info from "@/assets/Info";
-import Tooltip from "@/components/Tooltip";
-import { Basin } from "@/features/Panel/Filters/Geography/Basin";
-import { GeographySelector } from "@/features/Panel/Filters/Geography/GeographySelector";
-import { Region } from "@/features/Panel/Filters/Geography/Region";
-import { State } from "@/features/Panel/Filters/Geography/State";
-import styles from "@/features/Panel/Panel.module.css";
-import mainManager from "@/managers/Main.init";
+import { useState } from 'react';
+import { Box, Group, Stack, Title, VisuallyHidden } from '@mantine/core';
+import Info from '@/assets/Info';
+import Tooltip from '@/components/Tooltip';
+import { Basin } from '@/features/Panel/Filters/Geography/Basin';
+import { GeographySelector } from '@/features/Panel/Filters/Geography/GeographySelector';
+import { State } from '@/features/Panel/Filters/Geography/State';
+import styles from '@/features/Panel/Panel.module.css';
+import mainManager from '@/managers/Main.init';
 
-type Geography = "region" | "basin" | "state";
+type Geography = 'region' | 'basin' | 'state';
 
 const Geography: React.FC = () => {
-  const [geography, setGeography] = useState<Geography>("region");
+  const [geography, setGeography] = useState<Geography>('basin');
 
   const helpText =
-    "Add a geographic filter to limit locations to a designated region, basin, or state.";
+    'Add a geographic filter to limit locations to a designated region, basin, or state.';
 
   const handleChange = (value: string) => {
-    if (["region", "basin", "state"].includes(value)) {
+    if (['region', 'basin', 'state'].includes(value)) {
       setGeography(value as Geography);
       mainManager.removeGeographyFilter();
     }
@@ -40,22 +39,16 @@ const Geography: React.FC = () => {
         </Group>
       </Tooltip>
       <VisuallyHidden>{helpText}</VisuallyHidden>
-      <Box
+      {/* <Box
         component="span"
         style={{ display: geography === "region" ? "block" : "none" }}
       >
         <Region />
-      </Box>
-      <Box
-        component="span"
-        style={{ display: geography === "basin" ? "block" : "none" }}
-      >
+      </Box> */}
+      <Box component="span" style={{ display: geography === 'basin' ? 'block' : 'none' }}>
         <Basin />
       </Box>
-      <Box
-        component="span"
-        style={{ display: geography === "state" ? "block" : "none" }}
-      >
+      <Box component="span" style={{ display: geography === 'state' ? 'block' : 'none' }}>
         <State />
       </Box>
       <GeographySelector geography={geography} onChange={handleChange} />
