@@ -973,17 +973,22 @@ export const contacts: Contact[] = [
                 This application follows{' '}
                 <Anchor
                     href="https://internetofwater.org/internet-of-water-principles/"
+                    target="_blank"
                     c="blue.8"
                 >
                     Internet of Water Principles
                 </Anchor>{' '}
                 for interoperable water data. Application design and development
                 provided by the{' '}
-                <Anchor href="https://cgsearth.org/" c="blue.8">
+                <Anchor href="https://cgsearth.org/" target="_blank" c="blue.8">
                     Center for Geospatial Solutions
                 </Anchor>{' '}
                 at the{' '}
-                <Anchor href="https://www.lincolninst.edu/" c="blue.8">
+                <Anchor
+                    href="https://www.lincolninst.edu/"
+                    target="_blank"
+                    c="blue.8"
+                >
                     Lincoln Institute of Land Policy
                 </Anchor>
                 .
@@ -998,7 +1003,12 @@ export const contacts: Contact[] = [
             <Text {...content}>
                 For questions or feedback on the Western Water Data Dashboard,
                 please contact the Bureau of Reclamation at{' '}
-                <Anchor {...content} href="data@usbr.gov" c="blue.8">
+                <Anchor
+                    {...content}
+                    href="data@usbr.gov"
+                    target="_blank"
+                    c="blue.8"
+                >
                     data@usbr.gov
                 </Anchor>
                 .
