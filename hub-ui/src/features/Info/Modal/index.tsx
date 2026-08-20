@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { Modal as ModalComponent, Tabs, Text } from '@mantine/core';
 import styles from '@/features/Info/Info.module.css';
 import { About } from '@/features/Info/Modal/About';
+import { Contact } from '@/features/Info/Modal/Contact';
 import { FAQ } from '@/features/Info/Modal/FAQ';
 import { Glossary } from '@/features/Info/Modal/Glossary';
 import useSessionStore from '@/stores/session';
@@ -58,7 +59,7 @@ const Modal: React.FC = () => {
           <Tabs.Tab disabled value={EHelpTab.FAQ}>
             <Text {...tabStyle}>Frequently Asked Questions</Text>
           </Tabs.Tab>
-          <Tabs.Tab disabled value={EHelpTab.Contact}>
+          <Tabs.Tab value={EHelpTab.Contact}>
             <Text {...tabStyle}>Contact Us</Text>
           </Tabs.Tab>
         </Tabs.List>
@@ -73,7 +74,7 @@ const Modal: React.FC = () => {
           <FAQ />
         </Tabs.Panel>
         <Tabs.Panel value={EHelpTab.Contact}>
-          <></>
+          <Contact />
         </Tabs.Panel>
       </Tabs>
     </ModalComponent>

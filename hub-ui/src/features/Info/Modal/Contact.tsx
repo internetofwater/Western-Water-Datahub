@@ -1,0 +1,77 @@
+/**
+ * Copyright 2025 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Anchor, Box, Flex, Grid, Paper, Stack, Text } from '@mantine/core';
+import styles from '@/features/Info/Info.module.css';
+import { contacts } from '@/features/Info/Modal/consts';
+
+export const Contact: React.FC = () => {
+  return (
+    <Stack gap="var(--default-spacing)">
+      <Text>
+        The Western Water Data Hub is built by the{' '}
+        <Anchor
+          href="https://cgsearth.org/"
+          className={styles.contactLink}
+          title="Landing page of the Center for Geospatial Solutions"
+          c="blue.8"
+          target="_blank"
+        >
+          Center for Geospatial Solutions
+        </Anchor>{' '}
+        with support from the{' '}
+        <Anchor
+          href="https://www.usbr.gov/"
+          className={styles.contactLink}
+          title="Landing page of U.S. Department of the Interior Bureau of Reclamation"
+          c="blue.8"
+          target="_blank"
+        >
+          U.S. Department of the Interior Bureau of Reclamation
+        </Anchor>
+        .
+      </Text>
+      <Grid mt="lg" gutter="lg">
+        {contacts.map((contact) => (
+          <Grid.Col
+            key={`contact-${contact.id}`}
+            span={contact.featured ? 12 : { base: 12, sm: 6 }}
+          >
+            <Paper className={styles.contactWrapper} shadow="xs" p="md" h="100%">
+              <Flex
+                h="100%"
+                direction={contact.featured ? { base: 'column', sm: 'row' } : 'column'}
+                justify="space-between"
+                gap="md"
+              >
+                <Stack gap="md">
+                  {contact.image && <Box className={styles.contactImage}>{contact.image}</Box>}
+
+                  <Text fw={700}>{contact.role}</Text>
+
+                  {contact.body}
+                </Stack>
+
+                {contact.link && (
+                  <Anchor
+                    className={styles.contactLink}
+                    href={contact.link.href}
+                    title={contact.link.text}
+                    size="sm"
+                    c="blue.8"
+                    target="_blank"
+                    lineClamp={1}
+                  >
+                    {contact.link.text}
+                  </Anchor>
+                )}
+              </Flex>
+            </Paper>
+          </Grid.Col>
+        ))}
+      </Grid>
+    </Stack>
+  );
+};

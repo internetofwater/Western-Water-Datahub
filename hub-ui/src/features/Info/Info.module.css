@@ -3,6 +3,27 @@
  * SPDX-License-Identifier: MIT
  */
 
+.contactImage {
+  height: 3.5rem;
+  flex-shrink: 0;
+}
+
+.contactImage > * {
+  height: 100%;
+  width: auto;
+  display: block;
+}
+
+.contactLink {
+  white-space: nowrap;
+}
+
+.contactWrapper {
+  color: #000;
+  background-color: var(--mantine-color-gray-0);
+  border: 2px solid var(--tab-border-color);
+}
+
 .body {
   width: 100%;
   padding-left: calc(var(--default-spacing) * 2);
