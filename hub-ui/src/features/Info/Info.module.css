@@ -3,12 +3,26 @@
  * SPDX-License-Identifier: MIT
  */
 
-.infoButton svg[data-identifier="help-svg"] {
+.body {
+  width: 100%;
+  padding-left: calc(var(--default-spacing) * 2);
+  padding-right: calc(var(--default-spacing) * 2);
+  padding-bottom: calc(var(--default-spacing) * 2);
+}
+
+.infoButton svg[data-identifier='help-svg'] {
   fill: var(--mantine-color-white);
   width: 2rem;
   height: auto;
 }
 
-.tabList {
+.tabs {
+  width: 100%;
+}
+
+.list {
+  position: sticky;
+  top: 0;
   margin-bottom: calc(var(--default-spacing) * 2);
+  background: var(--mantine-color-body);
 }
