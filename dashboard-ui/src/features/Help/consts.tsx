@@ -7,6 +7,7 @@ import { ReactNode } from 'react';
 import {
     Anchor,
     AnchorProps,
+    Image,
     List,
     Stack,
     Text,
@@ -952,29 +953,76 @@ export const questions: QA[] = [
 type Contact = {
     id: string;
     image?: ReactNode;
+    role: string;
+    featured?: boolean;
     body: ReactNode;
-    link?: string;
+    link?: {
+        text: string;
+        href: string;
+    };
 };
 
 export const contacts: Contact[] = [
     {
-        id: 'github',
-        image: <GitHub />,
-        body: 'Access the repository containing the source code for the Western Water Datahub. Contribute new features, report issues, and learn more about how this application was built.',
-        link: 'https://github.com/internetofwater/Western-Water-Datahub',
+        id: 'cgs',
+        image: <Image src="/cgs-logo-color.png" />,
+        role: 'Design & Development',
+        featured: true,
+        body: (
+            <Text {...content}>
+                This application follows{' '}
+                <Anchor
+                    href="https://internetofwater.org/internet-of-water-principles/"
+                    c="blue.8"
+                >
+                    Internet of Water Principles
+                </Anchor>{' '}
+                for interoperable water data. Application design and development
+                provided by the{' '}
+                <Anchor href="https://cgsearth.org/" c="blue.8">
+                    Center for Geospatial Solutions
+                </Anchor>{' '}
+                at the{' '}
+                <Anchor href="https://www.lincolninst.edu/" c="blue.8">
+                    Lincoln Institute of Land Policy
+                </Anchor>
+                .
+            </Text>
+        ),
     },
     {
         id: 'email-bor',
+        image: <Image src="/BofR-logo-dark.png" />,
+        role: 'Questions & Feedback',
         body: (
             <Text {...content}>
                 For questions or feedback on the Western Water Data Dashboard,
                 please contact the Bureau of Reclamation at{' '}
-                <Text {...content} c="blue" span>
+                <Anchor {...content} href="data@usbr.gov" c="blue.8">
                     data@usbr.gov
-                </Text>
+                </Anchor>
                 .
             </Text>
         ),
-        link: 'mailto:data@usbr.gov?subject=%5BUSBR%20Dashboard%20Feedback%5D%20-%20Placeholder&body=Please%20update%20the%20%22Placeholder%22%20portion%20of%20the%20subject%20line.%20Keeping%20%22%5BUSBR%20Dashboard%20Feedback%5D%22%20in%20the%20subject%20will%20help%20us%20get%20back%20to%20you%20sooner.%0D%0A%0D%0APlease%20replace%20the%20body%20of%20this%20email%20with%20your%20feedback.%20If%20you%20are%20encountering%20an%20issue%2C%20including%20attachments%20such%20as%20screenshots%20or%20screen%20recordings%20will%20help%20the%20development%20team%20resolve%20it.',
+        link: {
+            text: 'Email Bureau of Reclamation',
+            href: 'mailto:data@usbr.gov?subject=%5BUSBR%20Dashboard%20Feedback%5D%20-%20Placeholder&body=Please%20update%20the%20%22Placeholder%22%20portion%20of%20the%20subject%20line.%20Keeping%20%22%5BUSBR%20Dashboard%20Feedback%5D%22%20in%20the%20subject%20will%20help%20us%20get%20back%20to%20you%20sooner.%0D%0A%0D%0APlease%20replace%20the%20body%20of%20this%20email%20with%20your%20feedback.%20If%20you%20are%20encountering%20an%20issue%2C%20including%20attachments%20such%20as%20screenshots%20or%20screen%20recordings%20will%20help%20the%20development%20team%20resolve%20it.',
+        },
+    },
+    {
+        id: 'github',
+        image: <GitHub />,
+        role: 'Source Code & Contributions',
+        body: (
+            <Text {...content}>
+                Access the repository containing the source code for the Western
+                Water Datahub. Contribute new features, report issues, and learn
+                more about how this application was built.
+            </Text>
+        ),
+        link: {
+            text: 'View Repository',
+            href: 'https://github.com/internetofwater/Western-Water-Datahub',
+        },
     },
 ];

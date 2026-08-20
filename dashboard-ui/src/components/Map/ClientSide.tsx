@@ -66,13 +66,14 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
         useMap(id);
 
     useEffect(() => {
+        const year = new Date().getFullYear();
+
         if (!map && mapContainerRef.current) {
             mapboxgl.accessToken = accessToken;
             const newMap = new mapboxgl.Map({
                 ...options,
                 container: mapContainerRef.current,
-                customAttribution:
-                    'Powered by <a href="https://www.esri.com" >Esri</a>',
+                customAttribution: `© ${year} <a href="https://cgsearth.org">Center for Geospatial Solutions</a> at <a href="https://www.lincolninst.edu">Lincoln Institute of Land Policy</a> | Powered by <a href="https://www.esri.com" >Esri</a>`,
             });
             const hoverPopup = new mapboxgl.Popup({
                 closeButton: false,
