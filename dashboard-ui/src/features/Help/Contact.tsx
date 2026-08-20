@@ -3,58 +3,59 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Box, Grid, Group, Paper, Text } from '@mantine/core';
-import { contacts, content } from '@/features/Help/consts';
+import { Anchor, Box, Flex, Grid, Paper, Stack, Text } from '@mantine/core';
+import { contacts } from '@/features/Help/consts';
 import styles from '@/features/Help/Help.module.css';
 
 export const Contact: React.FC = () => {
     return (
-        <Grid
-            mt="calc(var(--default-spacing) * 2)"
-            gutter="var(--default-spacing)"
-        >
+        <Grid mt="lg" gutter="lg">
             {contacts.map((contact) => (
-                <Grid.Col key={`contact-${contact.id}`} span={6}>
+                <Grid.Col
+                    key={`contact-${contact.id}`}
+                    span={contact.featured ? 12 : { base: 12, sm: 6 }}
+                >
                     <Paper
-                        component="a"
-                        href={contact.link}
                         className={styles.contactWrapper}
-                        target="_blank"
-                        shadow="xl"
-                        p="calc(var(--default-spacing) / 2)"
+                        shadow="xs"
+                        p="md"
+                        h="100%"
                     >
-                        <Box className={styles.contact}>
-                            <Group
-                                gap="var(--default-spacing)"
-                                align="flex-start"
-                                grow
-                            >
+                        <Flex
+                            h="100%"
+                            direction={
+                                contact.featured
+                                    ? { base: 'column', sm: 'row' }
+                                    : 'column'
+                            }
+                            justify="space-between"
+                            gap="md"
+                        >
+                            <Stack gap="md">
                                 {contact.image && (
                                     <Box className={styles.contactImage}>
                                         {contact.image}
                                     </Box>
                                 )}
-                                {typeof contact.body === 'object' ? (
-                                    contact.body
-                                ) : (
-                                    <Text
-                                        {...content}
-                                        className={styles.contactBody}
-                                    >
-                                        {contact.body}
-                                    </Text>
-                                )}
-                            </Group>
-                            <Text
-                                size="xs"
-                                ta="center"
-                                title={contact.link}
-                                lineClamp={1}
-                                className={styles.contactLink}
-                            >
-                                {contact.link}
-                            </Text>
-                        </Box>
+
+                                <Text fw={700}>{contact.role}</Text>
+
+                                {contact.body}
+                            </Stack>
+
+                            {contact.link && (
+                                <Anchor
+                                    className={styles.contactLink}
+                                    href={contact.link.href}
+                                    title={contact.link.text}
+                                    size="sm"
+                                    c="blue.8"
+                                    lineClamp={1}
+                                >
+                                    {contact.link.text}
+                                </Anchor>
+                            )}
+                        </Flex>
                     </Paper>
                 </Grid.Col>
             ))}
