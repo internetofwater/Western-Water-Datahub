@@ -3,32 +3,32 @@
  * SPDX-License-Identifier: MIT
  */
 
-import dayjs from "dayjs";
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Feature } from "geojson";
-import { Button, Group, Progress } from "@mantine/core";
-import Tooltip from "@/components/Tooltip";
-import { StringIdentifierCollections } from "@/consts/collections";
-import { Charts } from "@/features/Charts";
-import DateTime from "@/features/DateTime";
-import styles from "@/features/Download/Download.module.css";
-import { Parameter } from "@/features/Popup";
-import mainManager from "@/managers/Main.init";
-import notificationManager from "@/managers/Notification.init";
-import { TZipLink, ZipService } from "@/services/csv.service";
+import dayjs from 'dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Feature } from 'geojson';
+import { Button, Group, Progress } from '@mantine/core';
+import Tooltip from '@/components/Tooltip';
+import { StringIdentifierCollections } from '@/consts/collections';
+import { Charts } from '@/features/Charts';
+import DateTime from '@/features/DateTime';
+import styles from '@/features/Download/Download.module.css';
+import { Parameter } from '@/features/Popup';
+import mainManager from '@/managers/Main.init';
+import notificationManager from '@/managers/Notification.init';
+import { TZipLink, ZipService } from '@/services/csv.service';
 import {
   CoverageCollection,
   CoverageJSON,
   ICollection,
   IGetLocationParams,
-} from "@/services/edr.service";
-import wwdhService from "@/services/init/wwdh.init";
-import { TLayer, TLocation } from "@/stores/main/types";
-import { ENotificationType } from "@/stores/session/types";
-import { getIdStore, getLabel } from "@/utils/getLabel";
-import { getParameterUnit } from "@/utils/parameters";
-import { buildLocationUrl } from "@/utils/url";
+} from '@/services/edr.service';
+import wwdhService from '@/services/init/wwdh.init';
+import { TLayer, TLocation } from '@/stores/main/types';
+import { ENotificationType } from '@/stores/session/types';
+import { getIdStore, getLabel } from '@/utils/getLabel';
+import { getParameterUnit } from '@/utils/parameters';
+import { buildLocationUrl } from '@/utils/url';
 
 dayjs.extend(isSameOrBefore);
 
@@ -40,8 +40,8 @@ type Props = {
 export const LocationsChart: React.FC<Props> = (props) => {
   const { layer, locations } = props;
 
-  const [from, setFrom] = useState<TLayer["from"]>(layer.from);
-  const [to, setTo] = useState<TLayer["to"]>(layer.to);
+  const [from, setFrom] = useState<TLayer['from']>(layer.from);
+  const [to, setTo] = useState<TLayer['to']>(layer.to);
   const [parameters, setParameters] = useState<Parameter[]>([]);
   const [progress, setProgress] = useState<number>(0);
 
@@ -50,16 +50,12 @@ export const LocationsChart: React.FC<Props> = (props) => {
   const controller = useRef<AbortController>(null);
   const isMounted = useRef(true);
 
-  const isStringIdentifierCollection = StringIdentifierCollections.includes(
-    layer.collectionId,
-  );
+  const isStringIdentifierCollection = StringIdentifierCollections.includes(layer.collectionId);
 
   const organizedLocations = useMemo(() => {
     return locations.map((location) => {
       const id = String(
-        isStringIdentifierCollection
-          ? (getIdStore(location) ?? location.id)
-          : location.id,
+        isStringIdentifierCollection ? (getIdStore(location) ?? location.id) : location.id
       );
       const label = layer.label ? (getLabel(location, layer.label) ?? id) : id;
       return { id, label };
@@ -71,27 +67,21 @@ export const LocationsChart: React.FC<Props> = (props) => {
 
     for (const location of organizedLocations) {
       labels[location.id] =
-        location.label !== location.id
-          ? `${location.label} (${location.id})`
-          : location.label;
+        location.label !== location.id ? `${location.label} (${location.id})` : location.label;
     }
     return labels;
   };
 
   const getData = (
-    collectionId: ICollection["id"],
-    locationId: TLocation["id"],
+    collectionId: ICollection['id'],
+    locationId: TLocation['id'],
     params: IGetLocationParams,
-    signal?: AbortSignal,
+    signal?: AbortSignal
   ) =>
-    wwdhService.getLocation<CoverageCollection | CoverageJSON>(
-      collectionId,
-      locationId,
-      {
-        signal,
-        params,
-      },
-    );
+    wwdhService.getLocation<CoverageCollection | CoverageJSON>(collectionId, locationId, {
+      signal,
+      params,
+    });
 
   const getId = (feature: Feature) => {
     if (isStringIdentifierCollection) {
@@ -102,14 +92,14 @@ export const LocationsChart: React.FC<Props> = (props) => {
   };
 
   const getFileName = (locationId: string, layer: TLayer) => {
-    let name = `data-${locationId}-${layer.parameters.join("_")}`;
+    let name = `data-${locationId}-${layer.parameters.join('_')}`;
 
     if (layer.from && dayjs(layer.from).isValid()) {
-      name += `-${dayjs(layer.from).format("MM_DD_YYYY")}`;
+      name += `-${dayjs(layer.from).format('MM_DD_YYYY')}`;
     }
 
     if (layer.to && dayjs(layer.to).isValid()) {
-      name += `-${dayjs(layer.to).format("MM_DD_YYYY")}`;
+      name += `-${dayjs(layer.to).format('MM_DD_YYYY')}`;
     }
 
     return `${name}.csv`;
@@ -123,7 +113,7 @@ export const LocationsChart: React.FC<Props> = (props) => {
       from,
       to,
       true,
-      true,
+      true
     );
     const fileName = getFileName(locationId, layer);
     return { url, fileName };
@@ -144,13 +134,9 @@ export const LocationsChart: React.FC<Props> = (props) => {
 
     let count = 0;
 
-    const handleEntryProgress = (
-      name: string,
-      loaded: number,
-      total?: number,
-    ) => {
+    const handleEntryProgress = (name: string, loaded: number, total?: number) => {
       console.log(
-        `Generated file: ${name}\n File size: ${loaded} bytes${typeof total === "number" ? `, total zip size: ${total} bytes.` : "."}`,
+        `Generated file: ${name}\n File size: ${loaded} bytes${typeof total === 'number' ? `, total zip size: ${total} bytes.` : '.'}`
       );
       const progress = (count / links.length) * 100;
       count += 1;
@@ -168,24 +154,20 @@ export const LocationsChart: React.FC<Props> = (props) => {
         notificationManager.show(
           `An error occurred generating file: ${name}. See console for further details.`,
           ENotificationType.Error,
-          10000,
+          10000
         );
-        console.error("Error", name, error);
+        console.error('Error', name, error);
         return true;
       },
     });
 
     if (isMounted.current) {
-      notificationManager.show(
-        "All CSV's generated",
-        ENotificationType.Success,
-        10000,
-      );
+      notificationManager.show("All CSV's generated", ENotificationType.Success, 10000);
 
       const objectUrl = URL.createObjectURL(zipBlob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = objectUrl;
-      a.download = `${layer.collectionId}-${locations.map((feature) => getId(feature)).join("_")}`;
+      a.download = `${layer.collectionId}-${locations.map((feature) => getId(feature)).join('_')}`;
       document.body.appendChild(a);
       a.click();
       URL.revokeObjectURL(objectUrl);
@@ -202,10 +184,7 @@ export const LocationsChart: React.FC<Props> = (props) => {
       const paramObjects = Object.values(collection?.parameter_names ?? {});
 
       const parameters = paramObjects
-        .filter(
-          (object) =>
-            object.type === "Parameter" && layer.parameters.includes(object.id),
-        )
+        .filter((object) => object.type === 'Parameter' && layer.parameters.includes(object.id))
         .map((object) => ({
           id: object.id,
           name: object.observedProperty.label.en,
@@ -216,14 +195,12 @@ export const LocationsChart: React.FC<Props> = (props) => {
     }
   }, [layer]);
 
-  const handleFromChange = (from: TLayer["from"]) => setFrom(from);
-  const handleToChange = (to: TLayer["to"]) => setTo(to);
+  const handleFromChange = (from: TLayer['from']) => setFrom(from);
+  const handleToChange = (to: TLayer['to']) => setTo(to);
 
-  const isValidRange =
-    from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
+  const isValidRange = from && to ? dayjs(from).isSameOrBefore(dayjs(to)) : true;
 
-  const disabled =
-    organizedLocations.length === 0 || isLoading || !isValidRange;
+  const disabled = organizedLocations.length === 0 || isLoading || !isValidRange;
 
   const organizedLabels = useMemo(() => organizeLabels(), [organizedLocations]);
 
@@ -241,6 +218,7 @@ export const LocationsChart: React.FC<Props> = (props) => {
           className={styles.bigChart}
           tabs
           tabHeight={31.875}
+          parserOptions={{ axisStyle: 'time' }}
         />
       )}
 
@@ -257,17 +235,12 @@ export const LocationsChart: React.FC<Props> = (props) => {
         <Tooltip
           label={
             isLoading
-              ? "Please wait for download to finish."
+              ? 'Please wait for download to finish.'
               : `Download the parameter data for all selected locations in CSV format.`
           }
           multiline
         >
-          <Button
-            size="sm"
-            disabled={disabled}
-            data-disabled={disabled}
-            onClick={handleGetAllCSV}
-          >
+          <Button size="sm" disabled={disabled} data-disabled={disabled} onClick={handleGetAllCSV}>
             Download All
           </Button>
         </Tooltip>

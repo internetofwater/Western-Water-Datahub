@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
+import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 export type Series<T extends GeoJsonProperties> = {
   name: string;
@@ -12,11 +12,13 @@ export type Series<T extends GeoJsonProperties> = {
 
 export type PrettyLabel = { value: string; label: string };
 
+type TValue = string | number | null;
+
 // TODO: consilidate, make generic?
 export type EChartsSeries = {
   name: string;
   parameter: string;
   unit: string;
-  type: "line";
-  data: number[];
+  type: 'line';
+  data: (TValue[] | TValue)[];
 };
