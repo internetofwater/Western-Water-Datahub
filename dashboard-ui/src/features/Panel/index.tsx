@@ -10,6 +10,7 @@ import {
     AccordionPanel,
     ActionIcon,
     Group,
+    Image,
     Paper,
     Title,
 } from '@mantine/core';
@@ -25,6 +26,8 @@ import { useMediaQuery } from '@mantine/hooks';
 import useSessionStore from '@/stores/session';
 import { Overlay } from '@/stores/session/types';
 import { MOBILE_MEDIA_QUERY } from '@/features/Main/consts';
+import { Badge } from '@/components/Badge';
+import useMainStore from '@/stores/main';
 
 type Props = {
     accessToken: string;
@@ -41,6 +44,8 @@ const Panel: React.FC<Props> = (props) => {
     const mobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
     const firstClose = useRef(true);
+
+    const colorScheme = useMainStore((state) => state.colorScheme);
 
     useEffect(() => {
         if (!mobile) {
@@ -91,6 +96,7 @@ const Panel: React.FC<Props> = (props) => {
             className={styles.panel}
             style={{ display: show ? 'block' : 'none' }}
         >
+            <Badge />
             <Header />
             <ActionIcon
                 size="sm"
@@ -131,8 +137,21 @@ const Panel: React.FC<Props> = (props) => {
                 py="var(--default-spacing)"
                 className={styles.footer}
             >
-                <Help />
-                <DarkModeToggle />
+                <a href="https://cgsearth.org">
+                    <Image
+                        src={
+                            colorScheme === 'light'
+                                ? '/cgs-logo-color.png'
+                                : '/cgs-logo-color-white.png'
+                        }
+                        h="2.4rem"
+                    />
+                </a>
+
+                <Group gap="xs">
+                    <DarkModeToggle />
+                    <Help />
+                </Group>
             </Group>
         </Paper>
     );
