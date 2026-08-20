@@ -61,6 +61,7 @@ export const Contact: React.FC = () => {
                     title={contact.link.text}
                     size="sm"
                     c="blue.8"
+                    target="_blank"
                     lineClamp={1}
                   >
                     {contact.link.text}
