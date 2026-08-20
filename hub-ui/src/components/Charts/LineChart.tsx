@@ -3,24 +3,26 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useMemo } from "react";
-import ReactEChartsCore from "echarts-for-react/lib/core";
-import { LineChart as _LineChart } from "echarts/charts";
+import { useMemo } from 'react';
+import ReactEChartsCore from 'echarts-for-react/lib/core';
+import { LineChart as _LineChart } from 'echarts/charts';
 import {
   DatasetComponent,
+  DataZoomComponent,
+  DataZoomSliderComponent,
   GridComponent,
   LegendComponent,
   TitleComponent,
   ToolboxComponent,
   TooltipComponent,
-} from "echarts/components";
-import * as echarts from "echarts/core";
-import { CanvasRenderer } from "echarts/renderers";
-import styles from "@/components/Charts/Charts.module.css";
-import { EChartsSeries, PrettyLabel } from "@/components/Charts/types";
-import { CoverageChartService } from "@/services/coverageJSON/coverageChart.service";
-import { CoverageCollection, CoverageJSON } from "@/services/edr.service";
-import { isCoverageCollection } from "@/utils/isTypeObject";
+} from 'echarts/components';
+import * as echarts from 'echarts/core';
+import { CanvasRenderer } from 'echarts/renderers';
+import styles from '@/components/Charts/Charts.module.css';
+import { EChartsSeries, PrettyLabel } from '@/components/Charts/types';
+import { TCoverageOptions, XAXisOption } from '@/services/coverageJSON/types';
+import { CoverageCollection, CoverageJSON } from '@/services/edr.service';
+import { coverageChartService } from '@/services/init/coverage.init';
 
 echarts.use([
   TitleComponent,
@@ -29,6 +31,8 @@ echarts.use([
   DatasetComponent,
   LegendComponent,
   ToolboxComponent,
+  DataZoomComponent,
+  DataZoomSliderComponent,
   _LineChart,
   CanvasRenderer,
 ]);
@@ -39,11 +43,18 @@ type Props = {
   legend?: boolean;
   filename?: string;
   prettyLabels?: PrettyLabel[];
-  theme?: "light" | "dark";
+  theme?: 'light' | 'dark';
   legendEntries?: string[];
   seriesLabels?: string[];
-  chosenParameter?: string;
+  chosenParameter?: string; // TODO: move these into parserOptions and deprecate
   chosenUnit?: string;
+  parserOptions?: TCoverageOptions;
+  useDataZoom?: boolean;
+  xAxisOverride?: XAXisOption;
+};
+
+const extractPrettyLabel = (target: string, prettyLabels: PrettyLabel[] = []): string => {
+  return prettyLabels.find((pl) => pl.value === target)?.label ?? target;
 };
 
 const LineChart = (props: Props) => {
@@ -53,51 +64,45 @@ const LineChart = (props: Props) => {
     legend = false,
     filename,
     prettyLabels = [],
-    theme = "light",
+    theme = 'light',
     legendEntries = [],
     seriesLabels,
     chosenParameter,
     chosenUnit,
+    parserOptions,
+    useDataZoom = false,
+    xAxisOverride,
   } = props;
 
   const option: echarts.EChartsCoreOption = useMemo(() => {
     const allSeries: EChartsSeries[] = [];
     const legendNames: string[] = [];
-    let dates: string[] = [];
+    let x;
+
+    const parameter = chosenParameter ?? parserOptions?.chosenParameter;
+    const unit = chosenUnit ?? parserOptions?.chosenUnit;
 
     // Validate seriesLabels alignment
-    const useSeriesLabels =
-      Array.isArray(seriesLabels) && seriesLabels.length === data.length;
+    const useSeriesLabels = Array.isArray(seriesLabels) && seriesLabels.length === data.length;
 
     if (seriesLabels && !useSeriesLabels) {
       console.warn(
-        "[LineChart] `seriesLabels` length does not match `data` length; ignoring seriesLabels.",
+        '[LineChart] `seriesLabels` length does not match `data` length; ignoring seriesLabels.'
       );
     }
 
     data.forEach((entry, coverageIdx) => {
-      // Determine x-axis dates for this coverage entry
-      dates = isCoverageCollection(entry)
-        ? ((entry.coverages[0]?.domain.axes.t as { values: string[] })
-            ?.values ?? dates)
-        : ((entry.domain.axes.t as { values: string[] })?.values ?? dates);
+      const chartData = coverageChartService.coverageJSONToSeries(entry, {
+        ...parserOptions,
+      });
 
-      let seriesForEntry = new CoverageChartService().coverageJSONToSeries(
-        entry,
-        {
-          chosenParameter,
-          chosenUnit,
-        },
-      );
+      let { series } = chartData;
+      // TODO: determine if/how to handle differences in the x axis
+      x = chartData.x;
 
-      if (
-        prettyLabels.length > 0 &&
-        prettyLabels.length >= seriesForEntry.length
-      ) {
-        seriesForEntry = seriesForEntry.map((entrySeries) => {
-          const pretty =
-            prettyLabels.find((pl) => pl.value === entrySeries.name)?.label ??
-            entrySeries.name;
+      if (prettyLabels.length > 0 && prettyLabels.length >= series.length) {
+        series = series.map((entrySeries) => {
+          const pretty = extractPrettyLabel(entrySeries.name, prettyLabels);
           return {
             ...entrySeries,
             name: pretty,
@@ -108,18 +113,18 @@ const LineChart = (props: Props) => {
       // Apply the label for this series
       if (useSeriesLabels) {
         const coverageLabel = seriesLabels![coverageIdx];
-        seriesForEntry = seriesForEntry.map((series, index) => {
+        series = series.map((series, index) => {
           const finalName = `${series.name} - ${coverageLabel}`;
 
           // Construct a stable id
           // This gets used to determine which series need to update
           const stableId = [
-            chosenParameter ?? "param",
-            chosenUnit ?? "unit",
+            parameter ?? 'param',
+            unit ?? 'unit',
             coverageLabel ?? `cov-${coverageIdx}`,
             series.name,
             index,
-          ].join("|");
+          ].join('|');
 
           legendNames.push(finalName);
           return {
@@ -129,10 +134,10 @@ const LineChart = (props: Props) => {
           };
         });
       } else {
-        seriesForEntry.forEach((s) => legendNames.push(s.name));
+        series.forEach((s) => legendNames.push(s.name));
       }
 
-      allSeries.push(...seriesForEntry);
+      allSeries.push(...series);
     });
 
     const computedLegendData =
@@ -142,45 +147,74 @@ const LineChart = (props: Props) => {
           ? prettyLabels.map((pl) => pl.label)
           : legendEntries;
 
+    const name =
+      parameter || unit
+        ? { name: extractPrettyLabel(String(parameter ?? unit), prettyLabels) }
+        : {};
+
+    const dataZoomFeature = useDataZoom
+      ? {
+          // dataZoom: { // This Adds the chart buttons, leaving commented for now
+          //   yAxisIndex: 'none',
+          // },
+          restore: {},
+        }
+      : {};
+
+    const dataZoom = useDataZoom
+      ? {
+          dataZoom: [
+            {
+              type: 'slider',
+              xAxisIndex: 0,
+              top: 10,
+              start: 0,
+              end: 100,
+            },
+          ],
+        }
+      : {};
+
     return {
       title: title ? { text: title } : undefined,
       tooltip: {
-        trigger: "axis",
+        trigger: 'axis',
       },
       legend: legend
         ? {
             data: computedLegendData,
-            top: "bottom",
+            top: 'bottom',
             bottom: 0,
-            left: "center",
-            orient: "horizontal",
+            left: 'center',
+            orient: 'horizontal',
           }
         : undefined,
       toolbox: {
         feature: {
+          ...dataZoomFeature,
           saveAsImage: {
             show: true,
-            type: "png",
-            name: filename ? filename : title ? title : "line-chart",
+            type: 'png',
+            name: filename ? filename : title ? title : 'line-chart',
           },
         },
       },
       grid: {
-        left: "3%",
-        right: "4%",
-        top: "12%",
-        bottom: "20%",
-        containLabel: true,
+        left: '8%',
+        right: '5%',
+        top: useDataZoom ? '18%' : '12%',
+        bottom: useDataZoom ? '15%' : '20%',
       },
-      xAxis: {
-        type: "category",
-        boundaryGap: true,
-        data: dates,
-      },
+      xAxis: x,
       yAxis: {
-        type: "value",
+        type: 'value',
+        nameLocation: 'middle',
+        nameRotate: 90,
+        nameGap: 50,
+        ...name,
       },
       series: allSeries,
+      ...dataZoom,
     };
   }, [
     data,
@@ -194,17 +228,27 @@ const LineChart = (props: Props) => {
     chosenUnit,
   ]);
 
+  if (data.length === 0) {
+    return null;
+  }
+
+  if (xAxisOverride) {
+    option.xAxis = xAxisOverride;
+  }
+
   return (
     <ReactEChartsCore
       className={styles.smoothTransition}
       style={{
-        height: "100%",
-        width: "100%",
+        height: '100%',
+        width: '98%',
+        marginLeft: '8px',
       }}
       echarts={echarts}
       option={option}
       theme={theme}
-      notMerge // or: notMerge
+      // lazyUpdate
+      notMerge
       lazyUpdate={false}
     />
   );

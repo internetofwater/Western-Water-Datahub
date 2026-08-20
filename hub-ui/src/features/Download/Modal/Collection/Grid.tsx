@@ -3,47 +3,39 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import dayjs from "dayjs";
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import { forwardRef, useEffect, useRef, useState } from "react";
-import { Feature } from "geojson";
-import {
-  Anchor,
-  Button,
-  Collapse,
-  Group,
-  Paper,
-  Stack,
-  Text,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import Code from "@/components/Code";
-import CopyInput from "@/components/CopyInput";
-import Tooltip from "@/components/Tooltip";
-import { StringIdentifierCollections } from "@/consts/collections";
-import { Charts } from "@/features/Charts";
-import DateTime from "@/features/DateTime";
-import styles from "@/features/Download/Download.module.css";
-import { GeoJSON } from "@/features/Download/Modal/Collection/GeoJSON";
-import { Parameter } from "@/features/Popup";
-import { Table } from "@/features/Table";
-import loadingManager from "@/managers/Loading.init";
-import mainManager from "@/managers/Main.init";
-import notificationManager from "@/managers/Notification.init";
+import dayjs from 'dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { forwardRef, useEffect, useRef, useState } from 'react';
+import { Feature } from 'geojson';
+import { Anchor, Button, Collapse, Group, Paper, Stack, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import Code from '@/components/Code';
+import CopyInput from '@/components/CopyInput';
+import Tooltip from '@/components/Tooltip';
+import { StringIdentifierCollections } from '@/consts/collections';
+import { Charts } from '@/features/Charts';
+import DateTime from '@/features/DateTime';
+import styles from '@/features/Download/Download.module.css';
+import { GeoJSON } from '@/features/Download/Modal/Collection/GeoJSON';
+import { Parameter } from '@/features/Popup';
+import { Table } from '@/features/Table';
+import loadingManager from '@/managers/Loading.init';
+import mainManager from '@/managers/Main.init';
+import notificationManager from '@/managers/Notification.init';
 import {
   CoverageCollection,
   CoverageJSON,
   ICollection,
   IGetCubeParams,
-} from "@/services/edr.service";
-import wwdhService from "@/services/init/wwdh.init";
-import { TLayer, TLocation } from "@/stores/main/types";
-import { ELoadingType, ENotificationType } from "@/stores/session/types";
-import { createEmptyCsv } from "@/utils/csv";
-import { getIdStore } from "@/utils/getLabel";
-import { normalizeBBox } from "@/utils/normalizeBBox";
-import { getParameterUnit } from "@/utils/parameters";
-import { buildCubeUrl } from "@/utils/url";
+} from '@/services/edr.service';
+import wwdhService from '@/services/init/wwdh.init';
+import { TLayer, TLocation } from '@/stores/main/types';
+import { ELoadingType, ENotificationType } from '@/stores/session/types';
+import { createEmptyCsv } from '@/utils/csv';
+import { getIdStore } from '@/utils/getLabel';
+import { normalizeBBox } from '@/utils/normalizeBBox';
+import { getParameterUnit } from '@/utils/parameters';
+import { buildCubeUrl } from '@/utils/url';
 
 dayjs.extend(isSameOrBefore);
 
@@ -59,12 +51,10 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
   const [openedProps, { toggle: toggleProps }] = useDisclosure(false);
   const [openedGeo, { toggle: toggleGeo }] = useDisclosure(false);
-  const [openedChart, { toggle: toggleChart, close: closeChart }] =
-    useDisclosure(false);
+  const [openedChart, { toggle: toggleChart, close: closeChart }] = useDisclosure(false);
 
-  const [url, setUrl] = useState("");
-  const [codeUrl, setCodeUrl] = useState("");
-  const [datasetName, setDatasetName] = useState<string>("");
+  const [url, setUrl] = useState('');
+  const [codeUrl, setCodeUrl] = useState('');
   const [parameters, setParameters] = useState<Parameter[]>([]);
 
   const [from, setFrom] = useState<string | null>(layer.from);
@@ -82,15 +72,7 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
       return;
     }
 
-    const url = buildCubeUrl(
-      collection.id,
-      location.bbox,
-      layer.parameters,
-      from,
-      to,
-      false,
-      true,
-    );
+    const url = buildCubeUrl(collection.id, location.bbox, layer.parameters, from, to, false, true);
 
     const codeUrl = buildCubeUrl(
       collection.id,
@@ -99,7 +81,7 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
       from,
       to,
       false,
-      false,
+      false
     );
 
     setUrl(url);
@@ -111,14 +93,10 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
       return;
     }
 
-    setDatasetName(collection.title ?? "");
     const paramObjects = Object.values(collection?.parameter_names ?? {});
 
     const parameters = paramObjects
-      .filter(
-        (object) =>
-          object.type === "Parameter" && layer.parameters.includes(object.id),
-      )
+      .filter((object) => object.type === 'Parameter' && layer.parameters.includes(object.id))
       .map((object) => ({
         id: object.id,
         name: object.observedProperty.label.en,
@@ -136,14 +114,10 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
     const collection = mainManager.getCollection(layer.collectionId);
 
     if (collection) {
-      setDatasetName(collection.title ?? "");
       const paramObjects = Object.values(collection?.parameter_names ?? {});
 
       const parameters = paramObjects
-        .filter(
-          (object) =>
-            object.type === "Parameter" && layer.parameters.includes(object.id),
-        )
+        .filter((object) => object.type === 'Parameter' && layer.parameters.includes(object.id))
         .map((object) => ({
           id: object.id,
           name: object.observedProperty.label.en,
@@ -170,14 +144,14 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
   }, [location, layer]);
 
   const getFileName = () => {
-    let name = `data-${location.id}-${layer.parameters.join("_")}`;
+    let name = `data-${location.id}-${layer.parameters.join('_')}`;
 
     if (from && dayjs(from).isValid()) {
-      name += `-${dayjs(from).format("MM/DD/YYYY")}`;
+      name += `-${dayjs(from).format('MM/DD/YYYY')}`;
     }
 
     if (to && dayjs(to).isValid()) {
-      name += `-${dayjs(to).format("MM/DD/YYYY")}`;
+      name += `-${dayjs(to).format('MM/DD/YYYY')}`;
     }
 
     return `${name}.csv`;
@@ -188,19 +162,11 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
       return;
     }
 
-    const url = buildCubeUrl(
-      collection.id,
-      location.bbox,
-      layer.parameters,
-      from,
-      to,
-      false,
-      true,
-    );
+    const url = buildCubeUrl(collection.id, location.bbox, layer.parameters, from, to, false, true);
 
     const loadingInstance = loadingManager.add(
       `Generating csv for location: ${location.id}`,
-      ELoadingType.Data,
+      ELoadingType.Data
     );
     try {
       setIsLoading(true);
@@ -212,17 +178,15 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
       const res = await fetch(url);
 
       if (!res.ok) {
-        throw new Error(
-          `Error: ${res.statusText.length > 0 ? res.statusText : "Unknown error"}`,
-        );
+        throw new Error(`Error: ${res.statusText.length > 0 ? res.statusText : 'Unknown error'}`);
       }
 
-      let objectUrl = "";
+      let objectUrl = '';
       if (res.status === 204) {
         notificationManager.show(
           `No data found for location: ${location.id} with the current parameter and date range selection.`,
           ENotificationType.Error,
-          10000,
+          10000
         );
         objectUrl = createEmptyCsv();
       } else {
@@ -230,7 +194,7 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
         objectUrl = URL.createObjectURL(blob);
       }
 
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = objectUrl;
       a.download = getFileName();
       document.body.appendChild(a);
@@ -238,19 +202,11 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
       URL.revokeObjectURL(objectUrl);
       a.remove();
-      notificationManager.show(
-        "CSV generated successfully.",
-        ENotificationType.Success,
-        10000,
-      );
+      notificationManager.show('CSV generated successfully.', ENotificationType.Success, 10000);
     } catch (err) {
-      if (((err as Error)?.message ?? "").length > 0) {
-        notificationManager.show(
-          (err as Error)?.message,
-          ENotificationType.Error,
-          10000,
-        );
-      } else if (typeof err === "string") {
+      if (((err as Error)?.message ?? '').length > 0) {
+        notificationManager.show((err as Error)?.message, ENotificationType.Error, 10000);
+      } else if (typeof err === 'string') {
         notificationManager.show(err, ENotificationType.Error, 10000);
       }
     } finally {
@@ -262,30 +218,27 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
   };
 
   const getData = (
-    collectionId: ICollection["id"],
-    _locationId: TLocation["id"],
+    collectionId: ICollection['id'],
+    _locationId: TLocation['id'],
     params: IGetCubeParams,
-    signal?: AbortSignal,
+    signal?: AbortSignal
   ) => {
     if (location.bbox) {
       const normalizedBBox = normalizeBBox(location.bbox);
 
-      return wwdhService.getCube<CoverageCollection | CoverageJSON>(
-        collectionId,
-        {
-          signal,
-          params: { ...params, bbox: normalizedBBox },
-        },
-      );
+      return wwdhService.getCube<CoverageCollection | CoverageJSON>(collectionId, {
+        signal,
+        params: { ...params, bbox: normalizedBBox },
+      });
     }
 
-    console.warn("Location without bbox detected: ", location);
+    console.warn('Location without bbox detected: ', location);
 
     // Stub collection to resolve type issues
     // This statement should never be reached
     return {
-      type: "CoverageCollection",
-      domainType: "PointSeries",
+      type: 'CoverageCollection',
+      domainType: 'PointSeries',
       coverages: [],
       parameters: {},
     } as CoverageCollection;
@@ -294,14 +247,14 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const code = `curl -X GET ${codeUrl} \n
 -H "Content-Type: application/json"`;
 
-  const handleFromChange = (from: TLayer["from"]) => setFrom(from);
-  const handleToChange = (to: TLayer["to"]) => setTo(to);
+  const handleFromChange = (from: TLayer['from']) => setFrom(from);
+  const handleToChange = (to: TLayer['to']) => setTo(to);
 
   return (
     <Paper
       ref={ref}
       shadow="xl"
-      className={`${styles.locationWrapper} ${linkLocation && linkLocation.id === String(location?.id) ? styles.highlightLocation : ""}`}
+      className={`${styles.locationWrapper} ${linkLocation && linkLocation.id === String(location?.id) ? styles.highlightLocation : ''}`}
     >
       <Stack gap="xs">
         <Group justify="space-between">
@@ -323,37 +276,25 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
         <Code size="xs" code={code} />
         <Group justify="space-between" align="flex-end">
           <Group gap="var(--default-spacing)">
-            <Button
-              size="xs"
-              className={styles.propertiesButton}
-              onClick={toggleProps}
-            >
+            <Button size="xs" className={styles.propertiesButton} onClick={toggleProps}>
               Properties
             </Button>
-            <Button
-              size="xs"
-              className={styles.propertiesButton}
-              onClick={toggleGeo}
-            >
+            <Button size="xs" className={styles.propertiesButton} onClick={toggleGeo}>
               GeoJSON
             </Button>
             <Tooltip
               label="Select one or more parameters in the layer controls to enable charts."
               disabled={parameters.length > 0}
             >
-              <Button
-                size="xs"
-                className={styles.propertiesButton}
-                onClick={toggleChart}
-              >
+              <Button size="xs" className={styles.propertiesButton} onClick={toggleChart}>
                 Chart
               </Button>
             </Tooltip>
             <Tooltip
               label={
                 isLoading
-                  ? "Please wait for download to finish."
-                  : "Download the parameter data in CSV format."
+                  ? 'Please wait for download to finish.'
+                  : 'Download the parameter data in CSV format.'
               }
             >
               <Button
@@ -384,12 +325,12 @@ export const Grid = forwardRef<HTMLDivElement, Props>((props, ref) => {
                 className={styles.linksChart}
                 collectionId={layer.collectionId}
                 locationIds={[id]}
-                title={datasetName}
                 parameters={parameters}
                 from={from}
                 to={to}
                 getData={getData}
                 tabs
+                parserOptions={{ axisStyle: 'time' }}
               />
             </Collapse>
           )}
