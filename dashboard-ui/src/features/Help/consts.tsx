@@ -1002,16 +1002,7 @@ export const contacts: Contact[] = [
         body: (
             <Text {...content}>
                 For questions or feedback on the Western Water Data Dashboard,
-                please contact the Bureau of Reclamation at{' '}
-                <Anchor
-                    {...content}
-                    href="data@usbr.gov"
-                    target="_blank"
-                    c="blue.8"
-                >
-                    data@usbr.gov
-                </Anchor>
-                .
+                please contact the Bureau of Reclamation at data@usbr.gov.
             </Text>
         ),
         link: {
