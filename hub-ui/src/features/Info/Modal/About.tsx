@@ -42,7 +42,7 @@ export const About: React.FC<Props> = (props) => {
       >
         <Text {...paragraph}>
           The Western Water Data Hub is an interface for accessing water-related data for the
-          western United States from multiple data providers and sources. It provides streamlined
+          Western United States from multiple data providers and sources. It provides streamlined
           access to data through Open Geospatial Consortium (OGC) Application Programming Interface
           (API) standards, making it easier to retrieve and work with data from a variety of
           providers and data sources.
