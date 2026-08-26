@@ -48,18 +48,25 @@ const Main: React.FC<Props> = (props) => {
                                 <Notification
                                     className={styles.notification}
                                     classNames={{
-                                        description: styles.betaDescription,
+                                        description: styles.description,
                                     }}
                                     title={
-                                        <Text fw={700}>Application Beta</Text>
+                                        <Text size="lg" fw={700}>
+                                            Help shape what's next!
+                                        </Text>
                                     }
                                     withCloseButton
                                     onClick={handleClick}
                                 >
-                                    <Text size="sm">
-                                        This application is still in active
-                                        development. Some features may not be
-                                        fully implemented.
+                                    <Text size="md">
+                                        This dashboard was built to grow and
+                                        improve based on the needs and
+                                        experiences of the people who use it. As
+                                        you put it to work, we want to hear
+                                        what's useful, what's missing, and what
+                                        could make it even better. Your feedback
+                                        will help shape where the dashboard goes
+                                        from here.
                                     </Text>
                                 </Notification>
                             )}
