@@ -52,7 +52,6 @@ export const Contact: React.FC = () => {
                                     c="blue.8"
                                     target="_blank"
                                     lineClamp={1}
-                                    target="_blank"
                                 >
                                     {contact.link.text}
                                 </Anchor>
