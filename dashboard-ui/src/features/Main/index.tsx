@@ -5,7 +5,7 @@
 
 'use client';
 
-import { Box, Group, Stack, Notification, Text } from '@mantine/core';
+import { Box, Group, Stack, Notification, Text, Anchor } from '@mantine/core';
 import Map from '@/features/Map';
 import styles from '@/features/Main/Main.module.css';
 import { MapTools } from '@/features/MapTools';
@@ -13,8 +13,8 @@ import Panel from '@/features/Panel';
 import Popups from '@/features/Popups';
 import Reservoir from '@/features/Reservior';
 import Loading from '@/features/Loading';
-import { useState } from 'react';
 import { MobilePanelButton } from '@/features/MapTools/MobilePanelButton';
+import { DATA_USBR_MAILTO } from '@/features/Help/consts';
 
 type Props = {
     accessToken: string;
@@ -27,12 +27,6 @@ type Props = {
 const Main: React.FC<Props> = (props) => {
     const { accessToken } = props;
 
-    const [showNotification, setShowNotification] = useState(true);
-
-    const handleClick = () => {
-        setShowNotification(!showNotification);
-    };
-
     return (
         <>
             <Group gap={0} align="flex-start" className={styles.primaryWrapper}>
@@ -44,21 +38,22 @@ const Main: React.FC<Props> = (props) => {
                     >
                         <Stack gap={'var(--default-spacing)'}>
                             <MobilePanelButton />
-                            {showNotification && (
-                                <Notification
-                                    className={styles.notification}
-                                    classNames={{
-                                        description: styles.description,
-                                    }}
-                                    title={
-                                        <Text size="lg" fw={700}>
-                                            Help shape what's next!
-                                        </Text>
-                                    }
-                                    withCloseButton
-                                    onClick={handleClick}
-                                >
-                                    <Text size="md">
+                            <Notification
+                                className={styles.notification}
+                                classNames={{
+                                    description: styles.description,
+                                    closeButton: styles.closeButton,
+                                }}
+                                title={
+                                    <Text size="md" fw={700}>
+                                        Help shape what's next!
+                                    </Text>
+                                }
+                                withCloseButton
+                                closeButtonProps={{ size: 'lg' }}
+                            >
+                                <Stack gap="var(--default-spacing)">
+                                    <Text size="sm">
                                         This dashboard was built to grow and
                                         improve based on the needs and
                                         experiences of the people who use it. As
@@ -68,8 +63,19 @@ const Main: React.FC<Props> = (props) => {
                                         will help shape where the dashboard goes
                                         from here.
                                     </Text>
-                                </Notification>
-                            )}
+                                    <Text size="sm">
+                                        For questions or feedback, please
+                                        contact the Bureau of Reclamation at{' '}
+                                        <Anchor
+                                            href={DATA_USBR_MAILTO}
+                                            c="blue.8"
+                                        >
+                                            data@usbr.gov
+                                        </Anchor>
+                                        .
+                                    </Text>
+                                </Stack>
+                            </Notification>
                             <Popups />
                         </Stack>
                     </Box>

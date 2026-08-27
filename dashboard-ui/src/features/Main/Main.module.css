@@ -26,6 +26,11 @@
     display: flex;
 }
 
+.closeButton svg {
+    width: 1.45rem !important;
+    height: auto !important;
+}
+
 .left {
     left: 0.5rem;
     justify-self: flex-start;
@@ -66,8 +71,10 @@
 }
 
 .notification {
-    width: 70%;
+    width: 75%;
     max-width: calc(100% - 3.625rem);
+    align-items: flex-start;
+    gap: calc(var(--default-spacing) * 2);
 }
 
 .primaryWrapper {
