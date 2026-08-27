@@ -291,18 +291,8 @@ const MainMap: React.FC<Props> = (props) => {
             loadImages(map);
         });
 
-        // Resize and fit bounds to ensure consistent loading behavior in all screen sizes
+        // Resize to ensure consistent loading behavior in all screen sizes
         map.resize();
-        map.fitBounds(
-            [
-                [-125, 24], // Southwest corner (California/Baja)
-                [-96.5, 49], // Northeast corner (MN/ND border)
-            ],
-            {
-                padding: 60,
-                animate: false,
-            }
-        );
     }, [map]);
 
     useEffect(() => {
@@ -765,6 +755,19 @@ const MainMap: React.FC<Props> = (props) => {
                     projection: 'mercator',
                     center: INITIAL_CENTER,
                     zoom: INITIAL_ZOOM,
+                    bounds: [
+                        [-125, 24], // Southwest corner (California/Baja)
+                        [-96.5, 49], // Northeast corner (MN/ND border)
+                    ],
+                    fitBoundsOptions: {
+                        padding: {
+                            bottom: 50,
+                            top: 160,
+                            left: 30,
+                            right: 30,
+                        },
+                        animate: false,
+                    },
                     minZoom: 3,
                     maxZoom: 20,
                 }}
