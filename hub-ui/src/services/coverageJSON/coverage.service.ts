@@ -1,59 +1,71 @@
 /**
- * Copyright 2025 Lincoln Institute of Land Policy
+ * Copyright 2026 Lincoln Institute of Land Policy
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { TAxes, TValues } from "@/services/coverageJSON/types";
-import {
-  CoverageAxesSegments,
-  CoverageAxesValues,
-  CoverageJSON,
-} from "@/services/edr.service";
+import { TAxes, TCoverageOptions, TValues } from '@/services/coverageJSON/types';
+import { CoverageAxesSegments, CoverageAxesValues, CoverageJSON } from '@/services/edr.service';
+import { getParameterUnit } from '@/utils/parameters';
 
 export class CoverageService {
-  getLength({
-    start,
-    stop,
-    num,
-  }: {
-    start: number;
-    stop: number;
-    num: number;
-  }): number {
+  getAxisNames(ranges: CoverageJSON['ranges']) {
+    return Object.entries(ranges).map(([parameterId, range]) => {
+      return { parameterId, axisNames: range.axisNames };
+    });
+  }
+
+  getLength({ start, stop, num }: { start: number; stop: number; num: number }): number {
     const length = Math.abs(stop - start) / num;
 
     return length;
   }
 
-  getValues(coverage: CoverageJSON): TValues {
+  getRange(coverage: CoverageJSON, options?: TCoverageOptions): TValues {
+    const filteredRanges = Object.entries(coverage.ranges).filter(([parameterId]) => {
+      if (options?.chosenParameter) {
+        const parameterEntry = coverage.parameters[parameterId];
+        if (parameterEntry) {
+          const parameterLabel = parameterEntry.observedProperty.label.en;
+          return parameterLabel === options?.chosenParameter;
+        }
+      }
+
+      if (options?.chosenUnit) {
+        const parameter = coverage.parameters[parameterId];
+        const unit = getParameterUnit(parameter);
+
+        return unit === options?.chosenUnit;
+      }
+
+      return true;
+    });
+
     const keys: TValues = {};
-    let keyValues = Object.keys(coverage.ranges);
+    let keyValues = filteredRanges.map((entry) => entry[0]);
     if (coverage.parameters) {
       keyValues = Object.keys(coverage.parameters);
     }
     for (const key of keyValues) {
-      keys[key] = coverage.ranges[key].values;
+      if (coverage.ranges[key]?.values) {
+        keys[key] = coverage.ranges[key].values;
+      }
     }
     return keys;
   }
 
-  isSegments(
-    axis: CoverageAxesSegments | CoverageAxesValues,
-  ): axis is CoverageAxesSegments {
+  isSegments(axis: CoverageAxesSegments | CoverageAxesValues): axis is CoverageAxesSegments {
     const a = axis as CoverageAxesSegments;
     return (
-      typeof a?.start !== "undefined" &&
-      typeof a?.stop !== "undefined" &&
-      typeof a?.num !== "undefined" &&
-      typeof a.start === "number" &&
-      typeof a.stop === "number" &&
-      typeof a.num === "number"
+      typeof a?.start !== 'undefined' &&
+      typeof a?.stop !== 'undefined' &&
+      typeof a?.num !== 'undefined' &&
+      typeof a.start === 'number' &&
+      typeof a.stop === 'number' &&
+      typeof a.num === 'number'
     );
   }
 
-  isValues(
-    axis: CoverageAxesSegments | CoverageAxesValues,
-  ): axis is CoverageAxesValues {
+  isValues(axis: CoverageAxesSegments | CoverageAxesValues): axis is CoverageAxesValues {
     return Array.isArray((axis as any)?.values);
   }
 
@@ -61,12 +73,11 @@ export class CoverageService {
     return coverage.domain.axes as TAxes;
   }
 
-  getCurrentValuesConstructor(
-    count: number,
-    values: TValues,
-    xCount: number,
-    yCount: number,
-  ) {
+  getDomainType(coverage: CoverageJSON): string {
+    return coverage.domain.domainType ?? coverage?.domainType ?? '';
+  }
+
+  getCurrentRangeValueConstructor(count: number, values: TValues, xCount: number, yCount: number) {
     const keys = Object.keys(values);
 
     return (i: number, j: number): TValues => {
