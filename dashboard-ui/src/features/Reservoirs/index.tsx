@@ -62,6 +62,9 @@ const Reservoirs: React.FC<Props> = (props) => {
 
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
+    // Manage pagination in the table
+    const [page, setPage] = useState(1);
+
     const { reservoirCollections } = useReservoirData();
 
     const { map } = useMap(MAP_ID);
@@ -242,6 +245,7 @@ const Reservoirs: React.FC<Props> = (props) => {
         sortOrder,
     ]);
 
+    // Hack to prevent unneeded changes to limitedReservoirs
     const showByExtent = useMemo(
         () => (limitByExtent ? mapMoved : 0),
         [limitByExtent, mapMoved]
@@ -339,6 +343,26 @@ const Reservoirs: React.FC<Props> = (props) => {
     }, [freezeSelection, limitedReservoirs]);
 
     useEffect(() => {
+        // Hide off-screen reservoirs is active, reset page when listing changes
+        if (limitByExtent) {
+            setPage(1);
+        }
+    }, [limitedReservoirs]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [
+        search,
+        region,
+        managingRegion,
+        basin,
+        state,
+        sortBy,
+        hideNoData,
+        sortOrder,
+    ]);
+
+    useEffect(() => {
         if (freezeSelection && mobile) {
             setFreezeSelection(false);
         }
@@ -367,6 +391,7 @@ const Reservoirs: React.FC<Props> = (props) => {
     };
     const handleFreezeSelectionChange = (freezeSelection: boolean) =>
         setFreezeSelection(freezeSelection);
+    const handlePageChange = (page: number) => setPage(page);
 
     return (
         <>
@@ -411,6 +436,8 @@ const Reservoirs: React.FC<Props> = (props) => {
                     pickFromTable={pickFromTable}
                     selectedReservoirs={selectedReservoirs}
                     onSelectedReservoirsChange={handleSelectedReservoirsChange}
+                    page={page}
+                    onPageChange={handlePageChange}
                 />
             )}
         </>
