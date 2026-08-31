@@ -2,6 +2,9 @@
  * Copyright 2025 Lincoln Institute of Land Policy
  * SPDX-License-Identifier: MIT
  */
+.actionRoot {
+    --ai-size: 1.875rem;
+}
 
 .body {
     height: min(80vh, 45.9375rem);
@@ -28,7 +31,7 @@
 }
 
 .dateNotesWrapper {
-    height: 4.4375rem;
+    height: fit-content;
 }
 
 .graphicLegendColor {
@@ -54,6 +57,10 @@
 
 .graphicPanel {
     flex-direction: row;
+}
+
+.goButton {
+    --button-padding-x-xs: 0.375rem;
 }
 
 .infoGroup {

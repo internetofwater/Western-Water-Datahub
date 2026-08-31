@@ -4,17 +4,18 @@
  */
 
 import useMainStore from '@/stores/main';
-import { Checkbox, Stack } from '@mantine/core';
+import { Button, Checkbox, Group, Stack, Tooltip } from '@mantine/core';
 import { DateInput, DateValue } from '@mantine/dates';
 import dayjs from 'dayjs';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLoading } from '@/hooks/useLoading';
-import debounce from 'lodash.debounce';
 import styles from '@/features/Reservoirs/Reservoirs.module.css';
 
 export const ReservoirDateSelector: React.FC = () => {
     const reservoirDate = useMainStore((state) => state.reservoirDate);
     const setReservoirDate = useMainStore((state) => state.setReservoirDate);
+
+    const [date, setDate] = useState(reservoirDate);
 
     const { isFetchingReservoirs, isGeneratingReport } = useLoading();
 
@@ -29,19 +30,16 @@ export const ReservoirDateSelector: React.FC = () => {
 
     const handleReservoirDateChange = (value: DateValue) => {
         const date = dayjs(value).format('YYYY-MM-DD');
+        setDate(date);
+    };
+
+    const handleClick = () => {
         setReservoirDate(date);
     };
 
-    const debouncedHandleReservoirDateChange = debounce(
-        handleReservoirDateChange,
-        300
-    );
-
     useEffect(() => {
-        return () => {
-            debouncedHandleReservoirDateChange.cancel();
-        };
-    }, []);
+        setDate(reservoirDate);
+    }, [reservoirDate]);
 
     const hasReservoirDate = reservoirDate !== null;
     const isDisabled = isFetchingReservoirs || isGeneratingReport;
@@ -63,22 +61,33 @@ export const ReservoirDateSelector: React.FC = () => {
                 onChange={() => handleCheckboxChange(!hasReservoirDate)}
             />
             {hasReservoirDate && (
-                <DateInput
-                    size="sm"
-                    classNames={{ input: styles.multiselect }}
-                    valueFormat="MM/DD/YYYY"
-                    placeholder="MM/DD/YYYY"
-                    disabled={isDisabled || !hasReservoirDate}
-                    value={
-                        reservoirDate
-                            ? dayjs(reservoirDate).toDate()
-                            : undefined
-                    }
-                    maxDate={new Date()}
-                    label="Reservoir Storage Date"
-                    description="Search for reservoir data on a specific date"
-                    onChange={debouncedHandleReservoirDateChange}
-                />
+                <Group gap={0} align="flex-end">
+                    <DateInput
+                        size="sm"
+                        classNames={{ input: styles.multiselect }}
+                        valueFormat="MM/DD/YYYY"
+                        placeholder="MM/DD/YYYY"
+                        disabled={isDisabled || !hasReservoirDate}
+                        value={date ? dayjs(date).toDate() : undefined}
+                        maxDate={new Date()}
+                        label="Reservoir Storage Date"
+                        description="Search for reservoir data on a specific date"
+                        onChange={handleReservoirDateChange}
+                    />
+                    <Tooltip
+                        label="The date has not changed."
+                        disabled={date !== reservoirDate}
+                    >
+                        <Button
+                            onClick={handleClick}
+                            size="xs"
+                            className={styles.goButton}
+                            disabled={date === reservoirDate}
+                        >
+                            GO
+                        </Button>
+                    </Tooltip>
+                </Group>
             )}
         </Stack>
     );
