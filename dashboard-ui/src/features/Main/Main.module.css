@@ -24,6 +24,11 @@
     overflow: hidden;
     max-height: 100%;
     display: flex;
+    pointer-events: none;
+}
+
+.closeButton {
+    pointer-events: auto;
 }
 
 .closeButton svg {
