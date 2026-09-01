@@ -24,6 +24,11 @@
     overflow: hidden;
     max-height: 100%;
     display: flex;
+    pointer-events: none;
+}
+
+.closeButton {
+    pointer-events: auto;
 }
 
 .closeButton svg {
@@ -75,6 +80,7 @@
     max-width: calc(100% - 3.625rem);
     align-items: flex-start;
     gap: calc(var(--default-spacing) * 2);
+    pointer-events: auto;
 }
 
 .primaryWrapper {
