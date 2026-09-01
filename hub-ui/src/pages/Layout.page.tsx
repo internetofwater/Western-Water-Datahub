@@ -4,10 +4,11 @@
  */
 
 import { useState } from 'react';
-import { Box, Group, Notification, Stack, Text } from '@mantine/core';
+import { Anchor, Box, Group, Notification, Stack, Text } from '@mantine/core';
 import Controls from '@/features/Controls';
 import DownloadModal from '@/features/Download/Modal';
 import InfoModal from '@/features/Info/Modal';
+import { DATA_USBR_MAILTO } from '@/features/Info/Modal/consts';
 import Loading from '@/features/Loading';
 import Map from '@/features/Map';
 import MapTools from '@/features/Map/Tools';
@@ -35,23 +36,30 @@ export const LayoutPage: React.FC = () => {
                 className={styles.notification}
                 classNames={{
                   description: styles.description,
+                  closeButton: styles.closeButton,
                 }}
                 title={
-                  <Text size="lg" fw={700}>
+                  <Text size="md" fw={700}>
                     Application Under Development
                   </Text>
                 }
+                closeButtonProps={{
+                  size: 'lg',
+                }}
                 withCloseButton
-                onClick={handleClick}
+                onClose={handleClick}
               >
                 <Stack gap="var(--default-spacing)">
-                  <Text size="md">
+                  <Text size="sm">
                     Some features may not work as expected and the presentation and availability of
                     data may change.
                   </Text>
-                  <Text size="md">
-                    For questions or feedback, please contact the Bureau of Reclamation at
-                    data@usbr.gov.
+                  <Text size="sm">
+                    For questions or feedback, please contact the Bureau of Reclamation at{' '}
+                    <Anchor href={DATA_USBR_MAILTO} c="blue.8">
+                      data@usbr.gov
+                    </Anchor>
+                    .
                   </Text>
                 </Stack>
               </Notification>

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "react";
-import { ActionIcon, Box, Divider, Image, Stack, Title } from "@mantine/core";
-import X from "@/assets/X";
-import styles from "@/features/Panel/Panel.module.css";
-import useSessionStore from "@/stores/session";
+import React from 'react';
+import { ActionIcon, Box, Divider, Image, Stack, Text, Title } from '@mantine/core';
+import X from '@/assets/X';
+import styles from '@/features/Panel/Panel.module.css';
+import useSessionStore from '@/stores/session';
 
 export const Header: React.FC = () => {
   const setOverlay = useSessionStore((state) => state.setOverlay);
@@ -22,16 +22,16 @@ export const Header: React.FC = () => {
       >
         <X />
       </ActionIcon>
-      <Stack>
+      <Stack gap="var(--default-spacing)" align="center">
         <Image
           darkHidden
           src="/BofR-logo-dark.png"
           alt="United States Bureau of Reclamation Logo"
           h={60}
           style={{
-            maxHeight: "60px",
-            height: "auto",
-            width: "auto",
+            maxHeight: '60px',
+            height: 'auto',
+            width: 'auto',
           }}
           fit="contain"
         />
@@ -41,9 +41,9 @@ export const Header: React.FC = () => {
           alt="United States Bureau of Reclamation Logo"
           h={60}
           style={{
-            maxHeight: "60px",
-            height: "auto",
-            width: "auto",
+            maxHeight: '60px',
+            height: 'auto',
+            width: 'auto',
           }}
           fit="contain"
         />
@@ -51,7 +51,8 @@ export const Header: React.FC = () => {
         <Title order={1} size="h2" className={styles.title}>
           Western Water Data Hub
         </Title>
-        <Divider size="md" />
+        <Text size="sm">Application in Development</Text>
+        <Divider size="md" w="100%" />
       </Stack>
     </Box>
   );
