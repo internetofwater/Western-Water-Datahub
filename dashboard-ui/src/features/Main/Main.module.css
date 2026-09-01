@@ -80,6 +80,7 @@
     max-width: calc(100% - 3.625rem);
     align-items: flex-start;
     gap: calc(var(--default-spacing) * 2);
+    pointer-events: auto;
 }
 
 .primaryWrapper {
