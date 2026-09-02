@@ -26,7 +26,7 @@ export const LayoutPage: React.FC = () => {
   return (
     <Box className={styles.root}>
       <Stack gap={0} className={styles.contentWrapper}>
-        <Group gap={0} align="stretch" className={styles.primaryWrapper}>
+        <Group gap={0} align="flex-start" className={styles.primaryWrapper}>
           <Panel />
           <Stack gap={0} className={styles.right}>
             <Controls />
