@@ -92,7 +92,7 @@
 }
 
 .panelWrapper {
-  height: 100%;
+  height: 100vh;
   max-height: 100vh;
 
   width: 25rem;
@@ -208,4 +208,8 @@
     overflow-y: auto;
     overflow-x: hidden;
   }
+}
+
+.panelFooter {
+  border-top: 1px solid var(--mantine-color-default-border);
 }
