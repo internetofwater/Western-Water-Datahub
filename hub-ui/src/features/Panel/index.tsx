@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Box, Divider, Image, Stack } from "@mantine/core";
+import { Box, Divider, Group, Image, Stack } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { Badge } from "@/components/Badge";
 import { Collection } from "@/features/Panel/Collection";
@@ -104,10 +104,12 @@ const Panel: React.FC = () => {
             {/* <Controls /> */}
           </Stack>
 
-          <Box
+          <Group
             className={styles.panelFooter}
             px="calc(var(--default-spacing) * 2)"
             py="var(--default-spacing)"
+            align="center"
+            justify="center"
           >
             <a href="https://cgsearth.org">
               <Image darkHidden src="/cgs-logo-color.png" h="2.4rem" w="auto" fit="contain" />
@@ -119,7 +121,7 @@ const Panel: React.FC = () => {
                 fit="contain"
               />
             </a>
-          </Box>
+          </Group>
         </Stack>
       </Box>
     </>
