@@ -31,7 +31,7 @@
 }
 
 .root {
-    max-height: calc(100% - 12.625rem);
+    max-height: calc(100% - 11.8125rem);
     overflow-y: auto;
 }
 
@@ -120,24 +120,24 @@
 /* TODO: static sizing of USBR logo causing layout issues with rem sizing */
 @media screen and (max-width: 1280px) {
     .root {
-        max-height: calc(100% - 188px);
+        max-height: calc(100% - 179px);
     }
 }
 
 @media screen and (max-width: 1024px) {
     .root {
-        max-height: calc(100% - 172px);
+        max-height: calc(100% - 169px);
     }
 }
 
 @media screen and (max-width: 899px) {
     .root {
-        max-height: calc(100% - 219px);
+        max-height: calc(100% - 189px);
     }
 }
 
 @media screen and (max-width: 768px) {
     .root {
-        max-height: calc(100% - 188px);
+        max-height: calc(100% - 179px);
     }
 }
