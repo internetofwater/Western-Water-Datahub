@@ -50,7 +50,7 @@ export const Contact: React.FC = () => {
                                     title={contact.link.text}
                                     size="sm"
                                     c="blue.8"
-                                    target="_blank"
+                                    target={contact.link.target}
                                     lineClamp={1}
                                 >
                                     {contact.link.text}

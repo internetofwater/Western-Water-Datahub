@@ -772,6 +772,8 @@ export class ReportService {
         context: OffscreenCanvasRenderingContext2D,
         legendPosition: { x: number; y: number } // TODO: define this type
     ) {
+        context.save();
+
         const { x: legendX, y: legendY } = legendPosition;
 
         context.font = '700 18px sans-serif';
@@ -785,6 +787,8 @@ export class ReportService {
         y += 24;
 
         context.fillText('Conditions', x, y);
+
+        context.restore();
     }
 
     private drawDate(
@@ -793,6 +797,8 @@ export class ReportService {
         legendPosition: { x: number; y: number }, // TODO: define this type
         legendHeight: number
     ) {
+        context.save();
+
         const { x: legendX, y: legendY } = legendPosition;
 
         const x = legendX + 8;
@@ -801,6 +807,8 @@ export class ReportService {
         context.font = '12px sans-serif';
         context.fillStyle = '#FFF';
         context.fillText(`Reservoir storage as of ${date}`, x, y);
+
+        context.restore();
     }
 
     private drawScale(
@@ -810,6 +818,7 @@ export class ReportService {
         legendWidth: number,
         legendHeight: number
     ) {
+        context.save();
         // Get scale HTML element
         const scaleElement = map
             .getContainer()
@@ -861,6 +870,22 @@ export class ReportService {
         if (scaleLabel) {
             context.fillText(scaleLabel, midX, midY - labelOffset);
         }
+        context.restore();
+    }
+
+    private drawMapboxAttribution(
+        context: OffscreenCanvasRenderingContext2D,
+        width: number,
+        height: number
+    ) {
+        context.save();
+
+        context.font = '10px sans-serif';
+        context.fillStyle = '#000';
+
+        context.fillText('© Mapbox © OpenStreetMap', width - 160, height - 30);
+
+        context.restore();
     }
 
     private exportCombinedImage(
@@ -883,6 +908,10 @@ export class ReportService {
 
         const reportLegend = document.getElementById(
             legendId
+        ) as HTMLImageElement | null;
+
+        const mapboxLogo = document.getElementById(
+            'mapbox-logo'
         ) as HTMLImageElement | null;
 
         const canvas = new OffscreenCanvas(width, height);
@@ -909,7 +938,7 @@ export class ReportService {
             context.drawImage(img, 0, 0, width, height);
             const legendPosition = {
                 x: width - legendWidth - 12,
-                y: height - legendHeight - 12,
+                y: height - legendHeight - 60,
             };
 
             const formattedDate = this.formatDate(date);
@@ -939,6 +968,18 @@ export class ReportService {
                     legendHeight
                 );
             }
+            if (mapboxLogo) {
+                context.drawImage(
+                    mapboxLogo,
+                    legendPosition.x,
+                    height - 46,
+                    75,
+                    17
+                );
+            }
+
+            this.drawMapboxAttribution(context, width, height);
+
             URL.revokeObjectURL(url);
 
             canvas

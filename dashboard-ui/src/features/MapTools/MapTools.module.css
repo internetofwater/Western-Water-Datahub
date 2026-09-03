@@ -13,6 +13,10 @@
     padding: 1px;
 }
 
+.actionIconRoot {
+    pointer-events: auto;
+}
+
 .basemapSelector {
     cursor: pointer;
     padding: 8px;
