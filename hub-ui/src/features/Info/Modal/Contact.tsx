@@ -10,29 +10,6 @@ import { contacts } from '@/features/Info/Modal/consts';
 export const Contact: React.FC = () => {
   return (
     <Stack gap="var(--default-spacing)">
-      <Text>
-        The Western Water Data Hub is built by the{' '}
-        <Anchor
-          href="https://cgsearth.org/"
-          className={styles.contactLink}
-          title="Landing page of the Center for Geospatial Solutions"
-          c="blue.8"
-          target="_blank"
-        >
-          Center for Geospatial Solutions
-        </Anchor>{' '}
-        with support from the{' '}
-        <Anchor
-          href="https://www.usbr.gov/"
-          className={styles.contactLink}
-          title="Landing page of U.S. Department of the Interior Bureau of Reclamation"
-          c="blue.8"
-          target="_blank"
-        >
-          U.S. Department of the Interior Bureau of Reclamation
-        </Anchor>
-        .
-      </Text>
       <Grid mt="lg" gutter="lg">
         {contacts.map((contact) => (
           <Grid.Col

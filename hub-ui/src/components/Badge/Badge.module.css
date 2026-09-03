@@ -1,0 +1,72 @@
+/**
+ * Copyright 2026 Lincoln Institute of Land Policy
+ * SPDX-License-Identifier: MIT
+ */
+
+.badge {
+  --badge-scale: 1.25;
+
+  --badge-bookmark-bg: #e5e5e5;
+  --badge-bookmark-bg-active: #ffdba8; /* IoW Orange (light variant) */
+
+  position: absolute;
+  top: 12px;
+  left: -2px;
+  width: 35px;
+  height: 26px;
+
+  z-index: var(--mantine-z-index-popover);
+
+  cursor: pointer;
+
+  transform: scale(var(--badge-scale));
+  transform-origin: left top;
+
+  transition: transform 200ms ease;
+}
+
+.badge.active {
+  transform: translateX(2px) scale(var(--badge-scale));
+}
+
+.bookmark {
+  position: absolute;
+  inset: 0;
+
+  transition: fill 200ms ease;
+}
+
+.bookmark path {
+  fill: var(--badge-bookmark-bg);
+  transition: fill 200ms ease;
+}
+
+.badge.active .bookmark path {
+  fill: var(--badge-bookmark-bg-active);
+}
+
+.logo {
+  position: absolute;
+  left: 8px;
+  top: 5px;
+  width: 13px;
+  height: 16px;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.gray {
+  opacity: 1;
+}
+
+.color {
+  opacity: 0;
+}
+
+.badge.active .gray {
+  opacity: 0;
+}
+
+.badge.active .color {
+  opacity: 1;
+}
