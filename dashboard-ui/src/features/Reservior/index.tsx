@@ -6,6 +6,7 @@ import { useRef } from 'react';
 import {
     ActionIcon,
     Box,
+    Button,
     Divider,
     Group,
     Modal,
@@ -39,7 +40,6 @@ import dayjs from 'dayjs';
 import { DateInput, DateValue } from '@mantine/dates';
 import loadingManager from '@/managers/Loading.init';
 import notificationManager from '@/managers/Notification.init';
-import debounce from 'lodash.debounce';
 import { useLoading } from '@/hooks/useLoading';
 import { Properties } from '@/components/Map/types';
 import Reset from '@/icons/Reset';
@@ -75,7 +75,10 @@ const Reservoir: React.FC = () => {
 
     const [reservoirId, setReservoirId] = useState<string | number>();
     const [config, setConfig] = useState<ReservoirConfigProperties>();
+    // Date used for data fetches
     const [currentDate, setCurrentDate] = useState(reservoirDate);
+    // Interim date before fetch is made
+    const [date, setDate] = useState(reservoirDate);
     const [isLocation, setIsLocation] = useState(false);
 
     const controller = useRef<AbortController>(null);
@@ -85,10 +88,12 @@ const Reservoir: React.FC = () => {
 
     const handleDateChange = (value: DateValue) => {
         const date = dayjs(value).format('YYYY-MM-DD');
-        setCurrentDate(date);
+        setDate(date);
     };
 
-    const debouncedHandleDateChange = debounce(handleDateChange, 300);
+    const handleClick = () => {
+        setCurrentDate(date);
+    };
 
     const fetchNewDate = async () => {
         if (
@@ -211,7 +216,6 @@ const Reservoir: React.FC = () => {
         isMounted.current = true;
         return () => {
             isMounted.current = false;
-            debouncedHandleDateChange.cancel();
             if (controller.current) {
                 controller.current.abort('Component unmount');
             }
@@ -220,6 +224,7 @@ const Reservoir: React.FC = () => {
 
     useEffect(() => {
         setCurrentDate(reservoirDate);
+        setDate(reservoirDate);
     }, [reservoirDate]);
 
     useEffect(() => {
@@ -395,32 +400,45 @@ const Reservoir: React.FC = () => {
                                 className={styles.dateSelector}
                                 valueFormat="MM/DD/YYYY"
                                 disabled={isFetchingSingleReservoir}
-                                description="View historical data for this reservoir"
-                                value={
-                                    currentDate
-                                        ? dayjs(currentDate).toDate()
-                                        : undefined
+                                description={
+                                    <Text size="sm">
+                                        View historical data for this reservoir
+                                    </Text>
                                 }
+                                value={date ? dayjs(date).toDate() : undefined}
                                 maxDate={new Date()}
                                 label={`${shortTitle} Storage Date`}
-                                onChange={debouncedHandleDateChange}
+                                onChange={handleDateChange}
                             />
-                            <Tooltip
-                                label={
-                                    reservoirDate
-                                        ? 'Reset data to the selected date'
-                                        : 'Reset data to the latest available'
-                                }
-                                position="top-start"
-                            >
-                                <ActionIcon
-                                    classNames={{ icon: styles.actionIcon }}
-                                    onClick={handleSetToDefault}
-                                    disabled={isFetchingSingleReservoir}
+                            <Group gap="calc(var(--default-spacing) / 2)">
+                                <Button
+                                    onClick={handleClick}
+                                    size="xs"
+                                    className={styles.goButton}
+                                    disabled={date === currentDate}
                                 >
-                                    <Reset />
-                                </ActionIcon>
-                            </Tooltip>
+                                    GO
+                                </Button>
+                                <Tooltip
+                                    label={
+                                        reservoirDate
+                                            ? 'Reset data to the selected date'
+                                            : 'Reset data to the latest available'
+                                    }
+                                    position="top-start"
+                                >
+                                    <ActionIcon
+                                        classNames={{
+                                            root: styles.actionRoot,
+                                            icon: styles.actionIcon,
+                                        }}
+                                        onClick={handleSetToDefault}
+                                        disabled={isFetchingSingleReservoir}
+                                    >
+                                        <Reset />
+                                    </ActionIcon>
+                                </Tooltip>
+                            </Group>
                         </Group>
                     )}
                     {/* Redundant ml to handle case with no date */}

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Box, Divider, Stack, Title, Text } from '@mantine/core';
+import { Box, Divider, Stack, Title } from '@mantine/core';
 import Image from 'next/image';
 import styles from '@/features/Panel/Panel.module.css';
 
@@ -14,8 +14,8 @@ export const Header: React.FC = () => {
             component="header"
             gap="calc(var(--default-spacing) / 2)"
             align="center"
-            pt={16}
-            pb={8}
+            pt="calc(var(--default-spacing) * 2)"
+            pb="calc(var(--default-spacing) * 2)"
         >
             <Box component="span" darkHidden className={styles.logoContainer}>
                 <Image
@@ -37,7 +37,6 @@ export const Header: React.FC = () => {
             <Title order={1} size="h2" ta="center">
                 Western Water Data Dashboard
             </Title>
-            <Text size="sm">Application in Development</Text>
         </Stack>
     );
 };

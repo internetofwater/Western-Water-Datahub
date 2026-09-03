@@ -46,6 +46,8 @@ type Props = {
     pickFromTable: boolean;
     selectedReservoirs: string[];
     onSelectedReservoirsChange: (selectedReservoirs: string[]) => void;
+    page: number;
+    onPageChange: (page: number) => void;
 };
 export const Table: React.FC<Props> = (props) => {
     const {
@@ -53,6 +55,8 @@ export const Table: React.FC<Props> = (props) => {
         pickFromTable,
         selectedReservoirs,
         onSelectedReservoirsChange,
+        page,
+        onPageChange,
     } = props;
 
     const setReservoir = useMainStore((state) => state.setReservoir);
@@ -64,7 +68,6 @@ export const Table: React.FC<Props> = (props) => {
     const [currentChunk, setCurrentChunk] = useState<
         Feature<Point, OrganizedProperties>[]
     >([]);
-    const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(5);
     // Dont display no data found on page load prior to reservoir fetch
     const [initialLoad, setInitialLoad] = useState(true);
@@ -75,7 +78,7 @@ export const Table: React.FC<Props> = (props) => {
 
     const handlePageSizeChange = (pageSize: number) => {
         setPageSize(pageSize);
-        setPage(1);
+        onPageChange(1);
     };
 
     const debouncePageSizeChange = useMemo(
@@ -454,7 +457,7 @@ export const Table: React.FC<Props> = (props) => {
                     disabled={isGeneratingReport}
                     total={chunkedLocations.length}
                     value={page}
-                    onChange={setPage}
+                    onChange={onPageChange}
                     mt="sm"
                 />
             </Group>

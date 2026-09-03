@@ -44,6 +44,12 @@
     height: auto;
 }
 
+.goButton {
+    margin-left: -5.0625rem;
+    margin-bottom: 0.1875rem;
+    --button-padding-x-xs: 0.375rem;
+}
+
 .label {
     padding-inline-start: var(--default-spacing);
     padding-inline-end: 0;
