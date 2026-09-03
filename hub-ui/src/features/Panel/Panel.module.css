@@ -78,6 +78,18 @@
   width: 100%;
   background: var(--mantine-color-body);
   z-index: 200;
+
+  padding-top: calc(var(--default-spacing) * 3);
+}
+
+.panelFooter {
+  border-top: 1px solid var(--mantine-color-default-border);
+
+  background: var(--mantine-color-body);
+
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
 }
 
 .panelUnderlay {
@@ -208,8 +220,4 @@
     overflow-y: auto;
     overflow-x: hidden;
   }
-}
-
-.panelFooter {
-  border-top: 1px solid var(--mantine-color-default-border);
 }
