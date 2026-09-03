@@ -4,8 +4,9 @@
  */
 
 import { useEffect, useState } from "react";
-import { Box, Divider, Stack } from "@mantine/core";
+import { Box, Divider, Group, Image, Stack } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { Badge } from "@/components/Badge";
 import { Collection } from "@/features/Panel/Collection";
 import { Datasources } from "@/features/Panel/Datasources";
 import Filters from "@/features/Panel/Filters";
@@ -76,28 +77,51 @@ const Panel: React.FC = () => {
         className={styles.panelWrapper}
         style={{ display: isVisible ? "block" : "none" }}
       >
-        <Stack
-          gap="calc(var(--default-spacing) * 2)"
-          px="calc(var(--default-spacing) * 2)"
-          py="calc(var(--default-spacing) * 3)"
-          justify="center"
-          className={styles.panelContent}
-        >
-          <Header />
-          <Stack gap="calc(var(--default-spacing) * 2)">
-            <Filters />
-            <Divider />
-            <Collection />
+        <Badge />
+
+        <Stack justify="space-between" h="100%">
+          <Stack
+            gap="calc(var(--default-spacing) * 2)"
+            px="calc(var(--default-spacing) * 2)"
+            py="calc(var(--default-spacing) * 3)"
+            justify="center"
+            className={styles.panelContent}
+          >
+            <Header />
+            <Stack gap="calc(var(--default-spacing) * 2)">
+              <Filters />
+              <Divider />
+              <Collection />
+            </Stack>
+            <Divider size="md" />
+            <Stack gap="calc(var(--default-spacing) * 2)">
+              <Refine />
+            </Stack>
+            <Divider size="md" />
+            <Stack gap="calc(var(--default-spacing) * 2)">
+              <Datasources />
+            </Stack>
+            {/* <Controls /> */}
           </Stack>
-          <Divider size="md" />
-          <Stack gap="calc(var(--default-spacing) * 2)">
-            <Refine />
-          </Stack>
-          <Divider size="md" />
-          <Stack gap="calc(var(--default-spacing) * 2)">
-            <Datasources />
-          </Stack>
-          {/* <Controls /> */}
+
+          <Group
+            className={styles.panelFooter}
+            px="calc(var(--default-spacing) * 2)"
+            py="var(--default-spacing)"
+            align="center"
+            justify="center"
+          >
+            <a href="https://cgsearth.org">
+              <Image darkHidden src="/cgs-logo-color.png" h="2.4rem" w="auto" fit="contain" />
+              <Image
+                lightHidden
+                src="/cgs-logo-color-white.png"
+                h="2.4rem"
+                w="auto"
+                fit="contain"
+              />
+            </a>
+          </Group>
         </Stack>
       </Box>
     </>
