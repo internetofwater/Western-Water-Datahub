@@ -6,6 +6,7 @@
 import React from 'react';
 import { ActionIcon, Box, Divider, Image, Stack, Text, Title } from '@mantine/core';
 import X from '@/assets/X';
+import { Badge } from '@/components/Badge';
 import styles from '@/features/Panel/Panel.module.css';
 import useSessionStore from '@/stores/session';
 
@@ -22,6 +23,7 @@ export const Header: React.FC = () => {
       >
         <X />
       </ActionIcon>
+      <Badge />
       <Stack gap="var(--default-spacing)" align="center">
         <Image
           darkHidden

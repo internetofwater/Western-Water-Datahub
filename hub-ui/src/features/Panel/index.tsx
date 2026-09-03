@@ -6,7 +6,6 @@
 import { useEffect, useState } from 'react';
 import { Box, Divider, Group, Image, Stack } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { Badge } from '@/components/Badge';
 import { Collection } from '@/features/Panel/Collection';
 import { Datasources } from '@/features/Panel/Datasources';
 import Filters from '@/features/Panel/Filters';
@@ -60,14 +59,12 @@ const Panel: React.FC = () => {
     <>
       {mobile && isVisible && <Box className={styles.panelUnderlay} />}
       <Box className={styles.panelWrapper} style={{ display: isVisible ? 'block' : 'none' }}>
-        <Badge />
-
-        <Stack justify="space-between" className={styles.panelContent}>
+        <Stack justify="flex-start" className={styles.panelContent}>
           <Header />
           <Stack
             gap="calc(var(--default-spacing) * 2)"
             px="calc(var(--default-spacing) * 2)"
-            py="calc(var(--default-spacing) * 3)"
+            pb="calc(var(--default-spacing) * 3)"
             justify="center"
           >
             <Stack gap="calc(var(--default-spacing) * 2)">
