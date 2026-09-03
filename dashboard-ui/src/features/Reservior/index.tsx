@@ -291,6 +291,7 @@ const Reservoir: React.FC = () => {
 
     useEffect(() => {
         void fetchNewDate();
+        setDate(currentDate);
     }, [currentDate]);
 
     useEffect(() => {
