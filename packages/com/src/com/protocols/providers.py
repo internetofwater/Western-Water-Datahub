@@ -1,15 +1,14 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from typing import Optional, Protocol
-from typing import Literal
+from typing import Literal, Protocol
 
+from com.covjson import CoverageCollectionDict
 from com.geojson.helpers import (
     GeojsonFeatureCollectionDict,
     GeojsonFeatureDict,
     SortDict,
 )
-from com.covjson import CoverageCollectionDict
 from com.helpers import EDRFieldsMapping, OAFFieldsMapping
 
 
@@ -22,14 +21,14 @@ class EDRProviderProtocol(Protocol):
 
     def locations(
         self,
-        location_id: Optional[str] = None,
-        datetime_: Optional[str] = None,
-        select_properties: Optional[list[str]] = None,
-        crs: Optional[str] = None,
-        format_: Optional[str] = None,
+        location_id: str | None = None,
+        datetime_: str | None = None,
+        select_properties: list[str] | None = None,
+        crs: str | None = None,
+        format_: str | None = None,
         # not explicitly in the current stable EDR spec;
         # seems to be going to be added in the future?
-        bbox: Optional[list] = None,
+        bbox: list | None = None,
         **kwargs,
     ) -> CoverageCollectionDict | GeojsonFeatureCollectionDict | GeojsonFeatureDict: ...
 
@@ -38,9 +37,9 @@ class EDRProviderProtocol(Protocol):
     def cube(
         self,
         bbox: list,
-        datetime_: Optional[str] = None,
-        select_properties: Optional[list[str]] = None,
-        z: Optional[str] = None,
+        datetime_: str | None = None,
+        select_properties: list[str] | None = None,
+        z: str | None = None,
         **kwargs,
     ) -> CoverageCollectionDict: ...
 
@@ -48,8 +47,8 @@ class EDRProviderProtocol(Protocol):
         self,
         wkt: str,
         select_properties: list[str] = [],
-        datetime_: Optional[str] = None,
-        z: Optional[str] = None,
+        datetime_: str | None = None,
+        z: str | None = None,
         **kwargs,
     ) -> CoverageCollectionDict: ...
 
@@ -66,15 +65,15 @@ class OAFProviderProtocol(Protocol):
     def items(
         self,
         bbox: list = [],
-        datetime_: Optional[str] = None,
-        resulttype: Optional[Literal["hits", "results"]] = "results",
-        select_properties: Optional[list[str]] = None,
+        datetime_: str | None = None,
+        resulttype: Literal["hits", "results"] | None = "results",
+        select_properties: list[str] | None = None,
         properties: list[tuple[str, str]] = [],
-        sortby: Optional[list[SortDict]] = None,
-        limit: Optional[int] = None,
-        itemId: Optional[str] = None,
-        offset: Optional[int] = 0,
-        skip_geometry: Optional[bool] = False,
+        sortby: list[SortDict] | None = None,
+        limit: int | None = None,
+        itemId: str | None = None,
+        offset: int | None = 0,
+        skip_geometry: bool | None = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict: ...
 

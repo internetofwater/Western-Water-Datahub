@@ -2,12 +2,14 @@
 # SPDX-License-Identifier: MIT
 
 import csv
+import logging
+import time
 from dataclasses import dataclass
 from datetime import date
-import logging
 from pathlib import Path
-import time
-from typing import Literal, Optional, TypedDict, cast
+from typing import Literal, TypedDict, cast
+
+import shapely
 from com.cache import RedisCache
 from com.geojson.helpers import (
     GeojsonFeatureCollectionDict,
@@ -19,20 +21,19 @@ from com.geojson.helpers import (
 )
 from com.helpers import EDRFieldsMapping, OAFFieldsMapping, await_
 from com.protocols.locations import LocationCollectionProtocol
-from pydantic import BaseModel
 from geojson_pydantic import Feature, FeatureCollection, Point
 from geojson_pydantic.types import Position2D
-import shapely
-from shapely.geometry.base import BaseGeometry
+from pydantic import BaseModel
+from pygeoapi.provider.base import ProviderInvalidDataError, ProviderItemNotFoundError
 from shapely.geometry import Point as ShapelyPoint
-from pygeoapi.provider.base import ProviderItemNotFoundError, ProviderInvalidDataError
+from shapely.geometry.base import BaseGeometry
 
 LOGGER = logging.getLogger(__name__)
 
 
 class NOAAMetadata(TypedDict):
-    doi_region_num: Optional[int]
-    doi_region_name: Optional[str]
+    doi_region_num: int | None
+    doi_region_name: str | None
     is_usbr_curated: bool
     NOAA_RFC_NAME: str
     geometry: str
@@ -87,34 +88,34 @@ del NOAA_ID_TO_INCLUDE
 class ForecastData(BaseModel):
     espid: list[str]
     espfdate: list[date | str]
-    espai: Optional[list[int]] = None
-    espmi: Optional[list[int]] = None
-    esppcti: Optional[list[int]] = None
+    espai: list[int] | None = None
+    espmi: list[int] | None = None
+    esppcti: list[int] | None = None
     espavg30: list[float]
-    esppavg: Optional[list[float]] = None
-    esppmed: Optional[list[int]] = None
-    esppctile: Optional[list[int]] = None
-    espplace: Optional[list[int]] = None
-    espnyears: Optional[list[int]] = None
+    esppavg: list[float] | None = None
+    esppmed: list[int] | None = None
+    esppctile: list[int] | None = None
+    espplace: list[int] | None = None
+    espnyears: list[int] | None = None
     espname: list[str]
     esplatdd: list[float]
     esplngdd: list[float]
     espfgroupid: list[str]
-    espbasin: Optional[list[str]] = None
-    espsubbasin: Optional[list[str]] = None
+    espbasin: list[str] | None = None
+    espsubbasin: list[str] | None = None
     espbper: list[int]
     espeper: list[int]
     espp_500: list[float]
-    espobpavg: Optional[list[int]] = None
-    espiobpavg: Optional[list[int]] = None
-    espobpmed: Optional[list[int]] = None
-    espiobpmed: Optional[list[int]] = None
-    espobpntd: Optional[list[int]] = None
-    espiobpntd: Optional[list[int]] = None
-    espobpesp: Optional[list[int]] = None
-    espiobpesp: Optional[list[int]] = None
+    espobpavg: list[int] | None = None
+    espiobpavg: list[int] | None = None
+    espobpmed: list[int] | None = None
+    espiobpmed: list[int] | None = None
+    espobpntd: list[int] | None = None
+    espiobpntd: list[int] | None = None
+    espobpesp: list[int] | None = None
+    espiobpesp: list[int] | None = None
     espqpfdays: list[int]
-    wsobasin: Optional[list[str]] = None
+    wsobasin: list[str] | None = None
 
 
 @dataclass
@@ -126,11 +127,11 @@ class ForecastDataAdHoc:
     is_usbr_curated: bool
     NOAA_RFC_NAME: str
     geometry: shapely.Point
-    doi_region_num: Optional[int]
-    doi_region_name: Optional[str]
+    doi_region_num: int | None
+    doi_region_name: str | None
     espname: str
-    image_plot_link: Optional[str] = None
-    dataset_link: Optional[str] = None
+    image_plot_link: str | None = None
+    dataset_link: str | None = None
 
 
 class ForecastDataForNOAAStation(BaseModel):
@@ -142,52 +143,45 @@ class ForecastDataForNOAAStation(BaseModel):
 
     espid: str  # The id of the station where the data is from
     espfdate: date | str  # the data the forecast was made
-    espai: Optional[int] = None
-    espmi: Optional[int] = None
-    esppcti: Optional[int] = None
+    espai: int | None = None
+    espmi: int | None = None
+    esppcti: int | None = None
     espavg30: float
-    esppavg: Optional[float] = None  #
-    esppmed: Optional[int] = None
-    esppctile: Optional[int] = None
-    espplace: Optional[int] = None
-    espnyears: Optional[int] = None
+    esppavg: float | None = None
+    esppmed: int | None = None
+    esppctile: int | None = None
+    espplace: int | None = None
+    espnyears: int | None = None
     espname: str  # The human readable name of the station
     esplatdd: float
     esplngdd: float
     espfgroupid: str
-    espbasin: Optional[str] = None
-    espsubbasin: Optional[str] = None
+    espbasin: str | None = None
+    espsubbasin: str | None = None
     espbper: int
     espeper: int
     espp_500: float
-    espobpavg: Optional[int] = None
-    espiobpavg: Optional[int] = None
-    espobpmed: Optional[int] = None
-    espiobpmed: Optional[int] = None
-    espobpntd: Optional[int] = None
-    espiobpntd: Optional[int] = None
-    espobpesp: Optional[int] = None
-    espiobpesp: Optional[int] = None
+    espobpavg: int | None = None
+    espiobpavg: int | None = None
+    espobpmed: int | None = None
+    espiobpmed: int | None = None
+    espobpntd: int | None = None
+    espiobpntd: int | None = None
+    espobpesp: int | None = None
+    espiobpesp: int | None = None
     espqpfdays: int
-    wsobasin: Optional[
-        Literal["AB"]
-        | Literal["MB"]
-        | Literal["WG"]
-        | Literal["CN"]
-        | Literal["NW"]
-        | None
-    ] = None
+    wsobasin: Literal["AB", "MB", "WG", "CN", "NW"] | None = None
 
-    dataset_link: Optional[str] = None
-    image_plot_link: Optional[str] = None
+    dataset_link: str | None = None
+    image_plot_link: str | None = None
 
     # extra doi metadata not in the upstream API
     # but inserted via the NOAA_DOI_REGIONS csv dict
-    doi_region_num: Optional[int] = None
-    doi_region_name: Optional[str] = None
+    doi_region_num: int | None = None
+    doi_region_name: str | None = None
 
-    NOAA_RFC_NAME: Optional[str] = None
-    is_usbr_curated: Optional[bool] = None
+    NOAA_RFC_NAME: str | None = None
+    is_usbr_curated: bool | None = None
 
     def extend_with_metadata(self):
         """
@@ -220,8 +214,8 @@ class ForecastDataForNOAAStation(BaseModel):
 class ForecastDataSingleWithLinks:
     forecastDataSingle: ForecastDataForNOAAStation
 
-    link: Optional[str] = None
-    plot: Optional[str] = None
+    link: str | None = None
+    plot: str | None = None
 
 
 def get_water_year() -> str:
@@ -390,11 +384,11 @@ class ForecastCollection(LocationCollectionProtocol):
     def to_geojson(
         self,
         itemsIDSingleFeature: bool = False,
-        skip_geometry: Optional[bool] = False,
-        select_properties: Optional[list[str]] = None,
-        properties: Optional[list[tuple[str, str]]] = None,
+        skip_geometry: bool | None = False,
+        select_properties: list[str] | None = None,
+        properties: list[tuple[str, str]] | None = None,
         fields_mapping: EDRFieldsMapping | OAFFieldsMapping = {},
-        sortby: Optional[list[SortDict]] = None,
+        sortby: list[SortDict] | None = None,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         features: dict[str, Feature] = {}
         for forecast in self.locations:

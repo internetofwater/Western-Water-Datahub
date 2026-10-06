@@ -1,13 +1,8 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from pathlib import Path
-from typing import Optional
-
-
-from typing import Dict
-
 import urllib.parse
+from pathlib import Path
 
 
 def get_reservoir_capacity_json_path():
@@ -22,7 +17,7 @@ def get_reservoir_capacity_json_path():
     )
 
 
-def merge_pages(pages: Dict[str, dict]) -> dict:
+def merge_pages(pages: dict[str, dict]) -> dict:
     """Given multiple different pages of data, merge them together."""
 
     combined_data = {}
@@ -68,7 +63,7 @@ def get_trailing_id(url: str) -> str:
     return url.split("/")[-1]
 
 
-def getResultUrlFromCatalogUrl(url: str, datetime_: Optional[str]) -> str:
+def getResultUrlFromCatalogUrl(url: str, datetime_: str | None) -> str:
     """Create the result url given a catalog item url and the datetime we want to filter by"""
     OLDEST_TO_NEWEST = "asc"
     # this param needs to be url encoded; if we don't

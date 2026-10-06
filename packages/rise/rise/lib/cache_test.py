@@ -5,8 +5,9 @@ import asyncio
 import json
 import time
 
-from com.helpers import await_
 import pytest
+from com.helpers import await_
+
 from rise.lib.cache import RISECache
 
 
@@ -14,7 +15,7 @@ from rise.lib.cache import RISECache
 async def test_simple_redis_serialization():
     cache = RISECache()
     data = json.loads('{"test": 1}')
-    await cache.set("test_url_location", data)  # noqa: F821
+    await cache.set("test_url_location", data)
     # our interface does not export an atomic set operation, so we need to just block heuristically
     time.sleep(0.2)
     val = await cache.get("test_url_location")

@@ -1,11 +1,11 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from typing import Optional
+
 from awdb_com.locations import MAGIC_UPSTREAM_DATE_SIGNIFYING_STILL_IN_SERVICE
+from awdb_com.types import ForecastDataDTO
 from com.cache import RedisCache
 from com.helpers import await_
-from awdb_com.types import ForecastDataDTO
 from pygeoapi.provider.base import ProviderNoDataError
 
 
@@ -26,7 +26,7 @@ class ForecastResultCollection:
         station_triplets: list[str],
         element_code: str = "*",
         force_fetch: bool = False,
-        datetime_filter: Optional[str] = None,
+        datetime_filter: str | None = None,
     ) -> dict[str, list[ForecastDataDTO]]:
         """
         Given a list of station triples, fetch all associated data for them

@@ -1,14 +1,15 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+from typing import cast
+
 from awdb_com.locations import LocationCollection
 from awdb_com.types import StationDTO
 from awdb_forecasts.lib.covjson_builder import CovjsonBuilder
 from com.cache import RedisCache
+from com.covjson import CoverageCollectionDict
 from com.helpers import EDRFieldsMapping, await_
 from com.protocols.locations import LocationCollectionProtocolWithEDR
-from com.covjson import CoverageCollectionDict
-from typing import Optional, cast
 from pygeoapi.provider.base import ProviderQueryError
 
 type longitudeAndLatitude = tuple[float, float]
@@ -17,9 +18,9 @@ type longitudeAndLatitude = tuple[float, float]
 class ForecastLocationCollection(LocationCollection, LocationCollectionProtocolWithEDR):
     def __init__(
         self,
-        select_properties: Optional[list[str]] = None,
+        select_properties: list[str] | None = None,
         only_stations_with_forecasts=True,
-        itemId: Optional[str] = None,
+        itemId: str | None = None,
     ):
         self.cache = RedisCache()
         # don't include station elements if we are fetching all stations since this causes an error upstream
@@ -47,8 +48,8 @@ class ForecastLocationCollection(LocationCollection, LocationCollectionProtocolW
     def to_covjson(
         self,
         fieldMapper: EDRFieldsMapping,
-        datetime_: Optional[str],
-        select_properties: Optional[list[str]],
+        datetime_: str | None,
+        select_properties: list[str] | None,
     ) -> CoverageCollectionDict:
         stationTriples: list[str] = [
             location.stationTriplet

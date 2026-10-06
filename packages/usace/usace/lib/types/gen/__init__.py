@@ -16,73 +16,74 @@ from . import TimeSeries as TimeSeries_1
 
 
 class CdaError(Struct):
-    message: Optional[str] = None
-    incidentIdentifier: Optional[
+    message: str | None = None
+    incidentIdentifier: (
         Annotated[
             str,
             Meta(
                 description="A randomly generated number to help identify your request in the logs for analysis.."
             ),
         ]
-    ] = None
-    details: Optional[Dict[str, Dict[str, Any]]] = None
+        | None
+    ) = None
+    details: dict[str, dict[str, Any]] | None = None
 
 
 class ApiKey(Struct):
     user_id: str = field(name="user-id")
     key_name: str = field(name="key-name")
-    api_key: Optional[str] = field(name="api-key", default=None)
-    created: Optional[
+    api_key: str | None = field(name="api-key", default=None)
+    created: (
         Annotated[
             str,
             Meta(
                 description="The instant this Key was created, in ISO-8601 format with offset and timezone ('yyyy-MM-dd'T'HH:mm:ssZ'['VV']'')"
             ),
         ]
-    ] = None
-    expires: Optional[
+        | None
+    ) = None
+    expires: (
         Annotated[
             str,
             Meta(
                 description="When this key expires, in ISO-8601 format with offset and timezone ('yyyy-MM-dd'T'HH:mm:ssZ'['VV']'')"
             ),
         ]
-    ] = None
+        | None
+    ) = None
 
 
 class LocationCategory(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    id: Optional[str] = None
-    description: Optional[str] = None
+    id: str | None = None
+    description: str | None = None
 
 
 class AssignedLocation(Struct):
-    location_id: Optional[str] = field(name="location-id", default=None)
-    office_id: Optional[str] = field(name="office-id", default=None)
-    alias_id: Optional[str] = field(name="alias-id", default=None)
-    attribute: Optional[float] = None
-    ref_location_id: Optional[str] = field(name="ref-location-id", default=None)
+    location_id: str | None = field(name="location-id", default=None)
+    office_id: str | None = field(name="office-id", default=None)
+    alias_id: str | None = field(name="alias-id", default=None)
+    attribute: float | None = None
+    ref_location_id: str | None = field(name="ref-location-id", default=None)
 
 
 class LocationGroup(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    id: Optional[str] = None
-    location_category: Optional[LocationCategory] = field(
+    id: str | None = None
+    location_category: LocationCategory | None = field(
         name="location-category", default=None
     )
-    description: Optional[str] = None
-    shared_loc_alias_id: Optional[str] = field(name="shared-loc-alias-id", default=None)
-    shared_ref_location_id: Optional[str] = field(
+    description: str | None = None
+    shared_loc_alias_id: str | None = field(name="shared-loc-alias-id", default=None)
+    shared_ref_location_id: str | None = field(
         name="shared-ref-location-id", default=None
     )
-    loc_group_attribute: Optional[float] = field(
-        name="loc-group-attribute", default=None
-    )
-    assigned_locations: Optional[List[AssignedLocation]] = field(
+    loc_group_attribute: float | None = field(name="loc-group-attribute", default=None)
+    assigned_locations: list[AssignedLocation] | None = field(
         name="assigned-locations", default=None
     )
 
@@ -110,29 +111,27 @@ class Location(Struct):
         name="office-id"
     )
     name: str
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
-    active: Optional[bool] = None
-    public_name: Optional[str] = field(name="public-name", default=None)
-    long_name: Optional[str] = field(name="long-name", default=None)
-    description: Optional[str] = None
-    timezone_name: Optional[str] = field(name="timezone-name", default=None)
-    location_type: Optional[str] = field(name="location-type", default=None)
-    location_kind: Optional[str] = field(name="location-kind", default=None)
-    nation: Optional[Nation] = None
-    state_initial: Optional[str] = field(name="state-initial", default=None)
-    county_name: Optional[str] = field(name="county-name", default=None)
-    nearest_city: Optional[str] = field(name="nearest-city", default=None)
-    horizontal_datum: Optional[str] = field(name="horizontal-datum", default=None)
-    published_longitude: Optional[float] = field(
-        name="published-longitude", default=None
-    )
-    published_latitude: Optional[float] = field(name="published-latitude", default=None)
-    vertical_datum: Optional[str] = field(name="vertical-datum", default=None)
-    elevation: Optional[float] = None
-    map_label: Optional[str] = field(name="map-label", default=None)
-    bounding_office_id: Optional[str] = field(name="bounding-office-id", default=None)
-    elevation_units: Optional[str] = field(name="elevation-units", default=None)
+    latitude: float | None = None
+    longitude: float | None = None
+    active: bool | None = None
+    public_name: str | None = field(name="public-name", default=None)
+    long_name: str | None = field(name="long-name", default=None)
+    description: str | None = None
+    timezone_name: str | None = field(name="timezone-name", default=None)
+    location_type: str | None = field(name="location-type", default=None)
+    location_kind: str | None = field(name="location-kind", default=None)
+    nation: Nation | None = None
+    state_initial: str | None = field(name="state-initial", default=None)
+    county_name: str | None = field(name="county-name", default=None)
+    nearest_city: str | None = field(name="nearest-city", default=None)
+    horizontal_datum: str | None = field(name="horizontal-datum", default=None)
+    published_longitude: float | None = field(name="published-longitude", default=None)
+    published_latitude: float | None = field(name="published-latitude", default=None)
+    vertical_datum: str | None = field(name="vertical-datum", default=None)
+    elevation: float | None = None
+    map_label: str | None = field(name="map-label", default=None)
+    bounding_office_id: str | None = field(name="bounding-office-id", default=None)
+    elevation_units: str | None = field(name="elevation-units", default=None)
 
 
 class State(Struct):
@@ -156,46 +155,48 @@ class Type(Enum):
 
 
 class Office(Struct):
-    name: Optional[str] = None
-    long_name: Optional[str] = field(name="long-name", default=None)
-    type: Optional[Type] = None
-    reports_to: Optional[
+    name: str | None = None
+    long_name: str | None = field(name="long-name", default=None)
+    type: Type | None = None
+    reports_to: (
         Annotated[
             str,
             Meta(
                 description="Reference to another office, like a division, that this office reports to."
             ),
         ]
-    ] = field(name="reports-to", default=None)
+        | None
+    ) = field(name="reports-to", default=None)
 
 
 class Office1(Struct):
-    name: Optional[str] = None
-    long_name: Optional[str] = field(name="long-name", default=None)
-    type: Optional[Type] = None
-    reports_to: Optional[
+    name: str | None = None
+    long_name: str | None = field(name="long-name", default=None)
+    type: Type | None = None
+    reports_to: (
         Annotated[
             str,
             Meta(
                 description="Reference to another office, like a division, that this office reports to."
             ),
         ]
-    ] = field(name="reports-to", default=None)
+        | None
+    ) = field(name="reports-to", default=None)
 
 
 class Parameter(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    name: Optional[str] = None
-    base_parameter: Optional[str] = field(name="base-parameter", default=None)
-    sub_parameter: Optional[str] = field(name="sub-parameter", default=None)
-    sub_parameter_description: Optional[str] = field(
+    name: str | None = None
+    base_parameter: str | None = field(name="base-parameter", default=None)
+    sub_parameter: str | None = field(name="sub-parameter", default=None)
+    sub_parameter_description: str | None = field(
         name="sub-parameter-description", default=None
     )
-    db_unit_id: Optional[str] = field(name="db-unit-id", default=None)
-    unit_long_name: Optional[str] = field(name="unit-long-name", default=None)
-    unit_description: Optional[str] = field(name="unit-description", default=None)
+    db_unit_id: str | None = field(name="db-unit-id", default=None)
+    unit_long_name: str | None = field(name="unit-long-name", default=None)
+    unit_description: str | None = field(name="unit-description", default=None)
 
 
 class TimeZone(Struct):
@@ -203,11 +204,11 @@ class TimeZone(Struct):
 
 
 class TimeZones(Struct):
-    time_zones: Optional[List[TimeZone]] = field(name="time-zones", default=None)
+    time_zones: list[TimeZone] | None = field(name="time-zones", default=None)
 
 
 class TimeZoneIds(Struct):
-    time_zones: Optional[List[TimeZone]] = field(name="time-zones", default=None)
+    time_zones: list[TimeZone] | None = field(name="time-zones", default=None)
 
 
 class ParameterTypeId(Enum):
@@ -224,15 +225,15 @@ class InterpolateString(Enum):
 
 
 class SeasonalValueBean(Struct):
-    value: Optional[float] = None
-    offset_months: Optional[int] = field(name="offset-months", default=None)
-    offset_minutes: Optional[int] = field(name="offset-minutes", default=None)
+    value: float | None = None
+    offset_months: int | None = field(name="offset-months", default=None)
+    offset_minutes: int | None = field(name="offset-minutes", default=None)
 
 
 class Offset(Struct):
-    estimate: Optional[bool] = None
-    to_datum: Optional[str] = field(name="to-datum", default=None)
-    value: Optional[float] = None
+    estimate: bool | None = None
+    to_datum: str | None = field(name="to-datum", default=None)
+    value: float | None = None
 
 
 class DateVersionType(Enum):
@@ -242,148 +243,159 @@ class DateVersionType(Enum):
 
 
 class Duration(Struct):
-    seconds: Optional[int] = None
-    zero: Optional[bool] = None
-    nano: Optional[int] = None
-    negative: Optional[bool] = None
+    seconds: int | None = None
+    zero: bool | None = None
+    nano: int | None = None
+    negative: bool | None = None
 
 
 class Unit1(Struct):
-    duration: Optional[Duration] = None
-    durationEstimated: Optional[bool] = None
-    dateBased: Optional[bool] = None
-    timeBased: Optional[bool] = None
+    duration: Duration | None = None
+    durationEstimated: bool | None = None
+    dateBased: bool | None = None
+    timeBased: bool | None = None
 
 
 class Interval(Struct):
-    seconds: Optional[int] = None
-    units: Optional[List[Unit1]] = None
-    zero: Optional[bool] = None
-    nano: Optional[int] = None
-    negative: Optional[bool] = None
+    seconds: int | None = None
+    units: list[Unit1] | None = None
+    zero: bool | None = None
+    nano: int | None = None
+    negative: bool | None = None
 
 
 class Value(Struct):
-    date_time: Optional[
+    date_time: (
         Annotated[
             int,
             Meta(description="Milliseconds since 1970-01-01 (Unix Epoch), always UTC"),
         ]
-    ] = field(name="date-time", default=None)
-    value: Optional[
-        Annotated[float, Meta(description="Requested time-series data value")]
-    ] = None
-    quality_code: Optional[int] = field(name="quality-code", default=None)
+        | None
+    ) = field(name="date-time", default=None)
+    value: (
+        Annotated[float, Meta(description="Requested time-series data value")] | None
+    ) = None
+    quality_code: int | None = field(name="quality-code", default=None)
 
 
 class VerticalDatumInfo(Struct):
-    office: Optional[str] = None
-    unit: Optional[str] = None
-    location: Optional[str] = None
-    native_datum: Optional[str] = field(name="native-datum", default=None)
-    elevation: Optional[float] = None
-    offsets: Optional[List[Offset]] = None
+    office: str | None = None
+    unit: str | None = None
+    location: str | None = None
+    native_datum: str | None = field(name="native-datum", default=None)
+    elevation: float | None = None
+    offsets: list[Offset] | None = None
 
 
 class Unit2(Struct):
-    duration: Optional[Duration] = None
-    durationEstimated: Optional[bool] = None
-    dateBased: Optional[bool] = None
-    timeBased: Optional[bool] = None
+    duration: Duration | None = None
+    durationEstimated: bool | None = None
+    dateBased: bool | None = None
+    timeBased: bool | None = None
 
 
 class Interval1(Struct):
-    seconds: Optional[int] = None
-    units: Optional[List[Unit2]] = None
-    zero: Optional[bool] = None
-    nano: Optional[int] = None
-    negative: Optional[bool] = None
+    seconds: int | None = None
+    units: list[Unit2] | None = None
+    zero: bool | None = None
+    nano: int | None = None
+    negative: bool | None = None
 
 
 class TimeSeries(Struct):
     units: Annotated[str, Meta(description="The units of the time series data")]
-    begin: Optional[
+    begin: (
         Annotated[
             str,
             Meta(
                 description="The requested start time of the data, in ISO-8601 format with offset and timezone ('yyyy-MM-dd'T'HH:mm:ssZ'['VV']'')"
             ),
         ]
-    ] = None
-    date_version_type: Optional[
+        | None
+    ) = None
+    date_version_type: (
         Annotated[
             DateVersionType,
             Meta(
                 description="Version type specifies the type of timeseries response to be received. Can be max aggregate or single version. Max aggregate cannot be run if version date field is specified."
             ),
         ]
-    ] = field(name="date-version-type", default=None)
-    end: Optional[
+        | None
+    ) = field(name="date-version-type", default=None)
+    end: (
         Annotated[
             str,
             Meta(
                 description="The requested end time of the data, in ISO-8601 format with offset and timezone ('yyyy-MM-dd'T'HH:mm:ssZ'['VV']'')"
             ),
         ]
-    ] = None
-    interval: Optional[
+        | None
+    ) = None
+    interval: (
         Annotated[
             Interval1,
             Meta(
                 description="The interval of the time-series, in ISO-8601 duration format"
             ),
         ]
-    ] = None
-    interval_offset: Optional[
-        Annotated[int, Meta(description="Offset from top of interval")]
-    ] = field(name="interval-offset", default=None)
-    name: Optional[Annotated[str, Meta(description="Time-series name")]] = None
-    next_page: Optional[
+        | None
+    ) = None
+    interval_offset: (
+        Annotated[int, Meta(description="Offset from top of interval")] | None
+    ) = field(name="interval-offset", default=None)
+    name: Annotated[str, Meta(description="Time-series name")] | None = None
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    office_id: Optional[
-        Annotated[str, Meta(description="Office ID that owns the time-series")]
-    ] = field(name="office-id", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    office_id: (
+        Annotated[str, Meta(description="Office ID that owns the time-series")] | None
+    ) = field(name="office-id", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    time_zone: Optional[
+        | None
+    ) = field(name="page-size", default=None)
+    time_zone: (
         Annotated[
             str,
             Meta(
                 description="Only on 21.1.1 Database. The timezone the Interval Offset is from."
             ),
         ]
-    ] = field(name="time-zone", default=None)
-    total: Optional[
+        | None
+    ) = field(name="time-zone", default=None)
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
-    value_columns: Optional[List[TimeSeries_1.Column]] = field(
+        | None
+    ) = None
+    value_columns: list[TimeSeries_1.Column] | None = field(
         name="value-columns", default=None
     )
-    values: Optional[List[List[Value]]] = None
-    version_date: Optional[
+    values: list[list[Value]] | None = None
+    version_date: (
         Annotated[str, Meta(description="The version date of the time series trace")]
-    ] = field(name="version-date", default=None)
-    vertical_datum_info: Optional[VerticalDatumInfo] = field(
+        | None
+    ) = field(name="version-date", default=None)
+    vertical_datum_info: VerticalDatumInfo | None = field(
         name="vertical-datum-info", default=None
     )
 
@@ -394,26 +406,26 @@ class UnitSystem(Enum):
 
 
 class TsvId(Struct):
-    tsCode: Optional[int] = None
-    dateTime: Optional[str] = None
-    versionDate: Optional[str] = None
-    dataEntryDate: Optional[str] = None
+    tsCode: int | None = None
+    dateTime: str | None = None
+    versionDate: str | None = None
+    dataEntryDate: str | None = None
 
 
 class StandardTextId(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    id: Optional[str] = None
+    id: str | None = None
 
 
 class StandardTextValue(Struct):
-    id: Optional[StandardTextId] = None
-    standard_text: Optional[str] = field(name="standard-text", default=None)
+    id: StandardTextId | None = None
+    standard_text: str | None = field(name="standard-text", default=None)
 
 
 class StandardTextCatalog(Struct):
-    values: Optional[List[StandardTextValue]] = None
+    values: list[StandardTextValue] | None = None
 
 
 class DeleteMethod(Enum):
@@ -423,134 +435,140 @@ class DeleteMethod(Enum):
 
 
 class RegularTextTimeSeriesRow(Struct):
-    date_time: Optional[str] = field(name="date-time", default=None)
-    data_entry_date: Optional[str] = field(name="data-entry-date", default=None)
-    text_value: Optional[str] = field(name="text-value", default=None)
-    filename: Optional[str] = None
-    media_type: Optional[str] = field(name="media-type", default=None)
-    quality_code: Optional[int] = field(name="quality-code", default=None)
-    dest_flag: Optional[int] = field(name="dest-flag", default=None)
-    value_url: Optional[str] = field(name="value-url", default=None)
+    date_time: str | None = field(name="date-time", default=None)
+    data_entry_date: str | None = field(name="data-entry-date", default=None)
+    text_value: str | None = field(name="text-value", default=None)
+    filename: str | None = None
+    media_type: str | None = field(name="media-type", default=None)
+    quality_code: int | None = field(name="quality-code", default=None)
+    dest_flag: int | None = field(name="dest-flag", default=None)
+    value_url: str | None = field(name="value-url", default=None)
 
 
 class TextTimeSeries(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    name: Optional[str] = None
-    interval_offset: Optional[int] = field(name="interval-offset", default=None)
-    time_zone: Optional[str] = field(name="time-zone", default=None)
-    date_version_type: Optional[
+    name: str | None = None
+    interval_offset: int | None = field(name="interval-offset", default=None)
+    time_zone: str | None = field(name="time-zone", default=None)
+    date_version_type: (
         Annotated[
             DateVersionType,
             Meta(
                 description="Version type specifies the type of timeseries response to be received. Can be max aggregate or single version. Max aggregate cannot be run if version date field is specified."
             ),
         ]
-    ] = field(name="date-version-type", default=None)
-    version_date: Optional[
+        | None
+    ) = field(name="date-version-type", default=None)
+    version_date: (
         Annotated[str, Meta(description="The version date of the time series trace")]
-    ] = field(name="version-date", default=None)
-    regular_text_values: Optional[List[RegularTextTimeSeriesRow]] = field(
+        | None
+    ) = field(name="version-date", default=None)
+    regular_text_values: list[RegularTextTimeSeriesRow] | None = field(
         name="regular-text-values", default=None
     )
 
 
 class BinaryTimeSeriesRow(Struct):
-    date_time: Optional[str] = field(name="date-time", default=None)
-    data_entry_date: Optional[str] = field(name="data-entry-date", default=None)
-    media_type: Optional[str] = field(name="media-type", default=None)
-    filename: Optional[str] = None
-    dest_flag: Optional[int] = field(name="dest-flag", default=None)
-    binary_value: Optional[str] = field(name="binary-value", default=None)
-    value_url: Optional[str] = field(name="value-url", default=None)
-    quality_code: Optional[int] = field(name="quality-code", default=None)
+    date_time: str | None = field(name="date-time", default=None)
+    data_entry_date: str | None = field(name="data-entry-date", default=None)
+    media_type: str | None = field(name="media-type", default=None)
+    filename: str | None = None
+    dest_flag: int | None = field(name="dest-flag", default=None)
+    binary_value: str | None = field(name="binary-value", default=None)
+    value_url: str | None = field(name="value-url", default=None)
+    quality_code: int | None = field(name="quality-code", default=None)
 
 
 class CwmsId(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    name: Optional[str] = None
+    name: str | None = None
 
 
 class TimeSeriesProfile(Struct):
-    location_id: Optional[CwmsId] = field(name="location-id", default=None)
-    description: Optional[Annotated[str, Meta(description="Description")]] = None
-    parameter_list: Optional[
-        Annotated[List[str], Meta(description="Dependent Parameters")]
-    ] = field(name="parameter-list", default=None)
-    key_parameter: Optional[
-        Annotated[str, Meta(description="Independent Parameter")]
-    ] = field(name="key-parameter", default=None)
-    reference_ts_id: Optional[CwmsId] = field(name="reference-ts-id", default=None)
+    location_id: CwmsId | None = field(name="location-id", default=None)
+    description: Annotated[str, Meta(description="Description")] | None = None
+    parameter_list: (
+        Annotated[list[str], Meta(description="Dependent Parameters")] | None
+    ) = field(name="parameter-list", default=None)
+    key_parameter: Annotated[str, Meta(description="Independent Parameter")] | None = (
+        field(name="key-parameter", default=None)
+    )
+    reference_ts_id: CwmsId | None = field(name="reference-ts-id", default=None)
 
 
 class TimeSeriesProfileList(Struct):
-    next_page: Optional[
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    profile_list: Optional[List[TimeSeriesProfile]] = field(
+        | None
+    ) = field(name="page-size", default=None)
+    profile_list: list[TimeSeriesProfile] | None = field(
         name="profile-list", default=None
     )
-    total: Optional[
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
+        | None
+    ) = None
 
 
 class ParameterInfo(Struct):
     type: str
-    parameter: Optional[str] = None
-    unit: Optional[str] = None
-    parameterInfoString: Optional[str] = None
+    parameter: str | None = None
+    unit: str | None = None
+    parameterInfoString: str | None = None
 
 
 class ParameterInfoColumnar(ParameterInfo):
-    start_column: Optional[int] = field(name="start-column", default=None)
-    end_column: Optional[int] = field(name="end-column", default=None)
+    start_column: int | None = field(name="start-column", default=None)
+    end_column: int | None = field(name="end-column", default=None)
 
 
 class ParameterInfoIndexed(ParameterInfo):
-    index: Optional[int] = None
+    index: int | None = None
 
 
 class TimeSeriesProfileParser(Struct):
-    location_id: Optional[CwmsId] = field(name="location-id", default=None)
-    key_parameter: Optional[str] = field(name="key-parameter", default=None)
-    record_delimiter: Optional[str] = field(name="record-delimiter", default=None)
-    time_format: Optional[str] = field(name="time-format", default=None)
-    time_zone: Optional[str] = field(name="time-zone", default=None)
-    parameter_info_list: Optional[List[ParameterInfo]] = field(
+    location_id: CwmsId | None = field(name="location-id", default=None)
+    key_parameter: str | None = field(name="key-parameter", default=None)
+    record_delimiter: str | None = field(name="record-delimiter", default=None)
+    time_format: str | None = field(name="time-format", default=None)
+    time_zone: str | None = field(name="time-zone", default=None)
+    parameter_info_list: list[ParameterInfo] | None = field(
         name="parameter-info-list", default=None
     )
-    time_in_two_fields: Optional[bool] = field(name="time-in-two-fields", default=None)
-    type: Optional[str] = None
+    time_in_two_fields: bool | None = field(name="time-in-two-fields", default=None)
+    type: str | None = None
 
 
 class TimeSeriesProfileParserColumnar(TimeSeriesProfileParser):
-    time_start_column: Optional[int] = field(name="time-start-column", default=None)
-    time_end_column: Optional[int] = field(name="time-end-column", default=None)
+    time_start_column: int | None = field(name="time-start-column", default=None)
+    time_end_column: int | None = field(name="time-end-column", default=None)
 
 
 # class TimeSeriesProfileParserIndexed(TimeSeriesProfileParser):
@@ -559,69 +577,71 @@ class TimeSeriesProfileParserColumnar(TimeSeriesProfileParser):
 
 
 class DataColumnInfo(Struct):
-    name: Optional[str] = None
-    ordinal: Optional[int] = None
-    datatype: Optional[str] = None
+    name: str | None = None
+    ordinal: int | None = None
+    datatype: str | None = None
 
 
 class ParameterColumnInfo(Struct):
-    parameter: Optional[str] = None
-    ordinal: Optional[int] = None
-    unit: Optional[str] = None
+    parameter: str | None = None
+    ordinal: int | None = None
+    unit: str | None = None
 
 
 class TimeSeriesData(Struct):
-    value: Optional[float] = None
-    quality: Optional[int] = None
+    value: float | None = None
+    quality: int | None = None
 
 
 class TimeSeriesProfileInstance(Struct):
-    data_columns: Optional[List[DataColumnInfo]] = field(
-        name="data-columns", default=None
-    )
-    first_date: Optional[str] = field(name="first-date", default=None)
-    last_date: Optional[str] = field(name="last-date", default=None)
-    location_time_zone: Optional[str] = field(name="location-time-zone", default=None)
-    next_page: Optional[
+    data_columns: list[DataColumnInfo] | None = field(name="data-columns", default=None)
+    first_date: str | None = field(name="first-date", default=None)
+    last_date: str | None = field(name="last-date", default=None)
+    location_time_zone: str | None = field(name="location-time-zone", default=None)
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_first_date: Optional[str] = field(name="page-first-date", default=None)
-    page_last_date: Optional[str] = field(name="page-last-date", default=None)
-    page_size: Optional[
+        | None
+    ) = None
+    page_first_date: str | None = field(name="page-first-date", default=None)
+    page_last_date: str | None = field(name="page-last-date", default=None)
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    parameter_columns: Optional[List[ParameterColumnInfo]] = field(
+        | None
+    ) = field(name="page-size", default=None)
+    parameter_columns: list[ParameterColumnInfo] | None = field(
         name="parameter-columns", default=None
     )
-    time_series_list: Optional[Dict[str, List[TimeSeriesData]]] = field(
+    time_series_list: dict[str, list[TimeSeriesData]] | None = field(
         name="time-series-list", default=None
     )
-    time_series_profile: Optional[TimeSeriesProfile] = field(
+    time_series_profile: TimeSeriesProfile | None = field(
         name="time-series-profile", default=None
     )
-    total: Optional[
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
-    version: Optional[str] = None
-    version_date: Optional[str] = field(name="version-date", default=None)
+        | None
+    ) = None
+    version: str | None = None
+    version_date: str | None = field(name="version-date", default=None)
 
 
 class StoreRule(Enum):
@@ -636,81 +656,85 @@ class TimeseriesCategory(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    id: Optional[str] = None
-    description: Optional[str] = None
+    id: str | None = None
+    description: str | None = None
 
 
 class TimeSeriesCategory(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    id: Optional[str] = None
-    description: Optional[str] = None
+    id: str | None = None
+    description: str | None = None
 
 
 class TimeSeriesIdentifierDescriptor(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    time_series_id: Optional[str] = field(name="time-series-id", default=None)
-    timezone_name: Optional[str] = field(name="timezone-name", default=None)
-    interval_offset_minutes: Optional[int] = field(
+    time_series_id: str | None = field(name="time-series-id", default=None)
+    timezone_name: str | None = field(name="timezone-name", default=None)
+    interval_offset_minutes: int | None = field(
         name="interval-offset-minutes", default=None
     )
-    active: Optional[bool] = None
+    active: bool | None = None
 
 
 class TimeSeriesIdentifierDescriptors(Struct):
-    descriptors: Optional[List[TimeSeriesIdentifierDescriptor]] = None
-    next_page: Optional[
+    descriptors: list[TimeSeriesIdentifierDescriptor] | None = None
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    total: Optional[
+        | None
+    ) = field(name="page-size", default=None)
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
+        | None
+    ) = None
 
 
 class AssignedTimeSeries(Struct):
-    officeId: Optional[str] = None
-    timeseriesId: Optional[str] = None
-    aliasId: Optional[str] = None
-    refTsId: Optional[str] = None
-    attribute: Optional[int] = None
+    officeId: str | None = None
+    timeseriesId: str | None = None
+    aliasId: str | None = None
+    refTsId: str | None = None
+    attribute: int | None = None
 
 
 class TimeseriesGroup(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    id: Optional[str] = None
-    time_series_category: Optional[TimeseriesCategory] = field(
+    id: str | None = None
+    time_series_category: TimeseriesCategory | None = field(
         name="time-series-category", default=None
     )
-    description: Optional[str] = None
-    shared_alias_id: Optional[str] = field(name="shared-alias-id", default=None)
-    shared_ref_ts_id: Optional[str] = field(name="shared-ref-ts-id", default=None)
-    assigned_time_series: Optional[List[AssignedTimeSeries]] = field(
+    description: str | None = None
+    shared_alias_id: str | None = field(name="shared-alias-id", default=None)
+    shared_ref_ts_id: str | None = field(name="shared-ref-ts-id", default=None)
+    assigned_time_series: list[AssignedTimeSeries] | None = field(
         name="assigned-time-series", default=None
     )
 
@@ -719,25 +743,23 @@ class TimeSeriesGroup(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    id: Optional[str] = None
-    time_series_category: Optional[TimeseriesCategory] = field(
+    id: str | None = None
+    time_series_category: TimeseriesCategory | None = field(
         name="time-series-category", default=None
     )
-    description: Optional[str] = None
-    shared_alias_id: Optional[str] = field(name="shared-alias-id", default=None)
-    shared_ref_ts_id: Optional[str] = field(name="shared-ref-ts-id", default=None)
-    assigned_time_series: Optional[List[AssignedTimeSeries]] = field(
+    description: str | None = None
+    shared_alias_id: str | None = field(name="shared-alias-id", default=None)
+    shared_ref_ts_id: str | None = field(name="shared-ref-ts-id", default=None)
+    assigned_time_series: list[AssignedTimeSeries] | None = field(
         name="assigned-time-series", default=None
     )
 
 
 class ParameterSpec(Struct):
-    parameter: Optional[str] = None
-    in_range_method: Optional[str] = field(name="in-range-method", default=None)
-    out_range_low_method: Optional[str] = field(
-        name="out-range-low-method", default=None
-    )
-    out_range_high_method: Optional[str] = field(
+    parameter: str | None = None
+    in_range_method: str | None = field(name="in-range-method", default=None)
+    out_range_low_method: str | None = field(name="out-range-low-method", default=None)
+    out_range_high_method: str | None = field(
         name="out-range-high-method", default=None
     )
 
@@ -746,113 +768,119 @@ class RatingTemplate(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    id: Optional[str] = None
-    version: Optional[str] = None
-    description: Optional[str] = None
-    dependent_parameter: Optional[str] = field(name="dependent-parameter", default=None)
-    independent_parameter_specs: Optional[List[ParameterSpec]] = field(
+    id: str | None = None
+    version: str | None = None
+    description: str | None = None
+    dependent_parameter: str | None = field(name="dependent-parameter", default=None)
+    independent_parameter_specs: list[ParameterSpec] | None = field(
         name="independent-parameter-specs", default=None
     )
-    rating_ids: Optional[List[str]] = field(name="rating-ids", default=None)
+    rating_ids: list[str] | None = field(name="rating-ids", default=None)
 
 
 class RatingTemplates(Struct):
-    next_page: Optional[
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    templates: Optional[List[RatingTemplate]] = None
-    total: Optional[
+        | None
+    ) = field(name="page-size", default=None)
+    templates: list[RatingTemplate] | None = None
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
+        | None
+    ) = None
 
 
 class IndependentRoundingSpec(Struct):
-    position: Optional[int] = None
-    value: Optional[str] = None
+    position: int | None = None
+    value: str | None = None
 
 
 class RatingSpec(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    rating_id: Optional[str] = field(name="rating-id", default=None)
-    template_id: Optional[str] = field(name="template-id", default=None)
-    location_id: Optional[str] = field(name="location-id", default=None)
-    version: Optional[str] = None
-    source_agency: Optional[str] = field(name="source-agency", default=None)
-    in_range_method: Optional[str] = field(name="in-range-method", default=None)
-    out_range_low_method: Optional[str] = field(
-        name="out-range-low-method", default=None
-    )
-    out_range_high_method: Optional[str] = field(
+    rating_id: str | None = field(name="rating-id", default=None)
+    template_id: str | None = field(name="template-id", default=None)
+    location_id: str | None = field(name="location-id", default=None)
+    version: str | None = None
+    source_agency: str | None = field(name="source-agency", default=None)
+    in_range_method: str | None = field(name="in-range-method", default=None)
+    out_range_low_method: str | None = field(name="out-range-low-method", default=None)
+    out_range_high_method: str | None = field(
         name="out-range-high-method", default=None
     )
-    active: Optional[bool] = None
-    auto_update: Optional[bool] = field(name="auto-update", default=None)
-    auto_activate: Optional[bool] = field(name="auto-activate", default=None)
-    auto_migrate_extension: Optional[bool] = field(
+    active: bool | None = None
+    auto_update: bool | None = field(name="auto-update", default=None)
+    auto_activate: bool | None = field(name="auto-activate", default=None)
+    auto_migrate_extension: bool | None = field(
         name="auto-migrate-extension", default=None
     )
-    independent_rounding_specs: Optional[List[IndependentRoundingSpec]] = field(
+    independent_rounding_specs: list[IndependentRoundingSpec] | None = field(
         name="independent-rounding-specs", default=None
     )
-    dependent_rounding_spec: Optional[str] = field(
+    dependent_rounding_spec: str | None = field(
         name="dependent-rounding-spec", default=None
     )
-    description: Optional[str] = None
-    effective_dates: Optional[List[str]] = field(name="effective-dates", default=None)
+    description: str | None = None
+    effective_dates: list[str] | None = field(name="effective-dates", default=None)
 
 
 class RatingSpecs(Struct):
-    next_page: Optional[
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    specs: Optional[List[RatingSpec]] = None
-    total: Optional[
+        | None
+    ) = field(name="page-size", default=None)
+    specs: list[RatingSpec] | None = None
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
+        | None
+    ) = None
 
 
 class SourceRating(Struct):
@@ -871,61 +899,61 @@ class CatalogableEndpoint(Enum):
 
 
 class TimeSeriesExtents(Struct):
-    earliest_time: Optional[
-        Annotated[str, Meta(description="Earliest value in the timeseries")]
-    ] = field(name="earliest-time", default=None)
-    latest_time: Optional[
-        Annotated[str, Meta(description="Latest value in the timeseries")]
-    ] = field(name="latest-time", default=None)
-    version_time: Optional[
+    earliest_time: (
+        Annotated[str, Meta(description="Earliest value in the timeseries")] | None
+    ) = field(name="earliest-time", default=None)
+    latest_time: (
+        Annotated[str, Meta(description="Latest value in the timeseries")] | None
+    ) = field(name="latest-time", default=None)
+    version_time: (
         Annotated[
             str,
             Meta(
                 description="TimeSeries version to which this extent information applies"
             ),
         ]
-    ] = field(name="version-time", default=None)
-    last_update: Optional[
-        Annotated[str, Meta(description="Last update in the timeseries")]
-    ] = field(name="last-update", default=None)
+        | None
+    ) = field(name="version-time", default=None)
+    last_update: (
+        Annotated[str, Meta(description="Last update in the timeseries")] | None
+    ) = field(name="last-update", default=None)
 
 
 class TimeseriesCatalogEntry(Struct):
-    office: Optional[str] = None
-    name: Optional[str] = None
-    units: Optional[str] = None
-    interval: Optional[str] = None
-    interval_offset: Optional[
-        Annotated[int, Meta(description="Offset from top of interval")]
-    ] = field(name="interval-offset", default=None)
-    time_zone: Optional[
+    office: str | None = None
+    name: str | None = None
+    units: str | None = None
+    interval: str | None = None
+    interval_offset: (
+        Annotated[int, Meta(description="Offset from top of interval")] | None
+    ) = field(name="interval-offset", default=None)
+    time_zone: (
         Annotated[
             str,
             Meta(
                 description="Only on 21.1.1 Database. The timezone the Interval Offset is from."
             ),
         ]
-    ] = field(name="time-zone", default=None)
-    extents: Optional[List[TimeSeriesExtents]] = None
+        | None
+    ) = field(name="time-zone", default=None)
+    extents: list[TimeSeriesExtents] | None = None
 
 
 class Alias(Struct):
-    name: Optional[str] = None
-    value: Optional[str] = None
+    name: str | None = None
+    value: str | None = None
 
 
 class Basin(Struct):
     basin_id: CwmsId = field(name="basin-id")
-    sort_order: Optional[float] = field(name="sort-order", default=None)
-    total_drainage_area: Optional[float] = field(
-        name="total-drainage-area", default=None
-    )
-    contributing_drainage_area: Optional[float] = field(
+    sort_order: float | None = field(name="sort-order", default=None)
+    total_drainage_area: float | None = field(name="total-drainage-area", default=None)
+    contributing_drainage_area: float | None = field(
         name="contributing-drainage-area", default=None
     )
-    parent_basin_id: Optional[CwmsId] = field(name="parent-basin-id", default=None)
-    area_unit: Optional[str] = field(name="area-unit", default=None)
-    primary_stream_id: Optional[CwmsId] = field(name="primary-stream-id", default=None)
+    parent_basin_id: CwmsId | None = field(name="parent-basin-id", default=None)
+    area_unit: str | None = field(name="area-unit", default=None)
+    primary_stream_id: CwmsId | None = field(name="primary-stream-id", default=None)
 
 
 class Bank(Enum):
@@ -935,9 +963,9 @@ class Bank(Enum):
 
 class StreamNode(Struct):
     stream_id: CwmsId = field(name="stream-id")
-    bank: Optional[Bank] = None
-    station: Optional[float] = None
-    station_units: Optional[str] = field(name="station-units", default=None)
+    bank: Bank | None = None
+    station: float | None = None
+    station_units: str | None = field(name="station-units", default=None)
 
 
 class StreamLocationNode(Struct):
@@ -946,51 +974,49 @@ class StreamLocationNode(Struct):
 
 
 class TimeExtents(Struct):
-    earliest_time: Optional[
-        Annotated[str, Meta(description="Earliest value in the timeseries")]
-    ] = field(name="earliest-time", default=None)
-    latest_time: Optional[
-        Annotated[str, Meta(description="Latest value in the timeseries")]
-    ] = field(name="latest-time", default=None)
+    earliest_time: (
+        Annotated[str, Meta(description="Earliest value in the timeseries")] | None
+    ) = field(name="earliest-time", default=None)
+    latest_time: (
+        Annotated[str, Meta(description="Latest value in the timeseries")] | None
+    ) = field(name="latest-time", default=None)
 
 
 class StreamflowMeasurement(Struct):
-    gage_height: Optional[float] = field(name="gage-height", default=None)
-    flow: Optional[float] = None
-    quality: Optional[str] = None
+    gage_height: float | None = field(name="gage-height", default=None)
+    flow: float | None = None
+    quality: str | None = None
 
 
 class SupplementalStreamflowMeasurement(Struct):
-    channel_flow: Optional[float] = field(name="channel-flow", default=None)
-    overbank_flow: Optional[float] = field(name="overbank-flow", default=None)
-    overbank_max_depth: Optional[float] = field(name="overbank-max-depth", default=None)
-    channel_max_depth: Optional[float] = field(name="channel-max-depth", default=None)
-    avg_velocity: Optional[float] = field(name="avg-velocity", default=None)
-    surface_velocity: Optional[float] = field(name="surface-velocity", default=None)
-    max_velocity: Optional[float] = field(name="max-velocity", default=None)
-    effective_flow_area: Optional[float] = field(
-        name="effective-flow-area", default=None
-    )
-    cross_sectional_area: Optional[float] = field(
+    channel_flow: float | None = field(name="channel-flow", default=None)
+    overbank_flow: float | None = field(name="overbank-flow", default=None)
+    overbank_max_depth: float | None = field(name="overbank-max-depth", default=None)
+    channel_max_depth: float | None = field(name="channel-max-depth", default=None)
+    avg_velocity: float | None = field(name="avg-velocity", default=None)
+    surface_velocity: float | None = field(name="surface-velocity", default=None)
+    max_velocity: float | None = field(name="max-velocity", default=None)
+    effective_flow_area: float | None = field(name="effective-flow-area", default=None)
+    cross_sectional_area: float | None = field(
         name="cross-sectional-area", default=None
     )
-    mean_gage: Optional[float] = field(name="mean-gage", default=None)
-    top_width: Optional[float] = field(name="top-width", default=None)
-    main_channel_area: Optional[float] = field(name="main-channel-area", default=None)
-    overbank_area: Optional[float] = field(name="overbank-area", default=None)
+    mean_gage: float | None = field(name="mean-gage", default=None)
+    top_width: float | None = field(name="top-width", default=None)
+    main_channel_area: float | None = field(name="main-channel-area", default=None)
+    overbank_area: float | None = field(name="overbank-area", default=None)
 
 
 class UsgsMeasurement(Struct):
-    remarks: Optional[str] = None
-    current_rating: Optional[str] = field(name="current-rating", default=None)
-    control_condition: Optional[str] = field(name="control-condition", default=None)
-    shift_used: Optional[float] = field(name="shift-used", default=None)
-    percent_difference: Optional[float] = field(name="percent-difference", default=None)
-    flow_adjustment: Optional[str] = field(name="flow-adjustment", default=None)
-    delta_height: Optional[float] = field(name="delta-height", default=None)
-    delta_time: Optional[float] = field(name="delta-time", default=None)
-    air_temp: Optional[float] = field(name="air-temp", default=None)
-    water_temp: Optional[float] = field(name="water-temp", default=None)
+    remarks: str | None = None
+    current_rating: str | None = field(name="current-rating", default=None)
+    control_condition: str | None = field(name="control-condition", default=None)
+    shift_used: float | None = field(name="shift-used", default=None)
+    percent_difference: float | None = field(name="percent-difference", default=None)
+    flow_adjustment: str | None = field(name="flow-adjustment", default=None)
+    delta_height: float | None = field(name="delta-height", default=None)
+    delta_time: float | None = field(name="delta-time", default=None)
+    air_temp: float | None = field(name="air-temp", default=None)
+    water_temp: float | None = field(name="water-temp", default=None)
 
 
 class Blob(Struct):
@@ -999,41 +1025,45 @@ class Blob(Struct):
     )
     id: str
     value: str
-    description: Optional[str] = None
-    media_type_id: Optional[str] = field(name="media-type-id", default=None)
+    description: str | None = None
+    media_type_id: str | None = field(name="media-type-id", default=None)
 
 
 class Blobs(Struct):
-    blobs: Optional[
-        Annotated[List[Blob], Meta(description="List of retrieved blobs")]
-    ] = None
-    next_page: Optional[
+    blobs: Annotated[list[Blob], Meta(description="List of retrieved blobs")] | None = (
+        None
+    )
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    total: Optional[
+        | None
+    ) = field(name="page-size", default=None)
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
+        | None
+    ) = None
 
 
 class Clob(Struct):
@@ -1041,103 +1071,108 @@ class Clob(Struct):
         name="office-id"
     )
     id: str
-    description: Optional[str] = None
-    value: Optional[str] = None
+    description: str | None = None
+    value: str | None = None
 
 
 class Clobs(Struct):
-    clobs: Optional[
-        Annotated[List[Clob], Meta(description="List of retrieved clobs")]
-    ] = None
-    next_page: Optional[
+    clobs: Annotated[list[Clob], Meta(description="List of retrieved clobs")] | None = (
+        None
+    )
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    total: Optional[
+        | None
+    ) = field(name="page-size", default=None)
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
+        | None
+    ) = None
 
 
 class PoolNameType(Struct):
-    officeId: Optional[str] = None
-    poolName: Optional[str] = None
+    officeId: str | None = None
+    poolName: str | None = None
 
 
 class SpecifiedLevel(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    id: Optional[str] = None
-    description: Optional[str] = None
+    id: str | None = None
+    description: str | None = None
 
 
 class ForecastSpec(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    spec_id: Optional[Annotated[str, Meta(description="Forecast Spec ID")]] = field(
+    spec_id: Annotated[str, Meta(description="Forecast Spec ID")] | None = field(
         name="spec-id", default=None
     )
-    designator: Optional[Annotated[str, Meta(description="Forecast Designator")]] = None
-    location_id: Optional[Annotated[str, Meta(description="Location IDs")]] = field(
+    designator: Annotated[str, Meta(description="Forecast Designator")] | None = None
+    location_id: Annotated[str, Meta(description="Location IDs")] | None = field(
         name="location-id", default=None
     )
-    source_entity_id: Optional[Annotated[str, Meta(description="Source Entity ID")]] = (
+    source_entity_id: Annotated[str, Meta(description="Source Entity ID")] | None = (
         field(name="source-entity-id", default=None)
     )
-    description: Optional[
-        Annotated[str, Meta(description="Description of Forecast")]
-    ] = None
-    time_series_ids: Optional[
+    description: Annotated[str, Meta(description="Description of Forecast")] | None = (
+        None
+    )
+    time_series_ids: (
         Annotated[
-            List[str],
+            list[str],
             Meta(description="List of Time Series IDs belonging to this Forecast Spec"),
         ]
-    ] = field(name="time-series-ids", default=None)
+        | None
+    ) = field(name="time-series-ids", default=None)
 
 
 class ForecastInstance(Struct):
-    spec: Optional[ForecastSpec] = None
-    date_time: Optional[str] = field(name="date-time", default=None)
-    issue_date_time: Optional[str] = field(name="issue-date-time", default=None)
-    first_date_time: Optional[str] = field(name="first-date-time", default=None)
-    last_date_time: Optional[str] = field(name="last-date-time", default=None)
-    max_age: Optional[int] = field(name="max-age", default=None)
-    notes: Optional[Annotated[str, Meta(description="Forecast Instance Notes")]] = None
-    metadata: Optional[Dict[str, str]] = None
-    filename: Optional[Annotated[str, Meta(description="Forecast Filename")]] = None
-    file_description: Optional[
-        Annotated[str, Meta(description="Description of Forecast File")]
-    ] = field(name="file-description", default=None)
-    file_media_type: Optional[
-        Annotated[str, Meta(description="Forecast File Media Type")]
-    ] = field(name="file-media-type", default=None)
-    file_data: Optional[
-        Annotated[str, Meta(description="Forecast File binary data")]
-    ] = field(name="file-data", default=None)
-    file_data_url: Optional[
-        Annotated[str, Meta(description="Link to Forecast File binary data")]
-    ] = field(name="file-data-url", default=None)
+    spec: ForecastSpec | None = None
+    date_time: str | None = field(name="date-time", default=None)
+    issue_date_time: str | None = field(name="issue-date-time", default=None)
+    first_date_time: str | None = field(name="first-date-time", default=None)
+    last_date_time: str | None = field(name="last-date-time", default=None)
+    max_age: int | None = field(name="max-age", default=None)
+    notes: Annotated[str, Meta(description="Forecast Instance Notes")] | None = None
+    metadata: dict[str, str] | None = None
+    filename: Annotated[str, Meta(description="Forecast Filename")] | None = None
+    file_description: (
+        Annotated[str, Meta(description="Description of Forecast File")] | None
+    ) = field(name="file-description", default=None)
+    file_media_type: (
+        Annotated[str, Meta(description="Forecast File Media Type")] | None
+    ) = field(name="file-media-type", default=None)
+    file_data: Annotated[str, Meta(description="Forecast File binary data")] | None = (
+        field(name="file-data", default=None)
+    )
+    file_data_url: (
+        Annotated[str, Meta(description="Link to Forecast File binary data")] | None
+    ) = field(name="file-data-url", default=None)
 
 
 class LookupType(Struct):
@@ -1145,8 +1180,8 @@ class LookupType(Struct):
         name="office-id"
     )
     display_value: str = field(name="display-value")
-    tooltip: Optional[str] = None
-    active: Optional[bool] = None
+    tooltip: str | None = None
+    active: bool | None = None
 
 
 class WaterUser(Struct):
@@ -1167,9 +1202,9 @@ class WaterSupplyPump(Struct):
 
 
 class PumpLocation(Struct):
-    pump_in: Optional[CwmsId] = field(name="pump-in", default=None)
-    pump_out: Optional[CwmsId] = field(name="pump-out", default=None)
-    pump_below: Optional[CwmsId] = field(name="pump-below", default=None)
+    pump_in: CwmsId | None = field(name="pump-in", default=None)
+    pump_out: CwmsId | None = field(name="pump-out", default=None)
+    pump_below: CwmsId | None = field(name="pump-below", default=None)
 
 
 class PumpTransfer(Struct):
@@ -1183,7 +1218,7 @@ class WaterSupplyAccounting(Struct):
     contract_name: str = field(name="contract-name")
     water_user: WaterUser = field(name="water-user")
     pump_locations: PumpLocation = field(name="pump-locations")
-    pump_accounting: Optional[Dict[str, List[PumpTransfer]]] = field(
+    pump_accounting: dict[str, list[PumpTransfer]] | None = field(
         name="pump-accounting", default=None
     )
 
@@ -1191,21 +1226,19 @@ class WaterSupplyAccounting(Struct):
 class Embankment(Struct):
     project_id: CwmsId = field(name="project-id")
     location: Location
-    structure_type: Optional[LookupType] = field(name="structure-type", default=None)
-    upstream_side_slope: Optional[float] = field(
-        name="upstream-side-slope", default=None
-    )
-    downstream_side_slope: Optional[float] = field(
+    structure_type: LookupType | None = field(name="structure-type", default=None)
+    upstream_side_slope: float | None = field(name="upstream-side-slope", default=None)
+    downstream_side_slope: float | None = field(
         name="downstream-side-slope", default=None
     )
-    structure_length: Optional[float] = field(name="structure-length", default=None)
-    max_height: Optional[float] = field(name="max-height", default=None)
-    top_width: Optional[float] = field(name="top-width", default=None)
-    length_units: Optional[str] = field(name="length-units", default=None)
-    downstream_protection_type: Optional[LookupType] = field(
+    structure_length: float | None = field(name="structure-length", default=None)
+    max_height: float | None = field(name="max-height", default=None)
+    top_width: float | None = field(name="top-width", default=None)
+    length_units: str | None = field(name="length-units", default=None)
+    downstream_protection_type: LookupType | None = field(
         name="downstream-protection-type", default=None
     )
-    upstream_protection_type: Optional[LookupType] = field(
+    upstream_protection_type: LookupType | None = field(
         name="upstream-protection-type", default=None
     )
 
@@ -1216,8 +1249,8 @@ class Turbine(Struct):
 
 
 class LockLocationLevelRef(Struct):
-    level_link: Optional[str] = field(name="level-link", default=None)
-    level_value: Optional[float] = field(name="level-value", default=None)
+    level_link: str | None = field(name="level-link", default=None)
+    level_value: float | None = field(name="level-value", default=None)
 
 
 class TurbineSetting(Struct):
@@ -1226,18 +1259,16 @@ class TurbineSetting(Struct):
     old_discharge: float = field(name="old-discharge")
     new_discharge: float = field(name="new-discharge")
     generation_units: str = field(name="generation-units")
-    scheduled_load: Optional[float] = field(name="scheduled-load", default=None)
-    real_power: Optional[float] = field(name="real-power", default=None)
+    scheduled_load: float | None = field(name="scheduled-load", default=None)
+    real_power: float | None = field(name="real-power", default=None)
 
 
 class Outlet(Struct):
     project_id: CwmsId = field(name="project-id")
     location: Location
-    rating_group_id: Optional[CwmsId] = field(name="rating-group-id", default=None)
-    rating_spec_id: Optional[str] = field(name="rating-spec-id", default=None)
-    rating_category_id: Optional[CwmsId] = field(
-        name="rating-category-id", default=None
-    )
+    rating_group_id: CwmsId | None = field(name="rating-group-id", default=None)
+    rating_spec_id: str | None = field(name="rating-spec-id", default=None)
+    rating_category_id: CwmsId | None = field(name="rating-category-id", default=None)
 
 
 class GateSetting(Struct):
@@ -1246,12 +1277,12 @@ class GateSetting(Struct):
     opening_parameter: str = field(name="opening-parameter")
     opening_units: str = field(name="opening-units")
     invert_elevation: float = field(name="invert-elevation")
-    type: Optional[str] = None
+    type: str | None = None
 
 
 class VirtualOutletRecord(Struct):
     outlet_id: CwmsId = field(name="outlet-id")
-    downstream_outlet_ids: Optional[List[CwmsId]] = field(
+    downstream_outlet_ids: list[CwmsId] | None = field(
         name="downstream-outlet-ids", default=None
     )
 
@@ -1265,83 +1296,81 @@ class Kind(Enum):
 
 
 class LocationsWithProjectKind(Struct):
-    kind: Optional[Kind] = None
-    location_ids: Optional[List[CwmsId]] = field(name="location-ids", default=None)
+    kind: Kind | None = None
+    location_ids: list[CwmsId] | None = field(name="location-ids", default=None)
 
 
 class ProjectChildLocations(Struct):
-    project_id: Optional[CwmsId] = field(name="project-id", default=None)
-    locations_by_kind: Optional[List[LocationsWithProjectKind]] = field(
+    project_id: CwmsId | None = field(name="project-id", default=None)
+    locations_by_kind: list[LocationsWithProjectKind] | None = field(
         name="locations-by-kind", default=None
     )
 
 
 class Project(Struct):
-    location: Optional[Location] = None
-    federal_cost: Optional[float] = field(name="federal-cost", default=None)
-    non_federal_cost: Optional[float] = field(name="non-federal-cost", default=None)
-    cost_year: Optional[str] = field(name="cost-year", default=None)
-    cost_unit: Optional[str] = field(name="cost-unit", default=None)
-    federal_o_and_m_cost: Optional[float] = field(
+    location: Location | None = None
+    federal_cost: float | None = field(name="federal-cost", default=None)
+    non_federal_cost: float | None = field(name="non-federal-cost", default=None)
+    cost_year: str | None = field(name="cost-year", default=None)
+    cost_unit: str | None = field(name="cost-unit", default=None)
+    federal_o_and_m_cost: float | None = field(
         name="federal-o-and-m-cost", default=None
     )
-    non_federal_o_and_m_cost: Optional[float] = field(
+    non_federal_o_and_m_cost: float | None = field(
         name="non-federal-o-and-m-cost", default=None
     )
-    authorizing_law: Optional[str] = field(name="authorizing-law", default=None)
-    project_owner: Optional[str] = field(name="project-owner", default=None)
-    hydropower_desc: Optional[str] = field(name="hydropower-desc", default=None)
-    sedimentation_desc: Optional[str] = field(name="sedimentation-desc", default=None)
-    downstream_urban_desc: Optional[str] = field(
+    authorizing_law: str | None = field(name="authorizing-law", default=None)
+    project_owner: str | None = field(name="project-owner", default=None)
+    hydropower_desc: str | None = field(name="hydropower-desc", default=None)
+    sedimentation_desc: str | None = field(name="sedimentation-desc", default=None)
+    downstream_urban_desc: str | None = field(
         name="downstream-urban-desc", default=None
     )
-    bank_full_capacity_desc: Optional[str] = field(
+    bank_full_capacity_desc: str | None = field(
         name="bank-full-capacity-desc", default=None
     )
-    pump_back_location: Optional[Location] = field(
-        name="pump-back-location", default=None
-    )
-    near_gage_location: Optional[Location] = field(
-        name="near-gage-location", default=None
-    )
-    yield_time_frame_start: Optional[str] = field(
+    pump_back_location: Location | None = field(name="pump-back-location", default=None)
+    near_gage_location: Location | None = field(name="near-gage-location", default=None)
+    yield_time_frame_start: str | None = field(
         name="yield-time-frame-start", default=None
     )
-    yield_time_frame_end: Optional[str] = field(
-        name="yield-time-frame-end", default=None
-    )
-    project_remarks: Optional[str] = field(name="project-remarks", default=None)
+    yield_time_frame_end: str | None = field(name="yield-time-frame-end", default=None)
+    project_remarks: str | None = field(name="project-remarks", default=None)
 
 
 class Projects(Struct):
-    next_page: Optional[
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    projects: Optional[List[Project]] = None
-    total: Optional[
+        | None
+    ) = field(name="page-size", default=None)
+    projects: list[Project] | None = None
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
+        | None
+    ) = None
 
 
 class Property(Struct):
@@ -1350,38 +1379,38 @@ class Property(Struct):
     )
     category: str
     name: str
-    value: Optional[str] = None
-    comment: Optional[str] = None
+    value: str | None = None
+    comment: str | None = None
 
 
 class ProjectLock(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    project_id: Optional[str] = field(name="project-id", default=None)
-    application_id: Optional[str] = field(name="application-id", default=None)
-    acquire_time: Optional[str] = field(name="acquire-time", default=None)
-    session_user: Optional[str] = field(name="session-user", default=None)
-    os_user: Optional[str] = field(name="os-user", default=None)
-    session_program: Optional[str] = field(name="session-program", default=None)
-    session_machine: Optional[str] = field(name="session-machine", default=None)
+    project_id: str | None = field(name="project-id", default=None)
+    application_id: str | None = field(name="application-id", default=None)
+    acquire_time: str | None = field(name="acquire-time", default=None)
+    session_user: str | None = field(name="session-user", default=None)
+    os_user: str | None = field(name="os-user", default=None)
+    session_program: str | None = field(name="session-program", default=None)
+    session_machine: str | None = field(name="session-machine", default=None)
 
 
 class ProjectLockId(Struct):
-    id: Optional[str] = None
+    id: str | None = None
 
 
 class LockRevokerRights(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    project_id: Optional[str] = field(name="project-id", default=None)
-    application_id: Optional[str] = field(name="application-id", default=None)
-    user_id: Optional[str] = field(name="user-id", default=None)
+    project_id: str | None = field(name="project-id", default=None)
+    application_id: str | None = field(name="application-id", default=None)
+    user_id: str | None = field(name="user-id", default=None)
 
 
 class OfficesFMT(Struct):
-    offices: Optional[List[Office]] = None
+    offices: list[Office] | None = None
 
 
 class LocationLevel(Struct):
@@ -1391,314 +1420,337 @@ class LocationLevel(Struct):
     location_level_id: Annotated[
         str, Meta(description="Name of the location level")
     ] = field(name="location-level-id")
-    seasonal_time_series_id: Optional[
+    seasonal_time_series_id: (
         Annotated[
             str,
             Meta(
                 description="Timeseries ID (e.g. from the times series catalog) to use as the location level. Mutually exclusive with seasonalValues and siParameterUnitsConstantValue"
             ),
         ]
-    ] = field(name="seasonal-time-series-id", default=None)
-    specified_level_id: Optional[
+        | None
+    ) = field(name="seasonal-time-series-id", default=None)
+    specified_level_id: (
         Annotated[
             str,
             Meta(
                 description="Generic name of this location level. Common names are 'Top of Dam', 'Streambed', 'Bottom of Dam'."
             ),
         ]
-    ] = field(name="specified-level-id", default=None)
-    parameter_type_id: Optional[
+        | None
+    ) = field(name="specified-level-id", default=None)
+    parameter_type_id: (
         Annotated[
             ParameterTypeId,
             Meta(description="To indicate if single or aggregate value"),
         ]
-    ] = field(name="parameter-type-id", default=None)
-    parameter_id: Optional[
+        | None
+    ) = field(name="parameter-type-id", default=None)
+    parameter_id: (
         Annotated[
             str, Meta(description="Data Type such as Stage, Elevation, or others.")
         ]
-    ] = field(name="parameter-id", default=None)
-    constant_value: Optional[
+        | None
+    ) = field(name="parameter-id", default=None)
+    constant_value: (
         Annotated[
             float,
             Meta(
                 description="Single value for this location level. Mutually exclusive with seasonableTimeSeriesId and seasonValues."
             ),
         ]
-    ] = field(name="constant-value", default=None)
-    level_units_id: Optional[
-        Annotated[str, Meta(description="Units the provided levels are in")]
-    ] = field(name="level-units-id", default=None)
-    level_date: Optional[
+        | None
+    ) = field(name="constant-value", default=None)
+    level_units_id: (
+        Annotated[str, Meta(description="Units the provided levels are in")] | None
+    ) = field(name="level-units-id", default=None)
+    level_date: (
         Annotated[
             str,
             Meta(
                 description="The date/time at which this location level configuration takes effect."
             ),
         ]
-    ] = field(name="level-date", default=None)
-    level_comment: Optional[str] = field(name="level-comment", default=None)
-    interval_origin: Optional[
+        | None
+    ) = field(name="level-date", default=None)
+    level_comment: str | None = field(name="level-comment", default=None)
+    interval_origin: (
         Annotated[str, Meta(description="The start point of provided seasonal values")]
-    ] = field(name="interval-origin", default=None)
-    interval_months: Optional[int] = field(name="interval-months", default=None)
-    interval_minutes: Optional[int] = field(name="interval-minutes", default=None)
-    interpolate_string: Optional[
+        | None
+    ) = field(name="interval-origin", default=None)
+    interval_months: int | None = field(name="interval-months", default=None)
+    interval_minutes: int | None = field(name="interval-minutes", default=None)
+    interpolate_string: (
         Annotated[
             InterpolateString,
             Meta(
                 description="Indicating whether or not to interpolate between seasonal values."
             ),
         ]
-    ] = field(name="interpolate-string", default=None)
-    duration_id: Optional[
+        | None
+    ) = field(name="interpolate-string", default=None)
+    duration_id: (
         Annotated[
             str,
             Meta(
                 description="0 if parameterTypeId is Inst. Otherwise duration indicating the time window of the aggregate value."
             ),
         ]
-    ] = field(name="duration-id", default=None)
-    attribute_value: Optional[float] = field(name="attribute-value", default=None)
-    attribute_units_id: Optional[str] = field(name="attribute-units-id", default=None)
-    attribute_parameter_type_id: Optional[str] = field(
+        | None
+    ) = field(name="duration-id", default=None)
+    attribute_value: float | None = field(name="attribute-value", default=None)
+    attribute_units_id: str | None = field(name="attribute-units-id", default=None)
+    attribute_parameter_type_id: str | None = field(
         name="attribute-parameter-type-id", default=None
     )
-    attribute_parameter_id: Optional[str] = field(
+    attribute_parameter_id: str | None = field(
         name="attribute-parameter-id", default=None
     )
-    attribute_duration_id: Optional[str] = field(
+    attribute_duration_id: str | None = field(
         name="attribute-duration-id", default=None
     )
-    attribute_comment: Optional[str] = field(name="attribute-comment", default=None)
-    seasonal_values: Optional[
+    attribute_comment: str | None = field(name="attribute-comment", default=None)
+    seasonal_values: (
         Annotated[
-            List[SeasonalValueBean],
+            list[SeasonalValueBean],
             Meta(
                 description="List of Repeating seasonal values. The values repeater after the specified interval. A yearly interval seasonable could have 12 different values, one for each month for example. Mutually exclusive with seasonalTimeSeriesId and siParameterUnitsConstantValue"
             ),
         ]
-    ] = field(name="seasonal-values", default=None)
+        | None
+    ) = field(name="seasonal-values", default=None)
 
 
 class LocationLevels(Struct):
-    levels: Optional[
+    levels: (
         Annotated[
-            List[LocationLevel], Meta(description="List of retrieved location levels")
+            list[LocationLevel], Meta(description="List of retrieved location levels")
         ]
-    ] = None
-    next_page: Optional[
+        | None
+    ) = None
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    total: Optional[
+        | None
+    ) = field(name="page-size", default=None)
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
+        | None
+    ) = None
 
 
 class Timeseries(Struct):
     units: Annotated[str, Meta(description="The units of the time series data")]
-    begin: Optional[
+    begin: (
         Annotated[
             str,
             Meta(
                 description="The requested start time of the data, in ISO-8601 format with offset and timezone ('yyyy-MM-dd'T'HH:mm:ssZ'['VV']'')"
             ),
         ]
-    ] = None
-    date_version_type: Optional[
+        | None
+    ) = None
+    date_version_type: (
         Annotated[
             DateVersionType,
             Meta(
                 description="Version type specifies the type of timeseries response to be received. Can be max aggregate or single version. Max aggregate cannot be run if version date field is specified."
             ),
         ]
-    ] = field(name="date-version-type", default=None)
-    end: Optional[
+        | None
+    ) = field(name="date-version-type", default=None)
+    end: (
         Annotated[
             str,
             Meta(
                 description="The requested end time of the data, in ISO-8601 format with offset and timezone ('yyyy-MM-dd'T'HH:mm:ssZ'['VV']'')"
             ),
         ]
-    ] = None
-    interval: Optional[
+        | None
+    ) = None
+    interval: (
         Annotated[
             Interval,
             Meta(
                 description="The interval of the time-series, in ISO-8601 duration format"
             ),
         ]
-    ] = None
-    interval_offset: Optional[
-        Annotated[int, Meta(description="Offset from top of interval")]
-    ] = field(name="interval-offset", default=None)
-    name: Optional[Annotated[str, Meta(description="Time-series name")]] = None
-    next_page: Optional[
+        | None
+    ) = None
+    interval_offset: (
+        Annotated[int, Meta(description="Offset from top of interval")] | None
+    ) = field(name="interval-offset", default=None)
+    name: Annotated[str, Meta(description="Time-series name")] | None = None
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    office_id: Optional[
-        Annotated[str, Meta(description="Office ID that owns the time-series")]
-    ] = field(name="office-id", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    office_id: (
+        Annotated[str, Meta(description="Office ID that owns the time-series")] | None
+    ) = field(name="office-id", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    time_zone: Optional[
+        | None
+    ) = field(name="page-size", default=None)
+    time_zone: (
         Annotated[
             str,
             Meta(
                 description="Only on 21.1.1 Database. The timezone the Interval Offset is from."
             ),
         ]
-    ] = field(name="time-zone", default=None)
-    total: Optional[
+        | None
+    ) = field(name="time-zone", default=None)
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
-    value_columns: Optional[List[TimeSeries_1.Column]] = field(
+        | None
+    ) = None
+    value_columns: list[TimeSeries_1.Column] | None = field(
         name="value-columns", default=None
     )
-    values: Optional[List[List[Value]]] = None
-    version_date: Optional[
+    values: list[list[Value]] | None = None
+    version_date: (
         Annotated[str, Meta(description="The version date of the time series trace")]
-    ] = field(name="version-date", default=None)
-    vertical_datum_info: Optional[VerticalDatumInfo] = field(
+        | None
+    ) = field(name="version-date", default=None)
+    vertical_datum_info: VerticalDatumInfo | None = field(
         name="vertical-datum-info", default=None
     )
 
 
 class Tsv(Struct):
-    id: Optional[TsvId] = None
-    value: Optional[float] = None
-    qualityCode: Optional[int] = None
-    startDate: Optional[str] = None
-    endDate: Optional[str] = None
+    id: TsvId | None = None
+    value: float | None = None
+    qualityCode: int | None = None
+    startDate: str | None = None
+    endDate: str | None = None
 
 
 class BinaryTimeSeries(Struct):
     office_id: Annotated[str, Meta(description="Owning office of object.")] = field(
         name="office-id"
     )
-    name: Optional[str] = None
-    interval_offset: Optional[int] = field(name="interval-offset", default=None)
-    time_zone: Optional[str] = field(name="time-zone", default=None)
-    date_version_type: Optional[
+    name: str | None = None
+    interval_offset: int | None = field(name="interval-offset", default=None)
+    time_zone: str | None = field(name="time-zone", default=None)
+    date_version_type: (
         Annotated[
             DateVersionType,
             Meta(
                 description="Version type specifies the type of timeseries response to be received. Can be max aggregate or single version. Max aggregate cannot be run if version date field is specified."
             ),
         ]
-    ] = field(name="date-version-type", default=None)
-    version_date: Optional[
+        | None
+    ) = field(name="date-version-type", default=None)
+    version_date: (
         Annotated[str, Meta(description="The version date of the time series trace")]
-    ] = field(name="version-date", default=None)
-    binary_values: Optional[List[BinaryTimeSeriesRow]] = field(
+        | None
+    ) = field(name="version-date", default=None)
+    binary_values: list[BinaryTimeSeriesRow] | None = field(
         name="binary-values", default=None
     )
 
 
 class CatalogEntry2(TimeseriesCatalogEntry):
-    office: Optional[str] = None
+    office: str | None = None
 
 
 class LocationCatalogEntry(Struct):
-    office: Optional[str] = None
-    name: Optional[str] = None
-    nearest_city: Optional[str] = field(name="nearest-city", default=None)
-    public_name: Optional[str] = field(name="public-name", default=None)
-    long_name: Optional[str] = field(name="long-name", default=None)
-    description: Optional[str] = None
-    kind: Optional[str] = None
-    type: Optional[str] = None
-    time_zone: Optional[str] = field(name="time-zone", default=None)
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
-    published_latitude: Optional[float] = field(name="published-latitude", default=None)
-    published_longitude: Optional[float] = field(
-        name="published-longitude", default=None
-    )
-    horizontal_datum: Optional[str] = field(name="horizontal-datum", default=None)
-    elevation: Optional[float] = None
-    unit: Optional[str] = None
-    vertical_datum: Optional[str] = field(name="vertical-datum", default=None)
-    nation: Optional[str] = None
-    state: Optional[str] = None
-    county: Optional[str] = None
-    bounding_office: Optional[str] = field(name="bounding-office", default=None)
-    map_label: Optional[str] = field(name="map-label", default=None)
-    active: Optional[bool] = None
-    aliases: Optional[List[Alias]] = None
+    office: str | None = None
+    name: str | None = None
+    nearest_city: str | None = field(name="nearest-city", default=None)
+    public_name: str | None = field(name="public-name", default=None)
+    long_name: str | None = field(name="long-name", default=None)
+    description: str | None = None
+    kind: str | None = None
+    type: str | None = None
+    time_zone: str | None = field(name="time-zone", default=None)
+    latitude: float | None = None
+    longitude: float | None = None
+    published_latitude: float | None = field(name="published-latitude", default=None)
+    published_longitude: float | None = field(name="published-longitude", default=None)
+    horizontal_datum: str | None = field(name="horizontal-datum", default=None)
+    elevation: float | None = None
+    unit: str | None = None
+    vertical_datum: str | None = field(name="vertical-datum", default=None)
+    nation: str | None = None
+    state: str | None = None
+    county: str | None = None
+    bounding_office: str | None = field(name="bounding-office", default=None)
+    map_label: str | None = field(name="map-label", default=None)
+    active: bool | None = None
+    aliases: list[Alias] | None = None
 
 
 class Stream(Struct):
     id: CwmsId
-    starts_downstream: Optional[bool] = field(name="starts-downstream", default=None)
-    flows_into_stream_node: Optional[StreamNode] = field(
+    starts_downstream: bool | None = field(name="starts-downstream", default=None)
+    flows_into_stream_node: StreamNode | None = field(
         name="flows-into-stream-node", default=None
     )
-    diverts_from_stream_node: Optional[StreamNode] = field(
+    diverts_from_stream_node: StreamNode | None = field(
         name="diverts-from-stream-node", default=None
     )
-    length: Optional[float] = None
-    average_slope: Optional[float] = field(name="average-slope", default=None)
-    length_units: Optional[str] = field(name="length-units", default=None)
-    slope_units: Optional[str] = field(name="slope-units", default=None)
-    comment: Optional[str] = None
+    length: float | None = None
+    average_slope: float | None = field(name="average-slope", default=None)
+    length_units: str | None = field(name="length-units", default=None)
+    slope_units: str | None = field(name="slope-units", default=None)
+    comment: str | None = None
 
 
 class StreamLocation(Struct):
     stream_location_node: StreamLocationNode = field(name="stream-location-node")
-    published_station: Optional[float] = field(name="published-station", default=None)
-    navigation_station: Optional[float] = field(name="navigation-station", default=None)
-    lowest_measurable_stage: Optional[float] = field(
+    published_station: float | None = field(name="published-station", default=None)
+    navigation_station: float | None = field(name="navigation-station", default=None)
+    lowest_measurable_stage: float | None = field(
         name="lowest-measurable-stage", default=None
     )
-    total_drainage_area: Optional[float] = field(
-        name="total-drainage-area", default=None
-    )
-    ungaged_drainage_area: Optional[float] = field(
+    total_drainage_area: float | None = field(name="total-drainage-area", default=None)
+    ungaged_drainage_area: float | None = field(
         name="ungaged-drainage-area", default=None
     )
-    area_units: Optional[str] = field(name="area-units", default=None)
-    stage_units: Optional[str] = field(name="stage-units", default=None)
+    area_units: str | None = field(name="area-units", default=None)
+    stage_units: str | None = field(name="stage-units", default=None)
 
 
 class StreamReach(Struct):
@@ -1706,81 +1758,85 @@ class StreamReach(Struct):
     upstream_node: StreamLocationNode = field(name="upstream-node")
     stream_id: CwmsId = field(name="stream-id")
     id: CwmsId
-    comment: Optional[str] = None
-    configuration_id: Optional[CwmsId] = field(name="configuration-id", default=None)
+    comment: str | None = None
+    configuration_id: CwmsId | None = field(name="configuration-id", default=None)
 
 
 class CwmsIdTimeExtentsEntry(Struct):
-    id: Optional[CwmsId] = None
-    time_extents: Optional[TimeExtents] = field(name="time-extents", default=None)
+    id: CwmsId | None = None
+    time_extents: TimeExtents | None = field(name="time-extents", default=None)
 
 
 class Measurement(Struct):
     instant: str
     id: CwmsId
     number: str
-    height_unit: Optional[str] = field(name="height-unit", default=None)
-    flow_unit: Optional[str] = field(name="flow-unit", default=None)
-    temp_unit: Optional[str] = field(name="temp-unit", default=None)
-    velocity_unit: Optional[str] = field(name="velocity-unit", default=None)
-    area_unit: Optional[str] = field(name="area-unit", default=None)
-    used: Optional[bool] = None
-    agency: Optional[str] = None
-    party: Optional[str] = None
-    wm_comments: Optional[str] = field(name="wm-comments", default=None)
-    streamflow_measurement: Optional[StreamflowMeasurement] = field(
+    height_unit: str | None = field(name="height-unit", default=None)
+    flow_unit: str | None = field(name="flow-unit", default=None)
+    temp_unit: str | None = field(name="temp-unit", default=None)
+    velocity_unit: str | None = field(name="velocity-unit", default=None)
+    area_unit: str | None = field(name="area-unit", default=None)
+    used: bool | None = None
+    agency: str | None = None
+    party: str | None = None
+    wm_comments: str | None = field(name="wm-comments", default=None)
+    streamflow_measurement: StreamflowMeasurement | None = field(
         name="streamflow-measurement", default=None
     )
-    supplemental_streamflow_measurement: Optional[SupplementalStreamflowMeasurement] = (
+    supplemental_streamflow_measurement: SupplementalStreamflowMeasurement | None = (
         field(name="supplemental-streamflow-measurement", default=None)
     )
-    usgs_measurement: Optional[UsgsMeasurement] = field(
+    usgs_measurement: UsgsMeasurement | None = field(
         name="usgs-measurement", default=None
     )
 
 
 class Pool(Struct):
-    poolName: Optional[PoolNameType] = None
-    projectId: Optional[str] = None
-    bottomLevelId: Optional[str] = None
-    topLevelId: Optional[str] = None
-    implicit: Optional[bool] = None
-    attribute: Optional[float] = None
-    description: Optional[str] = None
-    clobText: Optional[str] = None
+    poolName: PoolNameType | None = None
+    projectId: str | None = None
+    bottomLevelId: str | None = None
+    topLevelId: str | None = None
+    implicit: bool | None = None
+    attribute: float | None = None
+    description: str | None = None
+    clobText: str | None = None
 
 
 class Pools(Struct):
-    next_page: Optional[
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    pools: Optional[
-        Annotated[List[Pool], Meta(description="List of retrieved pools")]
-    ] = None
-    total: Optional[
+        | None
+    ) = field(name="page-size", default=None)
+    pools: Annotated[list[Pool], Meta(description="List of retrieved pools")] | None = (
+        None
+    )
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
+        | None
+    ) = None
 
 
 class WaterUserContract(Struct):
@@ -1798,13 +1854,13 @@ class WaterUserContract(Struct):
     storage_units_id: str = field(name="storage-units-id")
     future_use_percent_activated: float = field(name="future-use-percent-activated")
     total_alloc_percent_activated: float = field(name="total-alloc-percent-activated")
-    pump_out_location: Optional[WaterSupplyPump] = field(
+    pump_out_location: WaterSupplyPump | None = field(
         name="pump-out-location", default=None
     )
-    pump_out_below_location: Optional[WaterSupplyPump] = field(
+    pump_out_below_location: WaterSupplyPump | None = field(
         name="pump-out-below-location", default=None
     )
-    pump_in_location: Optional[WaterSupplyPump] = field(
+    pump_in_location: WaterSupplyPump | None = field(
         name="pump-in-location", default=None
     )
 
@@ -1812,34 +1868,34 @@ class WaterUserContract(Struct):
 class Lock(Struct):
     project_id: CwmsId = field(name="project-id")
     location: Location
-    chamber_type: Optional[LookupType] = field(name="chamber-type", default=None)
-    lock_width: Optional[float] = field(name="lock-width", default=None)
-    lock_length: Optional[float] = field(name="lock-length", default=None)
-    normal_lock_lift: Optional[float] = field(name="normal-lock-lift", default=None)
-    maximum_lock_lift: Optional[float] = field(name="maximum-lock-lift", default=None)
-    length_units: Optional[str] = field(name="length-units", default=None)
-    volume_units: Optional[str] = field(name="volume-units", default=None)
-    volume_per_lockage: Optional[float] = field(name="volume-per-lockage", default=None)
-    minimum_draft: Optional[float] = field(name="minimum-draft", default=None)
-    high_water_upper_pool_location_level: Optional[LockLocationLevelRef] = field(
+    chamber_type: LookupType | None = field(name="chamber-type", default=None)
+    lock_width: float | None = field(name="lock-width", default=None)
+    lock_length: float | None = field(name="lock-length", default=None)
+    normal_lock_lift: float | None = field(name="normal-lock-lift", default=None)
+    maximum_lock_lift: float | None = field(name="maximum-lock-lift", default=None)
+    length_units: str | None = field(name="length-units", default=None)
+    volume_units: str | None = field(name="volume-units", default=None)
+    volume_per_lockage: float | None = field(name="volume-per-lockage", default=None)
+    minimum_draft: float | None = field(name="minimum-draft", default=None)
+    high_water_upper_pool_location_level: LockLocationLevelRef | None = field(
         name="high-water-upper-pool-location-level", default=None
     )
-    low_water_lower_pool_location_level: Optional[LockLocationLevelRef] = field(
+    low_water_lower_pool_location_level: LockLocationLevelRef | None = field(
         name="low-water-lower-pool-location-level", default=None
     )
-    high_water_lower_pool_location_level: Optional[LockLocationLevelRef] = field(
+    high_water_lower_pool_location_level: LockLocationLevelRef | None = field(
         name="high-water-lower-pool-location-level", default=None
     )
-    low_water_upper_pool_location_level: Optional[LockLocationLevelRef] = field(
+    low_water_upper_pool_location_level: LockLocationLevelRef | None = field(
         name="low-water-upper-pool-location-level", default=None
     )
-    high_water_upper_pool_warning_level: Optional[float] = field(
+    high_water_upper_pool_warning_level: float | None = field(
         name="high-water-upper-pool-warning-level", default=None
     )
-    high_water_lower_pool_warning_level: Optional[float] = field(
+    high_water_lower_pool_warning_level: float | None = field(
         name="high-water-lower-pool-warning-level", default=None
     )
-    elevation_units: Optional[str] = field(name="elevation-units", default=None)
+    elevation_units: str | None = field(name="elevation-units", default=None)
 
 
 class TurbineChange(Struct):
@@ -1847,21 +1903,19 @@ class TurbineChange(Struct):
     change_date: str = field(name="change-date")
     discharge_computation_type: LookupType = field(name="discharge-computation-type")
     reason_type: LookupType = field(name="reason-type")
-    protected: Optional[bool] = None
-    notes: Optional[str] = None
-    new_total_discharge_override: Optional[float] = field(
+    protected: bool | None = None
+    notes: str | None = None
+    new_total_discharge_override: float | None = field(
         name="new-total-discharge-override", default=None
     )
-    old_total_discharge_override: Optional[float] = field(
+    old_total_discharge_override: float | None = field(
         name="old-total-discharge-override", default=None
     )
-    discharge_units: Optional[str] = field(name="discharge-units", default=None)
-    tailwater_elevation: Optional[float] = field(
-        name="tailwater-elevation", default=None
-    )
-    elevation_units: Optional[str] = field(name="elevation-units", default=None)
-    settings: Optional[List[TurbineSetting]] = None
-    pool_elevation: Optional[float] = field(name="pool-elevation", default=None)
+    discharge_units: str | None = field(name="discharge-units", default=None)
+    tailwater_elevation: float | None = field(name="tailwater-elevation", default=None)
+    elevation_units: str | None = field(name="elevation-units", default=None)
+    settings: list[TurbineSetting] | None = None
+    pool_elevation: float | None = field(name="pool-elevation", default=None)
 
 
 class GateChange(Struct):
@@ -1869,75 +1923,75 @@ class GateChange(Struct):
     change_date: str = field(name="change-date")
     discharge_computation_type: LookupType = field(name="discharge-computation-type")
     reason_type: LookupType = field(name="reason-type")
-    reference_elevation: Optional[float] = field(
-        name="reference-elevation", default=None
-    )
-    pool_elevation: Optional[float] = field(name="pool-elevation", default=None)
-    protected: Optional[bool] = None
-    notes: Optional[str] = None
-    type: Optional[str] = None
-    new_total_discharge_override: Optional[float] = field(
+    reference_elevation: float | None = field(name="reference-elevation", default=None)
+    pool_elevation: float | None = field(name="pool-elevation", default=None)
+    protected: bool | None = None
+    notes: str | None = None
+    type: str | None = None
+    new_total_discharge_override: float | None = field(
         name="new-total-discharge-override", default=None
     )
-    old_total_discharge_override: Optional[float] = field(
+    old_total_discharge_override: float | None = field(
         name="old-total-discharge-override", default=None
     )
-    discharge_units: Optional[str] = field(name="discharge-units", default=None)
-    tailwater_elevation: Optional[float] = field(
-        name="tailwater-elevation", default=None
-    )
-    elevation_units: Optional[str] = field(name="elevation-units", default=None)
-    settings: Optional[List[GateSetting]] = None
+    discharge_units: str | None = field(name="discharge-units", default=None)
+    tailwater_elevation: float | None = field(name="tailwater-elevation", default=None)
+    elevation_units: str | None = field(name="elevation-units", default=None)
+    settings: list[GateSetting] | None = None
 
 
 class VirtualOutlet(Struct):
     project_id: CwmsId = field(name="project-id")
     virtual_outlet_id: CwmsId = field(name="virtual-outlet-id")
-    virtual_records: Optional[List[VirtualOutletRecord]] = field(
+    virtual_records: list[VirtualOutletRecord] | None = field(
         name="virtual-records", default=None
     )
 
 
 class OfficeFormatV1(Struct):
-    offices: Optional[OfficesFMT] = None
+    offices: OfficesFMT | None = None
 
 
 class CatalogEntry1(LocationCatalogEntry):
-    office: Optional[str] = None
+    office: str | None = None
 
 
 CatalogEntry = Union[CatalogEntry1, CatalogEntry2]
 
 
 class Catalog(Struct):
-    entries: Optional[List[CatalogEntry]] = None
-    next_page: Optional[
+    entries: list[CatalogEntry] | None = None
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
-    total: Optional[
+        | None
+    ) = field(name="page-size", default=None)
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
+        | None
+    ) = None
 
 
 # AbstractRatingMetadata = Annotated[
@@ -1958,93 +2012,95 @@ class Catalog(Struct):
 
 
 class RatingMetadataList(Struct):
-    next_page: Optional[
+    next_page: (
         Annotated[
             str,
             Meta(
                 description="The cursor to the next page of data; null if there is no more data"
             ),
         ]
-    ] = field(name="next-page", default=None)
-    page: Optional[
+        | None
+    ) = field(name="next-page", default=None)
+    page: (
         Annotated[str, Meta(description="The cursor to the current page of data")]
-    ] = None
-    page_size: Optional[
+        | None
+    ) = None
+    page_size: (
         Annotated[
             int,
             Meta(
                 description="The number of records fetched per-page; this may be larger than the number of records actually retrieved"
             ),
         ]
-    ] = field(name="page-size", default=None)
+        | None
+    ) = field(name="page-size", default=None)
     # rating_metadata: Optional[List[RatingMetadata]] = field(
     #     name="rating-metadata", default=None
     # )
-    total: Optional[
+    total: (
         Annotated[
             int,
             Meta(
                 description="The total number of records retrieved; null or not present if not supported or unknown"
             ),
         ]
-    ] = None
+        | None
+    ) = None
 
 
 class ExpressionRating(Struct):
-    expression: Optional[str] = None
+    expression: str | None = None
 
 
 class TableRating(Struct):
-    in_range_method: Optional[str] = field(name="in-range-method", default=None)
-    out_range_low_method: Optional[str] = field(
-        name="out-range-low-method", default=None
-    )
-    out_range_high_method: Optional[str] = field(
+    in_range_method: str | None = field(name="in-range-method", default=None)
+    out_range_low_method: str | None = field(name="out-range-low-method", default=None)
+    out_range_high_method: str | None = field(
         name="out-range-high-method", default=None
     )
 
 
 class TransitionalRating(Struct):
-    source_ratings: Optional[List[str]] = field(name="source-ratings", default=None)
-    conditions: Optional[List[str]] = None
-    evaluations: Optional[List[str]] = None
+    source_ratings: list[str] | None = field(name="source-ratings", default=None)
+    conditions: list[str] | None = None
+    evaluations: list[str] | None = None
 
 
 class VirtualRating(Struct):
-    source_ratings: Optional[List[SourceRating]] = field(
+    source_ratings: list[SourceRating] | None = field(
         name="source-ratings", default=None
     )
-    connections: Optional[str] = None
+    connections: str | None = None
 
 
 class AbstractRatingMetadata4(ExpressionRating):
-    office_id: Optional[str] = field(name="office-id", default=None)
-    rating_spec_id: Optional[str] = field(name="rating-spec-id", default=None)
-    units_id: Optional[str] = field(name="units-id", default=None)
-    active: Optional[bool] = None
-    effective_date: Optional[str] = field(name="effective-date", default=None)
-    create_date: Optional[str] = field(name="create-date", default=None)
-    transition_date: Optional[str] = field(name="transition-date", default=None)
-    description: Optional[str] = None
-    vertical_datum_info: Optional[VerticalDatumInfo] = field(
+    office_id: str | None = field(name="office-id", default=None)
+    rating_spec_id: str | None = field(name="rating-spec-id", default=None)
+    units_id: str | None = field(name="units-id", default=None)
+    active: bool | None = None
+    effective_date: str | None = field(name="effective-date", default=None)
+    create_date: str | None = field(name="create-date", default=None)
+    transition_date: str | None = field(name="transition-date", default=None)
+    description: str | None = None
+    vertical_datum_info: VerticalDatumInfo | None = field(
         name="vertical-datum-info", default=None
     )
-    rating_type: Optional[str] = field(name="rating-type", default=None)
+    rating_type: str | None = field(name="rating-type", default=None)
 
 
 class AbstractRatingMetadata1(TableRating):
-    office_id: Optional[str] = field(name="office-id", default=None)
-    rating_spec_id: Optional[str] = field(name="rating-spec-id", default=None)
-    units_id: Optional[str] = field(name="units-id", default=None)
-    active: Optional[bool] = None
-    effective_date: Optional[str] = field(name="effective-date", default=None)
-    create_date: Optional[str] = field(name="create-date", default=None)
-    transition_date: Optional[str] = field(name="transition-date", default=None)
-    description: Optional[str] = None
-    vertical_datum_info: Optional[VerticalDatumInfo] = field(
+    office_id: str | None = field(name="office-id", default=None)
+    rating_spec_id: str | None = field(name="rating-spec-id", default=None)
+    units_id: str | None = field(name="units-id", default=None)
+    active: bool | None = None
+    effective_date: str | None = field(name="effective-date", default=None)
+    create_date: str | None = field(name="create-date", default=None)
+    transition_date: str | None = field(name="transition-date", default=None)
+    description: str | None = None
+    vertical_datum_info: VerticalDatumInfo | None = field(
         name="vertical-datum-info", default=None
     )
-    rating_type: Optional[str] = field(name="rating-type", default=None)
+    rating_type: str | None = field(name="rating-type", default=None)
 
 
 class UsgsStreamRating(TableRating):
@@ -2052,45 +2108,45 @@ class UsgsStreamRating(TableRating):
 
 
 class AbstractRatingMetadata2(TransitionalRating):
-    office_id: Optional[str] = field(name="office-id", default=None)
-    rating_spec_id: Optional[str] = field(name="rating-spec-id", default=None)
-    units_id: Optional[str] = field(name="units-id", default=None)
-    active: Optional[bool] = None
-    effective_date: Optional[str] = field(name="effective-date", default=None)
-    create_date: Optional[str] = field(name="create-date", default=None)
-    transition_date: Optional[str] = field(name="transition-date", default=None)
-    description: Optional[str] = None
-    vertical_datum_info: Optional[VerticalDatumInfo] = field(
+    office_id: str | None = field(name="office-id", default=None)
+    rating_spec_id: str | None = field(name="rating-spec-id", default=None)
+    units_id: str | None = field(name="units-id", default=None)
+    active: bool | None = None
+    effective_date: str | None = field(name="effective-date", default=None)
+    create_date: str | None = field(name="create-date", default=None)
+    transition_date: str | None = field(name="transition-date", default=None)
+    description: str | None = None
+    vertical_datum_info: VerticalDatumInfo | None = field(
         name="vertical-datum-info", default=None
     )
-    rating_type: Optional[str] = field(name="rating-type", default=None)
+    rating_type: str | None = field(name="rating-type", default=None)
 
 
 class AbstractRatingMetadata3(VirtualRating):
-    office_id: Optional[str] = field(name="office-id", default=None)
-    rating_spec_id: Optional[str] = field(name="rating-spec-id", default=None)
-    units_id: Optional[str] = field(name="units-id", default=None)
-    active: Optional[bool] = None
-    effective_date: Optional[str] = field(name="effective-date", default=None)
-    create_date: Optional[str] = field(name="create-date", default=None)
-    transition_date: Optional[str] = field(name="transition-date", default=None)
-    description: Optional[str] = None
-    vertical_datum_info: Optional[VerticalDatumInfo] = field(
+    office_id: str | None = field(name="office-id", default=None)
+    rating_spec_id: str | None = field(name="rating-spec-id", default=None)
+    units_id: str | None = field(name="units-id", default=None)
+    active: bool | None = None
+    effective_date: str | None = field(name="effective-date", default=None)
+    create_date: str | None = field(name="create-date", default=None)
+    transition_date: str | None = field(name="transition-date", default=None)
+    description: str | None = None
+    vertical_datum_info: VerticalDatumInfo | None = field(
         name="vertical-datum-info", default=None
     )
-    rating_type: Optional[str] = field(name="rating-type", default=None)
+    rating_type: str | None = field(name="rating-type", default=None)
 
 
 class AbstractRatingMetadata5(UsgsStreamRating):
-    office_id: Optional[str] = field(name="office-id", default=None)
-    rating_spec_id: Optional[str] = field(name="rating-spec-id", default=None)
-    units_id: Optional[str] = field(name="units-id", default=None)
-    active: Optional[bool] = None
-    effective_date: Optional[str] = field(name="effective-date", default=None)
-    create_date: Optional[str] = field(name="create-date", default=None)
-    transition_date: Optional[str] = field(name="transition-date", default=None)
-    description: Optional[str] = None
-    vertical_datum_info: Optional[VerticalDatumInfo] = field(
+    office_id: str | None = field(name="office-id", default=None)
+    rating_spec_id: str | None = field(name="rating-spec-id", default=None)
+    units_id: str | None = field(name="units-id", default=None)
+    active: bool | None = None
+    effective_date: str | None = field(name="effective-date", default=None)
+    create_date: str | None = field(name="create-date", default=None)
+    transition_date: str | None = field(name="transition-date", default=None)
+    description: str | None = None
+    vertical_datum_info: VerticalDatumInfo | None = field(
         name="vertical-datum-info", default=None
     )
-    rating_type: Optional[str] = field(name="rating-type", default=None)
+    rating_type: str | None = field(name="rating-type", default=None)

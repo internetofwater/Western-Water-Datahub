@@ -2,16 +2,16 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-import click
-from datetime import date, timedelta, datetime
-from dateutil.parser import parse as dateparse
-from math import isnan
-
 import logging
 import multiprocessing as mp
-from osgeo import ogr
 import os
+from datetime import date, datetime, timedelta
+from math import isnan
 from time import sleep
+
+import click
+from dateutil.parser import parse as dateparse
+from osgeo import ogr
 
 from teacup.env import BASE_URL, OGR_BATCH_SIZE, POSTGRES_URL
 from teacup.lib import (
@@ -21,7 +21,6 @@ from teacup.lib import (
     setup_table_schema,
 )
 from teacup.mappings import NAME_TO_ID_MAPPING
-
 
 LOGGER = logging.getLogger(__name__)
 

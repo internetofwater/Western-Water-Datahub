@@ -2,22 +2,22 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-from typing import Literal, Optional
+from typing import Literal
 
-from awdb_forecasts.lib.forecast_locations import ForecastLocationCollection
+from awdb_com.types import StationDTO
+from com.cache import RedisCache
+from com.geojson.helpers import (
+    GeojsonFeatureCollectionDict,
+    GeojsonFeatureDict,
+    SortDict,
+)
 from com.helpers import get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
 from com.protocols.providers import OAFProviderProtocol
-from pygeoapi.provider.base import BaseProvider
 from pygeoapi.crs import crs_transform
-from com.geojson.helpers import (
-    GeojsonFeatureDict,
-    GeojsonFeatureCollectionDict,
-    SortDict,
-)
-from com.cache import RedisCache
-from awdb_com.types import StationDTO
-from pygeoapi.provider.base import ProviderItemNotFoundError
+from pygeoapi.provider.base import BaseProvider, ProviderItemNotFoundError
+
+from awdb_forecasts.lib.forecast_locations import ForecastLocationCollection
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,21 +38,19 @@ class AwdbForecastsProvider(BaseProvider, OAFProviderProtocol):
     def items(
         self,
         bbox: list = [],
-        datetime_: Optional[str] = None,
-        resulttype: Optional[Literal["hits", "results"]] = "results",
+        datetime_: str | None = None,
+        resulttype: Literal["hits", "results"] | None = "results",
         # Filter out any properties in a given feature not in this list
-        select_properties: Optional[
-            list[str]
-        ] = None,  # query this with ?properties in the actual url
+        select_properties: list[str]
+        | None = None,  # query this with ?properties in the actual url
         # select only features that contains all the `properties` with their corresponding values
         properties: list[tuple[str, str]] = [],
-        sortby: Optional[list[SortDict]] = None,
-        limit: Optional[int] = None,
-        itemId: Optional[
-            str
-        ] = None,  # unlike edr, this is a string; we need to case to an int before filtering
-        offset: Optional[int] = 0,
-        skip_geometry: Optional[bool] = False,
+        sortby: list[SortDict] | None = None,
+        limit: int | None = None,
+        itemId: str
+        | None = None,  # unlike edr, this is a string; we need to case to an int before filtering
+        offset: int | None = 0,
+        skip_geometry: bool | None = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         # typically items/ returns all features, locations/ returns only features with timeseries, and thus forecasts

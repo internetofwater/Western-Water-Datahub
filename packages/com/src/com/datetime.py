@@ -1,7 +1,7 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 
 def datetime_from_iso(date_string: str) -> datetime:
@@ -11,5 +11,5 @@ def datetime_from_iso(date_string: str) -> datetime:
 
     serialized = datetime.fromisoformat(date_string)
     if serialized.tzinfo is None:
-        serialized = serialized.replace(tzinfo=timezone.utc)
+        serialized = serialized.replace(tzinfo=UTC)
     return serialized

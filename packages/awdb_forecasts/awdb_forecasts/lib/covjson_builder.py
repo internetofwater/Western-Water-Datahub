@@ -1,24 +1,25 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from datetime import datetime, timezone
 import logging
-from typing import Optional, cast
+from datetime import UTC, datetime
+from typing import cast
+
+from awdb_com.types import ForecastDataDTO
 from awdb_forecasts.lib.forecasts import ForecastResultCollection
+from com.covjson import CoverageCollectionDict
 from com.helpers import EDRFieldsMapping
 from com.protocols.covjson import CovjsonBuilderProtocol
 from covjson_pydantic.coverage import Coverage, CoverageCollection
-from covjson_pydantic.parameter import Parameter, Parameters
-from covjson_pydantic.unit import Unit
-from covjson_pydantic.observed_property import ObservedProperty
-from covjson_pydantic.domain import Domain, Axes, ValuesAxis, DomainType
+from covjson_pydantic.domain import Axes, Domain, DomainType, ValuesAxis
 from covjson_pydantic.ndarray import NdArrayFloat
+from covjson_pydantic.observed_property import ObservedProperty
+from covjson_pydantic.parameter import Parameter, Parameters
 from covjson_pydantic.reference_system import (
-    ReferenceSystemConnectionObject,
     ReferenceSystem,
+    ReferenceSystemConnectionObject,
 )
-from awdb_com.types import ForecastDataDTO
-from com.covjson import CoverageCollectionDict
+from covjson_pydantic.unit import Unit
 
 logger = logging.getLogger(__name__)
 
@@ -37,8 +38,8 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
         station_triples: list[str],
         triplesToGeometry: dict[str, tuple[float, float]],
         fieldsMapper: EDRFieldsMapping,
-        datetime_: Optional[str] = None,
-        select_properties: Optional[list[str]] = None,
+        datetime_: str | None = None,
+        select_properties: list[str] | None = None,
     ):
         """Initialize the builder object and fetch the necessary timeseries data"""
         self.triplesToData = ForecastResultCollection().fetch_all_data(
@@ -55,9 +56,7 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
 
         assert datastream.forecastValues
         assert datastream.issueDate
-        times = [
-            datetime.fromisoformat(datastream.issueDate).replace(tzinfo=timezone.utc)
-        ]
+        times = [datetime.fromisoformat(datastream.issueDate).replace(tzinfo=UTC)]
 
         longitude, latitude = self.triplesToGeometry[triple]
         assert datastream.elementCode
