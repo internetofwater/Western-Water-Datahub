@@ -3,13 +3,14 @@
 
 import asyncio
 import logging
-from typing import Optional
-import redis.asyncio as redis
-import aiohttp
-from aiohttp import client_exceptions
 from datetime import timedelta
-from com.env import REDIS_HOST, REDIS_PORT, TRACER
+
+import aiohttp
 import orjson
+import redis.asyncio as redis
+from aiohttp import client_exceptions
+
+from com.env import REDIS_HOST, REDIS_PORT, TRACER
 
 HEADERS = {"accept": "application/vnd.api+json, application/json"}
 
@@ -17,7 +18,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 async def fetch_url(
-    url: str, headers=HEADERS, custom_mimetype: Optional[str] = None
+    url: str, headers=HEADERS, custom_mimetype: str | None = None
 ) -> dict:
     async with aiohttp.ClientSession(headers=headers) as session:
         async with session.get(url, headers=headers) as response:
@@ -44,13 +45,13 @@ class RedisCache:
         self.db = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=False)
         self.ttl = ttl
 
-    async def set(self, url: str, json_data: dict, ttl: Optional[timedelta] = None):
+    async def set(self, url: str, json_data: dict, ttl: timedelta | None = None):
         """Associate a url key with json data in the cache"""
         # Serialize the data before storing it in Redis
         await self.db.set(name=url, value=orjson.dumps(json_data))
         await self.db.expire(name=url, time=self.ttl if ttl is None else ttl)
 
-    async def set_text(self, url: str, text_data: str, ttl: Optional[timedelta] = None):
+    async def set_text(self, url: str, text_data: str, ttl: timedelta | None = None):
         await self.db.set(name=url, value=text_data)
         await self.db.expire(name=url, time=self.ttl if ttl is None else ttl)
 
@@ -84,7 +85,7 @@ class RedisCache:
         return data
 
     async def get_or_fetch_json(
-        self, url, force_fetch=False, headers=HEADERS, ttl: Optional[timedelta] = None
+        self, url, force_fetch=False, headers=HEADERS, ttl: timedelta | None = None
     ) -> dict:
         """Send a get request or grab it locally if it already exists in the cache"""
 
@@ -98,7 +99,7 @@ class RedisCache:
             return await self.get(url)
 
     async def get_or_fetch_response_text(
-        self, url, force_fetch=False, headers=HEADERS, ttl: Optional[timedelta] = None
+        self, url, force_fetch=False, headers=HEADERS, ttl: timedelta | None = None
     ):
         if not await self.contains(url) or force_fetch:
             res = await fetch_url_text(url, headers=headers)
@@ -112,8 +113,8 @@ class RedisCache:
         self,
         urls: list[str],
         force_fetch=False,
-        custom_mimetype: Optional[str] = None,
-        ttl: Optional[timedelta] = None,
+        custom_mimetype: str | None = None,
+        ttl: timedelta | None = None,
     ) -> dict[str, dict]:
         """Send a GET request to all URLs or grab it locally if it already exists in the cache."""
 
@@ -147,8 +148,8 @@ class RedisCache:
     async def _fetch_and_set_url_group(
         self,
         urls: list[str],
-        custom_mimetype: Optional[str] = None,
-        ttl: Optional[timedelta] = None,
+        custom_mimetype: str | None = None,
+        ttl: timedelta | None = None,
     ):
         results = await asyncio.gather(
             *(fetch_url(url, custom_mimetype=custom_mimetype) for url in urls)

@@ -1,15 +1,16 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-import requests
+import datetime
+
 import pytest
+import requests
+from pygeoapi.provider.base import ProviderNoDataError, ProviderQueryError
 
 from rise.lib.helpers import merge_pages
 from rise.lib.location import LocationResponse
 from rise.rise import RiseProvider
 from rise.rise_edr import RiseEDRProvider
-import datetime
-from pygeoapi.provider.base import ProviderQueryError, ProviderNoDataError
 
 
 @pytest.fixture()

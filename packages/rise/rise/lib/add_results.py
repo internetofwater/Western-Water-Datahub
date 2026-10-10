@@ -1,14 +1,14 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from datetime import timedelta
 import logging
-from typing import Any, Literal, Optional, Tuple
+from datetime import timedelta
+from typing import Any, Literal
 
+from com.env import TRACER
 from com.helpers import await_
 from pydantic import BaseModel
 
-from com.env import TRACER
 from rise.lib.cache import RISECache
 from rise.lib.helpers import flatten_values, getResultUrlFromCatalogUrl
 from rise.lib.location import LocationCollectionWithIncluded
@@ -47,7 +47,7 @@ class DataNeededForCovjson(BaseModel):
 
     location: str
     locationType: Literal["Point", "Polygon", "LineString"]
-    geometry: list[Any] | Tuple[float, float]
+    geometry: list[Any] | tuple[float, float]
     parameters: list[ParameterWithResults]
 
 
@@ -66,7 +66,7 @@ class LocationResultBuilder:
             for catalogItem in catalogItems:
                 self.catalogItemToLocationId[catalogItem] = location
 
-    def _get_all_timeseries_data(self, time_filter: Optional[str] = None):
+    def _get_all_timeseries_data(self, time_filter: str | None = None):
         # Make a dictionary from an existing response
         catalogItemUrls = flatten_values(self.locationToCatalogItemUrls)
 
@@ -95,7 +95,7 @@ class LocationResultBuilder:
 
     @TRACER.start_as_current_span("fetching_and_loading_timeseries")
     def load_results(
-        self, time_filter: Optional[str] = None
+        self, time_filter: str | None = None
     ) -> list[DataNeededForCovjson]:
         """Given a location that contains just catalog item ids, fill in the catalog items with the full
         endpoint response for the given catalog item so it can be more easily used for complex joins

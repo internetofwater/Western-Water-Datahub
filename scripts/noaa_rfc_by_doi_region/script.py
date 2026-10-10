@@ -7,6 +7,7 @@
 
 import json
 from pathlib import Path
+
 import geopandas as gpd
 import pandas as pd
 import requests
@@ -270,10 +271,6 @@ assert (
 )
 
 df_final.to_csv(output_path, index=False)
-print(
-    "Saved full NOAA RFC stations table by DOI region to {}".format(
-        output_path.absolute()
-    )
-)
+print(f"Saved full NOAA RFC stations table by DOI region to {output_path.absolute()}")
 
 # %%

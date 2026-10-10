@@ -1,13 +1,13 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from typing import Optional
+from datetime import UTC, datetime
+
+from awdb_com.types import StationDataDTO
 from com.cache import RedisCache
 from com.datetime import datetime_from_iso
 from com.env import TRACER
 from com.helpers import await_, parse_date
-from awdb_com.types import StationDataDTO
-from datetime import datetime, timezone
 
 
 class ResultCollection:
@@ -78,7 +78,7 @@ class ResultCollection:
         station_triplets: list[str],
         element_code: str = "*",
         force_fetch: bool = False,
-        datetime_filter: Optional[str] = None,
+        datetime_filter: str | None = None,
     ) -> dict[str, StationDataDTO]:
         """
         Given a list of station triples, fetch all associated data for them
@@ -96,8 +96,8 @@ class ResultCollection:
 
             earliestDate, latestDate = (
                 (
-                    datetime.max.replace(tzinfo=timezone.utc),
-                    datetime.min.replace(tzinfo=timezone.utc),
+                    datetime.max.replace(tzinfo=UTC),
+                    datetime.min.replace(tzinfo=UTC),
                 )
                 if not datetime_filter
                 else self._get_earliest_and_latest_date_from_filter(datetime_filter)
@@ -115,10 +115,8 @@ class ResultCollection:
                     assert start and end
                     startDate = datetime_from_iso(start)
                     endDate = datetime_from_iso(end)
-                    if startDate < earliestDate:
-                        earliestDate = startDate
-                    if endDate > latestDate:
-                        latestDate = endDate
+                    earliestDate = min(earliestDate, startDate)
+                    latestDate = max(latestDate, endDate)
 
                 assert datastream.stationElement.elementCode
                 elements.append(datastream.stationElement.elementCode)

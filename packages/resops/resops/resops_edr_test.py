@@ -1,15 +1,16 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from datetime import datetime
-from datetime import timezone
+from datetime import UTC, datetime
 from typing import cast
+
+import pytest
 from com.covjson import CoverageCollectionDict
 from com.geojson.helpers import GeojsonFeatureCollectionDict
-import pytest
+from pygeoapi.provider.base import ProviderQueryError
+
 import resops
 import resops.resops_edr
-from pygeoapi.provider.base import ProviderQueryError
 
 provider_def = {
     "name": "resops",
@@ -62,7 +63,7 @@ def test_location_datetime_filter():
             "The coverage should have a datetime"
         )
         assert associatedTime.year == 2020
-        assert associatedTime.tzinfo == timezone.utc
+        assert associatedTime.tzinfo == UTC
         assert coverage["domain"]["axes"]["t"]["values"][0] == datetime.fromisoformat(
             "2020-01-01T00:00:00+00:00"
         ), "The coverage should match the same time as the datetime filter"

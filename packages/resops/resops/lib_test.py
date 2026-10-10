@@ -3,6 +3,7 @@
 
 import json
 from pathlib import Path
+
 from resops.lib import LocationCollection, load_thirty_year_averages
 
 

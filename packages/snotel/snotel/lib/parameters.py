@@ -1,9 +1,9 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+from awdb_com.types import ReferenceDataDTO
 from com.cache import RedisCache
 from com.helpers import EDRFieldsMapping, await_
-from awdb_com.types import ReferenceDataDTO
 
 
 class ParametersCollection:

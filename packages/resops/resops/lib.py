@@ -1,30 +1,26 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from collections import OrderedDict
 import datetime
 import json
 import logging
 import pathlib
-from typing import Optional, TypedDict, cast
+from collections import OrderedDict
+from typing import TypedDict, cast
 
 from com.covjson import CoverageCollectionDict
 from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
-
 from com.helpers import parse_date
-from covjson_pydantic.coverage import CoverageCollection, Coverage
-from covjson_pydantic.domain import Domain, DomainType
-from covjson_pydantic.domain import Axes
-
-from covjson_pydantic.domain import ValuesAxis
-from covjson_pydantic.reference_system import (
-    ReferenceSystemConnectionObject,
-    ReferenceSystem,
-)
+from covjson_pydantic.coverage import Coverage, CoverageCollection
+from covjson_pydantic.domain import Axes, Domain, DomainType, ValuesAxis
 from covjson_pydantic.ndarray import NdArrayFloat
-from covjson_pydantic.parameter import Parameter, Parameters
-from covjson_pydantic.unit import Unit
 from covjson_pydantic.observed_property import ObservedProperty
+from covjson_pydantic.parameter import Parameter, Parameters
+from covjson_pydantic.reference_system import (
+    ReferenceSystem,
+    ReferenceSystemConnectionObject,
+)
+from covjson_pydantic.unit import Unit
 
 LOGGER = logging.getLogger(__name__)
 
@@ -59,7 +55,7 @@ def filter_averages(time: str, averages: dict) -> dict:
             if (
                 start
                 <= datetime.datetime.strptime(k, "%Y-%m-%d").replace(
-                    tzinfo=datetime.timezone.utc
+                    tzinfo=datetime.UTC
                 )
                 <= end
             ):
@@ -69,7 +65,7 @@ def filter_averages(time: str, averages: dict) -> dict:
     else:
         for k, v in averages.items():
             if result == datetime.datetime.strptime(k, "%Y-%m-%d").replace(
-                tzinfo=datetime.timezone.utc
+                tzinfo=datetime.UTC
             ):
                 return {k: v}
         return {}
@@ -77,7 +73,7 @@ def filter_averages(time: str, averages: dict) -> dict:
 
 def get_all_values_for_one_key(data: dict, key: str) -> list:
     vals = []
-    for k in data.keys():
+    for k in data:
         vals.append(data[k][key])
     return vals
 
@@ -118,8 +114,8 @@ class LocationCollection:
 
     def to_covjson(
         self,
-        datetime_: Optional[str],
-        limit: Optional[int] = None,
+        datetime_: str | None,
+        limit: int | None = None,
     ) -> CoverageCollectionDict:
         coverages: list[Coverage] = []
 
@@ -151,7 +147,7 @@ class LocationCollection:
                 # 2020 is the final year in the 30 year period in both the ResOpsUS dataset
                 # as well as the usbr 30 year averages
                 date = datetime.datetime.strptime(k, "%Y-%m-%d")
-                date = date.replace(tzinfo=datetime.timezone.utc)
+                date = date.replace(tzinfo=datetime.UTC)
                 keysWithCurrentYear.append(date)
 
             for key, title, value in (

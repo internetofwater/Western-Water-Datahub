@@ -2,19 +2,20 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-from typing import Literal, Optional
+from typing import Literal
 
+from com.geojson.helpers import (
+    GeojsonFeatureCollectionDict,
+    GeojsonFeatureDict,
+    SortDict,
+)
 from com.helpers import OAFFieldsMapping, get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
 from com.protocols.providers import OAFProviderProtocol
-from pygeoapi.provider.base import BaseProvider
 from pygeoapi.crs import crs_transform
+from pygeoapi.provider.base import BaseProvider
+
 from rise.lib.cache import RISECache
-from com.geojson.helpers import (
-    GeojsonFeatureDict,
-    GeojsonFeatureCollectionDict,
-    SortDict,
-)
 from rise.lib.location import LocationResponse
 from rise.lib.types.location import LocationDataAttributes
 
@@ -39,21 +40,19 @@ class RiseProvider(BaseProvider, OAFProviderProtocol):
     def items(
         self,
         bbox: list = [],
-        datetime_: Optional[str] = None,
-        resulttype: Optional[Literal["hits", "results"]] = "results",
+        datetime_: str | None = None,
+        resulttype: Literal["hits", "results"] | None = "results",
         # return features as normal, but return only the properties specified in `select_properties`
-        select_properties: Optional[
-            list[str]
-        ] = None,  # query this with ?properties in the actual url
+        select_properties: list[str]
+        | None = None,  # query this with ?properties in the actual url
         # filter out features based on whether they contain all the `properties` with their corresponding values
         properties: list[tuple[str, str]] = [],
-        sortby: Optional[list[SortDict]] = None,
-        limit: Optional[int] = None,
-        itemId: Optional[
-            str
-        ] = None,  # unlike edr, this is a string; we need to case to an int before filtering
-        offset: Optional[int] = 0,
-        skip_geometry: Optional[bool] = False,
+        sortby: list[SortDict] | None = None,
+        limit: int | None = None,
+        itemId: str
+        | None = None,  # unlike edr, this is a string; we need to case to an int before filtering
+        offset: int | None = 0,
+        skip_geometry: bool | None = False,
         **kwargs,  # other implicit args added by pygeoapi
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         if itemId:

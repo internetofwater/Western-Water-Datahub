@@ -1,23 +1,24 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from datetime import datetime, timezone
-from typing import Optional, cast
+from datetime import UTC, datetime
+from typing import cast
+
+from awdb_com.types import DataDTO, StationDataDTO
+from com.covjson import CoverageCollectionDict
 from com.helpers import EDRFieldsMapping
 from com.protocols.covjson import CovjsonBuilderProtocol
 from covjson_pydantic.coverage import Coverage, CoverageCollection
-from covjson_pydantic.parameter import Parameter, Parameters
-from covjson_pydantic.unit import Unit
-from covjson_pydantic.observed_property import ObservedProperty
-from covjson_pydantic.domain import Domain, Axes, ValuesAxis, DomainType
+from covjson_pydantic.domain import Axes, Domain, DomainType, ValuesAxis
 from covjson_pydantic.ndarray import NdArrayFloat
+from covjson_pydantic.observed_property import ObservedProperty
+from covjson_pydantic.parameter import Parameter, Parameters
 from covjson_pydantic.reference_system import (
-    ReferenceSystemConnectionObject,
     ReferenceSystem,
+    ReferenceSystemConnectionObject,
 )
-from com.covjson import CoverageCollectionDict
+from covjson_pydantic.unit import Unit
 from snotel.lib.result import ResultCollection
-from awdb_com.types import DataDTO, StationDataDTO
 
 
 class CovjsonBuilder(CovjsonBuilderProtocol):
@@ -34,8 +35,8 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
         station_triples: list[str],
         triplesToGeometry: dict[str, tuple[float, float]],
         fieldsMapper: EDRFieldsMapping,
-        datetime_: Optional[str] = None,
-        select_properties: Optional[list[str]] = None,
+        datetime_: str | None = None,
+        select_properties: list[str] | None = None,
     ):
         """Initialize the builder object and fetch the necessary timeseries data"""
         self.triplesToData = ResultCollection().fetch_all_data(
@@ -77,7 +78,7 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
             data.value for data in datastream.values if data.value and data.date
         ]
         times = [
-            datetime.fromisoformat(data.date).replace(tzinfo=timezone.utc)
+            datetime.fromisoformat(data.date).replace(tzinfo=UTC)
             for data in datastream.values
             if data.date and data.value
         ]

@@ -1,15 +1,15 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from datetime import timedelta, date
 import logging
-from osgeo import ogr, gdal
 import re
+from collections.abc import Iterator
+from datetime import date, timedelta
+
 import requests
-from typing import Iterator
+from osgeo import gdal, ogr
 
 from resviz.mappings import LOCATION_IDS
-
 
 gdal.UseExceptions()
 

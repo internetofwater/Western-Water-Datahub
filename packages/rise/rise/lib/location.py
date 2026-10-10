@@ -1,10 +1,22 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from datetime import datetime
 import json
 import logging
-from typing import Literal, Optional, assert_never, cast
+from datetime import datetime
+from typing import Literal, assert_never, cast
+
+import geojson_pydantic
+import shapely
+from com.env import TRACER
+from com.geojson.helpers import (
+    GeojsonFeatureCollectionDict,
+    GeojsonFeatureDict,
+    SortDict,
+    all_properties_found_in_feature,
+    filter_out_properties_not_selected,
+    sort_by_properties_in_place,
+)
 from com.helpers import (
     EDRFieldsMapping,
     OAFFieldsMapping,
@@ -14,18 +26,10 @@ from com.helpers import (
 )
 from com.otel import otel_trace
 from com.protocols.locations import LocationCollectionProtocol
-import geojson_pydantic
+from geojson_pydantic import Feature, FeatureCollection
 from pydantic import BaseModel, field_validator
-import shapely
-from com.env import TRACER
-from com.geojson.helpers import (
-    GeojsonFeatureDict,
-    GeojsonFeatureCollectionDict,
-    SortDict,
-    all_properties_found_in_feature,
-    filter_out_properties_not_selected,
-    sort_by_properties_in_place,
-)
+from pygeoapi.provider.base import ProviderItemNotFoundError
+
 from rise.lib.helpers import (
     get_reservoir_capacity_json_path,
     merge_pages,
@@ -34,8 +38,6 @@ from rise.lib.helpers import (
 from rise.lib.types.helpers import ZType
 from rise.lib.types.includes import LocationIncluded
 from rise.lib.types.location import LocationData, PageLinks
-from geojson_pydantic import Feature, FeatureCollection
-from pygeoapi.provider.base import ProviderItemNotFoundError
 
 LOGGER = logging.getLogger()
 
@@ -57,16 +59,11 @@ class LocationResponse(BaseModel):
     """
 
     # links and pagination may not be present if there is only one location
-    links: Optional[PageLinks] = None
-    meta: Optional[
-        dict[
-            Literal["totalItems", "itemsPerPage", "currentPage"],
-            int,
-        ]
-    ] = None
+    links: PageLinks | None = None
+    meta: dict[Literal["totalItems", "itemsPerPage", "currentPage"], int] | None = None
     # data represents the list of locations returned
     data: list[LocationData] = []
-    included: Optional[list[LocationIncluded]] = None
+    included: list[LocationIncluded] | None = None
 
     @classmethod
     @TRACER.start_as_current_span("loading_data_from_api_pages")
@@ -155,16 +152,15 @@ class LocationCollection(LocationCollectionProtocol):
             parsed_date_str = str(parsed_date)
 
             for i, location in enumerate(self.locations):
-                if not location.attributes.updateDate:
-                    location_indices_to_remove.add(i)
-                elif not location.attributes.updateDate.startswith(parsed_date_str):
+                if (
+                    not location.attributes.updateDate
+                    or not location.attributes.updateDate.startswith(parsed_date_str)
+                ):
                     location_indices_to_remove.add(i)
 
         else:
             raise RuntimeError(
-                "datetime_ must be a date or date range with two dates separated by '/' but got {}".format(
-                    datetime_
-                )
+                f"datetime_ must be a date or date range with two dates separated by '/' but got {datetime_}"
             )
 
         # delete them backwards so we don't have to make a copy of the list or mess up indices while iterating
@@ -176,9 +172,9 @@ class LocationCollection(LocationCollectionProtocol):
     @TRACER.start_as_current_span("geometry_filter")
     def _filter_by_geometry(
         self,
-        geometry: Optional[shapely.geometry.base.BaseGeometry],
+        geometry: shapely.geometry.base.BaseGeometry | None,
         # Vertical level
-        z: Optional[str] = None,
+        z: str | None = None,
     ):
         """
         Filter a list of locations by any arbitrary geometry; if they are not inside of it, drop their data
@@ -238,8 +234,8 @@ class LocationCollection(LocationCollectionProtocol):
 
     def drop_outside_of_bbox(
         self,
-        bbox: Optional[list] = None,
-        z: Optional[str] = None,
+        bbox: list | None = None,
+        z: str | None = None,
     ):
         """
         Given a bounding box filter out location data for locations that are not in the box.
@@ -261,11 +257,11 @@ class LocationCollection(LocationCollectionProtocol):
     def to_geojson(
         self,
         itemsIDSingleFeature: bool = False,
-        skip_geometry: Optional[bool] = False,
-        select_properties: Optional[list[str]] = None,
-        properties: Optional[list[tuple[str, str]]] = None,
+        skip_geometry: bool | None = False,
+        select_properties: list[str] | None = None,
+        properties: list[tuple[str, str]] | None = None,
         fields_mapping: OAFFieldsMapping | EDRFieldsMapping = {},
-        sortby: Optional[list[SortDict]] = None,  # now treat as list[SortDict]
+        sortby: list[SortDict] | None = None,  # now treat as list[SortDict]
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
         Convert a list of locations to geojson
@@ -294,7 +290,7 @@ class LocationCollection(LocationCollectionProtocol):
                 ),
             }
             name = location_feature.attributes.locationName
-            extra_props: Optional[dict] = RESERVOIR_CAPACITY_DATA.get(name)
+            extra_props: dict | None = RESERVOIR_CAPACITY_DATA.get(name)
             if extra_props:
                 for k, v in extra_props.items():
                     feature_as_geojson["properties"][k] = v
@@ -418,7 +414,7 @@ class LocationCollectionWithIncluded(LocationCollection):
             relevantLocations.add(location.id)
 
         locationIDToCatalogItemsUrls: dict[str, list[str]] = {}
-        for locationId in locationIdToCatalogRecords.keys():
+        for locationId in locationIdToCatalogRecords:
             if locationId not in relevantLocations:
                 continue
 

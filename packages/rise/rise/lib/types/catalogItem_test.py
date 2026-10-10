@@ -3,7 +3,6 @@
 
 import pytest
 import requests
-
 from rise.lib.types.catalogItem import CatalogItemResponse
 
 

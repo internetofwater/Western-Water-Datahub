@@ -1,8 +1,9 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-import pandas as pd
 import json
+
+import pandas as pd
 
 """
 Convert the Excel file "Reservoirs_and_Capacity_Data.xlsx" to a JSON file

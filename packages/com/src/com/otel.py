@@ -4,6 +4,7 @@
 import functools
 import inspect
 import os
+
 from opentelemetry import trace
 
 from com.env import TRACER as GLOBAL_TRACER

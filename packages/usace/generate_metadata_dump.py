@@ -3,15 +3,16 @@
 
 # this is a script for genering the static data dump of all USACE dams
 
+import asyncio
+import json
 import os
 from pathlib import Path
+
 import aiohttp
 import aiohttp.client_exceptions
 import requests
-from rise.lib.cache import RISECache
-import asyncio
-import json
 import shapely
+from rise.lib.cache import RISECache
 
 """
 Script to generate a static data dump of all the metadata for the 

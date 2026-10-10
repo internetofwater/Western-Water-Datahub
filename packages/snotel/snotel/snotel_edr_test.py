@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import datetime
+
 from snotel.snotel_edr import SnotelEDRProvider
 
 conf = {
@@ -47,9 +48,7 @@ def test_cube_with_datetime_filter():
     assert len(out["coverages"]) > 10
     for cov in out["coverages"]:
         for tValue in cov["domain"]["axes"]["t"]["values"]:
-            assert tValue >= datetime.datetime(2010, 1, 1).replace(
-                tzinfo=datetime.timezone.utc
-            )
+            assert tValue >= datetime.datetime(2010, 1, 1).replace(tzinfo=datetime.UTC)
 
 
 def test_cube_with_select_properties():

@@ -31,13 +31,12 @@ import csv
 import io
 import logging
 
-from shapely.geometry import shape as geojson_to_geom
-
 from pygeoapi.formatter.base import (
     BaseFormatter,
     FormatterGenericError,
     FormatterSerializationError,
 )
+from shapely.geometry import shape as geojson_to_geom
 
 LOGGER = logging.getLogger(__name__)
 
@@ -98,7 +97,7 @@ class CSVFormatter(BaseFormatter):
             fields = list(data["features"][0]["properties"].keys())
         except IndexError:
             LOGGER.error("no features")
-            return str()
+            return ""
 
         if self.geom:
             LOGGER.debug("Including point geometry")
