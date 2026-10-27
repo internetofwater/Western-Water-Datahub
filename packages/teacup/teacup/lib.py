@@ -78,9 +78,6 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
     pg_layer.CreateField(ogr.FieldDefn("reg_name", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("reg_num", ogr.OFTInteger))
     pg_layer.CreateField(ogr.FieldDefn("mng_reg_abbr", ogr.OFTString))
-    #   pg_layer.CreateField(ogr.FieldDefn("total_capacity", ogr.OFTReal))
-    #   pg_layer.CreateField(ogr.FieldDefn("active_capacity", ogr.OFTReal))
-    #   pg_layer.CreateField(ogr.FieldDefn("live_capacity", ogr.OFTReal))
     # this will be of values "Total" / "Active" / "Live" ; the original CSV has some null values
     # for locations without any storage data in general; but it appears that this will be dropped
     # before ending up in the locations geojson
