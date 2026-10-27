@@ -78,9 +78,6 @@ def create_locations_table(pg_ds: gdal.Dataset) -> None:
     pg_layer.CreateField(ogr.FieldDefn("reg_name", ogr.OFTString))
     pg_layer.CreateField(ogr.FieldDefn("reg_num", ogr.OFTInteger))
     pg_layer.CreateField(ogr.FieldDefn("mng_reg_abbr", ogr.OFTString))
-    #   pg_layer.CreateField(ogr.FieldDefn("total_capacity", ogr.OFTReal))
-    #   pg_layer.CreateField(ogr.FieldDefn("active_capacity", ogr.OFTReal))
-    #   pg_layer.CreateField(ogr.FieldDefn("live_capacity", ogr.OFTReal))
     # this will be of values "Total" / "Active" / "Live" ; the original CSV has some null values
     # for locations without any storage data in general; but it appears that this will be dropped
     # before ending up in the locations geojson
@@ -225,12 +222,6 @@ def run_location_load(force_clean_layer=False) -> None:
         pref_name = row["preferred_label_for_map_and_table"]
         row["source_uri"] = get_source_url(source_name, source, pref_name)
 
-        # Clean Total Capacity (cast to float)
-        try:
-            row["total_capacity"] = float(row["total_capacity"].replace(",", ""))
-        except (ValueError, AttributeError):
-            row["total_capacity"] = None
-
         # Shorten Column Names
         row["map_label"] = row.pop("preferred_label_for_map_and_table")
         row["popup_label"] = row.pop("preferred_label_for_popup_and_modal")
@@ -282,9 +273,6 @@ def run_location_load(force_clean_layer=False) -> None:
         feature.SetField("reg_name", row["reg_name"])
         feature.SetField("reg_num", row["reg_num"])
         feature.SetField("mng_reg_abbr", row["mng_reg_abbr"])
-        # feature.SetField("total_capacity", row["total_capacity"])
-        # feature.SetField("active_capacity", row["active_capacity"])
-        # feature.SetField("live_capacity", row["live_capacity"])
         feature.SetField("storage_capacity_label", row["storage_capacity_label"])
         feature.SetField("capacity_value", row["capacity_value"])
         # Handle WWDH specific fields
