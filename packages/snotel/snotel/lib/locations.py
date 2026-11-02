@@ -1,9 +1,12 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+from typing import cast
+
 from awdb_com.locations import LocationCollection
 from awdb_com.types import StationDTO
 from com.cache import RedisCache
+from com.covjson import CoverageCollectionDict
 from com.env import TRACER
 from com.helpers import (
     EDRFieldsMapping,
@@ -11,9 +14,7 @@ from com.helpers import (
 )
 from com.otel import otel_trace
 from com.protocols.locations import LocationCollectionProtocolWithEDR
-from com.covjson import CoverageCollectionDict
 from snotel.lib.covjson_builder import CovjsonBuilder
-from typing import Optional, cast
 
 type longitudeAndLatitude = tuple[float, float]
 
@@ -24,8 +25,8 @@ class SnotelLocationCollection(LocationCollection, LocationCollectionProtocolWit
     @otel_trace()
     def __init__(
         self,
-        select_properties: Optional[list[str]] = None,
-        itemId: Optional[str] = None,
+        select_properties: list[str] | None = None,
+        itemId: str | None = None,
     ):
         self.cache = RedisCache()
         # snotel also proxies usgs so we just want to get SNOTEL stations
@@ -46,8 +47,8 @@ class SnotelLocationCollection(LocationCollection, LocationCollectionProtocolWit
     def to_covjson(
         self,
         fieldMapper: EDRFieldsMapping,
-        datetime_: Optional[str],
-        select_properties: Optional[list[str]],
+        datetime_: str | None,
+        select_properties: list[str] | None,
     ) -> CoverageCollectionDict:
         stationTriples: list[str] = [
             location.stationTriplet

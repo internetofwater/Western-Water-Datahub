@@ -2,17 +2,17 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-from typing import Optional
 
 import aiohttp
 import aiohttp.client_exceptions
+from com.covjson import CoverageCollectionDict
 from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
 from com.helpers import EDRFieldsMapping
 from com.otel import otel_trace
 from com.protocols.providers import EDRProviderProtocol
-from pygeoapi.provider.base_edr import BaseEDRProvider
-from com.covjson import CoverageCollectionDict
 from pygeoapi.provider.base import ProviderItemNotFoundError, ProviderQueryError
+from pygeoapi.provider.base_edr import BaseEDRProvider
+
 from usace.lib.locations_collection import LocationCollection
 from usace.lib.param_helpers import get_upstream_ids_of_select_properties
 
@@ -35,12 +35,12 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
     @otel_trace()
     def locations(
         self,
-        location_id: Optional[str] = None,
-        datetime_: Optional[str] = None,
-        select_properties: Optional[list[str]] = None,
-        crs: Optional[str] = None,
-        format_: Optional[str] = None,
-        bbox: Optional[list] = None,
+        location_id: str | None = None,
+        datetime_: str | None = None,
+        select_properties: list[str] | None = None,
+        crs: str | None = None,
+        format_: str | None = None,
+        bbox: list | None = None,
         **kwargs,
     ) -> CoverageCollectionDict | GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
@@ -93,9 +93,9 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
     def cube(
         self,
         bbox: list,
-        datetime_: Optional[str] = None,
-        select_properties: Optional[list[str]] = None,
-        z: Optional[str] = None,
+        datetime_: str | None = None,
+        select_properties: list[str] | None = None,
+        z: str | None = None,
         **kwargs,
     ) -> CoverageCollectionDict:
         """
@@ -123,8 +123,8 @@ class USACEEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         # Well known text (WKT) representation of the geometry for the area
         wkt: str,
         select_properties: list[str] = [],
-        datetime_: Optional[str] = None,
-        z: Optional[str] = None,
+        datetime_: str | None = None,
+        z: str | None = None,
         **kwargs,
     ) -> CoverageCollectionDict:
         """

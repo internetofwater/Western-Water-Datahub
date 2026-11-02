@@ -2,11 +2,16 @@
 # SPDX-License-Identifier: MIT
 
 from datetime import datetime
+from typing import assert_never, cast
+
+import geojson_pydantic
+import shapely
+from com.covjson import CoverageCollectionDict
 from com.datetime import datetime_from_iso
 from com.env import TRACER
 from com.geojson.helpers import (
-    GeojsonFeatureDict,
     GeojsonFeatureCollectionDict,
+    GeojsonFeatureDict,
     SortDict,
     all_properties_found_in_feature,
     filter_out_properties_not_selected,
@@ -19,13 +24,10 @@ from com.helpers import (
     parse_z,
 )
 from com.protocols.locations import LocationCollectionProtocolWithEDR
-import geojson_pydantic
-from com.covjson import CoverageCollectionDict
 from rise.lib.types.helpers import ZType
 from snotel.lib.covjson_builder import CovjsonBuilder
+
 from awdb_com.types import StationDTO
-import shapely
-from typing import Optional, assert_never, cast
 
 type longitudeAndLatitude = tuple[float, float]
 
@@ -88,9 +90,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                     location_indices_to_remove.add(i)
         else:
             raise RuntimeError(
-                "datetime_ must be a date or date range with two dates separated by '/' but got {}".format(
-                    datetime_
-                )
+                f"datetime_ must be a date or date range with two dates separated by '/' but got {datetime_}"
             )
 
         # delete them backwards so we don't have to make a copy of the list or mess up indices while iterating
@@ -102,11 +102,11 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
     def to_geojson(
         self,
         itemsIDSingleFeature=False,
-        skip_geometry: Optional[bool] = False,
-        select_properties: Optional[list[str]] = None,
-        properties: Optional[list[tuple[str, str]]] = None,
+        skip_geometry: bool | None = False,
+        select_properties: list[str] | None = None,
+        properties: list[tuple[str, str]] | None = None,
         fields_mapping: EDRFieldsMapping | OAFFieldsMapping = {},
-        sortby: Optional[list[SortDict]] = None,
+        sortby: list[SortDict] | None = None,
         useStationTripletAsId: bool = False,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
@@ -161,21 +161,19 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
             )
             return GeojsonFeatureDict(**features[0].model_dump(exclude_unset=True))
         return GeojsonFeatureCollectionDict(
-            **{
-                "type": "FeatureCollection",
-                "features": [
-                    feature.model_dump(by_alias=True, exclude_unset=True)
-                    for feature in features
-                ],
-            }
+            type="FeatureCollection",
+            features=[
+                feature.model_dump(by_alias=True, exclude_unset=True)
+                for feature in features
+            ],
         )
 
     @TRACER.start_as_current_span("geometry_filter")
     def _filter_by_geometry(
         self,
-        geometry: Optional[shapely.geometry.base.BaseGeometry],
+        geometry: shapely.geometry.base.BaseGeometry | None,
         # Vertical level
-        z: Optional[str] = None,
+        z: str | None = None,
     ):
         """
         Filter a list of locations by any arbitrary geometry; if they are not inside of it, drop their data
@@ -226,8 +224,8 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
     def to_covjson(
         self,
         fieldMapper: EDRFieldsMapping,
-        datetime_: Optional[str],
-        select_properties: Optional[list[str]],
+        datetime_: str | None,
+        select_properties: list[str] | None,
     ) -> CoverageCollectionDict:
         stationTriples: list[str] = [
             location.stationTriplet

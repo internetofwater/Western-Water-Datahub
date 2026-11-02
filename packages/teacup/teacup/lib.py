@@ -1,17 +1,18 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from datetime import timedelta, date
-from enum import StrEnum
 import logging
+from collections.abc import Iterator
+from datetime import date, timedelta
+from enum import StrEnum
 from math import isnan
-from osgeo import ogr, gdal
-import requests
-from typing import Iterator
 from urllib.parse import unquote, urlparse
 
-from teacup.env import POSTGRES_URL, LOCATION_GEOJSON_URL
-from teacup.mappings import LOCATION_IDS, DOI_REGIONS, STATE_MAPPING
+import requests
+from osgeo import gdal, ogr
+
+from teacup.env import LOCATION_GEOJSON_URL, POSTGRES_URL
+from teacup.mappings import DOI_REGIONS, LOCATION_IDS, STATE_MAPPING
 
 
 class SourceName(StrEnum):

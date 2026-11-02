@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Optional
+
 from com.cache import RedisCache
 from com.helpers import await_
 
@@ -49,7 +49,7 @@ class Huc6WithStationMetadata:
             self.latest_swe_values[station] = latest_swe
             self.median_swe_values[station] = median_swe
 
-    def get_basin_index_percentage(self) -> Optional[BasinIndexResult]:
+    def get_basin_index_percentage(self) -> BasinIndexResult | None:
         sum_of_observed_value_for_all_associated_stations = 0
         sum_of_median_swe_for_all_associated_stations = 0
 

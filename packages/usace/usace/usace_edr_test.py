@@ -3,8 +3,9 @@
 
 
 import pytest
-from usace.usace_edr import USACEEDRProvider
 from pygeoapi.provider.base import ProviderNoDataError
+
+from usace.usace_edr import USACEEDRProvider
 
 provider_def = {
     "name": "test",

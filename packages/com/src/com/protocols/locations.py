@@ -3,16 +3,16 @@
 
 from typing import Protocol
 
-from typing import Optional
+import shapely
+import shapely.wkt
+
+from com.covjson import CoverageCollectionDict
 from com.geojson.helpers import (
     GeojsonFeatureCollectionDict,
     GeojsonFeatureDict,
     SortDict,
 )
-from com.covjson import CoverageCollectionDict
 from com.helpers import EDRFieldsMapping, OAFFieldsMapping, parse_bbox
-import shapely
-import shapely.wkt
 
 """
 All classes in this file provide interfaces which providers must implement;
@@ -32,19 +32,19 @@ class LocationCollectionProtocol(Protocol):
     def drop_all_locations_but_id(self, location_id: str) -> None: ...
     def _filter_by_geometry(
         self,
-        geometry: Optional[shapely.geometry.base.BaseGeometry],
+        geometry: shapely.geometry.base.BaseGeometry | None,
         # Vertical level
-        z: Optional[str] = None,
+        z: str | None = None,
     ) -> None: ...
 
     def to_geojson(
         self,
         itemsIDSingleFeature=False,
-        skip_geometry: Optional[bool] = False,
-        select_properties: Optional[list[str]] = None,
-        properties: Optional[list[tuple[str, str]]] = None,
+        skip_geometry: bool | None = False,
+        select_properties: list[str] | None = None,
+        properties: list[tuple[str, str]] | None = None,
         fields_mapping: EDRFieldsMapping | OAFFieldsMapping = {},
-        sortby: Optional[list[SortDict]] = None,
+        sortby: list[SortDict] | None = None,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict: ...
 
     def drop_after_limit(self, limit: int) -> None:
@@ -59,9 +59,7 @@ class LocationCollectionProtocol(Protocol):
         """
         self.locations = self.locations[offset:]
 
-    def drop_outside_of_wkt(
-        self, wkt: Optional[str] = None, z: Optional[str] = None
-    ) -> None:
+    def drop_outside_of_wkt(self, wkt: str | None = None, z: str | None = None) -> None:
         parsed_geo = shapely.wkt.loads(str(wkt)) if wkt else None
         return self._filter_by_geometry(parsed_geo, z)
 
@@ -82,15 +80,14 @@ class LocationCollectionProtocolWithEDR(LocationCollectionProtocol):
     A location collection that supports EDR and covjson transformations
     """
 
-    def select_properties(self, properties: Optional[list[str]]) -> None:
+    def select_properties(self, properties: list[str] | None) -> None:
         """
         The EDR select properties filter
         """
-        ...
 
     def to_covjson(
         self,
         fieldMapper: EDRFieldsMapping,
-        datetime_: Optional[str],
-        select_properties: Optional[list[str]],
+        datetime_: str | None,
+        select_properties: list[str] | None,
     ) -> CoverageCollectionDict: ...

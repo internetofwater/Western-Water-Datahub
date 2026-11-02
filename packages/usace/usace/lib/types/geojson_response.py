@@ -1,7 +1,8 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from typing import List, Literal, Optional
+from typing import Literal
+
 from com.cache import RedisCache
 from pydantic import BaseModel, ConfigDict, FiniteFloat
 from usace.lib.result_collection import ResultCollection
@@ -16,12 +17,12 @@ class TimeseriesParameter(BaseModel):
     unit_long_name: str
     latest_time: str
     latest_value: float
-    delta24h: Optional[float] = None
+    delta24h: float | None = None
     sort_order: int
 
     # This field is not returned from the upstream
     # API but is appended at runtime to create the covjson
-    results: Optional[ResultCollection] = None
+    results: ResultCollection | None = None
 
     async def _get_results(
         self, office: str, start_date: str, end_date: str
@@ -50,7 +51,7 @@ class GeojsonProperties(BaseModel):
     provider: str
     code: str
     slug: str
-    elevation: Optional[float] = None
+    elevation: float | None = None
     horizontal_datum: str
     vertical_datum: str
     state: str
@@ -58,10 +59,10 @@ class GeojsonProperties(BaseModel):
     nearest_city: str
     public_name: str
     location_code: int
-    nsid: Optional[str] = None
+    nsid: str | None = None
     aliases: dict[Literal["NIDID"], str] | dict
-    timeseries: Optional[list[TimeseriesParameter]] = None
-    name: Optional[str] = None
+    timeseries: list[TimeseriesParameter] | None = None
+    name: str | None = None
 
     ### fields i have merged in
     # we have to set these here otherwise pygeoapi won't
@@ -72,8 +73,8 @@ class GeojsonProperties(BaseModel):
     # this is specified as a json since we need to be able to
     # use it for ?property filters and pygeoapi by default reads in
     # those properties to filter by as strings
-    hasResopsAverages: Optional[str] = "false"
-    nidId: Optional[str] = None
+    hasResopsAverages: str | None = "false"
+    nidId: str | None = None
 
     # allow setting arbitrary fields to allow
     # for merging the static metadata
@@ -91,9 +92,9 @@ class Feature(BaseModel):
     type: Literal["Feature"]
     properties: GeojsonProperties
     geometry: PointCoordinates
-    id: Optional[str] = None
+    id: str | None = None
 
 
 class FeatureCollection(BaseModel):
     type: Literal["FeatureCollection"] = "FeatureCollection"
-    features: List[Feature]
+    features: list[Feature]

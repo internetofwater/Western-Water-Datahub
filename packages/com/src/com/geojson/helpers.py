@@ -1,12 +1,11 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from typing import Literal, NotRequired, Optional, TypedDict
+from typing import Literal, NotRequired, TypedDict, assert_never
 
-from com.helpers import OAFFieldsMapping
 import geojson_pydantic
+from com.helpers import OAFFieldsMapping
 from pygeoapi.provider.base import ProviderQueryError
-from typing import assert_never
 
 
 class SortDict(TypedDict):
@@ -26,7 +25,7 @@ class GeojsonFeatureDict(TypedDict):
     """
 
     type: Literal["Feature"]
-    geometry: Optional[dict]
+    geometry: dict | None
     properties: dict
     id: int | str
 

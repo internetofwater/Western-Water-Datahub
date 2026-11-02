@@ -1,13 +1,14 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+import pytest
 from awdb_forecasts.awdb_forecasts import AwdbForecastsProvider
-from com.protocols.providers import OAFProviderProtocol
 from noaa_rfc.noaa_rfc import NOAARFCProvider
 from rise.rise import RiseProvider
 from snotel.snotel import SnotelProvider
 from usace.usace import USACEProvider
-import pytest
+
+from com.protocols.providers import OAFProviderProtocol
 
 provider_def = {
     "name": "test",

@@ -3,7 +3,6 @@
 
 from snotel.snotel import SnotelProvider
 
-
 conf = {
     "name": "snotel",
     "title": "Snotel",

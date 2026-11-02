@@ -2,21 +2,22 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-from typing import Literal, Optional
+from typing import Literal
 
 import aiohttp
 import aiohttp.client_exceptions
+from com.cache import RedisCache
+from com.geojson.helpers import (
+    GeojsonFeatureCollectionDict,
+    GeojsonFeatureDict,
+    SortDict,
+)
 from com.helpers import get_oaf_fields_from_pydantic_model
 from com.otel import otel_trace
 from com.protocols.providers import OAFProviderProtocol
-from pygeoapi.provider.base import BaseProvider, ProviderItemNotFoundError
 from pygeoapi.crs import crs_transform
-from com.geojson.helpers import (
-    GeojsonFeatureDict,
-    GeojsonFeatureCollectionDict,
-    SortDict,
-)
-from com.cache import RedisCache
+from pygeoapi.provider.base import BaseProvider, ProviderItemNotFoundError
+
 from usace.lib.locations_collection import LocationCollection
 from usace.lib.types.geojson_response import GeojsonProperties
 
@@ -39,21 +40,19 @@ class USACEProvider(BaseProvider, OAFProviderProtocol):
     def items(
         self,
         bbox: list = [],
-        datetime_: Optional[str] = None,
-        resulttype: Optional[Literal["hits", "results"]] = "results",
+        datetime_: str | None = None,
+        resulttype: Literal["hits", "results"] | None = "results",
         # select only features that contains all the `select_properties` values
-        select_properties: Optional[
-            list[str]
-        ] = None,  # query this with ?properties in the actual url
+        select_properties: list[str]
+        | None = None,  # query this with ?properties in the actual url
         # select only features that contains all the `properties` with their corresponding values
         properties: list[tuple[str, str]] = [],
-        sortby: Optional[list[SortDict]] = None,
-        limit: Optional[int] = None,
-        itemId: Optional[
-            str
-        ] = None,  # unlike edr, this is a string; we need to case to an int before filtering
-        offset: Optional[int] = 0,
-        skip_geometry: Optional[bool] = False,
+        sortby: list[SortDict] | None = None,
+        limit: int | None = None,
+        itemId: str
+        | None = None,  # unlike edr, this is a string; we need to case to an int before filtering
+        offset: int | None = 0,
+        skip_geometry: bool | None = False,
         **kwargs,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         collection = LocationCollection(itemId=itemId)

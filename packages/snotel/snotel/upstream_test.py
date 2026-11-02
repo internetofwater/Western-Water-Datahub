@@ -1,9 +1,8 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from com.cache import RedisCache
 import pytest
-
+from com.cache import RedisCache
 
 """
 According to upstream swagger docs

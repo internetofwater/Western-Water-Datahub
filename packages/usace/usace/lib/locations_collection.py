@@ -2,12 +2,17 @@
 # SPDX-License-Identifier: MIT
 
 import asyncio
-from datetime import datetime, timezone
 import json
 import logging
 import pathlib
-from typing import Optional, Set, Tuple, cast, assert_never
+from datetime import UTC, datetime
+from typing import assert_never, cast
+
+import geojson_pydantic
+import orjson
+import shapely
 from com.cache import RedisCache
+from com.covjson import CoverageCollectionDict
 from com.env import TRACER
 from com.geojson.helpers import (
     GeojsonFeatureCollectionDict,
@@ -21,31 +26,30 @@ from com.helpers import (
     EDRFieldsMapping,
     OAFFieldsMapping,
     await_,
+    parse_date,
     parse_z,
 )
 from com.otel import otel_trace
-from com.protocols.locations import LocationCollectionProtocolWithEDR
-import geojson_pydantic
-import orjson
-from com.covjson import CoverageCollectionDict
-from rise.lib.types.helpers import ZType
-import shapely
-from geojson_pydantic.types import Position2D
-from usace.lib.types.geojson_response import Feature, FeatureCollection
-from com.helpers import parse_date
 from com.protocols.covjson import CovjsonBuilderProtocol
-from covjson_pydantic.parameter import Parameter, Parameters
-from covjson_pydantic.unit import Unit
-from covjson_pydantic.observed_property import ObservedProperty
-from usace.lib.types.geojson_response import TimeseriesParameter
-from covjson_pydantic.domain import Domain, Axes, ValuesAxis, DomainType
-from covjson_pydantic.ndarray import NdArrayFloat
-from covjson_pydantic.reference_system import (
-    ReferenceSystemConnectionObject,
-    ReferenceSystem,
-)
+from com.protocols.locations import LocationCollectionProtocolWithEDR
 from covjson_pydantic.coverage import Coverage, CoverageCollection
+from covjson_pydantic.domain import Axes, Domain, DomainType, ValuesAxis
+from covjson_pydantic.ndarray import NdArrayFloat
+from covjson_pydantic.observed_property import ObservedProperty
+from covjson_pydantic.parameter import Parameter, Parameters
+from covjson_pydantic.reference_system import (
+    ReferenceSystem,
+    ReferenceSystemConnectionObject,
+)
+from covjson_pydantic.unit import Unit
+from geojson_pydantic.types import Position2D
 from pygeoapi.provider.base import ProviderItemNotFoundError
+from rise.lib.types.helpers import ZType
+from usace.lib.types.geojson_response import (
+    Feature,
+    FeatureCollection,
+    TimeseriesParameter,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -59,7 +63,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
     locations: list[Feature]
 
     @otel_trace()
-    def __init__(self, itemId: Optional[str] = None):
+    def __init__(self, itemId: str | None = None):
         self.cache = RedisCache()
         url = "https://water.sec.usace.army.mil/cda/reporting/providers/projects?fmt=geojson"
 
@@ -105,7 +109,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                     # we explicitly set this to 2020- since the resopsus dataset
                     # aggregates in the 30 year window ending on 2020 so it
                     # needs to we effectively just compare the month and day
-                    today = datetime.now(timezone.utc).strftime("2020-%m-%d")
+                    today = datetime.now(UTC).strftime("2020-%m-%d")
                     for avg_date in static_properties[prop]:
                         if avg_date == today:
                             averages_data: dict = static_properties["averages"][
@@ -116,7 +120,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
                                     f"Duplicate property {average_type} when trying to add averages to USACE feature"
                                 )
                                 setattr(feature.properties, average_type, average_value)
-                            setattr(feature.properties, "hasResopsAverages", "true")
+                            feature.properties.hasResopsAverages = "true"
                             break
                 else:
                     setattr(feature.properties, prop, static_properties[prop])
@@ -129,11 +133,11 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
     def to_geojson(
         self,
         itemsIDSingleFeature: bool = False,
-        skip_geometry: Optional[bool] = False,
-        select_properties: Optional[list[str]] = None,
-        properties: Optional[list[tuple[str, str]]] = [],
+        skip_geometry: bool | None = False,
+        select_properties: list[str] | None = None,
+        properties: list[tuple[str, str]] | None = [],
         fields_mapping: EDRFieldsMapping | OAFFieldsMapping = {},
-        sortby: Optional[list[SortDict]] = None,
+        sortby: list[SortDict] | None = None,
     ) -> GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         features_to_keep: list[geojson_pydantic.Feature] = []
 
@@ -192,9 +196,9 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
     @TRACER.start_as_current_span("geometry_filter")
     def _filter_by_geometry(
         self,
-        geometry: Optional[shapely.geometry.base.BaseGeometry],
+        geometry: shapely.geometry.base.BaseGeometry | None,
         # Vertical level
-        z: Optional[str] = None,
+        z: str | None = None,
     ):
         """
         Filter a list of locations by any arbitrary geometry; if they are not inside of it, drop their data
@@ -251,8 +255,8 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
     def to_covjson(
         self,
         fieldMapper: EDRFieldsMapping,
-        datetime_: Optional[str],
-        select_properties: Optional[list[str]],
+        datetime_: str | None,
+        select_properties: list[str] | None,
     ) -> CoverageCollectionDict:
         return CovjsonBuilder(self, datetime_, select_properties).render()
 
@@ -279,7 +283,7 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         # We want to make sure we don't have params that are
         # the same location with
         # multiple parameters of the same category
-        locationWithCategory: Set[Tuple[str, str]] = set()
+        locationWithCategory: set[tuple[str, str]] = set()
 
         fields: EDRFieldsMapping = {}
         for location in self.locations:
@@ -332,12 +336,12 @@ class LocationCollection(LocationCollectionProtocolWithEDR):
         if not properties:
             return
 
-        locations_to_pop: Set[int] = set()
+        locations_to_pop: set[int] = set()
         for i, location in enumerate(self.locations):
             if not location.properties.timeseries:
                 locations_to_pop.add(i)
                 continue
-            params_to_pop: Set[int] = set()
+            params_to_pop: set[int] = set()
             for j, param in enumerate(location.properties.timeseries):
                 if param.tsid not in properties:
                     params_to_pop.add(j)
@@ -356,8 +360,8 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
     def __init__(
         self,
         locationCollection: LocationCollection,
-        datetime_: Optional[str],
-        select_properties: Optional[list[str]],
+        datetime_: str | None,
+        select_properties: list[str] | None,
     ):
         self.locationCollection = locationCollection
 
@@ -372,20 +376,18 @@ class CovjsonBuilder(CovjsonBuilderProtocol):
 
             # Make sure the start and end are a reasonable time; if we put it too far in the future
             # the api will return nothing or error
-            end = min(end, datetime.now().replace(tzinfo=timezone.utc))
-            start = max(
-                datetime.fromisoformat("1900-01-01").replace(tzinfo=timezone.utc), start
-            )
+            end = min(end, datetime.now().replace(tzinfo=UTC))
+            start = max(datetime.fromisoformat("1900-01-01").replace(tzinfo=UTC), start)
             # Ensure both are timezone-aware and in UTC
             # We have to add the Z since the isoformat function doesn't add it
             # and otherwise causes an issue in the upstream api
             start = (
-                start.astimezone(timezone.utc)
+                start.astimezone(UTC)
                 .isoformat(timespec="milliseconds")
                 .replace("+00:00", "Z")
             )
             end = (
-                end.astimezone(timezone.utc)
+                end.astimezone(UTC)
                 .isoformat(timespec="milliseconds")
                 .replace("+00:00", "Z")
             )

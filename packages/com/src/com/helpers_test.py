@@ -1,11 +1,12 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from com.helpers import get_oaf_fields_from_pydantic_model, parse_bbox, parse_z
-from pydantic import BaseModel
 import pytest
-from rise.lib.types.helpers import ZType
 import shapely.wkt
+from pydantic import BaseModel
+from rise.lib.types.helpers import ZType
+
+from com.helpers import get_oaf_fields_from_pydantic_model, parse_bbox, parse_z
 
 
 def test_parse_bbox():

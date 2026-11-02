@@ -1,19 +1,19 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+import asyncio
 import os
-from typing import Optional
+import threading
+
+import requests
 from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
+from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import (
     BatchSpanProcessor,
 )
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-import requests
-from opentelemetry.sdk.resources import Resource
-from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
-import asyncio
-import threading
 
 """
 This file contains initialization code and global vars that are
@@ -65,8 +65,8 @@ REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 
 
-_custom_event_loop: Optional[asyncio.AbstractEventLoop] = None
-_custom_event_loop_thread: Optional[threading.Thread] = None
+_custom_event_loop: asyncio.AbstractEventLoop | None = None
+_custom_event_loop_thread: threading.Thread | None = None
 
 
 def get_loop():
