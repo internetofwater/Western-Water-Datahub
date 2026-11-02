@@ -296,13 +296,21 @@ class ForecastCollection(LocationCollectionProtocol):
             # but we don't need to worry about the case in which a field is null
             MAX_LENGTH_OF_A_FIELD_LIST = len(dumped["espid"])
             for i in range(MAX_LENGTH_OF_A_FIELD_LIST):
+                noaa_id = dumped["espid"][i]
+                # the upstream API can add new stations at any time; skip any that
+                # are not in our curated include list instead of failing the whole request
+                metadata = NOAA_ID_TO_METADATA.get(noaa_id)
+                if metadata is None:
+                    LOGGER.warning(
+                        f"Skipping NOAA station {noaa_id} since it is not in the static include metadata"
+                    )
+                    continue
+
                 # Get the i indexed item from the list and serialized it with pydantic
                 # This allows us to get a list of all stations instead of grouping them by basin
                 item = {k: v[i] if v else None for k, v in dumped.items()}
 
-                metadata = NOAA_ID_TO_METADATA[dumped["espid"][i]]
-
-                noaa_ids_seen_in_api_response.add(dumped["espid"][i])
+                noaa_ids_seen_in_api_response.add(noaa_id)
 
                 item["doi_region_num"] = metadata["doi_region_num"]
                 item["doi_region_name"] = metadata["doi_region_name"]
