@@ -1,8 +1,9 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
+from typing import Literal
+
 from pydantic import BaseModel, Field, field_validator
-from typing import Literal, Optional
 
 """
 This file contains the pydantic models for specifically the
@@ -28,10 +29,10 @@ class RelationshipData(BaseModel):
 
 
 class IncludeRelationships(BaseModel):
-    catalogRecord: Optional[RelationshipData] = None
-    location: Optional[RelationshipData] = None
-    catalogItems: Optional[RelationshipData] = None
-    parameter: Optional[RelationshipData] = None
+    catalogRecord: RelationshipData | None = None
+    location: RelationshipData | None = None
+    catalogItems: RelationshipData | None = None
+    parameter: RelationshipData | None = None
 
 
 class LocationIncluded(BaseModel):

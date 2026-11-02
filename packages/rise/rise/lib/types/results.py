@@ -1,7 +1,8 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from typing import Literal, Optional
+from typing import Literal
+
 from pydantic import BaseModel, field_validator
 
 
@@ -18,7 +19,7 @@ class ResultAttributes(BaseModel):
 
     itemId: int
     locationId: int
-    result: Optional[float]
+    result: float | None
     parameterId: str
     resultAttributes: ResultMetadataAttributes | None = None
 
@@ -30,7 +31,7 @@ class ResultAttributes(BaseModel):
             return str(parameterId)
         return parameterId
 
-    dateTime: Optional[str]
+    dateTime: str | None
 
 
 class ResultData(BaseModel):

@@ -7,25 +7,26 @@
 
 from __future__ import annotations
 
-from typing import Annotated, Optional
+from typing import Annotated
 
 from msgspec import Meta, Struct, field
 
 
 class Column(Struct):
-    name: Optional[str] = None
-    ordinal: Optional[int] = None
-    datatype: Optional[str] = None
+    name: str | None = None
+    ordinal: int | None = None
+    datatype: str | None = None
 
 
 class Record(Struct):
-    date_time: Optional[
+    date_time: (
         Annotated[
             int,
             Meta(description="Milliseconds since 1970-01-01 (Unix Epoch), always UTC"),
         ]
-    ] = field(name="date-time", default=None)
-    value: Optional[
-        Annotated[float, Meta(description="Requested time-series data value")]
-    ] = None
-    quality_code: Optional[int] = field(name="quality-code", default=None)
+        | None
+    ) = field(name="date-time", default=None)
+    value: (
+        Annotated[float, Meta(description="Requested time-series data value")] | None
+    ) = None
+    quality_code: int | None = field(name="quality-code", default=None)

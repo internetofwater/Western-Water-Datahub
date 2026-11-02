@@ -1,11 +1,11 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from com.helpers import await_
 import pytest
 import requests
-import shapely.wkt
 import shapely.geometry
+import shapely.wkt
+from com.helpers import await_
 
 from rise.lib.cache import RISECache
 from rise.lib.helpers import merge_pages

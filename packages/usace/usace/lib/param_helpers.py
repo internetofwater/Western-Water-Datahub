@@ -1,8 +1,8 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from usace.lib.locations_collection import LocationCollection
 from pygeoapi.provider.base import ProviderNoDataError
+from usace.lib.locations_collection import LocationCollection
 
 
 def get_upstream_ids_of_select_properties(

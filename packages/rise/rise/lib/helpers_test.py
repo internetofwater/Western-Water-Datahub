@@ -1,13 +1,13 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from typing import Optional
 from urllib.parse import urlparse
+
 from com.helpers import await_
 from pydantic import BaseModel
+
 from rise.lib.cache import RISECache
-from rise.lib.helpers import merge_pages
-from rise.lib.helpers import get_reservoir_capacity_json_path
+from rise.lib.helpers import get_reservoir_capacity_json_path, merge_pages
 
 
 def test_merge_pages():
@@ -62,8 +62,8 @@ def test_parse_query_params():
 
 def test_dump_none():
     class DummyNestedModel(BaseModel):
-        a: Optional[int] = None
-        b: Optional[str] = None
+        a: int | None = None
+        b: str | None = None
 
     class DummyModel(BaseModel):
         a: int

@@ -2,18 +2,19 @@
 # SPDX-License-Identifier: MIT
 
 import asyncio
-import logging
-from annotated_types import T
-from typing import Any
-from typing import Coroutine, Literal, Optional, Tuple, Type, TypedDict
-from com.datetime import datetime_from_iso
-from com.env import get_loop
-from pydantic import BaseModel
-from rise.lib.types.helpers import ZType
 import datetime
+import logging
+from collections.abc import Coroutine
+from typing import Any, Literal, TypedDict
 
 import shapely
+from annotated_types import T
+from pydantic import BaseModel
 from pygeoapi.provider.base import ProviderQueryError
+from rise.lib.types.helpers import ZType
+
+from com.datetime import datetime_from_iso
+from com.env import get_loop
 
 LOGGER = logging.getLogger(__name__)
 
@@ -46,7 +47,7 @@ def await_(coro: Coroutine[Any, Any, T]) -> T:
     return future.result()
 
 
-def parse_z(z: str) -> Optional[Tuple[ZType, list[int]]]:
+def parse_z(z: str) -> tuple[ZType, list[int]] | None:
     """Parse a z value in the format required by the OGC EDR spec"""
     if not z:
         return None
@@ -97,21 +98,19 @@ def parse_date(
             end = end.replace("Z", "+00:00")
 
         start = (
-            datetime.datetime.min.replace(tzinfo=datetime.timezone.utc)
+            datetime.datetime.min.replace(tzinfo=datetime.UTC)
             if start == ".."
             else datetime_from_iso(start)
         )
         end = (
-            datetime.datetime.max.replace(tzinfo=datetime.timezone.utc)
+            datetime.datetime.max.replace(tzinfo=datetime.UTC)
             if end == ".."
             else datetime_from_iso(end)
         )
 
         if start > end:
             raise ProviderQueryError(
-                "Start date must be before end date but got {} and {}".format(
-                    start, end
-                )
+                f"Start date must be before end date but got {start} and {end}"
             )
 
         return (start, end)
@@ -120,8 +119,8 @@ def parse_date(
 
 
 def parse_bbox(
-    bbox: Optional[list],
-) -> Tuple[Optional[shapely.geometry.base.BaseGeometry], Optional[str]]:
+    bbox: list | None,
+) -> tuple[shapely.geometry.base.BaseGeometry | None, str | None]:
     minz, maxz = None, None
 
     if not bbox:
@@ -141,7 +140,7 @@ def parse_bbox(
         )
 
 
-def get_oaf_fields_from_pydantic_model(model: Type[BaseModel]) -> OAFFieldsMapping:
+def get_oaf_fields_from_pydantic_model(model: type[BaseModel]) -> OAFFieldsMapping:
     """Given a pydantic model, return a mapping of the fields to their data types"""
     pydanticFields = model.model_fields
     fields: OAFFieldsMapping = {}

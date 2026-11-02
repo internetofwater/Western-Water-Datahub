@@ -8,136 +8,131 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
 
 class DataValueDTO(BaseModel):
-    date: Optional[str] = Field(
+    date: str | None = Field(
         None,
         description="The timestamp of the data. Used only for DAILY and HOURLY durations.",
         examples=["2022-01-01"],
     )
-    month: Optional[int] = Field(
+    month: int | None = Field(
         None,
         description="The month of the data value (1-12). Used only for MONTHLY and SEMIMONTHLY durations.",
         examples=[1],
     )
-    monthPart: Optional[str] = Field(
+    monthPart: str | None = Field(
         None,
         description="The half of month of the data value ('1' for first half, '2' for second half). Used only for SEMIMONTHLY durations.",
         examples=["1"],
     )
-    year: Optional[int] = Field(
+    year: int | None = Field(
         None,
         description="The year of the data value. Used only for WATER_YEAR, CALENDAR_YEAR, MONTHLY, and SEMIMONTHLY durations.",
         examples=[2022],
     )
-    collectionDate: Optional[str] = Field(
+    collectionDate: str | None = Field(
         None,
         description="The date the data value was collected. Used only for SEMIMONTHLY durations.",
         examples=["2021-12-31"],
     )
-    value: Optional[float] = Field(None, description="The data value", examples=[1.2])
-    qcFlag: Optional[str] = Field(
+    value: float | None = Field(None, description="The data value", examples=[1.2])
+    qcFlag: str | None = Field(
         None, description="The qc flag of the data value", examples=["E"]
     )
-    qaFlag: Optional[str] = Field(
+    qaFlag: str | None = Field(
         None, description="The qa flag of the data value", examples=["A"]
     )
-    origValue: Optional[float] = Field(
+    origValue: float | None = Field(
         None, description="The original data value", examples=[1.3]
     )
-    origQcFlag: Optional[str] = Field(
+    origQcFlag: str | None = Field(
         None, description="The original qc flag of the data value", examples=["V"]
     )
-    average: Optional[float] = Field(
+    average: float | None = Field(
         None, description="The 30-year average", examples=[1.4]
     )
-    median: Optional[float] = Field(
-        None, description="The 30-year median", examples=[1.0]
-    )
+    median: float | None = Field(None, description="The 30-year median", examples=[1.0])
 
 
 class DcoDTO(BaseModel):
-    code: Optional[str] = Field(None, description="The DCO code", examples=["OR"])
-    name: Optional[str] = Field(None, description="The DCO Name", examples=["OREGON"])
+    code: str | None = Field(None, description="The DCO code", examples=["OR"])
+    name: str | None = Field(None, description="The DCO Name", examples=["OREGON"])
 
 
 class DurationDTO(BaseModel):
-    code: Optional[str] = Field(None, description="The duration code", examples=["D"])
-    name: Optional[str] = Field(
-        None, description="The duration name", examples=["DAILY"]
-    )
-    durationMinutes: Optional[str] = Field(
+    code: str | None = Field(None, description="The duration code", examples=["D"])
+    name: str | None = Field(None, description="The duration name", examples=["DAILY"])
+    durationMinutes: str | None = Field(
         None, description="The duration in minutes", examples=["1440"]
     )
 
 
 class ElementDTO(BaseModel):
-    code: Optional[str] = Field(None, description="The element code", examples=["PREC"])
-    name: Optional[str] = Field(
+    code: str | None = Field(None, description="The element code", examples=["PREC"])
+    name: str | None = Field(
         None, description="The element name", examples=["PRECIPITATION ACCUMULATION"]
     )
-    physicalElementName: Optional[str] = Field(
+    physicalElementName: str | None = Field(
         None,
         description="The physical element name",
         examples=["precipitation accumulation"],
     )
-    functionCode: Optional[str] = Field(
+    functionCode: str | None = Field(
         None, description="The function code", examples=["C"]
     )
-    dataPrecision: Optional[int] = Field(
+    dataPrecision: int | None = Field(
         None, description="The precision of the data", examples=[2]
     )
-    description: Optional[str] = Field(
+    description: str | None = Field(
         None,
         description="The element description",
         examples=["Water Year Accumulated Precipitation"],
     )
-    storedUnitCode: Optional[str] = Field(
+    storedUnitCode: str | None = Field(
         None, description="The stored unit code", examples=["in"]
     )
-    englishUnitCode: Optional[str] = Field(
+    englishUnitCode: str | None = Field(
         None, description="The english unit code", examples=["in"]
     )
-    metricUnitCode: Optional[str] = Field(
+    metricUnitCode: str | None = Field(
         None, description="The metric unit code", examples=["mm"]
     )
 
 
 class ForecastDataDTO(BaseModel):
-    elementCode: Optional[str] = Field(
+    elementCode: str | None = Field(
         None,
         description="The element code related to the forecast record.",
         examples=["SRVO"],
     )
-    forecastPeriod: Optional[List[str]] = Field(
+    forecastPeriod: list[str] | None = Field(
         None,
         description="The start (MM-DD) and end (MM-DD) of the forecast period that the forecast is for.",
         examples=[["04-01", "07-31"]],
     )
-    forecastStatus: Optional[str] = Field(
+    forecastStatus: str | None = Field(
         None, description="Indicates the status of the Forecast.", examples=["final"]
     )
-    issueDate: Optional[str] = Field(
+    issueDate: str | None = Field(
         None,
         description="The issue date of the forecast.",
         examples=["2023-10-02 07:45:52"],
     )
-    periodNormal: Optional[float] = Field(
+    periodNormal: float | None = Field(
         None, description="The forecast period normal.", examples=[13.6]
     )
-    publicationDate: Optional[str] = Field(
+    publicationDate: str | None = Field(
         None,
         description="The publication date of the forecast value.",
         examples=["2023-04-01"],
     )
-    unitCode: Optional[str] = Field(
+    unitCode: str | None = Field(
         None, description="The unit code of a forecast.", examples=["kac_ft"]
     )
-    forecastValues: Optional[Dict[str, float]] = Field(
+    forecastValues: dict[str, float] | None = Field(
         None,
         description="A dictionary of forecast values where the key is the exceedence probability and the value is the corresponding forecast value.",
         examples=[{"10": 36.5, "30": 28.3, "50": 24.1}],
@@ -145,23 +140,23 @@ class ForecastDataDTO(BaseModel):
 
 
 class ForecastPeriodDTO(BaseModel):
-    code: Optional[str] = Field(
+    code: str | None = Field(
         None, description="The forecast period code", examples=["D1"]
     )
-    name: Optional[str] = Field(
+    name: str | None = Field(
         None, description="The forecast period name", examples=["J15-JAN"]
     )
-    description: Optional[str] = Field(
+    description: str | None = Field(
         None,
         description="The forecast period description",
         examples=["Jan 15 through Jan"],
     )
-    beginMonthDay: Optional[str] = Field(
+    beginMonthDay: str | None = Field(
         None,
         description="The beginning month and day for the forecast period",
         examples=["01-15"],
     )
-    endMonthDay: Optional[str] = Field(
+    endMonthDay: str | None = Field(
         None,
         description="The ending month and day for the forecast period",
         examples=["01-31"],
@@ -169,17 +164,17 @@ class ForecastPeriodDTO(BaseModel):
 
 
 class ForecastPointDTO(BaseModel):
-    name: Optional[str] = Field(
+    name: str | None = Field(
         None,
         description="The name of the forecast point",
         examples=["Alamosa Ck ab Terrace Reservoir"],
     )
-    forecaster: Optional[str] = Field(
+    forecaster: str | None = Field(
         None,
         description="The user name of the forecaster who forecasts for this station",
         examples=["agoodbody"],
     )
-    exceedenceProbabilities: Optional[List[int]] = Field(
+    exceedenceProbabilities: list[int] | None = Field(
         None,
         description="The name to display in the UI for the profile type",
         examples=[[10, 30, 50, 70, 90]],
@@ -187,37 +182,37 @@ class ForecastPointDTO(BaseModel):
 
 
 class FunctionDTO(BaseModel):
-    code: Optional[str] = Field(None, description="The function code", examples=["C"])
-    abbreviation: Optional[str] = Field(
+    code: str | None = Field(None, description="The function code", examples=["C"])
+    abbreviation: str | None = Field(
         None, description="The abbreviation", examples=["OBS"]
     )
-    name: Optional[str] = Field(
+    name: str | None = Field(
         None, description="The name", examples=["current observation"]
     )
 
 
 class InstrumentDTO(BaseModel):
-    name: Optional[str] = Field(
+    name: str | None = Field(
         None, description="The instrument name", examples=['150" transducer - unknown']
     )
-    transducerLength: Optional[int] = Field(
+    transducerLength: int | None = Field(
         None, description="The transducer length", examples=[150]
     )
-    dataPrecisionAdjustment: Optional[int] = Field(
+    dataPrecisionAdjustment: int | None = Field(
         None, description="The data precision adjustment", examples=[0]
     )
-    manufacturer: Optional[str] = Field(
+    manufacturer: str | None = Field(
         None, description="The manufacturer", examples=["Sensotec/Druck/Edcliff"]
     )
-    model: Optional[str] = Field(None, description="The model", examples=["unknown"])
+    model: str | None = Field(None, description="The model", examples=["unknown"])
 
 
 class NetworkDTO(BaseModel):
-    code: Optional[str] = Field(None, description="The network code", examples=["USGS"])
-    name: Optional[str] = Field(
+    code: str | None = Field(None, description="The network code", examples=["USGS"])
+    name: str | None = Field(
         None, description="The network name", examples=["STREAMFLOW"]
     )
-    description: Optional[str] = Field(
+    description: str | None = Field(
         None,
         description="The network description",
         examples=["STREAMFLOW NETWORK STATIONS"],
@@ -225,26 +220,26 @@ class NetworkDTO(BaseModel):
 
 
 class PhysicalElementDTO(BaseModel):
-    name: Optional[str] = Field(
+    name: str | None = Field(
         None, description="The physical element name", examples=["snow depth"]
     )
-    shefPhysicalElementCode: Optional[str] = Field(
+    shefPhysicalElementCode: str | None = Field(
         None, description="The SHEF physical element code", examples=["SD"]
     )
 
 
 class ReservoirMetadataDTO(BaseModel):
-    capacity: Optional[float] = Field(
+    capacity: float | None = Field(
         None,
         description="The capacity of the reservoir in acre-feet",
         examples=[153000.0],
     )
-    elevationAtCapacity: Optional[float] = Field(
+    elevationAtCapacity: float | None = Field(
         None,
         description="The elevation of the reservoir (in feet) when it is at capacity",
         examples=[350.0],
     )
-    usableCapacity: Optional[float] = Field(
+    usableCapacity: float | None = Field(
         None,
         description="The usable capacity of the reservoir in acre-feet",
         examples=[148640.0],
@@ -252,14 +247,12 @@ class ReservoirMetadataDTO(BaseModel):
 
 
 class StateDTO(BaseModel):
-    code: Optional[str] = Field(None, description="The state code", examples=["CO"])
-    fipsNumber: Optional[str] = Field(
+    code: str | None = Field(None, description="The state code", examples=["CO"])
+    fipsNumber: str | None = Field(
         None, description="The state FIPS number code", examples=["08"]
     )
-    name: Optional[str] = Field(
-        None, description="The state name", examples=["COLORADO"]
-    )
-    countryCode: Optional[str] = Field(
+    name: str | None = Field(None, description="The state name", examples=["COLORADO"])
+    countryCode: str | None = Field(
         None, description="The country code", examples=["US"]
     )
 
@@ -279,40 +272,40 @@ class DurationName(str, Enum):
 
 
 class StationElementDTO(BaseModel):
-    elementCode: Optional[str] = Field(
+    elementCode: str | None = Field(
         None, description="The element code", examples=["WTEQ"]
     )
-    ordinal: Optional[int] = Field(
+    ordinal: int | None = Field(
         None, description="The ordinal of the station element", examples=[1]
     )
-    heightDepth: Optional[int] = Field(
+    heightDepth: int | None = Field(
         None, description="The height/depth of the station element in inches"
     )
-    durationName: Optional[DurationName] = Field(
+    durationName: DurationName | None = Field(
         None, description="The duration name of the station element", examples=["DAILY"]
     )
-    dataPrecision: Optional[int] = Field(
+    dataPrecision: int | None = Field(
         None,
         description="The data precision of the data for the station element",
         examples=[2],
     )
-    storedUnitCode: Optional[str] = Field(
+    storedUnitCode: str | None = Field(
         None, description="The units that the data is stored in", examples=["in"]
     )
-    originalUnitCode: Optional[str] = Field(
+    originalUnitCode: str | None = Field(
         None, description="The units that the data was collected in", examples=["in"]
     )
-    beginDate: Optional[str] = Field(
+    beginDate: str | None = Field(
         None,
         description="The date that the station element was put into service",
         examples=["1980-10-30 15:53"],
     )
-    endDate: Optional[str] = Field(
+    endDate: str | None = Field(
         None,
         description="The date that the station element was taken out of service or 2100-01-01 if still in service",
         examples=["2100-01-01"],
     )
-    derivedData: Optional[bool] = Field(
+    derivedData: bool | None = Field(
         None,
         description="true/false if the station element data is derived",
         examples=[False],
@@ -320,22 +313,22 @@ class StationElementDTO(BaseModel):
 
 
 class UnitDTO(BaseModel):
-    code: Optional[str] = Field(None, description="The unit code", examples=["bar"])
-    singularName: Optional[str] = Field(
+    code: str | None = Field(None, description="The unit code", examples=["bar"])
+    singularName: str | None = Field(
         None, description="The singular unit name", examples=["bar"]
     )
-    pluralName: Optional[str] = Field(
+    pluralName: str | None = Field(
         None, description="The plural unit name", examples=["bars"]
     )
-    description: Optional[str] = Field(
+    description: str | None = Field(
         None, description="The unit description", examples=["barometric pressure"]
     )
 
 
 class DataDTO(BaseModel):
-    stationElement: Optional[StationElementDTO] = None
-    values: Optional[List[DataValueDTO]] = None
-    error: Optional[str] = Field(
+    stationElement: StationElementDTO | None = None
+    values: list[DataValueDTO] | None = None
+    error: str | None = Field(
         None,
         examples=[
             "Unsupported operation - the insertOrUpdateBeginDate parameter is not supported for derived data (NOTE: Only included when there is an error)."
@@ -344,118 +337,116 @@ class DataDTO(BaseModel):
 
 
 class ForecastDTO(BaseModel):
-    stationTriplet: Optional[str] = Field(
+    stationTriplet: str | None = Field(
         None,
         description="The station triplet of the forecast point.",
         examples=["09430500:CO:USGS"],
     )
-    forecastPointName: Optional[str] = Field(
+    forecastPointName: str | None = Field(
         None, description="The name of the forecast point.", examples=["Gila R at Gila"]
     )
-    data: Optional[List[ForecastDataDTO]] = Field(
+    data: list[ForecastDataDTO] | None = Field(
         None, description="Contains forecast data for a forecast point."
     )
 
 
 class ReferenceDataDTO(BaseModel):
-    dcos: Optional[List[DcoDTO]] = Field(
-        None, description="Contains DCO reference data."
-    )
-    durations: Optional[List[DurationDTO]] = Field(
+    dcos: list[DcoDTO] | None = Field(None, description="Contains DCO reference data.")
+    durations: list[DurationDTO] | None = Field(
         None, description="Contains duration reference data."
     )
-    elements: Optional[List[ElementDTO]] = Field(
+    elements: list[ElementDTO] | None = Field(
         None, description="Contains element reference data."
     )
-    forecastPeriods: Optional[List[ForecastPeriodDTO]] = Field(
+    forecastPeriods: list[ForecastPeriodDTO] | None = Field(
         None, description="Contains forecast period reference data."
     )
-    functions: Optional[List[FunctionDTO]] = Field(
+    functions: list[FunctionDTO] | None = Field(
         None, description="Contains function reference data."
     )
-    instruments: Optional[List[InstrumentDTO]] = Field(
+    instruments: list[InstrumentDTO] | None = Field(
         None, description="Contains instrument reference data."
     )
-    networks: Optional[List[NetworkDTO]] = Field(
+    networks: list[NetworkDTO] | None = Field(
         None, description="Contains network reference data."
     )
-    physicalElements: Optional[List[PhysicalElementDTO]] = Field(
+    physicalElements: list[PhysicalElementDTO] | None = Field(
         None, description="Contains physical element reference data."
     )
-    states: Optional[List[StateDTO]] = Field(
+    states: list[StateDTO] | None = Field(
         None, description="Contains State reference data."
     )
-    units: Optional[List[UnitDTO]] = Field(
+    units: list[UnitDTO] | None = Field(
         None, description="Contains unit reference data."
     )
 
 
 class StationDTO(BaseModel):
-    stationTriplet: Optional[str] = Field(
+    stationTriplet: str | None = Field(
         None, description="The station triplet of the station", examples=["302:OR:SNTL"]
     )
     stationId: str = Field(..., description="The id of the station", examples=["302"])
-    stateCode: Optional[str] = Field(
+    stateCode: str | None = Field(
         None, description="The 2-character state code of the station", examples=["OR"]
     )
-    networkCode: Optional[str] = Field(
+    networkCode: str | None = Field(
         None, description="The network code of the station", examples=["SNTL"]
     )
-    name: Optional[str] = Field(
+    name: str | None = Field(
         None, description="The name of the station", examples=["ANEROID LAKE #2"]
     )
-    dcoCode: Optional[str] = Field(
+    dcoCode: str | None = Field(
         None, description="The DCO code of the station", examples=["OR"]
     )
-    countyName: Optional[str] = Field(
+    countyName: str | None = Field(
         None,
         description="The name of the county that the station is located in",
         examples=["Wallowa"],
     )
-    huc: Optional[str] = Field(
+    huc: str | None = Field(
         None,
         description="The hydrologic unit code of the station",
         examples=["170601050101"],
     )
-    elevation: Optional[float] = Field(
+    elevation: float | None = Field(
         None, description="The elevation (in feet) of the station", examples=[7400.0]
     )
-    latitude: Optional[float] = Field(
+    latitude: float | None = Field(
         None, description="The latitude of the station", examples=[45.21328]
     )
-    longitude: Optional[float] = Field(
+    longitude: float | None = Field(
         None, description="The longitude of the station", examples=[45.21328]
     )
-    dataTimeZone: Optional[float] = Field(
+    dataTimeZone: float | None = Field(
         None,
         description="The timezone offset from GMT of the data for the station",
         examples=[-8.0],
     )
-    pedonCode: Optional[str] = Field(
+    pedonCode: str | None = Field(
         None, description="The NRCS pedon code for the station"
     )
-    shefId: Optional[str] = Field(
+    shefId: str | None = Field(
         None, description="The SHEF id of the station", examples=["ANR03"]
     )
-    beginDate: Optional[str] = Field(
+    beginDate: str | None = Field(
         None,
         description="The date that the station was put into service",
         examples=["1980-10-01 00:00"],
     )
-    endDate: Optional[str] = Field(
+    endDate: str | None = Field(
         None,
         description="The date that the station was taken out of service or 2100-01-01 if still in service",
         examples=["2100-01-01"],
     )
-    forecastPoint: Optional[ForecastPointDTO] = None
-    reservoirMetadata: Optional[ReservoirMetadataDTO] = None
-    stationElements: Optional[List[StationElementDTO]] = Field(
+    forecastPoint: ForecastPointDTO | None = None
+    reservoirMetadata: ReservoirMetadataDTO | None = None
+    stationElements: list[StationElementDTO] | None = Field(
         None, description="The station elements of the station"
     )
 
 
 class StationDataDTO(BaseModel):
-    stationTriplet: Optional[str] = Field(
+    stationTriplet: str | None = Field(
         None, description="The station triplet of the station", examples=["302:OR:SNTL"]
     )
-    data: Optional[List[DataDTO]] = None
+    data: list[DataDTO] | None = None

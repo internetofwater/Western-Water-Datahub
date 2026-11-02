@@ -1,16 +1,17 @@
 # Copyright 2025 Lincoln Institute of Land Policy
 # SPDX-License-Identifier: MIT
 
-from typing import Literal, Optional, Union
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field, FiniteFloat
 
 
 class PageLinks(BaseModel):
-    first: Optional[str] = None
-    last: Optional[str] = None
+    first: str | None = None
+    last: str | None = None
     self: str
-    next: Optional[str] = None
-    prev: Optional[str] = None
+    next: str | None = None
+    prev: str | None = None
 
 
 class PointCoordinates(BaseModel):
@@ -46,28 +47,28 @@ class LocationDataAttributes(BaseModel):
     # https://stackoverflow.com/questions/59562997/how-to-parse-and-read-id-field-from-and-to-a-pydantic-model
     id: int = Field(..., alias="_id")
 
-    locationParentId: Optional[int]
+    locationParentId: int | None
     locationName: str
-    locationDescription: Optional[str]
+    locationDescription: str | None
     locationStatusId: int
 
     # the "type" field tells us whether to validate as a Point or a Polygon
-    locationCoordinates: Union[
-        PointCoordinates, PolygonCoordinates, LineStringCoordinates
-    ] = Field(discriminator="type")
-    elevation: Optional[float] = None
+    locationCoordinates: (
+        PointCoordinates | PolygonCoordinates | LineStringCoordinates
+    ) = Field(discriminator="type")
+    elevation: float | None = None
     createDate: str
-    updateDate: Optional[str]
+    updateDate: str | None
     horizontalDatum: dict
     locationGeometry: dict
-    timezone: Optional[str] = None
-    verticalDatum: Optional[dict]
+    timezone: str | None = None
+    verticalDatum: dict | None
     locationTags: list[dict]
-    relatedLocationIds: Optional[list[int]]
+    relatedLocationIds: list[int] | None
     projectNames: list[str]
     locationTypeName: str
-    timezoneName: Optional[str] = None
-    timezoneOffset: Optional[float] = None
+    timezoneName: str | None = None
+    timezoneOffset: float | None = None
     locationRegionNames: list[str]
     locationUnifiedRegionNames: list[str]
 

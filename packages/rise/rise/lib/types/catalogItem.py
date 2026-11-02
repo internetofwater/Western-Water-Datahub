@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -10,7 +10,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class CatalogItemRelationships(BaseModel):
-    parameter: Optional[dict[Literal["data"], dict[Literal["type", "id"], str]]] = None
+    parameter: dict[Literal["data"], dict[Literal["type", "id"], str]] | None = None
     catalogRecord: dict[Literal["data"], dict[Literal["type", "id"], str]]
 
 
@@ -19,12 +19,12 @@ class CatalogItemAttributes(BaseModel):
     itemTitle: str
     itemDescription: str
 
-    parameterName: Optional[str]
-    parameterId: Optional[int]
-    parameterTimestep: Optional[str]
+    parameterName: str | None
+    parameterId: int | None
+    parameterTimestep: str | None
 
-    parameterUnit: Optional[str]
-    parameterTransformation: Optional[str]
+    parameterUnit: str | None
+    parameterTransformation: str | None
     dataStructure: str
     matrix: dict
 

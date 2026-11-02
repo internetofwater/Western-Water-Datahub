@@ -2,15 +2,15 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-from typing import Optional
 
+from com.covjson import CoverageCollectionDict
 from com.geojson.helpers import GeojsonFeatureCollectionDict, GeojsonFeatureDict
 from com.helpers import EDRFieldsMapping
 from com.otel import otel_trace
 from com.protocols.providers import EDRProviderProtocol
-from pygeoapi.provider.base_edr import BaseEDRProvider
-from com.covjson import CoverageCollectionDict
 from pygeoapi.provider.base import ProviderQueryError
+from pygeoapi.provider.base_edr import BaseEDRProvider
+
 from resops.lib import LocationCollection
 from resops.resops import USACE_THIRTY_YEAR_AVERAGES
 
@@ -31,13 +31,13 @@ class ResOpsUSProviderEDR(BaseEDRProvider, EDRProviderProtocol):
     @otel_trace()
     def locations(
         self,
-        location_id: Optional[str] = None,
-        datetime_: Optional[str] = None,
-        select_properties: Optional[list[str]] = None,
-        crs: Optional[str] = None,
-        format_: Optional[str] = None,
-        bbox: Optional[list] = None,
-        limit: Optional[int] = None,
+        location_id: str | None = None,
+        datetime_: str | None = None,
+        select_properties: list[str] | None = None,
+        crs: str | None = None,
+        format_: str | None = None,
+        bbox: list | None = None,
+        limit: int | None = None,
         **kwargs,
     ) -> CoverageCollectionDict | GeojsonFeatureCollectionDict | GeojsonFeatureDict:
         """
@@ -90,9 +90,9 @@ class ResOpsUSProviderEDR(BaseEDRProvider, EDRProviderProtocol):
     def cube(
         self,
         bbox: list,
-        datetime_: Optional[str] = None,
-        select_properties: Optional[list[str]] = None,
-        z: Optional[str] = None,
+        datetime_: str | None = None,
+        select_properties: list[str] | None = None,
+        z: str | None = None,
         **kwargs,
     ) -> CoverageCollectionDict:
         raise NotImplementedError
@@ -101,8 +101,8 @@ class ResOpsUSProviderEDR(BaseEDRProvider, EDRProviderProtocol):
         self,
         wkt: str,
         select_properties: list[str] = [],
-        datetime_: Optional[str] = None,
-        z: Optional[str] = None,
+        datetime_: str | None = None,
+        z: str | None = None,
         **kwargs,
     ) -> CoverageCollectionDict:
         raise NotImplementedError

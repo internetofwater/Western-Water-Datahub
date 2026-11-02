@@ -4,18 +4,19 @@
 import asyncio
 import logging
 import math
-from typing import Optional
-from urllib.parse import urlparse
-import aiohttp.client_exceptions
-from com.helpers import EDRFieldsMapping, await_
-from rise.custom_types import JsonPayload, Url
-import aiohttp
-from aiohttp import client_exceptions
 from datetime import timedelta
+from urllib.parse import urlparse
+
+import aiohttp
+import aiohttp.client_exceptions
+from aiohttp import client_exceptions
 from com.cache import RedisCache
 from com.env import TRACER
-from rise.lib.helpers import merge_pages
+from com.helpers import EDRFieldsMapping, await_
 from pygeoapi.provider.base import ProviderItemNotFoundError
+
+from rise.custom_types import JsonPayload, Url
+from rise.lib.helpers import merge_pages
 
 HEADERS = {"accept": "application/vnd.api+json"}
 
@@ -42,7 +43,7 @@ class RISECache(RedisCache):
         super().__init__(ttl)
 
     async def get_or_fetch_all_pages(
-        self, base_url: str, force_fetch=False, ttl: Optional[timedelta] = None
+        self, base_url: str, force_fetch=False, ttl: timedelta | None = None
     ) -> dict[Url, JsonPayload]:
         MAX_ITEMS_PER_PAGE: int
 
@@ -112,10 +113,10 @@ class RISECache(RedisCache):
     @TRACER.start_as_current_span("get_or_fetch_all_param_filtered_pages")
     def get_or_fetch_all_param_filtered_pages(
         self,
-        properties_to_filter_by: Optional[list[str]] = None,
+        properties_to_filter_by: list[str] | None = None,
         only_include_locations_with_data: bool = True,
         force_fetch=False,
-        itemId: Optional[str] = None,
+        itemId: str | None = None,
     ):
         """Return all locations which contain timeseries data and optionally, also a given list of properties. Will return the associated catalogitems / catalogrecords for joins"""
         base_url = (
@@ -146,7 +147,7 @@ class RISECache(RedisCache):
             raise e
 
     async def get_or_fetch_all_results(
-        self, catalogItemToResultUrl: dict[str, str], ttl: Optional[timedelta] = None
+        self, catalogItemToResultUrl: dict[str, str], ttl: timedelta | None = None
     ) -> dict[str, JsonPayload]:
         """Given a dictionary mapping catalog items to URLs, fetch all pages for each URL in parallel
         and return a dictionary mapping catalog items to their corresponding merged pages."""

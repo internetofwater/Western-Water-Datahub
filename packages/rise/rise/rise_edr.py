@@ -2,21 +2,22 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-from typing import ClassVar, Optional
+from typing import ClassVar
 
 from com.helpers import await_
 from com.otel import otel_trace
 from com.protocols.providers import EDRProviderProtocol
 from pygeoapi.provider.base import (
-    ProviderQueryError,
-    ProviderNoDataError,
     ProviderItemNotFoundError,
+    ProviderNoDataError,
+    ProviderQueryError,
 )
 from pygeoapi.provider.base_edr import BaseEDRProvider
+
+from rise.lib.add_results import LocationResultBuilder
+from rise.lib.cache import RISECache
 from rise.lib.covjson.covjson import CovJSONBuilder
 from rise.lib.location import LocationResponse
-from rise.lib.cache import RISECache
-from rise.lib.add_results import LocationResultBuilder
 
 LOGGER = logging.getLogger(__name__)
 
@@ -49,12 +50,12 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
     @otel_trace()
     def locations(
         self,
-        location_id: Optional[str] = None,
-        datetime_: Optional[str] = None,
-        select_properties: Optional[list[str]] = None,
-        crs: Optional[str] = None,
-        format_: Optional[str] = None,
-        bbox: Optional[list] = None,
+        location_id: str | None = None,
+        datetime_: str | None = None,
+        select_properties: list[str] | None = None,
+        crs: str | None = None,
+        format_: str | None = None,
+        bbox: list | None = None,
         **kwargs,
     ):
         """
@@ -113,10 +114,10 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
     def cube(
         self,
         bbox: list,
-        datetime_: Optional[str] = None,
-        select_properties: Optional[list] = None,
-        z: Optional[str] = None,
-        format_: Optional[str] = None,
+        datetime_: str | None = None,
+        select_properties: list | None = None,
+        z: str | None = None,
+        format_: str | None = None,
         **kwargs,
     ):
         """
@@ -147,9 +148,9 @@ class RiseEDRProvider(BaseEDRProvider, EDRProviderProtocol):
         # Well known text (WKT) representation of the geometry for the area
         wkt: str,
         select_properties: list[str] = [],
-        datetime_: Optional[str] = None,
-        z: Optional[str] = None,
-        format_: Optional[str] = None,
+        datetime_: str | None = None,
+        z: str | None = None,
+        format_: str | None = None,
         **kwargs,
     ):
         """

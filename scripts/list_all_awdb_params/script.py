@@ -12,6 +12,7 @@ we only present the stations with forecast data and their forecast params.
 """
 
 from pathlib import Path
+
 import requests
 
 url = "http://localhost:5005/collections/awdb-forecasts-edr/locations?limit=5000"

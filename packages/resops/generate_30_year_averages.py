@@ -4,12 +4,13 @@
 # pyright: reportAttributeAccessIssue=false
 # pyright: reportArgumentType=false
 # type ignores needed to disable pyright errors for dynamic pandas operations
-from datetime import datetime
 import json
-from pathlib import Path
-import pandas as pd
 import pathlib
+from datetime import datetime
+from pathlib import Path
+
 import geopandas as gpd
+import pandas as pd
 
 
 def generate_mapper():

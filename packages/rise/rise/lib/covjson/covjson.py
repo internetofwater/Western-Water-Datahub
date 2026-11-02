@@ -2,25 +2,25 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-from typing import Any, Tuple
+from typing import Any
 
-from com.helpers import EDRFieldsMapping, await_
-from rise.lib.covjson.template import COVJSON_TEMPLATE
 from com.covjson import (
     CoverageCollectionDict,
     CoverageDict,
     CoverageRangeDict,
     ParameterDict,
 )
-from rise.lib.cache import RISECache
+from com.helpers import EDRFieldsMapping, await_
 from rise.lib.add_results import DataNeededForCovjson
+from rise.lib.cache import RISECache
+from rise.lib.covjson.template import COVJSON_TEMPLATE
 
 LOGGER = logging.getLogger(__name__)
 
 
 def _generate_coverage_item(
     location_type: str,
-    coords: list[Any] | Tuple[float, float],
+    coords: list[Any] | tuple[float, float],
     times: list[str | None],
     isModeled: bool,
     paramToCoverage: dict[str, CoverageRangeDict],
